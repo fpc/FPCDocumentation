@@ -1585,7 +1585,7 @@ endif
 FCLOPTS=--package=fcl --descr=classes.xml --input='$(FPCSRCDIR)/rtl/$(OS_SOURCE)/classes.pp -Fi$(FPCSRCDIR)/rtl/objpas/classes'
 fcl.inc: classes.xml
 	$(FPDOC) --output=fcl.inc $(FCLOPTS) --format=latex
-RTLOPTS=--hide-protected --warn-no-node --package=rtl --descr=rtl.xml
+RTLOPTS=$(FPDOCOPTS) --hide-protected --warn-no-node --package=rtl --descr=rtl.xml
 ifndef CURRENTXMLONLY
 XMLUNITS=sysutils strutils dateutils strings mouse keyboard \
 	 crt video dos sockets objects heaptrc mmx ipc printer typinfo \
