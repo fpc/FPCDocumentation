@@ -1,0 +1,693 @@
+<?xml version="1.0" encoding="ISO8859-1"?>
+<fpdoc-descriptions>
+<!--  
+
+   $Id: matrix.xml,v $ 
+   This file is part of the FPC documentation. 
+   Copyright (C) 2005 by Daniel Mantione
+ 
+   The FPC documentation is free text; you can redistribute it and/or 
+   modify it under the terms of the GNU Library General Public License as 
+   published by the Free Software Foundation; either version 2 of the 
+   License, or (at your option) any later version. 
+ 
+   The FPC Documentation is distributed in the hope that it will be useful, 
+   but WITHOUT ANY WARRANTY; without even the implied warranty of 
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+   Library General Public License for more details. 
+ 
+   You should have received a copy of the GNU Library General Public 
+   License along with the FPC documentation; see the file COPYING.LIB.  If not, 
+   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, 
+   Boston, MA 02111-1307, USA. 
+ -->
+<package name="rtl">
+<module name="matrix">
+<short>Two, three, four dimensional matrix unit</short>
+<descr>
+<p>
+The unit <file>matrix</file> is a unit that provides objects for the common
+two, three and four dimensional vectors matrixes. These vectors and matrixes
+are very common in computer graphics and are often implemented from scratch
+by programmers while every implementation provides exactly the same
+functionality.
+</p><p>
+It makes therefore sense to provide this functionality in the runtime library.
+This eliminates the need for programmers to reinvent the wheel and also allows
+libraries that use matrix operations to become more compatible.
+</p><p>
+The matrix unit does not provide n-dimensional matrixes. The functionality
+needs of a general matrix unit varies from application to application; one
+can think of reduced memory usage tricks for matrixes that only have data
+around the diagonal etc., desire for parallelization etc. etc. It is
+believed that programmers that do use n-dimensional matrices would not
+necessarily benfit from such a unit in the runtime library.
+</p>
+<p>Design goals:</p>
+<ul>
+  <li>Provide common dimensions, two three and four.</li>
+  <li>Provide multiple floating point precisions, single, double, extended.</li>
+  <li>Simple trivial binary representation; it is possible to
+      typecast vectors into other implementations that use the
+      same trivial representation.</li>
+  <li>No dynamic memory management in the background. It must be possible
+      to write expressions like matrix A * B * C without worrying about
+      memory management.</li>
+</ul>
+<p>Design decisions:</p>
+<ul>
+  <li>Class object model is ruled out. The objects object model, without virtual
+  methods, is suitable.</li>
+  <li>Operator overloading is a good way to allow programmers to write matrix
+  expressions.</li>
+  <li>3 dimensions * 3 precision means 9 vector and 9 matrix objects. Macro's
+  have been used in the source to take care of this.</li>
+</ul>
+</descr>
+
+<!--                             Vector internal data                       -->
+
+<element name="Tvector2_single_data">
+  <short>Internal data of Tvector2_single</short>
+  <descr>
+    This is the vector internal data for a vector. It uses a simple array
+    structure so data from other libraries that define their own vector type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tvector2_double_data">
+  <short>Internal data of Tvector2_double</short>
+  <descr>
+    This is the vector internal data for a vector. It uses a simple array
+    structure so data from other libraries that define their own vector type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tvector2_extended_data">
+  <short>Internal data of Tvector2_extended</short>
+  <descr>
+    This is the vector internal data for a vector. It uses a simple array
+    structure so data from other libraries that define their own vector type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tvector3_single_data">
+  <short>Internal data of Tvector3_single</short>
+  <descr>
+    This is the vector internal data for a vector. It uses a simple array
+    structure so data from other libraries that define their own vector type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tvector3_double_data">
+  <short>Internal data of Tvector3_double</short>
+  <descr>
+    This is the vector internal data for a vector. It uses a simple array
+    structure so data from other libraries that define their own vector type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tvector3_extended_data">
+  <short>Internal data of Tvector3_extended</short>
+  <descr>
+    This is the vector internal data for a vector. It uses a simple array
+    structure so data from other libraries that define their own vector type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tvector4_single_data">
+  <short>Internal data of Tvector4_single</short>
+  <descr>
+    This is the vector internal data for a vector. It uses a simple array
+    structure so data from other libraries that define their own vector type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tvector4_double_data">
+  <short>Internal data of Tvector4_double</short>
+  <descr>
+    This is the vector internal data for a vector. It uses a simple array
+    structure so data from other libraries that define their own vector type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tvector4_extended_data">
+  <short>Internal data of Tvector4_extended</short>
+  <descr>
+    This is the vector internal data for a vector. It uses a simple array
+    structure so data from other libraries that define their own vector type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+
+<!--                             Matrix internal data                       -->
+
+<element name="Tmatrix2_single_data">
+  <short>Internal data of Tmatrix2_single</short>
+  <descr>
+    This is the matrix internal data for a matrix. It uses a simple array
+    structure so data from other libraries that define their own matrix type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tmatrix2_double_data">
+  <short>Internal data of Tmatrix2_double</short>
+  <descr>
+    This is the matrix internal data for a matrix. It uses a simple array
+    structure so data from other libraries that define their own matrix type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tmatrix2_extended_data">
+  <short>Internal data of Tmatrix2_extended</short>
+  <descr>
+    This is the matrix internal data for a matrix. It uses a simple array
+    structure so data from other libraries that define their own matrix type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tmatrix3_single_data">
+  <short>Internal data of Tmatrix3_single</short>
+  <descr>
+    This is the matrix internal data for a matrix. It uses a simple array
+    structure so data from other libraries that define their own matrix type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tmatrix3_double_data">
+  <short>Internal data of Tmatrix3_double</short>
+  <descr>
+    This is the matrix internal data for a matrix. It uses a simple array
+    structure so data from other libraries that define their own matrix type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tmatrix3_extended_data">
+  <short>Internal data of Tmatrix3_extended</short>
+  <descr>
+    This is the matrix internal data for a matrix. It uses a simple array
+    structure so data from other libraries that define their own matrix type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tmatrix4_single_data">
+  <short>Internal data of Tmatrix4_single</short>
+  <descr>
+    This is the matrix internal data for a matrix. It uses a simple array
+    structure so data from other libraries that define their own matrix type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tmatrix4_double_data">
+  <short>Internal data of Tmatrix4_double</short>
+  <descr>
+    This is the matrix internal data for a matrix. It uses a simple array
+    structure so data from other libraries that define their own matrix type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+<element name="Tmatrix4_extended_data">
+  <short>Internal data of Tmatrix4_extended</short>
+  <descr>
+    This is the matrix internal data for a matrix. It uses a simple array
+    structure so data from other libraries that define their own matrix type as a
+    simple array structure can simply be moved to and from this data, or typecasted
+    into it. As this is the only field in the object, the object itself can be used
+    just as fine for typecasting purposes etc.
+  </descr>
+</element>
+
+<!--                               Vector objects                           -->
+
+<element name="Tvector2_single">
+  <short>Single precision vector of two scalars</short>
+  <descr>
+    The Tvector2_single object provides a vector of two single precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tvector2_double">
+  <short>Double precision vector of two scalars</short>
+  <descr>
+    The Tvector2_double object provides a vector of two double precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tvector2_extended">
+  <short>Extended precision vector of two scalars</short>
+  <descr>
+    The Tvector2_extended object provides a vector of two extended precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tvector3_single">
+  <short>Single precision vector of three scalars</short>
+  <descr>
+    The Tvector3_single object provides a vector of three single precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tvector3_double">
+  <short>Double precision vector of three scalars</short>
+  <descr>
+    The Tvector3_double object provides a vector of three double precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tvector3_extended">
+  <short>Extended precision vector of three scalars</short>
+  <descr>
+    The Tvector3_extended object provides a vector of three extended precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tvector4_single">
+  <short>Single precision vector of four scalars</short>
+  <descr>
+    The Tvector4_single object provides a vector of four single precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tvector4_double">
+  <short>Double precision vector of four scalars</short>
+  <descr>
+    The Tvector4_double object provides a vector of four double precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tvector4_extended">
+  <short>Extended precision vector of extended scalars</short>
+  <descr>
+    The Tvector4_extended object provides a vector of four extended precision
+    scalars.
+  </descr>
+</element>
+
+<!--                               Matrix objects                           -->
+
+<element name="Tmatrix2_single">
+  <short>Single precision matrix of two scalars</short>
+  <descr>
+    The Tmatrix2_single object provides a matrix of 2*2 single precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tmatrix2_double">
+  <short>Double precision matrix of two scalars</short>
+  <descr>
+    The Tmatrix2_double object provides a matrix of 2*2 double precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tmatrix2_extended">
+  <short>Extended precision matrix of two scalars</short>
+  <descr>
+    The Tmatrix2_extended object provides a matrix of 2*2 extended precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tmatrix3_single">
+  <short>Single precision matrix of three scalars</short>
+  <descr>
+    The Tmatrix3_single object provides a matrix of 3*3 single precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tmatrix3_double">
+  <short>Double precision matrix of three scalars</short>
+  <descr>
+    The Tmatrix3_double object provides a matrix of 3*3 double precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tmatrix3_extended">
+  <short>Extended precision matrix of three scalars</short>
+  <descr>
+    The Tmatrix3_extended object provides a matrix of 3*3 extended precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tmatrix4_single">
+  <short>Single precision matrix of four scalars</short>
+  <descr>
+    The Tmatrix4_single object provides a matrix of 4*4 single precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tmatrix4_double">
+  <short>Double precision matrix of four scalars</short>
+  <descr>
+    The Tmatrix4_double object provides a matrix of 4*4 double precision
+    scalars.
+  </descr>
+</element>
+
+<element name="Tmatrix4_extended">
+  <short>Extended precision matrix of extended scalars</short>
+  <descr>
+    The Tmatrix4_extended object provides a matrix of 4*4 extended precision
+    scalars.
+  </descr>
+</element>
+
+<!--                        Vector init_zero constructors                   -->
+
+<element name="Tvector2_single.init_zero">
+  <short>Initializes the vector and sets its elements to zero</short>
+</element>
+
+<element name="Tvector2_double.init_zero">
+  <short>Initializes the vector and sets its elements to zero</short>
+</element>
+
+<element name="Tvector2_extended.init_zero">
+  <short>Initializes the vector and sets its elements to zero</short>
+</element>
+
+<element name="Tvector3_single.init_zero">
+  <short>Initializes the vector and sets its elements to zero</short>
+</element>
+
+<element name="Tvector3_double.init_zero">
+  <short>Initializes the vector and sets its elements to zero</short>
+</element>
+
+<element name="Tvector3_extended.init_zero">
+  <short>Initializes the vector and sets its elements to zero</short>
+</element>
+
+<element name="Tvector4_single.init_zero">
+  <short>Initializes the vector and sets its elements to zero</short>
+</element>
+
+<element name="Tvector4_double.init_zero">
+  <short>Initializes the vector and sets its elements to zero</short>
+</element>
+
+<element name="Tvector4_extended.init_zero">
+  <short>Initializes the vector and sets its elements to zero</short>
+</element>
+
+<!--                        Vector init_one constructors                   -->
+
+<element name="Tvector2_single.init_one">
+  <short>Initializes the vector and sets its elements to one</short>
+</element>
+
+<element name="Tvector2_double.init_one">
+  <short>Initializes the vector and sets its elements to one</short>
+</element>
+
+<element name="Tvector2_extended.init_one">
+  <short>Initializes the vector and sets its elements to one</short>
+</element>
+
+<element name="Tvector3_single.init_one">
+  <short>Initializes the vector and sets its elements to one</short>
+</element>
+
+<element name="Tvector3_double.init_one">
+  <short>Initializes the vector and sets its elements to one</short>
+</element>
+
+<element name="Tvector3_extended.init_one">
+  <short>Initializes the vector and sets its elements to one</short>
+</element>
+
+<element name="Tvector4_single.init_one">
+  <short>Initializes the vector and sets its elements to one</short>
+</element>
+
+<element name="Tvector4_double.init_one">
+  <short>Initializes the vector and sets its elements to one</short>
+</element>
+
+<element name="Tvector4_extended.init_one">
+  <short>Initializes the vector and sets its elements to one</short>
+</element>
+
+<!--                           Vector init constructors                    -->
+
+<element name="Tvector2_single.init">
+  <short>
+    Initializes the vector, setting its elements to the values passed
+    to the constructor.
+  </short>
+</element>
+
+<element name="Tvector2_double.init">
+  <short>
+    Initializes the vector, setting its elements to the values passed
+    to the constructor.
+  </short>
+</element>
+
+<element name="Tvector2_extended.init">
+  <short>
+    Initializes the vector, setting its elements to the values passed
+    to the constructor.
+  </short>
+</element>
+
+<element name="Tvector3_single.init">
+  <short>
+    Initializes the vector, setting its elements to the values passed
+    to the constructor.
+  </short>
+</element>
+
+<element name="Tvector3_double.init">
+  <short>
+    Initializes the vector, setting its elements to the values passed
+    to the constructor.
+  </short>
+</element>
+
+<element name="Tvector3_extended.init">
+  <short>
+    Initializes the vector, setting its elements to the values passed
+    to the constructor.
+  </short>
+</element>
+
+<element name="Tvector4_single.init">
+  <short>
+    Initializes the vector, setting its elements to the values passed
+    to the constructor.
+  </short>
+</element>
+
+<element name="Tvector4_double.init">
+  <short>
+    Initializes the vector, setting its elements to the values passed
+    to the constructor.
+  </short>
+</element>
+
+<element name="Tvector4_extended.init">
+  <short>
+    Initializes the vector, setting its elements to the values passed
+    to the constructor.
+  </short>
+</element>
+
+<!--                           Vector length functions                      -->
+
+<element name="Tvector2_single.length">
+  <short>Calculates the length of the vector.</short>
+  <descr>
+    Calculate the length of the vector: length=sqrt(data[0]**2+data[1]**2).
+    Try to use <link id="Tvector2_single.squared_length">squared_length</link>
+    if you are able to, as it is faster.
+  </descr>
+</element>
+
+<element name="Tvector2_double.length">
+  <short>Calculates the length of the vector.</short>
+  <descr>
+    Calculate the length of the vector: length=sqrt(data[0]**2+data[1]**2).
+    Try to use <link id="Tvector2_double.squared_length">squared_length</link>
+    if you are able to, as it is faster.
+  </descr>
+</element>
+
+<element name="Tvector2_extended.length">
+  <short>Calculates the length of the vector.</short>
+  <descr>
+    Calculate the length of the vector: length=sqrt(data[0]**2+data[1]**2).
+    Try to use <link id="Tvector2_extended.squared_length">squared_length</link>
+    if you are able to, as it is faster.
+  </descr>
+</element>
+
+<element name="Tvector3_single.length">
+  <short>Calculates the length of the vector.</short>
+  <descr>
+    Calculate the length of the vector: length=sqrt(data[0]**2+data[1]**2+data[2]**2).
+    Try to use <link id="Tvector3_single.squared_length">squared_length</link>
+    if you are able to, as it is faster.
+  </descr>
+</element>
+
+<element name="Tvector3_double.length">
+  <short>Calculates the length of the vector.</short>
+  <descr>
+    Calculate the length of the vector: length=sqrt(data[0]**2+data[1]**2+data[2]**2).
+    Try to use <link id="Tvector3_double.squared_length">squared_length</link>
+    if you are able to, as it is faster.
+  </descr>
+</element>
+
+<element name="Tvector3_extended.length">
+  <short>Calculates the length of the vector.</short>
+  <descr>
+    Calculate the length of the vector: length=sqrt(data[0]**2+data[1]**2+data[2]**2).
+    Try to use <link id="Tvector3_extended.squared_length">squared_length</link>
+    if you are able to, as it is faster.
+  </descr>
+</element>
+
+<element name="Tvector4_single.length">
+  <short>Calculates the length of the vector.</short>
+  <descr>
+    Calculate the length of the vector: length=sqrt(data[0]**2+data[1]**2+data[2]**2+data[3]**2).
+    Try to use <link id="Tvector4_single.squared_length">squared_length</link>
+    if you are able to, as it is faster.
+  </descr>
+</element>
+
+<element name="Tvector4_double.length">
+  <short>Calculates the length of the vector.</short>
+  <descr>
+    Calculate the length of the vector: length=sqrt(data[0]**2+data[1]**2+data[2]**2+data[3]**2).
+    Try to use <link id="Tvector4_double.squared_length">squared_length</link>
+    if you are able to, as it is faster.
+  </descr>
+</element>
+
+<element name="Tvector4_extended.length">
+  <short>Calculates the length of the vector.</short>
+  <descr>
+    Calculate the length of the vector: length=sqrt(data[0]**2+data[1]**2+data[2]**2+data[3]**2).
+    Try to use <link id="Tvector4_extended.squared_length">squared_length</link>
+    if you are able to, as it is faster.
+  </descr>
+</element>
+
+<!--                       Vector squared_length functions                  -->
+
+<element name="Tvector2_single.squared_length">
+  <short>Calculates the squared length of the vector.</short>
+  <descr>
+    Calculate the squared length of the vector: squared_length=data[0]**2+data[1]**2.
+  </descr>
+</element>
+
+<element name="Tvector2_double.squared_length">
+  <short>Calculates the squared length of the vector.</short>
+  <descr>
+    Calculate the squared length of the vector: squared_length=data[0]**2+data[1]**2.
+  </descr>
+</element>
+
+<element name="Tvector2_extended.squared_length">
+  <short>Calculates the squared length of the vector.</short>
+  <descr>
+    Calculate the squared length of the vector: squared_length=data[0]**2+data[1]**2.
+  </descr>
+</element>
+
+<element name="Tvector3_single.squared_length">
+  <short>Calculates the squared length of the vector.</short>
+  <descr>
+    Calculate the squared length of the vector: squared_length=data[0]**2+data[1]**2+data[2]**2.
+  </descr>
+</element>
+
+<element name="Tvector3_double.squared_length">
+  <short>Calculates the squared length of the vector.</short>
+  <descr>
+    Calculate the squared length of the vector: squared_length=data[0]**2+data[1]**2+data[2]**2.
+  </descr>
+</element>
+
+<element name="Tvector3_extended.squared_length">
+  <short>Calculates the squared length of the vector.</short>
+  <descr>
+    Calculate the squared length of the vector: squared_length=data[0]**2+data[1]**2+data[2]**2.
+  </descr>
+</element>
+
+<element name="Tvector4_single.squared_length">
+  <short>Calculates the squared length of the vector.</short>
+  <descr>
+    Calculate the squared length of the vector: squared_length=data[0]**2+data[1]**2+data[2]**2+data[3]**2.
+  </descr>
+</element>
+
+<element name="Tvector4_double.squared_length">
+  <short>Calculates the squared length of the vector.</short>
+  <descr>
+    Calculate the squared length of the vector: squared_length=data[0]**2+data[1]**2+data[2]**2+data[3]**2.
+  </descr>
+</element>
+
+<element name="Tvector4_extended.squared_length">
+  <short>Calculates the squared length of the vector.</short>
+  <descr>
+    Calculate the squared length of the vector: squared_length=data[0]**2+data[1]**2+data[2]**2+data[3]**2.
+  </descr>
+</element>
+
+</module>
+</package>
+</fpdoc-descriptions>
