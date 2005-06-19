@@ -70,7 +70,7 @@ TOTEST=ex1 ex2 ex3 ex4 ex5 ex8 ex9 ex10 ex11 ex12 ex13 ex14 \
         ex41 ex42 ex43 ex44 ex45 ex47 ex48 ex52 ex53 \
         ex54 ex56 ex59 ex60 ex62 ex63 ex64 ex65 ex66 \
         ex67 ex68 ex69 ex70 ex71 ex72 ex73 ex75 ex76 ex78 ex79 \
-	ex80 ex81 ex82 ex83  ex85 ex86 ex87 ex88 ex89 \
+	ex80 ex81 ex82 ex83 ex85 ex86 ex87 ex88 ex89 \
 	ex90 ex91 ex92 ex93 ex96 ex97 ex98 ex99 ex100 ex101 ex102\
         ex103 ex104 ex105 ex106 ex107 ex108 ex109 ex110 ex111 ex112
 LOGFILE=$(addsuffix .log, $(TOTEST))
@@ -86,7 +86,8 @@ onetex : tex
 	$(MAKETEX) $(TEXOBJECTS)
 
 clean : 
-	rm -f *.o *.s *.rst $(OBJECTS) $(TEXOBJECTS)
+	rm -f *.o *.s *.rst $(OBJECTS)
+	rm -f $(TEXOBJECTS)
 	rm -f *.ow *.sw *.exe *.dll *.log *.tmp
  
 $(OBJECTS): %: %.pp
