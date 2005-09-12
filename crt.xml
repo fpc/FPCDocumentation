@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="ISO8859-1"?>
 <fpdoc-descriptions>
-<!--  
+<!--
 
-   $Id: crt.xml,v 1.1 2004/09/09 20:17:07 michael Exp $ 
-   This file is part of the FPC documentation. 
-   Copyright (C) 1997, by Michael Van Canneyt 
- 
-   The FPC documentation is free text; you can redistribute it and/or 
-   modify it under the terms of the GNU Library General Public License as 
-   published by the Free Software Foundation; either version 2 of the 
-   License, or (at your option) any later version. 
- 
-   The FPC Documentation is distributed in the hope that it will be useful, 
-   but WITHOUT ANY WARRANTY; without even the implied warranty of 
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-   Library General Public License for more details. 
- 
-   You should have received a copy of the GNU Library General Public 
-   License along with the FPC documentation; see the file COPYING.LIB.  If not, 
-   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, 
-   Boston, MA 02111-1307, USA. 
+   $Id: crt.xml,v 1.1 2004/09/09 20:17:07 michael Exp $
+   This file is part of the FPC documentation.
+   Copyright (C) 1997, by Michael Van Canneyt
+
+   The FPC documentation is free text; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public License as
+   published by the Free Software Foundation; either version 2 of the
+   License, or (at your option) any later version.
+
+   The FPC Documentation is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with the FPC documentation; see the file COPYING.LIB.  If not,
+   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA 02111-1307, USA.
  -->
 <package name="rtl">
 <module name="crt">
@@ -28,7 +28,7 @@
 <descr>
 <p>
 This chapter describes the <var>CRT</var> unit for Free Pascal, both under dos
-linux and Windows. The unit was first written for dos by Florian klaempfl. 
+linux and Windows. The unit was first written for dos by Florian klaempfl.
 The unit was ported to linux by Mark May and enhanced by Michael Van Canneyt
 and Peter Vreman. It works on the linux console, and in xterm and rxvt windows
 under X-Windows. The functionality for both is the same, except that under
@@ -39,15 +39,15 @@ compiler) the crt unit automatically cleared the screen at program startup.
 There are some caveats when using the CRT unit:
 </p>
 <ul>
-<li> Programs using the CRT unit will <em> not</em> be usable when input/output 
+<li> Programs using the CRT unit will <em> not</em> be usable when input/output
 is being redirected on the command-line.
 </li>
-<li> For similar reasons they are not usable as CGI-scripts for use with a 
-webserver. 
+<li> For similar reasons they are not usable as CGI-scripts for use with a
+webserver.
 </li>
-<li> The use of the CRT unit and the graph unit may not always be supported. 
+<li> The use of the CRT unit and the graph unit may not always be supported.
 </li>
-<li> On linux or other unix OSes , executing other programs that expect 
+<li> On linux or other unix OSes , executing other programs that expect
 special terminal behaviour (using one of the special functions in the linux
 unit) will not work. The terminal is set in RAW mode, which will destroy
 most terminal emulation settings.
@@ -165,27 +165,90 @@ screen. It is defined on DOS only.
 </element>
 
 <element name="WindMin">
-<short>Minimum window dimension</short>
+<short>Upper left corner of currently defined window</short>
+
+<descr>
+<p>
+The upper byte of <var>WindMin</var> contains the Y coordinate while the lower byte contains the X coordinate.
+The use of this variable is deprecated, use <var>WindMinX</var> and <var>WindMinY</var> instead.
+</p>
+</descr>
+
+<link id="WindMaxX"/>
+<link id="WindMaxY"/>
+<link id="WindMin"/>
+<link id="WindMinX"/>
+<link id="WindMinY"/>
+<link id="Window"/>
 </element>
 
 <element name="WindMax">
-<short>Maximum window dimension</short>
+<short>Lower right corner of currently defined window</short>
+
+
+<descr>
+<p>
+The upper byte of <var>WindMax</var> contains the Y coordinate while the lower byte contains the X coordinate.
+The use of this variable is deprecated, use <var>WindMaxX</var> and <var>WindMaxY</var> instead.
+</p>
+</descr>
+
+<seealso>
+<link id="WindMaxX"/>
+<link id="WindMaxY"/>
+<link id="WindMin"/>
+<link id="WindMinX"/>
+<link id="WindMinY"/>
+<link id="Window"/>
+</seealso>
 </element>
 
 <element name="WindMaxX">
-<short>Maximum window X size</short>
+<short>X coordinate of lower right corner of the defined window</short>
+<seealso>
+<link id="WindMax"/>
+<link id="WindMaxY"/>
+<link id="WindMin"/>
+<link id="WindMinX"/>
+<link id="WindMinY"/>
+<link id="Window"/>
+</seealso>
 </element>
 
 <element name="WindMaxY">
-<short>Maximum window Y size</short>
+<short>Y coordinate of lower right corner of the defined window</short>
+<seealso>
+<link id="WindMax"/>
+<link id="WindMaxY"/>
+<link id="WindMin"/>
+<link id="WindMinX"/>
+<link id="WindMinY"/>
+<link id="Window"/>
+</seealso>
 </element>
 
 <element name="WindMinX">
-<short>Minimum window X size</short>
+<short>X coordinate of upper left corner of the defined window</short>
+<seealso>
+<link id="WindMax"/>
+<link id="WindMaxX"/>
+<link id="WindMaxY"/>
+<link id="WindMin"/>
+<link id="WindMinY"/>
+<link id="Window"/>
+</seealso>
 </element>
 
 <element name="WindMinY">
-<short>Minimum window Y size</short>
+<short>Y coordinate of upper left corner of the defined window</short>
+<seealso>
+<link id="WindMax"/>
+<link id="WindMaxX"/>
+<link id="WindMaxY"/>
+<link id="WindMin"/>
+<link id="WindMinX"/>
+<link id="Window"/>
+</seealso>
 </element>
 
 <element name="ScreenWidth">
@@ -240,8 +303,8 @@ screen. It is defined on DOS only.
 <element name="AssignCrt">
 <short>Assign file to CRT.</short>
 <descr>
-<var>AssignCrt</var> Assigns a file <var>F</var> to the console. Everything written to 
-the file <var>F</var> goes to the console instead. If the console contains a window, 
+<var>AssignCrt</var> Assigns a file <var>F</var> to the console. Everything written to
+the file <var>F</var> goes to the console instead. If the console contains a window,
 everything is written to the window instead.
 </descr>
 <errors>
@@ -253,11 +316,11 @@ None.
 <example file="crtex/ex1"/>
 </element>
 
- 
+
 <element name="CursorBig">
 <short>Show big cursor</short>
 <descr>
-<var>CursorBig</var> makes the cursor a big rectangle. 
+<var>CursorBig</var> makes the cursor a big rectangle.
 Not implemented on unixes.
 </descr>
 <errors>
@@ -286,11 +349,11 @@ None.
 <example file="crtex/ex9"/>
 </element>
 
- 
+
 <element name="ClrScr">
 <short>Clear current window.</short>
 <descr>
-<var>ClrScr</var> clears the current window (using the current colors), 
+<var>ClrScr</var> clears the current window (using the current colors),
 and sets the cursor in the top left
 corner of the current window.
 </descr>
@@ -298,12 +361,12 @@ corner of the current window.
 None.
 </errors>
 <seealso>
-<link id="Window"/> 
+<link id="Window"/>
 </seealso>
 <example file="crtex/ex8"/>
 </element>
 
- 
+
 <element name="CursorOff">
 <short>Hide cursor</short>
 <descr>
@@ -349,11 +412,11 @@ None
 <example file="crtex/ex15"/>
 </element>
 
- 
+
 <element name="DelLine">
 <short>Delete line at cursor position.</short>
 <descr>
-<var>DelLine</var> removes the current line. Lines following the current line are 
+<var>DelLine</var> removes the current line. Lines following the current line are
 scrolled 1 line up, and an empty line is inserted at the bottom of the
 current window. The cursor doesn't move.
 </descr>
@@ -368,7 +431,7 @@ None.
 <example file="crtex/ex11"/>
 </element>
 
- 
+
 <element name="GotoXY">
 <short>Set cursor position on screen.</short>
 <descr>
@@ -382,12 +445,12 @@ None.
 <seealso>
 <link id="WhereX"/>
 <link id="WhereY"/>
-<link id="Window"/> 
+<link id="Window"/>
 </seealso>
 <example file="crtex/ex6"/>
 </element>
 
- 
+
 <element name="HighVideo">
 <short>Switch to highlighted text mode</short>
 <descr>
@@ -406,13 +469,13 @@ None.
 <example file="crtex/ex14"/>
 </element>
 
- 
+
 <element name="InsLine">
 <short>Insert an empty line at cursor position</short>
 <descr>
-<var>InsLine</var> inserts an empty line at the current cursor position. 
-Lines following the current line are scrolled 1 line down, 
-causing the last line to disappear from the window. 
+<var>InsLine</var> inserts an empty line at the current cursor position.
+Lines following the current line are scrolled 1 line down,
+causing the last line to disappear from the window.
 The cursor doesn't move.
 </descr>
 <errors>
@@ -445,7 +508,7 @@ None.
 <example file="crtex/ex2"/>
 </element>
 
- 
+
 <element name="LowVideo">
 <short>Switch to low intensity colors.</short>
 <descr>
@@ -493,7 +556,7 @@ None.
 <element name="NoSound">
 <short>Stop system speaker</short>
 <descr>
-<var>NoSound</var> stops the speaker sound. 
+<var>NoSound</var> stops the speaker sound.
 This call is not supported on all operating systems.
 </descr>
 <errors>
@@ -510,14 +573,14 @@ None.
 <descr>
 <p>
 <var>ReadKey</var> reads 1 key from the keyboard buffer, and returns this.
-If an extended or function key has been pressed, then the zero ASCII code is 
+If an extended or function key has been pressed, then the zero ASCII code is
 returned. You can then read the scan code of the key with a second ReadKey
 call.
 </p>
 <p>
 Key mappings under Linux can cause the wrong key to be
 reported by <var>ReadKey</var>, so caution is needed when using
-<var>ReadKey</var>. 
+<var>ReadKey</var>.
 </p>
 </descr>
 <errors>
@@ -563,7 +626,7 @@ None.
 <example file="crtex/ex13"/>
 </element>
 
- 
+
 <element name="TextColor">
 <short>Set text color</short>
 <descr>
@@ -600,7 +663,7 @@ None.
 <link id="Window"/>
 </seealso>
 </element>
- 
+
 <element name="WhereX">
 <short>Return X (horizontal) cursor position</short>
 <descr>
@@ -614,11 +677,11 @@ None.
 <seealso>
 <link id="GotoXY"/>
 <link id="WhereY"/>
-<link id="Window"/> 
+<link id="Window"/>
 </seealso>
 <example file="crtex/ex7"/>
 </element>
- 
+
 <element name="WhereY">
 <short>Return Y (vertical) cursor position</short>
 <descr>
@@ -633,12 +696,12 @@ None.
 <seealso>
  <link id="GotoXY"/>
 <link id="WhereX"/>
-<link id="Window"/> 
+<link id="Window"/>
 </seealso>
 <example file="crtex/ex7"/>
 </element>
 
- 
+
 <element name="Window">
 <short>Create new window on screen.</short>
 <descr>
