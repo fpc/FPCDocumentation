@@ -231,11 +231,8 @@ endif
 PACKAGESDIR:=$(wildcard $(FPCDIR) $(FPCDIR)/packages/base $(FPCDIR)/packages/extra)
 override PACKAGE_NAME=fpdocs
 override PACKAGE_VERSION=2.0.0
-ifneq ($(wildcard ../fpcsrc),)
-FPCSRCDIR=../fpcsrc
-else
-FPCSRCDIR=../fpc
-endif
+SEARCHFPCSRCPATH=../fpcsrc ../fpc ..
+FPCSRCDIR:=$(patsubst %/compiler,%,$(firstword $(strip $(wildcard $(addsuffix /compiler,$(SEARCHFPCSRCPATH))))))
 ifdef REQUIRE_UNITSDIR
 override UNITSDIR+=$(REQUIRE_UNITSDIR)
 endif
