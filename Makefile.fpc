@@ -27,11 +27,8 @@ nortl=y
 rule=help
 
 [prerules]
-ifneq ($(wildcard ../fpcsrc),)
-FPCSRCDIR=../fpcsrc
-else
-FPCSRCDIR=../fpc
-endif
+SEARCHFPCSRCPATH=../fpcsrc ../fpc ..
+FPCSRCDIR:=$(patsubst %/compiler,%,$(firstword $(strip $(wildcard $(addsuffix /compiler,$(SEARCHFPCSRCPATH))))))
 
 [rules]
 # Debugging the install, that will only copy the .tex to index.html
