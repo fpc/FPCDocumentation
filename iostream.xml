@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="ISO8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    iostream
+  ====================================================================
+-->
+
+<module name="iostream">
+<short>Implement streams for handling standard input, output and stderr</short>
+<descr>
+The <file>iostream</file> implements a descendent of 
+<link id="#rtl.classes.THandleStream">THandleStream</link> streams that can
+be used to read from standard input and write to standard output and
+standard diagnostic output (<var>stderr</var>).
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>Used for definition of <var>TStream</var></short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TIOSType">
+<short>Type of stream to create</short>
+<descr>
+<var>TIOSType</var> is passed to the <link
+id="TIOStream.Create">Create</link>
+constructor of <link id="TIOStream"/>, it determines what kind of stream is
+created.
+</descr>
+<seealso>
+<link id="TIOStream"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIOSType.iosInput">
+<short>The stream can be used to read from standard input</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIOSType.iosOutPut">
+<short>The stream can be used to write to standard output</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIOSType.iosError">
+<short>The stream can be used to write to standard diagnostic output</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="EIOStreamError">
+<short>Error thrown in case of an invalid operation on a 
+<link id="#fpc.iostream.TIOStream">TIOStream</link>.</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TIOStream">
+<short>Stream which handles standard input/output and stderr.</short>
+<descr>
+<p>
+<var>TIOStream</var> can be used to create a stream which reads from or
+writes to the standard input, output or stderr file descriptors. It is a
+descendent of <var>THandleStream</var>. The type of stream that is created
+is determined by the <link id="TIOSType"/> argument to the constructor. The
+handle of the standard input, output or stderr file descriptors is
+determined automatically.
+</p>
+<p>
+The <var>TIOStream</var> keeps an internal <var>Position</var>, and 
+attempts to provide minimal <link id="TIOStream.Seek">Seek</link> 
+behaviour based on this position. 
+</p>
+</descr>
+<seealso>
+<link id="TIOSType"/>
+<link id="#rtl.classes.thandlestream">THandleStream</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TIOStream.Create">
+<short>Construct a new instance of <link id="#fcl.iostream.TIOStream">TIOStream</link></short>
+<descr>
+<p>
+<var>Create</var> creates a new instance of <link id="TIOStream"/>, which
+can subsequently be used
+</p>
+</descr>
+<errors>
+No checking is performed to see whether the requested file descriptor is
+actually open for reading/writing. In that case, subsequent calls to
+<var>Read</var> or <var>Write</var> or <var>seek</var> will fail.
+</errors>
+<seealso>
+<link id="TIOStream.Read"/>
+<link id="TIOStream.Write"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIOStream.Create.aIOSType">
+<short>Type of stream to create</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIOStream.Read">
+<short>Read data from the stream.</short>
+<descr>
+<var>Read</var> checks first whether the type of the stream allows 
+reading (type is <var>iosInput</var>). If not, it raises a <link id="EIOStreamError"/> exception.
+If the stream can be read, it calls the inherited <var>Read</var> to
+actually read the data.
+</descr>
+<errors>
+An <var>EIOStreamError</var> exception is raised if the stream does not
+allow reading.
+</errors>
+<seealso>
+<link id="TIOSType"/>
+<link id="TIOStream.Write"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIOStream.Read.Result">
+<short>The number of bytes actually read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIOStream.Read.Buffer">
+<short>Memory buffer for the read data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIOStream.Read.Count">
+<short>Number of bytes to read</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIOStream.Write">
+<short>Write data to the stream</short>
+<descr>
+<var>Write</var> checks first whether the type of the stream allows
+writing (type is <var>iosOutput</var> or <var>iosError</var>). 
+If not, it raises a <link id="EIOStreamError"/> exception.
+If the stream can be written to, it calls the inherited <var>Write</var> to
+actually read the data.
+</descr>
+<errors>
+An <var>EIOStreamError</var> exception is raised if the stream does not
+allow writing.
+</errors>
+<seealso>
+<link id="TIOSType"/>
+<link id="TIOStream.Read"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIOStream.Write.Result">
+<short>Number of bytes actually written.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIOStream.Write.Buffer">
+<short>Memory buffer containing the data to be written.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIOStream.Write.Count">
+<short>Number of bytes to write.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIOStream.SetSize">
+<short>Set the size of the stream</short>
+<descr>
+<var>SetSize</var> overrides the standard <var>SetSize</var> implementation.
+It always raises an exception, because the standard input, output and stderr 
+files have no size.
+</descr>
+<errors>
+An <var>EIOStreamError</var> exception is raised when this method is called.
+</errors>
+<seealso>
+<link id="EIOStreamError"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIOStream.SetSize.NewSize">
+<short>New size for the stream/</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIOStream.Seek">
+<short>Set the stream position</short>
+<descr>
+<p>
+<var>Seek</var> overrides the standard <var>Seek</var> implementation.
+Normally, standard input, output and stderr are not seekable. 
+The <var>TIOStream</var> stream tries to provide seek capabilities for the
+following limited number of cases:
+</p>
+<dl>
+<dt>Origin=soFromBeginning</dt>
+<dd>If <var>Offset</var> is larger than the current position, 
+then the remaining bytes are skipped by reading them from the 
+stream and discarding them, if the stream is of type <var>iosInput</var>.
+</dd>
+<dt>Origin=soFromCurrent</dt>
+<dd>If <var>Offset</var> is zero, the current position is returned. If 
+it is positive, then <var>Offset</var> bytes are skipped by reading them
+from the stream and discarding them, if the stream is of type
+<var>iosInput</var>.
+</dd>
+</dl>
+<p>
+All other cases will result in a <var>EIOStreamError</var> exception.
+</p>
+</descr>
+<errors>
+An <link id="EIOStreamError"/> exception is raised if the stream does not
+allow the requested seek operation.
+</errors>
+<seealso>
+<link id="EIOStreamError"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIOStream.Seek.Result">
+<short>New position of the stream.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIOStream.Seek.Offset">
+<short>Byte offset to position the stream on</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIOStream.Seek.Origin">
+<short>Where to start the byte offset</short>
+</element>
+</module> <!-- iostream -->
+</package>
+</fpdoc-descriptions>
