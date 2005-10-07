@@ -1,0 +1,1212 @@
+<?xml version="1.0" encoding="ISO8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    process
+  ====================================================================
+-->
+
+<module name="process">
+<short>Unit implementing the <var>TProcess</var> component.</short>
+<descr>
+The <file>Process</file> unit contains the code for the <link id="TProcess"/>
+component, a cross-platform component to start and control other programs, 
+offering also access to standard input and output for these programs.
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>For <var>TComponent</var> and <var>TStream</var> definitions.</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="pipes">
+<short>For pipe streams.</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="SysUtils">
+<short>For exception support.</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TProcessOption">
+<short>Options to be used when a process is started. </short>
+<descr>
+When a new process is started using <link id="TProcess.Execute"/>, 
+these options control the way the process is started. Note that not all
+options are supported on all platforms.
+</descr>
+<seealso>
+<link id="TProcessOptions"/>
+<link id="TShowWindowOptions"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessOption.poRunSuspended">
+<short>Start the process in suspended state.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessOption.poWaitOnExit">
+<short>Wait for the process to terminate before returning.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessOption.poUsePipes">
+<short>Use pipes to redirect standard input and output.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessOption.poStderrToOutPut">
+<short>Redirect standard error to the standard output stream.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessOption.poNoConsole">
+<short>Do not allow access to the console window for the process (Win32 only)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessOption.poNewConsole">
+<short>Start a new console window for the process (Win32 only)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessOption.poDefaultErrorMode">
+<short>Use default error handling.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessOption.poNewProcessGroup">
+<short>Start the process in a new process group (Win32 only)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessOption.poDebugProcess">
+<short>Allow debugging of the process (Win32 only)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessOption.poDebugOnlyThisProcess">
+<short>Do not follow processes started by this process (Win32 only)</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TShowWindowOptions">
+<short>Description of the main window of the new process.</short>
+<descr>
+This type describes what the new process' main window should look like.
+Most of these have only effect on Windows. They are ignored on other
+systems.
+</descr>
+<seealso>
+<link id="TProcessOption"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TShowWindowOptions.swoNone">
+<short>Allow system to position the window.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TShowWindowOptions.swoHIDE">
+<short>The main window is hidden.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TShowWindowOptions.swoMaximize">
+<short>The main window is maximized.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TShowWindowOptions.swoMinimize">
+<short>The main window is minimized.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TShowWindowOptions.swoRestore">
+<short>Restore the previous position.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TShowWindowOptions.swoShow">
+<short>Show the main window.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TShowWindowOptions.swoShowDefault">
+<short>When showing Show the main window on</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TShowWindowOptions.swoShowMaximized">
+<short>The main window is shown maximized</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TShowWindowOptions.swoShowMinimized">
+<short>The main window is shown minimized</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TShowWindowOptions.swoshowMinNOActive">
+<short>The main window is shown minimized but not activated</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TShowWindowOptions.swoShowNA">
+<short>The main window is shown but not activated</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TShowWindowOptions.swoShowNoActivate">
+<short>The main window is shown but not activated</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TShowWindowOptions.swoShowNormal">
+<short>The main window is shown normally</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TStartupOption">
+<short>Options determining how the application is started.</short>
+<descr>
+These options are mainly for Win32, and determine what should be done with
+the application once it's started.
+</descr>
+<seealso>
+<link id="TShowWindowOptions"/>
+<link id="TProcessOptions"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStartupOption.suoUseShowWindow">
+<short>Use the Show Window options specified in <link id="#fcl.process.TShowWindowOptions">TShowWindowOption</link></short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStartupOption.suoUseSize">
+<short>Use the window sizes as specified in <link id="#fcl.process.TProcess">TProcess</link></short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStartupOption.suoUsePosition">
+<short>Use the window sizes as specified in <link id="#fcl.process.TProcess">TProcess</link>.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStartupOption.suoUseCountChars">
+<short>Use the console character width as specified in <link id="#fcl.process.TProcess">TProcess</link>.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStartupOption.suoUseFillAttribute">
+<short>Use the console fill attribute as specified in <link id="#fcl.process.TProcess">TProcess</link>.</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TProcessPriority">
+<short>type determining the priority of the newly started process.</short>
+<descr>
+This enumerated type determines the priority of the newly started process.
+It translates to default platform specific constants. If finer control is 
+needed, then platform-dependent mechanism need to be used to set the priority.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessPriority.ppHigh">
+<short>The process runs at higher than normal priority.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessPriority.ppIdle">
+<short>The process only runs when the system is idle (i.e. has nothing else
+to do)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessPriority.ppNormal">
+<short>The process runs at normal priority.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessPriority.ppRealTime">
+<short>The process runs at real-time priority.</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TProcessOptions">
+<short>Set of <link id="#fcl.process.TProcessOption">TProcessOption</link>.</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TstartUpoptions">
+<short>Set of <link id="#fcl.process.TStartupOption">TStartUpOption</link>.</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TProcess">
+<short>Class to start and control other processes.</short>
+<descr>
+<p>
+<var>TProcess</var> is a component that can be used to start and control
+other processes (programs/binaries). It contains a lot of options that 
+control how the process is started. Many of these are Win32 specific, and
+have no effect on other platforms, so they should be used with care.
+</p>
+<p>
+The simplest way to use this component is to create an instance, set the
+<link id="TProcess.CommandLine">CommandLine</link> property to the full pathname of the program 
+that should be executed, and call <link id="TProcess.Execute">Execute</link>. 
+To determine whether the process is still running (i.e. has not stopped
+executing), the <link id="TProcess.Running">Running</link> property can be checked.
+</p>
+<p>
+More advanced techniques can be used with the <link
+id="TProcess.Options">Options</link> settings.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.Create">Create</link>
+<link id="TProcess.Execute">Execute</link>
+<link id="TProcess.Running">Running</link>
+<link id="TProcess.CommandLine">CommandLin</link>
+<link id="TProcess.Options">Options</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TProcess.Create">
+<short>Create a new instance of the <var>TProcess</var> class.</short>
+<descr>
+<var>Create</var> creates a new instance of the <var>TProcess</var> class.
+After calling the inherited constructor, it simply sets some default values.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TProcess.Create.AOwner">
+<short>Owner of the instance.</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TProcess.Destroy">
+<short>Destroy this instance of <var>TProcess</var></short>
+<descr>
+<var>Destroy</var> cleans up this instance of <var>TProcess</var>.
+Prior to calling the inherited destructor, it cleans up any streams that may
+have been created. If a process was started and is still executed, it is
+<em>not</em> stopped, but the standard input/output/stderr streams are no 
+longer available, because they have been destroyed.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TProcess.Create">Create</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TProcess.Execute">
+<short>Execute the program with the given options</short>
+<descr>
+<p>
+<var>Execute</var> actually executes the program as specified in <link
+id="TProcess.CommandLine">CommandLine</link>, applying as much as of the
+specified options as supported on the current platform.
+</p>
+<p>
+If the <var>poWaitOnExit</var> option is specified in <link
+id="TProcess.Options">Options</link>, then the call will only return when the
+program has finished executing (or if an error occured). If this option is 
+not given, the call returns immediatly, but the <link
+id="TProcess.WaitOnExit">WaitOnExit</link> call can be used to wait for it to close, or the
+<link id="TProcess.Running">Running</link> call can be used to check whether it is still
+running. 
+</p>
+<p>
+The <link id="TProcess.Terminate"/> call can be used to terminate the
+program if it is still running, or the <link
+id="TProcess.Suspend">Suspend</link> call can be used to temporarily stop the
+program's execution. 
+</p>
+<p>
+The <link id="TProcess.ExitStatus">ExitStatus</link> function can be used to
+check the program's exit status, after it has stopped executing.
+</p>
+</descr>
+<errors>
+On error a <link id="EProcess"/> exception is raised.
+</errors>
+<seealso>
+<link id="TProcess.Running"/>
+<link id="TProcess.WaitOnExit"/>
+<link id="TProcess.Terminate"/>
+<link id="TProcess.Suspend"/>
+<link id="TProcess.Resume"/>
+<link id="TProcess.ExitStatus"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TProcess.Resume">
+<short>Resume execution of a suspended process</short>
+<descr>
+<var>Resume</var> should be used to let a suspended process resume it's
+execution. It should be called in particular when the
+<var>poRunSuspended</var> flag is set in <link
+id="TProcess.Options">Options</link>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TProcess.Suspend"/>
+<link id="TProcess.Options"/>
+<link id="TProcess.Execute"/>
+<link id="TProcess.Terminate"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TProcess.Resume.Result">
+<short>0 on success, nonzero otherwise.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TProcess.Suspend">
+<short>Suspend a running process</short>
+<descr>
+<p>
+<var>Suspend</var> suspends a running process. If the call is successful,
+the process is suspended: it stops running, but can be made to execute again
+using the <link id="TProcess.Resume">Resume</link> call.
+</p>
+<p>
+<var>Suspend</var> is fundamentally different from <link
+id="TProcess.Terminate"/> which actually stops the process.
+</p>
+</descr>
+<errors>
+On error, a nonzero result is returned.
+</errors>
+<seealso>
+<link id="TProcess.Options"/>
+<link id="TProcess.Resume"/>
+<link id="TProcess.Terminate"/>
+<link id="TProcess.Execute"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TProcess.Suspend.Result">
+<short>0 on success, nonzero otherwise.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TProcess.Terminate">
+<short>Terminate a running process</short>
+<descr>
+<p>
+<var>Terminate</var> stops the execution of the running program. 
+It effectively stops the program. 
+</p>
+<p>
+On Windows, the program will report an exit code of <var>AExitCode</var>, on
+other systems, this value is ignored.
+</p>
+</descr>
+<errors>
+On error, a nonzero value is returned.
+</errors>
+<seealso>
+<link id="TProcess.ExitStatus"/>
+<link id="TProcess.Suspend"/>
+<link id="TProcess.Execute"/>
+<link id="TProcess.WaitOnExit"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TProcess.Terminate.Result">
+<short>0 on succes, nonzero for failure. </short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TProcess.Terminate.AExitCode">
+<short>Exit status to report (Windows only)</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TProcess.WaitOnExit">
+<short>Wait for the program to stop executing.</short>
+<descr>
+<var>WaitOnExit</var> waits for the running program to exit and then returns
+the exit status of the program. 
+</descr>
+<errors>
+On error, -1 is returned. Other values are system dependent.
+</errors>
+<seealso>
+<link id="TProcess.ExitStatus"/>
+<link id="TProcess.Terminate"/>
+<link id="TProcess.Running"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TProcess.WaitOnExit.Result">
+<short>-1 indicates failure, other values are system dependent.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProcess.WindowRect">
+<short>Positions for the main program window.</short>
+<descr>
+<var>WindowRect</var> can be used to specify the position of 
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProcess.Handle">
+<short>Handle of the process</short>
+<descr>
+<p>
+<var>Handle</var> identifies the process. In Unix systems, this is the
+process ID. On windows, this is the process handle. It can be used to signal
+the process.
+</p>
+<p>
+The handle is only valid after <link id="TProcess.Execute"/> has been
+called. It is not reset after the process stopped.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.ThreadHandle"/>
+<link id="TProcess.ProcessID"/>
+<link id="TProcess.ThreadID"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProcess.ProcessHandle">
+<short>Alias for <link id="#fcl.process.tprocess.handle">Handle</link></short>
+<descr>
+<p>
+<var>ProcessHandle</var> equals <link id="TProcess.Handle">Handle</link> and
+is provided for completeness only.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.Handle"/>
+<link id="TProcess.ThreadHandle"/>
+<link id="TProcess.ProcessID"/>
+<link id="TProcess.ThreadID"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProcess.ThreadHandle">
+<short>Main process thread handle</short>
+<descr>
+<p>
+<var>ThreadHandle</var> is the main process thread handle. On Unix, this is
+the same as the process ID, on Windows, this may be a different handle than
+the process handle.
+</p>
+<p>
+The handle is only valid after <link id="TProcess.Execute"/> has been
+called. It is not reset after the process stopped.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.Handle"/>
+<link id="TProcess.ProcessID"/>
+<link id="TProcess.ThreadID"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProcess.ProcessID">
+<short>ID of the process.</short>
+<descr>
+<p>
+<var>ProcessID</var> is the ID of the process. It is the same as the handle
+of the process on Unix systems, but on Windows it is different from the
+process Handle.
+</p>
+<p>
+The ID is only valid after <link id="TProcess.Execute"/> has been
+called. It is not reset after the process stopped.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.Handle"/>
+<link id="TProcess.ThreadHandle"/>
+<link id="TProcess.ThreadID"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProcess.ThreadID">
+<short>ID of the main process thread</short>
+<descr>
+<p>
+<var>ProcessID</var> is the ID of the main process thread. It is the same as the handle
+of the main proces thread (or the process itself) on Unix systems, but on Windows it
+is different from the thread Handle.
+</p>
+<p>
+The ID is only valid after <link id="TProcess.Execute"/> has been
+called. It is not reset after the process stopped.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.ProcessID"/>
+<link id="TProcess.Handle"/>
+<link id="TProcess.ThreadHandle"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProcess.Input">
+<short>Stream connected to standard input of the process.</short>
+<descr>
+<p>
+<var>Input</var> is a stream which is connected to the process' standard
+input file handle. Anything written to this stream can be read by the
+process. 
+</p>
+<p>The <var>Input</var> stream is only instantiated when the
+<var>poUsePipes</var> flag is used in <link id="TProcess.Options">Options</link>.
+</p>
+<p>
+Note that writing to the stream may cause the calling process to be
+suspended when the created process is not reading from it's input, 
+or to cause errors when the process has terminated.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.OutPut"/>
+<link id="TProcess.StdErr"/>
+<link id="TProcess.Options"/>
+<link id="TProcessOption"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProcess.OutPut">
+<short>Stream connected to standard output of the process.</short>
+<descr>
+<p>
+<var>Output</var> is a stream which is connected to the process' standard
+output file handle. Anything written to standard output by the created
+process can be read from this stream.
+</p>
+<p>
+The <var>Output</var> stream is only instantiated when the
+<var>poUsePipes</var> flag is used in <link id="TProcess.Options">Options</link>.
+</p>
+<p>
+The <var>Output</var> stream also contains any data written to standard
+diagnostic output (<var>stderr</var>) when the  
+<var>poStdErrToOutPut</var> flag is used in <link id="TProcess.Options">Options</link>.
+</p>
+<p>
+Note that reading from the stream may cause the calling process to be
+suspended when the created process is not writing anything to standard
+output, or to cause errors when the process has terminated.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.InPut"/>
+<link id="TProcess.StdErr"/>
+<link id="TProcess.Options"/>
+<link id="TProcessOption"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProcess.StdErr">
+<short>Stream connected to standard diagnostic output of the process.</short>
+<descr>
+<p>
+<var>StdErr</var> is a stream which is connected to the process' standard
+diagnostic output file handle (<var>StdErr</var>). Anything written to 
+standard diagnostic output by the created process can be read from this 
+stream.
+</p>
+<p>
+The <var>StdErr</var> stream is only instantiated when the
+<var>poUsePipes</var> flag is used in <link
+id="TProcess.Options">Options</link>.
+</p>
+<p>
+The <var>Output</var> stream equals the <link id="TProcess.Output">Output</link> 
+when the <var>poStdErrToOutPut</var> flag is used in <link id="TProcess.Options">Options</link>.
+</p>
+<p>
+Note that reading from the stream may cause the calling process to be
+suspended when the created process is not writing anything to standard
+output, or to cause errors when the process has terminated.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.InPut"/>
+<link id="TProcess.Output"/>
+<link id="TProcess.Options"/>
+<link id="TProcessOption"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProcess.ExitStatus">
+<short>Exit status of the process.</short>
+<descr>
+<p>
+<var>ExitStatus</var> contains the exit status as reported by the process
+when it stopped executing. The value of this property is only meaningful
+when the process is no longer running. If it is not running then the value
+is zero.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.Running"/>
+<link id="TProcess.Terminate"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProcess.InheritHandles">
+<short>Should the created process inherit the open handles of the current process.</short>
+<descr>
+<p>
+<var>InheritHandles</var> determines whether the created process inherits
+the open handles of the current process (value <var>True</var>) or not
+(<var>False</var>).
+</p>
+<p>
+On Unix, setting this variable has no effect.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.InPut"/>
+<link id="TProcess.Output"/>
+<link id="TProcess.StdErr"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.Active">
+<short>Start or stop the process.</short>
+<descr>
+<var>Active</var> starts the process if it is set to <var>True</var>, or
+terminates the process if set to <var>False</var>. It's mostly intended for
+use in an IDE.
+</descr>
+<seealso>
+<link id="TProcess.Execute"/>
+<link id="TProcess.Terminate"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.ApplicationName">
+<short>Name of the application to start</short>
+<descr>
+<p>
+<var>ApplicationName</var> is an alias for <link id="TProcess.CommandLine"/>. 
+It's mostly foruse in the Windows <var>CreateProcess</var> call. 
+If <var>CommandLine</var> is not set, then <var>ApplicationName</var> will be 
+used instead.
+</p>
+<p>
+Note that either <var>CommandLine</var> or <var>ApplicationName</var> must
+be set prior to calling <var>Execute</var>.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.CommandLine"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.CommandLine">
+<short>Command-line to execute</short>
+<descr>
+<p>
+<var>CommandLine</var> is the command-line to be executed: this is the name
+of the program to be executed, followed by any options it should be passed.
+</p>
+<p>If the command to be executed or any of the arguments contains whitespace
+(space, tab character, linefeed character) it should be enclosed in single
+or double quotes.
+</p>
+<p>
+If no absolute pathname is given for the command to be executed, it is
+searched for in the <var>PATH</var> environment variable. On Windows, the
+current directory always will be searched first. On other platforms, this is
+not so.
+</p> 
+<p>
+Note that either <var>CommandLine</var> or <var>ApplicationName</var> must
+be set prior to calling <var>Execute</var>.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.ApplicationName"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.ConsoleTitle">
+<short>Title of the console window</short>
+<descr>
+<p>
+<var>ConsoleTitle</var> is used on Windows when executing a console
+application: it specifies the title caption of the console window. On other
+platforms, this property is currently ignored.
+</p>
+<p>
+Changing this property after the process was started has no effect.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.WindowColumns"/>
+<link id="TProcess.WindowRows"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.CurrentDirectory">
+<short>Working directory of the process.</short>
+<descr>
+<p>
+<var>CurrentDirectory</var> specifies the working directory of the newly
+started process.
+</p>
+<p>
+Changing this property after the process was started has no effect.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.Environment"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.DeskTop">
+<short>Desktop on which to start the process.</short>
+<descr>
+<p>
+<var>DeskTop</var> is used on Windows to determine on which desktop the
+process' main window should be shown. Leaving this empty means the process
+is started on the same desktop as the currently running process. 
+</p>
+<p>
+Changing this property after the process was started has no effect.
+</p>
+<p>
+On unix, this parameter is ignored.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.Input"/>
+<link id="TProcess.Output"/>
+<link id="TProcess.StdErr"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.Environment">
+<short>Environment variables for the new process</short>
+<descr>
+<p>
+<var>Environment</var> contains the environment for the new process;
+it's a list of <var>Name=Value</var> pairs, one per line. 
+</p>
+<p>
+If it is empty, the environment of the current process is 
+passed on to the new process.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.Options"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.Options">
+<short>Options to be used when starting the process.</short>
+<descr>
+<p>
+<var>Options</var> determine how the process is started. 
+They should be set before the <link id="TProcess.Execute">Execute</link> call is made.
+</p>
+<table>
+<th><td>option</td><td>Meaning</td></th>
+<tr>
+<td><var>poRunSuspended</var></td>
+<td>Start the process in suspended state.</td>
+</tr>
+<tr>
+<td><var>poWaitOnExit</var></td>
+<td>Wait for the process to terminate before returning.</td>
+</tr>
+<tr>
+<td><var>poUsePipes</var></td>
+<td>Use pipes to redirect standard input and output.</td>
+</tr>
+<tr>
+<td><var>poStderrToOutPut</var></td>
+<td>Redirect standard error to the standard output stream.</td>
+</tr>
+<tr>
+<td><var>poNoConsole</var></td>
+<td>Do not allow access to the console window for the process (Win32 only)</td>
+</tr>
+<tr>
+<td><var>poNewConsole</var></td>
+<td>Start a new console window for the process (Win32 only)</td>
+</tr>
+<tr>
+<td><var>poDefaultErrorMode</var></td>
+<td>Use default error handling.</td>
+</tr>
+<tr>
+<td><var>poNewProcessGroup</var></td>
+<td>Start the process in a new process group (Win32 only)</td>
+</tr>
+<tr>
+<td><var>poDebugProcess</var></td>
+<td>Allow debugging of the process (Win32 only)</td>
+</tr>
+<tr>
+<td><var>poDebugOnlyThisProcess</var></td>
+<td>Do not follow processes started by this process (Win32 only)</td>
+</tr>
+</table>
+</descr>
+<seealso>
+<link id="TProcessOption"/>
+<link id="TProcessOptions"/>
+<link id="TProcess.Priority"/>
+<link id="TProcess.StartUpOptions"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.Priority">
+<short>Priority at which the process is running.</short>
+<descr>
+<p>
+<var>Priority</var> determines the priority at which the process is running.
+</p>
+<table>
+<th><td>Priority</td><td>Meaning</td></th>
+<tr>
+<td><var>ppHigh</var></td>
+<td>The process runs at higher than normal priority.</td>
+</tr>
+<tr>
+<td><var>ppIdle</var></td>
+<td>The process only runs when the system is idle (i.e. has nothing else to do)</td>
+</tr>
+<tr>
+<td><var>ppNormal</var></td>
+<td>The process runs at normal priority.</td>
+</tr>
+<tr>
+<td><var>ppRealTime</var></td>
+<td>The process runs at real-time priority.</td>
+</tr>
+</table>
+<p>
+Note that not all priorities can be set by any user. Usually, only users
+witha dministrative rights (the root user on Unix) can set a higher process
+priority.
+</p>
+<p>
+On unix, the process priority is mapped on <var>Nice</var> values as
+follows:
+</p>
+<table>
+<th><td>Priority</td><td>Nice value</td></th>
+<tr><td><var>ppHigh</var></td><td>20</td></tr>
+<tr><td><var>ppIdle</var></td><td>20</td></tr>
+<tr><td><var>ppNormal</var></td><td>0</td></tr>
+<tr><td><var>ppRealTime</var></td><td>-20</td></tr>
+</table>
+</descr>
+<seealso>
+<link id="TProcessPriority"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.StartUpOptions">
+<short>Additional (Windows) startup options</short>
+<descr>
+<p>
+<var>StartUpOptions</var> contains additional startup options, used mostly
+on Windows system. They determine  which other window layout properties are 
+taken into account when starting the new process.
+</p>
+<table>
+<th><td>Priority</td><td>Meaning</td></th>
+<tr>
+<td><var>suoUseShowWindow</var></td>
+<td>Use the Show Window options specified in <link id="TProcess.ShowWindow">ShowWindow</link></td>
+</tr>
+<tr>
+<td><var>suoUseSize</var></td>
+<td>Use the specified window sizes</td>
+</tr>
+<tr>
+<td><var>suoUsePosition</var></td>
+<td>Use the specified window sizes.</td>
+</tr>
+<tr>
+<td><var>suoUseCountChars</var></td>
+<td>Use the specified console character width.</td>
+</tr>
+<tr>
+<td><var>suoUseFillAttribute</var></td>
+<td>Use the console fill attribute specified in <link id="TProcess.FillAttribute">FillAttribute</link>.</td>
+</tr>
+</table>
+</descr>
+<seealso>
+<link id="TProcess.ShowWindow"/>
+<link id="TProcess.WindowHeight"/>
+<link id="TProcess.WindowWidth"/>
+<link id="TProcess.WindowLeft"/>
+<link id="TProcess.WindowTop"/>
+<link id="TProcess.WindowColumns"/>
+<link id="TProcess.WindowRows"/>
+<link id="TProcess.FillAttribute"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.Running">
+<short>Determines wheter the process is still running.</short>
+<descr>
+<var>Running</var> can be read to determine whether the process is still
+running.
+</descr>
+<seealso>
+<link id="TProcess.Terminate"/>
+<link id="TProcess.Active"/>
+<link id="TProcess.ExitStatus"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.ShowWindow">
+<short>Determines how the process main window is shown (Windows only)</short>
+<descr>
+<p>
+<var>ShowWindow</var> determines how the process' main window is shown. It
+is useful only on Windows.
+</p>
+<table>
+<th><td>Option</td><td>Meaning</td></th>
+<tr>
+<td><var>swoNone</var></td><td>Allow system to position the window.</td>
+</tr>
+<tr>
+<td><var>swoHIDE</var></td><td>The main window is hidden.</td>
+</tr>
+<tr>
+<td><var>swoMaximize</var></td><td>The main window is maximized.</td>
+</tr>
+<tr>
+<td><var>swoMinimize</var></td><td>The main window is minimized.</td>
+</tr>
+<tr>
+<td><var>swoRestore</var></td><td>Restore the previous position.</td>
+</tr>
+<tr>
+<td><var>swoShow</var></td><td>Show the main window.</td>
+</tr>
+<tr>
+<td><var>swoShowDefault</var></td><td>When showing Show the main window on a  default position</td>
+</tr>
+<tr>
+<td><var>swoShowMaximized</var></td><td>The main window is shown maximized</td>
+</tr>
+<tr>
+<td><var>swoShowMinimized</var></td><td>The main window is shown minimized</td>
+</tr>
+<tr>
+<td><var>swoshowMinNOActive</var></td><td>The main window is shown minimized but not activated</td>
+</tr>
+<tr>
+<td><var>swoShowNA</var></td><td>The main window is shown but not activated</td>
+</tr>
+<tr>
+<td><var>swoShowNoActivate</var></td><td>The main window is shown but not activated</td>
+</tr>
+<tr>
+<td><var>swoShowNormal</var></td><td>The main window is shown normally</td>
+</tr>
+</table>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.WindowColumns">
+<short>Number of columns in console window (windows only)</short>
+<descr>
+<var>WindowColumns</var> is the number of columns in the console window, used
+to run the command in. This property is only effective if 
+<var>suoUseCountChars</var> is specified in 
+<link id="TProcess.StartupOptions">StartupOptions</link>
+</descr>
+<seealso>
+<link id="TProcess.WindowHeight"/>
+<link id="TProcess.WindowWidth"/>
+<link id="TProcess.WindowLeft"/>
+<link id="TProcess.WindowTop"/>
+<link id="TProcess.WindowRows"/>
+<link id="TProcess.FillAttribute"/>
+<link id="TProcess.StartupOptions"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.WindowHeight">
+<short>Height of the process main window</short>
+<descr>
+<var>WindowHeight</var> is the initial height (in pixels) of the process' main
+window. This property is only effective if 
+<var>suoUseSize</var> is specified in 
+<link id="TProcess.StartupOptions">StartupOptions</link>
+</descr>
+<seealso>
+<link id="TProcess.WindowWidth"/>
+<link id="TProcess.WindowLeft"/>
+<link id="TProcess.WindowTop"/>
+<link id="TProcess.WindowColumns"/>
+<link id="TProcess.WindowRows"/>
+<link id="TProcess.FillAttribute"/>
+<link id="TProcess.StartupOptions"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.WindowLeft">
+<short>X-coordinate of the initial window (Windows only)</short>
+<descr>
+<var>WindowLeft</var> is the initial X coordinate (in pixels) of the process'
+main window, relative to the left border of the desktop. 
+This property is only effective if <var>suoUsePosition</var> is 
+specified in <link id="TProcess.StartupOptions">StartupOptions</link>
+</descr>
+<seealso>
+<link id="TProcess.WindowHeight"/>
+<link id="TProcess.WindowWidth"/>
+<link id="TProcess.WindowTop"/>
+<link id="TProcess.WindowColumns"/>
+<link id="TProcess.WindowRows"/>
+<link id="TProcess.FillAttribute"/>
+<link id="TProcess.StartupOptions"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.WindowRows">
+<short>Number of rows in console window (Windows only)</short>
+<descr>
+<var>WindowRows</var> is the number of rows in the console window, used
+to run the command in. This property is only effective if 
+<var>suoUseCountChars</var> is specified in 
+<link id="TProcess.StartupOptions">StartupOptions</link>
+</descr>
+<seealso>
+<link id="TProcess.WindowHeight"/>
+<link id="TProcess.WindowWidth"/>
+<link id="TProcess.WindowLeft"/>
+<link id="TProcess.WindowTop"/>
+<link id="TProcess.WindowColumns"/>
+<link id="TProcess.FillAttribute"/>
+<link id="TProcess.StartupOptions"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.WindowTop">
+<short>Y-coordinate of the initial window (Windows only)</short>
+<descr>
+<var>WindowTop</var> is the initial Y coordinate (in pixels) of the process'
+main window, relative to the top border of the desktop. 
+This property is only effective if <var>suoUsePosition</var> is 
+specified in <link id="TProcess.StartupOptions">StartupOptions</link>
+</descr>
+<seealso>
+<link id="TProcess.WindowHeight"/>
+<link id="TProcess.WindowWidth"/>
+<link id="TProcess.WindowLeft"/>
+<link id="TProcess.WindowColumns"/>
+<link id="TProcess.WindowRows"/>
+<link id="TProcess.FillAttribute"/>
+<link id="TProcess.StartupOptions"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.WindowWidth">
+<short>Height of the process main window (Windows only)</short>
+<descr>
+<var>WindowWidth</var> is the initial width (in pixels) of the process' main
+window. This property is only effective if 
+<var>suoUseSize</var> is specified in 
+<link id="TProcess.StartupOptions">StartupOptions</link>
+</descr>
+<seealso>
+<link id="TProcess.WindowHeight"/>
+<link id="TProcess.WindowLeft"/>
+<link id="TProcess.WindowTop"/>
+<link id="TProcess.WindowColumns"/>
+<link id="TProcess.WindowRows"/>
+<link id="TProcess.FillAttribute"/>
+<link id="TProcess.StartupOptions"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.FillAttribute">
+<short>Color attributes of the characters in the console window (Windows only)</short>
+<descr>
+<var>FillAttribute</var> is a WORD value which specifies the background and
+foreground colors of the console window.
+</descr>
+<seealso>
+<link id="TProcess.WindowHeight"/>
+<link id="TProcess.WindowWidth"/>
+<link id="TProcess.WindowLeft"/>
+<link id="TProcess.WindowTop"/>
+<link id="TProcess.WindowColumns"/>
+<link id="TProcess.WindowRows"/>
+<link id="TProcess.StartupOptions"/>
+</seealso>
+</element>
+</module> <!-- process -->
+</package>
+</fpdoc-descriptions>
