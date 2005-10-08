@@ -984,7 +984,7 @@ operators:
 The \var{:=} assignment symbol may be replaced with the \var{=} symbol.
 
 Note that this command works only in MACPAS mode, but independent of the
-\var{-Sm} command-line option or \var{\{\$MACROS \}} directive.
+\var{-Sm} command-line option or \var{\{\$MACRO \}} directive.
 
 \subsection{\var{\protect\$STATIC} : Allow use of \var{Static} keyword.}
 
@@ -1631,7 +1631,7 @@ of the macro (much like the macro support in the C preprocessor). If macro
 support is required, the \var{-Sm} command-line switch must be used to
 switch it on, or the directive must be inserted:
 \begin{verbatim}
-{$MACROS ON}
+{$MACRO ON}
 \end{verbatim}
 otherwise macros will be regarded as a symbol.
 
@@ -1691,7 +1691,7 @@ Symbol & Contains \\ \hline
 
 \begin{remark}Don't forget that macro support isn't on by default. It must
 be turned on  with the \var{-Sm} command-line switch or using the
-\var{\{\$MACROS ON\}} directive.
+\var{\{\$MACRO ON\}} directive.
 \end{remark}
 
 
@@ -2952,17 +2952,17 @@ creating shared libraries, \seec{libraries}.
 \section{Calling mechanism}
 \label{se:CallingConventions}
 
-Procedures and Functions are called with their parameters on the stack.
+Procedures and Functions are often called with their parameters on the stack.
 Contrary to Turbo Pascal, {\em all} parameters are pushed on the stack, and
 they are pushed {\em right} to {\em left}, instead of left to right for
 Turbo Pascal. This is especially important if you have some assembly
 subroutines in Turbo Pascal which you would like to translate to \fpc.
 
-Function results are returned in the accumulator, if they fit in the
-register. Methods calls (from either objects or clases) have an additional
-invisible parameter which is \var{self}. This parameter is the leftmost
-parameter within a method call (it is therefore the last parameter passed
-to the method).
+Function results are returned in the accumulator (first register), 
+if they fit in the register. Methods calls (from either objects or 
+clases) have an additional invisible parameter which is \var{self}. 
+This parameter is the leftmost parameter within a method call 
+(it is therefore the last parameter passed to the method).
 
 When the procedure or function exits, it clears the stack.
 
@@ -2985,24 +2985,21 @@ interrupt & Right-to-left & Function & default & all registers\\
 pascal  & Left-to-right & Function & default & None\\
 safecall & Right-to-left & Function & default & GCC registers\\
 stdcall & Right-to-left & Function & GCC alignment & GCC registers \\
-popstack & Right-to-left & Caller  & default & None \\
+oldfpcall & Right-to-left & Caller  & default & None \\
 register & Left-to-right & Caller & default & None \\ \hline
 \end{FPCltable}
 
 More about this can be found in \seec{Linking} on linking. Information
 on GCC registers saved, GCC stack alignment and general stack alignment
-on an operating system basis can be found in Appendix \ref{ch:AppH}. The \var{register}
-modifier is currently not supported, and maps to the default calling
-convention.
+on an operating system basis can be found in Appendix \ref{ch:AppH}. 
+As of 2.0, the \var{register} modifier is the default calling convention,
+prior to that, it was the \var{oldfpcall} convention.
 
-Furthermore, the \var{saveregisters} modifier can be used with
-any of the calling mechanism specifiers. When \var{saveregisters}
-is used, all registers will be saved on entry to the routine,
-and will be restored upon exit. Of course, if the routine is
-a function, and it normally returns its retun value in a register,
-that register will not be saved. Also, if the self register is
-used, it will also neither be saved nor restored.
-
+\begin{remark}
+The \var{popstack} modifier is no longer supported as of version 2.0, 
+but has been renamed to \var{oldfpcall}. The \var{saveregisters} modifier
+can no longer be used.
+\end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Nested subroutines
@@ -4037,13 +4034,22 @@ and the bit number within that 32-bit value is given by:
  BitNumber = (E mod 32);
 \end{verbatim}
 
-\subsection{array types}
+\subsection{Static array types}
 
-An array is stored as a contiguous sequence of variables
+A static array is stored as a contiguous sequence of variables
 of the components of the array. The components with the
 lowest indexes are stored first in memory. No alignment
 is done between each element of the array. A multi-dimensional
 array is stored with the rightmost dimension increasing first.
+
+\subsection{Dynamic array types}
+
+A dynamic array is stored as a pointer to a block of memory on the heap.
+The memory on the heap is a contiguous sequence of variables
+of the components of the array, just as for a static array. The reference
+count and memory size are stored in memory just before the actual start of
+the array, at a negative offset relative to the address the pointer refers
+to. It should not be used.
 
 \subsection{record types}
 
@@ -6443,10 +6449,10 @@ section is empty.
 otherwise ignored.
 \item \var{...} (ellipsis) is allowed in procedure declarations, is
 functionally equal to the \var{varargs} keyword.
-\item Procedures declared in the interface section which do not have a counterpart
-in the implementation section are considered external (implicit externals).
-In other words, for external procedures, the \var{external} keyword may be
-omitted.
+%\item Procedures declared in the interface section which do not have a counterpart
+%in the implementation section are considered external (implicit externals).
+%In other words, for external procedures, the \var{external} keyword may be
+%omitted.
 \end{enumerate}
 (Note: Macros are called 'Compiler Variables' in \macos dialects.)
 
