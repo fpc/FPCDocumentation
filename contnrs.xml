@@ -1,0 +1,1830 @@
+<?xml version="1.0" encoding="ISO8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    contnrs
+  ====================================================================
+-->
+
+<module name="contnrs">
+<short>Various general purpose classes: stack, queue, objectlists</short>
+<descr>
+<p>
+The <file>contnrs</file> implements various general-purpose classes:
+</p>
+<dl>
+<dt>Stacks</dt>
+<dd>Stack classes to push/pop pointers or objects</dd>
+<dt>Object lists</dt>
+<dd>
+lists that manage objects instead of pointers, and which automatically
+dispose of the objects.
+</dd>
+<dt>Component lists</dt>
+<dd>
+lists that manage components instead of pointers, and which automatically
+dispose the components.
+</dd>
+<dt>Class lists</dt>
+<dd>
+lists that manage class pointers instead of pointers.
+</dd>
+<dt>Stacks</dt>
+<dd>Stack classes to push/pop pointers or objects</dd>
+<dt>Queues</dt>
+<dd>Classes to manage a FIFO list of pointers or objects</dd>
+</dl>
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="SysUtils">
+<short>For exception support</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>For basic lists</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TFPObjectList">
+<short><var>TFPList</var> descendent which manages objects.</short>
+<descr>
+<p>
+<var>TFPObjectList</var> is a <link id="#rtl.classes.TFPList">TFPList</link>
+based list which has as the default array property <link id="#rtl.objpas.TObject">TObjects</link> 
+instead of pointers. By default it also manages the objects: when an object is deleted
+or removed from the list, it is automatically freed. This behaviour can be
+disabled when the list is created. 
+</p>
+<p>
+In difference with <link id="TObjectList"/>, <var>TFPObjectList</var> offers
+no notification mechanism of list operations, allowing it to be faster than
+<var>TObjectList</var>. For the same reason, it is also not a descendent of 
+<var>TFPList</var> (although it uses one internally).
+</p>
+</descr>
+<seealso>
+<link id="#rtl.classes.TFPList"/>
+<link id="TObjectList"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TFPObjectList.Create">
+<short>Create a new object list</short>
+<descr>
+<var>Create</var> instantiates a new object list. The <var>FreeObjects</var>
+parameter determines whether objects that are removed from the list should
+also be freed from memory. By default this is <var>True</var>. This
+behaviour can be changed after the list was instantiated.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPObjectList.Destroy"/>
+<link id="TFPObjectList.OwnsObjects"/>
+<link id="TObjectList"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Create.FreeObjects">
+<short>Should objects be freed when removing them from the list</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TFPObjectList.Destroy">
+<short>Clears the list and destroys the list instance</short>
+<descr>
+<var>Destroy</var> clears the list, freeing all objects in the list if <link
+id="TFPObjectList.OwnsObjects">OwnsObjects</link>  is <var>True</var>. 
+</descr>
+<seealso>
+<link id="TFPObjectList.OwnsObjects"/>
+<link id="TObjectList.Create"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPObjectList.Clear">
+<short>Clear all elements in the list.</short>
+<descr>
+Removes all objects from the list, freeing all objects in the list if <link
+id="TFPObjectList.OwnsObjects">OwnsObjects</link>  is <var>True</var>.
+</descr>
+<seealso>
+<link id="TObjectList.Destroy"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPObjectList.Add">
+<short>Add an object to the list.</short>
+<descr>
+<p>
+<var>Add</var> adds <var>AObject</var> to the list and returns the index of
+the object in the list. 
+</p>
+<p>
+Note that when <link id="TFPObjectList.OwnsObjects">OwnsObjects</link> is 
+<var>True</var>, an object should not be added twice to the list: this will
+result in memory corruption when the object is freed (as it will be freed
+twice). The <var>Add</var> method does not check this, however.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPObjectList.OwnsObjects"/>
+<link id="TFPObjectList.Delete"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPObjectList.Add.Result">
+<short>The index of the object in the list.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Add.AObject">
+<short>The object to add</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPObjectList.Delete">
+<short>Delete an element from the list.</short>
+<descr>
+<var>Delete</var> removes the object at index <var>Index</var> from the
+list. When <link id="TFPObjectList.OwnsObjects">OwnsObjects</link> is
+<var>True</var>, the object is also freed.
+</descr>
+<errors>
+An access violation may occur when <link id="TFPObjectList.OwnsObjects">OwnsObjects</link> is
+<var>True</var> and either the object was freed externally, or when
+the same object is in the same list twice.
+</errors>
+<seealso>
+<link id="TTFPObjectList.Remove"/>
+<link id="TFPObjectList.Extract"/>
+<link id="TFPObjectList.OwnsObjects"/>
+<link id="TTFPObjectList.Add"/>
+<link id="TTFPObjectList.Clear"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Delete.Index">
+<short>Index of the object to delete.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPObjectList.Exchange">
+<short>Exchange the location of two objects</short>
+<descr>
+<var>Exchange</var> exchanges the objects at indexes <var>Index1</var> and
+<var>Index2</var> in a direct operation (i.e. no delete/add is performed).
+</descr>
+<errors>
+If either <var>Index1</var> or <var>Index2</var> is invalid, an exception
+will be raised.
+</errors>
+<seealso>
+<link id="TTFPObjectList.Add"/>
+<link id="TTFPObjectList.Delete"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Exchange.Index1">
+<short>Location of first object</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Exchange.Index2">
+<short>Location of second object</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPObjectList.Expand">
+<short>Expand the capacity of the list.</short>
+<descr>
+<var>Expand</var> increases the capacity of the list. It calls
+<link id="#rtl.classes.tfplist.expand"/> and then returns a reference to
+itself.
+</descr>
+<errors>
+If there is not enough memory to expand the list, an exception will be
+raised.
+</errors>
+<seealso>
+<link id="TFPObjectList.Pack"/>
+<link id="TFPObjectList.Clear"/>
+<link id="#rtl.classes.tfplist.expand"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPObjectList.Expand.Result">
+<short>A reference to the expanded list.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPObjectList.Extract">
+<short>Extract an object from the list</short>
+<descr>
+<p>
+<var>Extract</var> removes <var>Item</var> from the list, if it is present
+in the list. It returns <var>Item</var> if it was found, <var>Nil</var> if
+item was not present in the list. 
+</p>
+<p>
+Note that the object is not freed, and
+that only the first found object is removed from the list.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPObjectList.Pack"/>
+<link id="TFPObjectList.Clear"/>
+<link id="TFPObjectList.Remove"/>
+<link id="TFPObjectList.Delete"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPObjectList.Extract.Result">
+<short>The extracted object, or <var>Nil</var> if none was extracted.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Extract.Item">
+<short>The object to extract</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPObjectList.Remove">
+<short>Remove an item from the list.</short>
+<descr>
+<p>
+<var>Remove</var> removes <var>Item</var> from the list, if it is present
+in the list. It frees <var>Item</var> if <link id="TFPObjectList.OwnsObjects">OwnsObjects</link> is
+<var>True</var>, and returns the index of the object that was found
+in the list, or -1 if the object was not found.
+</p>
+<p>
+Note that only the first found object is removed from the list.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPObjectList.Pack"/>
+<link id="TFPObjectList.Clear"/>
+<link id="TFPObjectList.Delete"/>
+<link id="TFPObjectList.Extract"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPObjectList.Remove.Result">
+<short>Index of the removed object or -1 if none was removed.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Remove.AObject">
+<short>Object to remove from the list.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPObjectList.IndexOf">
+<short>Search for an object in the list</short>
+<descr>
+<var>IndexOf</var> searches for the presence of <var>AObject</var> in the
+list, and returns the location (index) in the list. The index is 0-based,
+and -1 is returned if <var>AObject</var> was not found in the list.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPObjectList.Items"/>
+<link id="TFPObjectList.Remove"/>
+<link id="TFPObjectList.Extract"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPObjectList.IndexOf.Result">
+<short>Index of the object in the list, -1 if not present.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.IndexOf.AObject">
+<short>Object instance to search for.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPObjectList.FindInstanceOf">
+<short>Search for an instance of a certain class</short>
+<descr>
+<p>
+<var>FindInstanceOf</var> will look through the instances in the list and
+will return the first instance which is a descendent of class
+<var>AClass</var> if <var>AExact</var> is <var>False</var>. If
+<var>AExact</var> is true, then the instance should be of class
+<var>AClass</var>.
+</p>
+<p> 
+If no instance of the requested class is found, <var>Nil</var> is returned.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPObjectList.IndexOf"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPObjectList.FindInstanceOf.Result">
+<short>The first instance of the requested class.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.FindInstanceOf.AClass">
+<short>The class to look for</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.FindInstanceOf.AExact">
+<short>Should the class match exact or nor</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.FindInstanceOf.AStartAt">
+<short>Index to start the search at</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPObjectList.Insert">
+<short>Insert a new object in the list</short>
+<descr>
+<var>Insert</var> inserts <var>AObject</var> at position <var>Index</var> in
+the list. All elements in the list after this position are shifted. The
+index is zero based, i.e. an insert at position 0 will insert an object at
+the first position of the list.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPObjectList.Add"/>
+<link id="TFPObjectList.Delete"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Insert.Index">
+<short>Position Index to insert the object in</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Insert.AObject">
+<short>Object to insert in the list</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPObjectList.First">
+<short>Return the first non-nil object in the list</short>
+<descr>
+<var>First</var> returns a reference to the first non-<var>Nil</var> element in the
+list. If no non-<var>Nil</var> element is found, <var>Nil</var> is returned.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPObjectList.Last"/>
+<link id="TFPObjectList.Pack"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPObjectList.First.Result">
+<short>The first non-nil element in the list.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPObjectList.Last">
+<short>Return the last non-nil object in the list. </short>
+<descr>
+<var>Last</var> returns a reference to the last non-<var>Nil</var> element
+in the list. If no non-<var>Nil</var> element is found, <var>Nil</var> is 
+returned.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPObjectList.First"/>
+<link id="TFPObjectList.Pack"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPObjectList.Last.Result">
+<short>The last non-nil object in the list.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPObjectList.Move">
+<short>Move an object to another location in the list.</short>
+<descr>
+<p>
+<var>Move</var> moves the object at current location <var>CurIndex</var> to
+location <var>NewIndex</var>. Note that the <var>NewIndex</var> is
+determined <em>after</em> the object was removed from location
+<var>CurIndex</var>, and can hence be shifted with 1 position if
+<var>CurIndex</var> is less than <var>NewIndex</var>.
+</p>
+<p>
+Contrary to <link id="TFPObjectList.Exchange">exchange</link>, 
+the move operation is done by extracting the object from it's 
+current location and inserting it at the new location.
+</p>
+</descr>
+<errors>
+If either <var>CurIndex</var> or <var>NewIndex</var> is out of range, an
+exception may occur.
+</errors>
+<seealso>
+<link id="TFPObjectList.Exchange"/>
+<link id="TFPObjectList.Delete"/>
+<link id="TFPObjectList.Insert"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Move.CurIndex">
+<short>The current index of the object</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Move.NewIndex">
+<short>The new index of the object</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPObjectList.Assign">
+<short>Copy the contents of a list.</short>
+<descr>
+<var>Assign</var> copies the contents of <var>Obj</var> if <var>Obj</var> is
+of type <var>TFPObjectList</var>
+</descr>
+<errors>
+None.
+</errors>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Assign.Obj">
+<short>The source list to copy from.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPObjectList.Pack">
+<short>Remove all <var>Nil</var> references from the list</short>
+<descr>
+<var>Pack</var> removes all <var>Nil</var> elements from the list.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPObjectList.First"/>
+<link id="TFPObjectList.Last"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPObjectList.Sort">
+<short>Sort the list of objects</short>
+<descr>
+<p>
+<var>Sort</var> will perform a quick-sort on the list, using
+<var>Compare</var> as the compare algorithm. This function should accept 2
+pointers and should return the following result:
+</p>
+<dl>
+<dt>less than 0</dt><dd>If the first pointer comes before the second.</dd>
+<dt>equal to 0</dt><dd>If the pointers have the same value.</dd>
+<dt>larger than 0</dt><dd>If the first pointer comes after the second.</dd>
+</dl>
+<p>
+The function should be able to deal with <var>Nil</var> values.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.classes.TList.Sort"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Sort.Compare">
+<short>Compare function for two objects.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPObjectList.Capacity">
+<short>Capacity of the list</short>
+<descr>
+<var>Capacity</var> is the number of elements that the list can contain
+before it needs to expand itself, i.e., reserve more memory for pointers.
+It is always equal or larger than <link id="TFPObjectList.Count">Count</link>.
+</descr>
+<seealso>
+<link id="TFPObjectList.Count"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPObjectList.Count">
+<short>Number of elements in the list.</short>
+<descr>
+<var>Count</var> is the number of elements in the list. Note that this
+includes <var>Nil</var> elements.
+</descr>
+<seealso>
+<link id="TFPObjectList.Capacity"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPObjectList.OwnsObjects">
+<short>Should the list free elements when they are removed.</short>
+<descr>
+<p>
+<var>OwnsObjects</var> determines whether the objects in the list should be
+freed when they are removed (not extracted) from the list, or when the list
+is cleared. If the property is <var>True</var> then they are freed. If the
+property is <var>False</var> the elements are not freed.
+</p>
+<p>
+The value is usually set in the constructor, and is seldom changed during
+the lifetime of the list. It defaults to <var>True</var>.
+</p>
+</descr>
+<seealso>
+<link id="TFPObjectList.Create"/>
+<link id="TFPObjectList.Delete"/>
+<link id="TFPObjectList.Remove"/>
+<link id="TFPObjectList.Clear"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPObjectList.Items">
+<short>Indexed access to the elements of the list.</short>
+<descr>
+<var>Items</var> is the default property of the list. It provides indexed
+access to the elements in the list. The index <var>Index</var> is zero
+based, i.e., runs from 0 (zero) to <var>Count-1</var>.
+</descr>
+<seealso>
+<link id="TFPObjectList.Count"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPObjectList.Items.Index">
+<short>Index of the element.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPObjectList.List">
+<short>Internal list used to keep the objects.</short>
+<descr>
+<var>List</var> is a reference to the <link
+id="#rtl.classes.tfplist">TFPList</link> instance used to manage the
+elements in the list.
+</descr>
+<seealso>
+<link id="#rtl.classes.tfplist"/>
+</seealso>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TObjectList">
+<short>List to manage object instances.</short>
+<descr>
+<p>
+<var>TObjectList</var> is a <link id="#rtl.classes.TList">TList</link>
+descendent which has as the default array property  <link id="#rtl.objpas.TObject">TObjects</link> 
+instead of pointers. By default it also manages the objects: when an object is deleted
+or removed from the list, it is automatically freed. This behaviour can be
+disabled when the list is created. 
+</p>
+<p>
+In difference with <link id="TFPObjectList"/>, <var>TObjectList</var> offers
+a notification mechanism of list change operations: insert, delete. This slows down
+bulk operations, so if the notifications are not needed, <var>TObjectList</var>
+may be more appropriate.
+</p>
+</descr>
+<seealso>
+<link id="#rtl.classes.TList"/>
+<link id="TFPObjectList"/>
+<link id="TComponentList"/>
+<link id="TClassList"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TObjectList.create">
+<short>Create a new object list.</short>
+<descr>
+<var>Create</var> instantiates a new object list. The <var>FreeObjects</var>
+parameter determines whether objects that are removed from the list should
+also be freed from memory. By default this is <var>True</var>. This
+behaviour can be changed after the list was instantiated.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TObjectList.Destroy"/>
+<link id="TObjectList.OwnsObjects"/>
+<link id="TFPObjectList"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectList.create.freeobjects">
+<short>Should removed items be freed from memory</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectList.Add">
+<short>Add an object to the list.</short>
+<descr>
+<p>
+<var>Add</var> overrides the <link id="#rtl.classes.TList">TList</link>
+implementation to accept objects (<var>AObject</var>) instead of pointers.
+</p>
+<p>
+The function returns the index of the position where the object was added.
+</p>
+</descr>
+<errors>
+If the list must be expanded, and not enough memory is available, an
+exception may be raised.
+</errors>
+<seealso>
+<link id="TObjectList.Insert"/>
+<link id="#rtl.classes.TList.Delete"/>
+<link id="TObjectList.Extract"/>
+<link id="TObjectList.Remove"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectList.Add.Result">
+<short>Position at which the object was added</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectList.Add.AObject">
+<short>Object to add to the list.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectList.Extract">
+<short>Extract an object from the list.</short>
+<descr>
+<p>
+<var>Extract</var> removes the  object <var>Item</var> from the list if it
+is present in the list. Contrary to <link
+id="TObjectList.Remove">Remove</link>, <var>Extract</var> does not free the
+extracted element if <link id="TObjectList.OwnsObjects">OwnsObjects</link> is
+<var>True</var>
+</p>
+<p>
+The function returns a reference to the item which was removed from the
+list, or <var>Nil</var> if no element was removed.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TObjectList.Remove"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectList.Extract.Result">
+<short>The removed element, or <var>Nil</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectList.Extract.Item">
+<short>Element to remove from the list.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectList.Remove">
+<short>Remove (and possibly free) an element from the list.</short>
+<descr>
+<p>
+<var>Remove</var> removes <var>Item</var> from the list, if it is present
+in the list. It frees <var>Item</var> if <link id="TObjectList.OwnsObjects">OwnsObjects</link> is
+<var>True</var>, and returns the index of the object that was found
+in the list, or -1 if the object was not found.
+</p>
+<p>
+Note that only the first found object is removed from the list.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TObjectList.Extract"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectList.Remove.Result">
+<short>Index of the removed object, or -1 if none was removed.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectList.Remove.AObject">
+<short>Object to remove from the list.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectList.IndexOf">
+<short>Search for an object in the list</short>
+<descr>
+<p>
+<var>IndexOf</var> overrides the <link id="#rtl.classes.tlist">TList</link>
+implementation to accept an object instance instead of a pointer.
+</p>
+<p>
+The function returns the index of the first match for <var>AObject</var> in
+the list, or -1 if no match was found.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TObjectList.FindInstanceOf"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectList.IndexOf.Result">
+<short>Position (index) at which object was found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectList.IndexOf.AObject">
+<short>Object to search for.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectList.FindInstanceOf">
+<short>Search for an instance of a certain class</short>
+<descr>
+<p>
+<var>FindInstanceOf</var> will look through the instances in the list and
+will return the first instance which is a descendent of class
+<var>AClass</var> if <var>AExact</var> is <var>False</var>. If
+<var>AExact</var> is true, then the instance should be of class
+<var>AClass</var>.
+</p>
+<p> 
+If no instance of the requested class is found, <var>Nil</var> is returned.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TObjectList.IndexOf"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectList.FindInstanceOf.Result">
+<short>Instance found or Nil if none was found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectList.FindInstanceOf.AClass">
+<short>Class of which result should be a descendent</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectList.FindInstanceOf.AExact">
+<short>Should the class of the result be exactly the requested class.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectList.FindInstanceOf.AStartAt">
+<short>Index to start the search</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TObjectList.Insert">
+<short>Insert an object in the list.</short>
+<descr>
+<var>Insert</var> inserts <var>AObject</var> in the list at position
+<var>Index</var>. The index is zero-based. This method overrides the
+implementation in <link id="#rtl.classes.tlist">TList</link> to accept
+objects instead of pointers.
+</descr>
+<errors>
+If an invalid <var>Index</var> is specified, an exception is raised.
+</errors>
+<seealso>
+<link id="TObjectList.Add"/>
+<link id="TObjectList.Remove"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectList.Insert.Index">
+<short>Position to insert object at.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectList.Insert.AObject">
+<short>Object to insert</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectList.First">
+<short>Return the first non-nil object in the list</short>
+<descr>
+<var>First</var> returns a reference to the first non-<var>Nil</var> element in the
+list. If no non-<var>Nil</var> element is found, <var>Nil</var> is returned.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TObjectList.Last"/>
+<link id="TObjectList.Pack"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectList.First.Result">
+<short>First non-nil object in the list.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectList.Last">
+<short>Return the last non-nil object in the list. </short>
+<descr>
+<var>Last</var> returns a reference to the last non-<var>Nil</var> element
+in the list. If no non-<var>Nil</var> element is found, <var>Nil</var> is 
+returned.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TObjectList.First"/>
+<link id="TObjectList.Pack"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectList.Last.Result">
+<short>Last non-nil object in the list.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TObjectList.OwnsObjects">
+<short>Should the list free elements when they are removed.</short>
+<descr>
+<p>
+<var>OwnsObjects</var> determines whether the objects in the list should be
+freed when they are removed (not extracted) from the list, or when the list
+is cleared. If the property is <var>True</var> then they are freed. If the
+property is <var>False</var> the elements are not freed.
+</p>
+<p>
+The value is usually set in the constructor, and is seldom changed during
+the lifetime of the list. It defaults to <var>True</var>.
+</p>
+</descr>
+<seealso>
+<link id="TObjectList.Create"/>
+<link id="TObjectList.Delete"/>
+<link id="TObjectList.Remove"/>
+<link id="TObjectList.Clear"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TObjectList.Items">
+<short>Indexed access to the elements of the list.</short>
+<descr>
+<var>Items</var> is the default property of the list. It provides indexed
+access to the elements in the list. The index <var>Index</var> is zero
+based, i.e., runs from 0 (zero) to <var>Count-1</var>.
+</descr>
+<seealso>
+<link id="#rtl.classes.TList.Count"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectList.Items.Index">
+<short>Index of the element</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TComponentList">
+<short>List to manage component instances.</short>
+<descr>
+<p>
+<var>TComponentList</var> is a <link id="TObjectList"/> descendent which has as the 
+default array property  <link id="#rtl.classes.TComponent">TComponents</link> 
+instead of objects. It overrides some methods so only components can be added.
+</p>
+<p>
+In difference with <link id="TObjectList"/>, <var>TComponentList</var>
+removes any <var>TComponent</var> from the list if the <var>TComponent</var>
+instance was freed externally. It uses the <var>FreeNotification</var>
+mechanism for this.
+</p>
+</descr>
+<seealso>
+<link id="#rtl.classes.TList"/>
+<link id="TFPObjectList"/>
+<link id="TObjectList"/>
+<link id="TClassList"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TComponentList.Destroy">
+<short>Destroys the instance</short>
+<descr>
+<var>Destroy</var> unhooks the free notification handler and then calls the
+inherited destroy to clean up the <var>TComponentList</var> instance.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TObjectList"/>
+<link id="#rtl.classes.TComponent"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TComponentList.Add">
+<short>Add a component to the list.</short>
+<descr>
+<p>
+<var>Add</var> overrides the <var>Add</var> operation of it's ancestors, so
+it only accepts <var>TComponent</var> instances. It introduces no new behaviour.
+</p>
+<p>
+The function returns the index at which the component was added.
+</p>
+</descr>
+<errors>
+If not enough memory is available to expand the list, an exception may be
+raised.
+</errors>
+<seealso>
+<link id="TObectList.Add"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TComponentList.Add.Result">
+<short>Index at which the component was added.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TComponentList.Add.AComponent">
+<short>The component to add.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TComponentList.Extract">
+<short>Remove a component from the list without destroying it.</short>
+<descr>
+<p>
+<var>Extract</var> removes a component (<var>Item</var>) from the list, 
+without destroying it. It overrides the implementation of 
+<link id="TObjectList"/> so only <var>TComponent</var> descendents 
+can be extracted. It introduces no new behaviour.
+</p>
+<p>
+<var>Extract</var> returns the instance that was extracted, or
+<var>Nil</var> if no instance was found.
+</p>
+</descr>
+<seealso>
+<link id="TComponentList.Remove"/>
+<link id="TObjectList.Extract"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TComponentList.Extract.Result">
+<short>The extracted component, or <var>Nil</var> if none was found.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TComponentList.Extract.Item">
+<short>The component to extract.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TComponentList.Remove">
+<short>Remove a component from the list, possibly destroying it.</short>
+<descr>
+<p>
+<var>Remove</var> removes <var>item</var> from the list, and if the list
+owns it's items, it also destroys it. It returns the index of the item that
+was removed, or -1 if no item was removed. 
+</p>
+<p>
+<var>Remove</var> simply overrides the implementation in <link
+id="TObjectList"/> so it only accepts <var>TComponent</var> descendents.
+It introduces no new behaviour.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TComponentList.Extract"/>
+<link id="TObjectList.Remove"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TComponentList.Remove.Result">
+<short>The index of the removed instance</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TComponentList.Remove.AComponent">
+<short>Component to remove from the list</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TComponentList.IndexOf">
+<short>Search for an instance in the list</short>
+<descr>
+<p>
+<var>IndexOf</var> searches for an instance in the list and returns it's
+position in the list. The position is zero-based. If no instance is found,
+-1 is returned.
+</p>
+<p>
+<var>IndexOf</var> just overrides the implementation of the parent class so
+it accepts only <var>TComponent</var> instances. It introduces no new
+behaviour.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TObjectList.IndexOf"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TComponentList.IndexOf.Result">
+<short>Index of the found instance</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TComponentList.IndexOf.AComponent">
+<short>Instance to look for.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TComponentList.First">
+<short>First non-nil instance in the list.</short>
+<descr>
+<var>First</var> overrides the implementation of it's ancestors to return
+the first non-nil instance of <var>TComponent</var> in the list. If no
+non-nil instance is found, <var>Nil</var> is returned.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TComponentList.Last"/>
+<link id="TObjectList.First"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TComponentList.First.Result">
+<short>The first non-nil instance in the list, or Nil</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TComponentList.Last">
+<short>Last non-nil instance in the list.</short>
+<descr>
+<var>Last</var> overrides the implementation of it's ancestors to return
+the last non-nil instance of <var>TComponent</var> in the list. If no
+non-nil instance is found, <var>Nil</var> is returned.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TComponentList.First"/>
+<link id="TObjectList.Last"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TComponentList.Last.Result">
+<short>The last non-nil instance in the list, or Nil</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TComponentList.Insert">
+<short>Insert a new component in the list</short>
+<descr>
+<var>Insert</var> inserts a <var>TComponent</var> instance
+(<var>AComponent</var>) in the list at position <var>Index</var>. It simply
+overrides the parent implementation so it only accepts <var>TComponent</var>
+instances. It introduces no new behaviour.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TObjectList.Insert"/>
+<link id="TComponentList.Add"/>
+<link id="TComponentList.Remove"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TComponentList.Insert.Index">
+<short>Position in the list where the component should be inserted</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TComponentList.Insert.AComponent">
+<short>Component instance to insert.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TComponentList.Items">
+<short>Index-based access to the elements in the list.</short>
+<descr>
+<var>Items</var> provides access to the components in the list using an
+index. It simply overrides the default property of the parent classes so it
+returns/accepts <var>TComponent</var> instances only. Note that the index is
+zero based.
+</descr>
+<seealso>
+<link id="TObjectList.Items"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TComponentList.Items.Index">
+<short>Index in the array.</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TClassList">
+<short>List of classes.</short>
+<descr>
+<p>
+<var>TClassList</var> is a <link id="#rtl.classes.Tlist">Tlist</link>
+descendent which stores class references instead of pointers. It introduces
+no new behaviour other than ensuring all stored pointers are class pointers.
+</p>
+<p>
+The <var>OwnsObjects</var> property as found in <var>TComponentList</var>
+and <var>TObjectList</var> is not implemented as there are no actual
+instances.
+</p>
+</descr>
+<seealso>
+<link id="#rtl.classes.tlist"/>
+<link id="TComponentList"/>
+<link id="TObjectList"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TClassList.Add">
+<short>Add a new class pointer to the list.</short>
+<descr>
+<var>Add</var> adds <var>AClass</var> to the list, and returns the position
+at which it was added. It simply overrides the <link
+id="#rtl.classes.tlist">TList</link> bevahiour, and introduces no new
+functionality.
+</descr>
+<errors>
+If not enough memory is available to expand the list, an exception may be
+raised.
+</errors>
+<seealso>
+<link id="TClassList.Extract"/>
+<link id="#rtl.classes.tlist.add"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TClassList.Add.Result">
+<short>Index at which the class pointer was added.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TClassList.Add.AClass">
+<short>Class pointer to add.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TClassList.Extract">
+<short>Extract a class pointer from the list.</short>
+<descr>
+<var>Extract</var> extracts a class pointer <var>Item</var> from the list, 
+if it is present in the list. It returns the extracted class pointer, or 
+<var>Nil</var> if the class pointer was not present in the list.
+It simply overrides the implementation in <var>TList</var> so it accepts a
+class pointer instead of a simple pointer. No new behaviour is introduced.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TClassList.Remove"/>
+<link id="#rtl.classes.Tlist.Extract"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TClassList.Extract.Result">
+<short>The extracted class pointer or Nil if none was found.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TClassList.Extract.Item">
+<short>Class pointer to extract from the list</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TClassList.Remove">
+<short>Remove a class pointer from the list.</short>
+<descr>
+<var>Remove</var> removes a class pointer <var>Item</var> from the list, 
+if it is present in the list. It returns the index of the removed 
+class pointer, or <var>-1</var> if the class pointer was not present 
+in the list. It simply overrides the implementation in <var>TList</var> 
+so it accepts a class pointer instead of a simple pointer. 
+No new behaviour is introduced.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TClassList.Extract"/>
+<link id="#rtl.classes.Tlist.Remove"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TClassList.Remove.Result">
+<short>Index of the removed item</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TClassList.Remove.AClass">
+<short>Class pointer to remove from the list.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TClassList.IndexOf">
+<short>Search for a class pointer in the list.</short>
+<descr>
+<var>IndexOf</var> searches for <var>AClass</var> in the list, and returns
+it's position if it was found, or -1 if it was not found in the list.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.classes.tlist.indexof"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TClassList.IndexOf.Result">
+<short>Position of the class pointer, or -1 if not found.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TClassList.IndexOf.AClass">
+<short>Class pointer to search for</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TClassList.First">
+<short>Return first non-nil class pointer</short>
+<descr>
+<var>First</var> returns a reference to the first non-<var>Nil</var> class
+pointer in the
+list. If no non-<var>Nil</var> element is found, <var>Nil</var> is returned.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TClassList.Last"/>
+<link id="TClassList.Pack"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TClassList.First.Result">
+<short>The first non-<var>Nil</var> class pointer in the list.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TClassList.Last">
+<short>Return last non-<var>Nil</var> class pointer</short>
+<descr>
+<var>Last</var> returns a reference to the last non-<var>Nil</var> class
+pointer in the
+list. If no non-<var>Nil</var> element is found, <var>Nil</var> is returned.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TClassList.First"/>
+<link id="TClassList.Pack"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TClassList.Last.Result">
+<short>The last non-<var>Nil</var> class pointer in the list.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TClassList.Insert">
+<short>Insert a new class pointer in the list.</short>
+<descr>
+<var>Insert</var> inserts a class pointer in the list at position <var>Index</var>. It simply
+overrides the parent implementation so it only accepts class pointers.
+It introduces no new behaviour.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.classes.TList.Insert"/>
+<link id="TClassList.Add"/>
+<link id="TClassList.Remove"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TClassList.Insert.Index">
+<short>Position to insert class pointer at.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TClassList.Insert.AClass">
+<short>Class pointer to insert.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TClassList.Items">
+<short>Index based access to class pointers.</short>
+<descr>
+<var>Items</var> provides index-based access to the class pointers in the
+list. <var>TClassList</var> overrides the default <var>Items</var>
+implementation of <var>TList</var> so it returns class pointers instead of
+pointers.
+</descr>
+<seealso>
+<link id="#rtl.classes.TList.Items"/>
+<link id="#rtl.classes.TList.Count"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TClassList.Items.Index">
+<short>Position in the list.</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TOrderedList">
+<short>Base class for queues and stacks.</short>
+<descr>
+<p>
+<var>TOrderedList</var> provides the base class for <link id="TQueue"/> and <link
+id="TStack"/>. It provides an interface for pushing and popping elements on
+or off the list, and manages the internal list of pointers. 
+</p>
+<p>
+Note that <var>TOrderedList</var> does not manage objects on the stack, i.e.
+objects are not freed when the ordered list is destroyed.
+</p>
+</descr>
+<seealso>
+<link id="TQueue"/>
+<link id="TStack"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TOrderedList.Create">
+<short>Create a new ordered list</short>
+<descr>
+<var>Create</var> instantiates a new ordered list. It initializes the
+internal pointer list.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TOrderedList.Destroy"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TOrderedList.Destroy">
+<short>Free an ordered list</short>
+<descr>
+<var>Destroy</var> cleans up the internal pointer list, and removes the
+<var>TOrderedList</var> instance from memory.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TOrderedList.Create"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TOrderedList.Count">
+<short>Number of elements on the list.</short>
+<descr>
+<var>Count</var> is the number of pointers in the list.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TOrderedList.AtLeast"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TOrderedList.Count.Result">
+<short>Number of elements on the list.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TOrderedList.AtLeast">
+<short>Check whether the list contains a certain number of elements.</short>
+<descr>
+<var>AtLeast</var> returns <var>True</var> if the number of elements in the
+list is equal to or bigger than <var>ACount</var>. It returns
+<var>False</var> otherwise.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TOrderedList.Count"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TOrderedList.AtLeast.Result">
+<short><var>True</var> if <var>ACount</var> or more elements in the list.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOrderedList.AtLeast.ACount">
+<short>Required number of elements</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TOrderedList.Push">
+<short>Push another element on the list.</short>
+<descr>
+<var>Push</var> adds <var>AItem</var> to the list, and returns
+<var>AItem</var>. 
+</descr>
+<errors>
+If not enough memory is available to expand the list, an exception may be
+raised.
+</errors>
+<seealso>
+<link id="TOrderedList.Pop"/>
+<link id="TOrderedList.Peek"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TOrderedList.Push.Result">
+<short>The element added to the list.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOrderedList.Push.AItem">
+<short>Item to add to the list.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TOrderedList.Pop">
+<short>Remove an element from the list.</short>
+<descr>
+<var>Pop</var> removes an element from the list, and returns the element
+that was removed from the list. If no element is on the list, <var>Nil</var>
+is returned.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TOrderedList.Peek"/>
+<link id="TOrderedList.Push"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TOrderedList.Pop.Result">
+<short>The element removed from the list.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TOrderedList.Peek">
+<short>Return the next element to be popped from the list.</short>
+<descr>
+<var>Peek</var> returns the element that will be popped from the list at the
+next call to <link id="TOrderedList.Pop">Pop</link>, without actually
+popping it from the list.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TOrderedList.Pop"/>
+<link id="TOrderedList.Push"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TOrderedList.Peek.Result">
+<short>Next element to be popped from the list.</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TStack">
+<short>Pointer Stack</short>
+<descr>
+<p>
+<var>TStack</var> is a descendent of <link id="TOrderedList"/> which
+implements <link id="TOrderedList.Push">Push</link> and 
+<link id="TOrderedList.Pop">Pop</link> behaviour as a stack: what is 
+last pushed on the stack, is popped of first (LIFO: Last in, first out).
+</p>
+<p>
+<var>TStack</var> offers no new methods, it merely implements some abstract
+methods introduced by <link id="TOrderedList"/>
+</p>
+</descr>
+<seealso>
+<link id="TOrderedList"/>
+<link id="TObjectStack"/>
+<link id="TQueue"/>
+</seealso>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TObjectStack">
+<short>Object instances stack</short>
+<descr>
+<p>
+<var>TObjectStack</var> is a stack implementation which manages pointers
+only.
+</p>
+<p>
+<var>TObjectStack</var> introduces no new behaviour, it simply overrides
+some methods to accept and/or return <var>TObject</var> instances instead of
+pointers.
+</p>
+</descr>
+<seealso>
+<link id="TOrderedList"/>
+<link id="TStack"/>
+<link id="TQueue"/>
+<link id="TObjectQueue"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectStack.Push">
+<short>Push an object on the stack.</short>
+<descr>
+<var>Push</var> pushes another object on the stack. It overrides the
+<var>Push</var> method as implemented in <var>TStack</var> so it accepts
+only objects as arguments.
+</descr>
+<errors>
+If not enough memory is available to expand the stack, an exception may be
+raised.
+</errors>
+<seealso>
+<link id="TObjectStack.Pop"/>
+<link id="TObjectStack.Peek"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectStack.Push.Result">
+<short>The element pushed on the stack.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectStack.Push.AObject">
+<short>The object instance to push on the stack.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectStack.Pop">
+<short>Pop the top object of the stack.</short>
+<descr>
+<var>Pop</var> pops the top object of the stack, and returns the object
+instance. If there are no more objects on the stack, <var>Nil</var> is
+returned.
+</descr>
+<errors>
+None
+</errors>
+<seealso>
+<link id="TObjectStack.Push"/>
+<link id="TObjectStack.Peek"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectStack.Pop.Result">
+<short>The top object on the stack, or <var>Nil</var> if the stack is empty.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectStack.Peek">
+<short>Look at the top object in the stack.</short>
+<descr>
+<var>Peek</var> returns the top object of the stack, without removing it
+from the stack. If there are no more objects on the stack, <var>Nil</var> is
+returned.
+</descr>
+<errors>
+None
+</errors>
+<seealso>
+<link id="TObjectStack.Push"/>
+<link id="TObjectStack.Pop"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectStack.Peek.Result">
+<short>The top object on the stack, or <var>Nil</var> if the stack is empty.</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TQueue">
+<short>Pointer queue</short>
+<descr>
+<p>
+<var>TQueue</var> is a descendent of <link id="TOrderedList"/> which
+implements <link id="TOrderedList.Push">Push</link> and 
+<link id="TOrderedList.Pop">Pop</link> behaviour as a queue: what is 
+first pushed on the queue, is popped of first (FIFO: First in, first out).
+</p>
+<p>
+<var>TQueue</var> offers no new methods, it merely implements some abstract
+methods introduced by <link id="TOrderedList"/>
+</p>
+</descr>
+<seealso>
+<link id="TOrderedList"/>
+<link id="TObjectQueue"/>
+<link id="TStack"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectQueue.Push">
+<short>Push an object on the queue</short>
+<descr>
+<var>Push</var> pushes another object on the queue. It overrides the
+<var>Push</var> method as implemented in <var>TQueue</var> so it accepts
+only objects as arguments.
+</descr>
+<errors>
+If not enough memory is available to expand the queue, an exception may be
+raised.
+</errors>
+<seealso>
+<link id="TObjectQueue.Pop"/>
+<link id="TObjectQueue.Peek"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectQueue.Push.Result">
+<short>The element just pushed on the queue</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectQueue.Push.AObject">
+<short>Object to push on the queue</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectQueue.Pop">
+<short>Pop the first element off the queue</short>
+<descr>
+<var>Pop</var> removes the first element in the queue, and returns a
+reference to the instance. If the queue is empty, <var>Nil</var> is
+returned.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TObjectQueue.Push"/>
+<link id="TObjectQueue.Peek"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectQueue.Pop.Result">
+<short>The first element in the queue, or <var>Nil</var> if the queue is empty</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectQueue.Peek">
+<short>Look at the first object in the queue.</short>
+<descr>
+<var>Peek</var> returns the first object in the queue, without removing it
+from the queue. If there are no more objects in the queue, <var>Nil</var> is
+returned.
+</descr>
+<errors>
+None
+</errors>
+<seealso>
+<link id="TObjectQueue.Push"/>
+<link id="TObjectQueue.Pop"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectQueue.Peek.Result">
+<short>The first element in the queue, or <var>Nil</var> if the queue is empty</short>
+</element>
+
+</module> <!-- contnrs -->
+</package>
+</fpdoc-descriptions>

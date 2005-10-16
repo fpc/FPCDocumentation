@@ -1593,6 +1593,7 @@ FCLOPTS+= --descr=pipes.xml --input="$(FCLINC)/pipes.pp"
 FCLOPTS+= --descr=streamio.xml --input="$(FCLINC)/streamio.pp" 
 FCLOPTS+= --descr=process.xml --input="$(FCLINC)/process.pp" 
 FCLOPTS+= --descr=dbugintf.xml --input="$(FCLINC)/dbugintf.pp" 
+FCLOPTS+= --descr=contnrs.xml --input="$(FCLINC)/contnrs.pp"
 RTLOPTS=$(FPDOCOPTS) --hide-protected --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifndef CURRENTXMLONLY
 RTLUNITS=sysutils strutils dateutils strings mouse keyboard \
