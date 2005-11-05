@@ -1,0 +1,291 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CGI.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{CGI programming in Free Pascal}
+\label{ch:CGIProgramming}
+
+In these days of heavy WWW traffic on the Internet, CGI scripts have become
+an important topic in computer programming. While CGI programming can be
+done with almost any tool you wish, most languages aren't designed for it.
+Perl may be a notable exception, but perl is an interpreted language, the
+executable is quite big, and hence puts a big load on the server machine.
+
+Because of its simple, almost intuitive, string handling and its easy syntax,
+Pascal is very well suited for CGI programming. Pascal allows you to quickly
+produce some results, while giving you all the tools you need for more
+complex programming. The basic RTL routines in principle are enough to get
+the job done, but you can create, with relatively little effort, some units
+which can be used as a base for more complex CGI programming.
+
+That's why, in this chapter, we will discuss the basics of CGI in \fpc.
+In the subsequent, we will assume that the server for which the programs are
+created, are based upon the NCSA \var{httpd} WWW server, as the examples
+will be based upon the NCSA method of CGI programming\footnote{... and its
+the only WWW-server I have to my disposition at the moment.}.
+They have been tested with the \file{apache} server on \linux, and
+the \file{xitami} server on \windowsnt.
+
+The two example programs in this chapter have been tested on the command line
+and worked, under the condition that no spaces were present in the name and
+value pairs provided to them.
+
+There is however, a faster and generally better \file{uncgi} unit available,
+you can find it on the contributed units page of the \fpc web site. It uses
+techniques discussed here, but in a generally more efficient way, and it
+also provides some extra functionality, not discussed here.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Getting your data
+\section{Getting your data}
+Your CGI program must react on data the user has filled in on the form which
+your web-server gave him. The Web server takes the response on the form, and
+feeds it to the CGI script.
+
+There are essentially two ways of feeding the data to the CGI script. We will
+discuss both.
+
+%
+%
+
+% Data coming through standard input.
+\subsection{Data coming through standard input.}
+The first method of getting your data is through standard input. This method
+is invoked when the form uses a form submission method of \var{POST}.
+The web browser sets three environment variables \var{REQUEST\_METHOD},
+\var{CONTENT\_TYPE} and \var{CONTENT\_LENGTH}. It feeds then the results of
+the different fields through standard input to the CGI script.
+All the Pascal program has to do is :
+\begin{itemize}
+\item Check the value of the \var{REQUEST\_METHOD} environment variable. The
+\var{getenv} function will retrieve this value this for you.
+\item Check the value of the \var{CONTENT\_TYPE} environment variable.
+\item Read \var{CONTENT\_LENGTH} characters from standard input. \var{read
+(c)} with \var{c} of type \var{char} will take care of that.
+\end{itemize}
+if you know that the request method will always be \var{POST}, and the
+\var{CONTENT\_TYPE} will be correct, then you can skip the first two steps.
+The third step can be done easier: read characters until you reach the
+end-of-file marker of standard input.
+
+The following example shows how this can be achieved:
+\begin{verbatim}
+program cgi_post;
+
+uses dos;
+
+const max_data = 1000;
+
+type datarec = record
+  name,value : string;
+  end;
+
+var data : array[1..max_data] of datarec;
+    i,nrdata : longint;
+    c  : char;
+    literal,aname : boolean;
+
+begin
+writeln ('Content-type: text/html');
+writeln;
+if getenv('REQUEST_METHOD')<>'POST' then
+   begin
+   writeln ('This script should be referenced with a METHOD of POST');
+   write ('If you don''t understand this, see this ');
+   write ('< A HREF="http://www.ncsa.uiuc.edu/SDG/Softare/Mosaic');
+   writeln ('/Docs/fill-out-forms/overview.html">forms overview</A>.');
+   halt(1);
+   end;
+if getenv('CONTENT_TYPE')<>'application/x-www-form-urlencoded' then
+   begin
+   writeln ('This script can only be used to decode form results');
+   halt(1)
+   end;
+nrdata:=1;
+aname:=true;
+while not eof(input) do
+  begin
+  literal:=false;
+  read(c);
+  if c='\' then
+     begin
+     literal:=true;
+     read(c);
+     end;
+  if literal or ((c<>'=') and (c<>'&')) then
+     with data[nrdata] do
+        if aname then name:=name+c else value:=value+c
+  else
+     begin
+     if c='&' then
+         begin
+         inc (nrdata);
+         aname:=true;
+         end
+      else
+         aname:=false;
+      end
+  end;
+writeln ('<H1>Form Results :</H1>');
+writeln ('You submitted the following name/value pairs :');
+writeln ('<UL>');
+for i:=1 to nrdata do writeln ('<LI> ',data[i].name,' = ',data[i].value);
+writeln ('</UL>');
+end.
+\end{verbatim}
+While this program isn't shorter than the C program provided as an example
+at NCSA, it doesn't need any other units. everythig is done using standard
+Pascal procedures\footnote{actually, this program will give faulty results,
+since spaces in the input are converted to plus signs by the web browser.
+The program doesn't check for this, but that is easy to change.
+The main concern here is to give the working principle.}.
+
+Note that this program has a limitation: the length of names and values is
+limited to 255 characters. This is due to the fact that strings in Pascal
+have a maximal length of 255. It is of course easy to redefine the
+\var{datarec} record in such a way that longer values are allowed.
+In case you have to read the contents of a \var{TEXTAREA} form element,
+this may be needed.
+
+
+% Data passed through an environment variable
+\subsection{Data passed through an environment variable}
+If your form uses the \var{GET} method of passing its data, the CGI script
+needs to read the \var{QUERY\_STRING} environment variable to get its data.
+Since this variable can, and probably will, be more than 255 characters long,
+you will not be able to use normal string methods, present in pascal. \fpc
+implements the \var{pchar} type, which is a pointer to a null-terminated
+array of characters.
+And, fortunately, \fpc has a
+\seestrings\  unit, which eases the use of the
+\var{pchar} type.
+
+
+The following example illustrates what to do in case of a method of \var{GET}
+\begin{verbatim}
+program cgi_get;
+
+uses strings,linux;
+
+const max_data = 1000;
+
+type datarec = record
+  name,value : string;
+  end;
+
+var data : array[1..max_data] of datarec;
+    i,nrdata : longint;
+    p  : PChar;
+    literal,aname : boolean;
+
+begin
+Writeln ('Content-type: text/html');
+Writeln;
+if StrComp(GetEnv('REQUEST_METHOD'),'POST')<>0 then
+   begin
+   Writeln ('This script should be referenced with a METHOD of GET');
+   write ('If you don''t understand this, see this ');
+   write ('< A HREF="http://www.ncsa.uiuc.edu/SDG/Softare/Mosaic');
+   Writeln ('/Docs/fill-out-forms/overview.html">forms overview</A>.');
+   halt(1);
+   end;
+p:=GetEnv('QUERY_STRING');
+nrdata:=1;
+aname:=true;
+while p^<>#0  do
+  begin
+  literal:=false;
+  if p^='\' then
+     begin
+     literal:=true;
+     inc(longint(p));
+     end;
+  if ((p^<>'=') and (p^<>'&')) or literal then
+     with data[nrdata] do
+        if aname then name:=name+p^ else value:=value+p^
+  else
+     begin
+     if p^='&' then
+         begin
+         inc (nrdata);
+         aname:=true;
+         end
+      else
+         aname:=false;
+      end;
+  inc(longint(p));
+  end;
+Writeln ('<H1>Form Results :</H1>');
+Writeln ('You submitted the following name/value pairs :');
+Writeln ('<UL>');
+for i:=1 to nrdata do writeln ('<LI> ',data[i].name,' = ',data[i].value);
+Writeln ('</UL>');
+end.
+\end{verbatim}
+Although it may not be written in the most elegant way, this program does
+the same thing as the previous one. It also suffers from the same drawback,
+namely the limited length of the \var{value} field of the \var{datarec}.
+
+This drawback can be remedied by redefining \var{datarec} as follows:
+\begin{verbatim}
+type datarec = record;
+      name,value : pchar;
+     end;
+\end{verbatim}
+and assigning at run time enough space to keep the contents of the value
+field. This can be done with a
+\begin{verbatim}
+ getmem (data[nrdata].value,needed_number_of_bytes);
+\end{verbatim}
+call. After that you can do a
+\begin{verbatim}
+strlcopy (data[nrdata].value,p,needed_number_of_bytes);
+\end{verbatim}
+to copy the data into place.
+
+You may have noticed the following unorthodox call :
+\begin{verbatim}
+inc(longint(p));
+\end{verbatim}
+\fpc doesn't give you pointer arithmetic as in C. However, \var{longints} and
+\var{pointers} have the same length (namely 4 bytes). Doing a type-cast to a
+\var{longint} allows you to do arithmetic on the \var{pointer}.
+
+Note however, that this is a non-portable call. This may work on the I386
+processor, but not on a ALPHA processor (where a pointer is 8 bytes long).
+This will be remedied in future releases of \fpc.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Producing output
+\section{Producing output}
+The previous section concentrated mostly on getting input from the web
+server. To send the reply to the server, you don't need to do anything
+special.You just print your data on standard output, and the Web-server will
+intercept this, and send your output to the WWW-client waiting for it.
+
+You can print anything you want, the only thing you must take care of is
+that you supply a \var{Contents-type} line, followed by an empty line, as
+follows:
+\begin{verbatim}
+Writeln ('Content-type: text/html');
+Writeln;
+{ ...start output of the form... }
+
+\end{verbatim}
+
+And that's all there is to it !
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% I'm under Windows, what now ?
+\section{I'm under Windows, what now ?}
+Under Windows the system of writing CGI scripts can be totally different.
+If you use \fpc under Windows then you also should be able to do CGI
+programming, but the above instructions may not work. They are known to work
+for the \file{xitami} server, however.
+
+If some kind soul is willing to write a section on CGI programming under
+Windows for other servers, I'd be willing to include it here.
+\appendix
+

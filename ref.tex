@@ -253,6 +253,7 @@ packed
 procedure
 program
 record
+reintroduce
 repeat
 self
 set
@@ -793,10 +794,15 @@ Single & 1.5E-45 .. 3.4E38 & 7-8 & 4 \\
 Double & 5.0E-324 .. 1.7E308 & 15-16 & 8 \\
 Extended & 1.9E-4951 .. 1.1E4932 & 19-20 & 10\\
 Comp & -2E64+1 .. 2E63-1 & 19-20 & 8  \\
+Currency & -922337203685477.5808 & 922337203685477.5807 & 8 \\
 \end{FPCltable}
 The \var{Comp} type is, in effect, a 64-bit integer and is not available
 on all target platforms. To get more information on the supported types
 for each platform, refer to the \progref.
+
+The currency type is a fixed-point real data type which is internally used
+as an 64-bit integer type (automatically scaled with a factor 10000), this 
+minimalizes rounding errors.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Character types
@@ -2130,10 +2136,11 @@ Contrary to TP and Delphi, fields can be declared after methods in the same
 block, i.e. the following will generate an error when compiling with Delphi
 or Turbo Pascal, but not with FPC:
 \begin{verbatim}
-Type MyObj = Object
-       Procedure Doit;
-       Field : Longint;
-     end;
+Type 
+  MyObj = Object
+    Procedure Doit;
+    Field : Longint;
+  end;
 \end{verbatim}
 
 \begin{remark}
@@ -2589,14 +2596,27 @@ produce strange effects.
 
 The correct declaration is as follows:
 \begin{verbatim}
-Type ObjParent = Class
-        Procedure MyProc; virtual;
-     end;
-     ObjChild  = Class(ObjPArent)
-       Procedure MyProc; override;
-     end;
+Type 
+  ObjParent = Class
+    Procedure MyProc; virtual;
+  end;
+  ObjChild  = Class(ObjPArent)
+    Procedure MyProc; override;
+  end;
 \end{verbatim}
 This will compile and run without warnings or errors.
+
+If the virtual method should really be replaced with a method with the same name, then the \var{reintroduce} keyword can be used:
+\begin{verbatim}
+Type 
+  ObjParent = Class
+    Procedure MyProc; virtual;
+  end;
+  ObjChild  = Class(ObjPArent)
+    Procedure MyProc; reintroduce;
+  end;
+\end{verbatim}
+This new method is no longer virtual.
 
 \subsection{Class methods}
 Class methods are methods that do not have an instance, but which follow

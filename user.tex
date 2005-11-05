@@ -90,7 +90,7 @@ it supports the following operating systems:
 \end{itemize}
 
 \fpc is designed to be, as much as possible, source compatible with
-Turbo Pascal 7.0 and Delphi 5 (although this goal is not yet attained),
+Turbo Pascal 7.0 and Delphi 7 (although this goal is not yet attained),
 but it also enhances these languages with elements like operator overloading.
 And, unlike these ancestors, it supports multiple platforms.
 
@@ -100,10 +100,14 @@ from one system for the other, i.e. you cannot use TP compiled units.
 Also, at the time of writing, there is a beta version of an
 Integrated Development Environment (IDE) available for \fpc.
 
-\fpc consists of three parts :
+\fpc consists of several parts :
 \begin{enumerate}
 \item The compiler program itself.
 \item The Run-Time Library (RTL).
+\item The packages. This is a collection of many utility units, ranging from
+the whole Windows 32 API, through native ZIP/BZIP file handling to the whole GTK-2 interface.
+\item The Free Class Library. This is a set of class-based utility units which give
+a database framework, image support, web support, XML support and many many more.
 \item Utility programs and units.
 \end{enumerate}
 
@@ -153,14 +157,29 @@ Let's get on with something useful.
 %
 % System requirements
 %
-\subsection{System requirements}
-The compiler needs at least the following hardware:
+\subsection{Hardware requirements}
+The compiler needs at least one of the following processors:
 \begin{enumerate}
-\item An Intel 80386 or higher processor (for the intel version). A coprocessor 
+\item An Intel 80386 or higher processor. A coprocessor 
 is not required, although it will slow down your program's performance if you do 
 floating point calculations without a coprocessor, since emulation will be used.
-\item 32 Megabytes of free memory. 
-\item At least 8 Megabytes free disk space.
+\item An AMD64 or EMT64 processor. 
+\item A PowerPC processor. 
+\item A SPARC processor
+\item A Intel ARM processor.
+\item Older FPC versions exist for the motorola 68000 processor, 
+but these are no longer maintained.
+\end{enumerate}
+
+
+Memory and disk requirements:
+\begin{enumerate}
+\item 8 Megabytes of free memory. This is for compiling small programs. 
+\item Large programs such as the compiler will require at least 64 Mb. 
+of memory, but 128Mb is recommended. 
+(note that the programs themselves do not need so much memory)
+\item At least 80 Megabytes free disk space. 
+When the sources are installed, another 270 Megabytes are needed.
 \end{enumerate}
 
 % Software requirements
@@ -192,6 +211,10 @@ idea to install the EMX extender in order to compile and run
 programs with the Free Pascal compiler. The EMX extender can be found on:\\
 \var{http://www.leo.org/pub/comp/os/os2/leo/gnu/emx+gcc/index.html}
 
+\subsubsection{Under Mac OS X}
+Mac OS X 10.1 or higher is required, and the developer tools or XCode 
+should be installed.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Installing the compiler.
 \section{Installing the compiler.}
@@ -199,17 +222,21 @@ The installation of \fpc is easy, but is platform-dependent.
 We discuss the process for each platform separately.
 
 % Installing under DOS
-\subsection{Installing under DOS or Windows}
+\subsection{Installing under DOS, Windows or OS/2}
 \subsubsection{Mandatory installation steps.}
 First, you must get the latest distribution files of \fpc. They come as zip
 files, which you must unzip first, or you can download the compiler as a
 series of separate files. This is especially useful if you have a slow
 connection, but it is also nice if you want to install only some parts of the
-compiler distribution.  The distribution zip file contains an
+compiler distribution.  The distribution zip files for DOS or OS/2 contain an
 installation program \file{INSTALL.EXE}. You must run this program to install
 the compiler.
 
-The screen of the installation program looks like figure \ref{fig:install1}.
+For Windows, there is a Windows installer, \file{setup.exe}, this is a normal 
+windows installation program, which offers the usual options.
+
+The screen of the DOS or OS/2 installation program looks like figure 
+\ref{fig:install1}.
 
 \FPCpic{The \dos install program screen}{}{install1}
 \FPCpic{}{}{install2}
@@ -275,15 +302,12 @@ The \linux distribution of \fpc comes in three forms:
 \item a \file{.rpm} (Red Hat Package Manager) version, and
 \item a \file{.deb} (Debian) version.
 \end{itemize}
-All of these packages contain a \var{ELF} version of the compiler binaries and
-units. the older \var{aout} binaries are no longer distributed, although you
-still can use the comiler on an \var{aout} system if you recompile it.
 
 If you use the \file{.rpm} format, installation is limited to
 \begin{verbatim}
-rpm -i fpc-pascal-XXX.rpm
+rpm -i fpc-X.Y.Z-N.ARCH.rpm
 \end{verbatim}
-(\var{XXX} is the version number of the \file{.rpm} file)
+Where \var{X.Y.Z} is the version number of the \file{.rpm} file, and \var{ARCH} is one of the supported architectures (i586, x86\_64 etc.).
 
 If you use Debian, installation is limited to
 \begin{verbatim}
@@ -897,6 +921,7 @@ You can still pass a configuration file with the \var{@} option.
 \item \var{w} : Tells the compiler to issue warnings.
 \item \var{n} : Tells the compiler to issue notes.
 \item \var{h} : Tells the compiler to issue hints.
+\item \var{i} : Tells the compiler to issue informational messages.
 \item \var{l} : Tells the compiler to show the line numbers as it processes a
 file. Numbers are shown per 100.
 \item \var{u} : Tells the compiler to print information on the units it loads.
@@ -908,8 +933,6 @@ functions as it is processing them.
 conditional.
 \item \var{m} : Tells the compiler to write which macros are defined.
 \item \var{d} : Tells the compiler to write other debugging info.
-\item \var{a} : Tells the compiler to write all possible info. (this is the
-same as specifying all options)
 \item \var{0} : Tells the compiler to write no messages. This is useful when
 you want to override the default setting in the configuration file.
 \item \var{b} : Tells the compiler to show all procedure declarations if an
@@ -918,9 +941,14 @@ overloaded function error occurs.
 platform only).
 \item \var{r} : Rhide/GCC compatibility mode: formats the errors
 differently, so they are understood by RHIDE.
-\end{itemize}
-\item[V] write a file \file{fpcdebug.txt} with lots of debugging info.
+\item \var{a} : Tells the compiler to write all possible info. (this is the
+same as specifying all options)
+%\item \var{b} : Tells the compiler to write filenames using the full path.
+\item \var{v} write a file \file{fpcdebug.txt} with lots of debugging info.
 Mainly for the compiler developers.
+\item \var{p} write a file \file{tree.log} with the parse tree.
+Mainly for the compiler developers.
+\end{itemize}
 \end{description}
 
 %
@@ -1004,6 +1032,8 @@ temporary allocations and deallocations in the assembler file.
 \item[as] assemble using \gnu as.
 \item[nasmcoff] coff (Go32v2) file using Nasm.
 \item[nasmelf] elf32 (Linux) file using Nasm.
+\item[nasmwin32] Windows 32-bit file using Nasm.
+\item[nasmwdosx] Windows 32-bit/DOSX file using Nasm.
 \item[nasmobj] object file using Nasm.
 \item[masm] object file using Masm (Microsoft).
 \item[tasm] object file using Tasm (Borland).
@@ -1032,7 +1062,7 @@ exit with a run-time error. Which error is generated depends on the I/O error.
 \item [-Cn] \olabel{Cn} Omit the linking stage.
 \item [-Co] \olabel{Co} Generate Integer overflow checking code. In case of
 integer errors, a run-time error will be generated by your program.
-%\item [-CpXXX] set the processor type to XXX
+\item [-CpXXX] set the processor type to XXX
 \item [-Cr] \olabel{Cr} Generate Range checking code. In case your program
 acesses an array element with an invalid index, or if it increases an
 enumerated type beyond it's scope, a run-time error will be generated.
@@ -1068,6 +1098,7 @@ name/line number information if the program exits due to an error.)
 \item[-Oxxx] \olabel{O} optimize the compiler's output; \var{xxx} can have one
 of the following values :
 \begin{description}
+\item[a] specify alignment of structures.
 \item[g] optimize for size, try to generate smaller code.
 \item[G] optimize for time, try to generate faster code (default).
 \item[r] keep certain variables in registers (experimental, use with
@@ -1112,11 +1143,13 @@ the following:
 \item \textbf{netbsd} : NetBSD.
 \item \textbf{netware} : Novell Netware Module (clib)
 \item \textbf{netwlibc} : Novell Netware Module (libc)
+\item \textbf{openbsd} : OpenBSD.
 \item \textbf{os2} : OS/2 (2.x) using the \var{EMX} extender.
 \item \textbf{sunos} : SunOS/Solaris.
 \item \textbf{watcom} : watcom compatible DOS extender
 \item \textbf{wdosx} : WDOSX extender.
 \item \textbf{win32} : \windows 32 bit.
+\item \textbf{wince} : \windows for handhelds (ARM processor) bit.
 \end{itemize}
 \item [-uxxx] \olabel{u} Undefine the symbol \var{xxx}. This is the opposite
 of the \var{-d} option.
@@ -1146,7 +1179,9 @@ can be one of the following:
 cross-compilation, to avoid linking with the host platform's libraries.
 \item \textbf{D} : Link with dynamic libraries (defines the
 \var{FPC\_LINK\_DYNAMIC} symbol) \olabel{XD}
-\item \textbf{pXXX} : Prepend binutils names with  \var{XXX} for cross-compiling.
+\item \textbf{MXXX} : Set the name of the program entry routine 
+The default is 'main'.
+\item \textbf{PXXX} : Prepend binutils names with  \var{XXX} for cross-compiling.
 \item \textbf{rXXX} : set library path to \var{XXX}.
 \item \textbf{s} : Strip the symbols from the executable. \olabel{Xs}
 \item \textbf{S} : Link with static units (defines the \var{FPC\_LINK\_STATIC} symbol)
@@ -1202,7 +1237,7 @@ this option will cause assert statements to be ignored.
 the compiler tries to continue compiling after an error, until 50 errors are
 reached, or a fatal error is reached, and then it stops. With this switch,
 the compiler will stop after the N-th error (if N is omitted, a default of 1
-is assumed).
+is assumed). Instead of a number, one of \var{n}, \var{h} or \var{w} can also be specified, in that case the compiler will consider notes, hints or warnings as errors and stop when one is encountered.
 \item [-Sg] \olabel{Sg} Support the \var{label} and \var{goto} commands. By
 default these are not supported. You must also specify this option if you
 use labels in assembler statements. (if you use the \var{AT\&T} style
@@ -1459,10 +1494,12 @@ undesired effects.
 % Porting.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Porting Turbo Pascal Code}
+\chapter{Porting and Portable code }
 
-\fpc was designed to resemble Turbo Pascal as closely as possible. There
-are, of course, restrictions. Some of these are due to the fact that \fpc is
+
+\section{Turbo Pascal}
+\fpc was originally designed to resemble Turbo Pascal as closely as possible. 
+There are, of course, restrictions. Some of these are due to the fact that \fpc is
 a 32-bit compiler. Other restrictions result from the fact that \fpc works
 on more than one operating system.
 
@@ -1472,14 +1509,13 @@ Pascal, you will have no problems porting from Turbo Pascal, or even Delphi, to
 supported. This is even more so if you use the \var{-So} or \var{-S2}
 switches.
 
-In the following sections we will list the Turbo Pascal constructs which are
-not supported in \fpc, and we will list in what ways \fpc extends the Turbo
-Pascal language.
-
+In the following sections we will list the Turbo Pascal and Delphi 
+constructs which are not supported in \fpc, and we will list in what
+ways \fpc extends the Turbo Pascal.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Things that will not work
-\section{Things that will not work}
+\subsection{Things that will not work}
 
 Here we give a list of things which are defined/allowed in Turbo Pascal, but
 which are not supported by \fpc. Where possible, we indicate the reason.
@@ -1501,17 +1537,11 @@ you want to compile Turbo Pascal code that uses these words.
 \item The reserved words \var{FAR, NEAR} are ignored. This is
 because \fpc is a 32 bit compiler, so they're obsolete.
 \item \var{INTERRUPT} will work only on the \dos target.
-\item Boolean expressions are only evaluated until their result is completely
-determined. The rest of the expression will be ignored. This is
-configurable as of FPC 1.9.
 \item By default the compiler uses  \var{AT\&T} assembler syntax.
 This is mainly because \fpc uses \gnu \var{as}. However, other assembler
 forms are available. For more information, see \progref.
-\item Turbo Vision is not completely available. There is FreeVision, but the
-degree of compatibility with Turbo Vision is unclear at this
-time\footnote{At the time of writing, FreeVision has been taken off the
-net, because there are some copyright issues which make it impossible to
-distribute it.}.
+\item Turbo Vision is available under the name of FreeVision, which should
+be almost 100\% compatible with Turbo Vision.
 \item The 'overlay' unit is not available. It also isn't necessary, since
 \fpc is a 32 bit compiler, so program size shouldn't be a point.
 \item There are more reserved words. (see appendix \ref{ch:reserved} for a
@@ -1539,7 +1569,7 @@ it is not guaranteed that \var{g(2)} will be evaluated before \var{f(3)}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Things which are extra
-\section{Things which are extra}
+\subsection{Things which are extra}
 Here we give a list of things which are possible in \fpc, but which
 didn't exist in Turbo Pascal or Delphi.
 \begin{enumerate}
@@ -1634,7 +1664,7 @@ define e.g. the '+' operator for matrices.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Turbo Pascal compatibility mode
-\section{Turbo Pascal compatibility mode}
+\subsection{Turbo Pascal compatibility mode}
 When you compile a program with the \var{-So} switch, the compiler will
 attempt to mimic the Turbo Pascal compiler in the following ways:
 \begin{itemize}
@@ -1705,7 +1735,7 @@ begin
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % A note about long file names.
-\section{A note on long file names under \dos}
+\subsection{A note on long file names under \dos}
 Under \windows 95 and higher, long filenames are supported. Compiling
 for the win32 target ensures that long filenames are supported in all
 functions that do file or disk access in any way.
@@ -1723,6 +1753,145 @@ It is possible to disable the long filename support by setting the
 \var{LFNSupport} variable to \var{False}; but in general it is recommended
 to compile programs that need long filenames as native Win32 applications;
 
+\section{Porting Delphi Code}
+
+Porting Delphi code should be quite painless. The \var{Delphi} mode of the 
+compiler tries to mimic Delphi as closely as possible. 
+This mode can be enabled using the \var{-Mdelphi} command line switch, 
+or by inserting the following code in the sources before the \var{unit} 
+or \var{program} clause
+\begin{verbatim}
+{$IFDEF FPC}
+{$MODE DELPHI}
+{$ENDIF FPC}
+\end{verbatim}
+This ensures that the code will still compile with both Delphi and FPC.
+
+Nevertheless, there are some things that will not work. 
+Delphi compatibility is relatively complete up to Delphi 7. 
+New constructs in higher versions of Delphi 
+(notably, the versions that work with .NET) are not supported.
+
+\subsection{Missing language constructs}
+At the level of language compatibility, FPC is very compatible with Delphi:
+it can compile most of FreeCLX, the free Widget library that was shipped 
+with Delphi 6,7 and Kylix.
+
+Currently, the only missing language constructs are
+\begin{enumerate}
+\item The \var{Dispinterface} interface.
+\item Delegation of interfaces is not supported.
+\item \var{Dynamic} methods are actually the same as \var{virtual}.
+\item \var{Reintroduce} is not supported.
+\item \var{Const} for a parameter to a procedure does not necessarily 
+mean that the variable or value is passed by reference.
+\item Packages are not supported.
+\end{enumerate}
+
+There are some inline assembler constructs which are not supported, 
+but since \fpc is designed to be platform independent, it is quite 
+unlikely that these constructs will be supported in the future.
+
+Note that the \var{-Mobjfpc} mode switch is to a large degree Delphi 
+compatible, but is more strict than Delphi. The most notable differences
+are:
+\begin{enumerate}
+\item Parameters or local variables of methods cannot have the same 
+names as properties of the class in which they are implemented.
+\item The address operator is needed when assigning procedural variables (or event handlers).
+\item AnsiStrings are not switched on by default.
+\end{enumerate}
+
+\subsection{Missing calls/API incompatibilities}
+Delphi is heavily bound to Windows. Because of this, it has introduces a lot of Windows-isms in the API (e.g. file searching and opening, loading libraries).
+
+\fpc was designed to be portable, so things that are very Windows 
+specific are missing, although the \fpc team tries to minimize this.
+The following are the main points that should be considered:
+
+\begin{itemize}
+\item The \file{Windows} unit provides access to most of the core 
+Win32 API. Some calls may have different parameter lists: instead 
+of declaring a parameter as passed by reference (var), a pointer 
+is used (as in C). For most cases, \fpc provides overloaded versions 
+of such calls.
+\item Widestrings. Widestring management is not automatic in \fpc, since various platforms have different ways of dealing with widestring encodings and Multi-Byte Character Sets. FPC supports Widestrings, but may not use the same encoding as on Windows.
+\item Threads: At this moment, \fpc does not offer native thread 
+management on all platforms; on Unix, linking to the C library is 
+needed to provide thread management in an FPC application. 
+This means that a \file{cthreads} unit must be included to enable 
+threads.
+\item a much-quoted example is the \var{SetLastOSError} call. 
+This is not supported, and will never be supported.
+\item Filename Case sensitivity: Pascal is a case-insensitive language,
+so the uses clause should also be case insensitive. Free Pascal ensures
+case insensitive filenames by first searching for a lowercase version 
+of the file. Kylix does not do this, so this could create problems
+if 2 differently cased versions of the same filename are in the path.
+\item RTTI is NOT stored in the same way as for Delphi. The format is mostly compatible, but may differ. This should not be a problem if the API of the TypeInfo unit 
+is used and no direct access to the RTTI information is attempted.
+\item Sets are of different size than in Delphi
+\end{itemize}
+
+\subsection{Best practices for porting}
+
+When encountering differences in Delphi/FPC calls, the best thing to 
+do is not to insert IFDEF statements whenever a difference is 
+encountered, but to create a separate unit which is only used 
+when compiling with FPC. The missing/incompatible calls can 
+then be implemented in that unit. This will keep the code more 
+readable and easier to maintain.
+
+If a language construct difference is found, then the \fpc team 
+should be contacted and a bug should be reported.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% writing portable code
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Writing portable code}
+
+\fpc is designed to be cross-platform. This means that the basic RTL 
+units are usable on all platforms, and the compiler behaves the same 
+on all platforms (as far as possible).  The Object Pascal 
+langauge is the same on all platforms. Nevertheless, FPC comes with a
+lot of units that are not portable, but provide access to all 
+possibilities that a platform provides.
+
+The following are some guidelines to consider when writing portable code:
+\begin{itemize}
+\item Avoid system-specific units. The system unit, the objects and 
+classes units and the SysUtils unit are guaranteed to work on all 
+systems. So is the DOS unit, but that is deprecated. 
+\item Avoid direct hardware access. Limited, console-like Hardware 
+access is available for most platforms in the Video, Mouse and  
+Keyboard units.
+\item Do not use hard-coded filename conventions. 
+See below for more information on this.
+\item If system-specific functionality is needed, it is best to 
+separate this out in a single unit. Porting efforts will then be 
+limited to re-implementing this unit for the new platform.
+\end{itemize}
+
+The system unit contains some constants which describe file access on a system:
+\begin{description}
+\item[LineEnding] A character or string which describes the end-of-line marker used on the current platform. Commonly, this is one of \#10, \#13\#10 or \#13.
+\item[LFNSupport] A boolean that indicates whether the system supports long filenames
+(i.e. is not limited to MS-DOS 8.3 filenames).
+\item[DirectorySeparator] is the character which acts as a separator between directory parts of a path.
+\item[DriveSeparator] for systems that supports driveletters, this is the character that
+is used to separate the drive indication from the path..
+\item[PathSeparator] the character used to separate items in a list (notably, a PATH).
+\item[maxExitCode] The maximum value for a process exitcode.
+\item[MaxPathLen] The maximum length of a filename, including a path.
+\item[FileNameCaseSensitive] a boolean that indicates whether filenames are handled case sensitively.
+\item[UnusedHandle] a value used to indicate an unused/invalid file handle.
+\item[StdInputHandle] the value of the standard input file handle. This is not always zero, as is commonly the case on Unices.
+\item[StdOutputHandle] the value of the standard input file handle. This is not always 1, as is commonly the case on Unices.
+\item[StdErrorHandle] the value of the standard input file handle. This is not always 2, as is commonly the case on Unices.
+\item[CtrlZMarksEOF] a boolean that indicates whether the \#26 character marks the end of a file.
+(an old MS-DOS convention)
+\end{description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Utilities.
@@ -2337,6 +2506,9 @@ all supported platforms by \fpc. A brief description of each unit
 is also given.
 
 \begin{description}
+\item[charset] a unit to provide mapping of character sets.
+\item[cmem] Using this unit replaces the Free Pascal memory manager with the 
+memory manager of the C library.
 \item[crt] This unit is similar to the unit of the same name of
 Turbo Pascal. It implements writing to the console in color,  moving the 
 text cursor around and reading from the keyboard.
@@ -2345,16 +2517,21 @@ system. This includes file searching, environment variables access,
 getting the operating system version, getting and setting the
 system time. It is to note that some of these routines are duplicated
 in functionality in the \var{sysutils} unit.
+\item[dynlibs] provides cross-platform access to loading dynamical libraries.
+\item[errors] returns 
 \item[getopts] This unit gives you the \gnu \var{getopts} command-line
 arguments  handling mechanism. It also supports long options.
-\item[graph] This unit provides basic graphics handling, with routines to
+\item[graph] \emph{This unit is deprecated}. This unit provides basic graphics handling, with routines to
 draw lines on the screen, display texts etc. It provides the same functions
-as the Turbo Pascal unit.
+as the Turbo Pascal unit. 
+\item[heaptrc] a unit which debugs the heap usage. When the program exits, it outputs a summary of the used memory, and dumps a summary of unreleased memory blocks (if any).
 \item[keyboard] provides basic keyboard handling routines in a platform independent way,
 and supports writing custom drivers.
+\item[macpas] this unit implements several functions available only in macpas mode. This units hould not be included, it's automatically included when the MACPAS mode is used.
 \item[math] This unit contains common mathematical routines (trigonometric
 functions, logarithms, etc.) as well as more complex ones (summations of arrays,
 normalization functions, etc.).
+\item[matrix] a unit providing matrix manipulation routines.
 \item[mmx] This unit provides support for \var{mmx} extensions in your
 code. 
 \item[mouse] provides basic mouse handling routines in a platform independent way,
@@ -2371,16 +2548,19 @@ programming.
 \item[strings] This unit provides basic string handling routines for the
 \var{pchar} type, comparable to similar routines in standard \var{C}
 libraries.
-\item[system] This unit is available for all supported platforms, even
-though the unit name may be different (e.g : syslinux, sysos2). It includes
+\item[system] This unit is available for all supported platforms. It includes
 among others, basic file I/O routines, memory management routines, all compiler 
 helper routines, and directory services routines. 
+\item[strutils] offers a lot of extended string handling routines. 
+\item[dateutils] offers a lot of extended date/time handling routines for 
+almost any date and time math. 
 \item[sysutils] is an alternative implementation of the sysutils unit of
 Delphi. It includes file I/O access routines which takes care of file
 locking, date and string handling routines, file search, date and string 
 conversion routines.
 \item[typinfo] Provides functions to acces Run-Time Type Information, just
 like Delphi.
+\item[variants] provides basic variant handling.
 \item[video] provides basic screen handling in a platform independent way,
 and supports writing custom drivers.
 \end{description}
@@ -2414,24 +2594,23 @@ unit, so code for Delphi is easily ported to \fpc.
 %
 % Under Linux
 %
-\section{Under Linux}
+\section{Under Linux and BSD-like platforms}
 \begin{description}
-\item[linux] This unit provides access to the
+\item[baseunix] basic unix operations, basically a subset of the POSIX specification. 
+Using this unit should ensure portability across most unix systems.
+\item[errors] returns a string describing an operating system error code.
+\item[oldlinux]  \emph{This unit is deprecated}. This unit provides access to the
 \linux operating system. It provides most file and I/O handling routines
 that you may need. It implements most of the standard \var{C} library constructs
 that you will find on a Unix system. If you do a lot of disk/file
 operations, the use of this unit is recommended over the one you use under
 Dos.
-\item[graph] Is an implementation of Borlands \file{graph} unit, which
-works on the Linux console. Its implementation is as complete as on
-the other platforms (it shares the same code).
-It uses the libvga and libvgagl graphics libraries, so you need these
-installed for this unit to work. Also, programs using this library need
-to be run as root, or setuid root, and hence are a potential security risk.
 \item[ports] This implements the various \var{port[]} constructs. These are
 provided for compatibility only, and it is not recommended to use them
 extensively. Programs using this construct must be run as ruit or setuid
 root, and are a serious security risk on your system.
+\item[unix] extende unix operations.
+\item[unixtype] all types used commonly on unix platforms.
 \end{description}
 
 \section{Under OS/2}
@@ -2450,7 +2629,6 @@ root, and are a serious security risk on your system.
 
 Standard unit availability for each of the supported platforms 
 is given in the FAQ / Knowledge base. 
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Debugging
@@ -2771,297 +2949,6 @@ Call trace for block 0x00410DA0 size 128
 If lines without filename/line-number occur, this means there is a unit which
 has no debug info included. (in the above case, the getmem call itself)
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% CGI.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\chapter{CGI programming in Free Pascal}
-\label{ch:CGIProgramming}
-
-In these days of heavy WWW traffic on the Internet, CGI scripts have become
-an important topic in computer programming. While CGI programming can be
-done with almost any tool you wish, most languages aren't designed for it.
-Perl may be a notable exception, but perl is an interpreted language, the
-executable is quite big, and hence puts a big load on the server machine.
-
-Because of its simple, almost intuitive, string handling and its easy syntax,
-Pascal is very well suited for CGI programming. Pascal allows you to quickly
-produce some results, while giving you all the tools you need for more
-complex programming. The basic RTL routines in principle are enough to get
-the job done, but you can create, with relatively little effort, some units
-which can be used as a base for more complex CGI programming.
-
-That's why, in this chapter, we will discuss the basics of CGI in \fpc.
-In the subsequent, we will assume that the server for which the programs are
-created, are based upon the NCSA \var{httpd} WWW server, as the examples
-will be based upon the NCSA method of CGI programming\footnote{... and its
-the only WWW-server I have to my disposition at the moment.}.
-They have been tested with the \file{apache} server on \linux, and
-the \file{xitami} server on \windowsnt.
-
-The two example programs in this chapter have been tested on the command line
-and worked, under the condition that no spaces were present in the name and
-value pairs provided to them.
-
-There is however, a faster and generally better \file{uncgi} unit available,
-you can find it on the contributed units page of the \fpc web site. It uses
-techniques discussed here, but in a generally more efficient way, and it
-also provides some extra functionality, not discussed here.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Getting your data
-\section{Getting your data}
-Your CGI program must react on data the user has filled in on the form which
-your web-server gave him. The Web server takes the response on the form, and
-feeds it to the CGI script.
-
-There are essentially two ways of feeding the data to the CGI script. We will
-discuss both.
-
-%
-%
-
-% Data coming through standard input.
-\subsection{Data coming through standard input.}
-The first method of getting your data is through standard input. This method
-is invoked when the form uses a form submission method of \var{POST}.
-The web browser sets three environment variables \var{REQUEST\_METHOD},
-\var{CONTENT\_TYPE} and \var{CONTENT\_LENGTH}. It feeds then the results of
-the different fields through standard input to the CGI script.
-All the Pascal program has to do is :
-\begin{itemize}
-\item Check the value of the \var{REQUEST\_METHOD} environment variable. The
-\var{getenv} function will retrieve this value this for you.
-\item Check the value of the \var{CONTENT\_TYPE} environment variable.
-\item Read \var{CONTENT\_LENGTH} characters from standard input. \var{read
-(c)} with \var{c} of type \var{char} will take care of that.
-\end{itemize}
-if you know that the request method will always be \var{POST}, and the
-\var{CONTENT\_TYPE} will be correct, then you can skip the first two steps.
-The third step can be done easier: read characters until you reach the
-end-of-file marker of standard input.
-
-The following example shows how this can be achieved:
-\begin{verbatim}
-program cgi_post;
-
-uses dos;
-
-const max_data = 1000;
-
-type datarec = record
-  name,value : string;
-  end;
-
-var data : array[1..max_data] of datarec;
-    i,nrdata : longint;
-    c  : char;
-    literal,aname : boolean;
-
-begin
-writeln ('Content-type: text/html');
-writeln;
-if getenv('REQUEST_METHOD')<>'POST' then
-   begin
-   writeln ('This script should be referenced with a METHOD of POST');
-   write ('If you don''t understand this, see this ');
-   write ('< A HREF="http://www.ncsa.uiuc.edu/SDG/Softare/Mosaic');
-   writeln ('/Docs/fill-out-forms/overview.html">forms overview</A>.');
-   halt(1);
-   end;
-if getenv('CONTENT_TYPE')<>'application/x-www-form-urlencoded' then
-   begin
-   writeln ('This script can only be used to decode form results');
-   halt(1)
-   end;
-nrdata:=1;
-aname:=true;
-while not eof(input) do
-  begin
-  literal:=false;
-  read(c);
-  if c='\' then
-     begin
-     literal:=true;
-     read(c);
-     end;
-  if literal or ((c<>'=') and (c<>'&')) then
-     with data[nrdata] do
-        if aname then name:=name+c else value:=value+c
-  else
-     begin
-     if c='&' then
-         begin
-         inc (nrdata);
-         aname:=true;
-         end
-      else
-         aname:=false;
-      end
-  end;
-writeln ('<H1>Form Results :</H1>');
-writeln ('You submitted the following name/value pairs :');
-writeln ('<UL>');
-for i:=1 to nrdata do writeln ('<LI> ',data[i].name,' = ',data[i].value);
-writeln ('</UL>');
-end.
-\end{verbatim}
-While this program isn't shorter than the C program provided as an example
-at NCSA, it doesn't need any other units. everythig is done using standard
-Pascal procedures\footnote{actually, this program will give faulty results,
-since spaces in the input are converted to plus signs by the web browser.
-The program doesn't check for this, but that is easy to change.
-The main concern here is to give the working principle.}.
-
-Note that this program has a limitation: the length of names and values is
-limited to 255 characters. This is due to the fact that strings in Pascal
-have a maximal length of 255. It is of course easy to redefine the
-\var{datarec} record in such a way that longer values are allowed.
-In case you have to read the contents of a \var{TEXTAREA} form element,
-this may be needed.
-
-
-% Data passed through an environment variable
-\subsection{Data passed through an environment variable}
-If your form uses the \var{GET} method of passing its data, the CGI script
-needs to read the \var{QUERY\_STRING} environment variable to get its data.
-Since this variable can, and probably will, be more than 255 characters long,
-you will not be able to use normal string methods, present in pascal. \fpc
-implements the \var{pchar} type, which is a pointer to a null-terminated
-array of characters.
-And, fortunately, \fpc has a
-\seestrings\  unit, which eases the use of the
-\var{pchar} type.
-
-
-The following example illustrates what to do in case of a method of \var{GET}
-\begin{verbatim}
-program cgi_get;
-
-uses strings,linux;
-
-const max_data = 1000;
-
-type datarec = record
-  name,value : string;
-  end;
-
-var data : array[1..max_data] of datarec;
-    i,nrdata : longint;
-    p  : PChar;
-    literal,aname : boolean;
-
-begin
-Writeln ('Content-type: text/html');
-Writeln;
-if StrComp(GetEnv('REQUEST_METHOD'),'POST')<>0 then
-   begin
-   Writeln ('This script should be referenced with a METHOD of GET');
-   write ('If you don''t understand this, see this ');
-   write ('< A HREF="http://www.ncsa.uiuc.edu/SDG/Softare/Mosaic');
-   Writeln ('/Docs/fill-out-forms/overview.html">forms overview</A>.');
-   halt(1);
-   end;
-p:=GetEnv('QUERY_STRING');
-nrdata:=1;
-aname:=true;
-while p^<>#0  do
-  begin
-  literal:=false;
-  if p^='\' then
-     begin
-     literal:=true;
-     inc(longint(p));
-     end;
-  if ((p^<>'=') and (p^<>'&')) or literal then
-     with data[nrdata] do
-        if aname then name:=name+p^ else value:=value+p^
-  else
-     begin
-     if p^='&' then
-         begin
-         inc (nrdata);
-         aname:=true;
-         end
-      else
-         aname:=false;
-      end;
-  inc(longint(p));
-  end;
-Writeln ('<H1>Form Results :</H1>');
-Writeln ('You submitted the following name/value pairs :');
-Writeln ('<UL>');
-for i:=1 to nrdata do writeln ('<LI> ',data[i].name,' = ',data[i].value);
-Writeln ('</UL>');
-end.
-\end{verbatim}
-Although it may not be written in the most elegant way, this program does
-the same thing as the previous one. It also suffers from the same drawback,
-namely the limited length of the \var{value} field of the \var{datarec}.
-
-This drawback can be remedied by redefining \var{datarec} as follows:
-\begin{verbatim}
-type datarec = record;
-      name,value : pchar;
-     end;
-\end{verbatim}
-and assigning at run time enough space to keep the contents of the value
-field. This can be done with a
-\begin{verbatim}
- getmem (data[nrdata].value,needed_number_of_bytes);
-\end{verbatim}
-call. After that you can do a
-\begin{verbatim}
-strlcopy (data[nrdata].value,p,needed_number_of_bytes);
-\end{verbatim}
-to copy the data into place.
-
-You may have noticed the following unorthodox call :
-\begin{verbatim}
-inc(longint(p));
-\end{verbatim}
-\fpc doesn't give you pointer arithmetic as in C. However, \var{longints} and
-\var{pointers} have the same length (namely 4 bytes). Doing a type-cast to a
-\var{longint} allows you to do arithmetic on the \var{pointer}.
-
-Note however, that this is a non-portable call. This may work on the I386
-processor, but not on a ALPHA processor (where a pointer is 8 bytes long).
-This will be remedied in future releases of \fpc.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Producing output
-\section{Producing output}
-The previous section concentrated mostly on getting input from the web
-server. To send the reply to the server, you don't need to do anything
-special.You just print your data on standard output, and the Web-server will
-intercept this, and send your output to the WWW-client waiting for it.
-
-You can print anything you want, the only thing you must take care of is
-that you supply a \var{Contents-type} line, followed by an empty line, as
-follows:
-\begin{verbatim}
-Writeln ('Content-type: text/html');
-Writeln;
-{ ...start output of the form... }
-
-\end{verbatim}
-
-And that's all there is to it !
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% I'm under Windows, what now ?
-\section{I'm under Windows, what now ?}
-Under Windows the system of writing CGI scripts can be totally different.
-If you use \fpc under Windows then you also should be able to do CGI
-programming, but the above instructions may not work. They are known to work
-for the \file{xitami} server, however.
-
-If some kind soul is willing to write a section on CGI programming under
-Windows for other servers, I'd be willing to include it here.
-\appendix
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % APPENDIX A.
@@ -3070,184 +2957,7 @@ Windows for other servers, I'd be willing to include it here.
 \chapter{Alphabetical listing of command-line options}
 The following is alphabetical listing of all command-line options, as
 generated by the compiler:
-\begin{verbatim}
-Free Pascal Compiler version 1.9.6 [2004/12/11] for i386
-Copyright (c) 1993-2004 by Florian Klaempfl
-/usr/local/lib/fpc/1.9.6/ppc386 [options] <inputfile> [options]
-put + after a boolean switch option to enable it, - to disable it
-  -a     the compiler doesn't delete the generated assembler file
-      -al        list sourcecode lines in assembler file
-      -an        list node info in assembler file
-      -ap        use pipes instead of creating temporary assembler files
-      -ar        list register allocation/release info in assembler file
-      -at        list temp allocation/release info in assembler file
-  -A<x>  output format:
-      -Adefault  use default assembler
-      -Aas       assemble using GNU AS
-      -Anasmcoff coff (Go32v2) file using Nasm
-      -Anasmelf  elf32 (Linux) file using Nasm
-      -Awasm     obj file using Wasm (Watcom)
-      -Anasmobj  obj file using Nasm
-      -Amasm     obj file using Masm (Microsoft)
-      -Atasm     obj file using Tasm (Borland)
-      -Aelf      elf32 (Linux) using internal writer
-      -Acoff     coff (Go32v2) using internal writer
-      -Apecoff   pecoff (Win32) using internal writer
-  -b     generate browser info
-      -bl        generate local symbol info
-  -B     build all modules
-  -C<x>  code generation options:
-      -Cc<x>     set default calling convention to <x>
-      -CD        create also dynamic library (not supported)
-      -Ce        Compilation with emulated floating point opcodes
-      -Cf<x>     Select fpu instruction set to use to <x>
-      -Cg        Generate PIC code
-      -Ch<n>     <n> bytes heap (between 1023 and 67107840)
-      -Ci        IO-checking
-      -Cn        omit linking stage
-      -Co        check overflow of integer operations
-      -Cr        range checking
-      -CR        verify object method call validity
-      -Cs<n>     set stack size to <n>
-      -Ct        stack checking
-      -CX        create also smartlinked library
-  -d<x>  defines the symbol <x>
-  -D     generate a DEF file
-      -Dd<x>     set description to <x>
-      -Dv<x>     set DLL version to <x>
-  -e<x>  set path to executable
-  -E     same as -Cn
-  -F<x>  set file names and paths:
-      -Fc<x>     sets input codepage to <x>
-      -FD<x>     sets the directory where to search for compiler utilities
-      -Fe<x>     redirect error output to <x>
-      -FE<x>     set exe/unit output path to <x>
-      -Fi<x>     adds <x> to include path
-      -Fl<x>     adds <x> to library path
-      -FL<x>     uses <x> as dynamic linker
-      -Fo<x>     adds <x> to object path
-      -Fr<x>     load error message file <x>
-      -Fu<x>     adds <x> to unit path
-      -FU<x>     set unit output path to <x>, overrides -FE
-  -g     generate debugger information:
-      -gc        generate checks for pointers
-      -gd        use dbx
-      -gg        use gsym
-      -gh        use heap trace unit (for memory leak debugging)
-      -gl        use line info unit to show more info for backtraces
-      -gv        generates programs tracable with valgrind
-      -gw        generate dwarf debugging info
-  -i     information
-      -iD        return compiler date
-      -iV        return compiler version
-      -iSO       return compiler OS
-      -iSP       return compiler processor
-      -iTO       return target OS
-      -iTP       return target processor
-  -I<x>  adds <x> to include path
-  -k<x>  Pass <x> to the linker
-  -l     write logo
-  -M<x>  set language mode to <x>
-      -Mfpc      free pascal dialect (default)
-      -Mobjfpc   switch some Delphi 2 extensions on
-      -Mdelphi   tries to be Delphi compatible
-      -Mtp       tries to be TP/BP 7.0 compatible
-      -Mgpc      tries to be gpc compatible
-      -Mmacpas   tries to be compatible to the macintosh pascal dialects
-  -n     don't read the default config file
-  -o<x>  change the name of the executable produced to <x>
-  -O<x>  optimizations:
-      -Og        generate smaller code
-      -OG        generate faster code (default)
-      -Or        keep certain variables in registers
-      -Ou        enable uncertain optimizations (see docs)
-      -O1        level 1 optimizations (quick optimizations)
-      -O2        level 2 optimizations (-O1 + slower optimizations)
-      -O3        level 3 optimizations (-O2 repeatedly, max 5 times)
-      -Op<x>     target processor:
-         -Op1  set target processor to 386/486
-         -Op2  set target processor to Pentium/PentiumMMX (tm)
-         -Op3  set target processor to PPro/PII/c6x86/K6 (tm)
-  -pg    generate profile code for gprof (defines FPC_PROFILE)
-  -R<x>  assembler reading style:
-      -Rdefault  use default assembler
-      -Ratt      read AT&T style assembler
-      -Rintel    read Intel style assembler
-  -S<x>  syntax options:
-      -S2        same as -Mobjfpc
-      -Sc        supports operators like C (*=,+=,/= and -=)
-      -Sa        include assertion code.
-      -Sd        same as -Mdelphi
-      -Se<x>     compiler stops after the <x> errors (default is 1)
-      -Sg        allow LABEL and GOTO
-      -Sh        Use ansistrings
-      -Si        support C++ styled INLINE
-      -SI<x>     set interface style to <x>
-         -     **3SIcom COM compatible interface (default)
-         -     **3SIcorba CORBA compatible interface
-      -Sm        support macros like C (global)
-      -So        same as -Mtp
-      -Sp        same as -Mgpc
-      -Ss        constructor name must be init (destructor must be done)
-      -St        allow static keyword in objects
-  -s     don't call assembler and linker
-      -sh        Generate script to link on host
-      -st        Generate script to link on target
-      -sr        Skip register allocation phase (use with -alr)
-  -T<x>  Target operating system:
-      -Temx      OS/2 via EMX (including EMX/RSX extender)
-      -Tfreebsd  FreeBSD
-      -Tgo32v2   Version 2 of DJ Delorie DOS extender
-      -Tlinux    Linux
-      -Tnetbsd   NetBSD
-      -Tnetware  Novell Netware Module (clib)
-      -Tnetwlibc Novell Netware Module (libc)
-      -Topenbsd  OpenBSD
-      -Tos2      OS/2 / eComStation
-      -Tsunos    SunOS/Solaris
-      -Twatcom   Watcom compatible DOS extender
-      -Twdosx    WDOSX DOS extender
-      -Twin32    Windows 32 Bit
-  -u<x>  undefines the symbol <x>
-  -U     unit options:
-      -Un        don't check the unit name
-      -Ur        generate release unit files
-      -Us        compile a system unit
-  -v<x>  Be verbose. <x> is a combination of the following letters:
-      e : Show errors (default)       d : Show debug info
-      w : Show warnings               u : Show unit info
-      n : Show notes                  t : Show tried/used files
-      h : Show hints                  m : Show defined macros
-      i : Show general info           p : Show compiled procedures
-      l : Show linenumbers            c : Show conditionals
-      a : Show everything             0 : Show nothing (except errors)
-      b : Show all procedure          r : Rhide/GCC compatibility mode
-          declarations if an error    x : Executable info (Win32 only)
-          occurs
-  -V     write fpcdebug.txt file with lots of debugging info
-  -W<x>  Win32-like target options
-      -WB<x>     Set Image base to Hexadecimal <x> value
-      -WC        Specify console type application
-      -WD        Use DEFFILE to export functions of DLL or EXE
-      -WF        Specify full-screen type application (OS/2 only)
-      -WG        Specify graphic type application
-      -WN        Do not generate relocation code (necessary for debugging)
-      -WR        Generate relocation code
-  -X     executable options:
-      -Xc        link with the c library
-      -Xd        don't use standard library search path (needed for cross compile)
-      -XD        try to link units dynamic          (defines FPC_LINK_DYNAMIC)
-      -XP<x>     prepend the binutils names with the prefix <x>
-      -Xr<x>     set library search path to <x> (needed for cross compile)
-      -Xs        strip all symbols from executable
-      -XS        try to link units static (default) (defines FPC_LINK_STATIC)
-      -Xt        link with static libraries (-static is passed to linker)
-      -XX        try to link units smart            (defines FPC_LINK_SMART)
-  
-  -?     shows this help
-  -h     shows this help without waiting
-\end{verbatim}
-
+\input{comphelp.inc}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % APPENDIX B.
@@ -3733,81 +3443,6 @@ installed.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{The Floating Point Coprocessor emulator}
-
-In this appendix we note some caveats when using the floating point
-emulator on GO32V2 systems. Under GO32V1 systems, all is as described in
-the installation section.
-
-{\em Q: I don't have an 80387. How do I compile and run floating point
-   programs under GO32V2?
-
-     Q: What shall I install on a target machine which lacks hardware
-   floating-point support?
-}
-
-{\em A :}
- Programs which use floating point computations and could be run on
-   machines without an 80387 should be allowed to dynamically load the
-\file{emu387.dxe}
-   file at run-time if needed. To do this you must link the \var{emu387} unit to your
-   exectuable program, for example:
-
-\begin{verbatim}
-      Program MyFloat;
-
-      Uses emu387;
-
-      var
-       r: real;
-      Begin
-       r:=1.0;
-       WriteLn(r);
-      end.
-\end{verbatim}
-
-   \var{Emu387} takes care of loading the dynamic emulation point library.
-
-   You should always add emulation when you distribute floating-point
-   programs.
-
-   A few users reported that the emulation won't work for them unless
-   they explicitly tell \var{DJGPP} there is no \var{x87} hardware, like this:
-
-\begin{verbatim}
-       set 387=N
-       set emu387=c:/djgpp/bin/emu387.dxe
-\end{verbatim}
-
-   There is an alternative FP emulator called WMEMU. It mimics a real
-   coprocessor more closely.
-
-   {\em WARNING:} We strongly suggest that you use WMEMU as FPU emulator, since
-   \file{emu387.dxe} does not emulate all the instructions which are used by the
-   Run-Time Libary such as \var{FWAIT}.
-
-
-{\em   Q: I have an 80387 emulator installed in my AUTOEXEC.BAT, but
-   DJGPP-compiled floating point programs still doesn't work. Why?
-}
-
-
-{\em   A :} DJGPP switches the CPU to protected mode, and the information
-   needed to emulate the 80387 is different. Not to mention that the
-   exceptions never get to the real-mode handler. You must use emulators
-   which are designed for DJGPP. Apart of emu387 and WMEMU, the only
-   other emulator known to work with DJGPP is Q87 from QuickWare. Q87 is
-   shareware and is available from the QuickWare Web site.
-
-
-{\em   Q: I run DJGPP in an \ostwo DOS box, and I'm told that \ostwo will install
-   its own emulator library if the CPU has no FPU, and will transparently
-   execute FPU instructions. So why won't DJGPP run floating-point code
-   under \ostwo on my machine?
-}
-
-{\em   A} : \ostwo installs an emulator for native \ostwo images, but does not
-   provide FPU emulation for DOS sessions.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  GDB Configuration file

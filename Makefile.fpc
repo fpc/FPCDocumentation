@@ -236,6 +236,12 @@ $(FPCSRCDIR)/compiler/msg2inc$(EXEEXT):
 messages.inc: $(FPCSRCDIR)/compiler/msg2inc$(EXEEXT) $(FPCSRCDIR)/compiler/msg/errore.msg
         $(FPCSRCDIR)/compiler/utils/msg2inc -TE $(FPCSRCDIR)/compiler/msg/errore.msg messages.inc
 
+comphelp.inc:
+	echo "% Automatically generated. Do not edit" > comphelp.inc
+	echo "\begin{verbatim}" >> comphelp.inc
+	ppc386 -h >>comphelp.inc
+	echo "\end{verbatim}" >> comphelp.inc
+
 # Local copy of the required styles
 syntax.sty: styles/syntax.sty
         cp $(wildcard styles/*.sty) .
@@ -343,7 +349,7 @@ ref.dvi: ref.tex $(INCLUDES)
 
 prog.dvi: prog.tex $(INCLUDES)
 
-user.dvi: user.tex $(INCLUDES) messages.inc
+user.dvi: user.tex $(INCLUDES) messages.inc comphelp.inc
 
 fpdoc.dvi: fpdoc.tex $(INCLUDES)
 
@@ -354,7 +360,7 @@ chart.dvi: chart.tex
 
 ref.pdf: ref.tex $(INCLUDES)
 
-user.pdf: user.tex $(INCLUDES) messages.inc
+user.pdf: user.tex $(INCLUDES) messages.inc comphelp.inc
 
 prog.pdf: prog.tex $(INCLUDES)
 

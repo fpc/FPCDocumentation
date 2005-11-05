@@ -181,6 +181,26 @@ This can be used mainly for debugging purposes. The \file{system} unit sets the
 and simply exits. The \file{sysutils} unit catches the run-time error 227
 and raises an \var{EAssertionFailed} exception.
 
+\subsection{\var{\protect\$CALLING} : Specify calling convention}
+\label{se:dircalling}
+The \var{\{\$CALLING \}} directive tells the compiler which calling 
+convention should be used if none is specified:
+\begin{verbatim}
+{$CALLING REGISTER}
+\end{verbatim}
+ By default it is \var{REGISTER}. The following calling conventions exist:
+\begin{description}
+\item[register]
+\item[cdecl]
+\item[pascal]
+\item[safecall]
+\item[stdcall]
+\item[oldfpcall]
+\end{description}
+For a more detailed explanation of calling conventions, \sees{CallingConventions}.
+As a special case, \var{DEFAULT} can be used, to restore the default calling
+convention.
+
 \subsection{\var{\protect\$CHECKPOINTER} : Check pointer values}
 The \var{\{\$CHECKPOINTER\}} directive turns heap pointer checking on (value
 \var{ON}) or off (value \var{OFF}). When heap pointer checking is on and the
@@ -192,6 +212,34 @@ by the program: the stack or a location in the heap. If not, a run-time error
 
 If the code is compiled without \var{-gl} switch, then this directive has no
 effect. Note that this considerably slows down the code.
+
+\subsection{\var{\protect\$CODEALIGN} : Set the code alignment}
+This switch sets the code alignment. 
+It takes an argument which is the alignment in bytes.
+\begin{verbatim}
+{$CODEALIGNMENT 8}
+\end{verbatim}
+
+\subsection{\var{\protect\$COPERATOR} : Allow C like operators}
+This boolean switch determines whether C like operators are allowed. 
+By default they are not allowed.
+After the following statement:
+\begin{verbatim}
+{$COPERATOR ON}
+\end{verbatim}
+The following operators are allowed:
+\begin{verbatim}
+Var
+  I : Integer;
+
+begin
+  I:=1;
+  I+=3; // Add 3 to I and assign the result to I;
+  I-=2; // Substract 2 from I and assign the result to I;
+  I*=2; // Multiply I with 2 and assign the result to I;
+  I/=2; // Divide I with 2 and assign the result to I;
+end;  
+\end{verbatim}
 
 \subsection{\var{\protect\$DEFINE} : Define a symbol}
 
@@ -257,6 +305,9 @@ The following code
 will display an error message when the compiler encounters it,
 and increase the error count of the compiler.
 The compiler will continue to compile, but no code will be emitted.
+
+\subsection{\var{\protect\$EXTENDEDSYM}: Ignored}
+This directive is parsed for Delphi compatibility but otherwise ignored.
 
 \subsection{\var{\protect\$F} : Far or near functions}
 This directive is recognized for compatibility with Turbo Pascal. Under the
@@ -395,6 +446,9 @@ By default, no hints are generated.
 \var{\{\$HINTS OFF\}} switches the generation of hints off.
 Contrary to the command-line option \var{-vh} this is a local switch,
 this is useful for checking parts of the code.
+
+\subsection{\var{\protect\$HPPEMIT}: Ignored}
+This directive is parsed for Delphi compatibility but otherwise ignored.
 
 \subsection{\var{\protect\$IF} : Start conditional compilation}
 
@@ -619,6 +673,27 @@ has the same effect as \var{\{\$ASMMODE XXX\}}, \sees{AsmReader}
 This switch is deprecated, the \var{\{\$ASMMODE XXX\}} directive should
 be used instead.
 
+\subsection{\var{\protect\$J} or \var{\protect\$WRITABLECONSTS} : Allow typed consts}
+This boolean switch tells the compiler whether or not typed constants are allowed.
+The default is to allow typed constants.
+
+The following statement will switch off typed constants:
+\begin{verbatim}
+{$WRITABLECONST OFF}
+\end{verbatim}
+After this switch, the following statement will no longer compile:
+\begin{verbatim}
+Const
+  MyString : String = 'Some nice string';
+\end{verbatim}
+But an initialized variable will still compile:
+\begin{verbatim}
+Var
+  MyString : String = 'Some nice string';
+\end{verbatim}
+
+
+
 \subsection{\var{\protect\$L} or \var{\protect\$LINK} : Link object file}
 
 The \var{\{\$L filename\}} or \var{\{\$LINK filename\}} directive
@@ -802,6 +877,9 @@ end.
 See, however, the chapter on MMX (\ref{ch:MMXSupport}) for more information
 on this topic.
 
+\subsection{\var{\protect\$NODEFINE} : Ignored}
+This directive is parsed for Delphi compatibility but is otherwise ignored.
+
 \subsection{\var{\protect\$NOTE} : Generate note message}
 
 If the generation of notes is turned on, through the \var{-vn} command-line
@@ -820,6 +898,17 @@ Contrary to the command-line option \var{-vn} this is a local switch,
 this is useful for checking parts of the code.
 
 By default, \var{\{\$NOTES\}} is off.
+
+\subsection{\var{\protect\$OBJECTCHECK} : Check Object}
+This boolean switch determines whether code to test the \var{SELF} 
+pointer is inserted in methods. By default it is of
+\begin{verbatim}
+{$OBJECTCHECK ON}
+\end{verbatim}
+If the \var{SELF} pointer is \var{NIL} a run-time error \var{210} 
+(range check) will be generated.
+
+This switch is also activated by the \var{-CR} command-line switch.
 
 \subsection{\var{\protect\$OUTPUT\_FORMAT} : Specify the output format}
 
@@ -845,19 +934,6 @@ NASMELF   & Nasm assembler file (ELF format).\\
 PECOFF    & PECOFF object file (Win32).\\
 TASM      & Tasm assembler file.\\
 \end{FPCltable}
-
-\subsection{\var{\protect\$P} or \var{\protect\$OPENSTRINGS} : Use open strings}
-
-If this switch is on, all function or procedure parameters of type string
-are considered to be open string parameters; this parameter only has effect
-for short strings, not for ansistrings.
-
-When using openstrings, the declared type of the string can be different
-from the type of string that is actually passed, even for strings that are
-passed by reference. The declared size of the string passed can be examined
-with the \var{High(P)} call.
-
-Default the use of openstrings is off.
 
 \subsection{\var{\protect\$PACKENUM} : Minimum enumeration type size}
 
@@ -915,6 +991,14 @@ contrary to Turbo Pascal, where it is 1.
 More information on this and an example program can be found in the reference
 guide, in the section about record types.
 
+The following shorthands can be used for this directive:
+\begin{verbatim}
+{$A1 }
+{$A2 }
+{$A4 }
+{$A8 }
+\end{verbatim}
+
 
 \subsection{\var{\protect\$Q} \var{\protect\$OVERFLOWCHECKS}: Overflow checking}
 The \var{\{\$Q+\}} or \var{\{\$OVERFLOWCHECKS ON\}} directive turns on
@@ -954,6 +1038,20 @@ will be generated.
 when the call is compiled in \var{\{\$R+\}} mode.
 \end{remark}
 
+\subsection{\var{\protect\$R} or \var{\protect\$RESOURCE} : Include resource}
+This directive includes a resource in the binary. The argument to this directive is the resource to include:
+\begin{verbatim}
+{$R icons.res}
+\end{verbatim}
+Will include the file \file{icons.res} as a resource in the binary. Currently resources are supported only for Windows (native resources are used) and for platforms using ELF binaries (linux, BSD).
+
+The asterix can be used as a placeholder for the current unit/program filename:
+\begin{verbatim}
+unit myunit;
+{$R *.res}
+\end{verbatim}
+will include \file{myunit.res}.
+
 \subsection{\var{\protect\$SATURATION} : Saturation operations (Intel 80x86 only)}
 
 This works only on the intel compiler, and MMX support must be on
@@ -985,6 +1083,7 @@ The \var{:=} assignment symbol may be replaced with the \var{=} symbol.
 
 Note that this command works only in MACPAS mode, but independent of the
 \var{-Sm} command-line option or \var{\{\$MACRO \}} directive.
+
 
 \subsection{\var{\protect\$STATIC} : Allow use of \var{Static} keyword.}
 
@@ -1033,6 +1132,24 @@ When in the \var{+} or \var{ON} state, the compiler checks that strings
 passed as parameters are of the same, identical, string type as the declared
 parameters of the procedure.
 
+\subsection{\var{\protect\$W} or \var{\protect\$STACKFRAMES} : Generate stackframes}
+
+The \var{\{\$W\}} switch directive controls the generation of stackframes.
+In the on state, the compiler will generate a
+stackframe for every procedure or function.
+
+In the off state, the compiler will omit the generation of a stackframe if
+the following conditions are satisfied:
+\begin{itemize}
+\item The procedure has no parameters.
+\item The procedure has no local variables.
+\item If the procedure is not an \var{assembler} procedure, it must not have
+a \var{asm \dots end;} block.
+\item it is not a constructor or destructor.
+\end{itemize}
+If these conditions are satisfied, the stack frame will be omitted.
+
+
 \subsection{\var{\protect\$WAIT} : Wait for enter key press}
 
 If the compiler encounters a
@@ -1067,35 +1184,6 @@ Contrary to the command-line option \var{-vw} this
 is a local switch, this is useful for checking parts of your code.
 
 By default, no warnings are emitted.
-
-\subsection{\var{\protect\$X} or \var{\protect\$EXTENDEDSYNTAX} : Extended syntax}
-
-Extended syntax allows you to drop the result of a function. This means that
-you can use a function call as if it were a procedure. Standard this feature
-is on. You can switch it off using the \var{\{\$X-\}} or
-\var{\{\$EXTENDEDSYNTAX OFF\}}directive.
-
-The following, for instance, will not compile:
-\begin{verbatim}
-function Func (var Arg : sometype) : longint;
-begin
-...          { declaration of Func }
-end;
-
-...
-
-{$X-}
-Func (A);
-\end{verbatim}
-The reason this construct is supported is that you may wish to call a
-function for certain side-effects it has, but you don't need the function
-result. In this case you don't need to assign the function result, saving
-you an extra variable.
-
-The command-line compiler switch \var{-Sa1} has the same effect as the
-\var{\{\$X+\}} directive.
-
-By default, extended syntax is assumed.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Global switches
@@ -1204,6 +1292,17 @@ procedure/function saves all registers.
 \end{description}
 It is equivalent to the \var{-Cc} command-line option.
 
+\subsection{\var{\protect\$CODEPAGE} : Set the source codepage}
+This switch sets the codepage of the rest of the source file. 
+The codepage is only taken into account when interpreting literal 
+strings, the actual code must be in US-ASCII. The argument to this switch is the name of the code page to be used.
+\begin{verbatim}
+{$CODEPAGE UTF8}
+\end{verbatim}
+The 'UTF-8' codepage can be specified as 'UTF-8' or 'UTF8'.
+The list of supported codepages is the list of codepages
+supported by the \file{charset} unit of the RTL.
+
 \subsection{\var{\protect\$COPYRIGHT} specify copyright info}
 This is intended for the NETWARE version of the compiler: it specifies the
 copyright information that can be viewed on a module for a Netware OS.
@@ -1227,6 +1326,10 @@ By default, insertion of debugging information is off.
 
 This switch is recognised for compatibility only, but is ignored completely
 by the compiler. At a later stage, this switch may be activated.
+
+\subsection{\var{\protect\$D} \var{\protect\$DEBUGINFO} : Include debug info}
+Setting this boolean switch to ON will include debug information in the unit 
+or program. It has the same effect as the \var{-g} command-line option.
 
 \subsection{\var{\protect\$E} : Emulation of coprocessor}
 
@@ -1293,6 +1396,19 @@ paths, as in the example above. Only
  use this directive if you are certain
 of the places where the files reside. If you are not sure, it is better
 practice to use makefiles and makefile variables.
+
+\subsection{\var{\protect\$INTERFACES} : Default interface type}
+This interface selects the style of interface that the compiler will use:
+\begin{verbatim}
+{$INTERFACES COM}
+\end{verbatim}
+selects COM compatible interfaces, while
+\begin{verbatim}
+{$INTERFACES CORBA}
+\end{verbatim}
+selects CORBA compatible interfaces. 
+
+This switch is equivalent to the \var{-SI} command-line option.
 
 \subsection{\var{\protect\$L} or \var{\protect\$LOCALSYMBOLS} : Local symbol information}
 
@@ -1403,6 +1519,20 @@ paths, as in the example above. Only use this directive if you are certain
 of the places where the files reside. If you are not sure, it is better
 practice to use makefiles and makefile variables.
 
+\subsection{\var{\protect\$P} or \var{\protect\$OPENSTRINGS} : Use open strings}
+
+If this switch is on, all function or procedure parameters of type string
+are considered to be open string parameters; this parameter only has effect
+for short strings, not for ansistrings.
+
+When using openstrings, the declared type of the string can be different
+from the type of string that is actually passed, even for strings that are
+passed by reference. The declared size of the string passed can be examined
+with the \var{High(P)} call.
+
+Default the use of openstrings is off.
+
+
 \subsection{\var{\protect\$PROFILE} : Profiling}
 
 This directive turns the generation of profiling code on (or off). It is
@@ -1424,6 +1554,14 @@ The command-line compiler switch \var{-Ct} has the same effect as the
 \var{\{\$S+\}} directive.
 
 By default, no stack checking is performed.
+
+\subsection{\var{\protect\$SCREENNAME} : Specify screen name}
+This directive can be used for the Novell netware targets to specify the screen name. 
+The argument is the screen name to be used.
+\begin{verbatim}
+{$SCREENNAME My Nice Screen}
+\end{verbatim}
+Will set the screenname of the current application to 'My Nice Screen'.
 
 \subsection{\var{\protect\$SMARTLINK} : Use smartlinking}
 
@@ -1510,22 +1648,38 @@ And even:
 This can not yet be used for executables on Windows, but may be activated in
 the future.
 
-\subsection{\var{\protect\$W} or \var{\protect\$STACKFRAMES} : Generate stackframes}
+\subsection{\var{\protect\$WEAKPACKAGEUNIT} : ignored}
+This switch is parsed for Delphi compatibility but is otherwise ignored.
 
-The \var{\{\$W\}} switch directive controls the generation of stackframes.
-In the on state, the compiler will generate a
-stackframe for every procedure or function.
+\subsection{\var{\protect\$X} or \var{\protect\$EXTENDEDSYNTAX} : Extended syntax}
 
-In the off state, the compiler will omit the generation of a stackframe if
-the following conditions are satisfied:
-\begin{itemize}
-\item The procedure has no parameters.
-\item The procedure has no local variables.
-\item If the procedure is not an \var{assembler} procedure, it must not have
-a \var{asm \dots end;} block.
-\item it is not a constructor or destructor.
-\end{itemize}
-If these conditions are satisfied, the stack frame will be omitted.
+Extended syntax allows you to drop the result of a function. This means that
+you can use a function call as if it were a procedure. Standard this feature
+is on. You can switch it off using the \var{\{\$X-\}} or
+\var{\{\$EXTENDEDSYNTAX OFF\}}directive.
+
+The following, for instance, will not compile:
+\begin{verbatim}
+function Func (var Arg : sometype) : longint;
+begin
+...          { declaration of Func }
+end;
+
+...
+
+{$X-}
+Func (A);
+\end{verbatim}
+The reason this construct is supported is that you may wish to call a
+function for certain side-effects it has, but you don't need the function
+result. In this case you don't need to assign the function result, saving
+you an extra variable.
+
+The command-line compiler switch \var{-Sa1} has the same effect as the
+\var{\{\$X+\}} directive.
+
+By default, extended syntax is assumed.
+
 
 \subsection{\var{\protect\$Y} or \var{\protect\$REFERENCEINFO} : Insert Browser information}
 
@@ -1544,6 +1698,20 @@ however, more than that. It allows you to make macros which can be used in
 your code, and it allows you to define messages or errors which will be
 displayed when compiling. It also has support for compile-time variables and
 compile-time expressions, as commonly found in \macos compilers.
+
+The various conditional compilation directives (\var{\$IF},  \var{\$IFDEF},
+\var{\$IFOPT} are used in combination with \var{\$DEFINE}
+to allow the programmer to choose at compile time, which portions 
+of the code should be compiled.  This can be used for instance for
+\begin{itemize}
+\item To choose an implementation for one operating system over another.
+\item To choose a demonstration version or a full version.
+\item To distinguish between a debug version and a version for shipping.
+\end{itemize}
+These options are then chosen when the program is compiled, including or
+excluding parts of the code as needed. This is opposed to using normal 
+variables and running through selected portions of code at run time,  
+in which case extra code is included in the executable.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Conditionals
@@ -1728,8 +1896,9 @@ In mode MacPas, compile time variables are always enabled.
 \subsection{Definition}
 Except for the regular Turbo Pascal constructs for conditional compilation,
 the \fpc compiler also supports a stronger conditional compile mechanism: 
-The \var{\{\$if\}} construct, which can be used to evaluate compile-time
+The \var{\{\$IF\}} construct, which can be used to evaluate compile-time
 expressions.
+
 
 The prototype of this construct is as follows:
 \begin{verbatim}
@@ -2920,11 +3089,8 @@ give nicknames to mangled names, or to change the mangled
 name directly. Two modifiers can be used:
 
 \begin{description}
-\item [cdecl:\ ] A function that has a \var{cdecl} modifier, will be used
-with C calling conventions, that is, the caller clears the stack. Also
+\item [public: ] For a function that has a \var{public} modifier, 
 the mangled name will be the name {\em exactly} as it is declared.
-\var{cdecl} is part of the function declaration, and hence must be present
-both in the interface and implementation section of a unit.
 
 \item [alias: ] The \var{alias} modifier can be used to assign a second
 assembler label to your function. This label has the same name as the
@@ -2952,11 +3118,10 @@ creating shared libraries, \seec{libraries}.
 \section{Calling mechanism}
 \label{se:CallingConventions}
 
-Procedures and Functions are often called with their parameters on the stack.
-Contrary to Turbo Pascal, {\em all} parameters are pushed on the stack, and
-they are pushed {\em right} to {\em left}, instead of left to right for
-Turbo Pascal. This is especially important if you have some assembly
-subroutines in Turbo Pascal which you would like to translate to \fpc.
+By default, the calling mechanism the compiler uses is \var{register}, 
+that is, the compiler will try to pass as much parameters as posible by 
+storing them in a free register. Not all registers are used, some 
+registers have a special meaning, but this depends on the CPU.
 
 Function results are returned in the accumulator (first register), 
 if they fit in the register. Methods calls (from either objects or 
@@ -2979,21 +3144,24 @@ subroutine.
 \begin{FPCltable}{lllll}{Calling mechanisms in \fpc}{CallingTable}\hline
 Modifier & Pushing order & Stack cleaned by & alignment & registers saved \\
 \hline
-<none>  & Right-to-left & Function & default & None\\
+<none>  & Left-to-right & Function & default & None\\
+register & Left-to-right & Function & default & None \\ \hline
 cdecl   & Right-to-left & Caller   & GCC alignment & GCC registers\\
 interrupt & Right-to-left & Function & default & all registers\\
 pascal  & Left-to-right & Function & default & None\\
 safecall & Right-to-left & Function & default & GCC registers\\
 stdcall & Right-to-left & Function & GCC alignment & GCC registers \\
 oldfpcall & Right-to-left & Caller  & default & None \\
-register & Left-to-right & Caller & default & None \\ \hline
 \end{FPCltable}
 
 More about this can be found in \seec{Linking} on linking. Information
 on GCC registers saved, GCC stack alignment and general stack alignment
 on an operating system basis can be found in Appendix \ref{ch:AppH}. 
-As of 2.0, the \var{register} modifier is the default calling convention,
-prior to that, it was the \var{oldfpcall} convention.
+As of version 2.0 (actually, in 1.9.x somewhere) , the \var{register} 
+modifier is the default calling convention, prior to that, it was the 
+\var{oldfpcall} convention.
+
+The default calling convention, i.e., the calling convention used when none is specified explicitly, can be set using the \var{\{\$calling \}} directive, \sees{dircalling}
 
 \begin{remark}
 The \var{popstack} modifier is no longer supported as of version 2.0, 

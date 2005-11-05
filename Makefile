@@ -1567,6 +1567,11 @@ $(FPCSRCDIR)/compiler/msg2inc$(EXEEXT):
 	$(MAKE) -C $(FPCSRCDIR)/compiler msg2inc
 messages.inc: $(FPCSRCDIR)/compiler/msg2inc$(EXEEXT) $(FPCSRCDIR)/compiler/msg/errore.msg
 	$(FPCSRCDIR)/compiler/utils/msg2inc -TE $(FPCSRCDIR)/compiler/msg/errore.msg messages.inc
+comphelp.inc:
+	echo "% Automatically generated. Do not edit" > comphelp.inc
+	echo "\begin{verbatim}" >> comphelp.inc
+	ppc386 -h >>comphelp.inc
+	echo "\end{verbatim}" >> comphelp.inc
 syntax.sty: styles/syntax.sty
 	cp $(wildcard styles/*.sty) .
 INCLUDES=date.inc syntax.sty
@@ -1647,12 +1652,12 @@ fcl.inc: $(FCLXML)
 	$(FPDOC) --output=fcl.inc $(FCLOPTS) --format=latex
 ref.dvi: ref.tex $(INCLUDES)
 prog.dvi: prog.tex $(INCLUDES)
-user.dvi: user.tex $(INCLUDES) messages.inc
+user.dvi: user.tex $(INCLUDES) messages.inc comphelp.inc
 fpdoc.dvi: fpdoc.tex $(INCLUDES)
 fcl.dvi: fcl.tex fcl.inc $(INCLUDES)
 chart.dvi: chart.tex
 ref.pdf: ref.tex $(INCLUDES)
-user.pdf: user.tex $(INCLUDES) messages.inc
+user.pdf: user.tex $(INCLUDES) messages.inc comphelp.inc
 prog.pdf: prog.tex $(INCLUDES)
 onechap.pdf: onechap.tex $(INCLUDES)
 onechap.dvi: onechap.tex $(INCLUDES)
