@@ -565,15 +565,18 @@ from the search path, i.e. the existence of the path will be tested.
 You can see what paths the compiler will search by giving the compiler
 the \var{-vu} option.
 
-On systems where filenames to lower-case (such as \unix and \linux), the compiler 
-will first convert the filename of a unit to all-lowercase. This is necessary, 
-since Pascal is case-independent, and the statements \var{Uses Unit1;} or 
-\var{uses unit1;} should have the same effect.
+On systems where filenames are case sensitive (such as \unix and \linux), 
+the compiler will :
+\begin{enumerate}
+\item Search for the original file name, i.e. preserves case.
+\item Search for the filename all lowercased.
+\item Search for the filename all uppercased.
+\end{enumerate}
+This is necessary, since Pascal is case-independent, and the statements 
+\var{Uses Unit1;} or \var{uses unit1;} should have the same effect.
 
-Also, unit names that are longer than 8 characters will first be looked for
-with their full length. If the unit is not found with this name, the name
-will be truncated to 8 characters, and the compiler will look again in the
-same directories, but with the truncated name.
+It will do this first with the extension \file{.pp} and then with the
+extension \file{.pas}.
 
 For instance, suppose that the file \file{foo.pp} needs the unit
 \file{bar}. Then the command
@@ -589,6 +592,12 @@ places:
 \item In the subdirectory \file{units} of the current directory
 \item In the standard unit directory.
 \end{enumerate}
+
+Also, unit names that are longer than 8 characters will first be looked for
+with their full length. If the unit is not found with this name, the name
+will be truncated to 8 characters, and the compiler will look again in the
+same directories, but with the truncated name.
+
 
 If the compiler finds the unit it needs, it will look for the source file of
 this unit in the same directory where it found the unit.
@@ -654,14 +663,9 @@ You can add files to the object file search path with the \seeo{Fo} option.
 \subsection{Configuration file}
 \label{searchconfig}
 
-Starting from version 1.0.6 of the compiler, usage of the
-file \file{ppc386.cfg} is considered deprecated. The file
-should now be called \file{fpc.cfg} and will work for
-all processor targets. For compatibility, \file{fpc.cfg} will
-be searched first, and if not found, the file \file{ppc386.cfg}
-will be used.
-
-Unless you specify the \seeo{n} option, the compiler will look
+Not all options mus be given on the compiler commandline. The compiler
+can use a configuration file wich can contain the same options as on the
+command-line. Unless you specify the \seeo{n} option, the compiler will look
 for a configuration file \file{fpc.cfg} in the following places:
 
 \begin{itemize}
@@ -684,9 +688,17 @@ compiler is in \file{/usr/local/bin}, it will look in \file{/usr/local/etc})
 \end{enumerate}
 \end{itemize}
 
+Versions prior to version 1.0.6 of the compiler used a configuration
+file \file{ppc386.cfg}. This file is still searched, but it's usage 
+is considered deprecated. For compatibility, \file{fpc.cfg} will
+be searched first, and if not found, the file \file{ppc386.cfg}
+will be used.
+
+
 \subsection{About long filenames}
-\fpc can handle long filenames under \windows; it will use support for
-long filenames if it is available.
+\fpc can handle long filenames under on all platforms, except DOS; 
+On windows, it will use support for long filenames if it is available
+(which is not always the case on older windowses).
 
 If no support for long filenames is present, it will truncate unit names
 to 8 characters.
@@ -749,27 +761,17 @@ So don't delete them. If you want to distribute the unit, you must
 provide both the \file{.ppu} and \file{.o} file. One is useless without the
 other.
 
-\begin{remark}
-Under \linux and \unix, a unit source file {\em must} have a lowercase filename.
-Since Pascal is case independent, you can specify the names of units in the
-\var{uses} clause in either case. To get a unique filename, the \fpc compiler
-changes the name of the unit to all lowercase when looking for unit files.
-\end{remark}
-The compiler produces lowercase files, so your unit will be found, even if
-your source file has uppercase letters in it. Only when the compiler tries to
-recompile the unit, it will not find your source because of the uppercase
-letters.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Units libraries and smartlinking
 \section{Units, libraries and smartlinking}
 The \fpc compiler supports smartlinking and the creation of libraries.
 However, the default behaviour is to compile each unit into 1 big object
 file, which will be linked as a whole into your program.
+Shared libraries can be created on any platform except MS-DOS.
 
-Not only is it possible to compile a shared library under \windows and
-\linux, but also it is possible to take existing units and put them
-together in 1 static or shared library (using the \file{ppumove} tool)
+It is also possible to take existing units and put them
+together in 1 static or shared library (using the \file{ppumove} tool,
+\sees{ppumove}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Reducing the size of your program
@@ -798,8 +800,9 @@ Another technique to reduce the size of a program is to use smartlinking.
 Normally, units (including the system unit) are linked in as a whole.
 It is however possible to compile units such that the can be smartlinked.
 This means that only the functions and procedures are linked in your
-program, leaving out any unnecessary code. This technique is described in
-full in the programmers guide.
+program, leaving out any unnecessary code. The compiler will turn on
+smartlinking with the \seeo{XX} switch. This technique is described in
+full in the programmers guide. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Problems
@@ -876,8 +879,9 @@ that the options are case sensitive.
 % Using the command-line options
 \section{Using the command-line options}
 
-The available options for version 1.0.6 of the compiler are listed by
-category (see appendix A for a listing as generated by the compiler):
+The available options for the current version of the compiler are listed by
+category. Also, \seec{commandlineoptions} for a listing as generated by 
+the current compiler.
 
 %
 % General options
@@ -1202,7 +1206,7 @@ linker. \olabel{Xt}
 \label{se:sourceoptions}
 for more information on these options, see also \progref
 \begin{description}
-\item[-Mmode] set language mode to \var{mode}, which can be one of the
+\item[-Mmode] \olabel{M} set language mode to \var{mode}, which can be one of the
 following:
 \begin{description}
 \item[delphi] tries to be Delphi compatible. This is more strict
@@ -1524,16 +1528,18 @@ which are not supported by \fpc. Where possible, we indicate the reason.
 and will not be changed.
 \item Parameter lists of previously defined functions and procedures must
 match exactly. The reason for this is the function overloading mechanism of
-\fpc. (however, the \seeo{So} option solves this.)
+\fpc. (however, the \seeo{M} option solves this.)
 \item The \var{MEM, MEMW, MEML} and \var{PORT} variables for memory and port
 access are not available in the system unit. This is due to the operating system. Under
 \dos, the extender unit (\file {GO32.PPU}) implements the mem constuct.
 under \linux, the \file{ports} unit implements such a construct.
-\item \var{PROTECTED, PUBLIC, PUBLISHED, TRY, FINALLY, EXCEPT, RAISE}
+\item There are more reserved words. \var{PROTECTED, PUBLIC, PUBLISHED, TRY, FINALLY, EXCEPT, RAISE}
 are reserved words. This means you cannot create procedures or variables
 with the same name. While they are not reserved words in Turbo Pascal,
-they are in Delphi. Using the \var{-So} switch will solve this problem if
-you want to compile Turbo Pascal code that uses these words.
+they are in Delphi. Using the \var{-Mtp} switch will solve this problem if
+you want to compile Turbo Pascal code that uses these words
+(\seec{reserved} for a list of all reserved words).
+
 \item The reserved words \var{FAR, NEAR} are ignored. This is
 because \fpc is a 32 bit compiler, so they're obsolete.
 \item \var{INTERRUPT} will work only on the \dos target.
@@ -1573,8 +1579,6 @@ it is not guaranteed that \var{g(2)} will be evaluated before \var{f(3)}.
 Here we give a list of things which are possible in \fpc, but which
 didn't exist in Turbo Pascal or Delphi.
 \begin{enumerate}
-\item There are more reserved words. (see appendix \ref{ch:reserved} for a
-list of all reserved words.)
 \item Functions can also return complex types, such as records and arrays.
 \item You can handle function results in the function itself, as a variable.
 Example
@@ -1665,7 +1669,7 @@ define e.g. the '+' operator for matrices.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Turbo Pascal compatibility mode
 \subsection{Turbo Pascal compatibility mode}
-When you compile a program with the \var{-So} switch, the compiler will
+When you compile a program with the \var{-Mtp} switch, the compiler will
 attempt to mimic the Turbo Pascal compiler in the following ways:
 \begin{itemize}
 \item Assigning a procedural variable doesn't require a @ operator. One of
@@ -1810,6 +1814,11 @@ specific are missing, although the \fpc team tries to minimize this.
 The following are the main points that should be considered:
 
 \begin{itemize}
+\item By default, \fpc generates console applications. This means that
+you must explicitly enable the GUI application type for windows:
+\begin{verbatim}
+{$APPTYPE GUI}
+\end{verbatim}
 \item The \file{Windows} unit provides access to most of the core 
 Win32 API. Some calls may have different parameter lists: instead 
 of declaring a parameter as passed by reference (var), a pointer 
@@ -1825,12 +1834,20 @@ threads.
 This is not supported, and will never be supported.
 \item Filename Case sensitivity: Pascal is a case-insensitive language,
 so the uses clause should also be case insensitive. Free Pascal ensures
-case insensitive filenames by first searching for a lowercase version 
+case insensitive filenames by also searching for a lowercase version 
 of the file. Kylix does not do this, so this could create problems
 if 2 differently cased versions of the same filename are in the path.
 \item RTTI is NOT stored in the same way as for Delphi. The format is mostly compatible, but may differ. This should not be a problem if the API of the TypeInfo unit 
 is used and no direct access to the RTTI information is attempted.
-\item Sets are of different size than in Delphi
+\item Sets are of different size than in Delphi.
+\item Enumerateds are of different size than in Delphi.
+\item In general, one should not make assumptions about the internal
+structure of complex types such as records, objects, classes and their
+associated structure: For example the VMT table layout is different, the
+alignment of fields in a record may be different, etc. 
+\item The same is true for basic types: on other processors the high and low
+bytes of a word or integer may not be on the same location as on an Intel
+processor (the endianness is different).
 \end{itemize}
 
 \subsection{Best practices for porting}
@@ -1868,9 +1885,17 @@ access is available for most platforms in the Video, Mouse and
 Keyboard units.
 \item Do not use hard-coded filename conventions. 
 See below for more information on this.
+\item Make no assumptions on the internal representation of types. Various
+processors store information in different ways ('endianness').
 \item If system-specific functionality is needed, it is best to 
 separate this out in a single unit. Porting efforts will then be 
 limited to re-implementing this unit for the new platform.
+\item Don't use assembler, unless you have to. Assembler is processor
+specific. Some instructions will not work even on the same processor family.
+\item Do not assume that pointers and integers have the same size. They do
+on an intel 32-bit processor, but not necesarily on other processors.
+The \var{PtrInt} type is an alias for the integer type that has the same
+size as a pointer. \var{SizeInt} is used for all size-related issues.
 \end{itemize}
 
 The system unit contains some constants which describe file access on a system:
@@ -2125,6 +2150,7 @@ letters:
 
 
 \section{ppumove program}
+\label{se:ppumove}
 
 \file{ppumove} is a program to make shared or static libraries from
 multiple units. It can be compared with the \file{tpumove} program that
@@ -2869,10 +2895,7 @@ Call trace for block 0x0040FA50 size 128
   0x0040C481
 \end{verbatim}
 The output of the heaptrc unit is customizable by setting some variables.
-
-\begin{ver2}
 Output can also be customized using environment variables.
-\end{ver2}
 
 You can find more information about the usage of the \file{heaptrc} unit
 in the \unitsref.
@@ -2955,6 +2978,7 @@ has no debug info included. (in the above case, the getmem call itself)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Alphabetical listing of command-line options}
+\label{ch:commandlineoptions}
 The following is alphabetical listing of all command-line options, as
 generated by the compiler:
 \input{comphelp.inc}
