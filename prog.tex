@@ -4201,7 +4201,6 @@ ansistring is shown in \seet{ansistrings}.
 
 \begin{FPCltable}{rl}{AnsiString memory structure (32-bit model)}{ansistrings}
 Offset & Contains \\ \hline
--12  & Longint with maximum string size. \\
 -8   & Longint with actual string size.\\
 -4   & Longint with reference count.\\
 0    & Actual array of \var{char}, null-terminated. \\ \hline
@@ -4443,10 +4442,7 @@ a byte are usually aligned on a power of two boundary. This alignment
 applies only to the start address of the variables, and not the alignment
 of fields within structures or objects for example. For more information
 on structured alignment, \sees{StructuredAlignment}. The alignment
-is similar across the different target processors. \footnote{The Intel
-80x86 version does not align data in the case of constant strings,
-constant sets, constant floating point values amd global variables.
-This will be fixed in the version 1.1 release.}
+is similar across the different target processors. 
 
 
 \begin{FPCltable}{lccc}{Data alignment}{DataAlignment}
@@ -4480,14 +4476,12 @@ the structure will actually be 2 bytes.
 \section{The heap}
 \label{se:Heap}
 The heap is used to store all dynamic variables, and to store class
-instances. The interface to the heap is the same as in Turbo Pascal,
-although the effects are maybe not the same. On top of that, the \fpc
-run-time library has some extra possibilities, not available in Turbo
-Pascal. These extra possibilities are explained in the next subsections.
-
+instances. The interface to the heap is the same as in Turbo Pascal 
+and Delphi although the effects are maybe not the same. 
+The heap is thread-safe, so allocating memory from various 
+threads is not a problem.
 % The heap algorithm
 \subsection{Heap allocation strategy}
-
 
 The heap is a memory structure which is organized as a stack. The heap
 bottom is stored in the variable \var{HeapOrg}. Initially the heap
@@ -4543,19 +4537,14 @@ generates a runtime error 203.
 
 % The heap grows
 \subsection{The heap grows}
-By default, \var{HeapError} points to the \var{GrowHeap} function,
-which tries to increase the heap.
+The heap allocates memory from the operating system on an as-needed basis.
 
-The \var{GrowHeap} function issues a system call to try to increase the size of the
-memory available to your program. It first tries to increase memory in a 256Kb
-chunk if the size to allocate is less than 256Kb, or 1024K otherwise.
+OS memory is requested in blocks: It first tries to increase memory in a 64Kb 
+chunk if the size to allocate is less than 64Kb, or 256Kb or 1024K otherwise.
 If this fails, it tries to increase the heap by the amount you requested
 from the heap.
 
-If the call to \var{GrowHeap} was successful, then the needed memory will be
-allocated.
-
-If the call to \var{GrowHeap} fails, the value returned depends on the
+If the attempt to reserve OS memory fails, the value returned depends on the
 value of the \var{ReturnNilIfGrowHeapFails} global variable. This is summarized
 in \seet{growheapnil}.
 
@@ -4605,24 +4594,28 @@ procedure SetMemoryManager(const MemMgr: TMemoryManager);
 the \var{TMemoryManager} record is defined as follows:
 \begin{verbatim}
   TMemoryManager = record
-    Getmem      : Function(Size:Longint):Pointer;
-    Freemem     : Function(var p:pointer):Longint;
-    FreememSize : Function(var p:pointer;Size:Longint):Longint;
-    AllocMem    : Function(Size:longint):Pointer;
-    ReAllocMem  : Function(var p:pointer;Size:longint):Pointer;
-    MemSize     : function(p:pointer):Longint;
+    NeedLock    : Boolean;
+    Getmem      : Function(Size:PtrInt):Pointer;
+    Freemem     : Function(var p:pointer):PtrInt;
+    FreememSize : Function(var p:pointer;Size:PtrInt):PtrInt;
+    AllocMem    : Function(Size:PtrInt):Pointer;
+    ReAllocMem  : Function(var p:pointer;Size:PtrInt):Pointer;
+    MemSize     : function(p:pointer):PtrInt;
     GetHeapStatus       : function :THeapStatus;
     GetFPCHeapStatus    : function :TFPCHeapStatus;
   end;
 \end{verbatim}
 
-As you can see, the elements of this record are procedural variables.
+As you can see, the elements of this record are mostly procedural variables.
 The \file{system} unit does nothing but call these various variables when you
 allocate or deallocate memory.
 
-Each of these functions corresponds to the corresponding call in the \file{system}
+Each of these fields corresponds to the corresponding call in the \file{system}
 unit. We'll describe each one of them:
 \begin{description}
+\item[NeedLock] This boolean indicates whether the memory manager needs a lock:
+if the memory manager itself is not thread-safe, then this can be set to True,
+and the Memory routines will use a lock for all memory routines. If this field is set to false, no lock will be used.
 \item[Getmem] This function allocates a new block on the heap. The block
 should be \var{Size} bytes long. The return value is a pointer to the newly
 allocated block.
@@ -4678,70 +4671,137 @@ distributed  as a package with \fpc.
 \begin{verbatim}
 unit cmem;
 
-{$mode objfpc}
-
 interface
 
-Function Malloc (Size : Longint) : Pointer;cdecl;
-  external 'c' name 'malloc';
-Procedure Free (P : pointer); cdecl; external 'c' name 'free';
-Procedure FreeMem (P : Pointer); cdecl; external 'c' name 'free';
-function ReAlloc (P : Pointer; Size : longint) : pointer; cdecl;
-  external 'c' name 'realloc';
-Function CAlloc (unitSize,UnitCount : Longint) : pointer;cdecl;
-  external 'c' name 'calloc';
+Const
+  LibName = 'libc';
+
+Function Malloc (Size : ptrint) : Pointer; 
+  cdecl; external LibName name 'malloc';
+Procedure Free (P : pointer); 
+  cdecl; external LibName name 'free';
+function ReAlloc (P : Pointer; Size : ptrint) : pointer;
+  cdecl; external LibName name 'realloc';
+Function CAlloc (unitSize,UnitCount : ptrint) : pointer; 
+  cdecl; external LibName name 'calloc';
 
 implementation
 
-Function CGetMem  (Size : Longint) : Pointer;
+type
+  pptrint = ^ptrint;
+
+Function CGetMem  (Size : ptrint) : Pointer;
 
 begin
-  result:=Malloc(Size);
+  CGetMem:=Malloc(Size+sizeof(ptrint));
+  if (CGetMem <> nil) then
+    begin
+      pptrint(CGetMem)^ := size;
+      inc(CGetMem,sizeof(ptrint));
+    end;
 end;
 
-Function CFreeMem (Var P : pointer) : Longint;
+Function CFreeMem (P : pointer) : ptrint;
 
 begin
+  if (p <> nil) then
+    dec(p,sizeof(ptrint));
   Free(P);
-  Result:=0;
+  CFreeMem:=0;
 end;
 
-Function CFreeMemSize(var p:pointer;Size:Longint):Longint;
+Function CFreeMemSize(p:pointer;Size:ptrint):ptrint;
 
 begin
-  Result:=CFreeMem(P);
+  if size<=0 then
+    begin
+      if size<0 then
+        runerror(204);
+      exit;
+    end;
+  if (p <> nil) then
+    begin
+      if (size <> pptrint(p-sizeof(ptrint))^) then
+        runerror(204);
+    end;
+  CFreeMemSize:=CFreeMem(P);
 end;
 
-Function CAllocMem(Size : Longint) : Pointer;
+Function CAllocMem(Size : ptrint) : Pointer;
 
 begin
-  Result:=calloc(Size,1);
+  CAllocMem:=calloc(Size+sizeof(ptrint),1);
+  if (CAllocMem <> nil) then
+    begin
+      pptrint(CAllocMem)^ := size;
+      inc(CAllocMem,sizeof(ptrint));
+    end;
 end;
 
-Function CReAllocMem (var p:pointer;Size:longint):Pointer;
+Function CReAllocMem (var p:pointer;Size:ptrint):Pointer;
 
 begin
-  Result:=realloc(p,size);
+  if size=0 then
+    begin
+      if p<>nil then
+        begin
+          dec(p,sizeof(ptrint));
+          free(p);
+          p:=nil;
+        end;
+    end
+  else
+    begin
+      inc(size,sizeof(ptrint));
+      if p=nil then
+        p:=malloc(Size)
+      else
+        begin
+          dec(p,sizeof(ptrint));
+          p:=realloc(p,size);
+        end;
+      if (p <> nil) then
+        begin
+          pptrint(p)^ := size-sizeof(ptrint);
+          inc(p,sizeof(ptrint));
+        end;
+    end;
+  CReAllocMem:=p;
 end;
 
-Function CMemSize (p:pointer): Longint;
+Function CMemSize (p:pointer): ptrint;
 
 begin
-  Result:=0;
+  CMemSize:=pptrint(p-sizeof(ptrint))^;
 end;
 
+function CGetHeapStatus:THeapStatus;
+
+var res: THeapStatus;
+
+begin
+  fillchar(res,sizeof(res),0);
+  CGetHeapStatus:=res;
+end;
+
+function CGetFPCHeapStatus:TFPCHeapStatus;
+
+begin
+  fillchar(CGetFPCHeapStatus,sizeof(CGetFPCHeapStatus),0);
+end;
 
 Const
  CMemoryManager : TMemoryManager =
     (
-      GetMem : CGetmem;
-      FreeMem : CFreeMem;
-      FreememSize : CFreememSize;
-      AllocMem : CAllocMem;
-      ReallocMem : CReAllocMem;
-      MemSize : CMemSize;
-      GetHeapStatus : Nil;
-      GetFPCHeapStatus : Nil;
+      NeedLock : false;
+      GetMem : @CGetmem;
+      FreeMem : @CFreeMem;
+      FreememSize : @CFreememSize;
+      AllocMem : @CAllocMem;
+      ReallocMem : @CReAllocMem;
+      MemSize : @CMemSize;
+      GetHeapStatus : @CGetHeapStatus;
+      GetFPCHeapStatus: @CGetFPCHeapStatus;	
     );
 
 Var
@@ -5140,6 +5200,10 @@ as early in the uses clause as possible.
 
 At a later time, a system thread manager may be implemented which implements threads
 without Libc support.
+
+The following sections show how to program threads, and how to protect access to
+data common to all threads using (cross-platform) critical sections. 
+Finally, the thread manager is explained in more detail.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Programming threads
@@ -7473,7 +7537,7 @@ and put on the web.
 
 There are, nevertheless, circumstances when the compiler must be recompiled
 manually. When changes are made to compiler code, or when the compiler is
-downloaded through CVS.
+downloaded through Subversion.
 
 There are essentially 2 ways of recompiling the compiler: by hand, or using
 the makefiles. Each of these methods will be discussed.
@@ -7605,15 +7669,8 @@ in assembler. They must be assembled with the \gnu \file{as} assembler. These st
 are in the OS-dependent directory, except for \linux, where they are in a
 processor dependent subdirectory of the \linux directory (\file{i386} or
 \file{m68k}).
-\item[system] the \file{system} unit. This unit is named differently on different
-systems:
-\begin{itemize}
-\item Only on GO32v2, it's called \file{system}.
-\item For \linux it's called \file{syslinux}.
-\item For \windowsnt it's called \file{syswin32}.
-\item For \ostwo it's called \file{sysos2}
-\end{itemize}
-This unit resides in the OS-dependent subdirectories of the RTL.
+\item[system] the \file{system} unit. This unit resides in the OS-dependent 
+subdirectories of the RTL.
 \item[strings] The strings unit. This unit resides in the \file{inc}
 subdirectory of the RTL.
 \item[dos] The \file{dos} unit. It resides in the OS-dependent subdirectory
@@ -7695,18 +7752,22 @@ minimum. A list of recognised options can be found in \seet{FPCdefines}.
 
 \begin{FPCltable}{ll}{Possible defines when compiling FPC}{FPCdefines}
 Define & does what \\ \hline
-TP & Needed to compile the compiler with Turbo or Borland Pascal. \\
 GDB & Support of the GNU Debugger (required switch). \\
 I386 & Generate a compiler for the Intel i386+ processor family. \\
 M68K & Generate a compiler for the M680x0 processor family. \\
+X86\_64 & Generate a compiler for the AMD64 processor family. \\
+POWERPC & Generate a compiler for the PowerPC processor family. \\
+POWERPC64 & Generate a compiler for the 64-bit PowerPC processor family. \\
+ARM & Generate a compiler for the Intel ARM processor family. \\
+SPARC & Generate a compiler for the SPARC processor family. \\
 EXTDEBUG & Some extra debug code is executed. \\
 MEMDEBUG & Some memory usage information is displayed. \\
 SUPPORT\_MMX & only i386: enables the compiler switch \var{MMX} which \\
  &allows the compiler to generate  MMX instructions.\\
 EXTERN\_MSG & Don't compile the msgfiles in the compiler, always use \\
-& external messagefiles (default for TP).\\
-LOGSECONDPASS & Write compiler node information in assembler output. \\
+& external messagefiles.\\
 NOOPT & Do not include the optimizer in the compiler. \\
+CMEM & Use the C memory manager. \\
 \hline
 \end{FPCltable}
 This list may be subject to change, the source file \file{pp.pas} always
