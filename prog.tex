@@ -181,6 +181,26 @@ This can be used mainly for debugging purposes. The \file{system} unit sets the
 and simply exits. The \file{sysutils} unit catches the run-time error 227
 and raises an \var{EAssertionFailed} exception.
 
+\subsection{\var{\protect\$CALLING} : Specify calling convention}
+\label{se:dircalling}
+The \var{\{\$CALLING \}} directive tells the compiler which calling 
+convention should be used if none is specified:
+\begin{verbatim}
+{$CALLING REGISTER}
+\end{verbatim}
+ By default it is \var{REGISTER}. The following calling conventions exist:
+\begin{description}
+\item[register]
+\item[cdecl]
+\item[pascal]
+\item[safecall]
+\item[stdcall]
+\item[oldfpcall]
+\end{description}
+For a more detailed explanation of calling conventions, \sees{CallingConventions}.
+As a special case, \var{DEFAULT} can be used, to restore the default calling
+convention.
+
 \subsection{\var{\protect\$CHECKPOINTER} : Check pointer values}
 The \var{\{\$CHECKPOINTER\}} directive turns heap pointer checking on (value
 \var{ON}) or off (value \var{OFF}). When heap pointer checking is on and the
@@ -192,6 +212,34 @@ by the program: the stack or a location in the heap. If not, a run-time error
 
 If the code is compiled without \var{-gl} switch, then this directive has no
 effect. Note that this considerably slows down the code.
+
+\subsection{\var{\protect\$CODEALIGN} : Set the code alignment}
+This switch sets the code alignment. 
+It takes an argument which is the alignment in bytes.
+\begin{verbatim}
+{$CODEALIGNMENT 8}
+\end{verbatim}
+
+\subsection{\var{\protect\$COPERATOR} : Allow C like operators}
+This boolean switch determines whether C like operators are allowed. 
+By default they are not allowed.
+After the following statement:
+\begin{verbatim}
+{$COPERATOR ON}
+\end{verbatim}
+The following operators are allowed:
+\begin{verbatim}
+Var
+  I : Integer;
+
+begin
+  I:=1;
+  I+=3; // Add 3 to I and assign the result to I;
+  I-=2; // Substract 2 from I and assign the result to I;
+  I*=2; // Multiply I with 2 and assign the result to I;
+  I/=2; // Divide I with 2 and assign the result to I;
+end;  
+\end{verbatim}
 
 \subsection{\var{\protect\$DEFINE} : Define a symbol}
 
@@ -257,6 +305,9 @@ The following code
 will display an error message when the compiler encounters it,
 and increase the error count of the compiler.
 The compiler will continue to compile, but no code will be emitted.
+
+\subsection{\var{\protect\$EXTENDEDSYM}: Ignored}
+This directive is parsed for Delphi compatibility but otherwise ignored.
 
 \subsection{\var{\protect\$F} : Far or near functions}
 This directive is recognized for compatibility with Turbo Pascal. Under the
@@ -395,6 +446,9 @@ By default, no hints are generated.
 \var{\{\$HINTS OFF\}} switches the generation of hints off.
 Contrary to the command-line option \var{-vh} this is a local switch,
 this is useful for checking parts of the code.
+
+\subsection{\var{\protect\$HPPEMIT}: Ignored}
+This directive is parsed for Delphi compatibility but otherwise ignored.
 
 \subsection{\var{\protect\$IF} : Start conditional compilation}
 
@@ -619,6 +673,27 @@ has the same effect as \var{\{\$ASMMODE XXX\}}, \sees{AsmReader}
 This switch is deprecated, the \var{\{\$ASMMODE XXX\}} directive should
 be used instead.
 
+\subsection{\var{\protect\$J} or \var{\protect\$WRITABLECONSTS} : Allow typed consts}
+This boolean switch tells the compiler whether or not typed constants are allowed.
+The default is to allow typed constants.
+
+The following statement will switch off typed constants:
+\begin{verbatim}
+{$WRITABLECONST OFF}
+\end{verbatim}
+After this switch, the following statement will no longer compile:
+\begin{verbatim}
+Const
+  MyString : String = 'Some nice string';
+\end{verbatim}
+But an initialized variable will still compile:
+\begin{verbatim}
+Var
+  MyString : String = 'Some nice string';
+\end{verbatim}
+
+
+
 \subsection{\var{\protect\$L} or \var{\protect\$LINK} : Link object file}
 
 The \var{\{\$L filename\}} or \var{\{\$LINK filename\}} directive
@@ -802,6 +877,9 @@ end.
 See, however, the chapter on MMX (\ref{ch:MMXSupport}) for more information
 on this topic.
 
+\subsection{\var{\protect\$NODEFINE} : Ignored}
+This directive is parsed for Delphi compatibility but is otherwise ignored.
+
 \subsection{\var{\protect\$NOTE} : Generate note message}
 
 If the generation of notes is turned on, through the \var{-vn} command-line
@@ -820,6 +898,17 @@ Contrary to the command-line option \var{-vn} this is a local switch,
 this is useful for checking parts of the code.
 
 By default, \var{\{\$NOTES\}} is off.
+
+\subsection{\var{\protect\$OBJECTCHECK} : Check Object}
+This boolean switch determines whether code to test the \var{SELF} 
+pointer is inserted in methods. By default it is of
+\begin{verbatim}
+{$OBJECTCHECK ON}
+\end{verbatim}
+If the \var{SELF} pointer is \var{NIL} a run-time error \var{210} 
+(range check) will be generated.
+
+This switch is also activated by the \var{-CR} command-line switch.
 
 \subsection{\var{\protect\$OUTPUT\_FORMAT} : Specify the output format}
 
@@ -845,19 +934,6 @@ NASMELF   & Nasm assembler file (ELF format).\\
 PECOFF    & PECOFF object file (Win32).\\
 TASM      & Tasm assembler file.\\
 \end{FPCltable}
-
-\subsection{\var{\protect\$P} or \var{\protect\$OPENSTRINGS} : Use open strings}
-
-If this switch is on, all function or procedure parameters of type string
-are considered to be open string parameters; this parameter only has effect
-for short strings, not for ansistrings.
-
-When using openstrings, the declared type of the string can be different
-from the type of string that is actually passed, even for strings that are
-passed by reference. The declared size of the string passed can be examined
-with the \var{High(P)} call.
-
-Default the use of openstrings is off.
 
 \subsection{\var{\protect\$PACKENUM} : Minimum enumeration type size}
 
@@ -915,6 +991,14 @@ contrary to Turbo Pascal, where it is 1.
 More information on this and an example program can be found in the reference
 guide, in the section about record types.
 
+The following shorthands can be used for this directive:
+\begin{verbatim}
+{$A1 }
+{$A2 }
+{$A4 }
+{$A8 }
+\end{verbatim}
+
 
 \subsection{\var{\protect\$Q} \var{\protect\$OVERFLOWCHECKS}: Overflow checking}
 The \var{\{\$Q+\}} or \var{\{\$OVERFLOWCHECKS ON\}} directive turns on
@@ -954,6 +1038,20 @@ will be generated.
 when the call is compiled in \var{\{\$R+\}} mode.
 \end{remark}
 
+\subsection{\var{\protect\$R} or \var{\protect\$RESOURCE} : Include resource}
+This directive includes a resource in the binary. The argument to this directive is the resource to include:
+\begin{verbatim}
+{$R icons.res}
+\end{verbatim}
+Will include the file \file{icons.res} as a resource in the binary. Currently resources are supported only for Windows (native resources are used) and for platforms using ELF binaries (linux, BSD).
+
+The asterix can be used as a placeholder for the current unit/program filename:
+\begin{verbatim}
+unit myunit;
+{$R *.res}
+\end{verbatim}
+will include \file{myunit.res}.
+
 \subsection{\var{\protect\$SATURATION} : Saturation operations (Intel 80x86 only)}
 
 This works only on the intel compiler, and MMX support must be on
@@ -984,7 +1082,8 @@ operators:
 The \var{:=} assignment symbol may be replaced with the \var{=} symbol.
 
 Note that this command works only in MACPAS mode, but independent of the
-\var{-Sm} command-line option or \var{\{\$MACROS \}} directive.
+\var{-Sm} command-line option or \var{\{\$MACRO \}} directive.
+
 
 \subsection{\var{\protect\$STATIC} : Allow use of \var{Static} keyword.}
 
@@ -1033,6 +1132,24 @@ When in the \var{+} or \var{ON} state, the compiler checks that strings
 passed as parameters are of the same, identical, string type as the declared
 parameters of the procedure.
 
+\subsection{\var{\protect\$W} or \var{\protect\$STACKFRAMES} : Generate stackframes}
+
+The \var{\{\$W\}} switch directive controls the generation of stackframes.
+In the on state, the compiler will generate a
+stackframe for every procedure or function.
+
+In the off state, the compiler will omit the generation of a stackframe if
+the following conditions are satisfied:
+\begin{itemize}
+\item The procedure has no parameters.
+\item The procedure has no local variables.
+\item If the procedure is not an \var{assembler} procedure, it must not have
+a \var{asm \dots end;} block.
+\item it is not a constructor or destructor.
+\end{itemize}
+If these conditions are satisfied, the stack frame will be omitted.
+
+
 \subsection{\var{\protect\$WAIT} : Wait for enter key press}
 
 If the compiler encounters a
@@ -1067,35 +1184,6 @@ Contrary to the command-line option \var{-vw} this
 is a local switch, this is useful for checking parts of your code.
 
 By default, no warnings are emitted.
-
-\subsection{\var{\protect\$X} or \var{\protect\$EXTENDEDSYNTAX} : Extended syntax}
-
-Extended syntax allows you to drop the result of a function. This means that
-you can use a function call as if it were a procedure. Standard this feature
-is on. You can switch it off using the \var{\{\$X-\}} or
-\var{\{\$EXTENDEDSYNTAX OFF\}}directive.
-
-The following, for instance, will not compile:
-\begin{verbatim}
-function Func (var Arg : sometype) : longint;
-begin
-...          { declaration of Func }
-end;
-
-...
-
-{$X-}
-Func (A);
-\end{verbatim}
-The reason this construct is supported is that you may wish to call a
-function for certain side-effects it has, but you don't need the function
-result. In this case you don't need to assign the function result, saving
-you an extra variable.
-
-The command-line compiler switch \var{-Sa1} has the same effect as the
-\var{\{\$X+\}} directive.
-
-By default, extended syntax is assumed.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Global switches
@@ -1204,6 +1292,17 @@ procedure/function saves all registers.
 \end{description}
 It is equivalent to the \var{-Cc} command-line option.
 
+\subsection{\var{\protect\$CODEPAGE} : Set the source codepage}
+This switch sets the codepage of the rest of the source file. 
+The codepage is only taken into account when interpreting literal 
+strings, the actual code must be in US-ASCII. The argument to this switch is the name of the code page to be used.
+\begin{verbatim}
+{$CODEPAGE UTF8}
+\end{verbatim}
+The 'UTF-8' codepage can be specified as 'UTF-8' or 'UTF8'.
+The list of supported codepages is the list of codepages
+supported by the \file{charset} unit of the RTL.
+
 \subsection{\var{\protect\$COPYRIGHT} specify copyright info}
 This is intended for the NETWARE version of the compiler: it specifies the
 copyright information that can be viewed on a module for a Netware OS.
@@ -1227,6 +1326,10 @@ By default, insertion of debugging information is off.
 
 This switch is recognised for compatibility only, but is ignored completely
 by the compiler. At a later stage, this switch may be activated.
+
+\subsection{\var{\protect\$D} \var{\protect\$DEBUGINFO} : Include debug info}
+Setting this boolean switch to ON will include debug information in the unit 
+or program. It has the same effect as the \var{-g} command-line option.
 
 \subsection{\var{\protect\$E} : Emulation of coprocessor}
 
@@ -1293,6 +1396,19 @@ paths, as in the example above. Only
  use this directive if you are certain
 of the places where the files reside. If you are not sure, it is better
 practice to use makefiles and makefile variables.
+
+\subsection{\var{\protect\$INTERFACES} : Default interface type}
+This interface selects the style of interface that the compiler will use:
+\begin{verbatim}
+{$INTERFACES COM}
+\end{verbatim}
+selects COM compatible interfaces, while
+\begin{verbatim}
+{$INTERFACES CORBA}
+\end{verbatim}
+selects CORBA compatible interfaces. 
+
+This switch is equivalent to the \var{-SI} command-line option.
 
 \subsection{\var{\protect\$L} or \var{\protect\$LOCALSYMBOLS} : Local symbol information}
 
@@ -1403,6 +1519,20 @@ paths, as in the example above. Only use this directive if you are certain
 of the places where the files reside. If you are not sure, it is better
 practice to use makefiles and makefile variables.
 
+\subsection{\var{\protect\$P} or \var{\protect\$OPENSTRINGS} : Use open strings}
+
+If this switch is on, all function or procedure parameters of type string
+are considered to be open string parameters; this parameter only has effect
+for short strings, not for ansistrings.
+
+When using openstrings, the declared type of the string can be different
+from the type of string that is actually passed, even for strings that are
+passed by reference. The declared size of the string passed can be examined
+with the \var{High(P)} call.
+
+Default the use of openstrings is off.
+
+
 \subsection{\var{\protect\$PROFILE} : Profiling}
 
 This directive turns the generation of profiling code on (or off). It is
@@ -1424,6 +1554,14 @@ The command-line compiler switch \var{-Ct} has the same effect as the
 \var{\{\$S+\}} directive.
 
 By default, no stack checking is performed.
+
+\subsection{\var{\protect\$SCREENNAME} : Specify screen name}
+This directive can be used for the Novell netware targets to specify the screen name. 
+The argument is the screen name to be used.
+\begin{verbatim}
+{$SCREENNAME My Nice Screen}
+\end{verbatim}
+Will set the screenname of the current application to 'My Nice Screen'.
 
 \subsection{\var{\protect\$SMARTLINK} : Use smartlinking}
 
@@ -1510,22 +1648,38 @@ And even:
 This can not yet be used for executables on Windows, but may be activated in
 the future.
 
-\subsection{\var{\protect\$W} or \var{\protect\$STACKFRAMES} : Generate stackframes}
+\subsection{\var{\protect\$WEAKPACKAGEUNIT} : ignored}
+This switch is parsed for Delphi compatibility but is otherwise ignored.
 
-The \var{\{\$W\}} switch directive controls the generation of stackframes.
-In the on state, the compiler will generate a
-stackframe for every procedure or function.
+\subsection{\var{\protect\$X} or \var{\protect\$EXTENDEDSYNTAX} : Extended syntax}
 
-In the off state, the compiler will omit the generation of a stackframe if
-the following conditions are satisfied:
-\begin{itemize}
-\item The procedure has no parameters.
-\item The procedure has no local variables.
-\item If the procedure is not an \var{assembler} procedure, it must not have
-a \var{asm \dots end;} block.
-\item it is not a constructor or destructor.
-\end{itemize}
-If these conditions are satisfied, the stack frame will be omitted.
+Extended syntax allows you to drop the result of a function. This means that
+you can use a function call as if it were a procedure. Standard this feature
+is on. You can switch it off using the \var{\{\$X-\}} or
+\var{\{\$EXTENDEDSYNTAX OFF\}}directive.
+
+The following, for instance, will not compile:
+\begin{verbatim}
+function Func (var Arg : sometype) : longint;
+begin
+...          { declaration of Func }
+end;
+
+...
+
+{$X-}
+Func (A);
+\end{verbatim}
+The reason this construct is supported is that you may wish to call a
+function for certain side-effects it has, but you don't need the function
+result. In this case you don't need to assign the function result, saving
+you an extra variable.
+
+The command-line compiler switch \var{-Sa1} has the same effect as the
+\var{\{\$X+\}} directive.
+
+By default, extended syntax is assumed.
+
 
 \subsection{\var{\protect\$Y} or \var{\protect\$REFERENCEINFO} : Insert Browser information}
 
@@ -1544,6 +1698,20 @@ however, more than that. It allows you to make macros which can be used in
 your code, and it allows you to define messages or errors which will be
 displayed when compiling. It also has support for compile-time variables and
 compile-time expressions, as commonly found in \macos compilers.
+
+The various conditional compilation directives (\var{\$IF},  \var{\$IFDEF},
+\var{\$IFOPT} are used in combination with \var{\$DEFINE}
+to allow the programmer to choose at compile time, which portions 
+of the code should be compiled.  This can be used for instance for
+\begin{itemize}
+\item To choose an implementation for one operating system over another.
+\item To choose a demonstration version or a full version.
+\item To distinguish between a debug version and a version for shipping.
+\end{itemize}
+These options are then chosen when the program is compiled, including or
+excluding parts of the code as needed. This is opposed to using normal 
+variables and running through selected portions of code at run time,  
+in which case extra code is included in the executable.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Conditionals
@@ -1631,7 +1799,7 @@ of the macro (much like the macro support in the C preprocessor). If macro
 support is required, the \var{-Sm} command-line switch must be used to
 switch it on, or the directive must be inserted:
 \begin{verbatim}
-{$MACROS ON}
+{$MACRO ON}
 \end{verbatim}
 otherwise macros will be regarded as a symbol.
 
@@ -1691,7 +1859,7 @@ Symbol & Contains \\ \hline
 
 \begin{remark}Don't forget that macro support isn't on by default. It must
 be turned on  with the \var{-Sm} command-line switch or using the
-\var{\{\$MACROS ON\}} directive.
+\var{\{\$MACRO ON\}} directive.
 \end{remark}
 
 
@@ -1728,8 +1896,9 @@ In mode MacPas, compile time variables are always enabled.
 \subsection{Definition}
 Except for the regular Turbo Pascal constructs for conditional compilation,
 the \fpc compiler also supports a stronger conditional compile mechanism: 
-The \var{\{\$if\}} construct, which can be used to evaluate compile-time
+The \var{\{\$IF\}} construct, which can be used to evaluate compile-time
 expressions.
+
 
 The prototype of this construct is as follows:
 \begin{verbatim}
@@ -2090,6 +2259,67 @@ mechanism for this is the same as under Turbo Pascal. There are, however
 some substantial differences, as will be explained in the following
 sections.
 
+\section{Using assembler in the sources}
+
+There are essentially 2 ways to embed assembly code in the pascal source.
+The first one is the simplest, by using an asm block:
+\begin{verbatim}
+Var
+  I : Integer;
+begin
+  I:=3;
+  asm
+   movl I,%eax
+  end;
+end;    
+\end{verbatim}
+Everything between the \var{asm} and \var{end} block is inserted as
+assembler in the generated code. Depending on the assembler reader mode, the
+compiler performs substitution of certain names with their addresses.
+
+The second way is implementing a complete procedure or function in
+assembler. This is done by adding a \var{assembler} modifier to the 
+function or procedure header:
+\begin{verbatim}
+function geteipasebx : pointer;assembler;
+asm
+  movl (%esp),%ebx
+  ret
+end;
+\end{verbatim}
+It's still possible to declare variables in an assembler procedure:
+\begin{verbatim}
+procedure Move(const source;var dest;count:SizeInt);assembler;
+var
+  saveesi,saveedi : longint;
+asm
+  movl %edi,saveedi
+end;
+\end{verbatim}
+The compiler will reserve space on the stack for these variables.
+(it inserts some commands for this).
+
+Note that the assembler name of an assembler function will still be 'mangled' 
+by the compiler, i.e. the label for this function will not be the name of
+the function as declared. To change this, a \var{Alias} modifier can be
+used:
+\begin{verbatim}
+function geteipasebx : pointer;assembler;[alias:'FPC_GETEIPINEBX'];
+asm
+  movl (%esp),%ebx
+  ret
+end;
+\end{verbatim}
+To make the function available in assembler code outside the current unit, 
+the \var{Public} modifier can be added:
+\begin{verbatim}
+function geteipasebx : pointer;assembler;[public,alias:'FPC_GETEIPINEBX'];
+asm
+  movl (%esp),%ebx
+  ret
+end;
+\end{verbatim}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 80x86 Assembler syntax
 \section{Intel 80x86 Inline assembler}
@@ -2369,9 +2599,11 @@ When the compiler uses variables, it sometimes stores them, or the result of
 some calculations, in the processor registers. If you insert assembler code
 in your program that modifies the processor registers, then this may
 interfere with the compiler's idea about the registers. To avoid this
-problem, \fpc allows you to tell the compiler which registers have changed.
-The compiler will then avoid using these registers. Telling the compiler
-which registers have changed is done by specifying a set of register names
+problem, \fpc allows you to tell the compiler which registers have changed
+in an \var{asm} block.
+The compiler will then save and reload these registers if it was using them. 
+Telling the compiler which registers have changed is done by specifying a 
+set of register names
 behind an assembly block, as follows:
 \begin{verbatim}
 asm
@@ -2391,6 +2623,13 @@ As an example:
 \end{verbatim}
 This example tells the compiler that the \var{EAX} register was modified.
 
+For assembler routines, i.e., routines that are written completely in
+assembler, the ABI of the processor \& platform must be respected, i.e. 
+the routine itself must know what registers to save and what not. The
+method described above doesn't apply there.
+
+The only thing the compiler does, is create a minimal stack frame if needed
+(e.g. when variables are declared). All the rest is up to the programmer.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2920,11 +3159,8 @@ give nicknames to mangled names, or to change the mangled
 name directly. Two modifiers can be used:
 
 \begin{description}
-\item [cdecl:\ ] A function that has a \var{cdecl} modifier, will be used
-with C calling conventions, that is, the caller clears the stack. Also
+\item [public: ] For a function that has a \var{public} modifier, 
 the mangled name will be the name {\em exactly} as it is declared.
-\var{cdecl} is part of the function declaration, and hence must be present
-both in the interface and implementation section of a unit.
 
 \item [alias: ] The \var{alias} modifier can be used to assign a second
 assembler label to your function. This label has the same name as the
@@ -2952,17 +3188,16 @@ creating shared libraries, \seec{libraries}.
 \section{Calling mechanism}
 \label{se:CallingConventions}
 
-Procedures and Functions are called with their parameters on the stack.
-Contrary to Turbo Pascal, {\em all} parameters are pushed on the stack, and
-they are pushed {\em right} to {\em left}, instead of left to right for
-Turbo Pascal. This is especially important if you have some assembly
-subroutines in Turbo Pascal which you would like to translate to \fpc.
+By default, the calling mechanism the compiler uses is \var{register}, 
+that is, the compiler will try to pass as much parameters as posible by 
+storing them in a free register. Not all registers are used, some 
+registers have a special meaning, but this depends on the CPU.
 
-Function results are returned in the accumulator, if they fit in the
-register. Methods calls (from either objects or clases) have an additional
-invisible parameter which is \var{self}. This parameter is the leftmost
-parameter within a method call (it is therefore the last parameter passed
-to the method).
+Function results are returned in the accumulator (first register), 
+if they fit in the register. Methods calls (from either objects or 
+clases) have an additional invisible parameter which is \var{self}. 
+This parameter is the leftmost parameter within a method call 
+(it is therefore the last parameter passed to the method).
 
 When the procedure or function exits, it clears the stack.
 
@@ -2979,30 +3214,30 @@ subroutine.
 \begin{FPCltable}{lllll}{Calling mechanisms in \fpc}{CallingTable}\hline
 Modifier & Pushing order & Stack cleaned by & alignment & registers saved \\
 \hline
-<none>  & Right-to-left & Function & default & None\\
+<none>  & Left-to-right & Function & default & None\\
+register & Left-to-right & Function & default & None \\ \hline
 cdecl   & Right-to-left & Caller   & GCC alignment & GCC registers\\
 interrupt & Right-to-left & Function & default & all registers\\
 pascal  & Left-to-right & Function & default & None\\
 safecall & Right-to-left & Function & default & GCC registers\\
 stdcall & Right-to-left & Function & GCC alignment & GCC registers \\
-popstack & Right-to-left & Caller  & default & None \\
-register & Left-to-right & Caller & default & None \\ \hline
+oldfpcall & Right-to-left & Caller  & default & None \\
 \end{FPCltable}
 
 More about this can be found in \seec{Linking} on linking. Information
 on GCC registers saved, GCC stack alignment and general stack alignment
-on an operating system basis can be found in Appendix \ref{ch:AppH}. The \var{register}
-modifier is currently not supported, and maps to the default calling
-convention.
+on an operating system basis can be found in Appendix \ref{ch:AppH}. 
+As of version 2.0 (actually, in 1.9.x somewhere) , the \var{register} 
+modifier is the default calling convention, prior to that, it was the 
+\var{oldfpcall} convention.
 
-Furthermore, the \var{saveregisters} modifier can be used with
-any of the calling mechanism specifiers. When \var{saveregisters}
-is used, all registers will be saved on entry to the routine,
-and will be restored upon exit. Of course, if the routine is
-a function, and it normally returns its retun value in a register,
-that register will not be saved. Also, if the self register is
-used, it will also neither be saved nor restored.
+The default calling convention, i.e., the calling convention used when none is specified explicitly, can be set using the \var{\{\$calling \}} directive, \sees{dircalling}
 
+\begin{remark}
+The \var{popstack} modifier is no longer supported as of version 2.0, 
+but has been renamed to \var{oldfpcall}. The \var{saveregisters} modifier
+can no longer be used.
+\end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Nested subroutines
@@ -3162,15 +3397,16 @@ When a function or procedure is called, then the following is done by the
 compiler:
 \begin{enumerate}
 \item If there are any parameters to be passed to the procedure, they are
-pushed from right to left on the stack.
+stored in well-known registers, and if there are more parameters than free
+registers, they are pushed from left to right on the stack.
 \item If a function is called that returns a variable of type \var{String},
 \var{Set}, \var{Record}, \var{Object} or \var{Array}, then an address to
-store the function result in, is pushed on the stack.
+store the function result in, is also passed to the procedure.
 \item If the called procedure or function is an object method, then the
-pointer to \var{self} is pushed on the stack.
+pointer to \var{self} is passed to the procedure.
 \item If the procedure or function is nested in another function or
-procedure, then the frame pointer of the parent procedure is pushed on the
-stack.
+procedure, then the frame pointer of the parent procedure is passed 
+to the stack.
 \item The return address is pushed on the stack (This is done automatically
 by the instruction which calls the subroutine).
 \end{enumerate}
@@ -3179,7 +3415,7 @@ The resulting stack frame upon entering looks as in \seet{StackFrame}.
 \begin{FPCltable}{llc}{Stack frame when calling a procedure (32-bit model)}{StackFrame}
 \hline
 Offset & What is stored & Optional? \\ \hline
-+x & parameters & Yes \\
++x & extra parameters & Yes \\
 +12 & function result & Yes \\
 +8 & self & Yes \\
 +4 & Return address & No\\
@@ -3203,7 +3439,7 @@ as passing a byte value parameter to the stack).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Processor limitations}
+\section{Stack limitations}
 \label{se:ProcessorLimits}
 
 Certain processors have limitations on the size of the parameters
@@ -3680,7 +3916,7 @@ the \file{ranlib} or \var{ar} program on your system. It is standard on most
 For the dos distribution, a copy of ar is included in the file
 \file{gnuutils.zip}.
 
-{\em BEWARE:} This command doesn't include anything but the current unit in
+{\em Remark:} This command doesn't include anything but the current unit in
 the library. Other units are left out, so if you use code from other units,
 you must deploy them together with your library.
 
@@ -3775,9 +4011,7 @@ making it smartlinked.
 The \fpc compiler issues 32-bit or 64-bit code.
 This has several consequences:
 \begin{itemize}
-\item You need a 32-bit or 64-bit processor to run the generated code. The
-compiler functions on a 286 when you compile it using Turbo Pascal,
-but the generated programs cannot be assembled or executed.
+\item You need a 32-bit or 64-bit processor to run the generated code. 
 \item You don't need to bother with segment selectors. Memory can be
 addressed using a single 32-bit (on 32-bit processors) or 64-bit (on
 64-bit processors with 64-bit addressing) pointer.
@@ -3786,35 +4020,6 @@ memory on your machine.
 \item The structures you define are unlimited in size. Arrays can be as long
 as you want. You can request memory blocks from any size.
 \end{itemize}
-
-The fact that 16-bit code is no longer used, means that some of the older
-Turbo Pascal constructs and functions are obsolete. The following is a
-list of functions which shouldn't be used anymore:
-\begin{description}
-\item [Seg()]: Returned the segment of a memory address. Since segments have
-no more meaning, zero is returned in the \fpc run-time library implementation of
-\var{Seg}.
-\item [Ofs()]: Returned the offset of a memory address. Since segments have
-no more meaning, the complete address is returned in the \fpc implementation
-of this function. This has as a consequence that the return type is
-\var{longint} or \var{int64} instead of \var{Word}.
-\item [Cseg(), Dseg()]: Returned, respectively, the code and data segments
-of your program.  This returns zero in the \fpc implementation of the
-system unit, since both code and data are in the same memory space.
-\item [Ptr]: Accepted a segment and offset from an address, and would return
-a pointer to this address. This has been changed in the run-time library, it
-now simply returns the offset.
-\item [memw and mem]: These arrays gave access to the \dos memory. \fpc
-supports them on the go32v2 platform, they are mapped into \dos memory
-space. You need the \file{go32} unit for this. On other platforms, they are
-{\em not} supported
-\end{description}
-
-You shouldn't use these functions, since they are very non-portable, they're
-specific to \dos and the 80x86 processor. The \fpc compiler is designed to be
-portable to other platforms, so you should keep your code as portable as
-possible, and not system specific. That is, unless you're writing some driver
-units, of course.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Data formats
@@ -3825,7 +4030,7 @@ This section gives information on the storage space occupied by
 the different possible types in \fpc. Information on internal
 alignment will also be given.
 
-\subsection{integer types}
+\subsection{Integer types}
 
 The storage size of the default integer types are given in
 \refref. In the case of user defined-types, the storage space
@@ -3846,12 +4051,12 @@ variable is stored as a longword (unsigned 32-bit quantity).
 32-bit quantity).
 \end{itemize}
 
-\subsection{char types}
+\subsection{Char types}
 
 A \var{char}, or a subrange of the char type is stored
-as a byte.
+as a byte. A WideChar is stored as a word, i.e. 2 bytes.
 
-\subsection{boolean types}
+\subsection{Boolean types}
 
 The \var{boolean} type is stored as a byte and can take
 a value of \var{true} or \var{false}.
@@ -3860,7 +4065,7 @@ A \var{ByteBool} is stored as a byte, a \var{WordBool}
 type is stored as a word, and a \var{longbool} is stored
 as a longint.
 
-\subsection{enumeration types}
+\subsection{Enumeration types}
 
 By default all enumerations are stored as a
 longword (4 bytes), which is equivalent to specifying
@@ -3888,7 +4093,7 @@ bytes (word), if the enumeration has less or equal
 then 65535 elements, otherwise, the enumeration
 value is stored as a 4 byte value (longword).
 
-\subsection{floating point types}
+\subsection{Floating point types}
 
 Floating point type sizes and mapping vary from one
 processor to another. Except for the Intel 80x86
@@ -3896,21 +4101,12 @@ architecture, the \var{extended} type maps to the IEEE
 double type if a hardware floating point coprocessor
 is present.
 
-\begin{FPCltable}{lr}{Processor mapping of real type}{RealMapping}
-Processor & Real type mapping\\
-\hline
-Intel 80x86 &   \var{double}\\
-Motorola 680x0 (with \{\$E-\} switch) & \var{double}\\
-Motorola 680x0 (with \{\$E+\} switch) & \var{single}\\
-\hline
-\end{FPCltable}
-
 Floating point types have a storage binary format divided
 into three distinct fields : the mantissa, the exponent
 and the sign bit which stores the sign of the floating
 point value.
 
-\subsubsection{single}
+\subsubsection{Single}
 
 The \var{single} type occupies 4 bytes of storage space,
 and its memory structure is the same as the IEEE-754 single
@@ -3924,7 +4120,7 @@ what is shown in \seefig{single}.
 \FPCpic{The single format}{}{single}
 
 
-\subsubsection{double}
+\subsubsection{Double}
 
 The \var{double} type occupies 8 bytes of storage space,
 and its memory structure is the same as the IEEE-754 double
@@ -3941,7 +4137,7 @@ the \{\$E+\} switch), the \var{double} type does not exist.
 
 
 
-\subsubsection{extended}
+\subsubsection{Extended}
 
 For Intel 80x86 processors, the \var{extended} type has
 takes up 10 bytes of memory space. For more information
@@ -3954,7 +4150,7 @@ On processors which do not support co-processor operations (and which have
 the \{\$E+\} switch), the \var{extended} type usually maps to the
 \var{single} type.
 
-\subsubsection{comp}
+\subsubsection{Comp}
 
 For Intel 80x86 processors, the \var{comp} type contains
 a 63-bit integral value, and a sign bit (in the MSB position).
@@ -3962,7 +4158,7 @@ The \var{comp} type takes up 8 bytes of storage space.
 
 On other processors, the \var{comp} type is not supported.
 
-\subsubsection{real}
+\subsubsection{Real}
 
 Contrary to Turbo Pascal, where the \var{real} type had
 a special internal format, under \fpc the \var{real} type
@@ -3973,16 +4169,25 @@ on processors which do not support floating point operations
 in hardware. See \seet{RealMapping} for more information
 on this.
 
-\subsection{pointer types}
+\begin{FPCltable}{lr}{Processor mapping of real type}{RealMapping}
+Processor & Real type mapping\\
+\hline
+Intel 80x86 &   \var{double}\\
+Motorola 680x0 (with \{\$E-\} switch) & \var{double}\\
+Motorola 680x0 (with \{\$E+\} switch) & \var{single}\\
+\hline
+\end{FPCltable}
+
+\subsection{Pointer types}
 
 A \var{pointer} type is stored as a longword (unsigned 32-bit value) on
 32-bit processors, and is stored as a 64-bit unsigned value\footnote{this
 is actually the \var{qword} type, which is not supported in \fpc v1.0}
 on 64-bit processors.
 
-\subsection{string types}
+\subsection{String types}
 
-\subsubsection{ansistring types}
+\subsubsection{Ansistring types}
 
 The ansistring is a dynamically allocated string which
 has no length limitation. When the string is no longer
@@ -3996,14 +4201,13 @@ ansistring is shown in \seet{ansistrings}.
 
 \begin{FPCltable}{rl}{AnsiString memory structure (32-bit model)}{ansistrings}
 Offset & Contains \\ \hline
--12  & Longint with maximum string size. \\
 -8   & Longint with actual string size.\\
 -4   & Longint with reference count.\\
 0    & Actual array of \var{char}, null-terminated. \\ \hline
 \end{FPCltable}
 
 
-\subsubsection{shortstring types}
+\subsubsection{Shortstring types}
 
 A shortstring occupies as many bytes as its maximum length plus one.
 The first byte contains the current dynamic length of the string. The
@@ -4011,12 +4215,12 @@ following bytes contain the actual characters (of type \var{char})
 of the string. The maximum size of a short string is the length
 byte followed by 255 characters.
 
-\subsubsection{widestring types}
+\subsubsection{Widestring types}
 
 The widestring (composed of unicode characters) is not supported
 in \fpc v1.0.
 
-\subsection{set types}
+\subsection{Set types}
 
 A set is stored as an array of bits, where each bit indicates
 if the element is in the set or excluded from the set. The maximum
@@ -4037,15 +4241,24 @@ and the bit number within that 32-bit value is given by:
  BitNumber = (E mod 32);
 \end{verbatim}
 
-\subsection{array types}
+\subsection{Static array types}
 
-An array is stored as a contiguous sequence of variables
+A static array is stored as a contiguous sequence of variables
 of the components of the array. The components with the
 lowest indexes are stored first in memory. No alignment
 is done between each element of the array. A multi-dimensional
 array is stored with the rightmost dimension increasing first.
 
-\subsection{record types}
+\subsection{Dynamic array types}
+
+A dynamic array is stored as a pointer to a block of memory on the heap.
+The memory on the heap is a contiguous sequence of variables
+of the components of the array, just as for a static array. The reference
+count and memory size are stored in memory just before the actual start of
+the array, at a negative offset relative to the address the pointer refers
+to. It should not be used.
+
+\subsection{Record types}
 
 Each field of a record are stored in a contigous sequence
 of variables, where the first field is stored at the
@@ -4058,7 +4271,7 @@ consult \sees{StructuredAlignment}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % memory storage of Objects
-\subsection{object types}
+\subsection{Object types}
 \label{subse:ObjMemory}
 
 Objects are stored in memory just as ordinary records with an extra field:
@@ -4100,7 +4313,7 @@ pointers. \\
 \end{FPCltable}
 
 
-\subsection{class types}
+\subsection{Class types}
 
 Just like objects, classes are stored in memory just as ordinary records
 with an extra field: a pointer to the Virtual Method Table (VMT).
@@ -4151,7 +4364,7 @@ pointers. \\
 \hline
 \end{FPCltable}
 
-\subsection{file types}
+\subsection{File types}
 
 File types are represented as records. Typed files and untyped
 files are represented as a fixed record:
@@ -4206,7 +4419,7 @@ the name of the file.
 be used for special purposes by software developpers.
 \end{description}
 
-\subsection{procedural types}
+\subsection{Procedural types}
 A procedural type is stored as a generic pointer, which stores
 the address of the routine.
 
@@ -4229,10 +4442,7 @@ a byte are usually aligned on a power of two boundary. This alignment
 applies only to the start address of the variables, and not the alignment
 of fields within structures or objects for example. For more information
 on structured alignment, \sees{StructuredAlignment}. The alignment
-is similar across the different target processors. \footnote{The Intel
-80x86 version does not align data in the case of constant strings,
-constant sets, constant floating point values amd global variables.
-This will be fixed in the version 1.1 release.}
+is similar across the different target processors. 
 
 
 \begin{FPCltable}{lccc}{Data alignment}{DataAlignment}
@@ -4266,14 +4476,12 @@ the structure will actually be 2 bytes.
 \section{The heap}
 \label{se:Heap}
 The heap is used to store all dynamic variables, and to store class
-instances. The interface to the heap is the same as in Turbo Pascal,
-although the effects are maybe not the same. On top of that, the \fpc
-run-time library has some extra possibilities, not available in Turbo
-Pascal. These extra possibilities are explained in the next subsections.
-
+instances. The interface to the heap is the same as in Turbo Pascal 
+and Delphi although the effects are maybe not the same. 
+The heap is thread-safe, so allocating memory from various 
+threads is not a problem.
 % The heap algorithm
 \subsection{Heap allocation strategy}
-
 
 The heap is a memory structure which is organized as a stack. The heap
 bottom is stored in the variable \var{HeapOrg}. Initially the heap
@@ -4329,19 +4537,14 @@ generates a runtime error 203.
 
 % The heap grows
 \subsection{The heap grows}
-By default, \var{HeapError} points to the \var{GrowHeap} function,
-which tries to increase the heap.
+The heap allocates memory from the operating system on an as-needed basis.
 
-The \var{GrowHeap} function issues a system call to try to increase the size of the
-memory available to your program. It first tries to increase memory in a 256Kb
-chunk if the size to allocate is less than 256Kb, or 1024K otherwise.
+OS memory is requested in blocks: It first tries to increase memory in a 64Kb 
+chunk if the size to allocate is less than 64Kb, or 256Kb or 1024K otherwise.
 If this fails, it tries to increase the heap by the amount you requested
 from the heap.
 
-If the call to \var{GrowHeap} was successful, then the needed memory will be
-allocated.
-
-If the call to \var{GrowHeap} fails, the value returned depends on the
+If the attempt to reserve OS memory fails, the value returned depends on the
 value of the \var{ReturnNilIfGrowHeapFails} global variable. This is summarized
 in \seet{growheapnil}.
 
@@ -4391,24 +4594,28 @@ procedure SetMemoryManager(const MemMgr: TMemoryManager);
 the \var{TMemoryManager} record is defined as follows:
 \begin{verbatim}
   TMemoryManager = record
-    Getmem      : Function(Size:Longint):Pointer;
-    Freemem     : Function(var p:pointer):Longint;
-    FreememSize : Function(var p:pointer;Size:Longint):Longint;
-    AllocMem    : Function(Size:longint):Pointer;
-    ReAllocMem  : Function(var p:pointer;Size:longint):Pointer;
-    MemSize     : function(p:pointer):Longint;
+    NeedLock    : Boolean;
+    Getmem      : Function(Size:PtrInt):Pointer;
+    Freemem     : Function(var p:pointer):PtrInt;
+    FreememSize : Function(var p:pointer;Size:PtrInt):PtrInt;
+    AllocMem    : Function(Size:PtrInt):Pointer;
+    ReAllocMem  : Function(var p:pointer;Size:PtrInt):Pointer;
+    MemSize     : function(p:pointer):PtrInt;
     GetHeapStatus       : function :THeapStatus;
     GetFPCHeapStatus    : function :TFPCHeapStatus;
   end;
 \end{verbatim}
 
-As you can see, the elements of this record are procedural variables.
+As you can see, the elements of this record are mostly procedural variables.
 The \file{system} unit does nothing but call these various variables when you
 allocate or deallocate memory.
 
-Each of these functions corresponds to the corresponding call in the \file{system}
+Each of these fields corresponds to the corresponding call in the \file{system}
 unit. We'll describe each one of them:
 \begin{description}
+\item[NeedLock] This boolean indicates whether the memory manager needs a lock:
+if the memory manager itself is not thread-safe, then this can be set to True,
+and the Memory routines will use a lock for all memory routines. If this field is set to false, no lock will be used.
 \item[Getmem] This function allocates a new block on the heap. The block
 should be \var{Size} bytes long. The return value is a pointer to the newly
 allocated block.
@@ -4464,70 +4671,137 @@ distributed  as a package with \fpc.
 \begin{verbatim}
 unit cmem;
 
-{$mode objfpc}
-
 interface
 
-Function Malloc (Size : Longint) : Pointer;cdecl;
-  external 'c' name 'malloc';
-Procedure Free (P : pointer); cdecl; external 'c' name 'free';
-Procedure FreeMem (P : Pointer); cdecl; external 'c' name 'free';
-function ReAlloc (P : Pointer; Size : longint) : pointer; cdecl;
-  external 'c' name 'realloc';
-Function CAlloc (unitSize,UnitCount : Longint) : pointer;cdecl;
-  external 'c' name 'calloc';
+Const
+  LibName = 'libc';
+
+Function Malloc (Size : ptrint) : Pointer; 
+  cdecl; external LibName name 'malloc';
+Procedure Free (P : pointer); 
+  cdecl; external LibName name 'free';
+function ReAlloc (P : Pointer; Size : ptrint) : pointer;
+  cdecl; external LibName name 'realloc';
+Function CAlloc (unitSize,UnitCount : ptrint) : pointer; 
+  cdecl; external LibName name 'calloc';
 
 implementation
 
-Function CGetMem  (Size : Longint) : Pointer;
+type
+  pptrint = ^ptrint;
+
+Function CGetMem  (Size : ptrint) : Pointer;
 
 begin
-  result:=Malloc(Size);
+  CGetMem:=Malloc(Size+sizeof(ptrint));
+  if (CGetMem <> nil) then
+    begin
+      pptrint(CGetMem)^ := size;
+      inc(CGetMem,sizeof(ptrint));
+    end;
 end;
 
-Function CFreeMem (Var P : pointer) : Longint;
+Function CFreeMem (P : pointer) : ptrint;
 
 begin
+  if (p <> nil) then
+    dec(p,sizeof(ptrint));
   Free(P);
-  Result:=0;
+  CFreeMem:=0;
 end;
 
-Function CFreeMemSize(var p:pointer;Size:Longint):Longint;
+Function CFreeMemSize(p:pointer;Size:ptrint):ptrint;
 
 begin
-  Result:=CFreeMem(P);
+  if size<=0 then
+    begin
+      if size<0 then
+        runerror(204);
+      exit;
+    end;
+  if (p <> nil) then
+    begin
+      if (size <> pptrint(p-sizeof(ptrint))^) then
+        runerror(204);
+    end;
+  CFreeMemSize:=CFreeMem(P);
 end;
 
-Function CAllocMem(Size : Longint) : Pointer;
+Function CAllocMem(Size : ptrint) : Pointer;
 
 begin
-  Result:=calloc(Size,1);
+  CAllocMem:=calloc(Size+sizeof(ptrint),1);
+  if (CAllocMem <> nil) then
+    begin
+      pptrint(CAllocMem)^ := size;
+      inc(CAllocMem,sizeof(ptrint));
+    end;
 end;
 
-Function CReAllocMem (var p:pointer;Size:longint):Pointer;
+Function CReAllocMem (var p:pointer;Size:ptrint):Pointer;
 
 begin
-  Result:=realloc(p,size);
+  if size=0 then
+    begin
+      if p<>nil then
+        begin
+          dec(p,sizeof(ptrint));
+          free(p);
+          p:=nil;
+        end;
+    end
+  else
+    begin
+      inc(size,sizeof(ptrint));
+      if p=nil then
+        p:=malloc(Size)
+      else
+        begin
+          dec(p,sizeof(ptrint));
+          p:=realloc(p,size);
+        end;
+      if (p <> nil) then
+        begin
+          pptrint(p)^ := size-sizeof(ptrint);
+          inc(p,sizeof(ptrint));
+        end;
+    end;
+  CReAllocMem:=p;
 end;
 
-Function CMemSize (p:pointer): Longint;
+Function CMemSize (p:pointer): ptrint;
 
 begin
-  Result:=0;
+  CMemSize:=pptrint(p-sizeof(ptrint))^;
 end;
 
+function CGetHeapStatus:THeapStatus;
+
+var res: THeapStatus;
+
+begin
+  fillchar(res,sizeof(res),0);
+  CGetHeapStatus:=res;
+end;
+
+function CGetFPCHeapStatus:TFPCHeapStatus;
+
+begin
+  fillchar(CGetFPCHeapStatus,sizeof(CGetFPCHeapStatus),0);
+end;
 
 Const
  CMemoryManager : TMemoryManager =
     (
-      GetMem : CGetmem;
-      FreeMem : CFreeMem;
-      FreememSize : CFreememSize;
-      AllocMem : CAllocMem;
-      ReallocMem : CReAllocMem;
-      MemSize : CMemSize;
-      GetHeapStatus : Nil;
-      GetFPCHeapStatus : Nil;
+      NeedLock : false;
+      GetMem : @CGetmem;
+      FreeMem : @CFreeMem;
+      FreememSize : @CFreememSize;
+      AllocMem : @CAllocMem;
+      ReallocMem : @CReAllocMem;
+      MemSize : @CMemSize;
+      GetHeapStatus : @CGetHeapStatus;
+      GetFPCHeapStatus: @CGetFPCHeapStatus;	
     );
 
 Var
@@ -4597,6 +4871,36 @@ After using the selector, you must free it again using the
 
 More information on all this can be found in the \unitsref, the chapter on
 the \file{go32} unit.
+
+\section{When porting Turbo Pascal code}
+The fact that 16-bit code is no longer used, means that some of the older
+Turbo Pascal constructs and functions are obsolete. The following is a
+list of functions which shouldn't be used anymore:
+\begin{description}
+\item [Seg()]: Returned the segment of a memory address. Since segments have
+no more meaning, zero is returned in the \fpc run-time library implementation of
+\var{Seg}.
+\item [Ofs()]: Returned the offset of a memory address. Since segments have
+no more meaning, the complete address is returned in the \fpc implementation
+of this function. This has as a consequence that the return type is
+\var{longint} or \var{int64} instead of \var{Word}.
+\item [Cseg(), Dseg()]: Returned, respectively, the code and data segments
+of your program.  This returns zero in the \fpc implementation of the
+system unit, since both code and data are in the same memory space.
+\item [Ptr]: Accepted a segment and offset from an address, and would return
+a pointer to this address. This has been changed in the run-time library, it
+now simply returns the offset.
+\item [memw and mem]: These arrays gave access to the \dos memory. \fpc
+supports them on the go32v2 platform, they are mapped into \dos memory
+space. You need the \file{go32} unit for this. On other platforms, they are
+{\em not} supported
+\end{description}
+
+You shouldn't use these functions, since they are very non-portable, they're
+specific to \dos and the 80x86 processor. The \fpc compiler is designed to be
+portable to other platforms, so you should keep your code as portable as
+possible, and not system specific. That is, unless you're writing some driver
+units, of course.
 
 
 
@@ -4896,6 +5200,10 @@ as early in the uses clause as possible.
 
 At a later time, a system thread manager may be implemented which implements threads
 without Libc support.
+
+The following sections show how to program threads, and how to protect access to
+data common to all threads using (cross-platform) critical sections. 
+Finally, the thread manager is explained in more detail.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Programming threads
@@ -6443,10 +6751,10 @@ section is empty.
 otherwise ignored.
 \item \var{...} (ellipsis) is allowed in procedure declarations, is
 functionally equal to the \var{varargs} keyword.
-\item Procedures declared in the interface section which do not have a counterpart
-in the implementation section are considered external (implicit externals).
-In other words, for external procedures, the \var{external} keyword may be
-omitted.
+%\item Procedures declared in the interface section which do not have a counterpart
+%in the implementation section are considered external (implicit externals).
+%In other words, for external procedures, the \var{external} keyword may be
+%omitted.
 \end{enumerate}
 (Note: Macros are called 'Compiler Variables' in \macos dialects.)
 
@@ -7229,7 +7537,7 @@ and put on the web.
 
 There are, nevertheless, circumstances when the compiler must be recompiled
 manually. When changes are made to compiler code, or when the compiler is
-downloaded through CVS.
+downloaded through Subversion.
 
 There are essentially 2 ways of recompiling the compiler: by hand, or using
 the makefiles. Each of these methods will be discussed.
@@ -7361,15 +7669,8 @@ in assembler. They must be assembled with the \gnu \file{as} assembler. These st
 are in the OS-dependent directory, except for \linux, where they are in a
 processor dependent subdirectory of the \linux directory (\file{i386} or
 \file{m68k}).
-\item[system] the \file{system} unit. This unit is named differently on different
-systems:
-\begin{itemize}
-\item Only on GO32v2, it's called \file{system}.
-\item For \linux it's called \file{syslinux}.
-\item For \windowsnt it's called \file{syswin32}.
-\item For \ostwo it's called \file{sysos2}
-\end{itemize}
-This unit resides in the OS-dependent subdirectories of the RTL.
+\item[system] the \file{system} unit. This unit resides in the OS-dependent 
+subdirectories of the RTL.
 \item[strings] The strings unit. This unit resides in the \file{inc}
 subdirectory of the RTL.
 \item[dos] The \file{dos} unit. It resides in the OS-dependent subdirectory
@@ -7451,18 +7752,22 @@ minimum. A list of recognised options can be found in \seet{FPCdefines}.
 
 \begin{FPCltable}{ll}{Possible defines when compiling FPC}{FPCdefines}
 Define & does what \\ \hline
-TP & Needed to compile the compiler with Turbo or Borland Pascal. \\
 GDB & Support of the GNU Debugger (required switch). \\
 I386 & Generate a compiler for the Intel i386+ processor family. \\
 M68K & Generate a compiler for the M680x0 processor family. \\
+X86\_64 & Generate a compiler for the AMD64 processor family. \\
+POWERPC & Generate a compiler for the PowerPC processor family. \\
+POWERPC64 & Generate a compiler for the 64-bit PowerPC processor family. \\
+ARM & Generate a compiler for the Intel ARM processor family. \\
+SPARC & Generate a compiler for the SPARC processor family. \\
 EXTDEBUG & Some extra debug code is executed. \\
 MEMDEBUG & Some memory usage information is displayed. \\
 SUPPORT\_MMX & only i386: enables the compiler switch \var{MMX} which \\
  &allows the compiler to generate  MMX instructions.\\
 EXTERN\_MSG & Don't compile the msgfiles in the compiler, always use \\
-& external messagefiles (default for TP).\\
-LOGSECONDPASS & Write compiler node information in assembler output. \\
+& external messagefiles.\\
 NOOPT & Do not include the optimizer in the compiler. \\
+CMEM & Use the C memory manager. \\
 \hline
 \end{FPCltable}
 This list may be subject to change, the source file \file{pp.pas} always
@@ -7490,7 +7795,6 @@ FPC\_LINK\_SMART & Defined when the output will be smartlinked.\\
 & This is defined when using the -XX compiler switch.\\
 FPC\_PROFILE & Defined when profiling code is added to program.\\
 & This is defined when using the -pg compiler switch.\\
-FPK & Always defined for \fpc. \\
 FPC & Always defined for \fpc. \\
 VER1 & Always defined for \fpc version 1.x.x. \\
 VER1\_0 & Always defined for \fpc version 1.0.x. \\

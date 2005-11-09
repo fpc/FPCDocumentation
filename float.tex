@@ -1,0 +1,75 @@
+\chapter{The Floating Point Coprocessor emulator}
+
+In this appendix we note some caveats when using the floating point
+emulator on GO32V2 systems. Under GO32V1 systems, all is as described in
+the installation section.
+
+{\em Q: I don't have an 80387. How do I compile and run floating point
+   programs under GO32V2?
+
+     Q: What shall I install on a target machine which lacks hardware
+   floating-point support?
+}
+
+{\em A :}
+ Programs which use floating point computations and could be run on
+   machines without an 80387 should be allowed to dynamically load the
+\file{emu387.dxe}
+   file at run-time if needed. To do this you must link the \var{emu387} unit to your
+   exectuable program, for example:
+
+\begin{verbatim}
+      Program MyFloat;
+
+      Uses emu387;
+
+      var
+       r: real;
+      Begin
+       r:=1.0;
+       WriteLn(r);
+      end.
+\end{verbatim}
+
+   \var{Emu387} takes care of loading the dynamic emulation point library.
+
+   You should always add emulation when you distribute floating-point
+   programs.
+
+   A few users reported that the emulation won't work for them unless
+   they explicitly tell \var{DJGPP} there is no \var{x87} hardware, like this:
+
+\begin{verbatim}
+       set 387=N
+       set emu387=c:/djgpp/bin/emu387.dxe
+\end{verbatim}
+
+   There is an alternative FP emulator called WMEMU. It mimics a real
+   coprocessor more closely.
+
+   {\em WARNING:} We strongly suggest that you use WMEMU as FPU emulator, since
+   \file{emu387.dxe} does not emulate all the instructions which are used by the
+   Run-Time Libary such as \var{FWAIT}.
+
+
+{\em   Q: I have an 80387 emulator installed in my AUTOEXEC.BAT, but
+   DJGPP-compiled floating point programs still doesn't work. Why?
+}
+
+
+{\em   A :} DJGPP switches the CPU to protected mode, and the information
+   needed to emulate the 80387 is different. Not to mention that the
+   exceptions never get to the real-mode handler. You must use emulators
+   which are designed for DJGPP. Apart of emu387 and WMEMU, the only
+   other emulator known to work with DJGPP is Q87 from QuickWare. Q87 is
+   shareware and is available from the QuickWare Web site.
+
+
+{\em   Q: I run DJGPP in an \ostwo DOS box, and I'm told that \ostwo will install
+   its own emulator library if the CPU has no FPU, and will transparently
+   execute FPU instructions. So why won't DJGPP run floating-point code
+   under \ostwo on my machine?
+}
+
+{\em   A} : \ostwo installs an emulator for native \ostwo images, but does not
+   provide FPU emulation for DOS sessions.

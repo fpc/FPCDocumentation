@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="ISO8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    dbugintf
+  ====================================================================
+-->
+
+<module name="dbugintf">
+<short>Unit to send commands to a debug server process</short>
+<descr>
+<p>
+Use <file>dbugintf</file> to add debug messages to your application.
+The messages are not sent to standard output, but are sent to a debug server
+process which collects messages from various clients and displays them
+somehow on screen. 
+</p>
+<p>
+The unit is transparant in its use: it does not need initialization, it
+will start the debug server by itself if it can find it: the program should
+be called <file>debugserver</file> and should be in the <var>PATH</var>.
+When the first debug message is sent, the unit will initialize itself.
+</p>
+<p>
+The FCL contains a sample debug server (<file>dbugsvr</file>) which can be
+started in advance, and which writes debug message to the console (both on
+Windows and Linux). The Lazarus project contains a visual application which
+displays the messages in a GUI.
+</p>
+<p>
+The <file>dbugintf</file> unit relies on the <link id="SimpleIPC"/>
+mechanism to communicate with the debug server, hence it works on all
+platforms that have a functional version of that unit. It also uses
+<var>TProcess</var> to start the debug server if needed, so the 
+<link id="process"/> unit should also be functional.
+</p>
+</descr>
+
+<topic name="debugservers">
+<short>Writing a debug server</short>
+<descr>
+<p>
+Writing a debug server is relatively easy. It should instantiate a
+<var>TSimpleIPCServer</var> class from the <link id="SimpleIPC"/> unit, and
+use the <var>DebugServerID</var> as <var>ServerID</var> identification. This
+constant, as well as the record containing the message which is sent between 
+client  and server is defined in the <file>msgintf</file> unit.
+</p>
+<p>
+The <file>dbugintf</file> unit relies on the <link id="SimpleIPC"/>
+mechanism to communicate with the debug server, hence it works on all
+platforms that have a functional version of that unit. It also uses
+<var>TProcess</var> to start the debug server if needed, so the 
+<link id="process"/> unit should also be functional.
+</p>
+</descr>
+</topic>
+
+<!-- enumeration type Visibility: default -->
+<element name="TDebugLevel">
+<short>Level of the message.</short>
+<descr>
+<var>TDebugLevel</var> indicates the severity level of the debug 
+message to be sent. By default, an informational message is sent. 
+</descr>
+<seealso>
+<link id="SendDebugFmtEx"/>
+<link id="SendDebugEx"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TDebugLevel.dlInformation">
+<short>Informational message</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TDebugLevel.dlWarning">
+<short>Warning message</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TDebugLevel.dlError">
+<short>Error message</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="SendBoolean">
+<short>Send the value of a boolean variable</short>
+<descr>
+<var>SendBoolean</var> is a simple wrapper around <link id="SendDebug"/>
+which sends the name and value of a boolean value as an informational
+message.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="SendDebug"/>
+<link id="SendDateTime"/>
+<link id="SendInteger"/>
+<link id="SendPointer"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendBoolean.Identifier">
+<short>Name of the boolean variable</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendBoolean.Value">
+<short>Value of the boolean variable.</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="SendDateTime">
+<short>Send the value of a <var>TDateTime</var> variable.</short>
+<descr>
+<var>SendDateTime</var> is a simple wrapper around <link id="SendDebug"/>
+which sends the name and value of an integer value as an informational
+message. The value is converted to a string using the <link
+id="#rtl.sysutils.DateTimeToStr">DateTimeToStr</link> call.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="SendDebug"/>
+<link id="SendBoolean"/>
+<link id="SendInteger"/>
+<link id="SendPointer"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendDateTime.Identifier">
+<short>Name of the <var>TDateTime</var> variable</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendDateTime.Value">
+<short>The actual date/time</short>
+</element>
+
+<element name="SendInteger">
+<short>Send the value of an integer variable.</short>
+<descr>
+<var>SendInteger</var> is a simple wrapper around <link id="SendDebug"/>
+which sends the name and value of an integer value as an informational
+message. If <var>HexNotation</var> is <var>True</var>, then the value will be
+displayed using hexadecimal notation.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="SendDebug"/>
+<link id="SendBoolean"/>
+<link id="SendDateTime"/>
+<link id="SendPointer"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendInteger.Identifier">
+<short>Name of the integer variable</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendInteger.Value">
+<short>The actual value</short>
+</element>
+
+<element name="SendInteger.HexNotation">
+<short>Format integer using hexadecimal notation</short>
+</element>
+
+<element name="SendPointer">
+<short>Send the value of a pointer variable.</short>
+<descr>
+<var>SendInteger</var> is a simple wrapper around <link id="SendDebug"/>
+which sends the name and value of a pointer value as an informational
+message. The pointer value is displayed using hexadecimal notation.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="SendDebug"/>
+<link id="SendBoolean"/>
+<link id="SendDateTime"/>
+<link id="SendInteger"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendPointer.Identifier">
+<short>Name of the pointer variable</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendPointer.Value">
+<short>The actual pointer value</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="SendDebugEx">
+<short>Send debug message other than informational messages</short>
+<descr>
+<p>
+<var>SendDebugEx</var> allows to specify the debug level of the message
+to be sent in <var>MType</var>. By default, <link id="SendDebug"/> uses 
+informational messages.
+</p>
+<p>
+Other than that the function of <var>SendDebugEx</var> is equal to that of
+<var>SendDebug</var>
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="SendDebug"/>
+<link id="SendDebugFmt"/>
+<link id="SendDebugFmtEx"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendDebugEx.Msg">
+<short>Message to be sent</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendDebugEx.MType">
+<short>Debug level of the message to be sent</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="SendDebug">
+<short>Send a message to the debug server.</short>
+<descr>
+<p>
+<var>SendDebug</var> sends the message <var>Msg</var> to the debug server as
+an informational message (debug level <var>dlInformation</var>).
+If no debug server is running, then an attempt will be made to start the 
+server first.
+</p>
+<p>
+The binary that is started is called <file>debugserver</file> and should be somewhere
+on the <var>PATH</var>. A sample binary which writes received messages to
+standard output is included in the FCL, it is called <file>dbugsrv</file>.
+This binary can be renamed to <file>debugserver</file> or can be started
+before the program is started.
+</p>
+</descr>
+<errors>
+Errors are silently ignored, any exception messages are stored in <link id="SendError"/>.
+</errors>
+<seealso>
+<link id="SendDebugEx"/>
+<link id="SendDebugFmt"/>
+<link id="SendDebugFmtEx"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendDebug.Msg">
+<short>The message to be sent to the server.</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="SendMethodEnter">
+<short>Send method enter message</short>
+<descr>
+<p>
+<var>SendMethodEnter</var> sends a "Entering <var>MethodName</var>" message 
+to the debug server. After that it increases the message indentation 
+(currently 2 characters). By sending a corresponding <link id="SendMethodExit"/>, 
+the indentation of messages can be decreased again.
+</p>
+<p>
+By using the <var>SendMethodEnter</var> and <var>SendMethodExit</var>
+methods at the beginning and end of a procedure/method, 
+it is possible to visually trace program execution.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="SendDebug"/>
+<link id="SendMethodExit"/>
+<link id="SendSeparator"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendMethodEnter.MethodName">
+<short>Name of the entered method</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="SendMethodExit">
+<short>Send method exit message </short>
+<descr>
+<p>
+<var>SendMethodExit</var> sends a "Exiting <var>MethodName</var>" message 
+to the debug server. After that it decreases the message indentation 
+(currently 2 characters). By sending a corresponding <link
+id="SendMethodEnter"/>, the indentation of messages can be increased again.
+</p>
+<p>
+By using the <var>SendMethodEnter</var> and <var>SendMethodExit</var>
+methods at the beginning and end of a procedure/method, 
+it is possible to visually trace program execution.
+</p>
+<p>
+Note that the indentation level will not be made negative.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="SendDebug"/>
+<link id="SendMethodEnter"/>
+<link id="SendSeparator"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendMethodExit.MethodName">
+<short>Name of the method that is entered</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="SendSeparator">
+<short>Send a separator message</short>
+<descr>
+<var>SendSeparator</var> is a simple wrapper around <link id="SendDebug"/>
+which sends a short horizontal line to the debug server. It can be used to 
+visually separate execution of blocks of code or blocks of values.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="SendDebug"/>
+<link id="SendMethodEnter"/>
+<link id="SendMethodExit"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="SendDebugFmt">
+<short>Format and send a debug message</short>
+<descr>
+<var>SendDebugFmt</var> is a utility routine which formats a message by
+passing <var>Msg</var> and <var>Args</var> to <link
+id="#rtl.sysutils.format">Format</link> and sends the result to the debug server
+using <link id="SendDebug"/>. It exists mainly to avoid the
+<var>Format</var> call in calling code.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="SendDebug"/>
+<link id="SendDebugEx"/>
+<link id="SendDebugFmtEx"/>
+<link id="#rtl.sysutils.format"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendDebugFmt.Msg">
+<short>Template for message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendDebugFmt.Args">
+<short>Arguments to be inserted in template</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="SendDebugFmtEx">
+<short>Format and send message with alternate type</short>
+<descr>
+<var>SendDebugFmtEx</var> is a utility routine which formats a message by
+passing <var>Msg</var> and <var>Args</var> to <link
+id="#rtl.sysutils.format">Format</link> and sends the result to the debug server
+using <link id="SendDebugEx"/> with Debug level <var>MType</var>. It exists mainly to avoid the
+<var>Format</var> call in calling code.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="SendDebug"/>
+<link id="SendDebugEx"/>
+<link id="SendDebugFmt"/>
+<link id="#rtl.sysutils.format"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendDebugFmtEx.Msg">
+<short>Message template</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendDebugFmtEx.Args">
+<short>Arguments to insert in template</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SendDebugFmtEx.MType">
+<short>Debug level of message</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="StartDebugServer">
+<short>Start the debug server</short>
+<descr>
+<p>
+<var>StartDebugServer</var> attempts to start the debug server. The process
+started is called <file>debugserver</file> and should be located in the
+<var>PATH</var>.
+</p>
+<p>
+Normally this function should not be called. The <link id="SendDebug"/> call
+will attempt to start the server by itself if it is not yet running.
+</p>
+</descr>
+<errors>
+On error, <var>False</var> is returned.
+</errors>
+<seealso>
+<link id="SendDebug"/>
+<link id="InitDebugClient"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="StartDebugServer.Result">
+<short>True if started succesfully, false otherwise</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="InitDebugClient">
+<short>Initialize the debug client.</short>
+<descr>
+<p>
+<var>InitDebugClient</var> starts the debug server and then performs all
+necessary initialization of the debug IPC communication channel.
+</p>
+<p>
+Normally this function should not be called. The <link id="SendDebug"/> call
+will initialize the debug client when it is first called.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="SendDebug"/>
+<link id="StartDebugServer"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SendError">
+<short>Last error in the debug system.</short>
+<descr>
+Whenever a call encounteres an exception, the exception message is stored in
+this variable.
+</descr>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SProcessID">
+<short>String used when sending identification message to the server.</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SEntering">
+<short>String used when sending method enter message.</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SExiting">
+<short>String used when sending method exit message.</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SSeparator">
+<short>String used when sending a separator line.</short>
+</element>
+
+</module> <!-- dbugintf -->
+</package>
+</fpdoc-descriptions>

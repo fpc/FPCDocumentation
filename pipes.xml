@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="ISO8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    Pipes
+  ====================================================================
+-->
+
+<module name="Pipes">
+<short>Unit implementing pipe streams.</short>
+<descr>
+The <file>Pipes</file> unit implements streams that are wrappers around the
+OS's pipe functionality. It creates a pair of streams, and what is written
+to one stream can be read from another.
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="sysutils">
+<short>uses for exception support.</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>Used for the <var>TSTream</var> class definition.</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="EPipeError">
+<short>Exception raised when an invalid operation is performed on a pipe stream.</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="ENoReadPipe">
+<short>Exception raised when a write operation is attempted on a write-only pipe. </short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="ENoWritePipe">
+<short>Exception raised when a read operation is attempted on a read-only pipe. </short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="EPipeSeek">
+<short>Exception raised when an invalid seek operation is attempted on a pipe.</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="EPipeCreation">
+<short>Exception raised when an error occurred during the creation of a pipe pair.</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TInputPipeStream">
+<short><var>TStream</var> descendent which wraps the read end of a pipe.</short>
+<descr>
+<var>TInputPipeStream</var> is created by the <link id="CreatePipeStreams"/>
+call to represent the reading end of a pipe. 
+It is a <link id="#rtl.classes.TStream">TStream</link> descendent which does
+not allow writing, and which mimics the seek operation.
+</descr>
+<seealso>
+<link id="#rtl.classes.TStream">TStream</link>
+<link id="CreatePipeStreams"/>
+<link id="TOutputPipeStream"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TInputPipeStream.Write">
+<short>Write data to the stream.</short>
+<descr>
+<var>Write</var> overrides the parent implementation of <var>Write</var>.
+On a <var>TInputPipeStream</var> will always raise an
+exception, as the pipe is read-only.
+</descr>
+<errors>
+An <link id="ENoWritePipe"/> exception is raised when this function is
+called.
+</errors>
+<seealso>
+<link id="TInputPipeStream.Read">Read</link>
+<link id="TInputPipeStream.Seek">Seek</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TInputPipeStream.Write.Result">
+<short>Number of bytes actually written.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TInputPipeStream.Write.Buffer">
+<short>Memory buffer containing the data to be written.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TInputPipeStream.Write.Count">
+<short>Number of bytes that must be written.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TInputPipeStream.Seek">
+<short>Set the current position of the stream</short>
+<descr>
+<p>
+<var>Seek</var> overrides the standard <var>Seek</var> implementation.
+Normally, pipe streams stderr are not seekable.
+The <var>TInputPipeStream</var> stream tries to provide seek capabilities for the
+following limited number of cases:
+</p>
+<dl>
+<dt>Origin=soFromBeginning</dt>
+<dd>If <var>Offset</var> is larger than the current position,
+then the remaining bytes are skipped by reading them from the
+stream and discarding them.
+</dd>
+<dt>Origin=soFromCurrent</dt>
+<dd>If <var>Offset</var> is zero, the current position is returned. If
+it is positive, then <var>Offset</var> bytes are skipped by reading them
+from the stream and discarding them, if the stream is of type
+<var>iosInput</var>.
+</dd>
+</dl>
+<p>
+All other cases will result in a <var>EPipeSeek</var> exception.
+</p>
+</descr>
+<errors>
+An <link id="EPipeSeek"/> exception is raised if the stream does not
+allow the requested seek operation.
+</errors>
+<seealso>
+<link id="EPipeSeek"/>
+<link id="#rtl.classes.tstream.seek">Seek</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TInputPipeStream.Seek.Result">
+<short>New position of the stream.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TInputPipeStream.Seek.Offset">
+<short>Offset, in bytes, starting at <var>Origin</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TInputPipeStream.Seek.Origin">
+<short>Where to start counting <var>Offset</var> bytes.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TInputPipeStream.Read">
+<short>Read data from the stream to a buffer.</short>
+<descr>
+<var>Read</var> calls the inherited read and adjusts the 
+internal position pointer of the stream.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TInputPipeStream.Write">Write</link>
+<link id="TInputPipeStream.Seek">Seek</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TInputPipeStream.Read.Result">
+<short>Number of bytes actually read from the stream.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TInputPipeStream.Read.Buffer">
+<short>Memory buffer where to write the data read from the stream.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TInputPipeStream.Read.Count">
+<short>Number of bytes to read from the stream.</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TOutputPipeStream">
+<short></short>
+<short><var>TStream</var> descendent which wraps the write end of a pipe.</short>
+<descr>
+<var>TOutputPipeStream</var> is created by the <link id="CreatePipeStreams"/>
+call to represent the writing end of a pipe. 
+It is a <link id="#rtl.classes.TStream">TStream</link> descendent which does
+not allow reading.
+</descr>
+<seealso>
+<link id="#rtl.classes.TStream">TStream</link>
+<link id="CreatePipeStreams"/>
+<link id="TInputPipeStream"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TOutputPipeStream.Seek">
+<short>Sets the position in the stream</short>
+<descr>
+<var>Seek</var> is overridden in <var>TOutputPipeStream</var>. Calling this
+method will always raise an exception: an output pipe is not seekable.
+</descr>
+<errors>
+An <link id="EPipeSeek"/> exception is raised if this method is called.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TOutputPipeStream.Seek.Result">
+<short>New position of the stream.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOutputPipeStream.Seek.Offset">
+<short>Offset, in bytes, starting at <var>Origin</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOutputPipeStream.Seek.Origin">
+<short>Where to start counting <var>Offset</var> bytes.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TOutputPipeStream.Read">
+<short>Read data from the stream.</short>
+<descr>
+<var>Read</var> overrides the parent <var>Read</var> implementation. It
+always raises an exception, because a output pipe is write-only.
+</descr>
+<errors>
+An <link id="ENoReadPipe"/> exception is raised when this function is
+called.
+</errors>
+<seealso>
+<link id="TOutputPipeStream.Seek">Seek</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TOutputPipeStream.Read.Result">
+<short>Number of bytes actually read from the stream.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOutputPipeStream.Read.Buffer">
+<short>Memory buffer where to write the data read from the stream.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOutputPipeStream.Read.Count">
+<short>Number of bytes to read from the stream.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CreatePipeHandles">
+<short>Function to create a set of pipe handles</short>
+<descr>
+<var>CreatePipeHandles</var> provides an OS-independent way to 
+create a set of pipe filehandles. These handles are inheritable 
+to child processes. The reading end of the pipe is returned in 
+<var>InHandle</var>, the writing end in <var>OutHandle</var>.
+</descr>
+<errors>
+On error, <var>False</var> is returned.
+</errors>
+<seealso>
+<link id="CreatePipeStreams"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="CreatePipeHandles.Result">
+<short><var>True</var> if the call was succesul, <var>False</var> if not.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CreatePipeHandles.Inhandle">
+<short>File handle for reading end of the pipe</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CreatePipeHandles.OutHandle">
+<short>File handle for writing end of the pipe</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="CreatePipeStreams">
+<short>Create a pair of pipe stream.</short>
+<descr>
+<var>CreatePipeStreams</var> creates a set of pipe file
+descriptors with <link id="CreatePipeHandles"/>, and if
+that call is succesfull, a pair of streams is created: 
+<var>InPipe</var> and <var>OutPipe</var>.
+</descr>
+<errors>
+If no pipe handles could be created, an <link id="EPipeCreation"/> exception
+is raised.
+</errors>
+<seealso>
+<link id="CreatePipeHandles"/>
+<link id="TInputPipeStream"/>
+<link id="TOutputPipeStream"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CreatePipeStreams.InPipe">
+<short>Contains the read end of the pipe on return</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CreatePipeStreams.OutPipe">
+<short>Contains the write end of the pipe on return.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="EPipeMsg">
+<short>Constant used in <link id="#fcl.pipes.EPipeCreation">EPipeCreation</link> exception.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="ENoReadMSg">
+<short>Constant used in <link id="#fcl.pipes.ENoReadPipe">ENoReadPipe</link> exception.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="ENoWriteMsg">
+<short>Constant used in <link id="#fcl.pipes.ENoWritePipe">ENoWritePipe</link> exception.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="ENoSeekMsg">
+<short>Constant used in <link id="#fcl.pipes.EPipeSeek">EPipeSeek</link> exception.</short>
+</element>
+
+</module> <!-- Pipes -->
+</package>
+</fpdoc-descriptions>
