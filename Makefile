@@ -1603,7 +1603,7 @@ RTLOPTS=$(FPDOCOPTS) --hide-protected --warn-no-node --package=rtl --descr=rtl.x
 ifndef CURRENTXMLONLY
 RTLUNITS=sysutils strutils dateutils strings mouse keyboard \
 	 crt video dos sockets objects heaptrc mmx ipc printer typinfo \
-	 ports getopts emu387 dxeload go32 matrix gpm graph oldlinux baseunix \
+	 ports getopts emu387 dxeload go32 gpm graph oldlinux baseunix \
 	 unixtype unix classes unixutil x86 dynlibs linux math system\
 	 objpas dateutils rtl
 RTLXML=$(addsuffix .xml,$(RTLUNITS))
@@ -1619,7 +1619,6 @@ RTLOPTS+= --descr=sockets.xml --input="-dver1_0 $(FPCSRCDIR)/rtl/unix/sockets.pp
 RTLOPTS+= --descr=objects.xml --input="$(FPCSRCDIR)/rtl/inc/objects.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE)"
 RTLOPTS+= --descr=heaptrc.xml --input="$(FPCSRCDIR)/rtl/inc/heaptrc.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE)"
 RTLOPTS+= --descr=mmx.xml --input="$(FPCSRCDIR)/rtl/i386/mmx.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE)"
-RTLOPTS+= --descr=matrix.xml --input="$(FPCSRCDIR)/rtl/inc/matrix.pp -Fi$(FPCSRCDIR)/rtl/inc"
 RTLOPTS+= --descr=ipc.xml --input="$(FPCSRCDIR)/rtl/unix/ipc.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE)"
 RTLOPTS+= --descr=printer.xml --input="$(FPCSRCDIR)/rtl/unix/printer.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) -Fi$(FPCSRCDIR)/rtl/inc"
 RTLOPTS+= --descr=typinfo.xml --input="$(FPCSRCDIR)/rtl/objpas/typinfo.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE)"
@@ -1731,8 +1730,10 @@ txtinstall: txt
 htmlinstall: html
 	install -d -m 755 $(INSTALL_DOCDIR)
 	cp fpctoc.html $(INSTALL_DOCDIR)
-	cp -R buttons $(INSTALL_DOCDIR)
-	cp -R pics $(INSTALL_DOCDIR)
+	install -d -m 755 $(INSTALL_DOCDIR)/buttons
+	cp buttons/*.* $(INSTALL_DOCDIR)/buttons
+	install -d -m 755 $(INSTALL_DOCDIR)/pics
+	cp pics/*.* $(INSTALL_DOCDIR)/pics
 	cp -R $(HTML) $(INSTALL_DOCDIR)
 	find $(INSTALL_DOCDIR) -name 'CVS' -or -name '*.eps' | xargs -n1 rm -rf
 install:
