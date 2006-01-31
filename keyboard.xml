@@ -27,7 +27,7 @@
 <!-- \FPCexampledir{kbdex} -->
 <descr>
 <p>
-The <file>KeyBoard</file> unit implements a keyboard access layer which is system
+The <file>Keyboard</file> unit implements a keyboard access layer which is system
 independent. It can be used to poll the keyboard state and wait for certain
 events. Waiting for a keyboard event can be done with the <link id="GetKeyEvent"/>
 function, which will return a driver-dependent key event. This key event can
@@ -1067,6 +1067,87 @@ This driver could sit on top of any other driver.
 <example file="kbdex/ex9"/>
 </topic>
 
+<topic name="kbdunix">
+<short>Unix specific notes</short>
+<descr>
+<p>
+On Unix, applications run on a "terminal", and the application writes to the
+screen and reads from the keyboard by communicating with the terminal. Unix
+keyboard handling is mostly backward compatible with the DEC vt100 and vt220
+terminals from tens of years ago. The vt100 and vt220 had very different
+keyboards than todays PC's and this is where the problems start. To make it
+worse the protocol of both terminals has not been very well designed.
+</p><p>
+Because of this, the keyboard unit on Unix operating systems does a best effort
+to provide keyboard functionality. An implementation with full keyboard
+facilities like on other operating systems is not possible.
+</p><p>
+The exception is the Linux kernel. The terminal emulation of the Linux kernel
+is from a PC keyboard viewpoint hopeless as well, but unlike other terminal
+emulators it is configurable. On the Linux console, the Free Pascal keyboard
+unit tries to implement full functionality.
+</p><p>
+Users of applications using the keyboard unit should expect the following:
+</p>
+<ul>
+<li>Full functionality on the Linux console. It must be the bare console,
+SSH into another machine will kill the full functionality.</li>
+<li>Limited functionality otherwise.</li>
+</ul>
+<p>
+Notes about Linux full functionality:
+</p>
+<ul>
+<li>The keyboard is reprogrammed. If the keyboard is for whatever reason not
+restored in its original state, please load your keymap to reinitialize it.</li>
+<li>Alt+function keys generate keycodes for those keys. To switch virtual
+consoles, use ctrl+alt+function key.</li>
+<li>Unlike what you're used to with other Unix software, escape works as you
+intuitively expect, it generates the keycode for an escape key
+<b>without a delay.</b></li>
+</ul>
+<p>
+The limited functionality does include these quirks:
+</p>
+<ul>
+<li>Escape must be pressed two times before it has effect.</li>
+<li>On the Linux console, when the users runs the program by logging 
+   into another machine:
+  <ul>
+  <li>Shift+F1 and Shift+F12 will generate keycodes for F11 and F12.</li>
+  <li>Shift+arrow keys, shift+ins, shift+del, shift+home, shift+end do not work.
+      The same is true about the control and alt combinations.</li>
+  <li>Alt+function keys will switch virtual consoles instead of generating the
+      right key sequences.</li>
+  <li>Ctrl+function keys will generate the keycodes for the function keys
+      without ctrl</li>
+  </ul></li>
+<li>
+  In Xterm:
+  <ul>
+  <li>Shift+insert pastes the x clipboard, no keycode will be generated.</li>
+  </ul></li>
+<li>
+  In Konsole:
+  <ul>
+  <li>Shift+insert pastes the x clipboard, no keycode will be generated.</li>
+  <li>Shift+arrow keys doesn't work, nor does ctrl+arrow keys</li>
+  </ul></li>
+</ul>
+<p>
+If you have a non-standard terminal, some keys may not work at all. When in
+limited functionality mode, the user can work around using an escape prefix:
+</p>
+<ul>
+<li>Esc+1 = F1, Esc+2 = F2.</li>
+<li>Esc before another key is equal to alt+key.</li>
+</ul>
+<p>
+In such cases, if the terminal does output an escape sequence for those keys,
+please submit a bug report so we can add them.
+</p>
+</descr>
+</topic>
 </module>
 </package>
 </fpdoc-descriptions>
