@@ -4902,6 +4902,39 @@ portable to other platforms, so you should keep your code as portable as
 possible, and not system specific. That is, unless you're writing some driver
 units, of course.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Memavail and maxavail.
+\section{Memavail and Maxavail}
+
+The old \tp functions \var{MemAvail} and \var{MaxAvail} functions are 
+no longer available in \fpc as of version 2.0. The reason for this 
+incompatibility is below:
+
+On modern operating systems, \footnote{The DOS extender GO32V2 falls under this 
+definition of "modern" because it can use paged memory and run in 
+multitasked environments} the idea of "Available Free Memory" is not valid for an
+application.
+The reasons are:
+\begin{enumerate} 
+\item One processor cycle after an application asked the OS how much memory is free,
+another application may have allocated everything.
+\item It is not clear what "free memory" means: does it include swap memory,
+does it include disk cache memory (the disk cache can grow and shrink on
+modern OS'es), does it include memory allocated to other applications but
+which can be swapped out, etc.
+\end{enumerate}
+
+Therefore, programs using \var{MemAvail} and \var{MaxAvail} functions 
+should be rewritten so they no longer use these functions, because
+it does not make sense anymore on modern OS'es. There are 3 possibilities:
+\begin{enumerate}
+\item Use exceptions to catch out-of-memory errors.
+\item Set the global variable "ReturnNilIfGrowHeapFails" to \var{True}
+and check after each allocation whether the pointer is different from
+\var{Nil}.
+\item Don't care and declare a dummy function called \var{MaxAvail} 
+which always returns \var{High(LongInt)} (or some other constant).
+\end{enumerate}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7828,6 +7861,9 @@ CPU68 & \fpc target is a Motorola 680x0 or compatible.\\
 CPUSPARC & \fpc target is a SPARC v7 or compatible.\\
 CPUALPHA & \fpc target is an Alpha AXP or compatible.\\
 CPUPOWERPC & \fpc target is a 32-bit PowerPC or compatible.\\
+CPUX86\_64 & \fpc target is a AMD64 or Intel 64bit processor.\\
+CPU32 & \fpc target is a 32-bit CPU.\\
+CPU64 & \fpc target is a 64-bit CPU.\\
 \end{FPCltable}
 
 
