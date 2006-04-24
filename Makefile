@@ -1536,9 +1536,9 @@ CHK = $(addsuffix .chk, $(DOCS))
 	-rm $*.aux $*.idx  $*.ilg  $*.ind  $*.log  $*.out  $*.toc $*.tmp $*.xref $*.4ht
 	cp -f preamble.$(PREAMBLETYPE) preamble.inc
 	$(LATEX) $*
-	-$(MAKEINDEX) $*
+	-$(MAKEINDEX) $*.idx
 	$(LATEX) $*
-	-$(MAKEINDEX) $*
+	-$(MAKEINDEX) $*.idx
 	$(LATEX) $*
 .dvi.txt:
 	$(DVITXT) -o $*.txt  $*.dvi
@@ -1546,9 +1546,9 @@ CHK = $(addsuffix .chk, $(DOCS))
 	-rm $*.aux $*.idx  $*.ilg  $*.ind  $*.log  $*.out  $*.toc $*.tmp $*.xref $*.4ht
 	cp -f preamble.$(PREAMBLETYPE) preamble.inc
 	$(PDFLATEX) $*
-	-$(MAKEINDEX) $*
+	-$(MAKEINDEX) $*.idx
 	$(PDFLATEX) $*
-	-$(MAKEINDEX) $*
+	-$(MAKEINDEX) $*.idx
 	$(PDFLATEX) $*
 $(TXT) : %.txt: %.dvi
 $(DVI) : %.dvi: %.tex
