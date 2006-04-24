@@ -974,7 +974,9 @@ first item in the program's \var{uses} clause.
 the file named \file{xxx}.
 \olabel{Fe}
 \item [-FExxx] tells the compiler to write the executable and units in
-directory \file{xxx} instead of th current directory.
+directory \file{xxx} instead of the current directory. If this option
+is followed by a  \var{-o} option (\seeo{o}), and this option contains a path 
+component, then it will override the \var{-FE} setting.
 \olabel{FE}
 \item [-Fixxx] Adds \var{xxx} to the include file search path.
 \olabel{Fi}
@@ -1119,8 +1121,11 @@ caution).
 \end{description}
 \end{description}
 The exact effect of these optimizations can be found in the \progref.
-\item [-oxxx] Tells the compiler to use \var{xxx} as the name of the output
-file (executable). Only with programs.
+\item [-oxxx] \olabel{o}Tells the compiler to use \var{xxx} as the name of the output
+file (executable). Only with programs. The output filename can contain a
+path, and if it does, it will override any previous \var{-FE} setting. If
+the output filename does not contain a path, the \var{-FE} setting is
+observed.
 \item [-pg] \olabel{gp} Generate profiler code for \file{gprof}. This will
 define the symbol \var{FPC\_PROFILE}, which can be used in conditional
 defines.
@@ -1736,6 +1741,38 @@ begin
 \item The @ operator is typed when applied on procedures.
 \item You cannot nest comments.
 \end{itemize}
+
+\begin{remark}
+The \var{MemAvail} and \var{MaxAvail} functions are no longer available in
+\fpc as of version 2.0. The reason for this incompatibility is below:
+
+On modern operating systems, \footnote{The DOS extender GO32V2 falls under this 
+definition of "modern" because it can use paged memory and run in 
+multitasked environments} the idea of "Available Free Memory" is not valid for an
+application.
+The reasons are:
+\begin{enumerate} 
+\item One processor cycle after an application asked the OS how much memory is free,
+another application may have allocated everything.
+\item It is not clear what "free memory" means: does it include swap memory,
+does it include disk cache memory (the disk cache can grow and shrink on
+modern OS'es), does it include memory allocated to other applications but
+which can be swapped out, etc.
+\end{enumerate}
+
+Therefore, programs using \var{MemAvail} and \var{MaxAvail} functions 
+should be rewritten so they no longer use these functions, because
+it does not make sense anymore on modern OS'es. There are 3 possibilities:
+\begin{enumerate}
+\item Use exceptions to catch out-of-memory errors.
+\item Set the global variable "ReturnNilIfGrowHeapFails" to \var{True}
+and check after each allocation whether the pointer is different from
+\var{Nil}.
+\item Don't care and declare a dummy function called \var{MaxAvail} 
+which always returns \var{High(LongInt)} (or some other constant).
+\end{enumerate}
+
+\end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % A note about long file names.
