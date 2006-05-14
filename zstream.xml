@@ -1,0 +1,689 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    zstream
+  ====================================================================
+-->
+
+<module name="zstream">
+<short>Support for compression streams</short>
+<descr>
+<p>
+The <file>ZStream</file> unit implements a <link id="#rtl.classes.TStream">TStream</link>
+descendent (<link id="TCompressionStream"/>) which uses the deflate algorithm to compress 
+everything that is written to it. The compressed data is written to the output stream, which is
+specified when the compressor class is created.
+</p>
+<p>
+Likewise, a <var>TStream</var> descendent is implemented which reads data
+from an input stream (<link id="TDecompressionStream"/>) and decompresses 
+it with the inflate algorithm. 
+</p>
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Sysutils">
+<short>Used for exception support.</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>Used for the TStream declaration</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="paszlib">
+<short>Support for the deflate algorithm</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="EZlibError">
+<short>Base exception for exceptions in the ZStream unit</short>
+<descr>
+Errors which occur in the <file>zstream</file> unit are signaled by
+raising an <var>EZLibError</var> exception descendent.
+</descr>
+</element>
+
+<!-- object Visibility: default -->
+<element name="ECompressionError">
+<short>Errors in the <link id="#fcl.zstream.TCompressionStream">TCompressionStream</link>
+class are signaled with this exception</short>
+<descr>
+<var>ECompressionError</var> is the exception class used by the <link
+id="TCompressionStream"/> class.
+</descr>
+</element>
+
+<!-- object Visibility: default -->
+<element name="EDecompressionError">
+<short>Errors in the <link
+id="#fcl.zstream.TDeCompressionStream">TDeCompressionStream</link>
+class are signaled with this exception</short>
+<descr>
+<var>EDecompressionError</var> is the exception class used by the <link
+id="TDeCompressionStream"/> class.
+</descr>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TCustomZlibStream">
+<short>Ancestor for compression and decompression classes</short>
+<descr>
+<p>
+<var>TCustomZlibStream</var> serves as the ancestor class for the
+<link id="TCompressionStream"/> and <link id="TDeCompressionStream"/>
+classes.
+</p>
+<p>
+It introduces support for a progess handler, and stores the input or 
+output stream.
+</p>
+</descr>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCustomZlibStream.Create">
+<short>Create a new instance of <var>TCustomZlibStream</var></short>
+<descr>
+<var>Create</var> creates a new instance of <var>TCustomZlibStream</var>. It
+stores a reference to the input/output stream, and initializes the
+deflate compression mechanism so they can be used by the descendents.
+</descr>
+<seealso>
+<link id="TCompressionStream"/>
+<link id="TDecompressionStream"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomZlibStream.Create.Strm">
+<short>Instance of the Input/Output stream</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TCompressionLevel">
+<short>Compression level for the deflate algorithm</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCompressionLevel.clNone">
+<short>Do not use compression, just copy data.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCompressionLevel.clFastest">
+<short>Use fast (but less) compression.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCompressionLevel.clDefault">
+<short>Use default compression</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCompressionLevel.clMax">
+<short>Use maximum compression</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TCompressionStream">
+<short>Write-only stream class which compresses data written to it.</short>
+<descr>
+<var>TCompressionStream</var> 
+</descr>
+<errors>
+
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCompressionStream.Create">
+<short>Create a new instance of the compression stream.</short>
+<descr>
+<p>
+<var>Create</var> creates a new instance of the compression stream.
+It merely calls the inherited constructor with the destination stream
+<var>Dest</var> and stores the compression level.
+</p>
+<p>Note that the compressed data is only completely written after the
+compression stream is destroyed.
+</p>
+</descr>
+<seealso>
+<link id="TCompressionStream.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCompressionStream.Create.CompressionLevel">
+<short>Compression level to use when writing data to the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCompressionStream.Create.Dest">
+<short>Output stream to which compressed data is written.</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCompressionStream.Destroy">
+<short>Flushe data to the output stream and destroys the compression stream.</short>
+<descr>
+<var>Destroy</var> flushes the output stream: any compressed data not yet
+written to the output stream are written, and the deflate structures are
+cleaned up.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TCompressionStream.Create">Create</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCompressionStream.Read">
+<short>Overridden to raise an exception.</short>
+<descr>
+The <var>Read</var> method of <var>TStream</var> is overridden, and always
+raises an exception, because <var>TCompressionStream</var> is write-only.
+</descr>
+<errors>
+An <link id="ECompressionError"/> exception is raised.
+</errors>
+<seealso>
+<link id="ECompressionError"/>
+<link id="TCompressionStream.Write"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCompressionStream.Read.Result">
+<short>Number of bytes actually read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCompressionStream.Read.Buffer">
+<short>Buffer to read data to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCompressionStream.Read.Count">
+<short>Number of bytes to read</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCompressionStream.Write">
+<short>Write data to the stream</short>
+<descr>
+<var>Write</var> takes <var>Count</var> bytes from <var>Buffer</var>
+and comresseses (deflates) them. The compressed result is written 
+to the output stream.
+</descr>
+<errors>
+If an error occurs, an <link id="ECompressionError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TCompressionStream.Read">Read</link>
+<link id="TCompressionStream.Seek">Seek</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCompressionStream.Write.Result">
+<short>Number of (uncompressed) bytes actually written </short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCompressionStream.Write.Buffer">
+<short>Buffer to take data from.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCompressionStream.Write.Count">
+<short>Number of bytes to take from the buffer.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCompressionStream.Seek">
+<short>Overrides seek to raise an exception.</short>
+<descr>
+The <var>Seek</var> method of <var>TStream</var> is overridden, and always
+raises an exception, because <var>TCompressionStream</var> is write-only,
+and cannot seek.
+</descr>
+<errors>
+An <link id="ECompressionError"/> exception is raised.
+</errors>
+<seealso>
+<link id="ECompressionError"/>
+<link id="TCompressionStream.Read">Read</link>
+<link id="TCompressionStream.Write">Write</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCompressionStream.Seek.Result">
+<short>New location after seek</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCompressionStream.Seek.Offset">
+<short>Offset to move stream position</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCompressionStream.Seek.Origin">
+<short>Origin of seek operation.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCompressionStream.CompressionRate">
+<short>Running compression rate of compression stream</short>
+<descr>
+The <var>Compressionrate</var> is updated as more data is written to the
+stream and represents the ratio of outputted data versus written data.
+</descr>
+<seealso>
+<link id="TCompressionStream.Write">Write</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCompressionStream.OnProgress">
+<short>Progress handler</short>
+<descr>
+<var>OnProgress</var> is called whenever output data is written to the
+output stream. It can be used to update a progress bar or so. The
+<var>Sender</var> argument to the progress handler is the compression stream
+instance.
+</descr>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TDecompressionStream">
+<short>Reads and decompresses data from a compressed data stream.</short>
+<descr>
+<p>
+<var>TDecompressionStream</var> performs the inverse operation of 
+<link id="TCompressionStream"/>. A read operation reads data from an input
+stream and decompresses (inflates) the data it as it goes along.
+</p>
+<p>
+The decompression stream reads it's compressed data from a stream with
+deflated data. This data can be created e.g. with a <link id="TCompressionStream"/> 
+compression stream.
+</p>
+</descr>
+<seealso>
+<link id="TCompressionStream"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TDecompressionStream.Create">
+<short>Creates a new instance of the <var>TDecompressionStream</var> stream</short>
+<descr>
+<p>
+<var>Create</var> creates and initializes a new instance of the <var>TDecompressionStream</var>
+class. It calls the inherited <var>Create</var> and passes it the
+<var>Source</var> stream. The source stream is the stream from which the
+compressed (deflated) data is read.
+</p>
+<p>
+Note that the source stream is by default not owned by the decompression
+stream, and is not freed when the decompression stream is destroyed.
+</p>
+</descr>
+<seealso>
+<link id="TDecompressionStream.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDecompressionStream.Create.Source">
+<short>Stream with compressed data</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TDecompressionStream.Destroy">
+<short>Destroys the <var>TDecompressionStream</var> instance</short>
+<descr>
+<p>
+<var>Destroy</var> cleans up the inflate structure, and then simply 
+calls the inherited destroy.
+</p>
+<p>
+By default the source stream is not freed when calling <var>Destroy</var>.
+</p>
+</descr>
+<seealso>
+<link id="TDecompressionStream.Create">Create</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDecompressionStream.Read">
+<short>Read data from the compressed stream</short>
+<descr>
+<var>Read</var> will read data from the compressed stream until the
+decompressed data size is <var>Count</var> or there is no more compressed
+data available. The decompressed data is written in <var>Buffer</var>. 
+The function returns the number of bytes written in the buffer.
+</descr>
+<errors>
+If an error occurs, an <link id="EDeCompressionError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TCompressionStream.Write">Write</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDecompressionStream.Read.Result">
+<short>Number of decompressed bytes that were actually read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDecompressionStream.Read.Buffer">
+<short>Buffer in which to store the read data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDecompressionStream.Read.Count">
+<short>Maximum number of bytes to read.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDecompressionStream.Write">
+<short>Write data to the stream</short>
+<descr>
+<var>Write</var> will raise a <link id="EDeCompressionError"/> exception,
+because the <var>TDecompressionStream</var> class is read-only.
+</descr>
+<errors>
+An <link id="EDeCompressionError"/> exception is always raised.
+</errors>
+<seealso>
+<link id="TDeCompressionStream.Read">Read</link>
+<link id="EDeCompressionError"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDecompressionStream.Write.Result">
+<short>Number of bytes written</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDecompressionStream.Write.Buffer">
+<short>Buffer containing the data to be written</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDecompressionStream.Write.Count">
+<short>Number of bytes to write</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDecompressionStream.Seek">
+<short>Move stream position to a certain location in the stream.</short>
+<descr>
+<p>
+<var>Seek</var> overrides the standard <var>Seek</var> implementation.
+Normally, pipe streams stderr are not seekable.
+The <var>TDecompressionStream</var> stream tries to provide seek capabilities for the
+following limited number of cases:
+</p>
+<dl>
+<dt>Origin=soFromBeginning</dt>
+<dd>If <var>Offset</var> is larger than the current position,
+then the remaining bytes are skipped by reading them from the
+stream and discarding them.
+</dd>
+<dt>Origin=soFromCurrent</dt>
+<dd>If <var>Offset</var> is zero, the current position is returned. If
+it is positive, then <var>Offset</var> bytes are skipped by reading them
+from the stream and discarding them, if the stream is of type
+<var>iosInput</var>.
+</dd>
+</dl>
+<p>
+All other cases will result in a <var>EPipeSeek</var> exception.
+</p>
+</descr>
+<errors>
+An <link id="EDecompressionError"/> exception is raised if the stream does not
+allow the requested seek operation.
+</errors>
+<seealso>
+<link id="TDecompressionStream.Read">Read</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDecompressionStream.Seek.Result">
+<short>New position in the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDecompressionStream.Seek.Offset">
+<short>Offset to apply to the position in the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDecompressionStream.Seek.Origin">
+<short>Origin from where <var>Offset</var> should be counted.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDeCompressionStream.OnProgress">
+<short>Progress handler</short>
+<descr>
+<var>OnProgress</var> is called whenever input data is read from the 
+source stream. It can be used to update a progress bar or so. The
+<var>Sender</var> argument to the progress handler is the decompression stream
+instance.
+</descr>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TGZOpenMode">
+<short>Open mode for gzip file.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TGZOpenMode.gzOpenRead">
+<short>Open file for reading</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TGZOpenMode.gzOpenWrite">
+<short>Open file for writing</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TGZFileStream">
+<short>Stream to read/write from a gzip file.</short>
+<descr>
+<var>TGZFileStream</var> can be used to read data from a gzip file, or to
+write data to a gzip file.
+</descr>
+<seealso>
+<link id="TCompressionStream"/>
+<link id="TDeCompressionStream"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TGZFileStream.Create">
+<short>Create a new instance of <var>TGZFileStream</var></short>
+<descr>
+<p>
+<var>Create</var> creates a new instance of the <var>TGZFileStream</var>
+class. It opens <var>FileName</var> for reading or writing, depending on
+the <var>FileMode</var> parameter. It is not possible to open the file
+read-write. If the file is opened for reading, it must exist.
+</p>
+<p>
+If the file is opened for reading, the <link id="TGZFileStream.Read"/>
+method can be used for reading the data in uncompressed form.
+</p>
+<p>
+If the file is opened for writing, any data written using
+the <link id="TGZFileStream.Write"/> method will be stored 
+in the file in compressed (deflated) form.
+</p>
+</descr>
+<errors>
+If the file is not found, an <link id="EZlibError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TGZFileStream.Destroy">Destroy</link>
+<link id="TGZOpenMode">TGZOpenMode</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGZFileStream.Create.FileName">
+<short>Name of the gzip file</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGZFileStream.Create.FileMode">
+<short>Open mode for the file.</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TGZFileStream.Destroy">
+<short>Removes <var>TGZFileStream</var> instance</short>
+<descr>
+<var>Destroy</var> closes the file and releases the <var>TGZFileStream</var>
+instance from memory.
+</descr>
+<seealso>
+<link id="TGZFileStream.Create">Create</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TGZFileStream.Read">
+<short>Read data from the compressed file</short>
+<descr>
+<p>
+<var>Read</var> overrides the <var>Read</var> method of <var>TStream</var>
+to read the data from the compressed file. The <var>Buffer</var> parameter
+indicates where the read data should be stored. The <var>Count</var>
+parameter specifies the number of bytes (<em>uncompressed</em>) that should
+be read from the compressed file. Note that it is
+not possible to read from the stream if it was opened in write mode.
+</p>
+<p>
+The function returns the number of uncompressed bytes actually read.
+</p>
+</descr>
+<errors>
+If <var>Buffer</var> points to an invalid location, or does not have enough
+room for <var>Count</var> bytes, an exception will be raised.
+</errors>
+<seealso>
+<link id="TGZFileStream.Create">Create</link>
+<link id="TGZFileStream.Write">Write</link>
+<link id="TGZFileStream.Seek">Seek</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TGZFileStream.Read.Result">
+<short>Number of bytes (uncompressed) actually read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGZFileStream.Read.Buffer">
+<short>Memory buffer to store the data in</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGZFileStream.Read.Count">
+<short>Number of (uncompressed) bytes to read.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TGZFileStream.Write">
+<short>Write data to be compressed</short>
+<descr>
+<p>
+<var>Write</var> writes <var>Count</var> bytes from <var>Buffer</var> to the
+compressed file. The data is compressed as it is written, so ideally, less
+than <var>Count</var> bytes end up in the compressed file. Note that it is
+not possible to write to the stream if it was opened in read mode.
+</p>
+<p>
+The function returns the number of (uncompressed) bytes that were actually
+written.
+</p>
+</descr>
+<errors>
+In case of an error, an <link id="EZlibError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TGZFileStream.Create">Create</link>
+<link id="TGZFileStream.Read">Read</link>
+<link id="TGZFileStream.Seek">Seek</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TGZFileStream.Write.Result">
+<short>Number of uncompressed bytes written</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGZFileStream.Write.Buffer">
+<short>Memory location containing the data to be written.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGZFileStream.Write.Count">
+<short>Number of bytes to write.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TGZFileStream.Seek">
+<short>Set the position in the compressed stream.</short>
+<descr>
+<var>Seek</var> sets the position to <var>Offset</var> bytes, starting from
+<var>Origin</var>. Not all combinations are possible, see
+<link id="TDecompressionStream.Seek"/> for a list of possibilities.
+</descr>
+<errors>
+In case an impossible combination is asked, an <link id="EZlibError"/> exception 
+is raised.
+</errors>
+<seealso>
+<link id="TDecompressionStream.Seek"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TGZFileStream.Seek.Result">
+<short>New position in the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGZFileStream.Seek.Offset">
+<short>Number of bytes to position on</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGZFileStream.Seek.Origin">
+<short>Where to start positioning</short>
+</element>
+</module> <!-- zstream -->
+</package>
+</fpdoc-descriptions>
