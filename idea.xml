@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    IDEA
+  ====================================================================
+-->
+
+<module name="idea">
+<short>The IDEA unit provides IDEA encryption support</short>
+<descr>
+Besides some low level IDEA encryption routines, the IDEA unit also offers 2
+streams which offer on-the-fly encryption or decryption: there are 2 stream
+objects: A write-only encryption stream which encrypts anything that is
+written to it, and a decription stream which decrypts anything that is read
+from it.
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Sysutils">
+<short>Used for exception support</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>Used for TOwnerStream definition.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IDEAKEYSIZE">
+<short>IDEA Key size constant.</short>
+<seealso>
+<link id="IDEABLOCKSIZE"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IDEABLOCKSIZE">
+<short>IDEA block size</short>
+<seealso>
+<link id="IDEAKEYSIZE"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="ROUNDS">
+<short>Number of rounds to encrypt</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="KEYLEN">
+<short>Key length</short>
+<descr>
+</descr>
+<seealso>
+<link id="IDEAKEYSIZE"/>
+<link id="IDEABLOCKSIZE"/>
+<link id="ROUNDS"/>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TIDEAKey">
+<short>Type for holding a user IDEA key</short>
+<descr>
+The IDEA key should be filled by the user with some random data (say, a
+passphrase). This key is used to generate the actual encryption/decryption keys.
+</descr>
+<seealso>
+<link id="TIdeaCryptKey"/>
+<link id="TIdeaCryptData"/>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TIdeaCryptKey">
+<short>Type for holding an encyption/decryption IDEA key.</short>
+<descr>
+The actual encryption or decryption key for IDEA is 64-bit long.
+This type is used to hold such a key. It can be generated with the 
+<link id="EnKeyIDEA"/> or <link id="DeKeyIDEA"/> algorithms depending on
+whether an encryption or decryption key is needed.
+</descr>
+<seealso>
+<link id="EnKeyIDEA"/>
+<link id="DeKeyIDEA"/>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TIdeaCryptData">
+<short>Buffer type to hold encryption data.</short>
+<descr>
+<var>TIdeaCryptData</var> is an internal type, defined to hold data for
+encryption/decryption.
+</descr>
+<seealso>
+<link id="TIdeaCryptKey"/>
+<link id="TIDEAKey"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="IDEAkey">
+<short>Alias for <link id="#fcl.idea.TIDEAKey">TIDEAKey</link></short>
+<descr>
+Provided for backward functionality.
+</descr>
+<seealso>
+<link id="TIDEAKey"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="IdeaCryptKey">
+<short>Alias for for <link id="#fcl.idea.TIDEACryptKey">TIDEACryptKey</link></short>
+<descr>
+Provided for backward functionality.
+</descr>
+<seealso>
+<link id="TIDEACryptKey"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="IdeaCryptData">
+<short>Alias for for <link id="#fcl.idea.TIDEACryptData">TIDEACryptData</link></short>
+<descr>
+Provided for backward functionality.
+</descr>
+<seealso>
+<link id="TIDEACryptData"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="EnKeyIdea">
+<short>Create an IDEA encryption key from a user key.</short>
+<descr>
+<var>EnKeyIdea</var> creates an IDEA encryption key from user-supplied data
+in <var>UserKey</var>. The Encryption key is stored in <var>z</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="DeKeyIdea"/>
+<link id="CipherIdea"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="EnKeyIdea.UserKey">
+<short>User-supplied data to generate key from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="EnKeyIdea.z">
+<short>64-bit Encryption key.</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="DeKeyIdea">
+<short>Create a decryption key from an encryption key.</short>
+<descr>
+<var>DeKeyIdea</var> creates a decryption key based on the encryption key
+<var>z</var>. The decryption key is returned in <var>dk</var>. Note that
+only a decryption key generated from the encryption key that was used to
+encrypt the data can be used to decrypt the data.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="EnKeyIdea"/>
+<link id="CipherIdea"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="DeKeyIdea.z">
+<short>Encryption key</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="DeKeyIdea.dk">
+<short>Key for decryption</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="CipherIdea">
+<short>Encrypt or decrypt a buffer.</short>
+<descr>
+<var>CipherIdea</var> encrypts or decrypts a buffer with data
+(<var>Input</var>) using key <var>z</var>. The resulting encrypted or
+decrypted data is returned in <var>Output</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="EnKeyIdea"/>
+<link id="DeKeyIdea"/>
+<link id="TIDEAEncryptStream"/>
+<link id="TIDEADecryptStream"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CipherIdea.Input">
+<short>Data to be encrypted/decrypted</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CipherIdea.outdata">
+<short>Decrypted/Encrypted data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CipherIdea.z">
+<short>Key to use for Encryption/Decryption</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="EIDEAError">
+<short>Exception for IDEA Stream errors.</short>
+<descr>
+<var>EIDEAError</var> is used to signal errors in the IDEA encryption
+decryption streams.
+</descr>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TIDEAStream">
+<short>Ancestor stream for IDEA encryption/decryption streams.</short>
+<descr>
+Do not create instances of <var>TIDEAStream</var> directly. It implements no
+useful functionality: it serves as a common ancestor of the <link
+id="TIDEAEncryptStream"/> and <link id="TIDEADeCryptStream"/>, and simply
+provides some fields that these descendent classes use when
+encrypting/decrypting. One of these classes should be created, 
+depending on whether one wishes to encrypt or to decrypt.
+</descr>
+<seealso>
+<link id="TIDEAEncryptStream"/>
+<link id="TIDEADeCryptStream"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TIDEAStream.Create">
+<short>Creates a new instance of the <var>TIDEAStream</var> class</short>
+<descr>
+<var>Create</var> stores the encryption/decryption key and then calls the
+inherited <var>Create</var> to store the <var>Dest</var> stream.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TIDEAEncryptStream"/>
+<link id="TIDEADeCryptStream"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEAStream.Create.AKey">
+<short>Key to use for encryption/decryption</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEAStream.Create.Dest">
+<short>Stream to write encrypted data to/read encrypted data from</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIDEAStream.Key">
+<short>Key used when encrypting/decrypting</short>
+<descr>
+<var>Key</var> is the key as it was passed to the constructor of the stream.
+It cannot be changed while data is read or written. It is the key as it is
+used when encrypting/decrypting.
+</descr>
+<seealso>
+<link id="CipherIdea"/>
+</seealso>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TIDEAEncryptStream">
+<short>IDEA encryption stream.</short>
+<descr>
+<p>
+<var>TIDEAEncryptStream</var> is a stream which encrypts anything that is
+written to it using the IDEA mechanism, and then writes the encrypted data
+to the destination stream using the <link id="CipherIDEA"/> algorithm. 
+It is a write-only stream: it is not possible to read data from this stream.
+</p>
+<p>
+When creating a <var>TIDEAEncryptStream</var> instance, an IDEA encryption
+key should be passed to the constructor, as well as the stream to which
+encrypted data should be written.
+</p>
+<p>
+The resulting encrypted data can be read again with a <link id="TIDEADecryptStream"/> 
+decryption stream.
+</p>
+</descr>
+<seealso>
+<link id="TIDEADecryptStream"/>
+<link id="TIDEAStream.Create"/>
+<link id="CipherIDEA"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TIDEAEncryptStream.Destroy">
+<short>Flush data buffers and free the stream instance.</short>
+<descr>
+<p>
+<var>Destroy</var> flushes any data still remaining in the internal
+encryption buffer, and then calls the inherited <var>Destroy</var>
+</p>
+<p>
+By default, the destination stream is not freed when the encryption stream
+is freed.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TIDEAStream.Create"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIDEAEncryptStream.Read">
+<short>Read data from the stream</short>
+<descr>
+<var>Read</var> always raises an <link id="EIDEAError"/> exception, because
+the encryption stream is write-only. To read from an encrypted stream, use
+the <link id="TIDEADecryptStream.Read">Read</link> method of the
+<link id="TIDEADecryptStream"/> decryption stream.
+</descr>
+<errors>
+An <link id="EIDEAError"/> exception is raised when calling this method.
+</errors>
+<seealso>
+<link id="TIDEAEncryptStream.Write">Write</link>
+<link id="TIDEADecryptStream"/>
+<link id="TIDEADecryptStream.Read"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIDEAEncryptStream.Read.Result">
+<short>Number of bytes read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEAEncryptStream.Read.Buffer">
+<short>Buffer to store read data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEAEncryptStream.Read.Count">
+<short>Number of bytes to read.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIDEAEncryptStream.Write">
+<short>Write bytes to the stream to be encrypted</short>
+<descr>
+<var>Write</var> writes <var>Count</var> bytes from <var>Buffer</var> to the stream,
+encrypting the bytes as they are written (encryption in blocks of 8 bytes).
+</descr>
+<errors>
+If an error occurs writing to the destination stream, an error may occur.
+</errors>
+<seealso>
+<link id="TIDEADecryptStream.Read">Read</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIDEAEncryptStream.Write.Result">
+<short>Number of bytes actually written.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEAEncryptStream.Write.Buffer">
+<short>Buffer containing data to be written</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEAEncryptStream.Write.Count">
+<short>Number of bytes to write.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIDEAEncryptStream.Seek">
+<short>Set stream position</short>
+<descr>
+<var>Seek</var> return the current position if called with
+<var>0</var> and <var>soFromCurrent</var> as arguments.
+With all other values, it will always raise an exception, 
+since it is impossible to set the position on an encryption stream.
+</descr>
+<errors>
+An <link id="EIDEAError"/> will be raised unless called with <var>0</var>
+and <var>soFromCurrent</var> as arguments.
+</errors>
+<seealso>
+<link id="TIDEAEncryptStream.Write">Write</link>
+<link id="EIDEAError"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIDEAEncryptStream.Seek.Result">
+<short>New location after seek operation</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEAEncryptStream.Seek.Offset">
+<short>Number of bytes to move stream pointer</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEAEncryptStream.Seek.Origin">
+<short>Where to move stream pointer from</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIDEAEncryptStream.Flush">
+<short>Write remaining bytes from the stream</short>
+<descr>
+<var>Flush</var> writes the current encryption buffer to 
+the stream. Encryption always happens in blocks of 8 bytes,
+so if the buffer is not completely filled at the end of the writing
+operations, it must be flushed. 
+It should never be called directly, unless at the end of all writing
+operations. It is called automatically when the stream is destroyed.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TIDEAEncryptStream.Write">Write</link>
+</seealso>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TIDEADeCryptStream">
+<short>IDEA Decryption stream.</short>
+<descr>
+<p>
+<var>TIDEADecryptStream</var> is a stream which decrypts anything that is
+read from it using the IDEA mechanism. It reads the encrypted data
+from a source stream and decrypts it using the <link id="CipherIDEA"/> algorithm. 
+It is a read-only stream: it is not possible to write data to this stream.
+</p>
+<p>
+When creating a <var>TIDEADecryptStream</var> instance, an IDEA decryption
+key should be passed to the constructor, as well as the stream from which
+encrypted data should be read written.
+</p>
+<p>
+The encrypted data can be created with a <link id="TIDEAEncryptStream"/> 
+encryption stream.
+</p>
+</descr>
+<seealso>
+<link id="TIDEAEncryptStream"/>
+<link id="TIDEAStream.Create"/>
+<link id="CipherIDEA"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIDEADeCryptStream.Read">
+<short>Reads data from the stream, decrypting it as needed</short>
+<descr>
+<var>Read</var> attempts to read <var>Count</var> bytes from the stream,
+placing them in <var>Buffer</var> the bytes are read from the source stream
+and decrypted as they are read. (bytes are read from the source stream in
+blocks of 8 bytes. The function returns the number of bytes actually read.
+</descr>
+<errors>
+If an error occurs when reading data from the source stream, an exception
+may be raised.
+</errors>
+<seealso>
+<link id="TIDEADecryptStream.Write">Write</link>
+<link id="TIDEADecryptStream.Seek">Seek</link>
+<link id="TIDEAEncryptStream"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIDEADeCryptStream.Read.Result">
+<short>Number of bytes actually read.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEADeCryptStream.Read.Buffer">
+<short>Buffer to place the descrypted data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEADeCryptStream.Read.Count">
+<short>Number of bytes that should be read from the stream.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIDEADeCryptStream.Write">
+<short>Write data to the stream</short>
+<descr>
+<var>Write</var> always raises an <link id="EIDEAError"/> exception, because
+the decryption stream is read-only. To write to an encryption stream, use
+the <link id="TIDEAEncryptStream.Write">Write</link> method of the
+<link id="TIDEAEncryptStream"/> decryption stream.
+</descr>
+<errors>
+An <link id="EIDEAError"/> exception is raised when calling this method.
+</errors>
+<seealso>
+<link id="TIDEADecryptStream.Read">Read</link>
+<link id="TIDEAEncryptStream"/>
+<link id="TIDEAEncryptStream.Write"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIDEADeCryptStream.Write.Result">
+<short>Number of written bytes</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEADeCryptStream.Write.Buffer">
+<short>Buffer containing data to be written</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEADeCryptStream.Write.Count">
+<short>Number of bytes to write</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIDEADeCryptStream.Seek">
+<short>Set position on the stream</short>
+<descr>
+<p>
+<var>Seek</var> will only work on a forward seek. It emulates a forward seek by
+reading and discarding bytes from the input stream.
+The <var>TIDEADecryptStream</var> stream tries to provide seek capabilities for the
+following limited number of cases:
+</p>
+<dl>
+<dt>Origin=soFromBeginning</dt>
+<dd>If <var>Offset</var> is larger than the current position,
+then the remaining bytes are skipped by reading them from the
+stream and discarding them.
+</dd>
+<dt>Origin=soFromCurrent</dt>
+<dd>If <var>Offset</var> is zero, the current position is returned. If
+it is positive, then <var>Offset</var> bytes are skipped by reading them
+from the stream and discarding them.
+</dd>
+</dl>
+</descr>
+<errors>
+An <link id="EIDEAError"/> exception is raised if the stream does not
+allow the requested seek operation.
+</errors>
+<seealso>
+<link id="TIDEADeCryptStream.Read">Read</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIDEADeCryptStream.Seek.Result">
+<short>New position in the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEADeCryptStream.Seek.Offset">
+<short>Offset to apply to the position in the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIDEADeCryptStream.Seek.Origin">
+<short>Origin from where <var>Offset</var> should be counted.</short>
+</element>
+</module> <!-- IDEA -->
+</package>
+</fpdoc-descriptions>
