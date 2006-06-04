@@ -15,4 +15,5 @@ begin
     Writeln ('Oh-oh problems...')
   else
     Writeln ('All is well : PP=',PP);
+  StrDispose(PP);  
 end.

@@ -14,4 +14,5 @@ begin
     writeln ('This can''t be happening...')
   else
     writeln ('P2 : ',P2);
+  StrDispose(P2);  
 end.

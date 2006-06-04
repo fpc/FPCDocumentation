@@ -14,4 +14,5 @@ begin
     Writeln('Something is wrong here !')
   else
     Writeln ('PP= ',PP);
+  StrDispose(PP);  
 end.

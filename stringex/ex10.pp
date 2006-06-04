@@ -13,4 +13,5 @@ begin
   P2:=StrAlloc(StrLen(P1)+1);
   StrMove (P2,P1,StrLen(P1)+1); { P2:=P1 }
   Writeln ('P2 = ',P2);
+  StrDispose(P2);
 end.

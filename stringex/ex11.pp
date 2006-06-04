@@ -13,4 +13,5 @@ begin
   StrMove (P2,P1,StrLen(P1)+1); { P2=P1 }
   StrCat (P2,P1);               { Append P2 once more }
   Writeln ('P2 : ',P2);
+  StrDispose(P2);
 end.

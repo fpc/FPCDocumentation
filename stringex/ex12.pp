@@ -14,4 +14,5 @@ begin
   StrCat (P2,P1);
   StrLCat (P2,P1,5);
   Writeln ('P2 = ',P2);
+  StrDispose(P2)
 end.

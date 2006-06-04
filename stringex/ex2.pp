@@ -14,4 +14,5 @@ begin
     Writeln ('This is impossible !!')
   else
     writeln (P);
+  StrDispose(P);  
 end.
