@@ -28,14 +28,9 @@ begin
       end;
     end;
   Writeln ('Set ',cnt,' pointers to Nil. Count is ',C^.Count);
-  Writeln ('Available memory : ',Memavail);
   C^.Pack;
   Writeln ('Packed collection. Count is ',C^.Count);
-  cnt:=Memavail;
-  Writeln ('Available memory : ',Cnt);
   C^.SetLimit(C^.Count);
   Writeln ('Set limit to ',C^.Count);
-  Write   ('Available memory : ',Memavail,'.');
-  Writeln (' Gained ',Memavail-cnt,' bytes.');
   Dispose(C,Done);
 end.

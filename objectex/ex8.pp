@@ -7,10 +7,7 @@ Uses Objects;
 Var O : PObject;
 
 begin
-  Writeln ('Memavail : ',Memavail);
   // Allocate memory for object.
   O:=New(PObject,Init);
-  Writeln ('Memavail : ',Memavail);
   O^.Done;
-  Writeln ('Memavail : ',Memavail);
 end.
