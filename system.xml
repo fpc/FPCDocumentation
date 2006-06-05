@@ -801,7 +801,7 @@ None.
 <descr>
 <var>Cos</var> returns the cosine of <var>X</var>, where X is an angle, in radians.
 
-If the absolute value of the argument is larger than \var{2\^{}63}, then the
+If the absolute value of the argument is larger than 2^63, then the
 result is undefined.
 </descr>
 <errors>
@@ -2628,7 +2628,7 @@ No checking on <var>Size</var> is done.
 <var>Sin</var> returns the sine of its argument <var>X</var>, where <var>X</var> is an
 angle in radians.
 
-If the absolute value of the argument is larger than \var{2\^{}63}, then the
+If the absolute value of the argument is larger than 2^63, then the
 result is undefined.
 </descr>
 <errors>
@@ -9078,84 +9078,82 @@ To get DOS-compatible behaviour, this constant can be set to <var>True</var>
 
 
 <element name="AnsiToUtf8">
-<short></short>
+<short>Convert ansi string to UTF-8 string</short>
 <descr>
+<var>AnsiToUtf8</var> converts the ansistring <var>S</var> to a WideString
+in UTF-8 format.
 </descr>
 <errors>
+None.
 </errors>
 <seealso>
-</seealso>
-</element>
-
-
-<element name="BEtoN">
-<short></short>
-<descr>
-</descr>
-<errors>
-</errors>
-<seealso>
+<link id="Utf8toAnsi"/>
 </seealso>
 </element>
 
 
 <element name="DefaultAnsi2WideMove">
-<short></short>
+<short>Standard implementation of Ansi to Widestring conversion routine</short>
 <descr>
+<var>DefaultAnsi2WideMove</var> simply copies each character of the
+null-terminated ansi-string <var>Source</var> to the corresponding WideChar
+in <var>Dest</var>. At most <var>Len</var> characters will be copied.
 </descr>
 <errors>
+None.
 </errors>
 <seealso>
+<link id="DefaultWide2AnsiMove"/>
 </seealso>
 </element>
 
 
 <element name="DefaultWide2AnsiMove">
-<short></short>
+<short>Standard implementation of Widestring to Ansi conversion routine</short>
 <descr>
+var>DefaultWide2AnsiMove</var> simply copies each character from
+<var>Source</var> having an ordinal value of less than 255 to the
+corresponding character in <var>Dest</var>. Characters having an 
+ordinal valuelarger than 255 will be replaced by question marks.
+At most <var>Len</var> characters will be copied.
 </descr>
 <errors>
+None.
 </errors>
 <seealso>
+<link id="DefaultAnsi2WideMove"/>
 </seealso>
 </element>
 
 
 <element name="DynArraySetLength">
-<short></short>
+<short>Set the length of a dynamic array</short>
 <descr>
+<p>
+<var>DynArraySetLength</var> sets the length of the dynamical array
+<var>a</var> to the first <var>dimCnt</var> lengths specified in the 
+array <var>lengthVec</var>. The dynamical array type is described in
+<var>typeInfo</var> which points to a record of type <link
+id="TDynArrayTypeInfo"/>
+</p>
+<p>
+It should never be necessary to call this function directly, the 
+standard <link id="SetLength"/> function should be used instead.
+</p>
 </descr>
 <errors>
+If an invalid pointer is specified, an error may occur.
 </errors>
 <seealso>
+<link id="SetLength"/>
+<link id="tdynarraytypeinfo"/>
 </seealso>
 </element>
 
-
-<element name="FindResource">
-<short></short>
-<descr>
-</descr>
-<errors>
-</errors>
-<seealso>
-</seealso>
-</element>
-
-
-<element name="FreeResource">
-<short></short>
-<descr>
-</descr>
-<errors>
-</errors>
-<seealso>
-</seealso>
-</element>
 
 
 <element name="GetFPCHeapStatus">
-<short></short>
+<short>Return FPC heap manager status information</short>
 <descr>
 </descr>
 <errors>
@@ -9165,15 +9163,6 @@ To get DOS-compatible behaviour, this constant can be set to <var>True</var>
 </element>
 
 
-<element name="GetWideStringManager">
-<short></short>
-<descr>
-</descr>
-<errors>
-</errors>
-<seealso>
-</seealso>
-</element>
 
 
 <element name="HGLOBAL">
@@ -9312,58 +9301,163 @@ all COM objects must implement. The definition does not contain any code.
 </seealso>
 </element>
 
-
-<element name="LEtoN">
-<short></short>
+<element name="FindResource">
+<short>Locate a resource and return a handle to it.</short>
 <descr>
+<var>FindResource</var> searches for a resource with name
+<var>ResourceName</var> and of type <var>ResourceType</var> 
+in the executable or library identified by <var>ModuleHandle</var>.
+It returns a <var>TResourceHandle</var> which can be used to load the
+resource with <link id="LoadResource"/>.
 </descr>
 <errors>
+None. In case the resource was not found, 0 is returned.
 </errors>
 <seealso>
+<link id="FreeResource"/>
+<link id="LoadResource"/>
+<link id="SizeofResource"/>
+<link id="LockResource"/>
+<link id="UnlockResource"/>
+<link id="FreeResource"/>
 </seealso>
 </element>
 
 
-<element name="LoadResource">
-<short></short>
+<element name="FreeResource">
+<short>Free a loaded resource</short>
 <descr>
+<var>FreeResource</var> unloads the resource identified by
+<var>ResData</var> from memory. The resource must have been loaded by <link
+id="LoadResource"/>. It returns <var>True</var> if the operation was
+succesful, <var>False</var> otherwise.
 </descr>
 <errors>
+On error, <var>False</var> is returned.
 </errors>
 <seealso>
+<link id="FindResource"/>
+<link id="LoadResource"/>
+<link id="SizeofResource"/>
+<link id="LockResource"/>
+<link id="UnlockResource"/>
+<link id="FreeResource"/>
+</seealso>
+</element>
+
+
+
+<element name="LoadResource">
+<short>Load a resource for use</short>
+<descr>
+<p>
+<var>LoadResource</var> loads a resource identified by <var>ResHandle</var>
+from a module identified by <var> ModuleHandle</var>into memory. It returns
+a handle to the resource.
+</p>
+<p>
+Loaded resources must be unloaded again using the <link id="FreeResource"/>
+function.
+</p>
+</descr>
+<errors>
+On error, 0 is returned.
+</errors>
+<seealso>
+<link id="FindResource"/>
+<link id="FreeResource"/>
+<link id="SizeofResource"/>
+<link id="LockResource"/>
+<link id="UnlockResource"/>
+<link id="FreeResource"/>
 </seealso>
 </element>
 
 
 <element name="LockResource">
-<short></short>
+<short>Lock a resource</short>
 <descr>
+<p>
+<var>LockResource</var> locks a resource previously loaded by
+<var>LoadResource</var> into memory. This means that any attempt to modify
+the resource will fail while it is locked. The function returns a pointer to
+the resource location in memory.
+</p>
+<p>
+The resource can be freed again using the <link id="UnlockResource"/>
+function.
+</p>
 </descr>
 <errors>
+if the function fails, <var>Nil</var> is returned.
 </errors>
 <seealso>
+<link id="FindResource"/>
+<link id="FreeResource"/>
+<link id="SizeofResource"/>
+<link id="LoadResource"/>
+<link id="UnlockResource"/>
+<link id="FreeResource"/>
+</seealso>
+</element>
+
+<element name="SizeofResource">
+<short>Return the size of a particular resource</short>
+<descr>
+<var>SizeOfResource</var> returns the size of the resource identified by
+<var>ResHandle</var> in module identified by <var>ModuleHandle</var>. 
+<var>ResHandle</var> should be obtained from a call to <link id="LoadResource"/>
+</descr>
+<errors>
+In case of an error, 0 is returned.
+</errors>
+<seealso>
+<link id="FindResource"/>
+<link id="FreeResource"/>
+<link id="LoadResource"/>
+<link id="LockResource"/>
+<link id="UnlockResource"/>
+<link id="FreeResource"/>
+</seealso>
+</element>
+
+<element name="UnlockResource">
+<short>Unlock a previously locked resource</short>
+<descr>
+<var>UnlockResource</var> unlocks a previously locked resource. Note that
+this function does not exist on windows, it's only needed on other
+platforms.
+</descr>
+<errors>
+The function returns <var>False</var> if it failed.
+</errors>
+<seealso>
+<link id="FindResource"/>
+<link id="FreeResource"/>
+<link id="SizeofResource"/>
+<link id="LoadResource"/>
+<link id="lockResource"/>
+<link id="FreeResource"/>
 </seealso>
 </element>
 
 
 <element name="MAKEINTRESOURCE">
-<short></short>
-<descr>
-</descr>
-<errors>
-</errors>
-<seealso>
-</seealso>
+<short>Alias for the <link id="#rtl.system.PChar">PChar</var> type.</short>
 </element>
 
 
 <element name="MaxKeptOSChunks">
-<short></short>
+<short>Maximum number of OS chunks to be kept in memory</short>
 <descr>
+<var>MaxKeptOSChunks</var> tells the heap manager how many free 
+chunks of OS-allocated memory it should keep in memory. When freeing memory,
+it can happen that a memory block obtained from the OS is completely free.
+If more than <var>MaxKeptOSChunks</var> such blocks are free, then the heap
+manager will return them to the OS, to reduce memory requirements.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="FreeMem"/>
 </seealso>
 </element>
 
@@ -9376,60 +9470,81 @@ This constant is system dependent.
 </element>
 
 
-<element name="NtoBE">
-<short></short>
+<element name="BEtoN">
+<short>Convert Big Endian-ordered integer to Native-ordered integer</short>
 <descr>
+<var>BEToN</var> will rearrange the bytes in a Big-Endian number to 
+the native order for the current processor. That is, for a big-endian 
+processor, it will do nothing, and for a little-endian processor, 
+it will invert the order of the bytes.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="LEtoN"/>
+<link id="NtoBE"/>
+<link id="NtoLE"/>
+</seealso>
+</element>
+
+
+<element name="LEtoN">
+<short>Convert Little Endian-ordered integer to Native-ordered integer</short>
+<descr>
+<var>LEToN</var> will rearrange the bytes in a Little-Endian number to 
+the native order for the current processor. That is, for a little-endian 
+processor, it will do nothing, and for a big-endian processor, 
+it will invert the order of the bytes.
+</descr>
+<seealso>
+<link id="BEtoN"/>
+<link id="NtoBE"/>
+<link id="NtoLE"/>
+</seealso>
+</element>
+
+<element name="NtoBE">
+<short>Convert Native-ordered integer to a Big Endian-ordered integer</short>
+<descr>
+<var>NToBE</var> will rearrange the bytes in a natively-ordered number to 
+the Big-Endian order. That is, for a Little-Endian processor, it will 
+invert the order of the bytes and for a big-endian processor, it will do
+nothing.
+</descr>
+<seealso>
+<link id="BEtoN"/>
+<link id="LEtoN"/>
+<link id="NtoLE"/>
 </seealso>
 </element>
 
 
 <element name="NtoLE">
-<short></short>
+<short>Convert Native-ordered integer to a Little Endian-ordered integer</short>
 <descr>
+<var>NToLE</var> will rearrange the bytes in a natively-ordered number to 
+the little-Endian order. That is, for a Big-Endian processor, it will 
+invert the order of the bytes and for a Little-Endian processor, it will do
+nothing.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="BEtoN"/>
+<link id="LEtoN"/>
+<link id="NtoBE"/>
 </seealso>
 </element>
-
-
 
 
 <element name="PDispatch">
-<short></short>
-<descr>
-</descr>
-<errors>
-</errors>
-<seealso>
-</seealso>
+<short>Pointer to <link id="#rtl.system.IDispatch">IDispatch</link> interface type</short>
 </element>
 
 
-<element name="pdynarraytypeinfo">
-<short></short>
-<descr>
-</descr>
-<errors>
-</errors>
-<seealso>
-</seealso>
+<element name="PDynArrayTypeInfo">
+<short>Pointer to <link id="#rtl.system.tdynarraytypeinfo">TDynArrayTypeInfo</link> type.</short>
 </element>
 
 
 <element name="PPDispatch">
-<short></short>
-<descr>
-</descr>
-<errors>
-</errors>
-<seealso>
-</seealso>
+<short>Pointer to <link id="#rtl.system.PDispatch">PDispatch</link> pointer type</short>
 </element>
 
 
@@ -9543,11 +9658,65 @@ error occurred.
 </seealso>
 </element>
 
+<element name="GetWideStringManager">
+<short>Return a copy of the currently active widestring manager.</short>
+<descr>
+<p>
+<var>GetWideStringManager</var> returns a copy of the currently active 
+heap manager in <var>Old</var>
+</p>
+<p>
+WideStrings are implemented in different ways on different platforms. 
+Therefore, the Free Pascal Runtime library has no fixed implementation of
+widestring routines. Instead, it defines a WideString manager record, 
+with callbacks that can be set to an implementation which is most 
+efficient on the current platform. On windows, standard Windows 
+routines will be used. On Unix and Linux, an implementation based on the 
+C library is available (in unit <file>cwstrings</file>).
+</p>
+<p>
+It is possible to implement a custom widestring manager, optimized for 
+the current application, without having to recompile the complete Run-Time Library.
+</p>
+</descr>
+<seealso>
+<link id="SetWideStringManager"/>
+<link id="TWideStringManager"/>
+</seealso>
+</element>
 
 <element name="SetWideStringManager">
 <short>Set the widestring manager</short>
 <descr>
+<p>
+<var>SetWideStringManager</var> sets the current widestring manager to <var>New</var>.
+Optionally, it returns the currently active widestring manager in <var>Old</var>.
+</p>
+<p>
+WideStrings are implemented in different ways on different platforms. 
+Therefore, the Free Pascal Runtime library has no fixed implementation of
+widestring routines. Instead, it defines a WideString manager record, 
+with callbacks that can be set to an implementation which is most 
+efficient on the current platform. On windows, standard Windows 
+routines will be used. On Unix and Linux, an implementation based on the 
+C library is available (in unit <file>cwstrings</file>).
+</p>
+<p>
+It is possible to implement a custom widestring manager, optimized for 
+the current application, without having to recompile the complete Run-Time Library.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TWideStringManager"/>
+</seealso>
+</element>
 
+<element name="TWideStringManager">
+<short>Record containing the various callbacks of the widestring manager.</short>
+<descr>
+<var>TWideStringManager<var> contains the definition of the widestring manager.
 </descr>
 <errors>
 </errors>
@@ -9555,87 +9724,201 @@ error occurred.
 </seealso>
 </element>
 
+<element name="TWideStringManager.Wide2AnsiMoveProc">
+<short>Convert an AnsiString to a WideString</short>
+</element>
 
-<element name="SizeofResource">
-<short>Return the size of a particular resource</short>
-<descr>
-</descr>
-<errors>
-</errors>
-<seealso>
-</seealso>
+<element name="TWideStringManager.Ansi2WideMoveProc">
+<short>Convert a WideString to an AnsiString</short>
+</element>
+
+<element name="TWideStringManager.UpperWideStringProc">
+<short>Convert a widestring to all-uppercase</short>
+</element>
+
+<element name="TWideStringManager.LowerWideStringProc">
+<short>Convert a widestring to all-lowercase</short>
+</element>
+
+<element name="TWideStringManager.CompareWideStringProc">
+<short>Compare 2 widestrings, case-sensitive</short>
+</element>
+
+<element name="TWideStringManager.CompareTextWideStringProc">
+<short>Compare 2 widestrings, case-insensitive</short>
+</element>
+
+<element name="TWideStringManager.CharLengthPCharProc">
+<short>Return the length, in characters, of a widestring</short>
+</element>
+
+<element name="TWideStringManager.UpperAnsiStringProc">
+<short>Convert an ansistring to all-uppercase</short>
+</element>
+
+<element name="TWideStringManager.LowerAnsiStringProc">
+<short>Convert an ansistring to all-lowercase</short>
+</element>
+
+<element name="TWideStringManager.CompareStrAnsiStringProc">
+<short>Compare 2 ansistrings, case-sensitive</short>
+</element>
+
+<element name="TWideStringManager.CompareTextAnsiStringProc">
+<short>Compare 2 ansistrings, case-insensitive</short>
+</element>
+
+<element name="TWideStringManager.StrCompAnsiStringProc">
+<short>Compare 2 null-terminated ansistrings, case-sensitive</short>
+</element>
+
+<element name="TWideStringManager.StrICompAnsiStringProc">
+<short>Compare 2 null-terminated ansistrings, case-insensitive</short>
+</element>
+
+<element name="TWideStringManager.StrLCompAnsiStringProc">
+<short>Compare 2 null-terminated ansistrings, case-sensitive, for a maximum length</short>
+</element>
+
+<element name="TWideStringManager.StrLICompAnsiStringProc">
+<short>Compare 2 null-terminated ansistrings, case-insensitive, for a maximum length</short>
+</element>
+
+<element name="TWideStringManager.StrLowerAnsiStringProc">
+<short>Convert an ansistring to all-lowercase</short>
+</element>
+
+<element name="TWideStringManager.StrUpperAnsiStringProc">
+<short>Convert an ansistring to all-uppercase</short>
 </element>
 
 
 <element name="StackTop">
-<short></short>
+<short>Top location of the stack.</short>
 <descr>
+<var>StackTop</var> contains the top of the stack for the current process.
+It is used to check the heap on some operating systems, and is set by the 
+system unit initialization code. Do not use or modify this value.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="StackBottom"/>
+<link id="StackLength"/>
 </seealso>
 </element>
 
 
 <element name="StringToWideChar">
-<short></short>
+<short>Convert a string to an array of widechars.</short>
 <descr>
+<var>StringToWideChar</var> converts an ansistring <var>Src</var> 
+to a null-terminated  array of WideChars. The destination for this
+array is pointed to by <var>Dest</var>, and contains room for at 
+least <var>DestSize</var> widechars.
 </descr>
 <errors>
+No validity checking is performed on <var>Dest</var>.
 </errors>
 <seealso>
+<link id="WideCharToString"/>
+<link id="WideCharToStrVar"/>
+<link id="WideCharLenToStrVar"/>
+<link id="WideCharLenToString"/>
 </seealso>
 </element>
 
 
 <element name="SysGetFPCHeapStatus">
-<short></short>
+<short>Return the status of the FPC heapmanager</short>
 <descr>
+<var>SysGetFPCHeapStatus</var> returns the status of the 
+default FPC heapmanager. It is set as the default value 
+of the corresponding <link id="GetFPCHeapStatus"/> function.
 </descr>
 <errors>
+None. The result of this function is bogus information if
+the current heapmanager is not the standard FPC heapmanager.
 </errors>
 <seealso>
+<link id="GetFPCHeapStatus"/>
 </seealso>
 </element>
 
 
 <element name="tdynarraytypeinfo">
-<short></short>
+<short>Type information for a dynamic array.</short>
 <descr>
+<var>tdynarraytypeinfo</var> describes the structure of 
+a multi-dimensional dynamical array. 
+It is used in the <link id="DynArraySetLength"/> call.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="DynArraySetLength"/>
 </seealso>
+</element>
+
+<element name="tdynarraytypeinfo.kind"/>
+<short>Kind of array.</short>
+</element>
+<element name="tdynarraytypeinfo.namelen"/>
+<short>Length of the Name of the array type. Name follows as Namelen characters.</short>
+</element>
+<element name="tdynarraytypeinfo.elesize">
+<short>Size of a single element in the array</short>
+</element>
+<element name="tdynarraytypeinfo.eletype">
+<short>Pointer to next dimension structure in case of a multidimensional array</short>
+</element>
+<element name="tdynarraytypeinfo.vartype">
+<short>Type (variant type) of element in the array</short>
 </element>
 
 
 <element name="TError">
-<short></short>
-<descr>
-</descr>
-<errors>
-</errors>
-<seealso>
-</seealso>
+<short>Error type, used in variants.</short>
 </element>
 
 
 <element name="TFPCHeapStatus">
-<short></short>
+<short>Record describing the state of the default FPC heap manager.</short>
 <descr>
+<var>TFPCHeapStatus<var> describes the state of the FPC heap manager. 
+This is not equivalent to the <link id="THeapStatus"/> record defined 
+by Delphi, which contains information not meaningful for the FPC heap manager.
+The heap status can be retrieved by the <link id="GetFPCHeapStatus"/> call.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="GetFPCHeapStatus"/>
+<link id="GetHeapStatus"/>
+<link id="THeapStatus"/>
 </seealso>
 </element>
 
+<element name="TFPCHeapStatus.MaxHeapSize">
+<short>Maximum allowed size for the heap, in bytes</short>
+</element>
+
+<element name="TFPCHeapStatus.MaxHeapUsed">
+<short>Maximum used size for the heap, in bytes</short>
+</element>
+
+<element name="TFPCHeapStatus.CurrHeapSize">
+<short>Current heap size, in bytes</short>
+</element>
+
+<element name="TFPCHeapStatus.CurrHeapUsed">
+<short>Currently used heap size, in bytes</short>
+</element>
+
+<element name="TFPCHeapStatus.CurrHeapFree">
+<short>Currently free memory on heap, in bytes</short>
+</element>
+
+
 
 <element name="TInterfacedClass">
-<short></short>
+<short><link id="#rtl.system.tobject">TObject</link> descendent implementing the <link id="#rtl.system.IInterface">IInterface</link> interface </short>
 <descr>
+<var>TInterfacedClass</var> is a descendent of 
 </descr>
 <errors>
 </errors>
@@ -9645,67 +9928,94 @@ error occurred.
 
 
 <element name="TInterfacedObject">
-<short></short>
+<short><link id="#rtl.system.tobject">TObject</link> descendent implementing the <link id="#rtl.system.IUnknown">IUnknown</link> interface </short>
 <descr>
+<var>TInterfacedObject</var> is a descendent of <link id="TObject"/> which implements the
+<link id="IUnknown"/> interface. It can be used as a base class for all classes which need
+reference counting.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IUnknown"/>
+<link id="TObject"/>
 </seealso>
 </element>
 
 
 <element name="TInterfacedObject.AfterConstruction">
-<short></short>
+<short>Handle reference count properly.</short>
 <descr>
+<var>AfterConstruction</var> overrides the basic method in <var>TObject</var> 
+and adds some additional reference count handling.
 </descr>
 <errors>
+None.
 </errors>
 <seealso>
+<link id="TInterfacedObject.BeforeDestruction">BeforeDestruction</link>
 </seealso>
 </element>
 
 
 <element name="TInterfacedObject.BeforeDestruction">
-<short></short>
+<short>Check reference count.</short>
 <descr>
+<var>AfterConstruction</var> overrides the basic method in <var>TObject</var> 
+and adds a reference count check: if the reference count is not zero, an error
+occurs.
 </descr>
 <errors>
+A runtime-error 204 will be generated if the reference count is nonzero when 
+the object is destroyed.
 </errors>
 <seealso>
+<link id="TInterfacedObject.AfterConstruction">AfterConstruction</link>
 </seealso>
 </element>
 
 
 <element name="TInterfacedObject.NewInstance">
-<short></short>
+<short>Create a new instance</short>
 <descr>
+<var>NewInstance<var> initializes a new instance of <link id="TInterfacedObject"/>
 </descr>
 <errors>
+None.
 </errors>
-<seealso>
-</seealso>
 </element>
 
 
 <element name="TInterfacedObject.RefCount">
-<short></short>
+<short>Return the current reference count</short>
 <descr>
+<var>RefCount</var> returns the current reference count. 
+This reference count cannot be manipulated, except through 
+the methods of <link id="IUnknown"/>. When it reaches zero,
+the class instance is destroyed.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IUnknown"/>
 </seealso>
 </element>
 
 
 <element name="TObject.GetInterface">
-<short></short>
+<short>Return a reference to an interface</short>
 <descr>
+<p>
+<var>GetInterface</var> scans the interface tables and returns a reference
+to the interface <var>iid</var>. The reference is stored in <var>Obj</var> 
+which should be an interface reference. It returns <var>True</var> if the 
+interface was found, <var>False</var> if not.
+</p>
+<p>
+The reference count of the interface is increased by this call.
+</p>
 </descr>
 <errors>
+If no interface was found, <var>False</var> is returned.
 </errors>
 <seealso>
+<link id="TObject.GetInterfaceByStr">GetInterfaceByStr</link>
 </seealso>
 </element>
 
@@ -9932,15 +10242,6 @@ address where the error occurred.
 <short>Address where error occurred</short>
 </element>
 
-<element name="TWideStringManager">
-<short></short>
-<descr>
-</descr>
-<errors>
-</errors>
-<seealso>
-</seealso>
-</element>
 
 
 <element name="UCS4StringToWideString">
@@ -9965,15 +10266,6 @@ address where the error occurred.
 </element>
 
 
-<element name="UnlockResource">
-<short></short>
-<descr>
-</descr>
-<errors>
-</errors>
-<seealso>
-</seealso>
-</element>
 
 
 <element name="UTF8Decode">
@@ -10043,62 +10335,97 @@ address where the error occurred.
 
 
 <element name="WideCharLenToString">
-<short></short>
+<short>Convert a length-limited array of widechar to an ansistring</short>
 <descr>
+<var>WideCharLenToString</var> converts at most <var>Len</var> widecharacters from 
+the null-terminated widechar array <var>S</var> to an ansistring, and returns 
+the ansistring.
 </descr>
 <errors>
+No validity checking is performed on <var>S</var>. 
+Passing an invalid pointer may lead to access violations.
 </errors>
 <seealso>
+<link id="StringToWideChar"/>
+<link id="WideCharToString"/>
+<link id="WideCharToStrVar"/>
+<link id="WideCharLenToStrVar"/>
 </seealso>
 </element>
 
-
 <element name="WideCharLenToStrVar">
-<short></short>
+<short>Convert a length-limited array of widechar to an ansistring</short>
 <descr>
+<var>WideCharLenToString</var> converts at most <var>Len</var> widecharacters from 
+the null-terminated widechar array <var>Src</var> to an ansistring, and returns 
+the ansistring in <var>Dest</var>.
 </descr>
 <errors>
+No validity checking is performed on <var>Src</var>. 
+Passing an invalid pointer may lead to access violations.
 </errors>
 <seealso>
+<link id="StringToWideChar"/>
+<link id="WideCharToString"/>
+<link id="WideCharToStrVar"/>
+<link id="WideCharLenToString"/>
 </seealso>
 </element>
 
 
 <element name="WideCharToString">
-<short></short>
+<short>Convert a null-terminated array of widechar to an ansistring</short>
 <descr>
+<var>WideCharToString</var> converts the null-terminated widechar 
+array <var>S</var> to an ansistring, and returns the ansistring.
 </descr>
 <errors>
+No validity checking is performed on <var>Src</var>. 
+Passing an invalid pointer, or an improperly terminated array may 
+lead to access violations.
 </errors>
 <seealso>
+<link id="StringToWideChar"/>
+<link id="WideCharToStrVar"/>
+<link id="WideCharLenToStrVar"/>
+<link id="WideCharLenToString"/>
 </seealso>
 </element>
 
-
 <element name="WideCharToStrVar">
-<short></short>
+<short>Convert a null-terminated array of widechar to an ansistring</short>
 <descr>
+<var>WideCharToString</var> converts the null-terminated widechar 
+array <var>S</var> to an ansistring, and returns the ansistring in <var>Dest</var>.
 </descr>
 <errors>
+No validity checking is performed on <var>S</var>. 
+Passing an invalid pointer, or an improperly terminated array may 
+lead to access violations.
 </errors>
 <seealso>
+<link id="StringToWideChar"/>
+<link id="WideCharToString"/>
+<link id="WideCharToStrVar"/>
+<link id="WideCharLenToString"/>
 </seealso>
 </element>
 
 
 <element name="widestringmanager">
-<short></short>
+<short>Current widestring manager.</short>
 <descr>
+Contains the current widestring manager. Do not use directly.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="GetWideStringManager"/>
+<link id="SetWideStringManager"/>
 </seealso>
 </element>
 
 
 <element name="WideStringToUCS4String">
-<short></short>
+<short>Convert a widestring to a UCS-4 encoded string.</short>
 <descr>
 </descr>
 <errors>
