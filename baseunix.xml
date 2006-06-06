@@ -2495,13 +2495,17 @@ Makes <var>fildes2</var> or <var>NewFile</var> an exact copy of
 buffer of <var>OldFile</var> in the case of text or untyped files. 
 </p>
 <p>
-<var>NewFile</var> can be an assigned file. If <var>newfile</var> was open, it is 
-closed first. Due to the buffering mechanism of Pascal, this has not
-the same functionality as the <var>dup2</var> call in C. The internal Pascal
-buffers are not the same after this call, but when the buffers are flushed
-(e.g. after output), the output is sent to the same file.
-Doing an lseek will, however, work as in C, i.e. doing a lseek will change the
-fileposition in both files.
+After a call to fdup2, the 2 file descriptors point to the same physical
+device (a file, socket, or a terminal).
+</p>
+<p>
+<var>NewFile</var> can be an assigned file. If <var>newfile</var> or
+<var>fildes</var> was open, it is closed first. 
+Due to the buffering mechanism of Pascal, this has not the same functionality 
+as the <var>dup2</var> call in C. The internal Pascal buffers are not the same 
+after this call, but when the buffers are flushed (e.g. after output), the output 
+is sent to the same file. Doing an lseek will, however, work as in C, i.e. doing 
+a lseek will change the fileposition in both files.
 </p>
 <p>
 The function returns zero if succesful, a nonzero return value means the

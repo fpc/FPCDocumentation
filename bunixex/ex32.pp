@@ -1,6 +1,6 @@
 program Example31;
 
-{ Program to demonstrate the Dup function. }
+{ Program to demonstrate the FpDup2 function. }
 
 uses BaseUnix;
 
@@ -11,7 +11,7 @@ begin
   Assign (f,'text.txt');
   Rewrite (F);
   For i:=1 to 10 do writeln (F,'Line : ',i);
-  if fpdup2 (output,f)<>0 then
+  if fpdup2 (output,f)=-1 then
     Writeln ('Dup2 Failed !');
   writeln ('This is written to stdout.');
   writeln (f,'This is written to the dup file, and flushed');
