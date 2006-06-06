@@ -559,8 +559,29 @@ or, when cross-compiling
 \end{verbatim}
 \end{enumerate}
 
+The \var{-Fu} option accepts a single \var{*} wildcard, which will be
+replaced by all directories found on that location. For example, given the
+directories
+\begin{verbatim}
+rtl/units/i386-linux
+fcl/units/i386-linux
+packages/base
+packages/extra
+\end{verbatim}
+\begin{verbatim}
+fpc -Fu"*/units/i386-linux"
+\end{verbatim}
+will have the same effect as
+\begin{verbatim}
+fpc -Furtl/units/i386-linux -Fufcl/units/i386-linux
+\end{verbatim}
+since both the \file{rtl} and \file{fcl} directories contain further
+\file{units/i386-linux} subdirectories. The packages directory will not be
+added, since it doesn't contain a \file{units/i386-linux} subdirectory.
+
 Note that (for optimization) the compiler will drop any non-existing paths 
-from the search path, i.e. the existence of the path will be tested.
+from the search path, i.e. the existence of the path (after wildcard and
+environment variable expansion) will be tested.
 
 You can see what paths the compiler will search by giving the compiler
 the \var{-vu} option.
@@ -997,7 +1018,9 @@ will override the default messages.
 \item [-Fuxxx] Add \file{xxx} to the unit search path.
 Units are first searched in the current directory.
 If they are not found there then the compiler searches them in the unit path.
-You must {\em always} supply the path to the system unit.
+You must {\em always} supply the path to the system unit. The \file{xxx}
+path can contain a single wildcard (*) which will be expanded to all
+possible directory names found at that location.
 \olabel{Fu}
 \item [-FUxxx] Tells the compiler to write units in directory \var{xxx}
 instead of the current directory. It overrides the \var{-FE} option.
