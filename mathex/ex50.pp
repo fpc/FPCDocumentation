@@ -4,17 +4,14 @@ Program Example50;
 
 Uses math;
 
-Type
-  TExArray = Array[1..100] of Float;
-
 Var
-  I : Integer;
-  ExArray : TExArray;
+  I : 1..100;
+  ExArray : Array[1..100] of Float;
   V : float;
 
 begin
   Randomize;
-  for I:=1 to 100 do
+  for I:=low(ExArray) to high(ExArray) do
     ExArray[i]:=(Random-Random)*100;
   V:=Variance(ExArray);
   Writeln('Variance     : ',V:8:4);
