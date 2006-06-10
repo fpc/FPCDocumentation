@@ -1,12 +1,12 @@
-Program Example73;
+program Example73;
 
 { Program to demonstrate the Lowercase function. }
 
-Var I : Longint;
+var c:char;
 
 begin
-  For i:=ord('A') to ord('Z') do
-    write (lowercase(chr(i)));
+  for c:='A' to 'Z' do
+    write(lowercase(c));
   Writeln;
-  Writeln (Lowercase('ABCDEFGHIJKLMNOPQRSTUVWXYZ'));
+  Writeln(Lowercase('ABCDEFGHIJKLMNOPQRSTUVWXYZ'));
 end.
