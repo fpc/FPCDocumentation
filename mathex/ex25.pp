@@ -16,7 +16,7 @@ Var
 
 begin
   Randomize;
-  for I:=1 to 100 do
+  for I:=low(exarray) to high(exarray) do
     ExArray[i]:=Random(I)-Random(100);
   Writeln(MaxIntValue(ExArray));
 end.
