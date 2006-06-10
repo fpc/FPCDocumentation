@@ -1,18 +1,14 @@
-Program Example33;
+program Example33;
 
 { Program to demonstrate the norm function. }
 
-Uses math;
+uses math;
 
-Type
-  TVector = Array[1..10] of Float;
-
-Var
-  AVector : Tvector;
-  I : longint;
+var v:array[1..10] of Float;
+    I:1..10;
 
 begin
- for I:=1 to 10 do
-   Avector[i]:=Random;
- Writeln(Norm(AVector));
+  for I:=low(v) to high(v) do
+    v[i]:=random;
+  writeln(norm(v));
 end.
