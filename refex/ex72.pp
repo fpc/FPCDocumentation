@@ -1,13 +1,13 @@
-Program Example72;
+program Example72;
 
-{ Program to demonstrate the Upcase function. }
+{ Program to demonstrate the upcase function. }
 
-Var I : Longint;
+var c:char;
 
 begin
-  For i:=ord('a') to ord('z') do
-    write (upcase(chr(i)));
+  for c:='a' to 'z' do
+    write(upcase(c));
   Writeln;
   { This doesn't work in TP, but it does in Free Pascal }
-  Writeln (Upcase('abcdefghijklmnopqrstuvwxyz'));
+  Writeln(upcase('abcdefghijklmnopqrstuvwxyz'));
 end.
