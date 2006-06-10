@@ -4,17 +4,14 @@ Program Example40;
 
 Uses Math;
 
-Type
-  TExArray = Array[1..10000] of Float;
-
 Var
   I : Integer;
-  ExArray : TExArray;
+  ExArray : Array[1..10000] of Float;;
   Mean,stddev : Float;
 
 begin
   Randomize;
-  for I:=1 to 10000 do
+  for I:=low(ExArray) to high(ExArray) do
     ExArray[i]:=Randg(1,0.2);
   MeanAndStdDev(ExArray,Mean,StdDev);
   Writeln('Mean       : ',Mean:8:4);
