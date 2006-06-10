@@ -1,7 +1,6 @@
 Program Example89;
 
 { Program to demonstrate the FreeMem function. }
-{$Mode Delphi}
 
 Var P : Pointer;
 
