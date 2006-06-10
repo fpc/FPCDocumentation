@@ -5,7 +5,7 @@ Program Example44;
 Uses math;
 
 Var
-  I : Integer;
+  I : 1..100;
   ExArray : Array[1..100] of Float;
 
 begin
