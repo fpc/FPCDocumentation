@@ -1,9 +1,9 @@
-Program Example64;
+program Example64;
 
-{ Program to demonstrate the SPtr function. }
-Var
-  P :Longint;
+{ Program to demonstrate the sptr function. }
+
+var p:ptruint;
 
 begin
-  P:=Longint(Sptr); { P Contains now the current stack position. }
+  p:=ofs(sptr); { P Contains now the current stack position. }
 end.
