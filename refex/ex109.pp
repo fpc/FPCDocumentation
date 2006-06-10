@@ -8,7 +8,7 @@ Var
 
 begin
   Randomize;
-  For I:=1 to 80 do
+  For I:=low(buf1) to high(buf1) do
     Buf1[i]:=chr(Random(16)+Ord('A'));
   Writeln('Original buffer');
   writeln(Buf1);
