@@ -6,15 +6,14 @@ Program server;
   sock_cli to connect to that socket
 }
 
-uses BaseUnix,Sockets;
-const
-  SPath='ServerSoc';
+uses Sockets;
 
 Var
   FromName : string;
   Buffer   : string[255];
   S        : Longint;
   Sin,Sout : Text;
+  SAddr    : TInetSockAddr;
 
 procedure perror (const S:string);
 begin
@@ -25,11 +24,14 @@ end;
 
 
 begin
-  S:=Socket (AF_UNIX,SOCK_STREAM,0);
+  S:=Socket (AF_INET,SOCK_STREAM,0);
   if SocketError<>0 then
    Perror ('Server : Socket : ');
-  fpUnLink(SPath);
-  if not Bind(S,SPath) then
+  SAddr.sin_family:=AF_INET;
+  { port 50000 in network order }
+  SAddr.sin_port:=htons(50000);
+  SAddr.sin_addr.s_addr:=0;
+  if not Bind(S,SAddr,sizeof(saddr)) then
    PError ('Server : Bind : ');
   if not Listen (S,1) then
    PError ('Server : Listen : ');
@@ -45,5 +47,4 @@ begin
      Readln(Sin,Buffer);
      Writeln('Server : read : ',buffer);
    end;
-  FPUnlink(SPath);
 end.

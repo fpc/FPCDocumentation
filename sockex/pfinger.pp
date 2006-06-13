@@ -2,17 +2,18 @@ program pfinger;
 
 uses sockets,errors;
 
-Var Addr : TInetSockAddr;
- S : Longint;
-    Sin,Sout : Text;
-    Line : string;
+Var
+  Addr : TInetSockAddr;
+  S : Longint;
+  Sin,Sout : Text;
+  Line : string;
 
 begin
-  Addr.family:=AF_INET;
+  Addr.sin_family:=AF_INET;
   { port 79 in network order }
-  Addr.port:=79 shl 8;
+  Addr.sin_port:=79 shl 8;
   { localhost : 127.0.0.1 in network order }
-  Addr.addr:=((1 shl 24) or 127);
+  Addr.sin_addr.s_addr:=((1 shl 24) or 127);
   S:=Socket(AF_INET,SOCK_STREAM,0);
   If Not Connect (S,ADDR,SIN,SOUT) Then
     begin

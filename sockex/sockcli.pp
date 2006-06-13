@@ -6,7 +6,7 @@ Program Client;
   sock_cli to connect to that socket
 }
 
-uses Sockets,BaseUnix;
+uses Sockets;
 
 procedure PError(const S : string);
 begin
@@ -16,16 +16,21 @@ end;
 
 
 Var
-  Saddr    : String[25];
+  SAddr    : TInetSockAddr;
   Buffer   : string [255];
   S        : Longint;
   Sin,Sout : Text;
   i        : integer;
+
 begin
-  S:=Socket (AF_UNIX,SOCK_STREAM,0);
+  S:=Socket (AF_INET,SOCK_STREAM,0);
   if SocketError<>0 then
    Perror('Client : Socket : ');
-  Saddr:='ServerSoc';
+  SAddr.sin_family:=AF_INET;
+  { port 50000 in network order }
+  SAddr.sin_port:=htons(50000);
+  { localhost : 127.0.0.1 in network order }
+  SAddr.sin_addr.s_addr:=HostToNet((127 shl 24) or 1);
   if not Connect (S,SAddr,Sin,Sout) then
    PError('Client : Connect : ');
   Reset(Sin);
