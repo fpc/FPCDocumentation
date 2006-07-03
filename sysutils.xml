@@ -5181,6 +5181,24 @@ program startup, so it is available when needed.
 </descr>
 </element>
 
+<element name="EVariantError.ErrCode">
+<short>Variant error code.</short>
+<descr>
+<var>ErrCode</var> is the error code describing the actual error.
+</descr>
+</element>
+
+<element name="EVariantError.CreateCode">
+<short>Create an instance of <var>EVariantError</var> with a particular error code.</short>
+<descr>
+<var>CreateCode</var> calls the inherited constructor, and sets the <link
+id="EVariantError.ErrCode">ErrCode</link> property to <var>Code</var>.
+</descr>
+<seealso>
+<link id="EVariantError.ErrCode">ErrCode</link>
+</seealso>
+</element>
+
 <!-- object Visibility: default -->
 <element name="EAccessViolation">
 <short>Access Violation error</short>
@@ -7564,6 +7582,520 @@ of copied bytes.
 <link id="WideFormat"/>
 <link id="Format"/>
 <link id="FormatBuf"/>
+</seealso>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Unix">
+<short>Unix functionality</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="errors">
+<short>Error descriptions</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="sysconst">
+<short>Message Strings</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Unixtype">
+<short>Unix functionality types</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TryStrToDate">
+<short>Try to convert a string with a date indication to a TDateTime value</short>
+<descr>
+<p>
+<var>TryStrToDate</var> tries to convert the string <var>S</var> to a <var>TDateTime</var> date
+value, and stores the date in <var>Value</var>. The Date must consist of 1 to three digits, separated by the
+<var>DateSeparator</var> character. If two numbers are given, they
+are supposed to form the day and month of the current year. If only
+one number is given, it is supposed to represent the day of the
+current month. (This is <em>not</em> supported in Delphi)
+</p>
+<p>
+The order of the digits (y/m/d, m/d/y, d/m/y) is determined from the
+<var>ShortDateFormat</var> variable.
+</p>
+<p>
+The function returns <var>True</var> if the string contained a valid date indication,
+<var>False</var> otherwise.
+</p>
+</descr>
+<seealso>
+<link id="StrToDate"/>
+<link id="StrToTime"/>
+<link id="TryStrToTime"/>
+<link id="TryStrToDateTime"/>
+<link id="DateToStr"/>
+<link id="TimeToStr"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TryStrToTime">
+<short>Try to convert a string with a time indication to a TDateTime value</short>
+<descr>
+<p>
+<var>TryStrToTime</var> tries to convert the string <var>S</var> to a <var>TDateTime</var> time
+value, and stores the result in <var>Value</var>. The time must consist of 1 to 4 digits, 
+separated by the <var>TimeSeparator</var> character. If two numbers are given, they
+are supposed to form the hour and minutes.
+</p>
+<p>
+The function returns <var>True</var> if the string contained a valid time indication,
+<var>False</var> otherwise.
+</p>
+</descr>
+<seealso>
+<link id="TryStrToDate"/>
+<link id="TryStrToDateTime"/>
+<link id="StrToDate"/>
+<link id="StrToTime"/>
+<link id="DateToStr"/>
+<link id="TimeToStr"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TryStrToDateTime">
+<short>Try to convert a string with date/time indication to a TDateTime value</short>
+<descr>
+<p>
+<var>TryStrToDateTime</var> tries to convert the string <var>S</var> to a <var>TDateTime</var> date and time
+value, and stores the result in <var>Value</var>. The date must consist of 1 to three digits, separated by the
+<var>DateSeparator</var> character. If two numbers are given, they
+are supposed to form the day and month of the current year. If only
+one number is given, it is supposed to represent the day of the
+current month (This is <em>not</em> supported in Delphi).
+The time must consist of 1 to 4 digits, 
+separated by the <var>TimeSeparator</var> character. If two numbers are given, they
+are supposed to form the hour and minutes.
+</p>
+<p>
+The function returns <var>True</var> if the string contained a valid date and time indication,
+<var>False</var> otherwise.
+</p>
+</descr>
+<seealso>
+<link id="TryStrToDate"/>
+<link id="TryStrToTime"/>
+<link id="StrToDateTime"/>
+<link id="StrToTime"/>
+<link id="DateToStr"/>
+<link id="TimeToStr"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CurrentYear">
+<short>Return the current year</short>
+<descr>
+<var>CurrentYear</var> returns the current year as a 4-digit number.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="Date"/>
+<link id="Time"/>
+<link id="Now"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="StrToQWord">
+<short>Convert a string to a QWord.</short>
+<descr>
+<var>TryStrToQWord</var> converts the string <var>S</var> to a valid QWord (unsigned 64-bit) value, 
+and returns the result.
+</descr>
+<errors>
+If the string <var>S</var> does not contain a valid QWord value, a <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TryStrToQWord"/>
+<link id="StrToQWordDef"/>
+<link id="StrToInt64"/>
+<link id="StrToInt"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TryStrToQWord">
+<short>Try to convert a string to a QWord value, and report on success</short>
+<descr>
+<var>TryStrToQWord</var> tries to convert the string <var>S</var> to a valid QWord (unsigned 64-bit) value, 
+and stores the result in <var>I</var>. If the conversion fails, the function returns <var>False</var>, 
+else it returns <var>True</var>.
+</descr>
+<seealso>
+<link id="StrToQWord"/>
+<link id="StrToQWordDef"/>
+<link id="TryStrToInt64"/>
+<link id="TryStrToInt"/>
+</seealso>
+</element>
+
+<element name="TryStrQWord">
+<short>Alias for <link id="#rtl.sysutils.trystrtoqword">TryStrToQWord</link>.</short>
+<descr>
+<var>TryStrToQWord</var> is a backward-compatibility alias for <link id="TryStrToQWord"/>.
+</descr>
+<seealso>
+<link id="TryStrToQWord"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="StrToQWordDef">
+<short>Try to convert a string to a QWord, returning a default value in case of failure.</short>
+<descr>
+<var>StrToQWordDef</var> tries to convert the string <var>S</var> to a valid QWord (unsigned 64-bit) value,
+and returns the result. If the conversion fails, the function returns the value passed in <var>Def</var>.
+</descr>
+<seealso>
+<link id="StrToQWord"/>
+<link id="TryStrToQWord"/>
+<link id="StrToInt64Def"/>
+<link id="StrToIntDef"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CurrToStrF">
+<short>Format a currency to a string</short>
+<descr>
+<var>CurrToStrF</var> formats the currency <var>Value</var> according to the value in <var>Format</var>, using 
+the number of digits specified in <var>Digits</var>, and a precision of 19. This function simply calls <link id="FloatToStrF"/>.
+</descr>
+<seealso>
+<link id="FloatToStrF"/>
+</seealso>
+</element>
+
+<element name="SScanf">
+<short>Scan a string for substrings and return the substrings</short>
+<descr>
+<p>
+<var>SSCanF</var> scans the string <var>S</var> for the elements specified in <var>Fmt</var>, 
+and returns the elements in the pointers in <var>Pointers</var>. The <var>Fmt</var> can 
+contain placeholders of the form <var>%X</var> where <var>X</var> can be one of the 
+following characters:
+</p>
+<dl>
+<dt>d</dt><dd>Placeholder for a decimal number.</dd>
+<dt>f</dt><dd>Placeholder for a floating point number (an extended)</dd>
+<dt>s</dt><dd>Placeholder for a string of arbitrary length.</dd>
+<dt>c</dt><dd>Placeholder for a single character</dd>
+</dl>
+<p>
+The <var>Pointers</var> array contains a list of pointers, each pointer should point to a 
+memory location of a type that corresponds to the type of placeholder in that position:
+</p>
+<dl>
+<dt>d</dt><dd>A pointer to an integer.</dd>
+<dt>f</dt><dd>A pointer to an extended.</dd>
+<dt>s</dt><dd>A pointer to an ansistring.</dd>
+<dt>c</dt><dd>A pointer to a single character.</dd>
+</dl>
+</descr>
+<errors>
+No error checking is performed on the type of the memory location.
+</errors>
+<seealso>
+<link id="Format"/>
+</seealso>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="PSysCharSet">
+<short>Pointer to <link id="#rtl.sysutils.TSysCharSet">TSysCharSet</link> type.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="LongRec.Lo">
+<short>Lower byte</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="LongRec.Hi">
+<short>Upper byte</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="LongRec.Bytes">
+<short>Array of 4 bytes.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="Int64Rec.Lo">
+<short>Lower integer</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="Int64Rec.Hi">
+<short>High integer</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="Int64Rec.Words">
+<short>Array of 4 words</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="Int64Rec.Bytes">
+<short>Array of 8 bytes</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="EBusError">
+<short>Bus error exception</short>
+<descr>
+<var>EBusError</var> is raised in case of a bus error.
+</descr>
+</element>
+
+<!-- object Visibility: default -->
+<element name="EFormatError">
+<short>Formatting error exception</short>
+<descr>
+<var>EformatError</var> is raised in case of an error in one of the various <link id="Format"/> functions.
+</descr>
+<seealso>
+<link id="Format"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ExceptFrameCount">
+<short>Number of frames included in an exception backtrace</short>
+<descr>
+<var>ExceptFrameCount</var> returns the number of frames that are included in an exception
+stack frame backtrace. The function returns 0 if there is currently no exception being handled.
+(i.e. it only makes sense to call this function in an <var>finally..end</var> or 
+<var>except..end</var> block.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="ExceptFrames"/>
+<link id="ExceptAddr"/>
+<link id="ExceptObject"/>
+<link id="ExceptProc"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ExceptFrames">
+<short></short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="ExceptFrameCount"/>
+<link id="ExceptAddr"/>
+<link id="ExceptObject"/>
+<link id="ExceptProc"/>
+</seealso>
+</element>
+
+<!-- function type Visibility: default -->
+<element name="TCreateGUIDFunc">
+<short>Callback prototype to create GUIDs</short>
+<descr>
+<var>TCreateGUIDFunc</var> is the prototype for a GUID creation handler. 
+On return, the <var>GUID</var> argument should contain a new (unique) GUID.
+The return value of the function should be zero for success, nonzero for failure.
+</descr>
+<seealso>
+<link id="OnCreateGUID"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="OnCreateGUID">
+<short>Callback to create GUID values</short>
+<descr>
+<var>OnCreateGUID</var> can be set to point to a custom routine that creates GUID 
+values. If set, the <link id="CreateGUID"/> function will use it to obtain a GUID 
+value. If it is not set, a default implementation using random values will be used
+to create the unique value. The function should return a valid GUID in the 
+<var>GUID</var> parameter, and should return zero in case of success.
+</descr>
+<seealso>
+<link id="CreateGUID"/>
+<link id="TCreateGUIDFunc"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CreateGUID">
+<short>Create a new GUID</short>
+<descr>
+<p>
+<var>CreateGUID</var> can be called to create a new GUID (Globally Unique Identifier) value.
+The function returns the new <var>GUID</var> value in <var>GUID</var> and returns zero in 
+case the GUID was created succesfully. If no GUID was created, a nonzero error code is returned.
+</p>
+<p>
+The default mechanism for creating a new GUID is system dependent. If operating system support 
+is available, it is used. If none is available, a default implementation using random numbers 
+is used.
+</p>
+<p>
+The <var>OnCreateGUID</var> callback can be set to hook a custom mechanism behind the 
+<var>CreateGUID</var> function. This can be used to lt the GUID be created by an 
+external GUID creation library. 
+</p>
+</descr>
+<errors>
+On error, a nonzero return value is returned.
+</errors>
+<seealso>
+<link id="CreateGUID"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TextRec.LineEnd">
+<short>Line ending used when writing to this text file.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="MAX_PATH">
+<short>Maximum length of a fully qualified filename (including path)</short>
+<descr>
+<var>MAX_PATH</var> is the maximum number of characters that a filename (including path) 
+can contain on the current operating system.
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="ListSeparator">
+<short>Separator character for lists</short>
+<descr>
+<var>ListSeparator</var> is the character used in lists of values. It is locale dependent.
+</descr>
+<seealso>
+<link id="DecimalSeparator"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TSearchRec.Mode">
+<short>Unix File mode. Only used on Unix systems.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TSearchRec.PathOnly">
+<short>Path component of the file</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="faSymLink">
+<short>File is a symlink</short>
+<descr>
+<var>faSymLink</var> means the file (as returned e.g. by <link id="FindFirst"/>/<link id="FindNext"/>), is a symlink.
+It's ignored under Windows.
+</descr>
+<seealso>
+<link id="FindFirst"/>
+<link id="FindNext"/>
+<link id="TSearchRec"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="feInvalidHandle">
+<short>FileOpen error value</short>
+<descr>
+<var>feInvalidHandle</var> is the return value of <link id="FileOpen"/> in case of an error.
+</descr>
+<seealso>
+<link id="FileOpen"/>
+</seealso>
+</element>
+
+<!-- object Visibility: default -->
+<element name="IReadWriteSync">
+<short>Read/Write synchronizer</short>
+<descr>
+<var>IReadWriteSync</var> is an interface for synchronizing read/write operations. 
+Writers are always guaranteed to have exclusive access: readers may or may not have 
+simultaneous access, depending on the implementation.
+</descr>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IReadWriteSync.BeginRead">
+<short>Start a read operation.</short>
+<descr>
+<p>
+<var>BeginRead</var> indicates that a read operation is about to be started. 
+If a write operation is in progress, then the call will block untill the write 
+operation finished. Depending on the implementation the call may also block if
+another read operation is in progress.
+</p>
+<p>
+After <var>BeginRead</var>, any write operation started with 
+<link id="IReadWriteSync.BeginWrite">BeginWrite</link> will block until
+<link id="IReadWriteSync.EndRead">EndRead</link> is called.
+</p>
+</descr>
+<seealso>
+<link id="IReadWriteSync.EndRead"/>
+<link id="IReadWriteSync.BeginWrite"/>
+<link id="IReadWriteSync.EndWrite"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IReadWriteSync.EndRead">
+<short>End a read operation</short>
+<descr>
+<var>EndRead</var> signals the end of a read operation. 
+If there was any blocked write operation, that will be unblocked by a call to <var>EndRead</var>.
+</descr>
+<seealso>
+<link id="IReadWriteSync.BeginRead"/>
+<link id="IReadWriteSync.BeginWrite"/>
+<link id="IReadWriteSync.EndWrite"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IReadWriteSync.BeginWrite">
+<short>Start a write operation.</short>
+<descr>
+<var>BeginWrite</var> signals the begin of a write operation. 
+This call will block if any other read or write operation is currently in progress. 
+It will resumt only after all other read or write operations have finished.
+</descr>
+<seealso>
+<link id="IReadWriteSync.EndRead"/>
+<link id="IReadWriteSync.EndWrite"/>
+<link id="IReadWriteSync.BeginRead"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IReadWriteSync.EndWrite">
+<short>End a write operation.</short>
+<descr>
+<var>EndWrite</var> signals the end of a write operation. 
+After the call to <var>EndWrite</var> any other read or write operations can start.
+</descr>
+<seealso>
+<link id="IReadWriteSync.EndRead"/>
+<link id="IReadWriteSync.EndWrite"/>
+<link id="IReadWriteSync.BeginRead"/>
 </seealso>
 </element>
 
