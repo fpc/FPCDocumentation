@@ -280,6 +280,11 @@ endif
 
 FCLDIR=$(FPCSRCDIR)/fcl/
 FCLINC=$(FCLDIR)inc
+ifndef OLDGRAPH
+GRAPHDIR=$(FPCSRCDIR)/packages/base/graph
+else
+GRAPHDIR=$(FPCSRCDIR)/rtl
+endif
 ifndef RTLLINKPREFIX
 RTLLINKPREFIX=../rtl/
 endif
@@ -325,7 +330,7 @@ RTLOPTS+= --descr=emu387.xml --input="$(FPCSRCDIR)/rtl/go32v2/emu387.pp -Fi$(FPC
 RTLOPTS+= --descr=dxeload.xml --input="$(FPCSRCDIR)/rtl/go32v2/dxeload.pp -Fi$(FPCSRCDIR)/rtl/i386 ${OSDIRINCLUDES}"
 RTLOPTS+= --descr=go32.xml --input="$(FPCSRCDIR)/rtl/go32v2/go32.pp -Fi$(FPCSRCDIR)/rtl/i386 ${OSDIRINCLUDES}"
 RTLOPTS+= --descr=gpm.xml --input="-dVER1_0 $(FPCSRCDIR)/rtl/linux/gpm.pp -Fi$(FPCSRCDIR)/rtl/i386 ${OSDIRINCLUDES}"
-#RTLOPTS+= --descr=graph.xml --input="$(FPCSRCDIR)/rtl/unix/graph.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/inc/graph ${OSDIRINCLUDES}"
+RTLOPTS+= --descr=graph.xml --input="$(GRAPHDIR)/unix/graph.pp -Fi$(GRAPHDIR)/inc ${OSDIRINCLUDES}"
 RTLOPTS+= --descr=oldlinux.xml --input="$(FPCSRCDIR)/rtl/linux/oldlinux.pp -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/unix ${OSDIRINCLUDES}"
 RTLOPTS+= --descr=unixtype.xml --input="$(FPCSRCDIR)/rtl/unix/unixtype.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 ${OSDIRINCLUDES}"
 RTLOPTS+= --descr=baseunix.xml --input="$(FPCSRCDIR)/rtl/unix/baseunix.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 ${OSDIRINCLUDES}"
