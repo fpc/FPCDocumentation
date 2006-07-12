@@ -8099,6 +8099,426 @@ After the call to <var>EndWrite</var> any other read or write operations can sta
 </seealso>
 </element>
 
+<!-- object Visibility: default -->
+<element name="TMultiReadExclusiveWriteSynchronizer">
+<short>Standard implementation of a <link id="#rtl.sysutils.IReadWriteSync">IReadWriteSync</link> interface</short>
+<descr>
+<var>TMultiReadExclusiveWriteSynchronizer</var> is a default implementation of the
+<link id="IReadWriteSync"/> interface. It uses a single mutex to protect access to the 
+read/write resource, resulting in a single thread having access to the resource.
+</descr>
+<seealso>
+<link id="IReadWriteSync"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TMultiReadExclusiveWriteSynchronizer.Create">
+<short>Create a new instance of the <var>TMultiReadExclusiveWriteSynchronizer</var> class</short>
+<descr>
+<var>Create</var> creates a new instance of <var>TMultiReadExclusiveWriteSynchronizer</var>. It
+initializes a <var>TRTLCriticalSection</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.system.TRTLCriticalSection">TRTLCriticalSection</link>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TMultiReadExclusiveWriteSynchronizer.Destroy">
+<short>Destroys the <var>TMultiReadExclusiveWriteSynchronizer</var> instance</short>
+<descr>
+<var>Create</var> destroys the instance of <var>TMultiReadExclusiveWriteSynchronizer</var>. 
+It frees the <var>TRTLCriticalSection</var> it initialized, and calls the inherited destructor.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.system.TRTLCriticalSection">TRTLCriticalSection</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMultiReadExclusiveWriteSynchronizer.Beginwrite">
+<short>Request write access to the resource.</short>
+<descr>
+<var>Beginwrite</var> is the implementation of <var>IReadWriteSync.BeginWrite</var>. 
+It simply enters the critical section, and returns <var>True</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="IReadWriteSync.BeginWrite"/>
+<link id="TMultiReadExclusiveWriteSynchronizer.EndWrite">EndWrite</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMultiReadExclusiveWriteSynchronizer.Endwrite">
+<short>Release write access to the resource</short>
+<descr>
+<var>Beginwrite</var> is the implementation of <var>IReadWriteSync.EndWrite</var>.
+It simply leaves the critical section.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="IReadWriteSync.EndWrite"/>
+<link id="TMultiReadExclusiveWriteSynchronizer.BeginWrite">BeginWrite</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMultiReadExclusiveWriteSynchronizer.BeginRead">
+<short>Request read access to the resource</short>
+<descr>
+<var>BeginRead</var> is the implementation of <var>IReadWriteSync.BeginRead</var>.
+It simply attempts to enter the critical section.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="IReadWriteSync.BeginRead"/>
+<link id="TMultiReadExclusiveWriteSynchronizer.EndRead">EndRead</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMultiReadExclusiveWriteSynchronizer.Endread">
+<short>Release read access to the resource</short>
+<descr>
+<var>EndRead</var> is the implementation of <var>IReadWriteSync.EndRead</var>.
+It simply leaves the critical section.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="IReadWriteSync.EndRead"/>
+<link id="TMultiReadExclusiveWriteSynchronizer.BeginRead">BeginRead</link>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="Supports">
+<short>Check whether a class or given interface supports an interface </short>
+<descr>
+<var>Supports</var> checks whether <var>Instance</var> supports the interface identified by
+<var>IID</var>. It returns <var>True</var> if it is supported, <var>False</var>. 
+Optionally, a pointer to the interface is returned to <var>Intf</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="StringToGUID"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="StringToGUID">
+<short>Convert a string to a native <var>TGUID</var> type.</short>
+<descr>
+<p>
+<var>StringToGUID</var> converts the string <var>S</var> to a valid GUID. The string <var>S</var> should 
+be of the form
+</p>
+<pre>
+{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}
+</pre>
+<p>
+Where each X is a hexadecimal digit. The dashes and braces are required.
+</p>
+</descr>
+<errors>
+In case <var>S</var> contains an invalid GUID representation, a <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="Supports"/>
+<link id="#rtl.system.TGUID"/>
+<link id="GUIDToString"/>
+<link id="IsEqualGuid"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="GUIDToString">
+<short>Convert a <var>TGUID</var> to a string representation.</short>
+<descr>
+<p>
+<var>GUIDToString</var> converts the GUID identifier in <var>GUID</var> to a string representation in the form
+</p>
+<pre>
+{XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}
+</pre>
+<p>
+Where each <var>X</var> is a hexadecimal digit.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="Supports"/>
+<link id="#rtl.system.TGUID"/>
+<link id="StringToGUID"/>
+<link id="IsEqualGuid"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsEqualGUID">
+<short>Check whether two <var>TGUID</var> variables are equal.</short>
+<descr>
+<var>IsEqualGUID</var> checks whether <var>guid1</var> and <var>guid2</var> are equal, 
+and returns <var>True</var> if this is the case, or <var>False</var> otherwise.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="Supports"/>
+<link id="#rtl.system.TGUID"/>
+<link id="StringToGUID"/>
+<link id="GuidToString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="SafeLoadLibrary">
+<short>Load a library safely</short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="RTL_SIGINT">
+<short>INTERRUPT signal number (Unix only)</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="RTL_SIGFPE">
+<short>Floating Point Error signal number (Unix only)</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="RTL_SIGSEGV">
+<short>Segmentation fault signal number (Unix only)</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="RTL_SIGILL">
+<short>Illegal instruction signal number (Unix only)</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="RTL_SIGBUS">
+<short>Bus error signal number (Unix only)</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="RTL_SIGQUIT">
+<short>QUIT signal number (Unix only)</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="RTL_SIGLAST">
+<short>Last signal number (Unix only)</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="RTL_SIGDEFAULT">
+<short>Default signal handler (Unix only)</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TSignalState">
+<short>State of the signal handler</short>
+<descr>
+<var>TSignalState</var> indicates the state of a signal handler in a unix system for a particular signal.
+</descr>
+<seealso>
+<link id="InquireSignal"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSignalState.ssNotHooked">
+<short>No signal handler is set for the signal.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSignalState.ssHooked">
+<short>A signal handler is set for the signal.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSignalState.ssOverridden">
+<short>A signal handler was set for the signal</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="InquireSignal">
+<short>Check whether a signal handler is set</short>
+<descr>
+This function is declared for Kylix compatibility, but is not implemented.
+</descr>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="AbandonSignalHandler">
+<short></short>
+<descr>
+This function is declared for Kylix compatibility, but is not implemented.
+</descr>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="HookSignal">
+<short>Hook a specified signal</short>
+<descr>
+This function is declared for Kylix compatibility, but is not implemented.
+</descr>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="UnhookSignal">
+<short>UnHook a specified signal</short>
+<descr>
+This function is declared for Kylix compatibility, but is not implemented.
+</descr>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TFormatSettings">
+<short>Record with all the strings that determine formatting</short>
+<descr>
+<var>TFormatSettings</var> is a record that contains a copy of all
+variables which determine formatting in the various string formatting routines.
+It is used to pass local copies of these values to the various formatting 
+routines in a thread-safe way.
+</descr>
+<seealso>
+<link id="Format"/>
+<link id="FormatDateTime"/>
+<link id="FormatFloat"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.CurrencyFormat">
+<short>Currency format string</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.NegCurrFormat">
+<short>Negative currency format string</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.ThousandSeparator">
+<short>Thousands separator character</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.DecimalSeparator">
+<short>Decimal separator character</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.CurrencyDecimals">
+<short>Currency decimals</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.DateSeparator">
+<short>Date separator character</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.TimeSeparator">
+<short>Time separator character</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.ListSeparator">
+<short>List separator character</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.CurrencyString">
+<short>Currency string</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.ShortDateFormat">
+<short>Short date format string</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.LongDateFormat">
+<short>Long Date Format string</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.TimeAMString">
+<short>AM time indicator string</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.TimePMString">
+<short>PM time indicator string</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.ShortTimeFormat">
+<short>Short time format string</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.LongTimeFormat">
+<short>Long time format string</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.ShortMonthNames">
+<short>Array with short month names</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.LongMonthNames">
+<short>Array with long month names</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.ShortDayNames">
+<short>Array with short day names</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.LongDayNames">
+<short>Long day names</short>
+<descr>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TFormatSettings.TwoDigitYearCenturyWindow">
+<short>Value for 2 digit year century window</short>
+</element>
+
 </module>
 </package>
 </fpdoc-descriptions>
