@@ -26,6 +26,9 @@ nortl=y
 [default]
 rule=help
 
+[target]
+programs=cleanxml
+
 [prerules]
 SEARCHFPCSRCPATH=../fpcsrc ../fpc ..
 FPCSRCDIR:=$(patsubst %/compiler,%,$(firstword $(strip $(wildcard $(addsuffix /compiler,$(SEARCHFPCSRCPATH))))))
@@ -50,6 +53,17 @@ ifneq ($(wildcard $(FPCSRCDIR)/utils/fpdoc/fpdoc),)
 FPDOC=$(FPCSRCDIR)/utils/fpdoc/fpdoc
 else
 FPDOC=fpdoc
+endif
+endif
+endif
+
+# Locate Makeskel
+ifndef CROSSCOMPILE
+ifndef MAKESKEL
+ifneq ($(wildcard $(FPCSRCDIR)/utils/fpdoc/makeskel),)
+MAKESKEL=$(FPCSRCDIR)/utils/fpdoc/makeskel
+else
+MAKESKEL=makeskel
 endif
 endif
 endif
@@ -150,7 +164,7 @@ CHK = $(addsuffix .chk, $(DOCS))
 
 .PHONY: clean dvi help html ps psdist htmldist htmdist htdist pdfdist \
         txtdist htm txt pdf refex alldist messages onechap gtk \
-        user ref prog rtl
+        user ref prog rtl updatexml updatefclxml updatertlxml
 
 .SUFFIXES: .dvi .tex .ps .txt .pdf
 
@@ -289,66 +303,151 @@ ifndef RTLLINKPREFIX
 RTLLINKPREFIX=../rtl/
 endif
 FCLOPTS=$(FPDOCOPTS) --package=fcl --hide-protected --warn-no-node --descr=fcl.xml --content=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX)
+#
+# Standard Makeskel update options.
+#
+MAKESKELOPTS=--update --disable-protected --disable-private --emit-class-separator
+#
+# Standard command
+#
+MAKESKEL+= $(MAKESKELOPTS)
+#
+# Command in use for FCL
+#
+FCLMAKESKEL=$(MAKESKEL) --package=fcl
+#
+# Command in use for RTL.
+#
+RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-results
 
 FCLUNITS=iostream pipes streamio process dbugintf
+FCLNEWXML=$(addsuffix .new,$(FCLXML))
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
-FCLOPTS+= --descr=iostream.xml --input="-S2 $(FCLINC)/iostream.pp"
-FCLOPTS+= --descr=pipes.xml --input="$(FCLINC)/pipes.pp"
-FCLOPTS+= --descr=streamio.xml --input="$(FCLINC)/streamio.pp" 
-FCLOPTS+= --descr=process.xml --input="$(FCLINC)/process.pp" 
-FCLOPTS+= --descr=dbugintf.xml --input="$(FCLINC)/dbugintf.pp" 
-FCLOPTS+= --descr=contnrs.xml --input="$(FCLINC)/contnrs.pp"
-FCLOPTS+= --descr=zstream.xml --input="$(FCLINC)/zstream.pp"
-FCLOPTS+= --descr=idea.xml --input="$(FCLINC)/idea.pp"
+# Separate arguments for all FCL units.
+FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLINC)/iostream.pp"
+FCLPIPES= --descr=pipes.xml --input="$(FCLINC)/pipes.pp"
+FCLSTREAMIO= --descr=streamio.xml --input="$(FCLINC)/streamio.pp"
+FCLPROCESS= --descr=process.xml --input="$(FCLINC)/process.pp"
+FCLDEBUGINTF= --descr=dbugintf.xml --input="$(FCLINC)/dbugintf.pp" 
+FCLCONTNRS= --descr=contnrs.xml --input="$(FCLINC)/contnrs.pp"
+FCLZSTREAM= --descr=zstream.xml --input="$(FCLINC)/zstream.pp"
+FCLIDEA= --descr=idea.xml --input="$(FCLINC)/idea.pp"
+# Now add to the FCL fpdoc opts.
+FCLOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
+FCLOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA)
 
 RTLOPTS=$(FPDOCOPTS) --hide-protected --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
-ifndef CURRENTXMLONLY
+ifdef CURRENTXMLONLY
+RTLXML=crt.xml
+RTLOPTS+=--descr=dateutils.xml --input="$(FPCSRCDIR)/rtl/unix/crt.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
+else
 RTLUNITS=sysutils strutils dateutils strings mouse keyboard \
          crt video dos sockets objects heaptrc mmx ipc printer typinfo \
          ports getopts emu387 dxeload go32 gpm oldlinux baseunix \
          unixtype unix classes unixutil x86 dynlibs linux math matrix \
          system objpas dateutils rtl
 RTLXML=$(addsuffix .xml,$(RTLUNITS))
-RTLOPTS+= --descr=strutils.xml --input="$(FPCSRCDIR)/rtl/objpas/strutils.pp ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=sysutils.xml --input="$(FPCSRCDIR)/rtl/unix/sysutils.pp -Fi$(FPCSRCDIR)/rtl/objpas/sysutils -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=strings.xml --input="$(FPCSRCDIR)/rtl/inc/strings.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=mouse.xml --input="$(FPCSRCDIR)/rtl/unix/mouse.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=keyboard.xml --input="$(FPCSRCDIR)/rtl/unix/keyboard.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=crt.xml --input="$(FPCSRCDIR)/rtl/unix/crt.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=video.xml --input="$(FPCSRCDIR)/rtl/unix/video.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=dos.xml --input="$(FPCSRCDIR)/rtl/unix/dos.pp -Fi$(FPCSRCDIR)/rtl/inc -dcpui386 ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=sockets.xml --input="-dver1_0 $(FPCSRCDIR)/rtl/unix/sockets.pp -Fi$(FPCSRCDIR)/rtl/inc -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=objects.xml --input="$(FPCSRCDIR)/rtl/inc/objects.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=heaptrc.xml --input="$(FPCSRCDIR)/rtl/inc/heaptrc.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=mmx.xml --input="$(FPCSRCDIR)/rtl/i386/mmx.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=ipc.xml --input="$(FPCSRCDIR)/rtl/unix/ipc.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=printer.xml --input="$(FPCSRCDIR)/rtl/unix/printer.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=typinfo.xml --input="$(FPCSRCDIR)/rtl/objpas/typinfo.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=ports.xml --input="$(FPCSRCDIR)/rtl/unix/ports.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=getopts.xml --input="$(FPCSRCDIR)/rtl/inc/getopts.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=emu387.xml --input="$(FPCSRCDIR)/rtl/go32v2/emu387.pp -Fi$(FPCSRCDIR)/rtl/i386 ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=dxeload.xml --input="$(FPCSRCDIR)/rtl/go32v2/dxeload.pp -Fi$(FPCSRCDIR)/rtl/i386 ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=go32.xml --input="$(FPCSRCDIR)/rtl/go32v2/go32.pp -Fi$(FPCSRCDIR)/rtl/i386 ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=gpm.xml --input="-dVER1_0 $(FPCSRCDIR)/rtl/linux/gpm.pp -Fi$(FPCSRCDIR)/rtl/i386 ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=graph.xml --input="$(GRAPHDIR)/unix/graph.pp -Fi$(GRAPHDIR)/inc ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=oldlinux.xml --input="$(FPCSRCDIR)/rtl/linux/oldlinux.pp -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/unix ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=unixtype.xml --input="$(FPCSRCDIR)/rtl/unix/unixtype.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=baseunix.xml --input="$(FPCSRCDIR)/rtl/unix/baseunix.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=unix.xml  --input="$(FPCSRCDIR)/rtl/unix/unix.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=classes.xml --input='$(FPCSRCDIR)/rtl/$(CLASSESUNITDIR)/classes.pp -Fi$(FPCSRCDIR)/rtl/objpas/classes ${OSDIRINCLUDES}'
-RTLOPTS+= --descr=unixutil.xml --input="$(FPCSRCDIR)/rtl/unix/unixutil.pp ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=x86.xml --input="$(FPCSRCDIR)/rtl/unix/x86.pp ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=dynlibs.xml --input="$(FPCSRCDIR)/rtl/inc/dynlibs.pp -Fi$(FPCSRCDIR)/rtl/unix ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=linux.xml --input="$(FPCSRCDIR)/rtl/linux/linux.pp -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/unix ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=math.xml --input="$(FPCSRCDIR)/rtl/objpas/math.pp -Fi$(FPCSRCDIR)/rtl/i386 -dFPC_HAS_TYPE_EXTENDED ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=matrix.xml --input="$(FPCSRCDIR)/rtl/inc/matrix.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=system.xml --input="-dfpdocsystem -dHASGETHEAPSTATUS -dSUPPORT_DOUBLE $(FPCSRCDIR)/rtl/$(SYSTEMUNITDIR)/system.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/inc -Fi$(FPCSRCDIR)/rtl/i386 -dCPU32 -dHASVARIANT -dFPC_HAS_TYPE_EXTENDED -dHASWIDECHAR ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=objpas.xml --input="-dHASINTF $(FPCSRCDIR)/rtl/objpas/objpas.pp ${OSDIRINCLUDES}"
-RTLOPTS+= --descr=dateutils.xml --input="$(FPCSRCDIR)/rtl/objpas/dateutils.pp -Fi$(FPCSRCDIR)/rtl/objpas ${OSDIRINCLUDES}"
-else
-RTLXML=crt.xml
-RTLOPTS+=--descr=dateutils.xml --input="$(FPCSRCDIR)/rtl/unix/crt.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
+RTLNEWXML=$(addsuffix .new,$(RTLXML))
+RTLSTRUTILS= --descr=strutils.xml --input="$(FPCSRCDIR)/rtl/objpas/strutils.pp ${OSDIRINCLUDES}"
+RTLSYSUTILS= --descr=sysutils.xml --input="$(FPCSRCDIR)/rtl/unix/sysutils.pp -Fi$(FPCSRCDIR)/rtl/objpas/sysutils -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
+RTLSTRINGS= --descr=strings.xml --input="$(FPCSRCDIR)/rtl/inc/strings.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
+RTLMOUSE= --descr=mouse.xml --input="$(FPCSRCDIR)/rtl/unix/mouse.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
+RTLKEYBOARD= --descr=keyboard.xml --input="$(FPCSRCDIR)/rtl/unix/keyboard.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
+RTLCRT= --descr=crt.xml --input="$(FPCSRCDIR)/rtl/unix/crt.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
+RTLVIDEO= --descr=video.xml --input="$(FPCSRCDIR)/rtl/unix/video.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
+RTLDOS= --descr=dos.xml --input="$(FPCSRCDIR)/rtl/unix/dos.pp -Fi$(FPCSRCDIR)/rtl/inc -dcpui386 ${OSDIRINCLUDES}"
+RTLSOCKETS= --descr=sockets.xml --input="-dver1_0 $(FPCSRCDIR)/rtl/unix/sockets.pp -Fi$(FPCSRCDIR)/rtl/inc -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
+RTLOBJECTS= --descr=objects.xml --input="$(FPCSRCDIR)/rtl/inc/objects.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
+RTLHEAPTRC= --descr=heaptrc.xml --input="$(FPCSRCDIR)/rtl/inc/heaptrc.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
+RTLMMX= --descr=mmx.xml --input="$(FPCSRCDIR)/rtl/i386/mmx.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
+RTLIPC= --descr=ipc.xml --input="$(FPCSRCDIR)/rtl/unix/ipc.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
+RTLPRINTER= --descr=printer.xml --input="$(FPCSRCDIR)/rtl/unix/printer.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
+RTLTYPINFO= --descr=typinfo.xml --input="$(FPCSRCDIR)/rtl/objpas/typinfo.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
+RTLPORTS= --descr=ports.xml --input="$(FPCSRCDIR)/rtl/unix/ports.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
+RTLGETOPTS= --descr=getopts.xml --input="$(FPCSRCDIR)/rtl/inc/getopts.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) ${OSDIRINCLUDES}"
+RTLEMU387= --descr=emu387.xml --input="$(FPCSRCDIR)/rtl/go32v2/emu387.pp -Fi$(FPCSRCDIR)/rtl/i386 ${OSDIRINCLUDES}"
+RTLDXELOAD= --descr=dxeload.xml --input="$(FPCSRCDIR)/rtl/go32v2/dxeload.pp -Fi$(FPCSRCDIR)/rtl/i386 ${OSDIRINCLUDES}"
+RTLGO32= --descr=go32.xml --input="$(FPCSRCDIR)/rtl/go32v2/go32.pp -Fi$(FPCSRCDIR)/rtl/i386 ${OSDIRINCLUDES}"
+RTLGPM= --descr=gpm.xml --input="-dVER1_0 $(FPCSRCDIR)/rtl/linux/gpm.pp -Fi$(FPCSRCDIR)/rtl/i386 ${OSDIRINCLUDES}"
+RTLGRAPH= --descr=graph.xml --input="$(GRAPHDIR)/unix/graph.pp -Fi$(GRAPHDIR)/inc ${OSDIRINCLUDES}"
+RTLOLDLINUX= --descr=oldlinux.xml --input="$(FPCSRCDIR)/rtl/linux/oldlinux.pp -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/unix ${OSDIRINCLUDES}"
+RTLUNIXTYPE= --descr=unixtype.xml --input="$(FPCSRCDIR)/rtl/unix/unixtype.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 ${OSDIRINCLUDES}"
+RTLBASEUNIX= --descr=baseunix.xml --input="$(FPCSRCDIR)/rtl/unix/baseunix.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 ${OSDIRINCLUDES}"
+RTLUNIX= --descr=unix.xml  --input="$(FPCSRCDIR)/rtl/unix/unix.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 ${OSDIRINCLUDES}"
+RTLCLASSES= --descr=classes.xml --input='$(FPCSRCDIR)/rtl/$(CLASSESUNITDIR)/classes.pp -Fi$(FPCSRCDIR)/rtl/objpas/classes ${OSDIRINCLUDES}'
+RTLUNIXUTIL= --descr=unixutil.xml --input="$(FPCSRCDIR)/rtl/unix/unixutil.pp ${OSDIRINCLUDES}"
+RTLX86= --descr=x86.xml --input="$(FPCSRCDIR)/rtl/unix/x86.pp ${OSDIRINCLUDES}"
+RTLDYNLIBS= --descr=dynlibs.xml --input="$(FPCSRCDIR)/rtl/inc/dynlibs.pp -Fi$(FPCSRCDIR)/rtl/unix ${OSDIRINCLUDES}"
+RTLLINUX= --descr=linux.xml --input="$(FPCSRCDIR)/rtl/linux/linux.pp -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/unix ${OSDIRINCLUDES}"
+RTLMATH= --descr=math.xml --input="$(FPCSRCDIR)/rtl/objpas/math.pp -Fi$(FPCSRCDIR)/rtl/i386 -dFPC_HAS_TYPE_EXTENDED ${OSDIRINCLUDES}"
+RTLMATRIX= --descr=matrix.xml --input="$(FPCSRCDIR)/rtl/inc/matrix.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
+RTLSYSTEM= --descr=system.xml --input="-dfpdocsystem -dHASGETHEAPSTATUS -dSUPPORT_DOUBLE $(FPCSRCDIR)/rtl/$(SYSTEMUNITDIR)/system.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/inc -Fi$(FPCSRCDIR)/rtl/i386 -dCPU32 -dHASVARIANT -dFPC_HAS_TYPE_EXTENDED -dHASWIDECHAR ${OSDIRINCLUDES}"
+RTLOBJPAS= --descr=objpas.xml --input="-dHASINTF $(FPCSRCDIR)/rtl/objpas/objpas.pp ${OSDIRINCLUDES}"
+RTLDATEUTILS= --descr=dateutils.xml --input="$(FPCSRCDIR)/rtl/objpas/dateutils.pp -Fi$(FPCSRCDIR)/rtl/objpas ${OSDIRINCLUDES}"
+#
+# Put all together.
+#
+RTLOPTS+= $(RTLSTRUTILS) $(RTLSYSUTILS) $(RTLSTRINGS) $(RTLMOUSE) $(RTLKEYBOARD)
+RTLOPTS+= $(RTLCRT) $(RTLVIDEO) $(RTLDOS) $(RTLSOCKETS) $(RTLOBJECTS)
+RTLOPTS+= $(RTLHEAPTRC) $(RTLMMX) $(RTLIPC) $(RTLPRINTER) $(RTLTYPINFO) 
+RTLOPTS+= $(RTLPORTS) $(RTLGETOPTS) $(RTLEMU387) $(RTLDXELOAD) $(RTLGO32)
+RTLOPTS+= $(RTLGPM) $(RTLGRAPH) $(RTLOLDLINUX) $(RTLUNIXTYPE) $(RTLBASEUNIX)
+RTLOPTS+= $(RTLUNIX) $(RTLCLASSES) $(RTLUNIXUTIL) $(RTLX86) $(RTLDYNLIBS)
+RTLOPTS+= $(RTLLINUX) $(RTLMATH) $(RTLMATRIX) $(RTLSYSTEM) $(RTLOBJPAS)
+RTLOPTS+= $(RTLDATEUTILS)
 endif
+
+updatexml: updatefclxml updatertlxml
+
+updatertlxml: cleanxml
+	$(RTLMAKESKEL) $(RTLSTRUTILS) --output=strutils.xml.new
+	$(RTLMAKESKEL) $(RTLSYSUTILS) --output=sysutils.xml.new
+	$(RTLMAKESKEL) $(RTLSTRINGS) --output=strings.xml.new
+	$(RTLMAKESKEL) $(RTLMOUSE) --output=mouse.xml.new
+	$(RTLMAKESKEL) $(RTLKEYBOARD) --output=keyboard.xml.new
+	$(RTLMAKESKEL) $(RTLCRT) --output=crt.xml.new
+	$(RTLMAKESKEL) $(RTLVIDEO) --output=video.xml.new
+	$(RTLMAKESKEL) $(RTLDOS) --output=dos.xml.new
+	$(RTLMAKESKEL) $(RTLSOCKETS) --output=sockets.xml.new
+	$(RTLMAKESKEL) $(RTLOBJECTS) --output=objects.xml.new
+	$(RTLMAKESKEL) $(RTLHEAPTRC) --output=heaptrc.xml.new
+	$(RTLMAKESKEL) $(RTLMMX) --output=mmx.xml.new
+	$(RTLMAKESKEL) $(RTLIPC) --output=ipc.xml.new
+	$(RTLMAKESKEL) $(RTLPRINTER) --output=printer.xml.new
+	$(RTLMAKESKEL) $(RTLTYPINFO) --output=typinfo.xml.new
+	$(RTLMAKESKEL) $(RTLPORTS) --output=ports.xml.new
+	$(RTLMAKESKEL) $(RTLGETOPTS) --output=getopts.xml.new
+	$(RTLMAKESKEL) $(RTLEMU387) --output=emu387.xml.new
+	$(RTLMAKESKEL) $(RTLDXELOAD) --output=dxeload.xml.new
+	$(RTLMAKESKEL) $(RTLGO32) --output=go32.xml.new
+	$(RTLMAKESKEL) $(RTLGPM) --output=gpm.xml.new
+	$(RTLMAKESKEL) $(RTLGRAPH) --output=graph.xml.new
+	$(RTLMAKESKEL) $(RTLOLDLINUX) --output=oldlinux.xml.new
+	$(RTLMAKESKEL) $(RTLUNIXTYPE) --output=unixtype.xml.new
+	$(RTLMAKESKEL) $(RTLBASEUNIX) --output=baseunix.xml.new
+	$(RTLMAKESKEL) $(RTLUNIX) --output=unix.xml.new
+	$(RTLMAKESKEL) $(RTLCLASSES) --output=classes.xml.new
+	$(RTLMAKESKEL) $(RTLUNIXUTIL) --output=unixutil.xml.new
+	$(RTLMAKESKEL) $(RTLX86) --output=x86.xml.new
+	$(RTLMAKESKEL) $(RTLDYNLIBS) --output=dynlibs.xml.new
+	$(RTLMAKESKEL) $(RTLLINUX) --output=linux.xml.new
+	$(RTLMAKESKEL) $(RTLMATH) --output=math.xml.new
+	$(RTLMAKESKEL) $(RTLMATRIX) --output=matrix.xml.new
+	$(RTLMAKESKEL) $(RTLSYSTEM) --output=system.xml.new
+	$(RTLMAKESKEL) $(RTLOBJPAS) --output=objpas.xml.new
+	$(RTLMAKESKEL) $(RTLDATEUTILS) --output=dateutils.xml.new
+	./cleanxml $(RTLNEWXML)
+
+updatefclxml: cleanxml
+	$(FCLMAKESKEL) $(FCLIOSTREAM) --output=iostream.xml.new
+	$(FCLMAKESKEL) $(FCLPIPES) --output=pipes.xml.new
+	$(FCLMAKESKEL) $(FCLSTREAMIO) --output=streamio.xml.new
+	$(FCLMAKESKEL) $(FCLPROCESS) --output=process.xml.new
+	$(FCLMAKESKEL) $(FCLDEBUGINTF) --output=dbugintf.xml.new
+	$(FCLMAKESKEL) $(FCLCONTNRS) --output=contnrs.xml.new
+	$(FCLMAKESKEL) $(FCLZSTREAM) --output=zstream.xml.new
+	$(FCLMAKESKEL) $(FCLIDEA) --output=idea.xml.new
+	./cleanxml $(FCLNEWXML)
 
 rtl.inc: $(RTLXML)
         $(FPDOC) --output=rtl.inc $(RTLOPTS) --format=latex
