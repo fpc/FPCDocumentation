@@ -1853,7 +1853,7 @@ MAKESKELOPTS=--update --disable-protected --disable-private --emit-class-separat
 MAKESKEL+= $(MAKESKELOPTS)
 FCLMAKESKEL=$(MAKESKEL) --package=fcl
 RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-results
-FCLUNITS=iostream pipes streamio process dbugintf
+FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea
 FCLNEWXML=$(addsuffix .new,$(FCLXML))
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLINC)/iostream.pp"
