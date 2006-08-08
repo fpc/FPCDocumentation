@@ -1854,8 +1854,8 @@ MAKESKEL+= $(MAKESKELOPTS)
 FCLMAKESKEL=$(MAKESKEL) --package=fcl
 RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-results
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea
-FCLNEWXML=$(addsuffix .new,$(FCLXML))
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
+FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLINC)/iostream.pp"
 FCLPIPES= --descr=pipes.xml --input="$(FCLINC)/pipes.pp"
 FCLSTREAMIO= --descr=streamio.xml --input="$(FCLINC)/streamio.pp"
@@ -1877,7 +1877,7 @@ RTLUNITS=sysutils strutils dateutils strings mouse keyboard \
 	 unixtype unix classes unixutil x86 dynlibs linux math matrix \
 	 system objpas dateutils rtl
 RTLXML=$(addsuffix .xml,$(RTLUNITS))
-RTLNEWXML=$(addsuffix .new,$(RTLXML))
+RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
 RTLSTRUTILS= --descr=strutils.xml --input="$(FPCSRCDIR)/rtl/objpas/strutils.pp ${OSDIRINCLUDES}"
 RTLSYSUTILS= --descr=sysutils.xml --input="$(FPCSRCDIR)/rtl/unix/sysutils.pp -Fi$(FPCSRCDIR)/rtl/objpas/sysutils -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
 RTLSTRINGS= --descr=strings.xml --input="$(FPCSRCDIR)/rtl/inc/strings.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
@@ -1925,52 +1925,52 @@ RTLOPTS+= $(RTLDATEUTILS)
 endif
 updatexml: updatefclxml updatertlxml
 updatertlxml: cleanxml
-	$(RTLMAKESKEL) $(RTLSTRUTILS) --output=strutils.xml.new
-	$(RTLMAKESKEL) $(RTLSYSUTILS) --output=sysutils.xml.new
-	$(RTLMAKESKEL) $(RTLSTRINGS) --output=strings.xml.new
-	$(RTLMAKESKEL) $(RTLMOUSE) --output=mouse.xml.new
-	$(RTLMAKESKEL) $(RTLKEYBOARD) --output=keyboard.xml.new
-	$(RTLMAKESKEL) $(RTLCRT) --output=crt.xml.new
-	$(RTLMAKESKEL) $(RTLVIDEO) --output=video.xml.new
-	$(RTLMAKESKEL) $(RTLDOS) --output=dos.xml.new
-	$(RTLMAKESKEL) $(RTLSOCKETS) --output=sockets.xml.new
-	$(RTLMAKESKEL) $(RTLOBJECTS) --output=objects.xml.new
-	$(RTLMAKESKEL) $(RTLHEAPTRC) --output=heaptrc.xml.new
-	$(RTLMAKESKEL) $(RTLMMX) --output=mmx.xml.new
-	$(RTLMAKESKEL) $(RTLIPC) --output=ipc.xml.new
-	$(RTLMAKESKEL) $(RTLPRINTER) --output=printer.xml.new
-	$(RTLMAKESKEL) $(RTLTYPINFO) --output=typinfo.xml.new
-	$(RTLMAKESKEL) $(RTLPORTS) --output=ports.xml.new
-	$(RTLMAKESKEL) $(RTLGETOPTS) --output=getopts.xml.new
-	$(RTLMAKESKEL) $(RTLEMU387) --output=emu387.xml.new
-	$(RTLMAKESKEL) $(RTLDXELOAD) --output=dxeload.xml.new
-	$(RTLMAKESKEL) $(RTLGO32) --output=go32.xml.new
-	$(RTLMAKESKEL) $(RTLGPM) --output=gpm.xml.new
-	$(RTLMAKESKEL) $(RTLGRAPH) --output=graph.xml.new
-	$(RTLMAKESKEL) $(RTLOLDLINUX) --output=oldlinux.xml.new
-	$(RTLMAKESKEL) $(RTLUNIXTYPE) --output=unixtype.xml.new
-	$(RTLMAKESKEL) $(RTLBASEUNIX) --output=baseunix.xml.new
-	$(RTLMAKESKEL) $(RTLUNIX) --output=unix.xml.new
-	$(RTLMAKESKEL) $(RTLCLASSES) --output=classes.xml.new
-	$(RTLMAKESKEL) $(RTLUNIXUTIL) --output=unixutil.xml.new
-	$(RTLMAKESKEL) $(RTLX86) --output=x86.xml.new
-	$(RTLMAKESKEL) $(RTLDYNLIBS) --output=dynlibs.xml.new
-	$(RTLMAKESKEL) $(RTLLINUX) --output=linux.xml.new
-	$(RTLMAKESKEL) $(RTLMATH) --output=math.xml.new
-	$(RTLMAKESKEL) $(RTLMATRIX) --output=matrix.xml.new
-	$(RTLMAKESKEL) $(RTLSYSTEM) --output=system.xml.new
-	$(RTLMAKESKEL) $(RTLOBJPAS) --output=objpas.xml.new
-	$(RTLMAKESKEL) $(RTLDATEUTILS) --output=dateutils.xml.new
+	$(RTLMAKESKEL) $(RTLSTRUTILS) --output=strutils.new.xml
+	$(RTLMAKESKEL) $(RTLSYSUTILS) --output=sysutils.new.xml
+	$(RTLMAKESKEL) $(RTLSTRINGS) --output=strings.new.xml
+	$(RTLMAKESKEL) $(RTLMOUSE) --output=mouse.new.xml
+	$(RTLMAKESKEL) $(RTLKEYBOARD) --output=keyboard.new.xml
+	$(RTLMAKESKEL) $(RTLCRT) --output=crt.new.xml
+	$(RTLMAKESKEL) $(RTLVIDEO) --output=video.new.xml
+	$(RTLMAKESKEL) $(RTLDOS) --output=dos.new.xml
+	$(RTLMAKESKEL) $(RTLSOCKETS) --output=sockets.new.xml
+	$(RTLMAKESKEL) $(RTLOBJECTS) --output=objects.new.xml
+	$(RTLMAKESKEL) $(RTLHEAPTRC) --output=heaptrc.new.xml
+	$(RTLMAKESKEL) $(RTLMMX) --output=mmx.new.xml
+	$(RTLMAKESKEL) $(RTLIPC) --output=ipc.new.xml
+	$(RTLMAKESKEL) $(RTLPRINTER) --output=printer.new.xml
+	$(RTLMAKESKEL) $(RTLTYPINFO) --output=typinfo.new.xml
+	$(RTLMAKESKEL) $(RTLPORTS) --output=ports.new.xml
+	$(RTLMAKESKEL) $(RTLGETOPTS) --output=getopts.new.xml
+	$(RTLMAKESKEL) $(RTLEMU387) --output=emu387.new.xml
+	$(RTLMAKESKEL) $(RTLDXELOAD) --output=dxeload.new.xml
+	$(RTLMAKESKEL) $(RTLGO32) --output=go32.new.xml
+	$(RTLMAKESKEL) $(RTLGPM) --output=gpm.new.xml
+	$(RTLMAKESKEL) $(RTLGRAPH) --output=graph.new.xml
+	$(RTLMAKESKEL) $(RTLOLDLINUX) --output=oldlinux.new.xml
+	$(RTLMAKESKEL) $(RTLUNIXTYPE) --output=unixtype.new.xml
+	$(RTLMAKESKEL) $(RTLBASEUNIX) --output=baseunix.new.xml
+	$(RTLMAKESKEL) $(RTLUNIX) --output=unix.new.xml
+	$(RTLMAKESKEL) $(RTLCLASSES) --output=classes.new.xml
+	$(RTLMAKESKEL) $(RTLUNIXUTIL) --output=unixutil.new.xml
+	$(RTLMAKESKEL) $(RTLX86) --output=x86.new.xml
+	$(RTLMAKESKEL) $(RTLDYNLIBS) --output=dynlibs.new.xml
+	$(RTLMAKESKEL) $(RTLLINUX) --output=linux.new.xml
+	$(RTLMAKESKEL) $(RTLMATH) --output=math.new.xml
+	$(RTLMAKESKEL) $(RTLMATRIX) --output=matrix.new.xml
+	$(RTLMAKESKEL) $(RTLSYSTEM) --output=system.new.xml
+	$(RTLMAKESKEL) $(RTLOBJPAS) --output=objpas.new.xml
+	$(RTLMAKESKEL) $(RTLDATEUTILS) --output=dateutils.new.xml
 	./cleanxml $(RTLNEWXML)
 updatefclxml: cleanxml
-	$(FCLMAKESKEL) $(FCLIOSTREAM) --output=iostream.xml.new
-	$(FCLMAKESKEL) $(FCLPIPES) --output=pipes.xml.new
-	$(FCLMAKESKEL) $(FCLSTREAMIO) --output=streamio.xml.new
-	$(FCLMAKESKEL) $(FCLPROCESS) --output=process.xml.new
-	$(FCLMAKESKEL) $(FCLDEBUGINTF) --output=dbugintf.xml.new
-	$(FCLMAKESKEL) $(FCLCONTNRS) --output=contnrs.xml.new
-	$(FCLMAKESKEL) $(FCLZSTREAM) --output=zstream.xml.new
-	$(FCLMAKESKEL) $(FCLIDEA) --output=idea.xml.new
+	$(FCLMAKESKEL) $(FCLIOSTREAM) --output=iostream.new.xml
+	$(FCLMAKESKEL) $(FCLPIPES) --output=pipes.new.xml
+	$(FCLMAKESKEL) $(FCLSTREAMIO) --output=streamio.new.xml
+	$(FCLMAKESKEL) $(FCLPROCESS) --output=process.new.xml
+	$(FCLMAKESKEL) $(FCLDEBUGINTF) --output=dbugintf.new.xml
+	$(FCLMAKESKEL) $(FCLCONTNRS) --output=contnrs.new.xml
+	$(FCLMAKESKEL) $(FCLZSTREAM) --output=zstream.new.xml
+	$(FCLMAKESKEL) $(FCLIDEA) --output=idea.new.xml
 	./cleanxml $(FCLNEWXML)
 rtl.inc: $(RTLXML)
 	$(FPDOC) --output=rtl.inc $(RTLOPTS) --format=latex
