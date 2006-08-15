@@ -320,7 +320,7 @@ FCLMAKESKEL=$(MAKESKEL) --package=fcl
 #
 RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-results
 
-FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea
+FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream base64
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 # Separate arguments for all FCL units.
@@ -332,9 +332,11 @@ FCLDBUGINTF= --descr=dbugintf.xml --input="$(FCLINC)/dbugintf.pp"
 FCLCONTNRS= --descr=contnrs.xml --input="$(FCLINC)/contnrs.pp"
 FCLZSTREAM= --descr=zstream.xml --input="$(FCLINC)/zstream.pp"
 FCLIDEA= --descr=idea.xml --input="$(FCLINC)/idea.pp"
+FCLBUFSTREAM= --descr=bufstream.xml --input="$(FCLINC)/bufstream.pp"
+FCLBASE64= --descr=base64.xml --input="$(FCLINC)/base64.pp"
 # Now add to the FCL fpdoc opts.
 FCLOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
-FCLOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA)
+FCLOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64)
 
 RTLOPTS=$(FPDOCOPTS) --hide-protected --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifdef CURRENTXMLONLY
@@ -447,6 +449,8 @@ updatefclxml: cleanxml
 	$(FCLMAKESKEL) $(FCLCONTNRS) --output=contnrs.new.xml
 	$(FCLMAKESKEL) $(FCLZSTREAM) --output=zstream.new.xml
 	$(FCLMAKESKEL) $(FCLIDEA) --output=idea.new.xml
+	$(FCLMAKESKEL) $(FCLBUFSTREAM) --output=bufstream.new.xml
+	$(FCLMAKESKEL) $(FCLBASE64) --output=base64.new.xml
 	./cleanxml $(FCLNEWXML)
 
 rtl.inc: $(RTLXML)

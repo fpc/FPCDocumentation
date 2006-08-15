@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    bufstream
+  ====================================================================
+-->
+
+<module name="bufstream">
+<short>Buffered stream</short>
+<descr>
+<p>
+<file>BufStream</file> implements two one-way buffered streams: the streams
+store all data from (or for) the source stream in a memory buffer, and only
+flush the buffer when it's full (or refill it when it's empty).
+The buffer size can be specified at creation time. 2 streams are
+implemented: <link id="TReadBufStream"/> which is for reading only, and
+<link id="TWriteBufStream"/> which is for writing only.
+</p>
+<p>
+Buffered streams can help in speeding up read or write operations,
+especially when a lot of small read/write operations are done: it 
+avoids doing a lot of operating system calls.
+</p>
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>Stream definitions</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="SysUtils">
+<short>Exception support</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="DefaultBufferCapacity">
+<short>Default buffer size</short>
+<descr>
+If no buffer size is specified when the stream is created, then this size is
+used.
+</descr>
+<seealso>
+<link id="TBufStream.Create"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.bufstream.TBufStream
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TBufStream">
+<short>Common ancestor for buffered streams</short>
+<descr>
+<var>TBufStream</var> is the common ancestor for the <link
+id="TReadBufStream"/> and <link id="TWriteBufStream"/> streams. 
+It completely handles the buffer memory management and position 
+management. An instance of <var>TBufStream</var> should never 
+be created directly. It also keeps the instance of the source stream.
+</descr>
+<seealso>
+<link id="TReadBufStream"/>
+<link id="TWriteBufStream"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TBufStream.Create">
+<short>Create a new <var>TBufStream</var> instance.</short>
+<descr>
+<p>
+<var>Create</var> creates a new <var>TBufStream</var> instance.
+A buffer of size <var>ACapacity</var> is allocated, and the
+<var>ASource</var> source (or destination) stream is stored.
+If no capacity is specified, then <link id="DefaultBufferCapacity"/> is used
+as the capacity.
+</p>
+<p>
+An instance of <var>TBufStream</var> should never be instantiated 
+directly. Instead, an instance of <link id="TReadBufStream"/> or
+<link id="TWriteBufStream"/> should be created.
+</p>
+</descr>
+<errors>
+If not enough memory is available for the buffer, then an exception may be
+raised.
+</errors>
+<seealso>
+<link id="TBufStream.Destroy"/>
+<link id="TReadBufStream"/>
+<link id="TWriteBufStream"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TBufStream.Destroy">
+<short>Destroys the <var>TBufStream</var> instance</short>
+<descr>
+<var>Destroy</var> destroys the instance of <var>TBufStream</var>. It
+flushes the buffer, deallocates it, and then destroys the
+<var>TBufStream</var> instance.
+</descr>
+<seealso>
+<link id="TBufStream.Create"/>
+<link id="TReadBufStream"/>
+<link id="TWriteBufStream"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBufStream.Buffer">
+<short>The current buffer</short>
+<descr>
+<var>Buffer</var> is a pointer to the actual buffer in use.
+</descr>
+<seealso>
+<link id="TBufStream.Create"/>
+<link id="TBufStream.Capacity"/>
+<link id="TBufStream.BufferSize"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBufStream.Capacity">
+<short>Current buffer capacity</short>
+<descr>
+<var>Capacity</var> is the amount of memory the buffer occupies.
+To change the buffer size, the capacity can be set. Note that the
+capacity cannot be set to a value that is less than the current
+buffer size, i.e. the current amount of data in the buffer.
+</descr>
+<seealso>
+<link id="TBufStream.Create"/>
+<link id="TBufStream.Buffer"/>
+<link id="TBufStream.BufferSize"/>
+<link id="TBufStream.BufferPos"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBufStream.BufferPos">
+<short>Current buffer position.</short>
+<descr>
+<var>BufPos</var> is the current stream position in the buffer. Depending on
+whether the stream is used for reading or writing, data will be read from
+this position, or will be written at this position in the buffer.
+</descr>
+<seealso>
+<link id="TBufStream.Create"/>
+<link id="TBufStream.Buffer"/>
+<link id="TBufStream.BufferSize"/>
+<link id="TBufStream.Capacity"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBufStream.BufferSize">
+<short>Amount of data in the buffer</short>
+<descr>
+<var>BufferSize</var> is the actual amount of data in the buffer. This is
+always less than or equal to the <link id="TBufStream.Capacity">Capacity</link>.
+</descr>
+<seealso>
+<link id="TBufStream.Create"/>
+<link id="TBufStream.Buffer"/>
+<link id="TBufStream.BufferPos"/>
+<link id="TBufStream.Capacity"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.bufstream.TReadBufStream
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TReadBufStream">
+<short>Read-only buffered stream.</short>
+<descr>
+<p>
+<var>TReadBufStream</var> is a read-only buffered stream. It implements the
+needed methods to read data from the buffer and fill the buffer with 
+additional data when needed.
+</p>
+<p>
+The stream provides limited forward-seek possibilities.
+</p>
+</descr>
+<seealso>
+<link id="TBufStream"/>
+<link id="TWriteBufStream"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TReadBufStream.Seek">
+<short>Set location in the buffer</short>
+<descr>
+<p>
+<var>Seek</var> sets the location in the buffer. Currently, only a forward
+seek is allowed. It is emulated by reading and discarding data. For an
+explanation of the parameters, see <link id="#rtl.classes.tstream.seek">TStream.Seek"</link>
+</p>
+<p>
+The seek method needs enhancement to enable it to do a full-featured seek.
+This may be implemented in a future release of Free Pascal.
+</p>
+</descr>
+<errors>
+In case an illegal seek operation is attempted, an exception is raised.
+</errors>
+<seealso>
+<link id="TWriteBufStream.Seek"/>
+<link id="TReadBufStream.Read"/>
+<link id="TReadBufStream.Write"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TReadBufStream.Read">
+<short>Reads data from the stream</short>
+<descr>
+<p>
+<var>Read</var> reads at most <var>ACount</var> bytes from the stream and
+places them in <var>Buffer</var>. The number of actually read bytes is
+returned.
+</p>
+<p>
+<var>TReadBufStream</var> first reads whatever data is still available in
+the buffer, and then refills the buffer, after which it continues to read
+data from the buffer. This is repeated untill <var>ACount</var> bytes are
+read, or no more data is available.
+</p>
+</descr>
+<seealso>
+<link id="TReadBufStream.Seek"/>
+<link id="TReadBufStream.Read"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TReadBufStream.Write">
+<short>Writes data to the stream</short>
+<descr>
+<var>Write</var> always raises an <var>EStreamError</var> exception, because
+the stream is read-only. A <link id="TWriteBufStream"/> write stream must be
+used to write data in a buffered way.
+</descr>
+<seealso>
+<link id="TReadBufStream.Seek"/>
+<link id="TReadBufStream.Read"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.bufstream.TWriteBufStream
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TWriteBufStream">
+<short>Write-only buffered stream.</short>
+<descr>
+<p>
+<var>TWriteBufStream</var> is a write-only buffered stream. It implements the
+needed methods to write data to the buffer and flush the buffer (i.e., write
+its contents to the source stream) when needed.
+</p>
+</descr>
+<seealso>
+<link id="TBufStream"/>
+<link id="TReadBufStream"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TWriteBufStream.Destroy">
+<short>Remove the <var>TWriteBufStream</var> instance from memory</short>
+<descr>
+<var>Destroy</var> flushes the buffer and then calls the inherited
+<link id="TBufstream.Destroy">Destroy</link>.
+</descr>
+<errors>
+If an error occurs during flushing of the buffer, an exception may be
+raised.
+</errors>
+<seealso>
+<link id="TBufStream.Create">Create</link>
+<link id="TBufStream.Destroy"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TWriteBufStream.Seek">
+<short>Set stream position.</short>
+<descr>
+<p>
+<var>Seek</var> always raises an <var>EStreamError</var> exception, 
+except when the seek operation would not alter the current position.
+</p>
+<p>
+A later implementation may perform a proper seek operation by flushing the
+buffer and doing a seek on the source stream.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TWriteBufStream.Write"/>
+<link id="TWriteBufStream.Read"/>
+<link id="TReadBufStream.Seek"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TWriteBufStream.Read">
+<short>Read data from the stream</short>
+<descr>
+<var>Read</var> always raises an <var>EStreamError</var> 
+exception since <var>TWriteBufStream</var> is write-only.
+To read data in a buffered way, <link id="TReadBufStream"/> should be used.
+</descr>
+<seealso>
+<link id="TWriteBufStream.Seek"/>
+<link id="TWriteBufStream.Write"/>
+<link id="TReadBufStream.Read"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TWriteBufStream.Write">
+<short>Write data to the stream</short>
+<descr>
+<var>Write</var> writes at most <var>ACount</var> bytes from
+<var>ABuffer</var> to the stream. The data is written to the 
+internal buffer first. As soon as the internal buffer is full, it is flushed
+to the destination stream, and the internal buffer is filled again. This
+process continues till all data is written (or an error occurs).
+</descr>
+<errors>
+An exception may occur if the destination stream has problems writing.
+</errors>
+<seealso>
+<link id="TWriteBufStream.Seek"/>
+<link id="TWriteBufStream.Read"/>
+<link id="TReadBufStream.Write"/>
+</seealso>
+</element>
+
+</module> <!-- bufstream -->
+
+</package>
+</fpdoc-descriptions>
