@@ -1,0 +1,624 @@
+\documentclass[A4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage{latexsym}
+\usepackage{amsmath}
+%Police pour generer des pdf sans defauts
+\renewcommand{\sfdefault}{phv}
+\renewcommand{\rmdefault}{ptm}
+\renewcommand{\ttdefault}{pcr}
+
+\title{How to use C code in Free Pascal projects}
+\author{G. Marcou, E. Engler, A. Varnek}
+
+\bibliographystyle{plain}
+\begin{document}
+
+\maketitle\footnote{Universit\'e Louis Pasteur,\\ Institut de Chimie de Strasbourg,\\ 4 rue Blaise Pascal,\\ 67000 Strasbourg,\\ FRANCE}
+
+\section{Introduction}
+
+Free Pascal provides a robust, portable and powerful compiler\cite{FPDoc}. On
+the other hand, the C language benefits of a very long life time and
+therefore of millions of lines of codes. Hopefully, the Free Pascal
+compiler supports linking with objects and shared objects compiled in
+C. Reusing this material is therefore often desirable in Free Pascal projects.
+
+Furthermore, the C++ provides also a very large number of very useful
+libraries. But it is not possible yet to access them from Free Pascal
+directly\cite{FPDoc,FPFor}. Therefore, it is necessary to write in C code,
+procedures and functions to access the C++ ones. Linking Free Pascal to C code
+is therefore even more important since C will act as a ``glue'' between
+Free Pascal code and C++ -or other languages.
+
+This article summerizes our experience about this field
+It will be extended, I hope, by ourself as we continue to gain
+experience with this problem, and by others.
+
+\section{Dangers of mixing code}
+
+The support of other languages is not a characteristic of any
+language. It is a property of compilers. Therefore, instructions for
+doing so are dependent of the runtime environment. This includes the system
+and, sometimes, the compiler chosen. Characteristics of the definitions of the
+languages also plays a role \cite{C++}.
+
+In the following, the environment used is the Free Pascal Compiler (fpc
+2.0.4) \cite{FPDoc} and the GNU Compiler Collection (gcc 4.1.2) \cite{gcc}.
+
+Incompatibilities will play a role at nearly every stage of the -executable-
+binary generation. The less dangerous are those that will prevent compilation
+or linking. The most delicate ones will generate unpredictable behavior. For
+example, it is up to the user to correctly convert from C or C++ types to Free
+Pascal. An error in this conversion will not necessarily generate compilation
+or linking errors, neither the executable will crash immediately. Such bug can
+become extremly difficult to spot.
+
+Free Pascal compiler is meant to produce as straight as possible, binaries and
+executable code \cite{FPDoc}. This leads to some differences compared to GCC
+compilers suite. The main difference is that Free Pascal users should not
+have to deal with a Makefile. Therefore, they should not have to compile the
+program by modules and then design a linking section.
+
+This explains why the pre-compiler will have to deal with commands dedicated to
+the linker and it helps understand the logic with the \verb|Unit| key word of
+Free Pascal.
+
+\section{Hello in C}
+
+This section is a tutorial showing, in a simple case, how it is possible to
+use C written objects in a Free Pascal project.
+
+\subsection{Hello object}
+
+The first thing to do is to produce an C written library to be compiled as a
+static object. Static objects, for the Linux world, are a legacy of the
+\verb|a.out| binary format. Objects are pieces of code already compiled that
+can be reused in other programs. Linking with a program which calls a function
+or procedure in an object file must be complete before execution time
+\cite{Drep2006}.
+
+Here is proposed a small C code as a classical ``hello'' example. First a
+small header (file \verb|chello.h|) defines what is the library composed of.
+
+\begin{verbatim}
+#ifndef CHELLO_H
+#define CHELLO_H
+#include <stdio.h>
+void PrintHello();
+void PrintHelloS(int);
+#endif
+\end{verbatim}
+
+This is not compulsory for C, but header files are highly encouraged since
+they simplify interface and helps linking the objects. Here are defined two
+procedures that write a ``hello'' message the second passing an integer to be
+written. The body of the program follows (file verb|chello.c|).
+
+\begin{verbatim}
+#include "chello.h"
+void PrintHello(){
+  printf("Hello\n");
+  return;
+};
+void PrintHelloS(int nme){
+  printf("Hello\n");
+  printf("%i",nme);
+  return;
+};
+
+\end{verbatim}
+
+This library is compiled using the command \verb|gcc -c chello.c|. The result
+of the compilation is a binary file \verb|chello.o|.
+
+\subsection{Free Pascal wrapping}
+
+In a C compatible world, it should be possible to pass the C header and let
+the compiler link the library definition of the procedures in the object files
+to the main program. Free Pascal does not understand C, so the header has to
+be rewritten in standard Free Pascal \cite{FPDoc,FPFor}. This is the purpose
+of the following Free Pascal unit (file helloU.pas), wrapping the C written
+object in a standard Free Pascal code:
+
+\begin{verbatim}
+unit helloU;
+
+{$link chello.o}
+{$linklib c}
+
+interface
+
+uses CTypes;
+
+procedure PrintHello; cdecl; external;
+procedure PrintHelloS(nme : ctypes.cint32); cdecl; external;
+
+implementation
+
+end.
+\end{verbatim}
+
+Several parts shall be noted. First there is only definition of the
+procedures. The implementation is empty. Even more, the definition is followed
+by the \verb|external| keyword. This means the Free Pascal compiler should not
+wait for the body of the procedure since it shall find it at linking
+time \cite{FPDoc,FPFor}.
+
+Second, the CTypes unit is called by the command \verb|uses CTypes|. This unit
+is poorly documented, but its purpose is precisely to help for correct
+conversion between Free Pascal native types and C native types. In fact, it is
+quite difficult: the numerical limits of types like integers or floats are not
+defined by a language but by the compilers. As pointed by
+D. Mantione\footnote{a regular contributor to Free Pascal}, with GCC, an
+\verb|int| is \$80000000..\$7fffffff (32 bits), while a Pascal integer is
+defined as \$8000..\$7fff (16 bits). Thus, it would be required to use
+\verb|longint| Free Pascal type to match it. Here we call the
+\verb|ctypes.cint32| type converter. This method shall be prefered.
+
+For type conversion of C types it is usefull to take a look at the
+C/C++ header \verb|limits.h|. On Linux systems it is usually located in
+\verb|/lib/include/|. For Free Pascal conversion, it shall be safer to take a
+look to the documentation \cite{FPDoc,FPFor}.
+
+Then, there is two instructions for the linker. The first one
+\hspace{0cm}\verb|{$link chello.o}| %$
+ means that the linker should link the program with the \verb|chello.o|
+file \cite{FPDoc,FPFor}. So the Free Pascal compiler will never know about
+what are truly those procedures, it will be the job of the linker to find
+them in the object file.
+
+Doing so, a lot of references will appear to some functions typical of C. For
+example, it will find references to the \verb|print| function and others
+defined in the \verb|<stdio.h>| included. Those are defined in a shared
+library file, \verb|libc.so|.
+
+Shared libraries are libraries that are not linked at linking time. So the
+linking of the program is not complete. The program will not run until it
+will have found the definition of, at least, the standard C functions. In
+fact, at execution time, a special program, \verb|ld-linux.so| is called to
+charge in memory the binary definition of the missing procedures
+\cite{Drep2006}.
+
+The linker needs to know at compile time, where to find not yet defined
+functions and procedure. First, to be able to build in the program binary
+instructions relative to which shared library has to be charged in
+memory. Second to test that at least, at linking time, every single procedure
+and function will be defined.
+
+Here we tell the linker to search in the file \verb|libc.so| for
+missing definitions. It is the purpose of the instruction \verb|{$link c}|.%$
+The linker will add a prefix \verb|lib| and a suffix \verb|.so|, in the Linux
+world to find the correct shared object file \cite{FPDoc,FPFor}.
+
+It is usually necessary to use also the \verb|{$link gcc}|%$
+to link with \verb|libgcc.so| if the C objects were created with
+GCC. Nonetheless this library might not have been produced
+during GCC compilation and therefore can be missing. Therefore, linking errors
+might occurs if this linking statement is present as well as if this statement
+is missing.
+
+One last thing, is that the Free Pascal definition has a different protocol as
+how to pass arguments in functions and procedures compared to C. This is what
+the keyword \verb|cdecl| does. The \verb|cdecl| warns the compiler and
+the linker that the arguments are to be understood as if they were in
+C\cite{FPDoc,FPFor}. If
+this keyword is omitted it is possible that the program will compile and link
+but as soon as procedure will be called, it will crash. It might as well not
+compile any more if one of the wrapped procedures or function is called.
+
+\subsection{Free Pascal program}
+
+Now it is time to get a program that will call our C written functions. This
+is done in the file \verb|hello.pas|:
+
+\begin{verbatim}
+uses
+  helloU;
+
+begin
+   PrintHello;
+end.
+
+\end{verbatim}
+
+It is compiled using the command \verb|fpc hello.pas|. This Free Pascal code
+only knows about the Free Pascal wrapper of the C object. So the compiler will
+compile first the \verb|helloU| unit, then the main program. This part will
+produce \verb|.ppu| and \verb|.o| files. The first ones are Free Pascal
+binaries and the second ones, a translation in the \verb|a.out| Linux binary
+format.
+
+The linker is called that will link statically the \verb|.o| it knows the
+existence of. It will then generate an executable binary with all informations
+about the shared libraries to be dynamically loaded in memory at execution
+time.
+
+\section{Hello in C++}
+
+This section is a tutorial showing how, in a simple case, it is possible to
+use C++ written objects in a Free Pascal project.
+
+\subsection{Hello object, again...}
+
+In this hello project in C++, a class hello is defined. This class
+contains a private structure and several public methods to access it or to
+perform some actions. Here is the header, in the file \verb|hello.hpp|:
+
+\begin{verbatim}
+#ifndef HELLO_HPP
+#define HELLO_HPP
+#include<iostream>
+#include<string>
+using namespace std;
+class hello{
+public:
+  hello(){
+    string vide="";
+    hello::SetName(vide);
+  };
+  hello(string &name){
+    hello::SetName(name);
+  };
+  void HelloPrint();
+  void SetName(string&);
+  string GetName();
+private:
+  string name;
+};
+#endif
+
+\end{verbatim}
+
+The private structure is a C++ string containing a name. There is a
+constructor to initialize this string to the null string and an overloaded
+constructor to initialize it to an arbitrary value.
+
+The other public methods include setting or retrieving the value of the
+private structure. The last method just prints in the current console a
+friendly message.
+
+The body of the methods defined in the header is in the following file,
+\verb|hello.cpp|:
+
+\begin{verbatim}
+#include "hello.hpp"
+void hello::HelloPrint(){
+  cout << "Hello " << GetName() << endl;
+  return;
+};
+void hello::SetName(string &str){
+  hello::name=str;
+  return;
+};
+string hello::GetName(){
+  return(hello::name);
+};
+
+\end{verbatim}
+
+This set of file, the header and the body of the methods, is written in pure
+C++. It is compiled using the command \verb|g++ -c hello.cc|. The compilation
+provide an object file \verb|hello.o| in which there is many references to C
+and C++ libraries, in particular standard template libraries -for the C++
+string.
+
+As stated before, Free Pascal cannot handle C++ objects
+\cite{FPDoc,FPFor}. They have a very particular structure since they are
+linked to C++ shared libraries and here, have class structure. It is therefore
+necessary to build a C interface between this C++ code and Free Pascal.
+
+\subsection{C wrapping}
+
+As the C language does not know about C++ object oriented structure it is not
+possible to keep it. This means that the main job of the C wrapper will be to
+flatten the C++ class structure to a set of C functions
+\cite{Rudy2006}. 
+
+Another important point is that C does not know about C++ standard template
+libraries and evolved structures like C++ strings, vectors, maps, etc. So
+another function of the wrapper will be to cast those C++ classes in standard
+C types \cite{Cline2006}.
+
+To do this, it is useful to create a special header, as shown in the file
+\verb|chello.h|:
+
+\begin{verbatim}
+#ifndef FHELLO_H
+#define FHELLO_H
+#ifdef __cplusplus
+#include "hello.hpp"
+#define EXPORTCALL __attribute__((stdcall))
+typedef hello *helloHandle;
+#else
+typedef struct hello *helloHandle;
+#define EXPORTCALL
+#endif
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+  extern helloHandle EXPORTCALL NewHello();
+  extern helloHandle EXPORTCALL NewHelloC(char*);
+  extern void EXPORTCALL DeleteHello(helloHandle);
+  extern void EXPORTCALL HelloPrint(helloHandle);
+  extern void EXPORTCALL SetName(helloHandle, char*);
+  extern const char* EXPORTCALL GetName(helloHandle);
+  //
+  extern helloHandle EXPORTCALL cNewHello();
+  extern helloHandle EXPORTCALL cNewHelloC(char*);
+  extern void EXPORTCALL cDeleteHello(helloHandle);
+  extern void EXPORTCALL cHelloPrint(helloHandle);
+  extern void EXPORTCALL cSetName(helloHandle, char*);
+  extern const char* EXPORTCALL cGetName(helloHandle);
+#ifdef __cplusplus
+}
+#endif
+#endif/*FHELLO_H*/
+\end{verbatim}
+
+This header can be interpreted both by a C and a C++ compiler. And two body
+files will be implemented, one in C++ code and the other one in standard C
+code.
+
+There is several instruction to help to deal with this. The first one is to
+use the macro definition \verb|#ifdef __cplusplus| and the corresponding
+\verb|#endif|. It is true if the compiler analyzing the code is a C++ compiler
+and false otherwise \cite{C++,gcc}. This macro definition is widely spread
+among compilers but it is not part of any standard. Therefore, it might be
+necessary to define it manually through an option of the compiler.
+
+This macro definition first protects the C++ header that needs to be included
+to define the hello object. If it is not protected, a C compiler will refuse the
+code since it would try to analyze the C++ code of the \verb|hello.hpp|
+header.
+
+The second statement that is protected so that only a C++ compiler can see it,
+is the definition of the \verb|EXPORTCALL| to
+\verb|__attribute__((stdcall))|. This value is interpreted by GCC and ensures
+the argument passing of the function to be compatible with C definition. This
+is why it is not set for the C compiler \cite{gcc,Rudy2006}.
+
+The third protected statement only to be processed by the C++ compiler just
+defines a new type \verb|helloHandle| as a pointer the \verb|hello|
+class.
+
+For the C compiler, \verb|helloHandle| will still be a pointer to a structure
+\verb|hello| that is not yet defined. This definition is of course protected
+only to be seen only by the C compiler so that it does not interfere with the
+C++ instructions \cite{Rudy2006}.
+
+Another important difference of behavior whether the header has to be
+processed by the C or the C++ compiler comes form the instruction 
+\verb|extern ''C''{}|. This is a C++ instruction and as such needs to be
+hidden for the C compiler. This instruction specifies a linking convention:
+how to access memory, integrated type formats, etc. This command does not
+target specifically the C language: it is also used to link Fortran to C++ for
+example \cite{C++}.
+
+In the following, it shall be noted that each method of the \verb|hello| class
+is replaced by a function. To allow the function to call a method of the class
+for a given instance of the class, at least a pointer to this instance shall
+be passed. Constructors are an exception since they only receive this pointer.
+
+The last unusual point of this header is the double definition of all the
+methods. It is so to cast C++ types in C standard types. In our example, the
+methods of the \verb|hello| class uses C++ strings that cannot be understood
+by C. As the functions definitions has to be understood by both C and C++
+compiler, we had to pass only C types as argument of the functions -a
+\verb|char*|. 
+
+Functions written with a \verb|c| prefix will be fully
+written in C. Therefore, they can only make calls to C functions. Functions
+that has not the prefix will have a body in a separate file, written in C++.
+
+The C body of the functions is the file \verb|fhello.c|:
+
+\begin{verbatim}
+#include "fhello.h"
+helloHandle cNewHello(){
+  return(NewHello());
+};
+helloHandle cNewHelloC(char* nme){
+  return(NewHelloC(nme));
+};
+void cDeleteHello(helloHandle h){
+  return(DeleteHello(h));
+};
+void cHelloPrint(helloHandle h){
+  return(HelloPrint(h));
+};
+void cSetName(helloHandle h, char* nme){
+  return(SetName(h,nme));
+};
+const char* cGetName(helloHandle h){
+  return(GetName(h));
+};
+
+\end{verbatim}
+
+It can be compiled with the command \verb|gcc -c fhello.c -o fhello_c.o|. The
+C++ body of the functions is in the file \verb|fhello.cc|:
+
+\begin{verbatim}
+#include "fhello.h"
+extern "C"{
+helloHandle EXPORTCALL NewHello(){
+  return new hello;
+};
+helloHandle EXPORTCALL NewHelloC(char *nme){
+  string str(nme);
+  return new hello(str);
+};
+void EXPORTCALL DeleteHello(helloHandle handle){
+  delete handle;
+};
+void EXPORTCALL HelloPrint(helloHandle handle){
+  handle->HelloPrint();
+};
+void EXPORTCALL SetName(helloHandle handle, char *nme){
+  string str(nme);
+  handle->SetName(str);
+};
+\end{verbatim}
+
+Here again the \verb|extern "C"{}| statement specifies the linking
+convention \cite{C++}. The body of the functions is obviously C++ so to
+cast C++ types and classes into standard C types. In
+this example, there is commands like \verb|string str(nme)| while \verb|nme|
+is a \verb|char*|.
+
+This code can be compiled using the command
+\\\verb|g++ -c fhello.cc -o fhello_cc.o|.
+
+Following this procedure, it shall be noted that on contrary of what is
+sometime said \cite{Cline2006}, it is not necessary to compile the C wrapper
+with the C++ compiler. The final program can be linked using the two separate
+objects created.
+
+\subsection{linking}
+
+The task of integrating those methods in Free Pascal is not over
+yet. Compilation of C++ objects is another compiler dependent task. In this
+tutorial, \verb|gcc| is used as compiler. During compilation of this set of
+compiler, a shared version of the \verb|libgcc| might not be compiled
+\cite{gcc}. Therefore, it might not be possible to find such version to link
+the Free Pascal code with the C++ object. In brief, this task might be
+possible but can be more difficult than the one of linking with pure C written
+objects.
+
+Another solution is to link the C++ and the C objects in advance into a shared
+library. This can be done with the command
+\\\verb|gcc -shared -o libhello.so hello.o fhello_cc.o|.
+Here, it is the \verb|gcc| compiler tools that
+will find and set the correct dependencies of the libraries.
+
+The shared library can be used as before in the Free Pascal Code.
+
+\subsection{Free Pascal wrapping}
+
+The Free Pascal wrapper is a Free Pascal unit defining the functions and
+procedures to be called in a Free Pascal project.
+
+\begin{verbatim}
+unit helloFLAT;
+
+interface
+
+uses
+sysutils;
+
+type
+   helloHandle = type pointer;
+
+function cNewHello:helloHandle; cdecl;
+function cNewHelloC(nme :PChar):helloHandle; cdecl;
+procedure cDeleteHello(handle : helloHandle); cdecl;
+procedure cHelloPrint(handle : helloHandle); cdecl;
+procedure cSetName(handle : helloHandle;nme : PChar); cdecl;
+function cGetName(handle : helloHandle):PChar ; cdecl;
+
+implementation
+
+{$link fhello_c.o}
+{$linklib hello.so}
+{$linklib c}
+{$linklib stdc++}
+
+function cNewHello:helloHandle; cdecl; external;
+function cNewHelloC(nme :PChar):helloHandle; cdecl; external;
+procedure cDeleteHello(handle : helloHandle); cdecl; external;
+procedure cHelloPrint(handle : helloHandle); cdecl; external;
+procedure cSetName(handle : helloHandle;nme : PChar); cdecl; external;
+function cGetName(handle : helloHandle):PChar ; cdecl; external;
+
+end.
+
+\end{verbatim}
+
+It shall be noted that the functions and procedures have to be declared with
+the \verb|cdecl| key word. It ensures compatibility between C and Free Pascal
+declarations of functions and procedures arguments \cite{FPDoc,FPFor}. Only
+the C functions are defined.
+
+Those declarations need also a new type to be defined:
+\verb|helloHandle|. Free Pascal does not really need to know about the true
+nature of this type: it will be linked to the C pointer \cite{Rudy2006}. As
+stated by D. Mantione, with this definition, \verb|helloHandle| is not
+compatible to a pointer, but still is a pointer, which is exactly what we want.
+
+Implementation of the functions and procedures are referred as
+\verb|external|. This means that the Free Pascal compiler knows it has to wait
+to find them: they will be defined only at linking time or later
+\cite{FPDoc,FPFor}.
+
+The \verb|cdecl| instruction guarantees the argument passing protocol to be
+compatible with C style. It should also be noted that to correctly map the
+C style \verb|char*| type, the Free Pascal \verb|PChar| type was
+used. Failing to map correctly the C type can be not detected at compilation
+or linking time, leading the generated binary to crash.
+
+At last, as explained before, two sets of pre-processor instructions are
+defined. The first \verb|{$link fhello_c.o}|,%$
+ link the C definition and the
+Free Pascal definition of the procedures and functions with a \verb|c| prefix
+\cite{FPDoc,FPFor}.
+
+The second set of pre-processor instructions, \verb|{$linklib hello.so}|,%$
+\\\verb|{$linklib c}|,%$
+ \verb|{$linklib stdc++}|,%$
+ pass instructions to the
+linker so that is can link the C functions with the C++ implementations of
+functions and class \cite{FPFor,FPDoc}. It also performs the link to the
+standard \verb|libc| and \verb|libc++| libraries.
+
+\section{Free Pascal program}
+
+An application resulting of this work can be found in the file
+\verb|helloP.pas|:
+
+\begin{verbatim}
+uses
+  helloFLAT;
+
+var
+   h : helloHandle;
+
+begin
+   h:=cNewHelloC('Gilles');
+   cHelloPrint(h);
+   cDeleteHello(h);
+end.
+\end{verbatim}
+
+It uses the \verb|helloFLAT| unit. Thus it uses the newly defined type
+\verb|helloHandle|. It will use it to construct an instance of the
+\verb|hello| class for which the private string structure is immediately
+set. It will use it to print a message and clean the memory before leaving.
+
+\subsection{Conclusion}
+
+This small tutorial will help new comers to Free Pascal to build applications
+that are able to take advantage of the huge libraries available in C and
+C++. This shall help saving time as first not having to write again what was
+already written in a quite optimal manner. Besides, reusing code prevent the
+need of testing it. In fact, the Borland's Kylix project (that is by now, cold
+dead) was build on the TrollTech's QT libraries \cite{Delphi}. Those libraries
+were originally written in C for use in C++ code.
+
+There exists some Free Pascal utilities developed for helping designing
+correct wrappers. This is precisely the goal of the utility \verb|h2pas|
+\cite{FPDoc,FPFor}. It is nonetheless essential to get knowledge of the
+details of the protocol to be able to use it correctly.
+
+This tutorial is not complete. For example, there shall be a way to use the
+C++ class structure into Free Pascal without flattening it. It has been
+reported previously for Delphi7 and Windows \cite{Rudy2006}.
+
+Some work also has to be done to check how exceptions can be handled through
+those mixed code.
+
+\bibliography{CinFreePasca}
+\end{document}
