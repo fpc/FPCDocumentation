@@ -332,6 +332,7 @@ far
 far16
 forward
 index
+local
 name
 near
 nostackframe
@@ -825,7 +826,7 @@ Type & Range & Significant digits & Size \\ \hline
 Real & platform dependant & ??? & 4 or 8 \\
 Single & 1.5E-45 .. 3.4E38 & 7-8 & 4 \\
 Double & 5.0E-324 .. 1.7E308 & 15-16 & 8 \\
-Extended & 1.9E-4951 .. 1.1E4932 & 19-20 & 10\\
+Extended & 1.9E-4932 .. 1.1E4932 & 19-20 & 10\\
 Comp & -2E64+1 .. 2E63-1 & 19-20 & 8  \\
 Currency & -922337203685477.5808 & 922337203685477.5807 & 8 \\
 \end{FPCltable}
@@ -1603,6 +1604,16 @@ In this example, \var{BP} {\em is a pointer to} a \var{Buffer} type; while \var{
 {\em is} a variable of type \var{Buffer}. \var{B} takes 256 bytes memory,
 and \var{BP} only takes 4 bytes of memory (enough to keep an adress in
 memory).
+
+The expression
+\begin{verbatim}
+ BP^
+\end{verbatim}
+Known as the dereferencing of \var{BP}, is of type \var{Buffer}, so
+\begin{verbatim}
+ BP^[23]
+\end{verbatim}
+Denotes the 23-rd character in the string pointed to by \var{BP}.
 \begin{remark} \fpc treats pointers much the same way as C does. This means
 that a pointer to some type can be treated as being an array of this type.
 The pointer then points to the zeroeth element of this array. Thus the
@@ -2197,24 +2208,12 @@ Fields or methods that are declared \var{private} are only accessible
 in the current unit: their scope is limited to the implementation of the
 current unit.\index{Scope}
 
-The prototype declaration of an object is as
-follows:\index{object}\keywordlink{object}
+The prototype declaration of an object is as follows:
+\index{object}\keywordlink{object}
 \input{syntax/typeobj.syn}
 As can be seen, as many \var{private} and \var{public} blocks as needed can be
 declared.\index{private}\index{public}
 
-\index{Method}%
-\var{Method definitions} are normal function or procedure declarations.
-Contrary to TP and Delphi, fields can be declared after methods in the same 
-block, i.e. the following will generate an error when compiling with Delphi
-or Turbo Pascal, but not with FPC:
-\begin{verbatim}
-Type 
-  MyObj = Object
-    Procedure Doit;
-    Field : Longint;
-  end;
-\end{verbatim}
 
 \begin{remark}\index{Packed}
 \fpc also supports the packed object. This is the same as an object, only
@@ -2351,8 +2350,29 @@ in the function header. When declaring methods, a normal identifier must be
 given.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Method declaration
+\subsection{Declaration}
+The declaration of a method is much like a normal function or procedure
+declaration, with some additional specifiers, as can be seen from the
+following diagram, which is part of the object declaration:
+\input{syntax/omethods.syn}
+from the point of view of declarations, \var{Method definitions} are 
+normal function or procedure declarations.
+Contrary to TP and Delphi, fields can be declared after methods in the same 
+block, i.e. the following will generate an error when compiling with Delphi
+or Turbo Pascal, but not with FPC:
+\begin{verbatim}
+Type 
+  MyObj = Object
+    Procedure Doit;
+    Field : Longint;
+  end;
+\end{verbatim}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Method invocation
-\section{Method invocation}
+\subsection{Method invocation}
 Methods are called just as normal procedures are called, only they have an
 object instance identifier prepended to them (see also \seec{Statements}).
 To determine which method is called, it is necessary to know the type of
@@ -2382,8 +2402,11 @@ Type
 As it is visible, both the parent and child objects have a method called
 \var{Doit}. Consider now the following declarations and calls:
 \begin{verbatim}
-Var ParentA,ParentB : PParent;
-    Child           : PChild;
+Var 
+  ParentA,ParentB : PParent;
+  Child           : PChild;
+
+begin
    ParentA := New(PParent,Init);
    ParentB := New(PChild,Init);
    Child := New(PChild,Init);
@@ -2426,8 +2449,11 @@ Type
 As it is visible, both the parent and child objects have a method called
 \var{Doit}. Consider now the following declarations and calls :
 \begin{verbatim}
-Var ParentA,ParentB : PParent;
-    Child           : PChild;
+Var 
+  ParentA,ParentB : PParent;
+  Child           : PChild;
+
+begin
    ParentA := New(PParent,Init);
    ParentB := New(PChild,Init);
    Child := New(PChild,Init);
@@ -2461,11 +2487,20 @@ end;
 In the above example, when \var{TChild.Doit} is called, the first thing it
 does is call \var{TParent.Doit}.  The inherited keyword cannot be used in
 static methods, only on virtual methods.
+
+To be able to do this, the compiler keeps - per object type - a table with
+virtual methods: the VMT (Virtual Method Table). This is simply a table 
+with pointers to each of the virtual methods: each virtual method has it's
+fixed location in this table (an index). The compiler uses this table to 
+look up the actual method that must be used. When a descendent object
+overrides a method, the entry of the parent method is overwritten in the
+VMT. More information about the VMT can be found in \progref.
+
 %
 \subsubsection{Abstract methods}
 \index{Abstract}\index{Methods!Abstract}\index{Methods!Virtual}\keywordlink{abstract}
 An abstract method is a special kind of virtual method. A method can not be
-abstract if it is not virtual (this is not obvious from the syntax diagram).
+abstract if it is not virtual (this can be seen from the syntax diagram).
 An instance of an object that has an abstract method cannot be created directly.
 The reason is obvious: there is no method where the compiler could jump to !
 A method that is declared \var{abstract} does not have an implementation for
@@ -2489,8 +2524,11 @@ Type
 As it is visible, both the parent and child objects have a method called
 \var{Doit}. Consider now the following declarations and calls :
 \begin{verbatim}
-Var ParentA,ParentB : PParent;
-    Child           : PChild;
+Var 
+  ParentA,ParentB : PParent;
+  Child           : PChild;
+
+begin
    ParentA := New(PParent,Init);
    ParentB := New(PChild,Init);
    Child := New(PChild,Init);
@@ -2544,17 +2582,37 @@ of an ordinary \var{record} type.\keywordlink{public}
 \label{ch:Classes}\index{Classes}\index{Types!Class}\keywordlink{class}
 In the Delphi approach to Object Oriented Programming, everything revolves
 around  the concept of 'Classes'.  A class can be seen as a pointer to an
-object, or a pointer to a record.
+object, or a pointer to a record, with methods associated with it.
+
+The difference between objects and classes is mainly that an object
+is allocated on the stack, as an ordinary record would be, and that
+classes are always allocated on the heap. In the following example:
+\begin{verbatim}
+Var
+  A : TSomeObject; // an Object
+  B : TSomeClass;  // a Class
+\end{verbatim}
+The main difference is that the variable \var{A} will take up as much 
+space on the stack as the size of the object (\var{TSomeObject}). The
+variable \var{B}, on the other hand, will always take just the size of
+a pointer on the stack. The actual class data is on the heap.
+
+From this, a second difference follows: a class must always be initialized
+through it's constructor, whereas for an object, this is not necessary.
+Calling the constructor allocates the necessary memory on the heap for the
+class instance data. 
 
 \begin{remark}
 In earlier versions of \fpc it was necessary, in order to use classes,
 to put the \file{objpas} unit in the uses clause of a unit or program.
-{\em This is no longer needed} as of version 0.99.12. As of version 0.99.12
-the \file{system} unit contains the basic  definitions of \var{TObject}
-and  \var{TClass}, as well as some auxiliary methods for using classes.
-The \file{objpas} unit still exists, and contains some redefinitions of
-basic types, so they coincide with Delphi types. The unit will be loaded
-automatically when the \var{-S2} or \var{-Sd} options are specified.
+{\em This is no longer needed} as of version 0.99.12. As of this version,
+the unit will be loaded automatically when the \var{-MObjfpc} or
+\var{-MDelphi}  options are specified, or their corresponding directives are
+used:
+\begin{verbatim}
+{$mode objfpc}
+{$mode delphi}
+\end{verbatim}
 \end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2586,14 +2644,17 @@ these classes. Fields defined in a \var{published} section must be of class type
 Array properties cannot be in a \var{published}
 section.\keywordlink{published}
 \end{description}
+In the syntax diagram, it can be seen that a class lists implemented
+interfaces. This will be discussed in the next chapter.
 
 It is also possible to define class reference types:
 \input{syntax/classref.syn}
 Class reference types are used to create instances of a certain class, which
 is not yet known at compile time, but which is specified at run time. 
 Essentially, a variable of a class reference type contains a pointer to the
-VMT of the speficied class. This can be used to construct an instance of the
-class corresponding to the VMT. The following example shows how it works:
+definition of the speficied class. This can be used to construct an instance 
+of the class corresponding to the definition, or to check inheritance. 
+The following example shows how it works:
 \begin{verbatim}
 Type
   TComponentClass = Class of TComponent;
@@ -2606,21 +2667,62 @@ begin
   // ...
 end;
 \end{verbatim}
+This function can be passed a class reference of any class that descends
+from \var{TComponent}. The following is a valid call:
+\begin{verbatim}
+Var
+  C : TComponent;
+
+begin
+  C:=CreateComponent(TEdit,Form1);
+end;
+\end{verbatim}
+On return of the \var{CreateComponent} function, \var{C} will contain an 
+instance of the class \var{TEdit}. Note that the following call will fail to
+compile:
+\begin{verbatim}
+Var
+  C : TComponent;
+
+begin
+  C:=CreateComponent(TStream,Form1);
+end;
+\end{verbatim}
+because \var{TStream} does not descend from \var{TComponent}, and
+\var{AClass} refers to a \var{TComponent} class. The compiler can
+(and will) check this at compile time, and will produce an error.
+
+References to classes can also be used to check inheritance:
+\begin{verbatim}
+  TMinClass = Class of TMyClass;
+  TMaxClass = Class of TMyClassChild;
+
+Function CheckObjectBetween(Instance : TObject) : boolean;
+
+begin
+  If not (Instance is TMinClass) 
+     or ((Instance is TMaxClass) 
+          and (Instance.ClassType<>TMaxClass)) then
+    Raise Exception.Create(SomeError)
+end;
+\end{verbatim}
+The above example will 
 More about instantiating a class can be found in the next section.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Class instantiation
 \section{Class instantiation}
 \index{Constructor}\keywordlink{constructor}
-Classes must be created using their constructor. Remember that a class is a
-pointer to an object, so when a variable of some class is declared, the
-compiler just allocates a pointer, not the entire object. The constructor of
-a class returns a pointer to an initialized instance of the object.
-So, to initialize an instance of some class, one would do the following :
+Classes must be created using one of their constructors (there can be
+multiple constructors). Remember that a class is a pointer to an object on
+the heap. When a variable of some class is declared, the compiler just 
+allocates a pointer, not the entire object. The constructor of
+a class returns a pointer to an initialized instance of the object on the
+heap. So, to initialize an instance of some class, one would do the following :
 \begin{verbatim}
   ClassVar := ClassType.ConstructorName;
 \end{verbatim}
-The extended syntax of \var{new} and \var{dispose} can be used to
+The extended syntax of \var{new} and \var{dispose} can {\em not} be used to
 instantiate and destroy class instances.
 That construct is reserved for use with objects only.
 Calling the constructor will provoke a call to \var{getmem}, to allocate
@@ -2646,6 +2748,11 @@ an object. To get the size of the class instance data, use the
 % Methods
 \section{Methods}
 \index{Methods}
+\subsection{Declaration}
+Declaration of methods in classes follows the same rules as method
+declarations in objects:
+\input{syntax/cmethods.syn}
+
 \subsection{invocation}
 Method invocation for classes is no different than for objects. The
 following is a valid method invocation:
@@ -2656,13 +2763,14 @@ begin
   ANobject.AMethod;
 \end{verbatim}
 
+
 \subsection{Virtual methods}
 \index{Methods!Virtual}\index{Virtual}
 Classes have virtual methods, just as objects do. There is however a
 difference between the two. For objects, it is sufficient to redeclare the
 same method in a descendent object with the keyword \var{virtual} to
-override it. For classes, the situation is different:
- virtual methods {\em must} be overridden with the \var{override} keyword. Failing to do so,
+override it. For classes, the situation is different: virtual methods 
+{\em must} be overridden with the \var{override} keyword. Failing to do so,
 will start a {\em new} batch of virtual methods, hiding the previous
 one.  The \var{Inherited} keyword will not jump to the inherited method, if
 virtual was used.
@@ -2709,11 +2817,30 @@ Type
 \end{verbatim}
 This new method is no longer virtual.
 
+To be able to do this, the compiler keeps - per class type - a table with
+virtual methods: the VMT (Virtual Method Table). This is simply a table 
+with pointers to each of the virtual methods: each virtual method has it's
+fixed location in this table (an index). The compiler uses this table to 
+look up the actual method that must be used. When a descendent object
+overrides a method, the entry of the parent method is overwritten in the
+VMT. More information about the VMT can be found in \progref.
+
+
 \subsection{Class methods}
 \index{Class}\index{Methods!Class}
-Class methods are methods that do not have an instance, but which follow
-the scoping and inheritance rules of a class. They can be called from inside
-a regular method, but can also be called using a class identifier:
+Class methods are identified by the keyword \var{Class} in front of the
+procedure or function declaration, as in the following example:
+\begin{verbatim}
+  Class Function ClassName : String;
+\end{verbatim}
+Class methods are methods that do not have an instance (i.e. Self does not
+point to a class instance) but which follow the scoping and inheritance 
+rules of a class. They can be used to return information about the current
+class, for instance for registration or use in a class factory. Since no 
+instance is available, no information available in instances can be used.
+
+Class methods can be called from inside a regular method, but can also be called 
+using a class identifier:
 \begin{verbatim}
 Var
   AClass : TClass;
@@ -2735,8 +2862,7 @@ begin
   ...
 
 \end{verbatim}
-Inside a class method, the <var>self</var> identifier points to the
-VMT\index{Self}
+Inside a class method, the <var>self</var> identifier points to the VMT\index{Self}
 table of the class. No fields, properties or regular methods are available
 inside a class method. Accessing a regular property or method will result in
 a compiler error. The reverse is possible: a class method can be called from
@@ -2746,6 +2872,7 @@ Note that class methods can be virtual, and can be overridden.
 
 Class methods cannot be used as read or write specifiers for a
 property.\index{Property}
+
 
 
 \subsection{Message methods}
@@ -2837,7 +2964,7 @@ needed. \var{DefaultHandlerStr} is declared as follows:
 In addition to this mechanism, a string message method accepts a \var{self}
 parameter:
 \begin{verbatim}
-  TMyObject.StrMsgHandler(Data : Pointer; Self : TMyObject);Message 'OnClick';
+  Procedure StrMsgHandler(Data : Pointer; Self : TMyObject);Message 'OnClick';
 \end{verbatim}
 When encountering such a method, the compiler will generate code that loads
 the \var{Self} parameter into the object instance pointer. The result of
@@ -2848,6 +2975,60 @@ method.
 The type of the \var{Self} \index{Self}parameter must be of the same class
 as the class the method is defined in.
 \end{remark}
+
+\subsection{Using inherited}
+In an overridden virtual method, it is often necessary to call the parent
+class' implementation of the virtual method. This can be  done with the
+\var{inherited} keyword. Likewise, the \var{inherited} keyword can be used
+to call any method of the parent class.
+
+The first case is the simplest:
+\begin{verbatim}
+Type
+  TMyClass = Class(TComponent)
+    Constructor Create(AOwner : TComponent); override;
+  end;
+
+Constructor TMyClass.Create(AOwner : TComponent); 
+
+begin
+  Inherited;
+  // Do more things
+end;
+\end{verbatim}
+In the above example, the \var{Inherited} statement will call \var{Create}
+of \var{TComponent}, passing it \var{AOwner} as a parameter: the same
+parameters that were passed to the current method will be passed to the
+parent's method.
+
+The second case is slightly more complicated:
+\begin{verbatim}
+Type
+  TMyClass = Class(TComponent)
+    Constructor Create(AOwner : TComponent); override;
+    Constructor CreateNew(AOwner : TComponent; DoExtra : Boolean);
+  end;
+
+Constructor TMyClass.Create(AOwner : TComponent); 
+
+begin
+  Inherited;
+end;
+
+Constructor TMyClass.CreateNew(AOwner : TComponent; DoExtra); 
+
+begin
+  Inherited Create(AOwner);
+  // Do stuff
+end;
+\end{verbatim}
+The \var{CreateNew} method will first call \var{TComponent.Create} and
+will pass it \var{AOwner} as a parameter. It will not call
+\var{TMyClass.Create}.
+
+Although the examples were given using constructors, the use of
+\var{inherited} is not restricted to constructors, it can be used
+for any method or function or destructor as well.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Properties
@@ -2872,9 +3053,9 @@ A \var{write specifier} \index{Write} is optional: If there is no \var{write spe
 property is read-only. A write specifier is either the name of a field, or
 the name of a method procedure that accepts as a sole argument a variable of
 the same type as the property.
-The section \index{Private}\index{Published} (\var{private}, \var{published}) in which the specified function or
-procedure resides is irrelevant. Usually, however, this will be a protected
-or private method.
+The section \index{Private}\index{Published} (\var{private}, \var{published}) 
+in which the specified function or procedure resides is irrelevant. Usually, 
+however, this will be a protected or private method.
 Example:
 Given the following declaration:
 \begin{verbatim}
@@ -3031,6 +3212,30 @@ AIntList[26] := 1;
 Only one default property per class is allowed, and descendent classes
 cannot redeclare the default property.
 
+The {\em stored specifier} should be either a boolean constant, a boolean
+field of the class, or a parameterless function which returns a boolean
+result. This specifier has no result on the class behaviour. It is an aid
+for the streaming system: the stored specifier is specified in the RTTI
+generated for a class (it can only be streamed if RTTI is generated), 
+and is used to determine whether a property should be streamed or not: 
+it saves space in a stream. It is not possible to specify the 'Stored'
+directive for array properties.
+
+The {\em default specifier} can be specified for ordinal types and sets.
+It serves the same purpose as the {\em stored specifier}: Properties that
+have as value their default value, will not be written to the stream by the
+streaming system. The default value is stored in the RTTI that is generated
+for the class. Note that
+\begin{enumerate}
+\item When the class is instantiated, the default value is not automatically
+applied to the property, it is the responsability of the programmer to do
+this in the constructor of the class.
+\item The value 2147483648 cannot be used as a default value, as it is used
+internally to denote 'nodefault'.
+\item It is not possible to specify a default for array properties.
+\end{enumerate}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interfaces
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3077,6 +3282,21 @@ a method. Modifiers as \var{virtual}, \var{abstract} or \var{dynamic}, and
 hence also \var{override} cannot be present in the definition of a interface
 definition.
 \end{itemize}
+The following are examples of interfaces:
+\begin{verbatim}
+IUnknown = interface ['{00000000-0000-0000-C000-000000000046}']
+  function QueryInterface(const iid : tguid;out obj) : longint;
+  function _AddRef : longint;
+  function _Release : longint;
+end;
+IInterface = IUnknown;
+
+IMyInterface = Interface
+  Function MyFunc : Integer;
+  Function MySecondFunc : Integer;
+end;
+\end{verbatim}
+As can be seen, the GUID identifying the interface is optional.
 
 \section{Interface identification: A GUID}
 An interface can be identified by a GUID. This is a 128-bit number, which is
@@ -3120,20 +3340,8 @@ end.
 Normally, the GUIDs are only used in Windows, when using COM interfaces.
 More on this in the next section.
 
-\section{Interfaces and COM}
-\index{COM}\index{Interfaces!COM}
-When using interfaces on Windows which should be available to the COM
-subsystem, the calling convention should be \var{stdcall} - this is not the
-default \fpc calling convention, so it should be specified explicitly.
-
-COM does not know properties. It only knows methods. So when specifying
-property definitions as part of an interface definition, be aware that the
-properties will only be known in the \fpc compiled program: other Windows
-programs will not be aware of the property definitions. For this reason,
-property definitions must always have interface methods as the read/write
-specifiers.
-
-\section*{Interface implementations}
+\section{Interface implementations}
+\index{Interfaces!Implementations}
 When a class implements an interface, it should implement all methods of the
 interface. If a method of an interface is not implemented, then the compiler
 will give an error. For example:
@@ -3185,6 +3393,19 @@ ype
 This declaration should tell the compiler that the \var{MyFunc} method of
 the \var{IMyInterface} interface is implemented in the \var{MyOtherFunction}
 method of the \var{TMyClass} class.
+
+\section{Interfaces and COM}
+\index{COM}\index{Interfaces!COM}
+When using interfaces on Windows which should be available to the COM
+subsystem, the calling convention should be \var{stdcall} - this is not the
+default \fpc calling convention, so it should be specified explicitly.
+
+COM does not know properties. It only knows methods. So when specifying
+property definitions as part of an interface definition, be aware that the
+properties will only be known in the \fpc compiled program: other Windows
+programs will not be aware of the property definitions. For this reason,
+property definitions must always have interface methods as the read/write
+specifiers.
 
 \section{CORBA and other Interfaces}
 \index{CORBA}\index{COM}\index{Interfaces!CORBA}
@@ -3369,8 +3590,7 @@ square brackets.
 All set groups and set elements must be of the same ordinal type.
 The empty set is denoted by \var{[]}, and it can be assigned to any type of
 set. A set group with a range  \var{[A..Z]} makes all values in the range a
-set element. If the first range specifier has a bigger ordinal value than
-the second the set is empty, e.g., \var{[Z..A]} denotes an empty set.
+set element. 
 The following are valid set constructors:
 \begin{verbatim}
 [today,tomorrow]
@@ -3378,11 +3598,16 @@ The following are valid set constructors:
 [ 2, 3*2, 6*2, 9*2 ]
 ['A'..'Z','a'..'z','0'..'9']
 \end{verbatim}
+\begin{remark}
+If the first range specifier has a bigger ordinal value than
+the second, the resulting set will be empty, e.g., \var{[Z..A]} 
+denotes an empty set. One should be careful when denoting a range.
+\end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Value typecasts
 \section{Value typecasts}
-\index{Typecast}
+\index{Typecast}\index{Typecast!Value}
 Sometimes it is necessary to change the type of an expression, or a part of
 the expression, to be able to be assignment compatible. This is done through
 a value typecast. The syntax diagram for a value typecast is as follows:
@@ -3401,13 +3626,57 @@ must be the same. However, for ordinal types (byte, char, word, boolean,
 enumerateds) this is not so, they can be used interchangeably. 
 That is, the following will work, although the sizes do not match.
 \begin{verbatim}
-Integer('A')
-Char(4875)
-boolean(100)
-Word(@Buffer)
+Integer('A');
+Char(4875);
+boolean(100);
+Word(@Buffer);
 \end{verbatim}
-This is compatible with Delphi or Turbo Pascal behaviour.
+This is compatible w5Bith Delphi or Turbo Pascal behaviour.
 
+Kx%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Variable typecasts
+\section{Variable typecasts}
+\index{Typecast}\index{Typecast!Variable}
+A variable can be considered a single factor in an expression. It can
+therefore be typecast as well. A variable can be typecast to any type,
+provided the type has the same size as the original variable. 
+
+It is a bad idea to typecast integer types to real types and vice versa.
+It's better to rely on type assignment compatibility and using some of the
+standard type changing functions.
+
+Note that variable typecasts can occur on either side of an assignment,
+i.e. the following are both valid typecasts:
+\begin{verbatim}
+Var
+  C : Char;
+  B : Byte;
+
+begin
+  B:=Byte(C);
+  Char(B):=C;
+end;
+\end{verbatim}
+pointer variables can be typecasted to procedural types.
+
+A typecast is an expression of the given type, which means the
+typecast can be followed by a qualifier:
+\begin{verbatim}
+Type 
+  TWordRec = Packed Record
+    L,H : Byte;
+  end;
+
+Var
+  P : Pointer;
+  W : Word;
+  S : String;
+
+begin
+  TWordRec(W).L:=$FF;
+  TWordRec(W).H:=0;
+  S:=TObject(P).ClassName;
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The @ operator
@@ -3590,9 +3859,16 @@ Operator & Action \\ \hline
 \var{>=} & Greater than or equal \\
 \var{in} & Element of \\ \hline
 \end{FPCltable}
-Left and right operands must be of the same type. Only integer
-and real types can be mixed in relational expressions.
+Normally, left and right operands must be of the same type. There are some
+notable exceptions, where the compiler can handle mixed expressions:
+\begin{enumerate}
+\item Integer and real types can be mixed in relational expressions.
+\item If the operator is overloaded, and an overloaded version exists whose
+arguments types match the types in the expression.
+\item Short-, Ansi- and widestring types can be mixed.
+\end{enumerate}
 Comparing strings is done on the basis of their character code representation.
+
 When comparing pointers, the addresses to which they point are compared.
 This also is true for \var{PChar} type pointers. To compare the strings
 the \var{Pchar} point to, the \var{StrComp} function
@@ -3600,6 +3876,68 @@ from the \file{strings} unit must be used.
 The \var{in} returns \var{True} if the left operand (which must have the same
 ordinal type as the set type, and which must be in the range 0..255) is an 
 element of the set which is the right operand, otherwise it returns \var{False}
+
+\subsection{Class operators}
+Class operators are slightly different from the operators above in the sense
+that they can only be used in class expressions which return a class. There
+are only 2 class operators, as can be seen in \seet{classoperators}.
+\begin{FPCltable}{ll}{Class operators}{classoperators}
+Operator & Action \\ \hline
+\var{is} & Checks class type \\
+\var{as} & Conditional typecast \\
+\end{FPCltable}
+An expression containing the \var{is} operator results in a boolean type.
+The \var{is} operator can only be used with a class reference or a class
+instance. The usage of this operator is as follows:
+\begin{verbatim}
+ Object is Class
+\end{verbatim}
+This expression is completely equivalent to
+\begin{verbatim}
+ Object.InheritsFrom(Class)
+\end{verbatim}
+If \var{Object} is \var{Nil}, \var{False} will be returned.
+
+The following are examples:
+\begin{verbatim}
+Var
+  A : TObject;
+  B : TClass;
+
+begin
+  if A is TComponent then ;
+  If A is B then; 
+end;
+\end{verbatim}
+
+The \var{as} operator performs a conditional typecast. It results in an
+expression that has the type of the class:
+\begin{verbatim}
+  Object as Class
+\end{verbatim}
+This is equivalent to the following statements:
+\begin{verbatim}
+  If Object=Nil then
+    Result:=Nil
+  else if Object is Class then
+    Result:=Class(Object)
+  else
+    Raise Exception.Create(SErrInvalidTypeCast);
+\end{verbatim}
+Note that if the object is \var{nil}, the \var{as} operator does not
+generate an exception.
+
+The following are some examples of the use of the \var{as} operator:
+\begin{verbatim}
+Var
+  C : TComponent;
+  O : TObject; 
+
+begin
+  (C as TEdit).Text:='Some text';
+  C:=O as TComponent;
+end;
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Statements
@@ -3660,6 +3998,19 @@ MyPi := 4* Tan(1);
 \end{verbatim}
 \end{remark}
 
+Keeping in mind that the dereferencing of a typed pointer results
+in a variable of the type the pointer points to, the following are
+also valid assignments:
+\begin{verbatim}
+Var
+  L : ^Longint;
+  P : PPChar; 
+
+begin
+  L^:=3;
+  P^^:='A';
+\end{verbatim}
+Note the double dereferencing in the second assignment.
 \subsection{Procedure statements}
 \index{Statements!Procedure}
 Procedure statements are calls to subroutines. There are
@@ -3812,8 +4163,8 @@ Also, before the \var {else} keyword,  no semicolon (\var{;}) is allowed,
 but all statements can be compound statements.
 In nested \var{If.. then .. else} constructs, some ambiguity may araise as
 to which  \var{else} statement pairs with which \var{if} statement. The rule
-is that the \var{else } keyword matches the first \var{if} keyword not
-already matched by an \var{else} keyword.
+is that the \var{else } keyword matches the first \var{if} keyword
+(searching backwards) not already matched by an \var{else} keyword.
 For example:
 \begin{verbatim}
 If exp1 Then
@@ -3843,7 +4194,7 @@ If exp1 Then
 else
    stat2
 \end{verbatim}
-If it is this latter construct is needed, the \var{begin} and \var{end}
+If it is this latter construct which is needed, the \var{begin} and \var{end}
 keywords must be present. When in doubt, it is better to add them.
 
 The following is a valid statement:
@@ -3881,6 +4232,11 @@ Contrary to ANSI pascal specifications, \fpc first initializes
 the counter variable, and only then calculates the upper bound.
 \end{remark}
 
+\begin{remark}
+It is not allowed to change (i.e. assign a value to) the value of a 
+loop variable inside the loop.
+\end{remark}
+
 The following are valid loops:
 \begin{verbatim}
 For Day := Monday to Friday do Work;
@@ -3888,11 +4244,19 @@ For I := 100 downto 1 do
   WriteLn ('Counting down : ',i);
 For I := 1 to 7*dwarfs do KissDwarf(i);
 \end{verbatim}
+The following will generate an error:
+\begin{verbatim}
+For I:=0 to 100 do
+  begin
+  DoSomething;
+  I:=I*2;
+  end;
+\end{verbatim}
+because the loop variable \var{I} cannot be assigned to.
 
-If the statement is a compound statement, then  the \var{Break} and
+If the statement is a compound statement, then the \var{Break} and
 \var{Continue} reserved words can be used to jump to the end or just
 after the end of the \var{For} statement.
-
 
 \subsection{The \var{Repeat..until} statement}
 \index{Statements!Repeat}\index{Statements!Loop}\index{Repeat}
@@ -3918,7 +4282,7 @@ repeat
 until x<10e-3
 \end{verbatim}
 The \var{Break} and \var{Continue} reserved words can be used to jump to
-the end or just after the end of the \var{repeat .. until } statement.
+the end or just after the end of the \var{repeat .. until} statement.
 
 \subsection{The \var{While..do} statement}
 \index{Statements!While}\index{Statements!Loop}\index{While}
@@ -3964,11 +4328,14 @@ checked to see if it is a field or method of the record or object or class.
 If so, then that field is accessed, or that method is called.
 Given the declaration:
 \begin{verbatim}
-Type Passenger = Record
-       Name : String[30];
-       Flight : String[10];
-       end;
-Var TheCustomer : Passenger;
+Type 
+  Passenger = Record
+    Name : String[30];
+    Flight : String[10];
+  end;
+
+Var 
+  TheCustomer : Passenger;
 \end{verbatim}
 The following statements are completely equivalent:
 \begin{verbatim}
@@ -4134,7 +4501,7 @@ must be declared in the formal parameter list of that function or procedure.
 The parameter list is a declaration of identifiers that can be referred to
 only in that procedure or function's block.
 \input{syntax/params.syn}
-Constant parameters and variable parameters can also be \var{untyped}
+Constant parameters, out parameters and variable parameters can also be \var{untyped}
 parameters if they have no type
 identifier.\index{Parameters!Untypes}\index{Parameters!Constant}\index{Parameters!Var}
 
@@ -4708,6 +5075,16 @@ On platforms where a return from interrupt does not exist, the normal exit
 code of routines will be done instead. For more information on the generated
 code, consult the \progref.
 
+\subsection{local}
+\label{se:local}\index{local}\index{Mofidiers!local}
+The local directive allows the compiler to optimize the function: a local
+function cannot be in the interface section of a unit: it is always in the
+implementation section of the unit. From this it follows that the function
+cannot be exported from a library. 
+
+On Linux, the local directive results in some optimizations. On Windows, it
+has no effect. It was introduced for Kylix compatibility.
+
 \subsection{nostackframe}
 \label{se:nostackframe}\index{nostackframe}\index{Modifiers!nostackframe}
 The \var{nostackframe} modifier can be used to tell the compiler it should
@@ -4761,6 +5138,12 @@ restores all registers.
 
 More information about this modifier can be found in the \progref, in the
 section on the calling mechanism and the chapter on linking.
+
+\subsection{saveregisters}
+\index{saveregisters}\index{Modifiers!saveregisters}
+This modifier tells the compiler that all CPU registers should be 
+saved prior to calling this routine. Which CPU registers are saved, depends
+entirely on the CPU.
 
 \subsection{softfloat}
 \index{softfloat}\index{Modifiers!softfloat}
@@ -5302,7 +5685,8 @@ of the given record type.
 
 \subsection{Class scope}
 \index{Scope!Class}
-A component identifier is valid in the following places:
+A component identifier (one of the items in the class' component list) 
+is valid in the following places:
 \begin{enumerate}
 \item From the point of declaration to the end of the class definition.
 \item In all descendent types of this class, unless it is in the private
@@ -5406,18 +5790,18 @@ procedure, to force memory consistence.
 The \var{raise} statement is as follows:
 \input{syntax/raise.syn}
 This statement will raise an exception. If it is specified, the exception
-instance must be an initialized instance of a class, which is the raise
-type. The address exception is optional. If itis not specified, the compiler
-will provide the address by itself.
-If the exception instance is omitted, then the current exception is
-re-raised. This construct can only be used in an exception handling
-block (see further).
+instance must be an initialized instance of any class, which is the raise
+type. The exception address is optional. If it is not specified, the compiler
+will provide the address by itself. If the exception instance is omitted, 
+then the current exception is re-raised. This construct can only be used 
+in an exception handling block (see further).
 
 \begin{remark} Control {\em never} returns after an exception block. The
 control is transferred to the first \var{try...finally} or
 \var{try...except} statement that is encountered when unwinding the stack.
 If no such statement is found, the \fpc Run-Time Library will generate a
-run-time error 217 (see also \sees{exceptclasses}).
+run-time error 217 (see also \sees{exceptclasses}). The exception address
+will be printed by the default exception handling routines.
 \end{remark}
 
 As an example: The following division checks whether the denominator is
@@ -5433,6 +5817,15 @@ end;
 \end{verbatim}
 The class \var{Exception} is defined in the \file{Sysutils} unit of the rtl.
 (\sees{exceptclasses})
+
+\begin{remark}
+Although the \var{Exception} class is used as the base class for exceptions
+throughout the code, this is just an unwritten agreement: the class can
+be of any type, and need not be a descendent of the \var{Exception} class.
+
+Of course, most code depends on the unwritten agreement that an exception
+class descends from \var{Exception}.
+\end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The try...except statement
