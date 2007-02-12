@@ -214,10 +214,47 @@ If the code is compiled without \var{-gh} switch, then this directive has no
 effect. Note that this considerably slows down the code.
 
 \subsection{\var{\protect\$CODEALIGN} : Set the code alignment}
-This switch sets the code alignment. 
-It takes an argument which is the alignment in bytes.
+This switch sets the code alignment. It takes an argument which is the alignment in bytes.
 \begin{verbatim}
-{$CODEALIGNMENT 8}
+{$CODEALIGN 8}
+\end{verbatim}
+There are some more arguments which can be specified, to tune the behaviour
+even more. The general form is
+\begin{verbatim}
+{$CODEALIGN PARAM=VALUE}
+\end{verbatim}
+Where \var{PARAM} is the parameter to tune, and \var{VAR} value is a
+numerical value specifying an alignment. \var{PARAM} can be one of the
+following strings:
+\begin{description}
+\item[PROC] Set the alignment for procedure entry points.
+\item[JUMP] Set the alignment for jump destination locations.
+\item[LOOP] Set alignment for loops (for, while, repeat).
+\item[CONSTMIN] Minimum alignment for constants (both typed and untyped).
+\item[CONSTMAX] Maximum alignment for constants (both typed and untyped).
+\item[VARMIN] Minimum alignment for static and global variables.
+\item[VARMAX] Maximum alignment for static and global variables.
+\item[LOCALMIN] Minimum alignment for local variables.
+\item[LOCALMAX] Maximum alignment for local variables.
+\item[RECORDMIN] Minimum alignment for record fields.
+\item[RECORDMAX] Maximum alignment for record fields.
+\end{description}
+By default the size of a data structure determines the alignment:
+\begin{itemize}
+\item A \var{SmallInt} will be aligned at 2 bytes.
+\item A \var{LongInt} will be aligned at 4 bytes.
+\item A \var{Int64} will be aligned at 8 bytes. 
+\end{itemize}
+With the above switches the minimum required alignment and a maximum 
+used alignment can be specified. The maximum allowed alignment is only
+meaningful if it is smaller than the natural size. i.e. setting the 
+maximum alignment (e.g. VARMAX) to 4, the alignment is forced to
+be at most 4 bytes: The \var{Int64} will then also be aligned at 
+4 bytes. The \var{SmallInt} will still be aligned at 2 bytes.
+
+These values can also be specified on the command-line as
+\begin{verbatim}
+-OaPARAM=VALUE
 \end{verbatim}
 
 \subsection{\var{\protect\$COPERATORS} : Allow C like operators}
