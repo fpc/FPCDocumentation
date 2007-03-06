@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    dbugmsg
+  ====================================================================
+-->
+
+<module name="dbugmsg">
+<short>Auxiliary unit for the dbugintf unit.</short>
+<descr>
+<file>dbugmsg</file> is an auxialiary unit used in the <link
+id="#fcl.dbugintf">dbugintf</link> unit. It defines the message protocol
+used between the debug unit and the debug server.
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short><var>TStream</var> implementation</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="DebugServerID">
+<short>System unique name</short>
+<descr>
+<var>DebugServerID</var> is a string which is used when creating the message
+protocol, it is used when identifying the server in the (platform dependent)
+client-server protocol.
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="lctStop">
+<short>Stop message</short>
+<descr>
+<var>lctStop</var> is sent by the client to a server when it disconnects.
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="lctInformation">
+<short>Informational message</short>
+<descr>
+<var>lctInformation</var> is the identification of informational messages.
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="lctWarning">
+<short>Warning message</short>
+<descr>
+<var>lctWarning</var> is the identification of warning messages.
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="lctError">
+<short>Error message</short>
+<descr>
+<var>lctError</var> is the identification of error messages.
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="lctIdentify">
+<short>Identification message</short>
+<descr>
+<var>lctIdentify</var> is sent by the client to a server when it first connects.
+It's the first message, and contains the name of client application.
+</descr>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TDebugMessage">
+<short>Structure describing a message</short>
+<descr>
+<var>TDebugMessage</var> is a record that describes the message passed from
+the client to the server. It should not be passed directly in shared memory,
+as the string containing the message is allocated on the heap. Instead, the
+<link id="WriteDebugMessageToStream"/>  and <link id="ReadDebugMessageFromStream"/>
+can be used to read or write the message from/to a stream.
+</descr>
+<seealso>
+<link id="ReadDebugMessageFromStream"/>
+<link id="WriteDebugMessageToStream"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TDebugMessage.MsgType">
+<short>Constant, identifying the type of message</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TDebugMessage.MsgTimeStamp">
+<short>Time when the message was generated</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TDebugMessage.Msg">
+<short>String containing the message text.</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="ReadDebugMessageFromStream">
+<short>Read a message from stream</short>
+<descr>
+<p>
+<var>ReadDebugMessageFromStream</var> reads a <link id="TDebugMessage"/>
+record (<var>Msg</var>) from the stream <var>AStream</var>.
+</p>
+<p>
+The record is not read in a byte-ordering safe way, i.e. it cannot be
+exchanged between little- and big-endian systems.
+</p>
+</descr>
+<errors>
+If the stream contains not enough bytes or is malformed, then an exception
+may be raised.
+</errors>
+<seealso>
+<link id="TDebugMessage"/>
+<link id="WriteDebugMessageToStream"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ReadDebugMessageFromStream.AStream">
+<short>Stream from which record is read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ReadDebugMessageFromStream.Msg">
+<short>Record to be read from stream</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="WriteDebugMessageToStream">
+<short>Write a message to stream</short>
+<descr>
+<p>
+<var>WriteDebugMessageFromStream</var> writes a <link id="TDebugMessage"/>
+record (<var>Msg</var>) to the stream <var>AStream</var>.
+</p>
+<p>
+The record is not written in a byte-ordering safe way, i.e. it cannot be
+exchanged between little- and big-endian systems.
+</p>
+</descr>
+<errors>
+A stream write error may occur if the stream cannot be written to.
+</errors>
+<seealso>
+<link id="TDebugMessage"/>
+<link id="ReadDebugMessageToStream"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="WriteDebugMessageToStream.AStream">
+<short>Stream to write message to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="WriteDebugMessageToStream.Msg">
+<short>Message record to be written</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="DebugMessageName">
+<short>Return the name of the debug message</short>
+<descr>
+<var>DebugMessageName</var> returns the name of the message type. It can be
+used to examine the <var>MsgType</var> field of a <link id="TDebugMessage"/>
+record, and if <var>msgType</var> contains a known type, it returns a
+string describing this type.
+</descr>
+<errors>
+If <var>MsgType</var> contains an unknown type, <var>'Unknown'</var> is
+returned.
+</errors>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="DebugMessageName.Result">
+<short>String describing the message type</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="DebugMessageName.msgType">
+<short>Message type</short>
+</element>
+
+</module> <!-- dbugmsg -->
+
+</package>
+</fpdoc-descriptions>
