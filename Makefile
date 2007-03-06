@@ -1898,7 +1898,7 @@ MAKESKEL+= $(MAKESKELOPTS)
 FCLMAKESKEL=$(MAKESKEL) --package=fcl
 RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-results
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream \
-	 base64 gettext ezcgi
+	 base64 gettext ezcgi pooledmm
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEINC)/iostream.pp"
@@ -1913,6 +1913,7 @@ FCLBUFSTREAM= --descr=bufstream.xml --input="$(FCLBASEINC)/bufstream.pp"
 FCLBASE64= --descr=base64.xml --input="$(FCLBASEINC)/base64.pp"
 FCLGETTEXT= --descr=gettext.xml --input="$(FCLBASEINC)/gettext.pp"
 FCLEZCGI= --descr=ezcgi.xml --input="$(FCLBASEINC)/ezcgi.pp"
+FCLEZCGI= --descr=pooledmm.xml --input="$(FCLBASEINC)/pooledmm.pp"
 FCLOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
 FCLOPTS+= $(FCLGETTEXT) $(FCLEZCGI)

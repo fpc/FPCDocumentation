@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    pooledmm
+  ====================================================================
+-->
+
+<module name="pooledmm">
+<short>Pooled memory manager implementation</short>
+<descr>
+<file>pooledmm</file> is a memory manager class which uses pools of blocks.
+Since it is a higher-level implementation of a memory manager which works on
+top of the FPC memory manager, It also offers more debugging and analysis
+tools. It is used mainly in the LCL and Lazarus IDE.
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>Lists implementation</short>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="PPooledMemManagerItem">
+<short>Pointer to <link id="#fcl.pooledmm.TPooledMemManagerItem">TPooledMemManagerItem</link></short>
+<descr>
+<var>PPooledMemManagerItem</var> is a pointer type, pointing to a
+<link id="TPooledMemManagerItem"/> item, used in a linked list.
+</descr>
+<seealso>
+<link id="TPooledMemManagerItem"/>
+<link id="TPooledMemManager"/>
+</seealso>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TPooledMemManagerItem">
+<short>Item used in a linked list</short>
+<descr>
+<var>TPooledMemManagerItem</var> is used internally by the <link id="TPooledMemManager"/>
+class to maintain the free list block. It simply points to the next free block.
+</descr>
+<seealso>
+<link id="PPooledMemManagerItem"/>
+<link id="TPooledMemManager"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TPooledMemManagerItem.Next">
+<short>Pointer to the next memory block</short>
+<descr>
+<var>Next</var> points to the next free memory block in the pool.
+</descr>
+<seealso>
+<link id="PPooledMemManagerItem"/>
+<link id="TPooledMemManagerItem"/>
+<link id="TPooledMemManager"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.pooledmm.TPooledMemManager
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TPooledMemManager">
+<short>Pooled memory manager</short>
+<descr>
+<var>TPooledMemManager</var> is a class which maintains a linked list of
+blocks, represented by the <link id="TPooledMemManagerItem"/> record.
+It should not be used directly, but should be descended from and the
+descendent should implement the actual memory manager.
+</descr>
+<seealso>
+<link id="TPooledMemManagerItem"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPooledMemManager.MinimumFreeCount">
+<short>Minimum count of free items in the list</short>
+<descr>
+<p>
+<var>MinimumFreeCount</var> is the minimum number of free items in the
+linked list. When disposing an item in the list, the number of items is
+checked, and only if the required number of free items is present, the 
+item is actually freed.
+</p>
+<p>
+The default value is 100000
+</p>
+</descr>
+
+<seealso>
+<link id="TPooledMemManager.MaximumFreeCountRatio"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPooledMemManager.MaximumFreeCountRatio">
+<short>Maximum ratio of free items over total items</short>
+<descr>
+<p>
+<var>MaximumFreeCountRatio</var> is the maximum ratio (divided by 8) of free
+elements over the total amount of elements: When disposing an item in the
+list, if the number of free items is higher than this ratio, the item is
+freed.
+</p>
+<p>
+The default value is 8.
+</p>
+</descr>
+<seealso>
+<link id="TPooledMemManager.MinimumFreeCount"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPooledMemManager.Count">
+<short>Number of items in the list</short>
+<descr>
+<var>Count</var> is the total number of items allocated from the list.
+</descr>
+<seealso>
+<link id="TPooledMemManager.FreeCount"/>
+<link id="TPooledMemManager.AllocatedCount"/>
+<link id="TPooledMemManager.FreedCount"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPooledMemManager.FreeCount">
+<short>Number of free items in the list</short>
+<descr>
+<var>FreeCount</var> is the current total number of free items in the list.
+</descr>
+<seealso>
+<link id="TPooledMemManager.Count"/>
+<link id="TPooledMemManager.AllocatedCount"/>
+<link id="TPooledMemManager.FreedCount"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPooledMemManager.AllocatedCount">
+<short>Total number of allocated items in the list</short>
+<descr>
+<var>AllocatedCount</var> is the total number of newly allocated items on
+the list.
+</descr>
+<seealso>
+<link id="TPooledMemManager.Count"/>
+<link id="TPooledMemManager.FreeCount"/>
+<link id="TPooledMemManager.FreedCount"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPooledMemManager.FreedCount">
+<short>Total number of freed items in the list.</short>
+<descr>
+<var>FreedCount</var> is the total number of elements actually freed in the list.
+</descr>
+<seealso>
+<link id="TPooledMemManager.Count"/>
+<link id="TPooledMemManager.FreeCount"/>
+<link id="TPooledMemManager.AllocatedCount"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TPooledMemManager.Clear">
+<short>Clears the list</short>
+<descr>
+<var>Clear</var> clears the list, it disposes all items in the list.
+</descr>
+<seealso>
+<link id="TPooledMemManager.FreedCount"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TPooledMemManager.Create">
+<short>Creates a new instance of the <var>TPooledMemManager</var> class</short>
+<descr>
+<var>Create</var> initializes all necessary properties and then calls the
+inherited create.
+</descr>
+<seealso>
+<link id="TPooledMemManager.Destroy"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TPooledMemManager.Destroy">
+<short>Removes an instance of <var>TPooledMemManager</var> class from memory</short>
+<descr>
+<p>
+<var>Destroy</var> calls <link id="TPooledMemManager.clear">Clear</link> and then calls the inherited destroy.
+</p>
+<p>
+<var>Destroy</var> should never be called directly. Instead <var>Free</var>
+should be used, or <var>FreeAndNil</var>
+</p>
+</descr>
+<seealso>
+<link id="TPooledMemManager.Create"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TEnumItemsMethod">
+<short>Callback for <link id="TNonFreePooledMemManager.EnumerateItems">EnumerateItems</link>.</short>
+<descr>
+<var>TEnumItemsMethod</var> is a prototype for the callback used in the
+<link id="TNonFreePooledMemManager.EnumerateItems"/> call. The parameter
+<var>Item</var> will be set to each of the pointers in the item list of
+<link id="TNonFreePooledMemManager"/>.
+</descr>
+<seealso>
+<link id="TNonFreePooledMemManager.EnumerateItems"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEnumItemsMethod.Item">
+<short>Pointer from the list in <link id="TNonFreePooledMemManager"/>.</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.pooledmm.TNonFreePooledMemManager
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TNonFreePooledMemManager">
+<short>Memory manager for fixed memory blocks which does not free any memory</short>
+<descr>
+<p>
+<var>TNonFreePooledMemManager</var> keeps a list of fixed-size memory blocks
+in memory. Each block has the same size, making it suitable for storing a
+lot of records of the same type. It does not free the items stored in it,
+except when the list is cleared as a whole.
+</p>
+<p>
+It allocates memory for the blocks in a exponential way, i.e. each time a
+new block of memory must be allocated, it's size is the double of the last
+block. The first block will contain 8 items.
+</p>
+</descr>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="TNonFreePooledMemManager.ClearOnCreate">
+<short>Determines whether newly allocated memory should be cleared</short>
+<descr>
+<var>ClearOnCreate</var> is a public variable, it determines whether a newly
+allocated block of memory will be filled with zeroes (if set to
+<var>True</var>) or not (if set to <var>False</var>).
+</descr>
+<seealso>
+<link id="TNonFreePooledMemManager.NewItem"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TNonFreePooledMemManager.ItemSize">
+<short>Size of an item in the list</short>
+<descr>
+<var>ItemSize</var> is the size of a single block in the list. It's a fixed
+size determined when the list is created.
+</descr>
+<seealso>
+<link id="TNonFreePooledMemManager.Create"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TNonFreePooledMemManager.Clear">
+<short>Clears the memory</short>
+<descr>
+<var>Clear</var> clears all blocks from memory, freeing the allocated memory
+blocks. None of the pointers returned by <link
+id="TNonFreePooledMemManager.NewItem">NewItem</link> is valid after a call
+to <var>Clear</var>
+</descr>
+<seealso>
+<link id="TNonFreePooledMemManager.NewItem">NewItem</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TNonFreePooledMemManager.Create">
+<short>Creates a new instance of <var>TNonFreePooledMemManager</var></short>
+<descr>
+<var>Create</var> creates a new instance of <var>TNonFreePooledMemManager</var> and sets the 
+item size to <var>TheItemSize</var>. 
+</descr>
+<errors>
+If not enough memory is available, an exception may be raised.
+</errors>
+<seealso>
+<link id="TNonFreePooledMemManager.ItemSize"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TNonFreePooledMemManager.Create.TheItemSize">
+<short>Size of the items in the list</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TNonFreePooledMemManager.Destroy">
+<short>Removes the <var>TNonFreePooledMemManager</var> instance from memory</short>
+<descr>
+<p>
+<var>Destroy</var> clears the list, clears the internal structures, and then calls 
+the inherited <var>Destroy</var>.
+</p>
+<p>
+<var>Destroy</var> should never be called directly. Instead <var>Free</var>
+should be used, or <var>FreeAndNil</var>
+</p>
+</descr>
+<seealso>
+<link id="TNonFreePooledMemManager.Create"/>
+<link id="TNonFreePooledMemManager.Clear"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TNonFreePooledMemManager.NewItem">
+<short>Return a pointer to a new memory block</short>
+<descr>
+<p>
+<var>NewItem</var> returns a pointer to an unused memory block of size <link
+id="TNonFreePooledMemManager.ItemSize">ItemSize</link>. It will allocate new
+memory on the heap if necessary.
+</p>
+<p>
+Note that there is no way to mark the memory block as free, except by
+clearing the whole list.
+</p>
+</descr>
+<errors>
+If no more memory is available, an exception may be raised.
+</errors>
+<seealso>
+<link id="TNonFreePooledMemManager.Clear"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TNonFreePooledMemManager.NewItem.Result">
+<short>Pointer to a new memory block</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TNonFreePooledMemManager.EnumerateItems">
+<short>Enumerate all items in the list</short>
+<descr>
+<var>EnumerateItems</var> will enumerate over all items in the list,
+passing the items to <var>Method</var>. This can be used to execute
+certain operations on all items in the list. (for example, simply 
+list them)
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TNonFreePooledMemManager.EnumerateItems.Method">
+<short>Callback to call</short>
+</element>
+
+</module> <!-- pooledmm -->
+
+</package>
+</fpdoc-descriptions>
