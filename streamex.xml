@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    streamex
+  ====================================================================
+-->
+
+<module name="streamex">
+<short>Stream extensions</short>
+<descr>
+<file>streamex</file> implements some extensions to be used together
+with streams from the classes unit.
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short><var>TStream</var>, <var>Treader</var> and <var>TWriter</var> classes</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.streamex.TBidirBinaryObjectReader
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TBidirBinaryObjectReader">
+<short>Binary component stream reader with BiDi support</short>
+<descr>
+<var>TBidirBinaryObjectReader</var> is a class descendent from <link
+id="#rtl.classes.TBinaryObjectReader">TBinaryObjectReader</link>, which
+implements the necessary support for BiDi data: the position in the stream
+(not available in the standard streaming) is emulated.
+</descr>
+<seealso>
+<link id="TBidirBinaryObjectWriter"/>
+<link id="TDelphiReader"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBidirBinaryObjectReader.Position">
+<short>Position in the stream</short>
+<descr>
+<var>Position</var> exposes the position of the stream in the reader for use
+in the <link id="TDelphiReader"/> class.
+</descr>
+<seealso>
+<link id="TDelphiReader"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.streamex.TBidirBinaryObjectWriter
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TBidirBinaryObjectWriter">
+<short>Binary component stream writer with BiDi support</short>
+<descr>
+<var>TBidirBinaryObjectReader</var> is a class descendent from <link
+id="#rtl.classes.TBinaryObjectWriter">TBinaryObjectWriter</link>, which
+implements the necessary support for BiDi data.
+</descr>
+<seealso>
+<link id="TBidirBinaryObjectWriter"/>
+<link id="TDelphiWriter"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBidirBinaryObjectWriter.Position">
+<short>Position in the stream</short>
+<descr>
+<var>Position</var> exposes the position of the stream in the writer for use
+in the <link id="TDelphiWriter"/> class.
+</descr>
+<seealso>
+<link id="TDelphiWriter"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.streamex.TDelphiReader
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TDelphiReader">
+<short>Stream reader with BiDi Support</short>
+<descr>
+<var>TDelphiReader</var> is a descendent of <var>TReader</var> which has
+support for BiDi Streaming. It overrides the stream reading methods for
+strings, and makes sure the stream can be positioned in the case of strings.
+For this purpose, it makes use of the <link id="TBidirBinaryObjectReader"/>
+driver class.
+</descr>
+<seealso>
+<link id="TDelphiWriter"/>
+<link id="TBidirBinaryObjectReader"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDelphiReader.GetDriver">
+<short>Return the driver class as a <link
+id="#fcl.streamex.TBidirBinaryObjectReader">TBidirBinaryObjectReader</link>
+class </short>
+<descr>
+<var>GetDriver</var> simply returns the used driver and typecasts it as
+<link id="TBidirBinaryObjectReader">TBidirBinaryObjectReader</link> class.
+</descr>
+<seealso>
+<link id="TBidirBinaryObjectReader"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDelphiReader.GetDriver.Result">
+<short>The driver instance.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDelphiReader.ReadStr">
+<short>Overrides the standard <var>ReadStr</var> method</short>
+<descr>
+<var>ReadStr</var> makes sure the <link id="TBidirBinaryObjectReader"/>
+methods are used, to store additional information about the stream position
+when reading the strings.
+</descr>
+<seealso>
+<link id="TBidirBinaryObjectReader"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDelphiReader.ReadStr.Result">
+<short>String read from stream</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TDelphiReader.Read">
+<short>Read data from stream</short>
+<descr>
+<var>Read</var> reads raw data from the stream. It reads <var>Count</var>
+bytes from the stream and places them in <var>Buf</var>. It forces the use
+of the <link id="TBidirBinaryObjectReader"/> class when reading.
+</descr>
+<seealso>
+<link id="TBidirBinaryObjectReader"/> 
+<link id="TDelphiReader.Position"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDelphiReader.Read.Buf">
+<short>Buffer to contain the data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDelphiReader.Read.Count">
+<short>Number of bytes to read from the stream</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDelphiReader.Position">
+<short>Position in the stream</short>
+<descr>
+Position in the stream.
+</descr>
+<seealso>
+<link id="TDelphiReader.Read"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.streamex.TDelphiWriter
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TDelphiWriter">
+<short>Stream writer with BiDi Support</short>
+<descr>
+<var>TDelphiWriter</var> is a descendent of <var>TWriter</var> which has
+support for BiDi Streaming. It overrides the stream writing methods for
+strings, and makes sure the stream can be positioned in the case of strings.
+For this purpose, it makes use of the <link id="TBidirBinaryObjectWriter"/>
+driver class.
+</descr>
+<seealso>
+<link id="TDelphiReader"/>
+<link id="TBidirBinaryObjectWriter"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDelphiWriter.GetDriver">
+<short>Return the driver class as a <link
+id="#fcl.streamex.TBidirBinaryObjectWriter">TBidirBinaryObjectWriter</link> class </short>
+<descr>
+<var>GetDriver</var> simply returns the used driver and typecasts it as
+<link id="TBidirBinaryObjectWriter">TBidirBinaryObjectWriter</link> class.
+</descr>
+<seealso>
+<link id="TBidirBinaryObjectWriter"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDelphiWriter.GetDriver.Result">
+<short>The driver instance</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TDelphiWriter.FlushBuffer">
+<short>Flushes the stream buffer</short>
+<descr>
+<var>FlushBuffer</var> flushes the internal buffer of the writer. It simply
+calls the <var>FlushBuffer</var> method of the driver class.
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TDelphiWriter.Write">
+<short>Write raw data to the stream</short>
+<descr>
+<var>Write</var> writes <var>Count</var> bytes from <var>Buf</var> to the
+buffer, updating the position as needed.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDelphiWriter.Write.Buf">
+<short>Buffer containing data to write</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDelphiWriter.Write.Count">
+<short>Number of bytes to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TDelphiWriter.WriteStr">
+<short>Write a string to the stream</short>
+<descr>
+<var>WriteStr</var> writes a string to the stream, forcing the use of the
+<link id="TBidirBinaryObjectWriter"/> class methods, which update the
+position of the stream. 
+</descr>
+<seealso>
+<link id="TBidirBinaryObjectWriter"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDelphiWriter.WriteStr.Value">
+<short>String to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TDelphiWriter.WriteValue">
+<short>Write value type</short>
+<descr>
+<var>WriteValue</var> overrides the same method in <var>TWriter</var> to
+force the use of the <link id="TBidirBinaryObjectWriter"/> methods, which
+update the position of the stream.
+</descr>
+<seealso>
+<link id="TBidirBinaryObjectWriter"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDelphiWriter.WriteValue.Value">
+<short>Value to write to stream</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDelphiWriter.Position">
+<short>Position in the stream</short>
+<descr>
+<var>Position</var> exposes the position in the stream as exposed by the 
+<link id="TBidirBinaryObjectWriter"/> instance used when streaming.
+</descr>
+<seealso>
+<link id="TBidirBinaryObjectWriter"/>
+</seealso>
+</element>
+
+</module> <!-- streamex -->
+
+</package>
+</fpdoc-descriptions>
