@@ -1898,7 +1898,7 @@ MAKESKEL+= $(MAKESKELOPTS)
 FCLMAKESKEL=$(MAKESKEL) --package=fcl
 RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-results
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream \
-	 base64 gettext
+	 base64 gettext ezcgi
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEINC)/iostream.pp"
@@ -1912,9 +1912,10 @@ FCLIDEA= --descr=idea.xml --input="$(FCLBASEINC)/idea.pp"
 FCLBUFSTREAM= --descr=bufstream.xml --input="$(FCLBASEINC)/bufstream.pp"
 FCLBASE64= --descr=base64.xml --input="$(FCLBASEINC)/base64.pp"
 FCLGETTEXT= --descr=gettext.xml --input="$(FCLBASEINC)/gettext.pp"
+FCLEZCGI= --descr=ezcgi.xml --input="$(FCLBASEINC)/ezcgi.pp"
 FCLOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
-FCLOPTS+= $(FCLGETTEXT)
+FCLOPTS+= $(FCLGETTEXT) $(FCLEZCGI)
 RTLOPTS=$(FPDOCOPTS) --hide-protected --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifdef CURRENTXMLONLY
 RTLXML=crt.xml

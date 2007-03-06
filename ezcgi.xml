@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    ezcgi
+  ====================================================================
+-->
+
+<module name="ezcgi">
+<short>Easy CGI unit</short>
+<descr>
+<p>
+<file>ezcgi</file>, written by Michael Hess, provides a single class
+which offers simple access to the CGI environment which a CGI program
+operates under. It supports both GET and POST methods. It's intended
+for simple CGI programs which do not need full-blown CGI support.
+File uploads are not supported by this component.
+</p>
+<p>
+To use the unit, a descendent of the <var>TEZCGI</var> class should be
+created and the <link id="TEZCGI.DoPost">DoPost</link> or <link
+id="TEZCGI.DoGet">DoGet</link> methods should be overidden.
+</p>
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="classes">
+<short>Stringlist and stream support</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="strings">
+<short>Null-terminated string support</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="sysutils">
+<short>Exception support and string formatting routines</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="hexTable">
+<short>Integer to hex code conversion table</short>
+<descr>
+String constant used to convert a number to a hexadecimal code
+or back.
+</descr>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.ezcgi.ECGIException
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="ECGIException">
+<short>Exception raised by <link id="#fcl.ezcgi.TEZcgi">TEZcgi</link></short>
+<seealso>
+<link id="TEZcgi"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.ezcgi.TEZcgi
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TEZcgi">
+<short>Easy CGI class</short>
+<descr>
+<p>
+<var>TEZcgi</var> implements all functionality to analyze the CGI
+environment and query the variables present in it. It's main use is the
+exposed variables.
+</p>
+<p>
+Programs wishing to use this class should make a descendent class of this
+class and override the <link id="TEZcgi.DoPost">DoPost</link> or <link
+id="TEZcgi.DoGet">DoGet</link> methods. To run the program, an instance
+of this class must be created, and it's <link id="TEZcgi.Run">Run</link>
+method should be invoked. This will analyze the environment and call the
+<var>DoPost</var> or <var>DoGet</var> method, depending on what HTTP method
+was used to invoke the program.
+</p>
+</descr>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TEZcgi.Create">
+<short>Creates a new instance of the <var>TEZCGI</var> component</short>
+<descr>
+<var>Create</var> initializes the CGI program's environment: it reads the
+environment variables passed to the CGI program and stores them in the
+<link id="TZECGI.Variables">Variable</link> property.
+</descr>
+<seealso>
+<link id="TZECGI.Variables">Variables</link>
+<link id="TZECGI.Names">Names</link>
+<link id="TZECGI.Values">Values</link>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TEZcgi.Destroy">
+<short>Removes the <var>TEZCGI</var> component from memory</short>
+<descr>
+<var>Destroy</var> removes all variables from memory and then calls the
+inherited destroy, removing the <var>TEZCGI</var> instance from memory.
+</descr>
+<seealso>
+<link id="TEZcgi.Create">Create</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TEZcgi.Run">
+<short>Run the CGI application.</short>
+<descr>
+<p>
+<var>Run</var> analyses the variables passed to the application, processes
+the request variables (it stores them in the <link id="TZECGI.Variables">Variables</link>
+property) and calls the <link id="TEZCGI.DoPost">DoPost</link> or <link
+id="TEZCGI.DoGet">DoGet</link> methods, depending on the method passed to
+the web server.
+</p>
+<p>
+After creating the instance of <var>TEZCGI</var>, the <var>Run</var> method
+is the only method that should be called when using this component.
+</p>
+</descr>
+<seealso>
+<link id="TZECGI.Variables">Variables</link>
+<link id="TEZCGI.DoPost">DoPost</link>
+<link id="TEZCGI.DoGet">DoGet</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TEZcgi.WriteContent">
+<short>Writes the content type to standard output</short>
+<descr>
+<var>WriteContent</var> writes the content type <var>cType</var> to standard
+output, followed by an empty line. After this method was called, no more
+HTTP headers may be written to standard output. Any HTTP headers should be written
+before <var>WriteContent</var> is called. It should be called from the 
+<link id="TEZCGI.DoPost">DoPost</link> or <link id="TEZCGI.DoGet">DoGet</link>
+methods.
+</descr>
+<seealso>
+<link id="TEZCGI.DoPost">DoPost</link>
+<link id="TEZCGI.DoGet">DoGet</link>
+<link id="TEZcgi.PutLine">PutLine</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEZcgi.WriteContent.ctype">
+<short>Content type</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TEZcgi.PutLine">
+<short>Send a line of output to the web-client</short>
+<descr>
+<var>PutLine</var> writes a line of text (<var>sOut</var>) to the web client (currently, to
+standard output). It should be called only after <link id="TEZcgi.WriteContent">WriteContent</link> was called
+with a content type of <var>text</var>. The sent text is not processed in
+any way, i.e. no HTML entities or so are inserted instead of special HTML
+characters. This should be done by the user.
+</descr>
+<errors>
+No check is performed whether the content type is right.
+</errors>
+<seealso>
+<link id="TEZcgi.WriteContent">WriteContent</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEZcgi.PutLine.sOut">
+<short>Text to be sent to the client.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TEZcgi.GetValue">
+<short>Return the value of a request variable.</short>
+<descr>
+<var>GetValue</var> returns the value of the variable named <var>Index</var>,
+and returns <var>DefaultValue</var> if it is empty or does not exist.
+</descr>
+<seealso>
+<link id="TEZCGI.Values">Values</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TEZcgi.GetValue.Result">
+<short>Value of variable.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEZcgi.GetValue.Index">
+<short>Name of variable.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEZcgi.GetValue.defaultValue">
+<short>Value to return in case variable is empty.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TEZcgi.DoPost">
+<short>Method to handle <var>POST</var> requests</short>
+<descr>
+<var>DoPost</var> is called by the <link id="TEZcgi.Run">Run</link> method
+the <var>POST</var> method was used to invoke the CGI application. It should 
+be overridden in descendents of <var>TEZcgi</var> to actually handle the
+request.
+</descr>
+<seealso>
+<link id="TEZcgi.Run">Run</link>
+<link id="TEZcgi.DoGet">DoGet</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TEZcgi.DoGet">
+<short>Method to handle <var>GET</var> requests</short>
+<descr>
+<var>DoGet</var> is called by the <link id="TEZcgi.Run">Run</link> method
+the <var>GET</var> method was used to invoke the CGI application. It should
+be overridden in descendents of <var>TEZcgi</var> to actually handle the
+request.
+</descr>
+<seealso>
+<link id="TEZcgi.Run">Run</link>
+<link id="TEZcgi.DoPost">DoPost</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEZcgi.Values">
+<short>Variables passed to the CGI script</short>
+<descr>
+<p>
+<var>Values</var> is a name-based array of variables that were passed to the
+script by the web server or the HTTP request. The <var>Index</var> variable
+is the name of the variable whose value should be retrieved. The following
+standard values are available:
+</p>
+<dl>
+<dt></dt><dd></dd>
+<dt>AUTH_TYPE</dt><dd>Authorization type</dd>
+<dt>CONTENT_LENGTH</dt><dd>Content length</dd>
+<dt>CONTENT_TYPE</dt><dd>Content type</dd>
+<dt>GATEWAY_INTERFACE</dt><dd>Used gateway interface</dd>
+<dt>PATH_INFO</dt><dd>Requested URL</dd>
+<dt>PATH_TRANSLATED</dt><dd>Transformed URL</dd>
+<dt>QUERY_STRING</dt><dd>Client query string</dd>
+<dt>REMOTE_ADDR</dt><dd>Address of remote client</dd>
+<dt>REMOTE_HOST</dt><dd>DNS name of remote client</dd>
+<dt>REMOTE_IDENT</dt><dd>Remote identity.</dd>
+<dt>REMOTE_USER</dt><dd>Remote user</dd>
+<dt>REQUEST_METHOD</dt><dd>Request methods (POST or GET)</dd>
+<dt>SCRIPT_NAME</dt><dd>Script name</dd>
+<dt>SERVER_NAME</dt><dd>Server host name</dd>
+<dt>SERVER_PORT</dt><dd>Server port</dd>
+<dt>SERVER_PROTOCOL</dt><dd>Server protocol</dd>
+<dt>SERVER_SOFTWARE</dt><dd>Web server software </dd>
+<dt>HTTP_ACCEPT</dt><dd>Accepted responses</dd>
+<dt>HTTP_ACCEPT_CHARSET</dt><dd>Accepted character sets</dd>
+<dt>HTTP_ACCEPT_ENCODING</dt><dd>Accepted encodings</dd>
+<dt>HTTP_IF_MODIFIED_SINCE</dt><dd>Proxy information</dd>
+<dt>HTTP_REFERER</dt><dd>Referring page</dd>
+<dt>HTTP_USER_AGENT</dt><dd>Client software name</dd>
+</dl>
+<p>
+Other than the standard list, any variables that were passed by the web-client
+request, are also available. Note that the variables are case insensitive.
+</p>
+</descr>
+<seealso>
+<link id="TEZCGI.Variables"/>
+<link id="TEZCGI.Names"/>
+<link id="TEZCGI.GetValue"/>
+<link id="TEZcgi.VariableCount"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEZcgi.Values.Index">
+<short>Name of variable to retrieve</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEZcgi.Names">
+<short>Indexed array with available variable names.</short>
+<descr>
+<var>Names</var> provides indexed access to the available variable names.
+The <var>Index</var> may run from 0 to <link
+id="TEZCGI.VariableCount">VariableCount</link>. Any other value will result
+in an exception being raised.
+</descr>
+<seealso>
+<link id="TEZcgi.Variables"/>
+<link id="TEZcgi.Values"/>
+<link id="TEZcgi.GetValue"/>
+<link id="TEZcgi.VariableCount"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEZcgi.Names.Index">
+<short>Index of the name to retrieve.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEZcgi.Variables">
+<short>Indexed array with variables as name=value pairs.</short>
+<descr>
+<var>Variables</var> provides indexed access to the available variable
+names and values. The variables are returned as <var>Name=Value</var> pairs.
+The <var>Index</var> may run from 0 to <link id="TEZCGI.VariableCount">VariableCount</link>. 
+Any other value will result in an exception being raised.
+</descr>
+<seealso>
+<link id="TEZcgi.Names"/>
+<link id="TEZcgi.Values"/>
+<link id="TEZcgi.GetValue"/>
+<link id="TEZcgi.VariableCount"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEZcgi.Variables.Index">
+<short>Index of variable pair</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEZcgi.VariableCount">
+<short>Number of available variables.</short>
+<descr>
+<var>TEZcgi.VariableCount</var> returns the number of available CGI
+variables. This includes both the standard CGI environment variables
+and the request variables. The actual names and values can be retrieved with the
+<link id="TEZcgi.Names">Names</link> and <link
+id="TEZcgi.Variables">Variables</link> properties.
+</descr>
+<seealso>
+<link id="TEZcgi.Names">Names</link>
+<link id="TEZcgi.Variables">Variables</link>
+<link id="TEZcgi.Values"/>
+<link id="TEZcgi.GetValue"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEZcgi.Name">
+<short>Name of the server administrator</short>
+<descr>
+<var>Name</var> is used when displaying an error message to the user. This
+should set prior to calling the <link id="TEZcgi.Run"/> method.
+</descr>
+<seealso>
+<link id="TEZcgi.Run"/>
+<link id="TEZcgi.Email"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEZcgi.Email">
+<short>Email of the server administrator</short>
+<descr>
+<var>Email</var> is used when displaying an error message to the user. 
+This should set prior to calling the <link id="TEZcgi.Run"/> method.
+</descr>
+<seealso>
+<link id="TEZcgi.Run"/>
+<link id="TEZcgi.Name"/>
+</seealso>
+</element>
+
+</module> <!-- ezcgi -->
+
+</package>
+</fpdoc-descriptions>
