@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    inicol
+  ====================================================================
+-->
+
+<module name="inicol">
+<short>Collection which can write itself to inifile.</short>
+<descr>
+<file>inicol</file> contains an implementation of <var>TCollection</var>
+and <var>TCollectionItem</var> descendents which cooperate to read and
+write the collection from and to a <file>.ini</file> file. It uses the
+<link id="#fcl.inifiles.TCustomIniFile">TCustomIniFile</link> class for 
+this.
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="SysUtils">
+<short>Exception and string formatting</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>Collections</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Inifiles">
+<short>Ini file support</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.inicol.TIniCollectionItem
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TIniCollectionItem">
+<short>Collection item with support for loading/saving from/to ini file</short>
+<descr>
+<p>
+<var>TIniCollectionItem</var> is a <link id="#rtl.classes.tcollectionitem"/>
+descendent which has some extra methods for saving/loading the item to or
+from an <file>.ini</file> file.
+</p>
+<p>
+To use this class, a descendent should be made, and the <link
+id="TIniCollectionItem.SaveToIni">SaveToIni</link> and <link
+id="TIniCollectionItem.LoadFromIni">LoadFromIni</link> methods should be
+overridden. They should implement the actual loading and saving. The loading
+and saving is always initiated by the methods in <link
+id="TIniCollection"/>, <link id="TIniCollection.LoadFromIni"/> and 
+<link id="TIniCollection.SaveToIni"/> respectively.
+</p>
+</descr>
+<seealso>
+<link id="TIniCollection"/>
+<link id="TIniCollectionItem.SaveToIni"/>
+<link id="TIniCollectionItem.LoadFromIni"/>
+<link id="TIniCollection.LoadFromIni"/>
+<link id="TIniCollection.SaveToIni"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniCollectionItem.SaveToIni">
+<short>Method called when the item must be saved</short>
+<descr>
+<var>SaveToIni</var> is called by <link id="TIniCollection.SaveToIni"/> when
+it saves this item. Descendent classes should override this method to
+save the data they need to save. All write methods of the
+<var>TCustomIniFile</var>  instance passed in <var>Ini</var> can be used, as
+long as the writing happens in the section passed in <var>Section</var>.
+</descr>
+<errors>
+No checking is done to see whether the values are actually written to the
+correct section.
+</errors>
+<seealso>
+<link id="TIniCollection.SaveToIni"/>
+<link id="TIniCollectionItem.LoadFromIni">LoadFromIni</link>
+<link id="TIniCollectionItem.SaveToFile">SaveToFile</link>
+<link id="TIniCollectionItem.LoadFromFile">LoadFromFile</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollectionItem.SaveToIni.Ini">
+<short><var>TCustomIniFile</var> instance to which the item should be saved</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollectionItem.SaveToIni.Section">
+<short>Section under which data should be saved.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniCollectionItem.LoadFromIni">
+<short>Method called when the item must be loaded</short>
+<descr>
+<var>LoadFromIni</var> is called by <link id="TIniCollection.LoadFromIni"/> when
+it saves this item. Descendent classes should override this method to
+load the data they need to load. All read methods of the
+<var>TCustomIniFile</var>  instance passed in <var>Ini</var> can be used, as
+long as the reading happens in the section passed in <var>Section</var>.
+</descr>
+<errors>
+No checking is done to see whether the values are actually read from the
+correct section.
+</errors>
+<seealso>
+<link id="TIniCollection.LoadFromIni"/>
+<link id="TIniCollectionItem.SaveToIni">SaveToIni</link>
+<link id="TIniCollectionItem.LoadFromFile">LoadFromFile</link>
+<link id="TIniCollectionItem.SaveToFile">SaveToFile</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollectionItem.LoadFromIni.Ini">
+<short><var>TCustomIniFile</var> instance from which the item should be loaded</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollectionItem.LoadFromIni.Section">
+<short>Section from which data should be loaded.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniCollectionItem.SaveToFile">
+<short>Save item to a file</short>
+<descr>
+<var>SaveToFile</var> creates an instance of <var>TIniFile</var> with
+the indicated <var>FileName</var> calls <link id="TIniCollectionItem.SaveToIni">SaveToIni</link> to save the
+item to the indicated file in .ini format under the section
+<var>Section</var>
+</descr>
+<errors>
+An exception can occur if the file is not writeable.
+</errors>
+<seealso>
+<link id="TIniCollectionItem.SaveToIni">SaveToIni</link>
+<link id="TIniCollectionItem.LoadFromFile">LoadFromFile</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollectionItem.SaveToFile.FileName">
+<short>Name of file to which the item should be saved.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollectionItem.SaveToFile.Section">
+<short>Section under which the item should be saved.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniCollectionItem.LoadFromFile">
+<short>Load item from a file</short>
+<descr>
+<var>LoadFromFile</var> creates an instance of <var>TMemIniFile</var> and
+calls <link id="TIniCollectionItem.LoadFromIni">LoadFromIni</link> to load the
+item from the indicated file in .ini format from the section
+<var>Section</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TIniCollectionItem.SaveToFile">SaveToFile</link>
+<link id="TIniCollectionItem.LoadFromIni">LoadFromIni</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollectionItem.LoadFromFile.FileName">
+<short>Filename from which to load item</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollectionItem.LoadFromFile.Section">
+<short>Section from which to load</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIniCollectionItem.SectionName">
+<short>Default section name</short>
+<descr>
+<var>SectionName</var> is the section name under which the item will be
+saved or from which it should be read. The read/write functions should be
+overridden in descendents to determine a unique section name within the .ini
+file.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.inicol.TIniCollection
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TIniCollection">
+<short></short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniCollection.Load">
+<short></short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniCollection.Save">
+<short></short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniCollection.SaveToIni">
+<short></short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollection.SaveToIni.Ini">
+<short></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollection.SaveToIni.Section">
+<short></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniCollection.SaveToFile">
+<short></short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollection.SaveToFile.AFileName">
+<short></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollection.SaveToFile.Section">
+<short></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniCollection.LoadFromIni">
+<short></short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollection.LoadFromIni.Ini">
+<short></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollection.LoadFromIni.Section">
+<short></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniCollection.LoadFromFile">
+<short></short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollection.LoadFromFile.AFileName">
+<short></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniCollection.LoadFromFile.Section">
+<short></short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIniCollection.Prefix">
+<short></short>
+<descr>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIniCollection.SectionPrefix">
+<short></short>
+<descr>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIniCollection.FileName">
+<short></short>
+<descr>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIniCollection.GlobalSection">
+<short></short>
+<descr>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.inicol.EIniCol
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="EIniCol">
+<short></short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="KeyCount">
+<short></short>
+<descr>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SGlobal">
+<short></short>
+<descr>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+</module> <!-- inicol -->
+
+</package>
+</fpdoc-descriptions>
