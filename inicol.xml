@@ -197,6 +197,8 @@ overridden in descendents to determine a unique section name within the .ini
 file.
 </descr>
 <seealso>
+<link id="TIniCollectionItem.SaveToFile">SaveToFile</link>
+<link id="TIniCollectionItem.LoadFromIni">LoadFromIni</link>
 </seealso>
 </element>
 
@@ -208,154 +210,289 @@ file.
 
 <!-- object Visibility: default -->
 <element name="TIniCollection">
-<short></short>
+<short>Collection which can write itself to an .ini file</short>
 <descr>
+<p>
+<var>TIniCollection</var> is a <link
+id="#rtl.classes.tcollection">collection</link> descendent which has the
+capability to write itself to an <file>.ini</file> file. It introduces some
+load and save mechanisms, which can be used to write all items in the
+collection to disk. The items should be descendents of the type <link
+id="TIniCollectionItem"/>.
+</p>
+<p>
+All methods work using a <var>TCustomInifile</var> class, making it possible
+to save to alternate file formats, or even databases.
+</p>
+<p>
+An instance of <var>TIniCollection</var> should never be used directly.
+Instead, a descendent should be used, which sets the <var>FPrefix</var> and
+<var>FSectionPrefix</var> protected variables.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TIniCollection.LoadFromFile"/>
+<link id="TIniCollection.LoadFromIni"/>
+<link id="TIniCollection.SaveToIni"/>
+<link id="TIniCollection.SaveToFile"/>
 </seealso>
 </element>
 
 <!-- procedure Visibility: public -->
 <element name="TIniCollection.Load">
-<short></short>
+<short>Loads the collection from the default filename.</short>
 <descr>
+<var>Load</var> loads the collection from the file as specified in the <link
+id="TIniCollection.FileName">FileName</link> property. It calls the <link
+id="TIniCollection.LoadFromFile">LoadFromFile</link> method to do this.
 </descr>
 <errors>
+If the collection was not loaded or saved to file before this call, an
+<var>EIniCol</var> exception will be raised.
 </errors>
 <seealso>
+<link id="TIniCollection.LoadFromFile"/>
+<link id="TIniCollection.LoadFromIni"/>
+<link id="TIniCollection.Save"/>
+<link id="TIniCollection.FileName">FileName</link>
 </seealso>
 </element>
 
 <!-- procedure Visibility: public -->
 <element name="TIniCollection.Save">
-<short></short>
+<short>Save the collection to the default filename.</short>
 <descr>
+<var>Save</var> writes the collection to the file as specified in the <link
+id="TIniCollection.FileName">FileName</link> property, using <link
+id="TIniCollection.GlobalSection">GlobalSection</link> as the section. 
+It calls the <link id="TIniCollection.SaveToFile">SaveToFile</link> 
+method to do this.
 </descr>
 <errors>
+If the collection was not loaded or saved to file before this call, an
+<var>EIniCol</var> exception will be raised.
 </errors>
 <seealso>
+<link id="TIniCollection.SaveToFile"/>
+<link id="TIniCollection.SaveToIni"/>
+<link id="TIniCollection.Load"/>
+<link id="TIniCollection.FileName">FileName</link>
 </seealso>
 </element>
 
 <!-- procedure Visibility: public -->
 <element name="TIniCollection.SaveToIni">
-<short></short>
+<short>Save the collection to a <var>TCustomIniFile</var> descendent</short>
 <descr>
+<p>
+<var>SaveToIni</var> does the actual writing. It writes the number of
+elements in the global section (as specified by the <var>Section</var> argument), as
+well as the section name for each item in the list. The item names are
+written using the <link id="TIniCollection.Prefix">Prefix</link> property
+for the key. After this it calls the <link
+id="TIniCollectionItem.SaveToIni">SaveToIni</link> method of all
+<link id="TIniCollectionItem"/> instances.
+</p>
+<p>
+This means that the global section of the .ini file will look something like
+this:
+</p>
+<pre>
+[globalsection]
+Count=3
+Prefix1=SectionPrefixFirstItemName
+Prefix2=SectionPrefixSecondItemName
+Prefix3=SectionPrefixThirdItemName
+</pre>
+<p>
+This construct allows to re-use an ini file for multiple collections.
+</p>
+<p>
+After this method is called, the <link
+id="TIniCollection.GlobalSection">GlobalSection</link> property contains the
+value of <var>Section</var>, it will be used in the 
+<link id="TIniCollectionItem.Save">Save</link> method.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TIniCollectionItem.SaveToIni"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TIniCollection.SaveToIni.Ini">
-<short></short>
+<short>Inifile class to use when writing data. </short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TIniCollection.SaveToIni.Section">
-<short></short>
+<short>Section to which to write the global data</short>
 </element>
 
 <!-- procedure Visibility: public -->
 <element name="TIniCollection.SaveToFile">
-<short></short>
+<short>Save collection to a file in .ini file format</short>
 <descr>
+<var>SaveToFile</var> will create a <var>TMemIniFile</var> instance
+with the <var>AFileName</var> argument as a filename. This instance is
+passed on to the <link id="TIniCollection.SaveToIni">SaveToIni</link>
+method, together with the <var>Section</var> argument, to do the actual
+saving.
 </descr>
 <errors>
+An exception may be raised if the path in <var>AFileName</var> does not exist.
 </errors>
 <seealso>
+<link id="TIniCollection.SaveToIni"/>
+<link id="TIniCollection.LoadFromFile"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TIniCollection.SaveToFile.AFileName">
-<short></short>
+<short>File to save collection to.</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TIniCollection.SaveToFile.Section">
-<short></short>
+<short>Section name for global section.</short>
 </element>
 
 <!-- procedure Visibility: public -->
 <element name="TIniCollection.LoadFromIni">
-<short></short>
+<short>Load collection from a file in .ini file format.</short>
 <descr>
+<p>
+<var>LoadFromIni</var> will load the collection from the <var>Ini</var>
+instance. It first clears the collection, and reads the number of items
+from the global section with the name as passed through the <var>Section</var>
+argument. After this, an item is created and added to the collection, and
+its data is read by calling the <link id="TIniCollectionItem.LoadFromIni"/>
+method, passing the appropriate section name as found in the global section.
+</p>
+<p>
+The description of the global section can be found in the <link
+id="TIniCollection.SaveToIni"/> method description.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TIniCollection.LoadFromFile"/>
+<link id="TIniCollectionItem.LoadFromIni"/>
+<link id="TIniCollection.SaveToIni"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TIniCollection.LoadFromIni.Ini">
-<short></short>
+<short>Ini object to load data from.</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TIniCollection.LoadFromIni.Section">
-<short></short>
+<short>Name of the global section.</short>
 </element>
 
 <!-- procedure Visibility: public -->
 <element name="TIniCollection.LoadFromFile">
-<short></short>
+<short>Load collection from file.</short>
 <descr>
+<var>LoadFromFile</var> creates a <var>TMemIniFile</var> instance using
+<var>AFileName</var> as the filename. It calls
+<link id="TIniCollection.LoadFromIni">LoadFromIni</link> using this instance
+and <var>Section</var> as the parameters.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TIniCollection.LoadFromIni"/>
+<link id="TIniCollection.Load"/>
+<link id="TIniCollection.SaveToIni"/>
+<link id="TIniCollection.SaveToFile"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TIniCollection.LoadFromFile.AFileName">
-<short></short>
+<short>Filename to load collection from</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TIniCollection.LoadFromFile.Section">
-<short></short>
+<short>Section to use as global section</short>
 </element>
 
 <!-- property Visibility: public -->
 <element name="TIniCollection.Prefix">
-<short></short>
+<short>Prefix used in global section</short>
 <descr>
+<p>
+<var>Prefix</var> is used when writing the section names of the items in
+the collection to the global section, or when reading the names from the
+global section. If the prefix is set to <var>Item</var> then the global
+section might look something like this:
+</p>
+<pre>
+[MyCollection]
+Count=2
+Item1=FirstItem
+Item2=SecondItem
+</pre>
+<p>
+A descendent of <var>TIniCollection</var> should set the value of this
+property, it cannot be empty.
+</p>
 </descr>
 <seealso>
+<link id="TIniCollection.SectionPrefix"/>
+<link id="TIniCollection.GlobalSection"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public -->
 <element name="TIniCollection.SectionPrefix">
-<short></short>
+<short>Prefix string for section names</short>
 <descr>
+<var>SectionPrefix</var> is a string that is prepended to the section name
+as returned by the <link id="TIniCollectionItem.SectionName"/> property to
+return the exact section name. It can be empty.
 </descr>
 <seealso>
+<link id="TIniCollection.Section"/>
+<link id="TIniCollection.GlobalSection"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public -->
 <element name="TIniCollection.FileName">
-<short></short>
+<short>Filename of the collection</short>
 <descr>
+<var>FileName</var> is the filename as used in the last
+<link id="TIniCollection.LoadFromFile">LoadFromFile</link> or <link
+id="TIniCollection.SaveToFile">SaveToFile</link> operation.
+It is used in the <link id="TIniCollection.Load">Load</link> or
+<link id="TIniCollection.Save">Save</link> calls.
 </descr>
 <seealso>
+<link id="TIniCollection.Save">Save</link>
+<link id="TIniCollection.LoadFromFile">LoadFromFile</link>
+<link id="TIniCollection.SaveToFile">SaveToFile</link>
+<link id="TIniCollection.Load">Load</link>
 </seealso>
 </element>
 
 <!-- property Visibility: public -->
 <element name="TIniCollection.GlobalSection">
-<short></short>
+<short>Name of the global section</short>
 <descr>
+<var>GlobalSection</var> contains the value of the <var>Section</var>
+argument in the <link id="TIniCollection.LoadFromIni">LoadFromIni</link>
+or <link id="TIniCollection.SaveToIni">SaveToIni</link> calls. It's used in
+the <link id="TIniCollection.Load">Load</link> or
+<link id="TIniCollection.Save">Save</link> calls.
 </descr>
 <seealso>
+<link id="TIniCollection.Save">Save</link>
+<link id="TIniCollection.LoadFromFile">LoadFromFile</link>
+<link id="TIniCollection.SaveToFile">SaveToFile</link>
+<link id="TIniCollection.Load">Load</link>
 </seealso>
 </element>
 
@@ -367,8 +504,10 @@ file.
 
 <!-- object Visibility: default -->
 <element name="EIniCol">
-<short></short>
+<short>Exception used for error reporting.</short>
 <descr>
+<var>EIniCol</var> is used to report error conditions in the load and save 
+methods of <link id="TIniCollection"/>.
 </descr>
 <errors>
 </errors>
@@ -378,20 +517,20 @@ file.
 
 <!-- constant Visibility: default -->
 <element name="KeyCount">
-<short></short>
+<short>Name used for the count item</short>
 <descr>
+<var>KeyCount</var> is used as a key name when reading or writing the number
+of items in the collection from the global section.
 </descr>
-<seealso>
-</seealso>
 </element>
 
 <!-- constant Visibility: default -->
 <element name="SGlobal">
-<short></short>
+<short>Default global section name</short>
 <descr>
+<var>SGlobal</var> is used as the default name of the global section when
+reading or writing the collection.
 </descr>
-<seealso>
-</seealso>
 </element>
 
 </module> <!-- inicol -->
