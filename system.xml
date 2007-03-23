@@ -5509,12 +5509,28 @@ passed to the program by the OS. It is not available on all systems.
 <element name="PtrInt">
 <short>Signed integer type with same size as Pointer.</short>
 <descr>
-<var>PtrInt</var> is an integer type which has always the same size as a
-pointer. When using integers which will be cast to pointers and vice versa,
-use this type, never the regular integer type.
+<p><var>Ptrint</var> is a signed integer type which has always the same size as a
+pointer. Ptrint is considered harmfull and should almost never be used in actual
+code, because pointers are normally unsigned. For example, consider the following
+code:
+</p>
+<code>
+getmem(p,2048);                 {Assume the address of p becomes $7ffffff0.}
+q:=pointer(ptrint(p)+1024));    {Overflow error.}
+writeln(q>p);                   {Incorrect answer.}
+</code>
+<p>
+Ptrint might have a valid use when two pointers are substracted from each other if
+it is unknown which pointer has the largest address. However, even in this case
+ptrint causes trouble in case the distance is larger than high(ptrint) and must be
+used with great care.
+</p><p>
+The introduction of the <var>ptrint</var> type was a mistake. Please use
+<link id="ptruint"/> instead.
+</p>
 </descr>
 <seealso>
-<link id="PtrUInt"/>
+<link id="ptruInt"/>
 </seealso>
 </element>
 
@@ -5526,9 +5542,6 @@ use this type, never the regular integer type.
 pointer. When using integers which will be cast to pointers and vice versa,
 use this type, never the regular Cardinal type.
 </descr>
-<seealso>
-<link id="PtrInt"/>
-</seealso>
 </element>
 
 <!-- alias type Visibility: default -->
