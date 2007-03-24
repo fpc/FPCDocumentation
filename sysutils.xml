@@ -1594,16 +1594,20 @@ On error, -1 is returned (always on Unixes).
 <short>Set the date of a file.</short>
 <descr>
 <p>
-<var>FileSetDate</var> sets the file date of the file with handle <var>Handle</var>
-to <var>Age</var>, where <var>Age</var> is a DOS date-and-time stamp value.
+<var>FileSetDate</var> sets the file date of the open file with handle <var>Handle</var>
+or to <var>Age</var>, where <var>Age</var> is a DOS date-and-time stamp value.
 </p>
 <p>
-The function returns zero if successfull. (not on unixes, where it is not
-implemented)
+Alternatively, the filename may be specified with the <var>FileName</var> argument.
+This variant of the call is mandatory on unices, since there is no OS support for 
+setting a file timestamp based on a handle. (the handle may not be a real file at all).
+</p>
+<p>
+The function returns zero if successfull. 
 </p>
 </descr>
 <errors>
-On Unix, -1 is always returned, since this is impossible to implement.
+On Unix, the handle variant always returns -1, since this is impossible to implement.
 On Windows and DOS, a negative error code is returned.
 </errors>
 <seealso>

@@ -1995,25 +1995,33 @@ None.
 <short>Return value of a command-line argument.</short>
 <descr>
 <p>
-<var>Paramstr</var> returns the <var>L</var>-th command-line argument. <var>L</var> must
-be between <var>0</var> and <var>Paramcount</var>, these values included.
-The zeroth argument is the path and file name with which the program was
-started.
+<var>Paramstr</var> returns the <var>L</var>-th command-line argument. 
+<var>L</var> must be between <var>0</var> and <var>Paramcount</var>, 
+these values included. The zeroth argument is the path and file name 
+with which the program was started.
 </p>
 <p>
 The command-line parameters will be truncated to a length of 255,
 even though the operating system may support bigger command-lines.
-The <var>Objpas</var> unit (used in <var>objfpc</var> or <var>delphi</var> mode) define versions
-of <var>Paramstr</var> which return the full-length command-line arguments.
+The <var>Objpas</var> unit (used in <var>objfpc</var> or <var>delphi</var> mode)
+defines versions of <var>Paramstr</var> which return the full-length command-line 
+arguments, using ansistrings.
 </p>
 <p>
-In the interrest of portability, the paramstr function behaves the same on all
-operating systems: like the original paramstr function in Turbo Pascal.
-This means even on Unix, paramstr(0) returns the full path to the program
-executable.
-
-When the complete Unix command-line must be accessed, the <var>argv</var> pointer
-should be used to retrieve the real values of the command-line parameters.
+In the interest of portability, the <var>ParamStr</var> function tries to behave 
+the same on all operating systems: like the original <var>ParamStr</var> function 
+in Turbo Pascal. This means even on Unix, paramstr(0) returns the full 
+path to the program executable. A notable exception is Mac OS X, where
+the return value depends on how the application was started. It may be that 
+just the name of the application is returned (in case of a command-line
+launch)
+</p>
+<p>
+In general, it's a bad idea to rely on the location of the binary. Often,
+this goes against best OS practices. Configuration data should (or can) not
+be stored next to the binary, but on designated locations. What locations
+these are, is very much operating system dependent. Therefore, 
+<var>ParamStr(0)</var> should be used with care.
 </p>
 <p>
 For an example, see <link id="Paramcount"/>.
