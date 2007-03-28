@@ -86,9 +86,9 @@ onetex : tex
 	$(MAKETEX) $(TEXOBJECTS)
 
 clean : 
-	rm -f *.o *.s *.rst $(OBJECTS)
-	rm -f $(TEXOBJECTS)
-	rm -f *.ow *.sw *.exe *.dll *.log *.tmp
+	-rm -f *.o *.s *.rst $(OBJECTS)
+	-rm -f $(TEXOBJECTS)
+	-rm -f *.ow *.sw *.exe *.dll *.log *.tmp
  
 $(OBJECTS): %: %.pp
 	$(FPC) $(PPOPTS) $*

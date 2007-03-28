@@ -77,8 +77,8 @@ onetex : tex
 	$(MAKETEX) $(TEXOBJECTS)
 
 clean : 
-	rm -f *.o *.s $(OBJECTS) $(TEXOBJECTS) mysortc.ppu myobject.ppu mysortc.tex myobject.tex test.dat
-	rm -f *.ow *.sw *.exe *.dll *.ppw *.log *.tmp 
+	-rm -f *.o *.s $(OBJECTS) $(TEXOBJECTS) mysortc.ppu myobject.ppu mysortc.tex myobject.tex test.dat
+	-rm -f *.ow *.sw *.exe *.dll *.ppw *.log *.tmp 
  
 $(OBJECTS): %: %.pp
 	$(FPC) $(PPOPTS) $*

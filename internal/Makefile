@@ -76,10 +76,10 @@ arch-ps.zip: comparch.ps
 	zip arch-ps comparch.ps
 
 clean : 
-	rm -f $(PDFOBJECTS) $(PNGOBJECTS) $(EPSOBJECTS) *.aux *.idx *.toc *.lof *.log *.out comparch.pdf comparch.ps comparch.dvi
+	-rm -f $(PDFOBJECTS) $(PNGOBJECTS) $(EPSOBJECTS) *.aux *.idx *.toc *.lof *.log *.out comparch.pdf comparch.ps comparch.dvi
 	
 distclean: clean
-	rm -f arch-dvi.zip arch-pdf.zip arch-ps.zip     
+	-rm -f arch-dvi.zip arch-pdf.zip arch-ps.zip     
  
 $(PDFOBJECTS): %.pdf: %.fig
 	$(FIG2DEV) pdf $*.fig $*.pdf 

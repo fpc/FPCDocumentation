@@ -64,7 +64,7 @@ onetex : tex
 	$(MAKETEX) $(TEXOBJECTS)
 
 clean : 
-	rm -f *.o *.s $(OBJECTS) $(TEXOBJECTS)
+	-rm -f *.o *.s $(OBJECTS) $(TEXOBJECTS)
  
 $(OBJECTS): %: %.pp
 	$(FPC) $(PPOPTS) $*

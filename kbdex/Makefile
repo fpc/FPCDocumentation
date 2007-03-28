@@ -65,9 +65,9 @@ onetex : tex
 	$(MAKETEX) $(TEXOBJECTS)
 
 clean : 
-	rm -f *.o *.s $(OBJECTS) $(TEXOBJECTS) logkeys.ppu logkeys.o
-	rm -f keyboard.log
-	rm -f *.ow *.sw *.exe *.dll
+	-rm -f *.o *.s $(OBJECTS) $(TEXOBJECTS) logkeys.ppu logkeys.o
+	-rm -f keyboard.log
+	-rm -f *.ow *.sw *.exe *.dll
  
 $(OBJECTS): %: %.pp
 	$(FPC) $(PPOPTS) $*
