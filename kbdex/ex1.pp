@@ -21,7 +21,6 @@ begin
       kbPhys     : Writeln('Physical key');
       kbReleased : Writeln('Released key event');
     end;
-    K:=TranslateKeyEvent(K);
     Writeln('Got key : ',KeyEventToString(K));
   Until (GetKeyEventChar(K)='q');
   DoneKeyBoard;
