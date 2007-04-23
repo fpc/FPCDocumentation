@@ -2,10 +2,6 @@ program example2;
 
 uses video,keyboard;
 
-{$ifndef cpu86}
-{$error This example only works on intel 80x86 machines}
-{$endif}
-
 Var
   P,PP,D : Integer;
   K: TKeyEvent;
