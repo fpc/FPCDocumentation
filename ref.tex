@@ -3425,6 +3425,290 @@ counted.\index{Types!Reference counted}
 CORBA interfaces are not necessarily reference counted.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Generics
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Generics}
+\label{ch:generics}
+\index{Generics}
+\section{Introduction}
+Generics are templates for generating classes. It is a concept that
+comes from C++, where it is deeply integrated in the language. As of
+version 2.2, Free Pascal also officially has support for templates or
+Generics. They are implemented as a kind of macro which is stored in the
+unit files that the compiler generates, and which is replayed as soon
+as a generic class is specialized.
+
+Currently, only generic classes can be defined. Later, support for
+generic records, functions and arrays may be introduced.
+
+Creating and using generics is a 2-phase process.
+\begin{enumerate}
+\item The definition of the generic class is defined as a new type: 
+this is a code template, a macro which can be replayed by the compiler 
+at a later stage.
+\item A generic class is specialized: this defines a second class,
+which is a specific implementation of the generic class: the compiler
+replays the macro which was stored when the generic class was defined.
+\end{enumerate}
+
+\section{Generic class definition}
+A generic class definition is much like a class definition, with the
+exception that it contains a list of placeholders for types, and can 
+contain a series of local variable blocks or local type blocks, as can be
+seen in the following syntax diagram:
+\input{syntax/generic.syn}
+The generic class declaration should be followed by a class implementation.
+It is the same as a normal class implementation with a single exception,
+namely that any identifier with the same name as one of the template
+identifiers must be a type identifier.
+
+The generic class declaration is much like a normal class declaration, 
+except for the local variable and local type block. The local type block
+defines types that are type placeholders: they are not actualized until
+the class is specialized.
+
+The local variable block is just an alternate syntax for ordinary class fields.
+The reason for introducing is the introduction of the \var{Type} block: just
+as in a unit or function declaration, a class declaration can now have a
+local type and variable block definition.
+
+The following is a valid generic class definition:
+\begin{verbatim}
+Type
+  generic TList<_T>=class(TObject)
+    type public
+       TCompareFunc = function(const Item1, Item2: _T): Integer;
+    var public
+      data : _T;
+    procedure Add(item: _T);
+    procedure Sort(compare: TCompareFunc);
+  end;
+\end{verbatim}
+This class could be followed by an implementation as follows:
+\begin{verbatim}
+procedure TList.Add(item: _T);
+begin
+  data:=item;
+end;
+
+procedure TList.Sort(compare: TCompareFunc);
+begin
+  if compare(data, 20) <= 0 then
+    halt(1);
+end;
+\end{verbatim}
+There are some noteworthy things about this declaration and implementation:
+\begin{enumerate}
+\item There is a single placeholder \var{\_T}. It will be substituted by a
+type identifier when the generic class is specialized. The identifier
+\var{\_T} may not be used for anything else than a placehoder. This means
+that the following would be invalid:
+\begin{verbatim}
+procedure TList.Sort(compare: TCompareFunc);
+
+Var
+  _t : integer;
+
+begin
+  // do something.
+end;
+\end{verbatim}
+\item The local type block contains a single type \var{TCompareFunc}. Note
+that the actual type is not yet known inside the generic class definition:
+the definition contains a reference to the placeholder \var{\_T}. All other
+identifier references must be known when the generic class is defined, {\em not}
+when the generic class is specialized.
+\item The local variable block is equivalent to the following:
+\begin{verbatim}
+  generic TList<_T>=class(TObject)
+    type public
+       TCompareFunc = function(const Item1, Item2: _T): Integer;
+  Public  
+    data : _T;
+    procedure Add(item: _T);
+    procedure Sort(compare: TCompareFunc);
+  end;
+\end{verbatim}
+\item Both the local variable block and local type block have a visibility
+specifier. This is optional; if it is omitted, the current visibility is
+used.
+\end{enumerate}
+
+\section{Generic class specialization}
+Once a generic class is defined, it can be used to generate other classes:
+this is like replaying the definition of the class, with the template
+placeholders filled in with actual type definitions.
+
+This can be done in any \var{Type} definition block. The specialized type
+looks as follows:
+\input{syntax/specialize.syn}
+Which is a very simple definition. Given the declaration of \var{TList} in
+the previous section, the following would be a valid type definition:
+\begin{verbatim}
+Type
+  TPointerList = specialize TList<Pointer>;
+  TIntegerList = specialize TList<Integer>;
+\end{verbatim}
+The following is not allowed:
+\begin{verbatim}
+Var
+  P : specialize TList<Pointer>;  
+\end{verbatim}
+that is, a variable cannot be directly declared using a specialization.
+
+The type in the specialize statement must be known. Given the 2 generic
+class definitions:
+\begin{verbatim}
+type 
+  Generic TMyFirstType<T1> = Class(TMyObject);
+  Generic TMySecondType<T2> = Class(TMyOtherObject);
+\end{verbatim}
+Then the following specialization is not valid:
+\begin{verbatim}
+type
+  TMySpecialType = specialize TMySecondType<TMyFirstType>;
+\end{verbatim}
+because the type \var{TMyFirstType} is a generic type, and thus
+not fully defined. However, the following is allowed:
+\begin{verbatim}
+type
+  TA = specialize TMyFirstType<Atype>;
+  TB = specialize TMySecondType<TA>;
+\end{verbatim}
+because \var{TA} is already fully defined when \var{TB} is specialized.
+
+Note that 2 specializations of a generic type with the same types in a
+placeholder are not assignment compatible. In the following example:
+\begin{verbatim}
+type
+  TA = specialize TList<Pointer>;
+  TB = specialize TList<Pointer>;
+\end{verbatim}
+variables of types \var{TA} and \var{TB} cannot be assigned to each other,
+i.e the following assignment will be invalid:
+\begin{verbatim}
+Var
+  A : TA;
+  B : TB;
+
+begin
+  A:=B;
+\end{verbatim}
+
+\section{A word about scope}
+It should be stressed that all identifiers other than the template placeholders
+should be known when the generic class is declared. This works in 2 ways.
+First, all types must be known, that is, a type identifier with the same name
+must exist. The following unit will produce an error:
+\begin{verbatim}
+unit myunit;
+
+interface
+
+type 
+  Generic TMyClass<T> = Class(TObject)
+    Procedure DoSomething(A : T; B : TSomeType);
+  end;
+
+Type
+  TSomeType = Integer;
+  TSomeTypeClass = specialize TMyClass<TSomeType>;
+
+Implementation
+
+Procedure TMyClass.DoSomething(A : T; B : TSomeType);
+
+begin
+  // Some code.
+end;
+
+end.
+\end{verbatim}
+The above code will result in an error, because the type \var{TSomeType} is
+not known when the declaration is parsed:
+\begin{verbatim}
+home: >fpc myunit.pp
+myunit.pp(8,47) Error: Identifier not found "TSomeType"
+myunit.pp(11,1) Fatal: There were 1 errors compiling module, stopping
+\end{verbatim}
+
+The second way in which this is visible, is the following. Assume a unit
+\begin{verbatim}
+unit mya;
+
+interface
+
+type
+  Generic TMyClass<T> = Class(TObject)
+    Procedure DoSomething(A : T);
+  end;
+
+
+Implementation
+
+Procedure DoLocalThings;
+
+begin
+  Writeln('mya.DoLocalThings');
+end;
+
+
+Procedure TMyClass.DoSomething(A : T);
+
+begin
+  DoLocalThings;
+end;
+
+end.
+\end{verbatim}
+and a program 
+\begin{verbatim}
+program myb;
+
+uses mya;
+
+procedure DoLocalThings;
+
+begin
+  Writeln('myb.DoLocalThings');
+end;
+
+Type
+  TB = specialize TMyClass<Integer>;
+
+Var
+  B : TB;
+
+begin
+  B:=TB.Create;
+  B.DoSomething(1);
+end.
+\end{verbatim}
+Despite the fact that generics act as a macro which is replayed at
+specialization time, the reference to \var{DoLocalThings} is resolved
+when \var{TMyClass} is defined, not when TB is defined. This means that the
+output of the program is:
+\begin{verbatim}
+home: >fpc -S2 myb.pp
+home: >myb
+mya.DoLocalThings
+\end{verbatim}
+This is dictated by safety and necessity:
+\begin{enumerate}
+\item A programmer specializing a class has no way of knowing which local
+procedures are used, so he cannot accidentally 'override' it.
+\item A programmer specializing a class has no way of knowing which local
+procedures are used, so he cannot implement it either, since he does not
+know the parameters.
+\item If implementation procedures are used as in the example above, they 
+cannot be referenced from outside the unit. They could be in another unit
+altogether, and the programmer has no way of knowing he should include them
+before specializing his class.
+\end{enumerate}
+
+\section{Operator overloading and generics}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Expressions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Expressions}
