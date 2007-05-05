@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    streamcoll
+  ====================================================================
+-->
+
+<module name="streamcoll">
+<short>Collection which can stream itself</short>
+<descr>
+<p>
+The <file>streamcoll</file> unit contains the implentation of a collection
+(and corresponding collection item) which implements routines for saving or
+loading the collection to/from a stream. The collection item should
+implement 2 routines to implement the streaming; the streaming itself
+is not performed by the <link id="TStreamCollection"/> collection item. 
+</p>
+<p>
+The streaming performed here is not compatible with the streaming
+implemented in the <var>Classes</var> unit for components. It is independent
+of the latter and can be used without a component to hold the collection.
+</p>
+<p>
+The collection item introduces mostly protected methods, and the unit contains
+a lot of auxiliary routines which aid in streaming.
+</p>
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>Collection and stream classes</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="SysUtils">
+<short>Exception support</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.streamcoll.TStreamCollectionItem
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TStreamCollectionItem">
+<short>Collection item with streaming support</short>
+<descr>
+<p>
+<var>TStreamCollectionItem</var> is a <link
+id="#rtl.classes.TCollectionItem">TCollectionItem</link> descendent which 
+implements 2 abstract routines: <var>LoadFromStream</var> and
+<var>SaveToStream</var> which must be overridden in a descendent class.
+</p>
+<p>
+These 2 routines will be called by the <link id="TStreamCollection"/> to
+save or load the item from the stream.
+</p>
+</descr>
+<seealso>
+<link id="TStreamCollection"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.streamcoll.TStreamCollection
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TStreamCollection">
+<short>Collection with stream support</short>
+<descr>
+<p>
+<var>TStreamCollection</var> is a <link
+id="#rtl.classes.Tcollection">TCollection</link> descendent which implements
+2 calls <link id="TStreamCollection.LoadFromStream">LoadFromStream</link>
+and <link id="TStreamCollection.SaveToStream">SaveToStream</link> which
+load and save the contents of the collection to a stream.
+</p>
+<p>
+The collection items must be descendents of the <link
+id="TStreamCollectionItem"/> class for the streaming to work correctly.
+</p>
+<p>
+Note that the stream must be used to load collections of the same type.
+</p>
+</descr>
+<seealso>
+<link id="TStreamCollectionItem"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStreamCollection.LoadFromStream">
+<short>Load the collection from a stream</short>
+<descr>
+<var>LoadFromStream</var> loads the collection from the stream <var>S</var>,
+if the collection was saved using <link id="TStreamCollection.SaveToStream">SaveToStream</link>. 
+It reads the number of items in the collection, and then creates and loads
+the items one by one from the stream.
+</descr>
+<errors>
+An exception may be raised if the stream contains invalid data.
+</errors>
+<seealso>
+<link id="TStreamCollection.SaveToStream"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TStreamCollection.LoadFromStream.S">
+<short>Stream to load collection from.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStreamCollection.SaveToStream">
+<short>Load the collection from the stream.</short>
+<descr>
+<var>SaveToStream</var> saves the collection to the stream <var>S</var> so
+it can be read from the stream with <link
+id="TStreamCollection.LoadFromStream">LoadFromStream</link>. It does this by
+writing the number of collection items to the stream, and then streaming all
+items in the collection by calling their <var>SaveToStream</var> method.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TStreamCollection.LoadFromStream"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TStreamCollection.SaveToStream.S">
+<short>Stream to save collection to</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStreamCollection.Streaming">
+<short>Indicates whether the collection is currently being written to stream</short>
+<descr>
+<var>Streaming</var> is set to <var>True</var> if the collection is written
+to or loaded from stream, and is set again to <var>False</var> if the
+streaming process is finished.
+</descr>
+<seealso>
+<link id="TStreamCollection.LoadFromStream"/>
+<link id="TStreamCollection.SaveToStream"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.streamcoll.EStreamColl
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="EStreamColl">
+<short>Exception raised when an error occurs when streaming the collection.</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="ColWriteInteger">
+<short>Write a 32-bit integer to a stream</short>
+<descr>
+<var>ColWriteInteger</var> writes the 32-bit integer <var>AValue</var> to
+the stream <var>S</var>. No endianness is observed.
+</descr>
+<seealso>
+<link id="ColWriteBoolean"/>
+<link id="ColWriteString"/>
+<link id="ColReadInteger"/>
+<link id="ColWriteCurrency"/>
+<link id="ColWriteDateTime"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColWriteInteger.S">
+<short>Stream to write integer to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColWriteInteger.AValue">
+<short>Integer value to write to stream</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="ColWriteBoolean">
+<short>Write a boolean to a stream</short>
+<descr>
+<var>ColWriteBoolean</var> writes the boolean <var>AValue</var> to the stream.
+<var>S</var>.
+</descr>
+<seealso>
+<link id="ColReadBoolean"/>
+<link id="ColWriteString"/>
+<link id="ColWriteInteger"/>
+<link id="ColWriteCurrency"/>
+<link id="ColWriteDateTime"/>
+<link id="ColWriteFloat"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColWriteBoolean.S">
+<short>Stream to write value to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColWriteBoolean.AValue">
+<short>Boolean value to write to stream</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="ColWriteString">
+<short>Write a string value to the stream</short>
+<descr>
+<var>ColWriteString</var> writes the string value <var>AValue</var> to the
+stream <var>S</var>.
+</descr>
+<seealso>
+<link id="ColWriteBoolean"/>
+<link id="ColReadString"/>
+<link id="ColWriteInteger"/>
+<link id="ColWriteCurrency"/>
+<link id="ColWriteDateTime"/>
+<link id="ColWriteFloat"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColWriteString.S">
+<short>Stream to write string value to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColWriteString.AValue">
+<short>String value to write to stream</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="ColWriteCurrency">
+<short>Write a currency value to stream</short>
+<descr>
+<var>ColWriteCurrency</var> writes the currency <var>AValue</var> to the
+stream <var>S</var>.
+</descr>
+<seealso>
+<link id="ColWriteBoolean"/>
+<link id="ColWriteString"/>
+<link id="ColWriteInteger"/>
+<link id="ColWriteDateTime"/>
+<link id="ColWriteFloat"/>
+<link id="ColReadCurrency"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColWriteCurrency.S">
+<short>Stream to write currency to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColWriteCurrency.AValue">
+<short>Currency value to write to stream</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="ColWriteDateTime">
+<short>Write a <var>TDateTime</var> value to stream</short>
+<descr>
+<var>ColWriteDateTime</var> writes the <var>TDateTime</var>
+<var>AValue</var> to the stream <var>S</var>.
+</descr>
+<seealso>
+<link id="ColReadDateTime"/>
+<link id="ColWriteBoolean"/>
+<link id="ColWriteString"/>
+<link id="ColWriteInteger"/>
+<link id="ColWriteFloat"/>
+<link id="ColWriteCurrency"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColWriteDateTime.S">
+<short>Stream to write datetime value to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColWriteDateTime.AValue">
+<short>DateTime value to write to stream</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="ColWriteFloat">
+<short>Write floating point value to stream</short>
+<descr>
+<var>ColWriteFloat</var> writes the double <var>AValue</var> to the stream 
+<var>S</var>.
+</descr>
+<seealso>
+<link id="ColWriteDateTime"/>
+<link id="ColWriteBoolean"/>
+<link id="ColWriteString"/>
+<link id="ColWriteInteger"/>
+<link id="ColReadFloat"/>
+<link id="ColWriteCurrency"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColWriteFloat.S">
+<short>Stream to write float value to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColWriteFloat.AValue">
+<short>Double value to write to the stream</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ColReadInteger">
+<short>Read a 32-bit integer from a stream.</short>
+<descr>
+<var>ColReadInteger</var> reads a 32-bit integer from the stream
+<var>S</var> as it was written by <link id="ColWriteInteger"/> 
+and returns the read value. The value cannot be read and written 
+across systems that have different endian values.
+</descr>
+<seealso>
+<link id="ColReadDateTime"/>
+<link id="ColReadBoolean"/>
+<link id="ColReadString"/>
+<link id="ColWriteInteger"/>
+<link id="ColReadFloat"/>
+<link id="ColReadCurrency"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ColReadInteger.Result">
+<short>Integer value read from stream <var>S</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColReadInteger.S">
+<short>Stream to read integer value from</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ColReadBoolean">
+<short>Read a boolean value from a stream</short>
+<descr>
+<var>ColReadBoolean</var> reads a boolean from the stream
+<var>S</var> as it was written by <link id="ColWriteBoolean"/> 
+and returns the read value. The value cannot be read and written 
+across systems that have different endian values.
+</descr>
+<seealso>
+<link id="ColReadDateTime"/>
+<link id="ColWriteBoolean"/>
+<link id="ColReadString"/>
+<link id="ColReadInteger"/>
+<link id="ColReadFloat"/>
+<link id="ColReadCurrency"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ColReadBoolean.Result">
+<short>Boolean value read from the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColReadBoolean.S">
+<short>Stream to read boolean value from</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ColReadString">
+<short>Read a string from a stream</short>
+<descr>
+<var>ColReadStream</var> reads a string value from the stream
+<var>S</var> as it was written by <link id="ColWriteString"/> 
+and returns the read value. The value cannot be read and written 
+across systems that have different endian values.
+</descr>
+<seealso>
+<link id="ColReadDateTime"/>
+<link id="ColReadBoolean"/>
+<link id="ColWriteString"/>
+<link id="ColReadInteger"/>
+<link id="ColReadFloat"/>
+<link id="ColReadCurrency"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ColReadString.Result">
+<short>String value read from the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColReadString.S">
+<short>Stream to read string value from</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ColReadCurrency">
+<short>Read a currency value from the stream</short>
+<descr>
+<var>ColReadCurrency</var> reads a currency value from the stream
+<var>S</var> as it was written by <link id="ColWriteCurrency"/> 
+and returns the read value. The value cannot be read and written 
+across systems that have different endian values.
+</descr>
+<seealso>
+<link id="ColReadDateTime"/>
+<link id="ColReadBoolean"/>
+<link id="ColReadString"/>
+<link id="ColReadInteger"/>
+<link id="ColReadFloat"/>
+<link id="ColWriteCurrency"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ColReadCurrency.Result">
+<short>Currency value read from the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColReadCurrency.S">
+<short>Stream to read currency value from</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ColReadDateTime">
+<short>Read a <var>TDateTime</var> value from a stream</short>
+<descr>
+<var>ColReadDateTime</var> reads a currency value from the stream
+<var>S</var> as it was written by <link id="ColWriteDateTime"/> 
+and returns the read value. The value cannot be read and written 
+across systems that have different endian values.
+</descr>
+<seealso>
+<link id="ColWriteDateTime"/>
+<link id="ColReadBoolean"/>
+<link id="ColReadString"/>
+<link id="ColReadInteger"/>
+<link id="ColReadFloat"/>
+<link id="ColReadCurrency"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ColReadDateTime.Result">
+<short><var>TDateTime</var> value read from the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColReadDateTime.S">
+<short>Stream to read <var>TDateTime</var> value from</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ColReadFloat">
+<short>Read a floating point value from a stream</short>
+<descr>
+<var>ColReadFloat</var> reads a double value from the stream
+<var>S</var> as it was written by <link id="ColWriteFloat"/> 
+and returns the read value. The value cannot be read and written 
+across systems that have different endian values.
+</descr>
+<seealso>
+<link id="ColReadDateTime"/>
+<link id="ColReadBoolean"/>
+<link id="ColReadString"/>
+<link id="ColReadInteger"/>
+<link id="ColWriteFloat"/>
+<link id="ColReadCurrency"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ColReadFloat.Result">
+<short>Float value read from the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ColReadFloat.S">
+<short>Stream to read float value from.</short>
+</element>
+
+</module> <!-- streamcoll -->
+
+</package>
+</fpdoc-descriptions>

@@ -30,6 +30,54 @@ other streams, to provide base64 encoding and decoding on-the-fly...
 <short>Stream support</short>
 </element>
 
+<element name="TBase64DecodingMode">
+<short>Decoding mode for stream</short>
+<descr>
+<p><var>TBase64DecodingMode</var> determines the decoding algorithm used by 
+<link id="TBase64DecodingStream"/>. There are 2 modes:
+</p>
+<dl>
+<dt>bdmStrict</dt><dd>Strict mode, which follows RFC3548 and rejects any characters 
+outside of base64 alphabet. In this mode only up to two '=' characters are
+accepted at the end. It requires the input to have a Size being a multiple
+of 4, otherwise an <link id="EBase64DecodingException"/> exception is
+raised.</dd>
+<dt>bdmMime</dt><dd>MIME mode, which follows RFC2045 and ignores any characters 
+outside of base64 alphabet. In this mode any '=' is seen as the end of
+string, it handles apparently truncated input streams gracefully.
+</dd>
+</dl>                  
+</descr>
+</element>
+
+<element name="TBase64DecodingMode.bdmMIME">
+<short>MIME encoding</short>
+</element>
+
+<element name="TBase64DecodingMode.bdmStrict">
+<short>Strict encoding</short>
+</element>
+
+<element name="TBase64DecodingStream.Mode">
+<short>Decoding mode</short>
+<descr>
+<var>Mode</var> is the mode in which the stream is read. It can be set when
+creating the stream or at any time afterwards.
+</descr>
+<seealso>
+<link id="TBase64DecodingStream"/>
+</seealso>
+</element>
+
+<element name="EBase64DecodingException">
+<short>Exception raised on errors</short>
+<descr>
+<var>EBase64DecodeException</var> is raised when the stream contains errors
+against the encoding format. Whether or not this exception is raised depends
+on the mode in which the stream is decoded.
+</descr>
+</element>
+
 <!--
   ********************************************************************
     #fcl.base64.TBase64EncodingStream
@@ -222,12 +270,19 @@ The decoding stream is read-only, and provides a limited forward-seek capability
 <element name="TBase64DecodingStream.Create">
 <short>Create a new instance of the <var>TBase64DecodingStream</var> class</short>
 <descr>
+<p>
 <var>Create</var> creates a new instance of the
 <var>TBase64DecodingStream</var> class. It stores the source stream
 <var>AInputStream</var> for reading the data from.
+</p>
+<p>
+The optional <var>AMode</var> parameter determines the mode in which the
+decoding will be done. If omitted, <var>bdmMIME</var> is used.
+</p>
 </descr>
 <seealso>
 <link id="TBase64EncodingStream.Create"/>
+<link id="TBase64DecodingMode"/>
 </seealso>
 </element>
 
