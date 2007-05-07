@@ -230,7 +230,7 @@ UNITSDIR:=$(wildcard $(FPCDIR)/units/$(OS_TARGET))
 endif
 PACKAGESDIR:=$(wildcard $(FPCDIR) $(FPCDIR)/packages $(FPCDIR)/packages/base $(FPCDIR)/packages/extra)
 override PACKAGE_NAME=fpdocs
-override PACKAGE_VERSION=2.0.4
+override PACKAGE_VERSION=2.1.4
 SEARCHFPCSRCPATH=../fpcsrc ../fpc ..
 FPCSRCDIR:=$(patsubst %/compiler,%,$(firstword $(strip $(wildcard $(addsuffix /compiler,$(SEARCHFPCSRCPATH))))))
 ifeq ($(FULL_TARGET),i386-linux)
