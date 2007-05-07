@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    CacheCls
+  ====================================================================
+-->
+
+<module name="CacheCls">
+<short>Unit implementing cache class</short>
+<descr>
+The <file>CacheCls</file> unit implements a caching class: similar to a hash
+class, it can be used to cache data, associated with string values (keys).
+The class is calles <var>TCache</var>
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="SysUtils">
+<short>Exception support</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SInvalidIndex">
+<short>Message shown when an invalid index is passed.</short>
+</element>
+
+
+<!--
+  ********************************************************************
+    #fcl.CacheCls.ECacheError
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="ECacheError">
+<short>Exception class used in the <file>cachecls</file> unit.</short>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="PCacheSlot">
+<short>Pointer to <link id="#fcl.cachecls.TCacheSlot">TCacheSlot</link> record.</short>
+<seealso>
+<link id="TCacheSlot"/>
+</seealso>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TCacheSlot">
+<short>Record representing 1 item in the cache list.</short>
+<descr>
+<var>TCacheSlot</var> is internally used by the <link id="TCache"/> class.
+It represents 1 element in the linked list.
+</descr>
+<seealso>
+<link id="TCache"/>
+<link id="PCacheSlot"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TCacheSlot.Prev">
+<short>Pointer to previous element in the list.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TCacheSlot.Next">
+<short>Pointer to next element in the list.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TCacheSlot.Data">
+<short>Data pointer for this item.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TCacheSlot.Index">
+<short>Index in the list.</short>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="PCacheSlotArray">
+<short>Pointer to <link id="#fcl.cachecls.TCacheSlotArray">TCacheSlotArray</link> array</short>
+<seealso>
+<link id="TCacheSlotArray"/>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TCacheSlotArray">
+<short>Array of <link id="#fcl.cachecls.TCacheSlot">TCacheSlot</link></short>
+<descr>
+<var>TCacheSlotArray</var> is an array of <var>TCacheSlot</var> items. Do
+not use <var>TCacheSlotArray</var> directly, instead, use
+<link id="PCacheSlotArray"/> and allocate memory dynamically.
+</descr>
+<seealso>
+<link id="TCacheSlot"/>
+<link id="PCacheSlotArray"/>
+</seealso>
+</element>
+
+<!-- function type Visibility: default -->
+<element name="TOnIsDataEqual">
+<short>Callback type to check whether 2 data types are equal.</short>
+<descr>
+<p>
+<var>TOnIsDataEqual</var> is a callback prototype; It is used by the <link
+id="TCache.Add"/> call to determine whether the item to be added is a new 
+item or not. The function returns <var>True</var> if the 2 data pointers
+<var>AData1</var> and <var>AData2</var> should be considered equal, or 
+<var>False</var> when they are not.
+</p>
+<p>
+For most purposes, comparing the pointers will be enough, but if the
+pointers are ansistrings, then the contents should be compared.
+</p>
+</descr>
+<seealso>
+<link id="TCache.Add"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TOnIsDataEqual.Result">
+<short><var>True</var> if <var>AData1</var> and <var>AData2</var> are equal.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnIsDataEqual.ACache">
+<short><var>TCache</var> instance which calls the callback.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnIsDataEqual.AData1">
+<short>First data element pointer.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnIsDataEqual.AData2">
+<short>Second data element pointer.</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnFreeSlot">
+<short>Callback called when a slot must be freed.</short>
+<descr>
+<var>TOnFreeSlot</var> is a callback prototype used when
+not enough slots are free, and a slot must be freed. 
+</descr>
+<seealso>
+<link id="TCache.OnFreeSlot"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnFreeSlot.ACache">
+<short>Cache class calling the function</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnFreeSlot.SlotIndex">
+<short>Index of the slot that will be freed.</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.CacheCls.TCache
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TCache">
+<short>Cache class</short>
+<descr>
+<p>
+<var>TCache</var> implements a cache class: it is a list-like class,
+but which uses a counting mechanism, and keeps a Most-Recent-Used list;
+this list represents the 'cache'. The list is internally kept as a
+doubly-linked list.
+</p>
+<p>
+The <link id="TCache.Data">Data</link> property offers indexed access to
+the array of items. When accessing the array through this property, the
+<link id="TCache.MRUSlot">MRUSlot</link> property is updated.
+</p>
+</descr>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCache.Create">
+<short>Create a new cache class.</short>
+<descr>
+<var>Create</var> instantiates a new instance of <var>TCache</var>. It
+allocates room for <var>ASlotCount</var> entries in the list. The number of
+slots can be increased later.
+</descr>
+<seealso>
+<link id="TCache.SlotCount"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCache.Create.ASlotCount">
+<short>Initial slot count</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCache.Destroy">
+<short>Free the <var>TCache</var> class from memory</short>
+<descr>
+<var>Destroy</var> cleans up the array for the elements, and calls the
+inherited <var>Destroy</var>. The elements in the array are not freed by
+this action.
+</descr>
+<seealso>
+<link id="TCache.Create"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCache.Add">
+<short>Add a data element to the list.</short>
+<descr>
+<p>
+<var>Add</var> checks whether <var>AData</var> is already in the list. If
+so, the item is added to the top of the MRU list. If the item is not yet in
+the list, then the item is added to the list and placed at the top of the
+MRU list using the <link id="TCache.AddNew">AddNew</link> call. 
+</p>
+<p>
+The function returns the index at which the item was added.
+</p>
+<p>
+If the maximum number of slots is reached, and a new item is being added,
+the least used item is dropped from the list.
+</p>
+</descr>
+<seealso>
+<link id="TCache.AddNew"/>
+<link id="TCache.FindSlot"/>
+<link id="TCache.IndexOf"/>
+<link id="TCache.Data"/>
+<link id="TCache.MRUSlot"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCache.Add.Result">
+<short>Index at which item was added.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCache.Add.AData">
+<short>Data pointer to add to the cache.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCache.AddNew">
+<short>Add a new item to the list.</short>
+<descr>
+<p>
+<var>AddNew</var> adds a new item to the list: in difference with the <link
+id="TCache.Add">Add</link> call, no checking is performed to
+see whether the item is already in the list.
+</p>
+<p>
+The function returns the index at which the item was added.
+</p>
+<p>
+If the maximum number of slots is reached, and a new item is being added,
+the least used item is dropped from the list. 
+</p>
+</descr>
+<seealso>
+<link id="TCache.Add"/>
+<link id="TCache.FindSlot"/>
+<link id="TCache.IndexOf"/>
+<link id="TCache.Data"/>
+<link id="TCache.MRUSlot"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCache.AddNew.Result">
+<short>Position at which item is added to the list</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCache.AddNew.AData">
+<short>Data pointer to add to the list</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCache.FindSlot">
+<short>Find data pointer in the list</short>
+<descr>
+<p>
+<var>FindSlot</var> checks all items in the list, and returns the slot
+which contains a data pointer that matches the pointer <var>AData</var>.
+</p>
+<p>
+If no item with data pointer that matches <var>AData</var> is found,
+<var>Nil</var> is returned.
+</p>
+<p>
+For this function to work correctly, the <link
+id="TCache.OnIsDataEqual">OnIsDataEqual</link> event must be set.
+</p>
+</descr>
+<errors>
+If <var>OnIsDataEqual</var> is not set, an exception wil be raised.
+</errors>
+<seealso>
+<link id="TCache.IndexOf"/>
+<link id="TCache.Add"/>
+<link id="TCache.OnIsDataEqual"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCache.FindSlot.Result">
+<short>Slot which contains <var>AData</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCache.FindSlot.AData">
+<short>Data pointer to look for.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCache.IndexOf">
+<short>Return index of a data pointer in the list.</short>
+<descr>
+<p>
+<var>IndexOF</var> searches in the list for a slot with data pointer that
+matches <var>AData</var> and returns the index of the slot.</p>
+<p>
+If no item with data pointer that matches <var>AData</var> is found,
+<var>-1</var> is returned.
+</p>
+<p>
+For this function to work correctly, the <link
+id="TCache.OnIsDataEqual">OnIsDataEqual</link> event must be set.
+</p>
+</descr>
+<errors>
+If <var>OnIsDataEqual</var> is not set, an exception wil be raised.
+</errors>
+<seealso>
+<link id="TCache.FindSlot"/>
+<link id="TCache.Add"/>
+<link id="TCache.OnIsDataEqual"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCache.IndexOf.Result">
+<short>Index of item that matches <var>AData</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCache.IndexOf.AData">
+<short>Data pointer to search for.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCache.Remove">
+<short>Remove a data item from the list.</short>
+<descr>
+<var>Remove</var> searches the slot which matches <var>AData</var> 
+and if it is found, sets the data pointer to <var>Nil</var>, thus 
+effectively removing the pointer from the list.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TCache.FindSlot"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCache.Remove.AData">
+<short>Data pointer to remove</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCache.Data">
+<short>Indexed access to data items</short>
+<descr>
+<p>
+<var>Data</var> offers index-based access to the data pointers in the cache. 
+By accessing an item in the list in this manner, the item is moved to the 
+front of the MRU list, i.e. <link id="TCache.MRUSlot">MRUSlot</link> will
+point to the accessed item. The access is both read and write.
+</p>
+<p>
+The index is zero-based and can maximally be <link
+id="TCache.SlotCount">SlotCount-1</link>. Providing  an invalid index will
+result in an exception.
+</p>
+</descr>
+<seealso>
+<link id="TCache.MRUSlot"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCache.Data.SlotIndex">
+<short>Index of slot in the list</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCache.MRUSlot">
+<short>Most recent item slot.</short>
+<descr>
+<var>MRUSlot</var> points to the most recent used slot. The most recent used
+slot is updated when the list is accessed through the <link
+id="TCache.Data">Data</link> property, or when an item is added to the list
+with <link id="TCache.Add">Add</link> or <link id="TCache.AddNew">AddNew</link>
+</descr>
+<seealso>
+<link id="TCache.Add"/>
+<link id="TCache.AddNew"/>
+<link id="TCache.Data"/>
+<link id="TCache.LRUSlot"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCache.LRUSlot">
+<short>Last used item</short>
+<descr>
+<var>LRUSlot</var> points to the least recent used slot. It is the last item
+in the chain of slots.
+</descr>
+<seealso>
+<link id="TCache.Add"/>
+<link id="TCache.AddNew"/>
+<link id="TCache.Data"/>
+<link id="TCache.MRUSlot"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCache.SlotCount">
+<short>Number of slots in the list</short>
+<descr>
+<var>SlotCount</var> is the number of slots in the list. Its initial value
+is set when the <var>TCache</var> instance is created, but this can be
+changed at any time. If items are added to the list and the list is full, 
+then the number of slots is not increased, but the least used item is
+dropped from the list. 
+In that case <link id="TCache.OnFreeSlot">OnFreeSlot</link> is called.
+</descr>
+<seealso>
+<link id="TCache.Create"/>
+<link id="TCache.Data"/>
+<link id="TCache.Slots"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCache.Slots">
+<short>Indexed array to the slots</short>
+<descr>
+<p>
+<var>Slots</var> provides index-based access to the <var>TCacheSlot</var>
+records in the list. Accessing the records directly does not change their
+position in the MRU list.
+</p>
+<p>
+The index is zero-based and can maximally be <link
+id="TCache.SlotCount">SlotCount-1</link>. Providing  an invalid index will
+result in an exception.
+</p>
+</descr>
+<seealso>
+<link id="TCache.Data"/>
+<link id="TCache.SlotCount"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCache.Slots.SlotIndex">
+<short>Index of slot</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCache.OnIsDataEqual">
+<short>Event to compare 2 items.</short>
+<descr>
+<var>OnIsDataEqual</var> is used by <link id="TCache.FindSlot">FindSlot</link> and <link
+id="TCache.IndexOf">IndexOf</link> to compare items when looking for a
+particular item. These functions are called by the <link
+id="TCache.Add">Add</link> method. Failing to set this event will result in
+an exception. The function should return <var>True</var> if the 2 data
+pointers should be considered equal.
+</descr>
+<seealso>
+<link id="TCache.FindSlot"/>
+<link id="TCache.IndexOf"/>
+<link id="TCache.Add"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCache.OnFreeSlot">
+<short>Event called when a slot is freed</short>
+<descr>
+<p>
+<var>OnFreeSlot</var> is called when an item needs to be freed, i.e. when a
+new item is added to a full list, and the least recent used item needs to be
+dropped from the list.
+</p>
+<p>
+The cache class instance and the index of the item to be removed are passed
+to the callback.
+</p>
+</descr>
+<seealso>
+<link id="TCache.Add"/>
+<link id="TCache.AddNew"/>
+<link id="TCache.SlotCount"/>
+</seealso>
+</element>
+
+</module> <!-- CacheCls -->
+
+</package>
+</fpdoc-descriptions>
