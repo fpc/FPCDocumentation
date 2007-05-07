@@ -1901,7 +1901,8 @@ MAKESKEL+= $(MAKESKELOPTS)
 FCLMAKESKEL=$(MAKESKEL) --package=fcl
 RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-results
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream \
-	 base64 gettext ezcgi pooledmm dbugmsg streamex inicol streamcoll
+	 base64 gettext ezcgi pooledmm dbugmsg streamex inicol streamcoll cachecls \
+	 eventlog
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEINC)/iostream.pp"
@@ -1920,11 +1921,13 @@ FCLPOOLEDMM= --descr=pooledmm.xml --input="$(FCLBASEINC)/pooledmm.pp"
 FCLDBUGMSG= --descr=dbugmsg.xml --input="$(FCLBASEINC)/dbugmsg.pp"
 FCLSTREAMEX= --descr=streamex.xml --input="$(FCLBASEINC)/streamex.pp"
 FCLINICOL= --descr=inicol.xml --input="$(FCLBASEINC)/inicol.pp"
-FCLINICOL= --descr=streamcoll.xml --input="$(FCLBASEINC)/streamcoll.pp"
+FCLSTREAMCOL= --descr=streamcoll.xml --input="$(FCLBASEINC)/streamcoll.pp"
+FCLCACHECLS= --descr=cachecls.xml --input="$(FCLBASEINC)/cachecls.pp"
+FCLEVENTLOG= --descr=eventlog.xml --input="$(FCLBASEINC)/eventlog.pp"
 FCLOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
 FCLOPTS+= $(FCLGETTEXT) $(FCLEZCGI) $(FCLPOOLEDMM) $(FCLDBUGMSG) $(FCLSTREAMEX)
-FCLOPTS+= $(FCLINICOL) $(STREAMCOLL)
+FCLOPTS+= $(FCLINICOL) $(FCLSTREAMCOL) $(FCLCACHECLS) $(FCLEVENTLOG)
 RTLOPTS=$(FPDOCOPTS) --hide-protected --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifdef CURRENTXMLONLY
 RTLXML=crt.xml
@@ -2033,6 +2036,14 @@ updatefclxml: cleanxml
 	$(FCLMAKESKEL) $(FCLBUFSTREAM) --output=bufstream.new.xml
 	$(FCLMAKESKEL) $(FCLBASE64) --output=base64.new.xml
 	$(FCLMAKESKEL) $(FCLGETTEXT) --output=gettext.new.xml
+	$(FCLMAKESKEL) $(FCLEZCGI) --output=ezcgi.new.xml
+	$(FCLMAKESKEL) $(FCLPOOLEDMM) --output=pooledmm.new.xml
+	$(FCLMAKESKEL) $(FCLDBUGMSG) --output=dbugmsg.new.xml
+	$(FCLMAKESKEL) $(FCLSTREAMEX) --output=streamex.new.xml
+	$(FCLMAKESKEL) $(FCLINICOL) --output=inicol.new.xml
+	$(FCLMAKESKEL) $(FCLSTREAMCOL) --output=streamcoll.new.xml
+	$(FCLMAKESKEL) $(FCLCACHECLS) --output=cachecls.new.xml
+	$(FCLMAKESKEL) $(FCLEVENTLOG) --output=eventlog.new.xml
 	./cleanxml $(FCLNEWXML)
 rtl.inc: $(RTLXML)
 	$(FPDOC) --output=rtl.inc $(RTLOPTS) --format=latex

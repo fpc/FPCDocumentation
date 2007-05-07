@@ -1,0 +1,708 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    eventlog
+  ====================================================================
+-->
+
+<module name="eventlog">
+<short>Unit implementing system log class</short>
+<descr>
+The <file>EventLog</file> unit implements the <link id="TEventLog"/>
+component, which is a component that can be used to send log messages to the
+system log (if it is available) or to a file. 
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="SysUtils">
+<short>Exception and string formatting support.</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short><var>TComponent</var> and other classes support.</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.eventlog.TEventLog
+  ********************************************************************
+-->
+
+
+<!-- enumeration type Visibility: default -->
+<element name="TEventType">
+<short>Type of event</short>
+<descr>
+<var>TEventType</var> determines the type of event. Depending on the system
+logger, the log event may end up in different places, or may be displayed in
+a different manner. A suitable mapping is shown for each system. In the case
+of Windows, the formatting of the message is done differently, and a
+different icon is shown for each type of message.
+</descr>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TEventType.etCustom">
+<short>Custom event type.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TEventType.etInfo">
+<short>Informational event</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TEventType.etWarning">
+<short>Warning event</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TEventType.etError">
+<short>Error event</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TEventType.etDebug">
+<short>Debug event</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TLogType">
+<short>Type of log</short>
+<descr>
+<p>
+<var>TLogType</var> determines where the log messages are written.
+It is the type of the <link id="TEventLog.LogType"/> property. It can have 2
+values:
+</p>
+<dl>
+<dt>ltFile</dt>
+<dd>This is used to write all messages to file. if no system logging
+mechanism exists, this is used as a fallback mechanism.</dd>
+<dt>ltSystem</dt>
+<dd>This is used to send all messages to the system log mechanism. Which log
+mechanism this is, depends on the operating system.</dd>
+</dl>
+</descr>
+<seealso>
+<link id="TEventLog.LogType"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TLogType.ltSystem">
+<short>Use the system log</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TLogType.ltFile">
+<short>Write to file</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TLogCodeEvent">
+<short>Callback type to retrieve custom event codes </short>
+<descr>
+<var>TLogCodeEvent</var> is the event type for the <link
+id="TEventLog.OnGetCustomEvent">OnGetCustomEvent</link> and
+<link id="TEventLog.OnGetCustomEventID">OnGetCustomEventID</link> 
+event handlers. It should return a OS system log code for the 
+<var>etCustom</var> log event or event ID type in the <var>Code</var> parameter.
+</descr>
+<seealso>
+<link id="TEventLog.OnGetCustomEvent"/>
+<link id="TEventLog.OnGetCustomEventID"/>
+<link id="TLogCategoryEvent"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TLogCodeEvent.Sender">
+<short><var>TEventLog</var> instance that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TLogCodeEvent.Code">
+<short>Code to return</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TLogCategoryEvent">
+<short>Callback type to return custom category code</short>
+<descr>
+<var>TLogCategoryEvent</var> is the event type for the <link
+id="TEventLog.OnGetCustomCategory"/> event handler. It should 
+return a OS event catagory code for the <var>etCustom</var> 
+log event type in the <var>Code</var> parameter.
+</descr>
+<seealso>
+<link id="TEventLog.OnGetCustomCategory"/> 
+<link id="TLogCodeEvent"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TLogCategoryEvent.Sender">
+<short><var>TEventLog</var> instance that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TLogCategoryEvent.Code">
+<short>OS category code</short>
+</element>
+
+<!-- object Visibility: default -->
+<element name="TEventLog">
+<short>Event logging class</short>
+<descr>
+<var>TEventLog</var> is a component which can be used to send messages to 
+the system log. In case no system log exists (such as on Windows 95/98 or
+DOS), the messages are written to a file. Messages can be logged using the
+general <link id="TEventLog.Log">Log</link> call, or the specialized 
+<link id="TEventLog.Warning">Warning</link>,
+<link id="TEventLog.Error">Error</link>,
+<link id="TEventLog.Info">Info</link> or
+<link id="TEventLog.Debug">Debug</link> calls, which have the event type
+predefined.
+</descr>
+<seealso>
+<link id="TEventLog.Log">Log</link>
+<link id="TEventLog.Warning">Warning</link>
+<link id="TEventLog.Error">Error</link>
+<link id="TEventLog.Info">Info</link>
+<link id="TEventLog.Debug">Debug</link>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TEventLog.Destroy">
+<short>Clean up <var>TEventLog</var> instance</short>
+<descr>
+<var>Destroy</var> cleans up the <var>TEventLog</var> instance.
+It cleans any log structures that might have been set up to 
+perform logging, by setting the <link id="TEventLog.Active">Active</link>
+property to False.
+</descr>
+<seealso>
+<link id="TEventLog.Active">Active</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TEventLog.EventTypeToString">
+<short>Create a string representation of an event type</short>
+<descr>
+<var>EventTypeToString</var> converts the event type <var>E</var> to a
+suitable string representation for logging purposes. It's mainly used when
+writing messages to file, as the system log usually has it's own mechanisms
+for displaying the various event types.
+</descr>
+<seealso>
+<link id="TEventType"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TEventLog.EventTypeToString.Result">
+<short>String representation of <var>E</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.EventTypeToString.E">
+<short>Event type to convert to string</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TEventLog.RegisterMessageFile">
+<short>Register message file</short>
+<descr>
+<p>
+<var>RegisterMessageFile</var> is used on Windows to register the file
+<var>AFileName</var> containing the formatting strings for the system 
+messages. This should be a file containing resource strings. If
+<var>AFileName</var> is empty, the filename of the application binary is
+substituted.
+</p>
+<p> When a 
+message is logged to the windows system log, Windows looks for
+a formatting string in the file registered with this call. 
+</p>
+<p>
+There are 2 kinds of formatting strings:
+</p>
+<p>
+<b>Category strings</b> these should be numbered from 1 to 4
+</p>
+<dl>
+<dt>1</dt><dd>Should contain the description of the <var>etInfo</var> event type.</dd>
+<dt>2</dt><dd>Should contain the description of the <var>etWarning</var> event type.</dd>
+<dt>4</dt><dd>Should contain the description of the <var>etError</var> event type.</dd>
+<dt>4</dt><dd>Should contain the description of the <var>etDebug</var> event type.</dd>
+</dl>
+<p>
+None of these strings should have a string substitution placeholder.
+</p> 
+<p>
+The second type of strings are the <b>message definitions</b>. Their number starts
+at <link id="TEventLog.EventIDOffset">EventIDOffset</link> (default is 1000)
+and each string should have 1 placeholder.
+</p>
+<p>
+Free Pascal comes with a <file>fclel.res</file> resource file which contains
+default values for the 8 strings, in english. It can be linked in the
+application binary with the statement
+</p>
+<code>
+{$R fclel.res}
+</code>
+<p>
+This file is generated from the <file>fclel.mc</file> and <file>fclel.rc</file>
+files that are distributed with the Free Pascal sources.
+</p>
+<p>
+If the strings are not registered, windows will still display the event
+messages, but they will not be formatted nicely.
+</p>
+<p>
+Note that while any messages logged with the event logger are displayed in
+the event viewern Windows locks the file registered here. This usually
+means that the binary is locked.
+</p>
+<p>
+On non-windows operating systems, this call is ignored.
+</p>
+</descr>
+<errors>
+If <var>AFileName</var> is invalid, false is returned.
+</errors>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TEventLog.RegisterMessageFile.Result">
+<short><var>True</var> if the call was succesful, <var>False</var> if not.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.RegisterMessageFile.AFileName">
+<short>Filename with messages as resource strings.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TEventLog.Log">
+<short>Log a message to the system log.</short>
+<descr>
+<p>
+<var>Log</var> sends a log message to the system log. The message is either
+the parameter <var>Msg</var> as is, or is formatted from the <var>Fmt</var>
+and <var>Args</var> parameters. If <var>EventType</var> is specified, then
+it is used as the message event type. If <var>EventType</var> is omitted,
+then the event type is determined from 
+<link id="TEventLog.DefaultEventType">DefaultEventType</link>. 
+</p>
+<p>
+If <var>EventType</var> is <var>etCustom</var>, then the 
+<link id="TEventLog.OnGetCustomEvent">OnGetCustomEvent</link>, 
+<link id="TEventLog.OnGetCustomEventID">OnGetCustomEventID</link> and 
+<link id="TEventLog.OnGetCustomCategory">OnGetCustomCategory</link>.
+</p>
+<p>
+The other logging calls: <link id="TEventLog.Info">Info</link>,
+<link id="TEventLog.Warning">Warning</link>,
+<link id="TEventLog.Error">Error</link> and
+<link id="TEventLog.Debug">Debug</link> use the <var>Log</var> 
+call to do the actual work.
+</p>
+</descr>
+<seealso>
+<link id="TEventLog.Info">Info</link>
+<link id="TEventLog.Warning">Warning</link>
+<link id="TEventLog.Error">Error</link>
+<link id="TEventLog.Debug">Debug</link>
+<link id="TEventLog.OnGetCustomEvent">OnGetCustomEvent</link>
+<link id="TEventLog.OnGetCustomEventID">OnGetCustomEventID</link>
+<link id="TEventLog.OnGetCustomCategory">OnGetCustomCategory</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Log.EventType">
+<short>Event type to use.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Log.Msg">
+<short>Complete log message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Log.Fmt">
+<short>Format string for <var>Args</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Log.Args">
+<short>Arguments to be formatted with <var>Fmt</var></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TEventLog.Warning">
+<short>Log a warning message.</short>
+<descr>
+<var>Warning</var> is a utility function which logs a message with the
+<var>etWarning</var> type. The message is either the parameter <var>Msg</var> 
+as is, or is formatted from the <var>Fmt</var> and <var>Args</var> parameters.
+</descr>
+<seealso>
+<link id="TEventLog.Log">Log</link>
+<link id="TEventLog.Info">Info</link>
+<link id="TEventLog.Error">Error</link>
+<link id="TEventLog.Debug">Debug</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Warning.Msg">
+<short>Complete warning message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Warning.Fmt">
+<short>Formatting string for <var>Args</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Warning.Args">
+<short>Arguments to format message with</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TEventLog.Error">
+<short>Log an error message to</short>
+<descr>
+<var>Error</var> is a utility function which logs a message with the
+<var>etError</var> type. The message is either the parameter
+<var>Msg</var> as is, or is formatted from the <var>Fmt</var> 
+and <var>Args</var> parameters.
+</descr>
+<seealso>
+<link id="TEventLog.Log">Log</link>
+<link id="TEventLog.Info">Info</link>
+<link id="TEventLog.Warning">Warning</link>
+<link id="TEventLog.Debug">Debug</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Error.Msg">
+<short>Complete error message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Error.Fmt">
+<short>Formatting string for <var>Args</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Error.Args">
+<short>Arguments to format message with</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TEventLog.Debug">
+<short>Log a debug message</short>
+<descr>
+<var>Debug</var> is a utility function which logs a message with the
+<var>etDebug</var> type. The message is either the parameter
+<var>Msg</var> as is, or is formatted from the <var>Fmt</var>
+and <var>Args</var> parameters.
+</descr>
+<seealso>
+<link id="TEventLog.Log">Log</link>
+<link id="TEventLog.Info">Info</link>
+<link id="TEventLog.Warning">Warning</link>
+<link id="TEventLog.Error">Error</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Debug.Msg">
+<short>Complete debug message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Debug.Fmt">
+<short>Formatting string for <var>Args</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Debug.Args">
+<short>Arguments to format message with</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TEventLog.Info">
+<short>Log an informational message</short>
+<descr>
+<var>Info</var> is a utility function which logs a message with the
+<var>etInfo</var> type. The message is either the parameter
+<var>Msg</var> as is, or is formatted from the <var>Fmt</var>
+and <var>Args</var> parameters.
+</descr>
+<seealso>
+<link id="TEventLog.Log">Log</link>
+<link id="TEventLog.Warning">Warning</link>
+<link id="TEventLog.Error">Error</link>
+<link id="TEventLog.Debug">Debug</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Info.Msg">
+<short>Complete information message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Info.Fmt">
+<short>Formatting string for <var>Args</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventLog.Info.Args">
+<short>Arguments to format message with</short>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TEventLog.Identification">
+<short>Identification string for messages</short>
+<descr>
+<var>Identification</var> is used as a string identifying the source of the
+messages in the system log. If it is empty, the filename part of the application 
+binary is used.
+</descr>
+<seealso>
+<link id="TEventLog.Active">Active</link>
+<link id="TEventLog.TimeStampFormat">TimeStampFormat</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TEventLog.LogType">
+<short>Log type</short>
+<descr>
+<var>LogType</var> is the type of the log: if it is <var>ltSystem</var>,
+then the system log is used, if it is available. If it is <var>ltFile</var>
+or there is no system log available, then the log messages are written to a
+file. The name for the log file is taken from the <link
+id="TEventLog.FileName">FileName</link> property.
+</descr>
+<seealso>
+<link id="TEventLog.FileName">FileName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TEventLog.Active">
+<short>Activate the log mechanism</short>
+<descr>
+<p>
+<var>Active</var> determines whether the log mechanism is active: if set to
+<var>True</var>, the component connects to the system log mechanism, or 
+opens the log file if needed. Any attempt to log a message while the log is
+not active will try to set this property to <var>True</var>. Disconnecting from the system log or
+closing the log file is done by setting the <var>Active</var> property to
+<var>False</var>.
+</p>
+<p>
+If the connection to the system logger fails, or the log file cannot be
+opened, then setting this property may result in an exception.
+</p>
+</descr>
+<seealso>
+<link id="TEventLog.Log">Log</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TEventLog.DefaultEventType">
+<short>Default event type for the <link
+id="#fcl.eventlog.TEventLog.Log">Log</link> call.</short>
+<descr>
+<var>DefaultEventType</var> is the event type used by the <link
+id="TEventLog.Log">Log</link> call if it's <var>EventType</var> parameter
+is omitted.
+</descr>
+<seealso>
+<link id="TEventLog.Log">Log</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TEventLog.FileName">
+<short>File name for log file</short>
+<descr>
+<var>FileName</var> is the name of the log file used to log messages if no
+system logger is available or the <link id="TEventType.LogType">LogType</link> 
+is <var>ltFile</var>. If none is specified, then the name of the application
+binary is used, with the extension replaced by <file>.log</file>. The file
+is then located in the <file>/tmp</file> directory on unix-like systems, or
+in the application directory for Dos/Windows like systems.
+</descr>
+<seealso>
+<link id="TEventType.LogType">LogType</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TEventLog.TimeStampFormat">
+<short>Format for the timestamp string</short>
+<descr>
+<var>TimeStampFormat</var> is the formatting string used to create a
+timestamp string when writing log messages to file. It should have a format
+suitable for the <link
+id="#rtl.sysutils.formatdateTime">FormatDateTime</link> call. If it is left
+empty, then <var>yyyy-mm-dd hh:nn:ss.zzz</var> is used.
+</descr>
+<seealso>
+<link id="TEventLog.Identification"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TEventLog.CustomLogType">
+<short>Custom log type ID</short>
+<descr>
+<var>CustomLogType</var> is used in the <link
+id="TEventLog.EventTypeToString">EventTypeToString</link> to format the custom log
+event type string.
+</descr>
+<seealso>
+<link id="TEventLog.EventTypeToString">EventTypeToString</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TEventLog.EventIDOffset">
+<short>Offset for event ID messages identifiers</short>
+<descr>
+<p>
+<var>EventIDOffset</var> is the offset for the message formatting strings in the windows resource
+file. This property is ignored on other platforms.
+</p>
+<p>
+The message strings in the file registered with the <link
+id="TEventLog.RegisterMessageFile">RegisterMessageFile</link> call are
+windows resource strings. They each have a unique ID, which must be
+communicated to windows. In the resource file distributed by Free Pascal,
+the resource strings are numbered from 1000 to 1004. The actual number
+communicated to windows is formed by adding the ordinal value of the
+message's eventtype to <var>EventIDOffset</var> (which is by default 1000),
+which means that by default, the string numbers are:
+</p>
+<dl>
+<dt>1000</dt><dd>Custom event types</dd>
+<dt>1001</dt><dd>Information event type</dd>
+<dt>1002</dt><dd>Warning event type</dd>
+<dt>1003</dt><dd>Error event type</dd>
+<dt>1004</dt><dd>Debug event type</dd>
+</dl>
+</descr>
+<seealso>
+<link id="TEventLog.RegisterMessageFile">RegisterMessageFile</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TEventLog.OnGetCustomCategory">
+<short>Event to retrieve custom message category</short>
+<descr>
+<var>OnGetCustomCategory</var> is called on the windows platform to
+determine the category of a custom event type. It should return an ID
+which will be used by windows to look up the string which describes the
+message category in the file containing the resource strings.
+</descr>
+<seealso>
+<link id="TEventLog.OnGetCustomEventID">OnGetCustomEventID</link>
+<link id="TEventLog.OnGetCustomEvent">OnGetCustomEvent</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TEventLog.OnGetCustomEventID">
+<short>Event to retrieve custom event ID</short>
+<descr>
+<var>OnGetCustomEventID</var> is called on the windows platform to
+determine the category of a custom event type. It should return an ID
+which will be used by windows to look up the string which formats the
+message, in the file containing the resource strings.
+</descr>
+<seealso>
+<link id="TEventLog.OnGetCustomCategory">OnGetCustomCategory</link>
+<link id="TEventLog.OnGetCustomEvent">OnGetCustomEvent</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TEventLog.OnGetCustomEvent">
+<short>Event to retrieve custom event Code</short>
+<descr>
+<var>OnGetCustomEvent</var> is called on the windows platform to
+determine the event code of a custom event type. It should return 
+an ID.
+</descr>
+<seealso>
+<link id="TEventLog.OnGetCustomCategory">OnGetCustomCategory</link>
+<link id="TEventLog.OnGetCustomEventID">OnGetCustomEventID</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.eventlog.ELogError
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="ELogError">
+<short>Exception raised on errors in the <var>TEventLog</var> component</short>
+<descr>
+<var>ELogError</var> is the exception used in the <link id="TEventLog"/>
+component to indicate errors.
+</descr>
+<seealso>
+<link id="TEventLog"/>
+</seealso>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SLogInfo">
+<short>Informational message name</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SLogWarning">
+<short>Warning message name</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SLogError">
+<short>Error message name</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SLogDebug">
+<short>Debug message name</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SLogCustom">
+<short>Custom message formatting string</short>
+</element>
+
+</module> <!-- eventlog -->
+
+</package>
+</fpdoc-descriptions>
