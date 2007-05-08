@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    syncobjs
+  ====================================================================
+-->
+
+<module name="syncobjs">
+<short>Synchronization objects</short>
+<descr>
+The <file>syncobjs</file> unit implements some classes which can be used
+when synchronizing threads in routines or classes that are used in multiple
+threads at once. The <link id="TCriticalSection"/> class is a wrapper around
+low-level critical section routines (semaphores or mutexes). The <link
+id="TEventObject"/> class can be used to send messages between threads
+(also known as conditional variables in Posix threads).
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="sysutils">
+<short>Exception support</short>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="PSecurityAttributes">
+<short>Dummy type</short>
+<descr>
+<var>PSecurityAttributes</var> is a dummy type used in non-windows
+implementations, so the calls remain Delphi compatible.
+</descr>
+<seealso>
+<link id="TEventObject.Create"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TEventHandle">
+<short>Handle type</short>
+<descr>
+<var>TEventHandle</var> is an opaque type and should not be used in user
+code.
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="INFINITE">
+<short>Infinite waiting time</short>
+<descr>
+Constant denoting an infinite timeout.
+</descr>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TWaitResult">
+<short>Unix wait result</short>
+<descr>
+<var>TWaitResult</var> is used to report the result of a wait operation.
+</descr>
+<seealso>
+<link id="TEventObject.WaitFor"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TWaitResult.wrSignaled">
+<short>Event was signaled (triggered)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TWaitResult.wrTimeout">
+<short>Time-out period expired</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TWaitResult.wrAbandoned">
+<short>Wait operation was abandoned.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TWaitResult.wrError">
+<short>An error occurred during the wait operation.</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.syncobjs.TSynchroObject
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TSynchroObject">
+<short>Abstract synchronization object</short>
+<descr>
+<var>TSynchroObject</var> is an abstract synchronization resource object. It
+implements 2 virtual methods <link id="TSynchroObject.Acquire">Acquire</link> 
+which can be used to acquire the resource, and <link id="TSynchroObject.Release">Release</link>
+to release the resource.
+</descr>
+<seealso>
+<link id="TSynchroObject.Acquire">Acquire</link>
+<link id="TSynchroObject.Release">Release</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="TSynchroObject.Acquire">
+<short>Acquire synchronization resource</short>
+<descr>
+<var>Acquire</var> does nothing in <var>TSynchroObject</var>. Descendent
+classes must override this method to acquire the resource they manage.
+</descr>
+<seealso>
+<link id="TSynchroObject.Release">Release</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="TSynchroObject.Release">
+<short>Release previously acquired synchronization resource</short>
+<descr>
+<var>Release</var> does nothing in <var>TSynchroObject</var>. Descendent
+classes must override this method to release the resource they acquired
+through the <link id="TSynchroObject.Acquire">Acquire</link> call.
+</descr>
+<seealso>
+<link id="TSynchroObject.Acquire">Acquire</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.syncobjs.TCriticalSection
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TCriticalSection">
+<short>Critical section</short>
+<descr>
+<p>
+<var>TCriticalSection</var> is a class wrapper around the low-level
+<var>TRTLCriticalSection</var> routines. It simply calls the RTL routines
+in the system unit for critical section support.
+</p>
+<p>
+A critical section is a resource which can be owned by only 1 caller:
+it can be used to make sure that in a multithreaded application only
+1 thread enters pieces of code protected by the critical section.
+</p>
+<p>
+Typical usage is to protect a piece of code with the following code
+(<var>MySection</var> is a <var>TCriticalSection</var> instance):
+</p>
+<code>
+  // Previous code
+  MySection.Acquire;
+  Try
+    // Protected code
+  Finally
+    MySection.Release;
+  end;
+  // Other code.
+</code>
+<p>
+The protected code can be executed by only 1 thread at a time. This is
+useful for instance for list operations in multithreaded environments.
+</p>
+</descr>
+<seealso>
+<link id="TCriticalSection.Acquire">Acquire</link>
+<link id="TCriticalSection.Release">Release</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCriticalSection.Acquire">
+<short>Enter the critical section</short>
+<descr>
+<var>Acquire</var> attempts to enter the critical section. It will suspend
+the calling thread if the critical section is in use by another thread, and
+will resume as soon as the other thread has released the critical section.
+</descr>
+<seealso>
+<link id="TCriticalSection.Release">Release</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCriticalSection.Release">
+<short>Leave the critical section</short>
+<descr>
+<var>Release</var> leaves the critical section. It will free the critical
+section so another thread waiting to enter the critical section will be 
+awakened, and will enter the critical section. This call always returns
+immediatly.
+</descr>
+<seealso>
+<link id="TCriticalSection.Acquire">Acquire</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCriticalSection.Enter">
+<short>Alias for <var>Acquire</var></short>
+<descr>
+<var>Enter</var> just calls 
+<link id="TCriticalSection.Acquire">Acquire</link>.
+</descr>
+<seealso>
+<link id="TCriticalSection.Leave">Leave</link>
+<link id="TCriticalSection.Acquire">Acquire</link>.
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCriticalSection.Leave">
+<short>Alias for <var>Release</var></short>
+<descr>
+<var>Leave</var> just calls <link id="TCriticalSection.Release">Release</link>
+</descr>
+<seealso>
+<link id="TCriticalSection.Release">Release</link>
+<link id="TCriticalSection.Enter">Enter</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCriticalSection.Create">
+<short>Create a new critical section.</short>
+<descr>
+<var>Create</var> initializes a new critical section, and initializes the
+system objects for the critical section. It should be created only once 
+for all threads, all threads should use the same critical section instance. 
+</descr>
+<seealso>
+<link id="TCriticalSection.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCriticalSection.Destroy">
+<short>Destroy the criticalsection instance</short>
+<descr>
+<p>
+<var>Destroy</var> releases the system critical section resources, and
+removes the <var>TCriticalSection</var> instance from memory.
+</p>
+</descr>
+<errors>
+Any threads trying to enter the critical section when it is destroyed,
+will start running with an error (an exception should be raised).
+</errors>
+<seealso>
+<link id="TCriticalSection.Create">Create</link>
+<link id="TCriticalSection.Acquire">Acquire</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.syncobjs.THandleObject
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="THandleObject">
+<short>Class encapsulating an operating system handle</short>
+<descr>
+<var>THandleObject</var> is a parent class for synchronization classes 
+that need to store an operating system handle. It introduces a property
+<link id="THandleObject.Handle">Handle</link> which can be used to store the
+operating system handle. The handle is in no way manipulated by
+<var>THandleObject</var>, only storage is provided.
+</descr>
+<seealso>
+<link id="THandleObject.Handle">Handle</link>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="THandleObject.destroy">
+<short>Free the instance</short>
+<descr>
+<var>Destroy</var> does nothing in the Free Pascal implementation of
+<var>THandleObject</var>.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THandleObject.Handle">
+<short>Handle for this object</short>
+<descr>
+<var>Handle</var> provides read-only access to the operating system handle
+of this instance. The public access is read-only, descendent classes should
+set the handle by accessing it's protected field <var>FHandle</var>
+directly.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THandleObject.LastError">
+<short>Last operating system error</short>
+<descr>
+<var>LastError</var> provides read-only access to the last operating system
+error code for operations on <link id="THandleObject.Handle">Handle</link>.
+</descr>
+<seealso>
+<link id="THandleObject.Handle">Handle</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.syncobjs.TEventObject
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TEventObject">
+<short>Event propagation object</short>
+<descr>
+<var>TEventObject</var> encapsulates the <var>BasicEvent</var>
+implementation of the system unit in a class. The event can be used to
+notify other threads of a change in conditions. (in POSIX terms, this is a
+conditional variable). A thread that wishes to notify other threads creates
+an instance of <var>TEventObject</var> with a certain name, and posts events
+to it. Other threads that wish to be notified of these events should create
+their own instances of <var>TEventObject</var> with the same name, and wait
+for events to arrive.
+</descr>
+<seealso>
+<link id="TCriticalSection"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TEventObject.Create">
+<short>Create a new event object</short>
+<descr>
+<p>
+<var>Create</var> creates a new event object with unique name
+<var>AName</var>. The object will be created security attributes
+<var>EventAttributes</var> (windows only). 
+</p>
+<p>
+The <var>AManualReset</var> indicates whether the event must be reset
+manually (if it is <var>False</var>, the event is reset immediatly after
+the first thread waiting for it is notified). 
+<var>InitialState</var> determines whether the event is initially set or not.
+</p>
+</descr>
+<seealso>
+<link id="TEventObject.ManualReset">ManualReset</link>
+<link id="TEventObject.ResetEvent">ResetEvent</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventObject.Create.EventAttributes">
+<short>Security attributes (only used on Windows)</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventObject.Create.AManualReset">
+<short>Manual reset allowed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventObject.Create.InitialState">
+<short>Initial event state</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventObject.Create.Name">
+<short>Name uniquely identifying the event in this process.</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TEventObject.destroy">
+<short>Clean up the event and release from memory</short>
+<descr>
+<var>Destroy</var> cleans up the low-level resources allocated for
+this event and releases the event instance from memory.
+</descr>
+<seealso>
+<link id="TEventObject.Create">Create</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TEventObject.ResetEvent">
+<short>Reset the event</short>
+<descr>
+<var>ResetEvent</var> turns off the event. Any <link id="TEventObject.WaitFor">WaitFor</link>
+operation will suspend the calling thread. 
+</descr>
+<seealso>
+<link id="TEventObject.SetEvent">SetEvent</link>
+<link id="TEventObject.WaitFor">WaitFor</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TEventObject.SetEvent">
+<short>Set the event</short>
+<descr>
+<var>SetEvent</var> sets the event. 
+If the <link id="TEventObject.ManualReset">ManualReset</link> is <var>True</var> 
+any thread that was waiting for the event to be set (using <link id="TEventObject.WaitFor">WaitFor</link>) 
+will resume it's operation. After the event was set, any thread that executes <var>WaitFor</var> will 
+return at once. If <var>ManualReset</var> is <var>False</var>, only one
+thread will be notified that the event was set, and the event will be
+immediatly reset after that.
+</descr>
+<seealso>
+<link id="TEventObject.WaitFor">WaitFor</link>
+<link id="TEventObject.ManualReset">ManualReset</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TEventObject.WaitFor">
+<short>Wait for the event to be set.</short>
+<descr>
+<p>
+<var>WaitFor</var> should be used in threads that should be notified when
+the event is set. When <var>WaitFor</var> is called, and the event is not
+set, the thread will be suspended. As soon as the event is set by some other
+thread (using <link id="TEventObject.SetEvent">SetEvent</link>) or the
+timeout period (<var>TimeOut</var>) has expired, the <var>WaitFor</var>
+function returns. The return value depends on the condition that caused
+the <var>WaitFor</var> function to return.
+</p>
+<p>
+The calling thread will wait indefinitely when the constant
+<var>INFINITE</var> is specified for the <var>TimeOut</var> parameter.
+</p>
+</descr>
+<seealso>
+<link id="TEventObject.SetEvent"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TEventObject.WaitFor.Result">
+<short>Reason for returning</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEventObject.WaitFor.Timeout">
+<short>Maximum time to wait for the event to be set</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEventObject.ManualReset">
+<short>Should the event be reset manually</short>
+<descr>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TEvent">
+<short>Alias for <link id="#fcl.syncobjs.TEventObject">TEventObject</link></short>
+<descr>
+<var>TEvent</var> is a simple alias for the <link id="TEventObject"/> class.
+</descr>
+<seealso>
+<link id="TEventObject"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.syncobjs.TSimpleEvent
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TSimpleEvent">
+<short>Simple, anonymous event</short>
+<descr>
+<var>TSimpleEvent</var> is a simple descendent of the <link id="TEventObject"/>
+class. It creates an event with no name, which must be reset manually, and
+which is initially not set.
+</descr>
+<seealso>
+<link id="TEventObject"/>
+<link id="TSimpleEvent.Create"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: default -->
+<element name="TSimpleEvent.Create">
+<short>Creates a new <var>TSimpleEvent</var> instance</short>
+<descr>
+<var>Create</var> instantiates a new <var>TSimpleEvent</var> instance. It
+simply calls the inherited <link id="TEventObject.Create">Create</link>
+with <var>Nil</var> for the security attributes, an empty name,
+<var>AManualReset</var> set to <var>True</var>, and <var>InitialState</var>
+to <var>False</var>.
+</descr>
+<seealso>
+<link id="TEventObject.Create"/>
+</seealso>
+</element>
+
+</module> <!-- syncobjs -->
+
+</package>
+</fpdoc-descriptions>
