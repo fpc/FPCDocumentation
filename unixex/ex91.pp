@@ -16,7 +16,7 @@ begin
     Fd:=fpOpen(S,O_RDOnly);
     if (fd>=0) then
       begin
-      if fstatfs (fd,info)<>0 then
+      if fpfstatfs (fd,@info)<>0 then
         begin
         writeln('Fstat failed. Errno : ',fpgeterrno);
         halt (1);
@@ -24,7 +24,14 @@ begin
       FpClose(fd);
       writeln;
       writeln ('Result of fsstat on file ''',s,'''.');
+{$if defined(Linux) or defined(sunos)} 
+      // SysV like.
       writeln ('fstype  : ',info.fstype);
+{$else}
+      // BSD like, incl Mac OS X.
+      writeln ('fstype  : ',info.ftype);
+{$endif}
+
       writeln ('bsize   : ',info.bsize);
       writeln ('bfree   : ',info.bfree);
       writeln ('bavail  : ',info.bavail);

@@ -51,8 +51,8 @@ endif
 
 .PHONY: all tex clean
 
-OBJECTS=ex1 ex10 ex11 ex12 ex15 ex22 ex29 ex36 ex37 ex38 ex39 ex40 ex45 ex46\
-        ex49 ex5 ex56 ex6 ex60 ex61 ex62 ex65 ex66 ex76 ex77 ex79 ex8 ex80 \
+OBJECTS=    ex15 ex22 ex29 ex36 ex37 ex38 ex39 ex40  ex46\
+          ex56    ex62 ex65 ex66 ex76 ex77 ex79 ex8 ex80 \
         ex9 ex91 
 
 TEXOBJECTS=$(addsuffix .tex, $(OBJECTS))

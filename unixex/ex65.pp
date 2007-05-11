@@ -5,7 +5,7 @@ Program example64;
 uses Unix,BaseUnix;
 
 Var
-   oa,na : PSigActionRec;
+   oa,na : PSigActionrec;
 
 Procedure DoSig(sig : Longint);cdecl;
 
@@ -16,7 +16,7 @@ end;
 begin
    new(na);
    new(oa);
-   na^.sa_handler:=TSigaction(@DoSig);
+   na^.sa_handler:=SigActionHandler(@DoSig);
    fillchar(na^.Sa_Mask,sizeof(na^.Sa_Mask),#0);
    na^.Sa_Flags:=0;
    {$ifdef Linux}
