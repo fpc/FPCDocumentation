@@ -2,7 +2,7 @@ Program Example47;
 
 { Program to demonstrate the DirName function. }
 
-Uses Unix,UnixUtil;
+Uses Dos,Unix,UnixUtil;
 
 Var S : String;
 

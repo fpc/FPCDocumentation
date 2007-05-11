@@ -2,7 +2,7 @@ Program Example48;
 
 { Program to demonstrate the BaseName function. }
 
-Uses Unix,UnixUtil;
+Uses Dos,Unix,UnixUtil;
 
 Var S : String;
 
