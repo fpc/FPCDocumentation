@@ -15,5 +15,5 @@ begin
   Close (F);
   fpChmod ('testex21',&777);
   { File is now executable  }
-  execl ('./testex21');
+  fpexecl ('./testex21',[]);
 end.
