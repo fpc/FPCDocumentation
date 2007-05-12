@@ -1902,7 +1902,7 @@ FCLMAKESKEL=$(MAKESKEL) --package=fcl
 RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-results
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream \
 	 base64 gettext ezcgi pooledmm dbugmsg streamex inicol streamcoll cachecls \
-	 eventlog syncobjs
+	 eventlog syncobjs custapp
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEINC)/iostream.pp"
@@ -1925,10 +1925,12 @@ FCLSTREAMCOL= --descr=streamcoll.xml --input="$(FCLBASEINC)/streamcoll.pp"
 FCLCACHECLS= --descr=cachecls.xml --input="$(FCLBASEINC)/cachecls.pp"
 FCLEVENTLOG= --descr=eventlog.xml --input="$(FCLBASEINC)/eventlog.pp"
 FCLSYNCOBJS= --descr=syncobjs.xml --input="$(FCLBASEINC)/syncobjs.pp"
+FCLCUSTAPP= --descr=custapp.xml --input="$(FCLBASEINC)/custapp.pp"
 FCLOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
 FCLOPTS+= $(FCLGETTEXT) $(FCLEZCGI) $(FCLPOOLEDMM) $(FCLDBUGMSG) $(FCLSTREAMEX)
 FCLOPTS+= $(FCLINICOL) $(FCLSTREAMCOL) $(FCLCACHECLS) $(FCLEVENTLOG) $(FCLSYNCOBJS)
+FCLOPTS+= $(FCLCUSTAPP)
 RTLOPTS=$(FPDOCOPTS) --hide-protected --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifdef CURRENTXMLONLY
 RTLXML=crt.xml
@@ -2046,6 +2048,7 @@ updatefclxml: cleanxml
 	$(FCLMAKESKEL) $(FCLCACHECLS) --output=cachecls.new.xml
 	$(FCLMAKESKEL) $(FCLEVENTLOG) --output=eventlog.new.xml
 	$(FCLMAKESKEL) $(FCLSYNCOBJS) --output=syncobjs.new.xml
+	$(FCLMAKESKEL) $(FCLCUSTAPP) --output=custapp.new.xml
 	./cleanxml $(FCLNEWXML)
 rtl.inc: $(RTLXML)
 	$(FPDOC) --output=rtl.inc $(RTLOPTS) --format=latex
