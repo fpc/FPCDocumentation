@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    BlowFish
+  ====================================================================
+-->
+
+<module name="BlowFish">
+<short>Unit implementing blowfish encryption/decryption streams</short>
+<descr>
+The <file>BlowFish</file> implements a class <link id="TBlowFish"/> to
+handle blowfish encryption/descryption of memory buffers, and 2
+<link id="#rtl.classes.TStream">TStream</link> descendents
+<link id="TBlowFishDeCryptStream"/> which descrypts any data that is read
+from it on the fly, as well as <link id="TBlowFishEnCryptStream"/>
+which encrypts the data that is written to it on the fly.
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="SysUtils">
+<short>Exception support and formatting routines.</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>TStream declaration</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="BFRounds">
+<short>Number of rounds in blowfish encryption.</short>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="PBlowFishKey">
+<short>Pointer to <link id="#fcl.blowfish.TBlowFishKey">TBlowFishKey</link>
+array</short>
+<descr>
+<var>PBlowFishKey</var> is a simple pointer to a <link
+id="TBlowFishKey"/> array.
+</descr>
+<seealso>
+<link id="TBlowFishKey"/>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TBlowFishKey">
+<short>Array to hold blowfish encryption keys</short>
+<descr>
+<var>TBlowFishKey</var> is a data structure which keeps the encryption 
+or decryption key for the <link id="TBlowFish"/>, <link id="TBlowFishDeCryptStream"/> 
+and <link id="TBlowFishEnCryptStream"/> classes. It should be filled with
+the encryption key and passed to the constructor of one of these classes.
+</descr>
+<seealso>
+<link id="TBlowFish"/>
+<link id="TBlowFishDeCryptStream"/>
+<link id="TBlowFishEnCryptStream"/>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TBFBlock">
+<short>Internal blowfish data structure</short>
+<descr>
+<var>TBFBlock</var> is the basic data structure used by the
+encrypting/decrypting routines in <link id="TBlowFish"/>,
+<link id="TBlowFishDeCryptStream"/> and <link id="TBlowFishEnCryptStream"/>.
+It is the basic encryption/decryption block for all encrypting/decrypting:
+all  encrypting/decrypting happens on a <var>TBFBlock</var> structure.
+</descr>
+<seealso>
+<link id="TBlowFish"/>
+<link id="TBlowFishEnCryptStream"/>
+<link id="TBlowFishDeCryptStream"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.BlowFish.TBlowFish
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TBlowFish">
+<short>Class implementing blowfish encryption/decription</short>
+<descr>
+<var>TBlowFish</var> is a simple class that can be used to encrypt/decrypt
+a single <link id="TBFBlock"/> data block with the <link
+id="TBlowFish.Encrypt">Encrypt</link> and <link
+id="TBlowFish.Decrypt">Decrypt</link> calls. It is used internally by the 
+<link id="TBlowFishEnCryptStream"/> and <link id="TBlowFishDeCryptStream"/>
+classes to encrypt or decrypt the actual data.
+</descr>
+<seealso>
+<link id="TBlowFishEnCryptStream"/>
+<link id="TBlowFishDeCryptStream"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TBlowFish.Create">
+<short>Create a new instance of the <var>TBlowFish</var> class</short>
+<descr>
+<var>Create</var> initializes a new instance of the <var>TBlowFish</var>
+class: it stores the key <var>Key</var> in the internal data structures so it can be 
+used in later calls to <link id="TBlowFish.Encrypt">Encrypt</link> and 
+<link id="TBlowFish.Decrypt">Decrypt</link>.
+</descr>
+<seealso>
+<link id="TBlowFish.Encrypt">Encrypt</link>
+<link id="TBlowFish.Decrypt">Decrypt</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFish.Create.Key">
+<short>Encryption key</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFish.Create.KeySize">
+<short>Actual size of encryption key</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBlowFish.Encrypt">
+<short>Encrypt a block</short>
+<descr>
+<var>Encrypt</var> encrypts the data in <var>Block</var> (always 8 bytes)
+using the <link id="TBlowFishKey">key</link> specified when the 
+<var>TBlowFish</var> instance was created.
+</descr>
+<seealso>
+<link id="TBlowFishKey"/>
+<link id="TBlowFish.Decrypt">Decrypt</link>
+<link id="TBlowFish.Create">Create</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFish.Encrypt.Block">
+<short>Data to encrypt</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBlowFish.Decrypt">
+<short>Decrypt a block</short>
+<descr>
+<var>ncrypt</var> decrypts the data in <var>Block</var> (always 8 bytes)
+using the <link id="TBlowFishKey">key</link> specified when the
+<var>TBlowFish</var> instance was created. The data must have been encrypted
+with the same key and the <link id="TBlowFish.Encrypt">Encrypt</link> call.
+</descr>
+<seealso>
+<link id="TBlowFishKey"/>
+<link id="TBlowFish.Encrypt">Encrypt</link>
+<link id="TBlowFish.Create">Create</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFish.Decrypt.Block">
+<short>Encrypted data to decrypt</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.BlowFish.EBlowFishError
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="EBlowFishError">
+<short>Exception used to report errors.</short>
+<descr>
+<var>EBlowFishError</var> is used by the <link id="TBlowFishStream"/>,
+<link id="TBlowFishEncryptStream"/> and <link id="TBlowFishDecryptStream"/>
+classes to report errors.
+</descr>
+<seealso>
+<link id="TBlowFishStream"/>
+<link id="TBlowFishEncryptStream"/>
+<link id="TBlowFishDecryptStream"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.BlowFish.TBlowFishStream
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TBlowFishStream">
+<short>Parent class for blowfish encryption/decryption streams</short>
+<descr>
+<p>
+<var>TBlowFishStream</var> is an abstract class which is used as a parent
+class for <link id="TBlowFishEncryptStream"/> and <link
+id="TBlowFishDecryptStream"/>. It simply provides a constructor and storage
+for a <link id="TBlowFish"/> instance and for the source or destination stream.
+</p>
+<p>
+Do not create an instance of <var>TBlowFishStream</var> directly. Instead
+create one of the descendent classes <var>TBlowFishEncryptStream</var> or
+<var>TBlowFishDecryptStream</var>.
+</p>
+</descr>
+<seealso>
+<link id="TBlowFishEncryptStream"/>
+<link id="TBlowFishDecryptStream"/>
+<link id="TBlowFish"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TBlowFishStream.Create">
+<short>Create a new instance of the <var>TBlowFishStream</var> class</short>
+<descr>
+<p>
+<var>Create</var> initializes a new instance of <var>TBlowFishStream</var>,
+and creates an internal instance of <link id="TBlowFish"/> using
+<var>AKey</var> and <var>AKeySize</var>. The <var>Dest</var> stream is
+stored so the descendent classes can refer to it.
+</p>
+<p>
+Do not create an instance of <var>TBlowFishStream</var> directly. Instead
+create one of the descendent classes <var>TBlowFishEncryptStream</var> or
+<var>TBlowFishDecryptStream</var>.
+</p>
+</descr>
+<seealso>
+<link id="TBlowFishEncryptStream"/>
+<link id="TBlowFishDecryptStream"/>
+<link id="TBlowFish"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishStream.Create.AKey">
+<short>Encryption/Decryption key</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishStream.Create.AKeySize">
+<short>Actual key size.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishStream.Create.Dest">
+<short>Destination stream</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TBlowFishStream.Destroy">
+<short>Destroy the <var>TBlowFishStream</var> instance.</short>
+<descr>
+<var>Destroy</var> cleans up the internal <link id="TBlowFish"/> instance.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TBlowFishStream.Create">Create</link>
+<link id="TBlowFish"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBlowFishStream.BlowFish">
+<short>Blowfish instance used when encrypting/descrypting</short>
+<descr>
+<var>BlowFish</var> is the <link id="TBlowFish"/> instance which 
+is created when the <var>TBlowFishStream</var> class is initialized.
+Normally it should not be used directly, it's intended for access 
+by the descencent classes <link id="TBlowFishEncryptStream"/>
+and <link id="TBlowFishDecryptStream"/>.
+</descr>
+<seealso>
+<link id="TBlowFishEncryptStream"/>
+<link id="TBlowFishDecryptStream"/>
+<link id="TBlowFish"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.BlowFish.TBlowFishEncryptStream
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TBlowFishEncryptStream">
+<short>On-the-fly Blowfish encryption stream</short>
+<descr>
+<p>
+The <var>TBlowFishEncryptStream</var> provides On-the-fly Blowfish
+encryption: all data that is written to it is encrypted and then written to
+a destination stream, which must be specified when the
+<var>TBlowFishEncryptStream</var> instance is created. The encryption
+key must also be created when the stream instance is created.
+</p>
+<p>
+This is a write-only stream: it is not seekable, and data can only be
+written to it, reading is not possible. For reading encrypted data, 
+the <link id="TBlowFishDecryptStream"/> stream must be used.
+</p>
+</descr>
+<seealso>
+<link id="TBlowFishStream.Create">Create</link>
+<link id="TBlowFishDecryptStream"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TBlowFishEncryptStream.Destroy">
+<short>Free the <var>TBlowFishEncryptStream</var></short>
+<descr>
+<var>Destroy</var> flushes the encryption buffer, and writes it to the
+destination stream. After that the <var>Inherited</var> destructor is
+called to clean up the <var>TBlowFishEncryptStream</var> instance.
+</descr>
+<seealso>
+<link id="TBlowFishEncryptStream.Flush">Flush</link>
+<link id="TBlowFishStream.Create">Create</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TBlowFishEncryptStream.Read">
+<short>Read data from the stream</short>
+<descr>
+<var>Read</var> will raise an <var>EBlowFishError</var> exception: <var>TBlowFishEncryptStream</var>
+is a write-only stream.
+</descr>
+<errors>
+Calling this function always results in an <link id="EBlowFishError"/>
+exception.
+</errors>
+<seealso>
+<link id="TBlowFishEncryptStream.Write"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TBlowFishEncryptStream.Read.Result">
+<short>Actual number of bytes read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishEncryptStream.Read.Buffer">
+<short>Buffer in which to store read data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishEncryptStream.Read.Count">
+<short>Number of bytes to read.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TBlowFishEncryptStream.Write">
+<short>Write data to the stream</short>
+<descr>
+<p>
+<var>Write</var> will encrypt and write <var>Count</var> bytes from <var>Buffer</var>
+to the destination stream. The function returns the actual number of bytes
+written. The data is not encrypted in-place, but placed in a special buffer
+for encryption.
+</p>
+<p>
+Data is always written 4 bytes at a time, since this is the amount of bytes
+required by the Blowfish algorithm. If no multiple of 4 was written to the
+destination stream, the <link id="TBlowFishEncryptStream.Flush">Flush</link>
+mechanism can be used to write the remaining bytes.
+</p>
+</descr>
+<seealso>
+<link id="TBlowFishEncryptStream.Read"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TBlowFishEncryptStream.Write.Result">
+<short>Actual number of bytes written</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishEncryptStream.Write.Buffer">
+<short>Buffer containing data to be written.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishEncryptStream.Write.Count">
+<short>Number of bytes to write.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TBlowFishEncryptStream.Seek">
+<short>Set the position in the stream</short>
+<descr>
+<var>Read</var> will raise an <var>EBlowFishError</var> exception:
+<var>TBlowFishEncryptStream</var> is a write-only stream, and cannot be
+positioned.
+</descr>
+<errors>
+Calling this function always results in an <link id="EBlowFishError"/>
+exception.
+</errors>
+<seealso>
+<link id="TBlowFishEncryptStream.Write"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TBlowFishEncryptStream.Seek.Result">
+<short>New position in the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishEncryptStream.Seek.Offset">
+<short>Offset from origin</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishEncryptStream.Seek.Origin">
+<short>Origin for seek operation</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBlowFishEncryptStream.Flush">
+<short>Flush the encryption buffer</short>
+<descr>
+<p>
+<var>Flush</var> writes the remaining data in the encryption buffer to the
+destination stream.
+</p>
+<p>
+For efficiency, data is always written 4 bytes at a time, since this is the 
+amount of bytes required by the Blowfish algorithm. If no multiple of 4 was 
+written to the destination stream, the <var>Flush</var>
+mechanism can be used to write the remaining bytes.
+</p>
+<p>
+<var>Flush</var> is called automatically when the stream is destroyed, so
+there is no need to call it after all data was written and the stream is no
+longer needed.
+</p>
+</descr>
+<seealso>
+<link id="TBlowFishEncryptStream.Write">Write</link>
+<link id="TBFBlock"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.BlowFish.TBlowFishDeCryptStream
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TBlowFishDeCryptStream">
+<short>On-the-fly Blowfish decryption stream</short>
+<descr>
+<p>
+The <var>TBlowFishDecryptStream</var> provides On-the-fly Blowfish
+decryption: all data that is read from the source stream is decrypted
+before it is placed in the output buffer.
+The source stream must be specified when the
+<var>TBlowFishDecryptStream</var> instance is created. The Decryption
+key must also be created when the stream instance is created, and must be
+the same key as the one used when encrypting the data.
+</p>
+<p>
+This is a read-only stream: it is seekable only in a forward direction, and data can only be
+read from it, writing is not possible. For writing data so it is encrypted, 
+the <link id="TBlowFishEncryptStream"/> stream must be used.
+</p>
+</descr>
+<seealso>
+<link id="TBlowFishStream.Create">Create</link>
+<link id="TBlowFishEncryptStream"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TBlowFishDeCryptStream.Read">
+<short>Read data from the stream</short>
+<descr>
+<var>Read</var> reads <var>Count</var> bytes from the source stream,
+decrypts them using the key provided when the <var>TBlowFishDeCryptStream</var> 
+instance was created, and writes the decrypted data to <var>Buffer</var>
+</descr>
+<seealso>
+<link id="TBlowFishStream.Create">Create</link>
+<link id="TBlowFishEncryptStream"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TBlowFishDeCryptStream.Read.Result">
+<short>Actual number of bytes read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishDeCryptStream.Read.Buffer">
+<short>Memory buffer in which to place data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishDeCryptStream.Read.Count">
+<short>Number of bytes to read from the stream</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TBlowFishDeCryptStream.Write">
+<short>Write data to the stream</short>
+<descr>
+<var>Write</var> will raise an <var>EBlowFishError</var> exception:
+<var>TBlowFishDecryptStream</var> is a write-only stream.
+</descr>
+<errors>
+Calling this function always results in an <link id="EBlowFishError"/>
+exception.
+</errors>
+<seealso>
+<link id="TBlowFishDecryptStream.Read"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TBlowFishDeCryptStream.Write.Result">
+<short>Number of bytes actually written.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishDeCryptStream.Write.Buffer">
+<short>Buffer with data to be written.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishDeCryptStream.Write.Count">
+<short>Number of bytes to write</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TBlowFishDeCryptStream.Seek">
+<short>Set the stream position.</short>
+<descr>
+<var>Seek</var> emulates a forward seek by reading and discarding data. The
+discarded data is lost. Since it is a forward seek, this means that only
+<var>soFromCurrent</var> can be specified for <var>Origin</var> with a
+positive (or zero) <var>Offset</var> value. All other values will result in
+an exception. The function returns the new position in the stream.
+</descr>
+<errors>
+If any other combination of <var>Offset</var> and <var>Origin</var> than the
+allowed combination is specified, then an <link id="EBlowFishError"/>
+exception will be raised.
+</errors>
+<seealso>
+<link id="TBlowFishDeCryptStream.Read">Read</link>
+<link id="EBlowFishError"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TBlowFishDeCryptStream.Seek.Result">
+<short>New position in the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishDeCryptStream.Seek.Offset">
+<short>Offset. Only zero or positive values allowed.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBlowFishDeCryptStream.Seek.Origin">
+<short>Origin. Only <var>soFromCurrent</var> allowed.</short>
+</element>
+
+</module> <!-- BlowFish -->
+
+</package>
+</fpdoc-descriptions>
