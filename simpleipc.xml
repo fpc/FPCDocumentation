@@ -1,0 +1,1130 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    simpleipc
+  ====================================================================
+-->
+
+<module name="simpleipc">
+<short>Simple one-way IPC protocol</short>
+<descr>
+The <file>SimpleIPC</file> unit provides classes to implement a simple,
+one-way IPC mechanism using string messages. It provides a
+<link>TSimpleIPCServer</link> component for the server, and a <link
+id="TSimpleIPCClient"/> component for the client. The components are
+cross-platform, and should work both on Windows and unix-like systems.
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short><var>TComponent</var> definition.</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="SysUtils">
+<short>Exception support and formatting support</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="MsgVersion">
+<short>Current version of the messaging protocol</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="mtUnknown">
+<short>Unknown message type</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="mtString">
+<short>String message type</short>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TMessageType">
+<short>For backwards compatibility</short>
+<descr>
+<var>TMessageType</var> is provided for backward compatibility with earlier
+versions of the <file>simpleipc</file> unit.
+</descr>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TMsgHeader">
+<short>Message header record</short>
+<descr>
+<var>TMsgHeader</var> is used internally by the IPC client and server
+components to transmit data. The <var>Version</var> field denotes the
+protocol version. The <var>MsgType</var> field denotes the type of data
+(<var>mtString</var> for string messages), and <var>MsgLen</var> is the
+length of the message which will follow.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer"/>
+<link id="TSimpleIPCClient"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TMsgHeader.Version">
+<short>Version number</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TMsgHeader.MsgType">
+<short>Message data type</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TMsgHeader.MsgLen">
+<short>Message length</short>
+</element>
+
+
+
+<!--
+  ********************************************************************
+    #fcl.simpleipc.TIPCServerComm
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TIPCServerComm">
+<short>Internal message communication component </short>
+<descr>
+<p>
+<var>TIPCServerComm</var> is an abstract component which implements the
+server-side communication protocol. The behaviour expected of this class
+must be implemented in a platform-dependent descendent class.
+</p>
+<p>
+The <link id="TSimpleIPCServer"/> class does not implement the messaging protocol
+by itself. Instead, it creates an instance of a (platform dependent)
+descendent of <var>TIPCServerComm</var> which handles the internals of 
+the commnication protocol. 
+</p>
+<p>
+The client side of the messaging protocol is handled by the 
+<link id="TIPCClientComm"/> component. The descenent components must always be
+implemented in pairs.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCServer"/>
+<link id="TIPCClientComm"/> 
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TIPCServerComm.Create">
+<short>Create a new instance of the communication handler</short>
+<descr>
+<var>Create</var> initializes a new instance of the communication handler.
+It simply saves the <var>AOwner</var> parameter in the <link
+id="TIPCServerComm.Owner">Owner</link> property.
+</descr>
+<seealso>
+<link id="TIPCServerComm.Owner">Owner</link> 
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServerComm.Create.AOwner">
+<short><var>TSimpleIPCServer</var> instance for which to handle transport</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIPCServerComm.Owner">
+<short><var>TSimpleIPCServer</var> instance for which to handle transport</short>
+<descr>
+<var>Owner</var> refers to the <link id="TSimpleIPCServer"/> instance for
+which this instance of <var>TSimpleIPCServer</var> handles the transport. It
+is specified when the <var>TIPCServerComm</var> is created.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIPCServerComm.StartServer">
+<short>Start the server-side of the communication channel</short>
+<descr>
+<p>
+<var>StartServer</var> sets up the server-side of the communication channel.
+After <var>StartServer</var> was called, a client can connect to the
+communication channel, and send messages to the server.
+</p>
+<p>
+It is called when the <link id="TSimpleIPC.Active"/> property of the <link
+id="TSimpleIPCServer"/> instance is set to <var>True</var>.
+</p>
+</descr>
+<errors>
+In case of an error, an <link id="EIPCError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TSimpleIPCServer"/>
+<link id="TSimpleIPC.Active"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIPCServerComm.StopServer">
+<short>Stop the server side of the communication channel.</short>
+<descr>
+<p>
+<var>StartServer</var> closes down the server-side of the communication 
+channel. After <var>StartServer</var> was called, a client can no longer 
+connect to the communication channel, or even send messages to the server if
+it was previously connected (i.e. it will be disconnected).
+</p>
+<p>
+It is called when the <link id="TSimpleIPC.Active"/> property of the <link
+id="TSimpleIPCServer"/> instance is set to <var>False</var>.
+</p>
+</descr>
+<errors>
+In case of an error, an <link id="EIPCError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TSimpleIPCServer"/>
+<link id="TSimpleIPC.Active"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCServerComm.PeekMessage">
+<short>See if a message is available.</short>
+<descr>
+<p>
+<var>PeekMessage</var> can be used to see if a message is available: it
+returns <var>True</var> if a message is available. It will wait maximum
+<var>TimeOut</var> milliseconds for a message to arrive. If no message was
+available after this time, it will return <var>False</var>.
+</p>
+<p>
+If a message was available, it can be read with the 
+<link id="TIPCServerComm.ReadMessage">ReadMessage</link> call.
+</p>
+</descr>
+<seealso>
+<link id="TIPCServerComm.ReadMessage">ReadMessage</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCServerComm.PeekMessage.Result">
+<short><var>True</var> if a message was available.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServerComm.PeekMessage.TimeOut">
+<short>Number of milliseconds to wait for a message.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCServerComm.InstanceID">
+<short>Unique identifier for the communication channel.</short>
+<descr>
+<var>InstanceID</var> returns a textual representation which uniquely
+identifies the communication channel on the server. The value is system
+dependent, and should be usable by the client-side to establish a
+communication channel with this instance.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCServerComm.GetInstanceID.Result">
+<short>Unique identification of the channel</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIPCServerComm.ReadMessage">
+<short>Read message from the channel.</short>
+<descr>
+<p>
+<var>ReadMessage</var> reads the message for the channel, and stores the
+information in the data structures in the <var>Owner</var> class.
+</p>
+<p>
+<var>ReadMessage</var> is a blocking call: if no message is available, the
+program will wait till a message arrives. Use <link
+id="TIPCServerComm.PeekMessage">PeekMessage</link> to see if a message is
+available.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCServer"/>
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TIPCServerCommClass">
+<short>Class reference for <link id="#fcl.simpleipc.TIPCServerComm">TIPCServerComm</link></short>
+<descr>
+<var>TIPCServerCommClass</var> is used by <link id="TSimpleIPCServer"/>
+to decide which kind of communication channel to set up.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer"/>
+<link id="TIPCServerComm"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.simpleipc.TSimpleIPC
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TSimpleIPC">
+<short>Ancestor for client/server simple IPC classes</short>
+<descr>
+<var>TSimpleIPC</var> is the common ancestor for the <link
+id="TSimpleIPCServer"/> and <link id="TSimpleIPCClient"/> classes.
+It implements some common properties between client and server.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer"/> 
+<link id="TSimpleIPCClient"/> 
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSimpleIPC.Active">
+<short>Communication channel active</short>
+<descr>
+<var>Active</var> can be set to <var>True</var> to set up the client or
+server end of the communication channel. For the server this means that the
+server end is set up, for the client it means that the client tries to
+connect to the server with <link id="TSimpleIPC.ServerID">ServerID</link>
+identification.
+</descr>
+<seealso>
+<link id="TSimpleIPC.ServerID">ServerID</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSimpleIPC.ServerID">
+<short>Unique server identification</short>
+<descr>
+<var>ServerID</var> is the unique server identification: on the server, it
+determines how the server channel is set up, on the client it determines the
+server with which to connect.
+</descr>
+<seealso>
+<link id="TSimpleIPC.Active">Active</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.simpleipc.TSimpleIPCServer
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TSimpleIPCServer">
+<short>Simple IPC server component</short>
+<descr>
+<p>
+<var>TSimpleIPCServer</var> is the server side of the simple IPC
+communication protocol. The server program should create a
+<var>TSimpleIPCServer</var> instance, set it's <link
+id="TSimpleIPC.ServerID">ServerID</link> property to a unique name for the
+system, and then set the <link id="TSimpleIPC.ServerID">Active</link>
+property to <var>True</var> (or call <link id="TSimpleIPCServer.StartServer">StartServer</link>).
+</p>
+<p>
+After the server was started, it can check for availability of messages with
+the <link id="TSimpleIPCServer.PeekMessage">PeekMessage</link> call, and
+read the message with <link id="TSimpleIPCServer.ReadMessage">ReadMessage</link>.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCClient"/>
+<link id="TSimpleIPC"/>
+<link id="TIPCServerComm"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TSimpleIPCServer.Create">
+<short>Create a new instance of <var>TSimpleIPCServer</var></short>
+<descr>
+<var>Create</var> instantiates a new instance of the
+<var>TSimpleIPCServer</var> class. It initializes the data structures needed
+to handle the server side of the communication.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSimpleIPCServer.Create.AOwner">
+<short>Owner of the <var>TSimpleIPCServer</var> instance.</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TSimpleIPCServer.Destroy">
+<short>Remove the <var>TSimpleIPCServer</var> instance from memory</short>
+<descr>
+<p>
+<var>Destroy</var> stops the server, cleans up the internal data structures maintained by
+<var>TSimpleIPCServer</var> and then calls the inherited <var>Destroy</var>,
+which will remove the instance from memory.
+</p>
+<p>
+Never call <var>Destroy</var> directly, use the <var>Free</var> method
+instead or the <var>FreeAndNil</var> procedure in <file>SysUtils</file>.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.Create">Create</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSimpleIPCServer.StartServer">
+<short>Start the server</short>
+<descr>
+<p>
+<var>StartServer</var> starts the server side of the communication channel.
+It is called automatically when the <var>Active</var> property is set to
+<var>True</var>. It creates the internal communication object (a <link
+id="TIPCServerComm"/> descendent) and activates the communication channel.
+</p>
+<p>
+After this method was called, clients can connect and send messages. 
+</p>
+<p>
+Prior to calling this method, the <link id="TSimpleIPC.ServerID">ServerID</link>
+property must be set.
+</p>
+</descr>
+<errors>
+If an error occurs a <link id="EIPCError"/> exception may be raised.
+</errors>
+<seealso>
+<link id="TIPCServerComm"/>
+<link id="TSimpleIPC.Active">Active</link>
+<link id="TSimpleIPC.ServerID">ServerID</link>
+<link id="TSimpleIPCServer.StopServer">StopServer</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSimpleIPCServer.StopServer">
+<short>Stop the server</short>
+<descr>
+<p>
+<var>StopServer</var> stops the server side of the communication channel.
+It is called automatically when the <var>Active</var> property is set to
+<var>False</var>. It deactivates the communication channel and frees
+the internal communication object (a <link id="TIPCServerComm"/>
+descendent).
+</p>
+<p>
+</p>
+</descr>
+<seealso>
+<link id="TIPCServerComm"/>
+<link id="TSimpleIPC.Active">Active</link>
+<link id="TSimpleIPC.ServerID">ServerID</link>
+<link id="TSimpleIPCServer.StartServer">StartServer</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSimpleIPCServer.PeekMessage">
+<short>Check if a client message is available.</short>
+<descr>
+<p>
+<var>PeekMessage</var> checks if a message from a client is available. It
+will return <var>True</var> if a message is available. The call will wait
+for <var>TimeOut</var> milliseconds for a message to arrive: if after
+<var>TimeOut</var> milliseconds, no message is available, the function will
+return <var>False</var>.
+</p>
+<p>
+If <var>DoReadMessage</var> is <var>True</var> then <var>PeekMessage</var>
+will read the message. If it is <var>False</var>, it does not read the 
+message. The message should then be read manually
+with <link id="TSimpleIPCServer.ReadMessage">ReadMessage</link>.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.ReadMessage">ReadMessage</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TSimpleIPCServer.PeekMessage.Result">
+<short><var>True</var> if a client message is available.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSimpleIPCServer.PeekMessage.TimeOut">
+<short>Number of milliseconds to wait for a message.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSimpleIPCServer.PeekMessage.DoReadMessage">
+<short>Should the message be read or not ?</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSimpleIPCServer.StringMessage">
+<short>Last message as a string.</short>
+<descr>
+<p>
+<var>StringMessage</var> is the content of the last message as a string.
+</p>
+<p>
+This property will contain valid data only after a succesful call to 
+<link id="TSimpleIPCServer.ReadMessage">ReadMessage</link>.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.GetMessageData">GetMessageData</link>.
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSimpleIPCServer.GetMessageData">
+<short>Read the data of the last message in a stream</short>
+<descr>
+<p>
+<var>GetMessageData</var> reads the data of the last message from
+<link id="TSimpleIPCServer.MsgData"/> and stores it in stream 
+<var>Stream</var>. If no data was available, the stream will be cleared.
+</p>
+<p>
+This function will return valid data only after a succesful call to
+<link id="TSimpleIPCServer.ReadMessage">ReadMessage</link>. It will also not
+clear the data buffer.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.StringMessage">StringMessage</link>
+<link id="TSimpleIPCServer.MsgData">MsgData</link>
+<link id="TSimpleIPCServer.MsgType">MsgType</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSimpleIPCServer.GetMessageData.Stream">
+<short>Stream to store message data in</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSimpleIPCServer.MsgType">
+<short>Last message type</short>
+<descr>
+<p>
+<var>MsgType</var> contains the message type of the last message.
+</p>
+<p>
+This property will contain valid data only after a succesful call to
+<link id="TSimpleIPCServer.ReadMessage">ReadMessage</link>.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.ReadMessage">ReadMessage</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSimpleIPCServer.MsgData">
+<short>Last message data</short>
+<descr>
+<p>
+<var>MsgData</var> contains the actual data from the last read message.
+If the data is a string, then <link id="TSimpleIPCServer.StringMessage">StringMessage</link> is better suited to
+read the data.
+</p>
+<p>
+This property will contain valid data only after a succesful call to 
+<link id="TSimpleIPCServer.ReadMessage">ReadMessage</link>.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.StringMessage">StringMessage</link> 
+<link id="TSimpleIPCServer.ReadMessage">ReadMessage</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSimpleIPCServer.InstanceID">
+<short>Instance ID</short>
+<descr>
+<var>InstanceID</var> is the unique identifier for this server 
+communication channel endpoint, and will be appended to the 
+<link id="TSimpleIPCServer.ServerID">ServerID</link> property 
+to form the unique server endpoint which a client should use.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.ServerID">ServerID</link>
+<link id="TSimpleIPCServer.GlobalID">Global</link>
+
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSimpleIPCServer.Global">
+<short>Is the server reachable to all users or not</short>
+<descr>
+<var>Global</var> indicates whether the server is reachable to all users
+(<var>True</var>) or if it is private to the current process (<var>False</var>). 
+In the latter case, the unique channel endpoint identification may change:
+a unique identification of the current process is appended to the
+<var>ServerID</var> name.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.ServerID">ServerID</link>
+<link id="TSimpleIPCServer.InstanceID">InstanceID</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSimpleIPCServer.OnMessage">
+<short>Event triggered when a pessage arrives</short>
+<descr>
+<var>OnMessage</var> is called by <link
+id="TSimpleIPCServer.ReadMessage">ReadMessage</link> when a message has been
+read. The actual message data can be retrieved with one of the 
+<link id="TSimpleIPCServer.StringMessage">StringMessage</link>,
+<link id="TSimpleIPCServer.MsgData">MsgData</link> or 
+<link id="TSimpleIPCServer.MsgType">MsgType</link> properties.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.StringMessage">StringMessage</link>
+<link id="TSimpleIPCServer.MsgData">MsgData</link>
+<link id="TSimpleIPCServer.MsgType">MsgType</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.simpleipc.TIPCClientComm
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TIPCClientComm">
+<short>Internal client-side communication protocol</short>
+<descr>
+<p>
+<var>TIPCClientComm</var> is an abstract component which implements the
+client-side communication protocol. The behaviour expected of this class
+must be implemented in a platform-dependent descendent class.
+</p>
+<p>
+The <link id="TSimpleIPCClient"/> class does not implement the messaging protocol
+by itself. Instead, it creates an instance of a (platform dependent)
+descendent of <var>TIPCClientComm</var> which handles the internals of
+the commnication protocol.
+</p>
+<p>
+The server side of the messaging protocol is handled by the
+<link id="TIPCServerComm"/> component. The descenent components must always
+be implemented in pairs.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCClient"/>
+<link id="TIPCServerComm"/>
+<link id="TSimpleIPCServer"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TIPCClientComm.Create">
+<short>Create a new instance of the <var>TIPCClientComm</var></short>
+<descr>
+<var>Create</var> instantiates a new instance of the
+<var>TIPCClientComm</var> class, and stores the <var>AOwner</var> reference
+to the <link id="TSimpleIPCClient"/> instance for which it will handle
+communitation. It can be retrieved later using the <link id="TIPCClientComm.Owner">Owner</link> property.
+</descr>
+<seealso>
+<link id="TIPCClientComm.Owner">Owner</link>
+<link id="TSimpleIPCClient"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClientComm.Create.AOwner">
+<short><var>TSimpleIPCClient</var> instance for which communication must be
+handled.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIPCClientComm.Owner">
+<short><var>TSimpleIPCClient</var> instance for which communication must be
+handled.</short>
+<descr>
+<var>Owner</var> is the <link id="TSimpleIPCClient"/> instance for which the
+communication must be handled. It cannot be changed, and must be specified
+when the <var>TIPCClientComm</var> instance is created.
+</descr>
+<seealso>
+<link id="TSimpleIPCClient"/>
+<link id="TIPCClientComm.Create"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIPCClientComm.Connect">
+<short>Connect to the server</short>
+<descr>
+<p>
+<var>Connect</var> must establish a communication channel with the server.
+The server endpoint must be constructed from the <link
+id="TSimpleIPC.ServerID">ServerID</link> and <link
+id="TSimpleIPCClient.ServerInstance">ServerInstance</link> properties of the owning <link
+id="TSimpleIPCClient"/> instance.
+</p>
+<p>
+<var>Connect</var> is called by the <link id="TSimpleIPCClient.Connect"/> call
+or when the <link id="TSimpleIPC.Active">Active</link> property is set to
+<var>True</var>
+</p>
+<p>
+Messages can be sent only after <var>Connect</var> was called succesfully.
+</p>
+</descr>
+<errors>
+If the connection setup fails, or the connection was already set up , then an exception may be raised.
+</errors>
+<seealso>
+<link id="TSimpleIPCClient.Connect"/>
+<link id="TSimpleIPC.Active">Active</link>
+<link id="TIPCClientComm.Disconnect">Disconnect</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIPCClientComm.Disconnect">
+<short>Disconnect from the server</short>
+<descr>
+<p>
+<var>Disconnect</var> closes the communication channel with the server.
+Any calls to <var>SendMessage</var> are invalid after <var>Disconnect</var>
+was called.
+</p>
+<p>
+<var>Disconnect</var> is called by the <link id="TSimpleIPCClient.Disconnect"/>
+call or when the <link id="TSimpleIPC.Active">Active</link> property is set to
+<var>False</var>.
+</p>
+<p>
+Messages can no longer be sent after <var>Disconnect</var> was called.
+</p>
+</descr>
+<errors>
+If the connection shutdown fails, or the connection was already shut down, 
+then an exception may be raised.
+</errors>
+<seealso>
+<link id="TSimpleIPCClient.Disconnect"/>
+<link id="TSimpleIPC.Active">Active</link>
+<link id="TIPCClientComm.Connect">Connect</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCClientComm.ServerRunning">
+<short>Check if the server is running.</short>
+<descr>
+<var>ServerRunning</var> returns <var>True</var> if the server endpoint of
+the communication channel can be found, or <var>False</var> if not. The
+server endpoint should be obtained from the <var>ServerID</var> and
+<var>InstanceID</var> properties of the owning <link id="TSimpleIPCClient"/>
+component.
+</descr>
+<seealso>
+<link id="TSimpleIPCClient.InstanceID"/>
+<link id="TSimpleIPCClient.ServerID"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCClientComm.ServerRunning.Result">
+<short><var>True</var> if the server communication channel endpoint can be reached.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIPCClientComm.SendMessage">
+<short>Send a message</short>
+<descr>
+<var>SendMessage</var> should deliver the message with type
+<var>MsgType</var> and data in <var>Stream</var> to the server.
+It should not return until the message was delivered.
+</descr>
+<errors>
+If the delivery of the message fails, an exception will be raised.
+</errors>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClientComm.SendMessage.MsgType">
+<short>Type of message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClientComm.SendMessage.Stream">
+<short>Message data</short>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TIPCClientCommClass">
+<short>Class reference for <link
+id="#fcl.simpleipc.TIPCClientComm">TIPCClientComm</link></short>
+<descr>
+<var>TIPCClientCommClass</var> is used by <link id="TSimpleIPCClient"/>
+to decide which kind of communication channel to set up.
+</descr>
+<seealso>
+<link id="TSimpleIPCClient"/>
+<link id="TIPCClientComm"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.simpleipc.TSimpleIPCClient
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TSimpleIPCClient">
+<short>Simple IPC client component</short>
+<descr>
+<p>
+<var>TSimpleIPCClient</var> is the client side of the simple IPC
+communication protocol. The client program should create a
+<var>TSimpleIPCClient</var> instance, set it's <link
+id="TSimpleIPC.ServerID">ServerID</link> property to the unique name for the
+server it wants to send messages to, and then set the <link id="TSimpleIPC.ServerID">Active</link>
+property to <var>True</var> (or call <link
+id="TSimpleIPCClient.StartServer">Connect</link>).
+</p>
+<p>
+After the connection with the server was established, messages can be sent
+to the server with the <link id="TSimpleIPCClient.SendMessage">SendMessage</link> 
+or <link id="TSimpleIPCClient.SendStringMessage">SendStringMessage</link>
+calls.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCServer"/>
+<link id="TSimpleIPC"/>
+<link id="TIPCClientComm"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TSimpleIPCClient.Create">
+<short>Create a new instance of <var>TSimpleIPCClient</var></short>
+<descr>
+<var>Create</var> instantiates a new instance of the
+<var>TSimpleIPCClient</var> class. It initializes the data structures needed
+to handle the client side of the communication.
+</descr>
+<seealso>
+<link id="TSimpleIPCClient.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSimpleIPCClient.Create.AOwner">
+<short>Owner of the instance</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TSimpleIPCClient.Destroy">
+<short>Remove the <var>TSimpleIPCClient</var> instance from memory</short>
+<descr>
+<p>
+<var>Destroy</var> disconnects the client from the server if need be, and
+cleans up the internal data structures maintained by
+<var>TSimpleIPCClient</var> and then calls the inherited <var>Destroy</var>,
+which will remove the instance from memory.
+</p>
+<p>
+Never call <var>Destroy</var> directly, use the <var>Free</var> method
+instead or the <var>FreeAndNil</var> procedure in <file>SysUtils</file>.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCClient.Create">Create</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSimpleIPCClient.Connect">
+<short>Connect to the server</short>
+<descr>
+<p>
+<var>Connect</var> connects to the server indicated in the <link
+id="TSimpleIPC.ServerID">ServerID</link> and <link
+id="TSimpleIPCClient.InstanceID">InstanceID</link> properties. <var>Connect</var> is called
+automatically if the <link id="TSimpleIPC.Active">Active</link> property is
+set to <var>True</var>.
+</p>
+<p>
+After a successful call to <var>Connect</var>, messages can be sent to
+the server using <link id="TSimpleIPCClient.SendMessage">SendMessage</link>
+or <link id="TSimpleIPCClient.SendStringMessage">SendStringMessage</link>.
+</p>
+<p>
+Calling <var>Connect</var> if the connection is already open has no effect.
+</p>
+</descr>
+<errors>
+If creating the connection fails, an <link id="EIPCError"/> exception may be
+raised.
+</errors>
+<seealso>
+<link id="TSimpleIPC.ServerID">ServerID</link> 
+<link id="TSimpleIPCClient.InstanceID">InstanceID</link>
+<link id="TSimpleIPC.Active">Active</link> 
+<link id="TSimpleIPCClient.SendMessage">SendMessage</link>
+<link id="TSimpleIPCClient.SendStringMessage">SendStringMessage</link>
+<link id="TSimpleIPCClient.Disconnect">Disconnect</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSimpleIPCClient.Disconnect">
+<short>Disconnect from the server</short>
+<descr>
+<p>
+<var>Disconnect</var> shuts down the connection with the server as
+previously set up with <link id="TSimpleIPCClient.Connect">Connect</link>.
+<var>Disconnect</var> is called automatically if the <link id="TSimpleIPC.Active">Active</link> property is
+set to <var>False</var>.
+</p>
+<p>
+After a successful call to <var>Disconnect</var>, messages can no longer
+be sent to the server. Attempting to do so will result in an exception.
+</p>
+<p>
+Calling <var>Disconnect</var> if there is no connection has no effect.
+</p>
+</descr>
+<errors>
+If creating the connection fails, an <link id="EIPCError"/> exception may be
+raised.
+</errors>
+<seealso>
+<link id="TSimpleIPC.Active">Active</link>
+<link id="TSimpleIPCClient.Connect">Connect</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSimpleIPCClient.ServerRunning">
+<short>Check if the server is running.</short>
+<descr>
+<var>ServerRunning</var> verifies if the server indicated in the <link
+id="TSimpleIPC.ServerID">ServerID</link> and <link
+id="TSimpleIPCClient.InstanceID">InstanceID</link> properties is running.
+It returns <var>True</var> if the server communication endpoint can be
+reached, <var>False</var> otherwise. This function can be called before
+a connection is made.
+</descr>
+<seealso>
+<link id="TSimpleIPCClient.Connect">Connect</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TSimpleIPCClient.ServerRunning.Result">
+<short><var>True</var> if the server can be reached</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSimpleIPCClient.SendMessage">
+<short>Send a message to the server</short>
+<descr>
+<var>SendMessage</var> sends a message of type <var>MsgType</var> and data
+from <var>stream</var> to the server. The client must be connected for this
+call to work.
+</descr>
+<errors>
+In case an error occurs, or there is no connection to the server,
+an <link id="EIPCError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TSimpleIPCClient.Connect">Connect</link>
+<link id="TSimpleIPCClient.SendStringMessage">SendStringMessage</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSimpleIPCClient.SendMessage.MsgType">
+<short>Message type</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSimpleIPCClient.SendMessage.Stream">
+<short>Message data.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSimpleIPCClient.SendStringMessage">
+<short>Send a string message to the server</short>
+<descr>
+<var>SendStringMessage</var> sends a string message with type
+<var>MsgTyp</var> and data <var>Msg</var> to the server. This is a
+convenience function: a small wrapper around the
+<link id="TSimpleIPCClient.SendMessage">SendMessage</link> method
+</descr>
+<errors>
+Same as for <var>SendMessage</var>.
+</errors>
+<seealso>
+<link id="TSimpleIPCClient.SendMessage">SendMessage</link>
+<link id="TSimpleIPCClient.Connect">Connect</link>
+<link id="TSimpleIPCClient.SendStringMessageFmt">SendStringMessageFmt</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSimpleIPCClient.SendStringMessage.Msg">
+<short>String message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSimpleIPCClient.SendStringMessage.MsgType">
+<short>Message type</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSimpleIPCClient.SendStringMessageFmt">
+<short>Send a formatted string message</short>
+<descr>
+<var>SendStringMessageFmt</var> sends a string message with type
+<var>MsgTyp</var> and message formatted from <var>Msg</var> and
+<var>Args</var> to the server. This is a convenience function: 
+a small wrapper around the <link
+id="TSimpleIPCClient.SendStringMessage">SendStringMessage</link> method
+</descr>
+<errors>
+Same as for <var>SendMessage</var>.
+</errors>
+<seealso>
+<link id="TSimpleIPCClient.SendMessage">SendMessage</link>
+<link id="TSimpleIPCClient.Connect">Connect</link>
+<link id="TSimpleIPCClient.SendStringMessage">SendStringMessage</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSimpleIPCClient.SendStringMessageFmt.Msg">
+<short>Format string for message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSimpleIPCClient.SendStringMessageFmt.Args">
+<short>Arguments to format string with</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSimpleIPCClient.SendStringMessageFmt.MsgType">
+<short>Message type.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSimpleIPCClient.ServerInstance">
+<short>Server instance identification</short>
+<descr>
+<var>ServerInstance</var> should be used in case a particular instance of
+the server identified with <var>ServerID</var> should be contacted. This
+must be used if the server has it's <link
+id="TSimpleIPCServer.Global">GLobal</link> property set to <var>False</var>,
+and should match the server's <link id="TSimpleIPCServer.InstanceID">InstanceID</link> property.
+</descr>
+<seealso>
+<link id="TSimpleIPC.ServerID">ServerID</link>
+<link id="TSimpleIPCServer.Global">GLobal</link> 
+<link id="TSimpleIPCServer.InstanceID">InstanceID</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.simpleipc.EIPCError
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="EIPCError">
+<short>Error reporting exception</short>
+<descr>
+<var>EIPCError</var> is the exception used by the various classes in the
+<file>SimpleIPC</file> unit to report errors.
+</descr>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultIPCServerClass">
+<short>Default server communication class</short>
+<descr>
+<var>DefaultIPCServerClass</var> is filled with a class pointer indicating
+which kind of communication protocol class should be instantiated by the <link
+id="TSimpleIPCServer"/> class. It is set to a default value by the default
+implementation in the <file>SimpleIPC</file> unit, but can be set to another
+class if another method of transport is desired.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer"/>
+<link id="TIPCServerComm"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultIPCClientClass">
+<short>Default client communication class</short>
+<descr>
+<var>DefaultIPCClientClass</var> is filled with a class pointer indicating
+which kind of communication protocol class should be instantiated by the
+<link id="TSimpleIPCClient"/> class. It is set to a default value by the default
+implementation in the <file>SimpleIPC</file> unit, but can be set to another
+class if another method of transport is desired. (it should match the
+communication protocol used by the server, obviously).
+</descr>
+<seealso>
+<link id="TSimpleIPCClient"/>
+<link id="TIPCClientComm"/>
+</seealso>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrServerNotActive">
+<short>Error message if server is not active</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrActive">
+<short>Error message if client/server is active.</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrInActive">
+<short>Error message if client/server is not active.</short>
+</element>
+
+</module> <!-- simpleipc -->
+
+</package>
+</fpdoc-descriptions>
