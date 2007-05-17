@@ -1,0 +1,1758 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    IniFiles
+  ====================================================================
+-->
+
+<module name="IniFiles">
+<short>Ini files support</short>
+<descr>
+<file>IniFiles</file> provides support for handling <file>.ini</file> files.
+It contains an implementation completely independent of the Windows API for 
+handling such files. The basic (abstract) functionality is defined in 
+<link id="TCustomInifile"/> and is implemented in <link id="TIniFile"/> and
+<link id="TMemIniFile"/>. The API presented by these components is Delphi 
+compatible.
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="classes">
+<short>Stream and stringlist support</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="sysutils">
+<short>Exception and formatting routines</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.IniFiles.TIniFileKey
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TIniFileKey">
+<short>Object representing a key=value pair in the ini file.</short>
+<descr>
+<var>TIniFileKey</var> is used to keep the key/value pairs in the ini file
+in memory. It is an internal structure, used internally by the <link
+id="TIniFile"/> class.
+</descr>
+<seealso>
+<link id="TIniFile"/> 
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TIniFileKey.Create">
+<short>Create a new instance of <var>TIniFileKey</var></short>
+<descr>
+<var>Create</var> instantiates a new instance of <var>TIniFileKey</var> on
+the heap. It fills <link id="TIniFileKey.Ident">Ident</link> with
+<var>AIdent</var> and <link id="TIniFileKey.Value">Value</link> with
+<var>AValue</var>.
+</descr>
+<seealso>
+<link id="TIniFileKey.Ident">Ident</link>
+<link id="TIniFileKey.Value">Value</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFileKey.Create.AIdent">
+<short>Key name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFileKey.Create.AValue">
+<short>Key value</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIniFileKey.Ident">
+<short>Key name</short>
+<descr>
+<var>Ident</var> is the key value part of the key/value pair.
+</descr>
+<seealso>
+<link id="TIniFileKey.Value">Value</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIniFileKey.Value">
+<short>Key value</short>
+<descr>
+<var>Value</var> is the value part of the key/value pair.
+</descr>
+<seealso>
+<link id="TIniFileKey.Ident">Ident</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.IniFiles.TIniFileKeyList
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TIniFileKeyList">
+<short>Key list object</short>
+<descr>
+<var>TIniFileKeyList</var> maintains a list of <link id="TIniFileKey"/>
+instances on behalf of the <link id="TIniFileSection"/> class. It stores
+they keys of one section of the .ini files.
+</descr>
+<seealso>
+<link id="TIniFileKey"/>
+<link id="TIniFileSection"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TIniFileKeyList.Destroy">
+<short>Free the instance</short>
+<descr>
+<var>Destroy</var> clears up the list using <link
+id="TIniFileKeyList.Clear">Clear</link> and then calls the inherited destroy.
+</descr>
+<seealso>
+<link id="TIniFileKeyList.Clear">Clear</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniFileKeyList.Clear">
+<short>Clear the list</short>
+<descr>
+<var>Clear</var> removes all <link id="TIniFileKey"/> instances from the
+list, and frees the instances.
+</descr>
+<seealso>
+<link id="TIniFileKey"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIniFileKeyList.Items">
+<short>Indexed access to <var>TIniFileKey</var> items in the list</short>
+<descr>
+<var>Items</var> provides indexed access to the <link id="TIniFileKey"/>
+items in the list. The index is zero-based and runs from 0 to
+<var>Count-1</var>.
+</descr>
+<seealso>
+<link id="TIniFileKey"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFileKeyList.Items.Index">
+<short>Index of item to retrieve.</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.IniFiles.TIniFileSection
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TIniFileSection">
+<short>Ini file section object</short>
+<descr>
+<var>TIniFileSection</var> is a class which represents a section in the
+<file>.ini</file>, and is used internally by the <link id="TIniFile"/>
+class (one instance of <var>TIniFileSection</var> is created for each
+section in the file by the <link id="TIniFileSectionList"/> list).  
+The name of the section is stored in the <link id="TIniFileSection.Name">Name</link> property, and the key/value pairs in
+this section are available in the <link
+id="TIniFileSection.KeyList">KeyList</link> property.
+</descr>
+<seealso>
+<link id="TIniFileKeyList"/>
+<link id="TIniFile"/>
+<link id="TIniFileSectionList"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TIniFileSection.Create">
+<short>Create a new section object</short>
+<descr>
+<var>Create</var> instantiates a new <var>TIniFileSection</var> class, and
+sets the name to <var>AName</var>. It allocates a <link
+id="TIniFileKeyList"/> instance to keep all the key/value pairs for this
+section.
+</descr>
+<seealso>
+<link id="TIniFileKeyList"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFileSection.Create.AName">
+<short>Name for the section</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TIniFileSection.Destroy">
+<short>Free the section object from memory</short>
+<descr>
+<var>Destroy</var> cleans up the key list, and then calls the inherited
+<var>Destroy</var>, removing the <var>TIniFileSection</var> instance 
+from memory.
+</descr>
+<seealso>
+<link id="TIniFileSection.Create">Create</link>
+<link id="TIniFileKeyList"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIniFileSection.Name">
+<short>Name of the section</short>
+<descr>
+<var>Name</var> is the name of the section in the file.
+</descr>
+<seealso>
+<link id="TIniFileSection.KeyList"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIniFileSection.KeyList">
+<short>List of key/value pairs in this section</short>
+<descr>
+<var>KeyList</var> is the <link id="TIniFileKeyList"/> instance that is used
+by the <var>TIniFileSection</var> to keep the key/value pairs of the
+section.
+</descr>
+<seealso>
+<link id="TIniFileSection.Name"/>
+<link id="TIniFileKeyList"/>
+</seealso>
+</element>
+
+<element name="TIniFileSection.Empty">
+<short>Is the section empty</short>
+<descr>
+<var>Empty</var> returns <var>True</var> if the section contains no key
+values (even if they are empty). It may contain comments. 
+</descr>
+</element>
+<!--
+  ********************************************************************
+    #fcl.IniFiles.TIniFileSectionList
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TIniFileSectionList">
+<short>Section objects list</short>
+<descr>
+<var>TIniFileSectionList</var> maintains a list of <link
+id="TIniFileSection"/> instances, one for each section in an .ini file.
+<var>TIniFileSectionList</var> is used internally by the <link
+id="TIniFile"/> class to represent the sections in the file.
+</descr>
+<seealso>
+<link id="TIniFileSection"/>
+<link id="TIniFile"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TIniFileSectionList.Destroy">
+<short>Free the object from memory</short>
+<descr>
+<var>Destroy</var> calls <link id="TIniFileSectionList.Clear">Clear</link>
+to clear the section list and the calls the inherited <var>Destroy</var>
+</descr>
+<seealso>
+<link id="TIniFileSectionList.Clear">Clear</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniFileSectionList.Clear">
+<short>Clear the list</short>
+<descr>
+<var>Clear</var> removes all <link id="TIniFileSection"/> items from the
+list, and frees the items it removes from the list.
+</descr>
+<seealso>
+<link id="TIniFileSection"/>
+<link id="TIniFileSectionList.Items"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIniFileSectionList.Items">
+<short>Indexed access to all the section objects in the list</short>
+<descr>
+<var>Items</var> provides indexed access to all the section objects in the
+list. <var>Index</var> should run from 0 to <var>Count-1</var>.
+</descr>
+<seealso>
+<link id="TIniFileSection"/>
+<link id="TIniFileSectionList.Clear"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFileSectionList.Items.Index">
+<short>Index of section object to retrieve</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.IniFiles.TCustomIniFile
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TCustomIniFile">
+<short>Abstract ini file object</short>
+<descr>
+<p>
+<var>TCustomIniFile</var> implements all calls for manipulating a
+<file>.ini</file>. It does not implement any of this behaviour, the
+behaviour must be implemented in a descendent class like <link
+id="TIniFile"/> or <link id="TMemIniFile"/>.
+</p>
+<p>
+Since <var>TCustomIniFile</var> is an abstract class, it should never
+be created directly. Instead, one of the <var>TIniFile</var> or
+<var>TMemIniFile</var> classes should be created.
+</p>
+</descr>
+<seealso>
+<link id="TIniFile"/>
+<link id="TMemIniFile"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCustomIniFile.Create">
+<short>Instantiate a new instance of <var>TCustomIniFile</var>.</short>
+<descr>
+<p>
+<var>Create</var> creates a new instance of <var>TCustomIniFile</var> and
+loads it with the data from <var>AFileName</var>, if this file exists.
+If the <var>AEscapeLineFeeds</var> parameter is <var>True</var>, then lines
+which have their end-of-line markers escaped with a backslash, will be
+concatenated. This means that the following 2 lines
+</p>
+<pre>
+Description=This is a \
+line with a long text
+</pre>
+<p>
+is equivalent to
+</p>
+<pre>
+Description=This is a line with a long text
+</pre>
+<p>
+By default, not escaping of linefeeds is performed (for Delphi
+compatibility)
+</p>
+</descr>
+<errors>
+If the file cannot be read, an exception may be raised.
+</errors>
+<seealso>
+<link id="TCustomIniFile.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.Create.AFileName">
+<short>Filename to read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.Create.AEscapeLineFeeds">
+<short>Should escaping of linefeeds be enabled ?</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCustomIniFile.Destroy">
+<short>Remove the <var>TCustomIniFile</var> instance from memory</short>
+<descr>
+<var>Destroy</var> cleans up all internal structures and then calls the
+inherited <var>Destroy</var>.
+</descr>
+<seealso>
+<link id="TCustomIniFile"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomIniFile.SectionExists">
+<short>Check if a section exists.</short>
+<descr>
+<var>SectionExists</var> returns <var>True</var> if a section with name
+<var>Section</var> exists, and contains keys.  (comments are not considered
+keys)
+</descr>
+<seealso>
+<link id="TCustomIniFile.ValueExists"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomIniFile.SectionExists.Result">
+<short><var>True</var> if a section named <var>Section</var> exists and is
+non-empty.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.SectionExists.Section">
+<short>Name of the section</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomIniFile.ReadString">
+<short>Read a string valued key</short>
+<descr>
+<var>ReadString</var> reads the key <var>Ident</var> in section <var>Section</var>, 
+and returns the value as a string. If the specified key or section do not exist, 
+then the value in <var>Default</var> is returned. Note that if the key
+exists, but is empty, an empty string will be returned.
+</descr>
+<seealso>
+<link id="TCustomIniFile.WriteString">WriteString</link>
+<link id="TCustomIniFile.ReadInteger">ReadInteger</link>
+<link id="TCustomIniFile.ReadBool">ReadBool</link>
+<link id="TCustomIniFile.ReadDate">ReadDate</link>
+<link id="TCustomIniFile.ReadDateTime">ReadDateTime</link>
+<link id="TCustomIniFile.ReadTime">ReadTime</link>
+<link id="TCustomIniFile.ReadFloat">ReadFloat</link>
+<link id="TCustomIniFile.ReadBinaryStream">ReadBinaryStream</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomIniFile.ReadString.Result">
+<short>Value of <var>Ident</var> as a string.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadString.Section">
+<short>Section to read <var>Ident</var> from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadString.Ident">
+<short>Name of key to retrieve value from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadString.Default">
+<short>Default value to return when the key <var>Ident</var> does not exist.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.WriteString">
+<short>Write a string value</short>
+<descr>
+<var>WriteString</var> writes the string <var>Value</var> with the name
+<var>Ident</var> to the section <var>Section</var>, overwriting any previous
+value that may exist there. The section will be created if it does not
+exist.
+</descr>
+<seealso>
+<link id="TCustomIniFile.ReadString">ReadString</link>
+<link id="TCustomIniFile.WriteInteger">WriteInteger</link>
+<link id="TCustomIniFile.WriteBool">WriteBool</link>
+<link id="TCustomIniFile.WriteDate">WriteDate</link>
+<link id="TCustomIniFile.WriteDateTime">WriteDateTime</link>
+<link id="TCustomIniFile.WriteTime">WriteTime</link>
+<link id="TCustomIniFile.WriteFloat">WriteFloat</link>
+<link id="TCustomIniFile.WriteBinaryStream">WriteBinaryStream</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteString.Section">
+<short>Section to write key value to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteString.Ident">
+<short>Key name with which to write value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteString.Value">
+<short>String value to write</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomIniFile.ReadInteger">
+<short>Read an integer value from the file</short>
+<descr>
+<var>ReadInteger</var> reads the key <var>Ident</var> in section <var>Section</var>, 
+and returns the value as an integer. If the specified key or section do not exist,
+then the value in <var>Default</var> is returned. If the key
+exists, but contains an invalid integer value, <var>Default</var> is also returned.
+</descr>
+<seealso>
+<link id="TCustomIniFile.WriteInteger">WriteInteger</link>
+<link id="TCustomIniFile.ReadString">ReadString</link>
+<link id="TCustomIniFile.ReadBool">ReadBool</link>
+<link id="TCustomIniFile.ReadDate">ReadDate</link>
+<link id="TCustomIniFile.ReadDateTime">ReadDateTime</link>
+<link id="TCustomIniFile.ReadTime">ReadTime</link>
+<link id="TCustomIniFile.ReadFloat">ReadFloat</link>
+<link id="TCustomIniFile.ReadBinaryStream">ReadBinaryStream</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomIniFile.ReadInteger.Result">
+<short>Value of <var>Ident</var> as an integer.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadInteger.Section">
+<short>Section to read <var>Ident</var> from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadInteger.Ident">
+<short>Name of key to retrieve value from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadInteger.Default">
+<short>Default value to return when the key <var>Ident</var> does not exist.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.WriteInteger">
+<short>Write an integer value</short>
+<descr>
+<var>WriteInteger</var> writes the integer <var>Value</var> with the name
+<var>Ident</var> to the section <var>Section</var>, overwriting any previous
+value that may exist there. The section will be created if it does not
+exist.
+</descr>
+<seealso>
+<link id="TCustomIniFile.ReadInteger">ReadInteger</link>
+<link id="TCustomIniFile.WriteString">WriteString</link>
+<link id="TCustomIniFile.WriteBool">WriteBool</link>
+<link id="TCustomIniFile.WriteDate">WriteDate</link>
+<link id="TCustomIniFile.WriteDateTime">WriteDateTime</link>
+<link id="TCustomIniFile.WriteTime">WriteTime</link>
+<link id="TCustomIniFile.WriteFloat">WriteFloat</link>
+<link id="TCustomIniFile.WriteBinaryStream">WriteBinaryStream</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteInteger.Section">
+<short>Section to write key value to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteInteger.Ident">
+<short>Key name with which to write value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteInteger.Value">
+<short>Integer value to write</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomIniFile.ReadBool">
+<short></short>
+<descr>
+<var>ReadString</var> reads the key <var>Ident</var> in section <var>Section</var>, 
+and returns the value as a boolean (valid values are 0 and 1). If the specified key 
+or section do not exist, then the value in <var>Default</var> is returned. If the key
+exists, but contains an invalid integer value, <var>False</var> is also returned.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCustomIniFile.WriteBool">WriteBool</link>
+<link id="TCustomIniFile.ReadInteger">ReadInteger</link>
+<link id="TCustomIniFile.ReadString">ReadString</link>
+<link id="TCustomIniFile.ReadDate">ReadDate</link>
+<link id="TCustomIniFile.ReadDateTime">ReadDateTime</link>
+<link id="TCustomIniFile.ReadTime">ReadTime</link>
+<link id="TCustomIniFile.ReadFloat">ReadFloat</link>
+<link id="TCustomIniFile.ReadBinaryStream">ReadBinaryStream</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomIniFile.ReadBool.Result">
+<short>Value of <var>Ident</var> as a boolean</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadBool.Section">
+<short>Section to read <var>Ident</var> from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadBool.Ident">
+<short>Name of key to retrieve value from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadBool.Default">
+<short>Default value to return when the key <var>Ident</var> does not exist.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.WriteBool">
+<short>Write boolean value</short>
+<descr>
+<var>WriteBool</var> writes the boolean <var>Value</var> with the name
+<var>Ident</var> to the section <var>Section</var>, overwriting any previous
+value that may exist there. The section will be created if it does not
+exist.
+</descr>
+<seealso>
+<link id="TCustomIniFile.ReadBool">ReadBool</link>
+<link id="TCustomIniFile.WriteInteger">WriteInteger</link>
+<link id="TCustomIniFile.WriteString">WriteString</link>
+<link id="TCustomIniFile.WriteDate">WriteDate</link>
+<link id="TCustomIniFile.WriteDateTime">WriteDateTime</link>
+<link id="TCustomIniFile.WriteTime">WriteTime</link>
+<link id="TCustomIniFile.WriteFloat">WriteFloat</link>
+<link id="TCustomIniFile.WriteBinaryStream">WriteBinaryStream</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteBool.Section">
+<short>Section to write key value to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteBool.Ident">
+<short>Key name with which to write value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteBool.Value">
+<short>Boolean value to write</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomIniFile.ReadDate">
+<short>Read a date value</short>
+<descr>
+<var>ReadDate</var> reads the key <var>Ident</var> in section <var>Section</var>, 
+and returns the value as a date (<var>TDateTime</var>). If the specified key or section do not exist,
+then the value in <var>Default</var> is returned. If the key
+exists, but contains an invalid date value, <var>Default</var> is also returned.
+The international settings of the <file>SysUtils</file> are taken into
+account when deciding if the read value is a correct date.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCustomIniFile.WriteDate">WriteDate</link>
+<link id="TCustomIniFile.ReadInteger">ReadInteger</link>
+<link id="TCustomIniFile.ReadBool">ReadBool</link>
+<link id="TCustomIniFile.ReadString">ReadString</link>
+<link id="TCustomIniFile.ReadDateTime">ReadDateTime</link>
+<link id="TCustomIniFile.ReadTime">ReadTime</link>
+<link id="TCustomIniFile.ReadFloat">ReadFloat</link>
+<link id="TCustomIniFile.ReadBinaryStream">ReadBinaryStream</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomIniFile.ReadDate.Result">
+<short>Value of <var>Ident</var> as a <var>TDateTime</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadDate.Section">
+<short>Section to read <var>Ident</var> from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadDate.Ident">
+<short>Name of key to retrieve value from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadDate.Default">
+<short>Default value to return when the key <var>Ident</var> does not exist.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomIniFile.ReadDateTime">
+<short>Read a Date/Time value</short>
+<descr>
+<var>ReadDateTime</var> reads the key <var>Ident</var> in section <var>Section</var>, 
+and returns the value as a date/time (<var>TDateTime</var>). If the specified key or section do not exist,
+then the value in <var>Default</var> is returned. If the key
+exists, but contains an invalid date/time value, <var>Default</var> is also returned.
+The international settings of the <file>SysUtils</file> are taken into
+account when deciding if the read value is a correct date/time.
+</descr>
+<seealso>
+<link id="TCustomIniFile.WriteDateTime">WriteDateTime</link>
+<link id="TCustomIniFile.ReadInteger">ReadInteger</link>
+<link id="TCustomIniFile.ReadBool">ReadBool</link>
+<link id="TCustomIniFile.ReadDate">ReadDate</link>
+<link id="TCustomIniFile.ReadString">ReadString</link>
+<link id="TCustomIniFile.ReadTime">ReadTime</link>
+<link id="TCustomIniFile.ReadFloat">ReadFloat</link>
+<link id="TCustomIniFile.ReadBinaryStream">ReadBinaryStream</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomIniFile.ReadDateTime.Result">
+<short>Value of <var>Ident</var> as a <var>TDateTime</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadDateTime.Section">
+<short>Section to read <var>Ident</var> from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadDateTime.Ident">
+<short>Name of key to retrieve value from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadDateTime.Default">
+<short>Default value to return when the key <var>Ident</var> does not exist.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomIniFile.ReadFloat">
+<short>Read a floating point value</short>
+<descr>
+<var>ReadFloat</var> reads the key <var>Ident</var> in section <var>Section</var>, 
+and returns the value as a float (<var>Double</var>). If the specified key or section do not exist,
+then the value in <var>Default</var> is returned. If the key
+exists, but contains an invalid float value, <var>Default</var> is also returned.
+The international settings of the <file>SysUtils</file> are taken into
+account when deciding if the read value is a correct float.
+</descr>
+<seealso>
+<link id="TCustomIniFile.WriteFloat">WriteFloat</link>
+<link id="TCustomIniFile.ReadInteger">ReadInteger</link>
+<link id="TCustomIniFile.ReadBool">ReadBool</link>
+<link id="TCustomIniFile.ReadDate">ReadDate</link>
+<link id="TCustomIniFile.ReadDateTime">ReadDateTime</link>
+<link id="TCustomIniFile.ReadTime">ReadTime</link>
+<link id="TCustomIniFile.ReadString">ReadString</link>
+<link id="TCustomIniFile.ReadBinaryStream">ReadBinaryStream</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomIniFile.ReadFloat.Result">
+<short>Value of <var>Ident</var> as a floating point value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadFloat.Section">
+<short>Section to read <var>Ident</var> from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadFloat.Ident">
+<short>Name of key to retrieve value from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadFloat.Default">
+<short>Default value to return when the key <var>Ident</var> does not exist.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomIniFile.ReadTime">
+<short>Read a time value</short>
+<descr>
+<var>ReadTime</var> reads the key <var>Ident</var> in section <var>Section</var>, 
+and returns the value as a time (<var>TDateTime</var>). If the specified key or section do not exist,
+then the value in <var>Default</var> is returned. If the key
+exists, but contains an invalid time value, <var>Default</var> is also returned.
+The international settings of the <file>SysUtils</file> are taken into
+account when deciding if the read value is a correct time.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCustomIniFile.WriteTime">WriteTime</link>
+<link id="TCustomIniFile.ReadInteger">ReadInteger</link>
+<link id="TCustomIniFile.ReadBool">ReadBool</link>
+<link id="TCustomIniFile.ReadDate">ReadDate</link>
+<link id="TCustomIniFile.ReadDateTime">ReadDateTime</link>
+<link id="TCustomIniFile.ReadString">ReadString</link>
+<link id="TCustomIniFile.ReadFloat">ReadFloat</link>
+<link id="TCustomIniFile.ReadBinaryStream">ReadBinaryStream</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomIniFile.ReadTime.Result">
+<short>Value of <var>Ident</var> as a <var>TDateTime</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadTime.Section">
+<short>Section to read <var>Ident</var> from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadTime.Ident">
+<short>Name of key to retrieve value from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadTime.Default">
+<short>Default value to return when the key <var>Ident</var> does not exist.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomIniFile.ReadBinaryStream">
+<short>Read binary data</short>
+<descr>
+<p>
+<var>ReadBinaryStream</var> reads the key <var>Name</var> in section <var>Section</var>, 
+and returns the value in the stream <var>Value</var>. If the specified key or section do 
+not exist, then the contents of <var>Value</var> are left untouched. The
+stream is not cleared prior to adding data to it.
+</p>
+<p>
+The data is interpreted as a series of 2-byte hexadecimal values, each
+representing a byte in the data stream, i.e, it should always be an even 
+number of hexadecimal characters.
+</p>
+</descr>
+<seealso>
+<link id="TCustomIniFile.WriteBinaryStream">WriteBinaryStream</link>
+<link id="TCustomIniFile.ReadInteger">ReadInteger</link>
+<link id="TCustomIniFile.ReadBool">ReadBool</link>
+<link id="TCustomIniFile.ReadDate">ReadDate</link>
+<link id="TCustomIniFile.ReadDateTime">ReadDateTime</link>
+<link id="TCustomIniFile.ReadTime">ReadTime</link>
+<link id="TCustomIniFile.ReadFloat">ReadFloat</link>
+<link id="TCustomIniFile.ReadString">ReadString</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomIniFile.ReadBinaryStream.Result">
+<short>Number of bytes written to <var>Value</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadBinaryStream.Section">
+<short>Section to read <var>Name</var> from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadBinaryStream.Name">
+<short>Name of key to retrieve value from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadBinaryStream.Value">
+<short>Stream to write data to.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.WriteDate">
+<short>Write date value</short>
+<descr>
+<var>WriteDate</var> writes the date <var>Value</var> with the name
+<var>Ident</var> to the section <var>Section</var>, overwriting any previous
+value that may exist there. The section will be created if it does not
+exist. The date is written using the internationalization settings in the
+<file>SysUtils</file> unit.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCustomIniFile.ReadDate">ReadDate</link>
+<link id="TCustomIniFile.WriteInteger">WriteInteger</link>
+<link id="TCustomIniFile.WriteBool">WriteBool</link>
+<link id="TCustomIniFile.WriteString">WriteString</link>
+<link id="TCustomIniFile.WriteDateTime">WriteDateTime</link>
+<link id="TCustomIniFile.WriteTime">WriteTime</link>
+<link id="TCustomIniFile.WriteFloat">WriteFloat</link>
+<link id="TCustomIniFile.WriteBinaryStream">WriteBinaryStream</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteDate.Section">
+<short>Section to write key value to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteDate.Ident">
+<short>Key name with which to write value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteDate.Value">
+<short>Date value to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.WriteDateTime">
+<short>Write date/time value</short>
+<descr>
+<var>WriteDateTime</var> writes the date/time <var>Value</var> with the name
+<var>Ident</var> to the section <var>Section</var>, overwriting any previous
+value that may exist there. The section will be created if it does not
+exist. The date/time is written using the internationalization settings in the
+<file>SysUtils</file> unit.
+</descr>
+<seealso>
+<link id="TCustomIniFile.ReadDateTime">ReadDateTime</link>
+<link id="TCustomIniFile.WriteInteger">WriteInteger</link>
+<link id="TCustomIniFile.WriteBool">WriteBool</link>
+<link id="TCustomIniFile.WriteDate">WriteDate</link>
+<link id="TCustomIniFile.WriteString">WriteString</link>
+<link id="TCustomIniFile.WriteTime">WriteTime</link>
+<link id="TCustomIniFile.WriteFloat">WriteFloat</link>
+<link id="TCustomIniFile.WriteBinaryStream">WriteBinaryStream</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteDateTime.Section">
+<short>Section to write key value to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteDateTime.Ident">
+<short>Key name with which to write value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteDateTime.Value">
+<short>Date/Time  value to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.WriteFloat">
+<short>Write a floating-point value</short>
+<descr>
+<var>WriteFloat</var> writes the time <var>Value</var> with the name
+<var>Ident</var> to the section <var>Section</var>, overwriting any previous
+value that may exist there. The section will be created if it does not
+exist. The floating point value is written using the internationalization 
+settings in the <file>SysUtils</file> unit.
+</descr>
+<seealso>
+<link id="TCustomIniFile.ReadFloat">ReadFloat</link>
+<link id="TCustomIniFile.WriteInteger">WriteInteger</link>
+<link id="TCustomIniFile.WriteBool">WriteBool</link>
+<link id="TCustomIniFile.WriteDate">WriteDate</link>
+<link id="TCustomIniFile.WriteDateTime">WriteDateTime</link>
+<link id="TCustomIniFile.WriteTime">WriteTime</link>
+<link id="TCustomIniFile.WriteString">WriteString</link>
+<link id="TCustomIniFile.WriteBinaryStream">WriteBinaryStream</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteFloat.Section">
+<short>Section to write key value to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteFloat.Ident">
+<short>Key name with which to write value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteFloat.Value">
+<short>Float value to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.WriteTime">
+<short>Write time value</short>
+<descr>
+<var>WriteTime</var> writes the time <var>Value</var> with the name
+<var>Ident</var> to the section <var>Section</var>, overwriting any previous
+value that may exist there. The section will be created if it does not
+exist. The time is written using the internationalization settings in the
+<file>SysUtils</file> unit.
+</descr>
+<seealso>
+<link id="TCustomIniFile.ReadTime">ReadTime</link>
+<link id="TCustomIniFile.WriteInteger">WriteInteger</link>
+<link id="TCustomIniFile.WriteBool">WriteBool</link>
+<link id="TCustomIniFile.WriteDate">WriteDate</link>
+<link id="TCustomIniFile.WriteDateTime">WriteDateTime</link>
+<link id="TCustomIniFile.WriteString">WriteString</link>
+<link id="TCustomIniFile.WriteFloat">WriteFloat</link>
+<link id="TCustomIniFile.WriteBinaryStream">WriteBinaryStream</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteTime.Section">
+<short>Section to write key value to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteTime.Ident">
+<short>Key name with which to write value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteTime.Value">
+<short>Time value to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.WriteBinaryStream">
+<short>Write binary data</short>
+<descr>
+<p>
+<var>WriteBinaryStream</var> writes the binary data in <var>Value</var> with the name
+<var>Ident</var> to the section <var>Section</var>, overwriting any previous
+value that may exist there. The section will be created if it does not
+exist.
+</p>
+<p>
+The binary data is encoded using a 2-byte hexadecimal value per byte in the
+data stream. The data stream must be seekable, so it's size can be
+determined. The data stream is not repositioned, it must be at the correct
+position.
+</p>
+</descr>
+<seealso>
+<link id="TCustomIniFile.ReadBinaryStream">ReadBinaryStream</link>
+<link id="TCustomIniFile.WriteInteger">WriteInteger</link>
+<link id="TCustomIniFile.WriteBool">WriteBool</link>
+<link id="TCustomIniFile.WriteDate">WriteDate</link>
+<link id="TCustomIniFile.WriteDateTime">WriteDateTime</link>
+<link id="TCustomIniFile.WriteTime">WriteTime</link>
+<link id="TCustomIniFile.WriteFloat">WriteFloat</link>
+<link id="TCustomIniFile.WriteString">WriteString</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteBinaryStream.Section">
+<short>Section to write key value to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteBinaryStream.Name">
+<short>Key name with which to write value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.WriteBinaryStream.Value">
+<short>Binary data to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.ReadSection">
+<short>Read the key names in a section</short>
+<descr>
+<var>ReadSection</var> will return the names of the keys in section
+<var>Section</var> in <var>Strings</var>, one string per key. If a
+non-existing section is specified, the list is cleared. To return the values
+of the keys as well, the <link
+id="TCustomIniFile.ReadSectionValues">ReadSectionValues</link> method should
+be used.
+</descr>
+<seealso>
+<link id="TCustomIniFile.ReadSections">ReadSections</link>
+<link id="TCustomIniFile.SectionExists">SectionExists</link>
+<link id="TCustomIniFile.ReadSectionValues">ReadSectionValues</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadSection.Section">
+<short>Section for which to read key names</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadSection.Strings">
+<short>Stringlist to store key names in</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.ReadSections">
+<short>Read the list of sections</short>
+<descr>
+<var>ReadSections</var> returns the names of existing sections in
+<var>Strings</var>. It also returns names of empty sections.
+</descr>
+<seealso>
+<link id="TCustomIniFile.SectionExists">SectionExists</link>
+<link id="TCustomIniFile.ReadSectionValues">ReadSectionValues</link>
+<link id="TCustomIniFile.ReadSection">ReadSection</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadSections.Strings">
+<short>Stringlist in which to return section names</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.ReadSectionValues">
+<short>Read names and values of a section</short>
+<descr>
+<var>ReadSectionValues</var> returns the keys and their values in the
+section <var>Section</var> in <var>Strings</var>. They are returned as
+<var>Key=Value</var> strings, one per key, so the <var>Values</var> property
+of the stringlist can be used to read the values. To retrieve just the names
+of the available keys, <link id="TCustomIniFile.ReadSection">ReadSection</link>
+can be used.
+</descr>
+<seealso>
+<link id="TCustomIniFile.SectionExists">SectionExists</link>
+<link id="TCustomIniFile.ReadSections">ReadSections</link>
+<link id="TCustomIniFile.ReadSection">ReadSection</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadSectionValues.Section">
+<short>Section for which to read key names and values</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ReadSectionValues.Strings">
+<short>Stringlist to store key/value pairs in</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.EraseSection">
+<short>Clear a section </short>
+<descr>
+<var>EraseSection</var> deletes all values from the section named
+<var>Section</var> and removes the section from the ini file. 
+If the section didn't exist prior to a call to <var>EraseSection</var>, nothing happens.
+</descr>
+<seealso>
+<link id="TCustomIniFile.SectionExists">SectionExists</link>
+<link id="TCustomIniFile.ReadSections">ReadSections</link>
+<link id="TCustomIniFile.DeleteKey">DeleteKey</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.EraseSection.Section">
+<short>Name of section to erase</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.DeleteKey">
+<short>Delete a key from a section</short>
+<descr>
+<var>DeleteKey</var> deletes the key <var>Ident</var> from section
+<var>Section</var>. If the key or section didn't exist prior to the
+<var>DeleteKey</var> call, nothing happens.
+</descr>
+<seealso>
+<link id="TCustomIniFile.EraseSection">EraseSection</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.DeleteKey.Section">
+<short>Section from which to delete key</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.DeleteKey.Ident">
+<short>Name of key to delete</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.UpdateFile">
+<short>Update the file on disk</short>
+<descr>
+<var>UpdateFile</var> writes the in-memory image of the ini-file to disk.
+To speed up operation of the inifile class, the whole ini-file is read into
+memory when the class is created, and all operations are performed
+in-memory. If <var>CacheUpdates</var> is set to <var>True</var>, any
+changes to the inifile are only in memory, until they are committed to disk
+with a call to <var>UpdateFile</var>. If <var>CacheUpdates</var> is set to
+<var>False</var>, then all operations which cause a change in the .ini file
+will immediatly be committed to disk with a call to
+<var>UpdateFile</var>. Since the whole file is written to disk, this may have
+serious impact on performance.
+</descr>
+<seealso>
+<link id="TIniFile.CacheUpdates">CacheUpdates</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomIniFile.ValueExists">
+<short>Check if a value exists</short>
+<descr>
+<var>ValueExists</var> checks whether the key <var>Ident</var> exists in
+section <var>Section</var>. It returns <var>True</var> if a key was found,
+or <var>False</var> if not. The key may be empty.
+</descr>
+<seealso>
+<link id="TCustomIniFile.SectionExists">SectionExists</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomIniFile.ValueExists.Result">
+<short><var>True</var> if <var>Ident</var> exists in section <var>Section</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ValueExists.Section">
+<short>Section in which to look for <var>Ident</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.ValueExists.Ident">
+<short>Key name to look for.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomIniFile.FileName">
+<short>Name of the .ini file</short>
+<descr>
+<var>FileName</var> is the name of the ini file on disk. It should be
+specified when the <var>TCustomIniFile</var> instance is created. Contrary
+to the Delphi implementation, if no path component is present in the
+filename, the filename is not searched in the windows directory.
+</descr>
+<seealso>
+<link id="TCustomIniFile.Create">Create</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomIniFile.EscapeLineFeeds">
+<short>Should linefeeds be escaped ?</short>
+<descr>
+<p>
+<var>EscapeLineFeeds</var> determines whether escaping of linefeeds is
+enabled: For a description of this feature, see <link
+id="TCustomIniFile.Create">Create</link>, as the value of this property must
+be specified when the <var>TCustomIniFile</var> instance is created.
+</p>
+<p>
+By default, <var>EscapeLineFeeds</var> is <var>False</var>.
+</p>
+</descr>
+<seealso>
+<link id="TCustomIniFile.Create">Create</link>
+<link id="TCustomIniFile.CaseSensitive">CaseSensitive</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomIniFile.CaseSensitive">
+<short>Are key and section names case sensitive</short>
+<descr>
+<var>CaseSensitive</var> determines whether searches for sections and keys
+are performed case-sensitive or not. By default, they are not case
+sensitive.
+</descr>
+<seealso>
+<link id="TCustomIniFile.EscapeLineFeeds">EscapeLineFeeds</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.IniFiles.TIniFile
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TIniFile">
+<short>Ini file implementation</short>
+<descr>
+<p>
+<var>TIniFile</var> is an implementation of <link id="TCustomIniFile"/>
+which does the same as <link id="TMemIniFile"/>, namely it reads the whole file
+into memory. Unlike <var>TMemIniFile</var> it does not cache updates in
+memory, but immediatly writes any changes to disk. 
+</p>
+<p>
+<var>TIniFile</var> introduces no new methods, it just implements the
+abstract methods introduced in <var>TCustomIniFile</var>
+</p>
+</descr>
+<seealso>
+<link id="TCustomIniFile"/>
+<link id="TMemIniFile"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TIniFile.Create">
+<short>Create a new instance of <var>TIniFile</var></short>
+<descr>
+<var>Create</var> creates a new instance of <var>TIniFile</var> and
+initializes the class by reading the file from disk if the filename
+<var>AFileName</var> is specified, or from stream in case <var>AStream</var>
+is specified. It also sets most variables to their initial values, i.e. 
+<var>AEscapeLineFeeds</var> is saved prior to reading the file, and
+<var>Cacheupdates</var> is set to <var>False</var>.
+</descr>
+<seealso>
+<link id="TCustomIniFile"/>
+<link id="TMemIniFile"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.Create.AFileName">
+<short>Filename to read from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.Create.AEscapeLineFeeds">
+<short>Should escaping of linefeeds be enabled ?</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.Create.AStream">
+<short>Stream to read ini data from</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TIniFile.Destroy">
+<short>Remove the <var>TIniFile</var> instance from memory</short>
+<descr>
+<var>Destroy</var> writes any pending changes to disk, and cleans up the
+<var>TIniFile</var> structures, and then calls the inherited
+<var>Destroy</var>, effectively removing the instance from memory.
+</descr>
+<errors>
+If an error happens when the file is written to disk, an exception will be
+raised.
+</errors>
+<seealso>
+<link id="TCustomIniFile.UpdateFile">UpdateFile</link>
+<link id="TIniFile.CacheUpdates">CacheUpdates</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIniFile.ReadString">
+<short>Read a string</short>
+<descr>
+<var>ReadString</var> implements the <link id="TCustomIniFile.ReadString"/>
+abstract method by looking at the in-memory copy of the ini file and
+returning the string found there.
+</descr>
+<seealso>
+<link id="TCustomIniFile.ReadString"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIniFile.ReadString.Result">
+<short>Value of the string or <var>Default</var> if none found.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.ReadString.Section">
+<short>Section to search key value in</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.ReadString.Ident">
+<short>Key name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.ReadString.Default">
+<short>Default value if none is found.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniFile.WriteString">
+<short>Write string to file</short>
+<descr>
+<var>WriteString</var> implements the <link id="TCustomIniFile.WriteString"/>
+abstract method by writing the string to the in-memory copy of the ini file.
+If <link id="TIniFile.CacheUpdates">CacheUpdates</link> property is
+<var>False</var>, then the whole file is immediatly written to disk as well.
+</descr>
+<errors>
+If an error happens when the file is written to disk, an exception will be
+raised.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.WriteString.Section">
+<short>Section to write key value in</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.WriteString.Ident">
+<short>Key name to use</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.WriteString.Value">
+<short>String value to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniFile.ReadSection">
+<short>Read the key names in a section</short>
+<descr>
+<var>ReadSection</var> reads the key names from <var>Section</var> into
+<var>Strings</var>, taking the in-memory copy of the ini file. 
+This is the implementation for the abstract <link id="TCustomIniFile.ReadSection"/>
+</descr>
+<seealso>
+<link id="TCustomIniFile.ReadSection"/>
+<link id="TIniFile.ReadSectionRaw"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.ReadSection.Section">
+<short>Section to read names from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.ReadSection.Strings">
+<short>Stringlist to store names in</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniFile.ReadSectionRaw">
+<short>Read raw section</short>
+<descr>
+<var>ReadSectionRaw</var> returns the contents of the section
+<var>Section</var> as it is: this includes the comments in the 
+section. (these are also stored in memory)
+</descr>
+<seealso>
+<link id="TIniFile.ReadSection"/>
+<link id="TCustomIniFile.ReadSection"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.ReadSectionRaw.Section">
+<short>Section name to read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.ReadSectionRaw.Strings">
+<short>Strings to store section contents in</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniFile.ReadSections">
+<short>Read section names</short>
+<descr>
+<var>ReadSections</var> is the implementation of <link
+id="TCustomIniFile.ReadSections"/>. It operates on the in-memory copy of the
+inifile, and places all section names in <var>Strings</var>.
+</descr>
+<seealso>
+<link id="TIniFile.ReadSection"/>
+<link id="TCustomIniFile.ReadSections"/>
+<link id="TIniFile.ReadSectionValues"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.ReadSections.Strings">
+<short>Stringlist to store section names in</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniFile.ReadSectionValues">
+<short></short>
+<descr>
+<var>ReadSectionValues</var> is the implementation of <link
+id="TCustomIniFile.ReadSectionValues"/>. It operates on the in-memory copy of the
+inifile, and places all key names from <var>Section</var> together with
+their values in <var>Strings</var>.
+</descr>
+<seealso>
+<link id="TIniFile.ReadSection"/>
+<link id="TCustomIniFile.ReadSectionValues"/>
+<link id="TIniFile.ReadSections"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.ReadSectionValues.Section">
+<short>Section to read key name/values from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.ReadSectionValues.Strings">
+<short>Stringlist to store key/value pairs in.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniFile.EraseSection">
+<short></short>
+<descr>
+<var>Erasesection</var> deletes the section <var>Section</var> from memory,
+if <link id="TIniFile.CacheUpdates">CacheUpdates</link> is <var>False</var>,
+then the file is immediatly updated on disk. This method is the
+implementation of the abstract <link id="TCustomIniFile.EraseSection"/>
+method.
+</descr>
+<seealso>
+<link id="TCustomIniFile.EraseSection"/>
+<link id="TIniFile.ReadSection"/>
+<link id="TIniFile.ReadSections"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.EraseSection.Section">
+<short>Section to erase</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniFile.DeleteKey">
+<short>Delete key</short>
+<descr>
+<var>DeleteKey</var> deletes the <var>Ident</var> from the section
+<var>Section</var>. This operation is performed on the in-memory copy of the
+ini file. if <link id="TIniFile.CacheUpdates">CacheUpdates</link> is
+<var>False</var>, then the file is immediatly updated on disk.
+</descr>
+<seealso>
+<link id="TIniFile.CacheUpdates">CacheUpdates</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.DeleteKey.Section">
+<short>Section in which to delete key</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.DeleteKey.Ident">
+<short>Name of key to delete</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIniFile.UpdateFile">
+<short>Update the file on disk</short>
+<descr>
+<var>UpdateFile</var> writes the in-memory data for the ini file to disk.
+The whole file is written. If the ini file was instantiated from a stream,
+then the stream is updated. Note that the stream must be seekable for this
+to work correctly. The ini file is marked as 'clean' after a call to
+<var>UpdateFile</var> (i.e. not in need of writing to disk).
+</descr>
+<errors>
+If an error occurs when writing to stream or disk, an exception may be
+raised.
+</errors>
+<seealso>
+<link id="TIniFile.CacheUpdates">CacheUpdates</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIniFile.Stream">
+<short>Stream from which ini file was read</short>
+<descr>
+<var>Stream</var> is the stream which was used to create the
+<var>IniFile</var>. The <link id="TIniFile.UpdateFile">UpdateFile</link>
+method will use this stream to write changes to.
+</descr>
+<seealso>
+<link id="TIniFile.Create">Create</link>
+<link id="TIniFile.UpdateFile">UpdateFile</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIniFile.CacheUpdates">
+<short>Should changes be kept in memory</short>
+<descr>
+<var>CacheUpdates</var> determines how to deal with changes to the ini-file
+data: if set to <var>True</var> then changes are kept in memory till the
+file is written to disk with a call to <link id="TIniFile.UpdateFile">UpdateFile</link>.
+If it is set to <var>False</var> then each call that changes the data of the
+ini-file will result in a call to <var>UpdateFile</var>. This is the default
+behaviour, but it may aversely affect performance.
+</descr>
+<seealso>
+<link id="TIniFile.UpdateFile">UpdateFile</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.IniFiles.TMemIniFile
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TMemIniFile">
+<short>Inifile cached in memory</short>
+<descr>
+<var>TMemIniFile</var> is a simple descendent of <link id="TIniFile"/> which
+introduces some extra methods to be compatible to the Delphi implementation
+of <var>TMemIniFile</var>. The FPC implementation of <var>TIniFile</var> is 
+implemented as a <var>TMemIniFile</var>, except that <var>TIniFile</var>
+does not cache its updates, and <var>TMemIniFile</var> does.
+</descr>
+<seealso>
+<link id="TIniFile"/>
+<link id="TCustomIniFile"/>
+<link id="TIniFile.CacheUpdates">CacheUpdates</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TMemIniFile.Create">
+<short>Create a new instance of <var>TMemIniFile</var></short>
+<descr>
+<var>Create</var> simply calls the inherited <link
+id="TIniFile.Create">Create</link>, and sets the <link
+id="TIniFile.CacheUpdates">CacheUpdates</link> to <var>True</var> so updates
+will be kept in memory till they are explicitly written to disk.
+</descr>
+<seealso>
+<link id="TIniFile.Create"/>
+<link id="TIniFile.CacheUpdates">CacheUpdates</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMemIniFile.Create.AFileName">
+<short>Name of file to read data from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMemIniFile.Create.AEscapeLineFeeds">
+<short>Should linefeed escaping be turned on</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMemIniFile.Clear">
+<short>Clear the data</short>
+<descr>
+<var>Clear</var> removes all sections and key/value pairs from memory. If <link
+id="TIniFile.CacheUpdates">CacheUpdates</link> is set to <var>False</var>
+then the file on disk will immediatly be emptied.
+</descr>
+<seealso>
+<link id="TMemIniFile.SetStrings">SetStrings</link>
+<link id="TMemIniFile.GetStrings">GetStrings</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMemIniFile.GetStrings">
+<short>Get contents of ini file as stringlist</short>
+<descr>
+<p>
+<var>GetStrings</var> returns the whole contents of the ini file in a single
+stringlist, <var>List</var>. This includes comments and empty sections.
+</p>
+<p>
+The <var>GetStrings</var> call can be used to get data for a call to <link
+id="TMemIniFile.SetStrings">SetStrings</link>, which can be used to copy
+data between 2 in-memory ini files.
+</p>
+</descr>
+<seealso>
+<link id="TMemIniFile.SetStrings">SetStrings</link>
+<link id="TMemIniFile.Clear">Clear</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMemIniFile.GetStrings.List">
+<short>Stringlist in which to copy the data</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMemIniFile.Rename">
+<short>Rename the ini file</short>
+<descr>
+<var>Rename</var> will rename the ini file with the new name
+<var>AFileName</var>. If <var>Reload</var> is <var>True</var> then the
+in-memory contents will be cleared and replaced with the contents
+found in <var>AFileName</var>, if it exists. If <var>Reload</var> is
+<var>False</var>, the next call to <var>UpdateFile</var> will replace the
+contents of <var>AFileName</var> with the in-memory data.
+</descr>
+<seealso>
+<link id="TIniFile.UpdateFile">UpdateFile</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMemIniFile.Rename.AFileName">
+<short>New filename</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMemIniFile.Rename.Reload">
+<short>Load memory data from new file ?</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMemIniFile.SetStrings">
+<short>Set data from a stringlist</short>
+<descr>
+<p>
+<var>SetStrings</var> sets the in-memory data from the <var>List</var>
+stringlist. The data is first cleared.
+</p>
+<p>
+The <var>SetStrings</var> call can be used to set the data of the ini file
+to a list of strings obtained with  <link id="TMemIniFile.GetStrings">GetStrings</link>.
+The two calls combined can be used to copy data between 2 in-memory ini files.
+</p>
+</descr>
+<seealso>
+<link id="TMemIniFile.GetStrings">GetStrings</link>
+<link id="TMemIniFile.Clear">Clear</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMemIniFile.SetStrings.List">
+<short>Stringlist to get data from</short>
+</element>
+
+</module> <!-- IniFiles -->
+
+</package>
+</fpdoc-descriptions>

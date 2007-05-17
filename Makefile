@@ -1726,6 +1726,9 @@ endif
 ifndef DOCS
 DOCS = user rtl ref prog fpdoc chart fcl
 endif
+ifndef RTFS
+RTFS = fcl rtl
+endif
 PREAMBLETYPE = report
 ifndef CROSSCOMPILE
 ifndef FPDOC
@@ -1902,7 +1905,7 @@ FCLMAKESKEL=$(MAKESKEL) --package=fcl
 RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-results
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream \
 	 base64 gettext ezcgi pooledmm dbugmsg streamex inicol streamcoll cachecls \
-	 eventlog syncobjs custapp blowfish simpleipc
+	 eventlog syncobjs custapp blowfish simpleipc inifiles
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEINC)/iostream.pp"
@@ -1928,11 +1931,12 @@ FCLSYNCOBJS= --descr=syncobjs.xml --input="$(FCLBASEINC)/syncobjs.pp"
 FCLCUSTAPP= --descr=custapp.xml --input="$(FCLBASEINC)/custapp.pp"
 FCLBLOWFISH= --descr=blowfish.xml --input="$(FCLBASEINC)/blowfish.pp"
 FCLSIMPLEIPC= --descr=simpleipc.xml --input="$(FCLBASEINC)/simpleipc.pp"
+FCLINIFILES= --descr=inifiles.xml --input="$(FCLBASEINC)/inifiles.pp"
 FCLOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
 FCLOPTS+= $(FCLGETTEXT) $(FCLEZCGI) $(FCLPOOLEDMM) $(FCLDBUGMSG) $(FCLSTREAMEX)
 FCLOPTS+= $(FCLINICOL) $(FCLSTREAMCOL) $(FCLCACHECLS) $(FCLEVENTLOG) $(FCLSYNCOBJS)
-FCLOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC)
+FCLOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES)
 RTLOPTS=$(FPDOCOPTS) --hide-protected --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifdef CURRENTXMLONLY
 RTLXML=crt.xml
@@ -2053,11 +2057,18 @@ updatefclxml: cleanxml
 	$(FCLMAKESKEL) $(FCLCUSTAPP) --output=custapp.new.xml
 	$(FCLMAKESKEL) $(FCLBLOWFISH) --output=blowfish.new.xml
 	$(FCLMAKESKEL) $(FCLSIMPLEIPC) --output=simpleipc.new.xml
+	$(FCLMAKESKEL) $(FCLINIFILES) --output=inifiles.new.xml
 	./cleanxml $(FCLNEWXML)
 rtl.inc: $(RTLXML)
 	$(FPDOC) --output=rtl.inc $(RTLOPTS) --format=latex
 fcl.inc: $(FCLXML)
 	$(FPDOC) --output=fcl.inc $(FCLOPTS) --format=latex
+RTFFILES = $(addsuffix .rtf,$(RTFS))
+rtf: $(RTFFILES)
+rtl.rtf: $(RTLXML)
+	$(FPDOC) --output=rtl.rtf $(RTLOPTS) --format=rtf
+fcl.rtf: $(FCLXML)
+	$(FPDOC) --output=fcl.rtf $(FCLOPTS) --format=rtf
 ref.dvi: ref.tex $(INCLUDES)
 prog.dvi: prog.tex $(INCLUDES)
 user.dvi: user.tex $(INCLUDES) messages.inc comphelp.inc

@@ -43,6 +43,11 @@ ifndef DOCS
 DOCS = user rtl ref prog fpdoc chart fcl
 endif
 
+# Which RTF docs
+ifndef RTFS
+RTFS = fcl rtl
+endif
+
 # Can be 'report','book' for pdf/ps, html use their own preamble file
 PREAMBLETYPE = report
 
@@ -322,7 +327,7 @@ RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-res
 
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream \
          base64 gettext ezcgi pooledmm dbugmsg streamex inicol streamcoll cachecls \
-         eventlog syncobjs custapp blowfish simpleipc
+         eventlog syncobjs custapp blowfish simpleipc inifiles
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 # Separate arguments for all FCL units.
@@ -349,12 +354,13 @@ FCLSYNCOBJS= --descr=syncobjs.xml --input="$(FCLBASEINC)/syncobjs.pp"
 FCLCUSTAPP= --descr=custapp.xml --input="$(FCLBASEINC)/custapp.pp"
 FCLBLOWFISH= --descr=blowfish.xml --input="$(FCLBASEINC)/blowfish.pp"
 FCLSIMPLEIPC= --descr=simpleipc.xml --input="$(FCLBASEINC)/simpleipc.pp"
+FCLINIFILES= --descr=inifiles.xml --input="$(FCLBASEINC)/inifiles.pp"
 # Now add to the FCL fpdoc opts.
 FCLOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
 FCLOPTS+= $(FCLGETTEXT) $(FCLEZCGI) $(FCLPOOLEDMM) $(FCLDBUGMSG) $(FCLSTREAMEX)
 FCLOPTS+= $(FCLINICOL) $(FCLSTREAMCOL) $(FCLCACHECLS) $(FCLEVENTLOG) $(FCLSYNCOBJS)
-FCLOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC)
+FCLOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES)
 
 RTLOPTS=$(FPDOCOPTS) --hide-protected --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifdef CURRENTXMLONLY
@@ -482,6 +488,7 @@ updatefclxml: cleanxml
 	$(FCLMAKESKEL) $(FCLCUSTAPP) --output=custapp.new.xml
 	$(FCLMAKESKEL) $(FCLBLOWFISH) --output=blowfish.new.xml
 	$(FCLMAKESKEL) $(FCLSIMPLEIPC) --output=simpleipc.new.xml
+	$(FCLMAKESKEL) $(FCLINIFILES) --output=inifiles.new.xml
 	./cleanxml $(FCLNEWXML)
 
 rtl.inc: $(RTLXML)
@@ -489,6 +496,19 @@ rtl.inc: $(RTLXML)
 
 fcl.inc: $(FCLXML)
         $(FPDOC) --output=fcl.inc $(FCLOPTS) --format=latex
+
+#####################################################################
+# DVI files
+#####################################################################
+RTFFILES = $(addsuffix .rtf,$(RTFS))
+
+rtf: $(RTFFILES)
+
+rtl.rtf: $(RTLXML)
+        $(FPDOC) --output=rtl.rtf $(RTLOPTS) --format=rtf
+
+fcl.rtf: $(FCLXML)
+        $(FPDOC) --output=fcl.rtf $(FCLOPTS) --format=rtf
 
 
 #####################################################################
