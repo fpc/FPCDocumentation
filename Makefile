@@ -1905,7 +1905,7 @@ FCLMAKESKEL=$(MAKESKEL) --package=fcl
 RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-results
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream \
 	 base64 gettext ezcgi pooledmm dbugmsg streamex inicol streamcoll cachecls \
-	 eventlog syncobjs custapp blowfish simpleipc inifiles
+	 eventlog syncobjs custapp blowfish simpleipc inifiles rttiutils
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEINC)/iostream.pp"
@@ -1932,11 +1932,12 @@ FCLCUSTAPP= --descr=custapp.xml --input="$(FCLBASEINC)/custapp.pp"
 FCLBLOWFISH= --descr=blowfish.xml --input="$(FCLBASEINC)/blowfish.pp"
 FCLSIMPLEIPC= --descr=simpleipc.xml --input="$(FCLBASEINC)/simpleipc.pp"
 FCLINIFILES= --descr=inifiles.xml --input="$(FCLBASEINC)/inifiles.pp"
+FCLRTTIUTILS= --descr=rttiutils.xml --input="$(FCLBASEINC)/rttiutils.pp"
 FCLOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
 FCLOPTS+= $(FCLGETTEXT) $(FCLEZCGI) $(FCLPOOLEDMM) $(FCLDBUGMSG) $(FCLSTREAMEX)
 FCLOPTS+= $(FCLINICOL) $(FCLSTREAMCOL) $(FCLCACHECLS) $(FCLEVENTLOG) $(FCLSYNCOBJS)
-FCLOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES)
+FCLOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES) $(FCLRTTIUTILS)
 RTLOPTS=$(FPDOCOPTS) --hide-protected --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifdef CURRENTXMLONLY
 RTLXML=crt.xml
@@ -2058,6 +2059,7 @@ updatefclxml: cleanxml
 	$(FCLMAKESKEL) $(FCLBLOWFISH) --output=blowfish.new.xml
 	$(FCLMAKESKEL) $(FCLSIMPLEIPC) --output=simpleipc.new.xml
 	$(FCLMAKESKEL) $(FCLINIFILES) --output=inifiles.new.xml
+	$(FCLMAKESKEL) $(FCLRTTIUTILS) --output=rttiutils.new.xml
 	./cleanxml $(FCLNEWXML)
 rtl.inc: $(RTLXML)
 	$(FPDOC) --output=rtl.inc $(RTLOPTS) --format=latex

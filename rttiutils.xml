@@ -1,0 +1,834 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    rttiutils
+  ====================================================================
+-->
+
+<module name="rttiutils">
+<short>RTTI utility functions</short>
+<descr>
+The <file>rttiutils</file> unit is a unit providing simplified access to the
+RTTI information from published properties using the <link id="TPropInfoList"/>
+class. This access can be used when saving or restoring form properties at runtime, 
+or for persisting other objects whose RTTI is available: the <link
+id="TPropsStorage"/> class can be used for this. The implementation
+is based on the <file>apputils</file> unit from <var>RXLib</var> by <em>AO
+ROSNO</em> and <em>Master-Bank</em>
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="SysUtils">
+<short>Exception support and formatting</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>TPersistent, collections and lists definitions</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="TypInfo">
+<short>Low-level RTTI access</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="StrUtils">
+<short>String routines</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.rttiutils.TPropInfoList
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TPropInfoList">
+<short>Class for keeping property information</short>
+<descr>
+<var>TPropInfoList</var> is a class which can be used to maintain a list
+with information about published properties of a class (or an instance). It
+is used internally by <link id="TPropsStorage"/>
+</descr>
+<seealso>
+<link id="TPropsStorage"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TPropInfoList.Create">
+<short>Create a new instance of <var>TPropInfoList</var></short>
+<descr>
+<var>Create</var> allocates and initializes a new instance of
+<var>TPropInfoList</var> on the heap. It retrieves a list of published 
+properties from <var>AObject</var>: if <var>Filter</var> is empty, then all
+properties are retrieved. If it is not empty, then only properties of the
+kind specified in the set are retrieved. <var>Instance</var> should not be
+<var>Nil</var>
+</descr>
+<seealso>
+<link id="TPropInfoList.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropInfoList.Create.AObject">
+<short>Object whose properties should be listed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropInfoList.Create.Filter">
+<short>Filter on the kind of properties to retrieve</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TPropInfoList.Destroy">
+<short>Remove the <var>TPropInfoList</var> instance from memory</short>
+<descr>
+<var>Destroy</var> cleans up the internal structures maintained by
+<var>TPropInfoList</var> and then calls the inherited <var>Destroy</var>.
+</descr>
+<seealso>
+<link id="TPropInfoList.Create">Create</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TPropInfoList.Contains">
+<short>Check whether a certain property is included</short>
+<descr>
+<var>Contains</var> checks whether <var>P</var> is included in the list of
+properties, and returns <var>True</var> if it does. If <var>P</var> cannot
+be found, <var>False</var> is returned.
+</descr>
+<seealso>
+<link id="TPropInfoList.Find">Find</link>
+<link id="TPropInfoList.Intersect">Intersect</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TPropInfoList.Contains.Result">
+<short><var>True</var> if <var>P</var> is in the list of properties</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropInfoList.Contains.P">
+<short>Property info to check for</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TPropInfoList.Find">
+<short>Retrieve property information based on name</short>
+<descr>
+<var>Find</var> returns a pointer to the type information of the property
+<var>AName</var>. If no such information is available, the function returns
+<var>Nil</var>. The search is performed case insensitive.
+</descr>
+<seealso>
+<link id="TPropInfoList.Intersect">Intersect</link>
+<link id="TPropInfoList.Contains">Contains</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TPropInfoList.Find.Result">
+<short>Pointer to property type information for <var>AName</var>, or <var>Nil</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropInfoList.Find.AName">
+<short>Name of property</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TPropInfoList.Delete">
+<short>Delete property information from the list</short>
+<descr>
+<var>Delete</var> deletes the property information at position
+<var>Index</var> from the list. It's mainly of use in the 
+<link id="TPropInfoList.Intersect">Intersect</link> call.
+</descr>
+<errors>
+No checking on the validity of <var>Index</var> is performed.
+</errors>
+<seealso>
+<link id="TPropInfoList.Intersect">Intersect</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropInfoList.Delete.Index">
+<short>Index of item to delete.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TPropInfoList.Intersect">
+<short>Intersect 2 property lists</short>
+<descr>
+<var>Intersect</var> reduces the list of properties to the ones also 
+contained in <var>List</var>, i.e. all properties which are not also present
+in <var>List</var> are removed.
+</descr>
+<seealso>
+<link id="TPropInfoList.Delete">Delete</link>
+<link id="TPropInfoList.Contains">Contains</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropInfoList.Intersect.List">
+<short>List to intersect with</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPropInfoList.Count">
+<short>Number of items in the list</short>
+<descr>
+<var>Count</var> is the number of property type pointers in the list.
+</descr>
+<seealso>
+<link id="TPropInfoList.Items">Items</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPropInfoList.Items">
+<short>Indexed access to the property type pointers</short>
+<descr>
+<var>Items</var> provides access to the property type pointers stored in the
+list. <var>Index</var> runs from 0 to <var>Count-1</var>. 
+</descr>
+<seealso>
+<link id="TPropInfoList.Count">Count</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropInfoList.Items.Index">
+<short>Index of property to retrieve</short>
+</element>
+
+<!-- function type Visibility: default -->
+<element name="TReadStrEvent">
+<short>Callback to read strings from storage</short>
+<descr>
+<var>TReadStrEvent</var> is used by <link id="TPropsStorage"/> to read
+strings from a storage mechanism, in a .ini file like fashion: The call
+should read the string in <var>ASection</var> with key <var>Item</var>,
+and if it does not exist, <var>Default</var> should be returned.
+</descr>
+<seealso>
+<link id="TPropsStorage"/>
+<link id="TWriteStrEvent"/>
+<link id="TEraseSectEvent"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TReadStrEvent.Result">
+<short>Value of <var>Item</var> in section <var>ASection</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TReadStrEvent.ASection">
+<short>Section to read value from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TReadStrEvent.Item">
+<short>Key name for value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TReadStrEvent.Default">
+<short>Default return value if none was found</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TWriteStrEvent">
+<short>Write a string to storage </short>
+<descr>
+<var>TWriteStrEvent</var> is used by <link id="TPropsStorage"/> to
+write strings to a storage mechanism, in a .ini file like fashion: The call
+should write the string <var>Value</var> in <var>ASection</var> with key
+<var>Item</var>. The section and key should be created if they didn't exist
+yet.
+</descr>
+<seealso>
+<link id="TPropsStorage"/>
+<link id="TReadStrEvent"/>
+<link id="TEraseSectEvent"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWriteStrEvent.ASection">
+<short>Section to write in</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWriteStrEvent.Item">
+<short>Key name for value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWriteStrEvent.Value">
+<short>String value to write</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TEraseSectEvent">
+<short>Clear a storage section</short>
+<descr>
+<var>TEraseSectEvent</var> is used by <link id="TPropsStorage"/> to
+clear a storage section, in a .ini file like fashion: The call
+should remove all keys in the section <var>ASection</var>, and remove the
+section from storage.
+</descr>
+<seealso>
+<link id="TPropsStorage"/>
+<link id="TReadStrEvent"/>
+<link id="TWriteStrEvent"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TEraseSectEvent.ASection">
+<short>Section to erase</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.rttiutils.TPropsStorage
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TPropsStorage">
+<short>Property storage mechanism</short>
+<descr>
+<p>
+<var>TPropsStorage</var> provides a mechanism to store properties from
+any class which has published properties (usually a <var>TPersistent</var>
+descendent) in a storage mechanism.
+</p>
+<p>
+<var>TPropsStorage</var> does not handle the storage by itself, instead, 
+the storage is handled through a series of callbacks to read and/or write
+strings. Conversion of property types to string is handled by
+<var>TPropsStorage</var> itself: all that needs to be done is set the 3
+handlers. The storage mechanism is assumed to have the structure of an
+ .ini file : sections with key/value pairs. The three callbacks should take
+this into account, but they do not need to create an actual .ini file.
+</p>
+</descr>
+<seealso>
+<link id="TPropInfoList"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TPropsStorage.StoreAnyProperty">
+<short>Store a property value</short>
+<descr>
+<var>StoreAnyProperty</var> stores the property with information specified
+in <var>PropInfo</var> in the storage mechanism. The property value is 
+retrieved from the object instance specified in the 
+<link id="TPropsStorage.AObject">AObject</link> property of <var>TPropsStorage</var>. 
+</descr>
+<errors>
+If the property pointer is invalid or <var>AObject</var> is invalid, 
+ an exception will be raised.
+</errors>
+<seealso>
+<link id="TPropsStorage.AObject">AObject</link>
+<link id="TPropsStorage.LoadAnyProperty">LoadAnyProperty</link>
+<link id="TPropsStorage.LoadProperties">LoadProperties</link>
+<link id="TPropsStorage.StoreProperties">StoreProperties</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropsStorage.StoreAnyProperty.PropInfo">
+<short>Information about property to store</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TPropsStorage.LoadAnyProperty">
+<short>Load a property value</short>
+<descr>
+<var>LoadAnyProperty</var> loads the property with information specified
+in <var>PropInfo</var> from the storage mechanism. The value is then applied
+to the object instance specified in the <link id="TPropsStorage.AObject">AObject</link> 
+property of <var>TPropsStorage</var>.
+</descr>
+<errors>
+If the property pointer is invalid or <var>AObject</var> is invalid,
+an exception will be raised.
+</errors>
+<seealso>
+<link id="TPropsStorage.AObject">AObject</link>
+<link id="TPropsStorage.StoreAnyProperty">StoreAnyProperty</link>
+<link id="TPropsStorage.LoadProperties">LoadProperties</link>
+<link id="TPropsStorage.StoreProperties">StoreProperties</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropsStorage.LoadAnyProperty.PropInfo">
+<short>Information about property to load</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TPropsStorage.StoreProperties">
+<short>Store a list of properties</short>
+<descr>
+<var>StoreProperties</var> stores the values of all properties in
+<var>PropList</var> in the storage mechanism. The list should contain
+names of published properties of the <link id="TPropsStorage.AObject">AObject</link>
+object.
+</descr>
+<errors>
+If an invalid property name is specified, an exception will be raised.
+</errors>
+<seealso>
+<link id="TPropsStorage.AObject">AObject</link>
+<link id="TPropsStorage.StoreAnyProperty">StoreAnyProperty</link>
+<link id="TPropsStorage.LoadProperties">LoadProperties</link>
+<link id="TPropsStorage.LoadAnyProperty">LoadAnyProperty</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropsStorage.StoreProperties.PropList">
+<short>List with names of properties to store</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TPropsStorage.LoadProperties">
+<short>Load a list of properties</short>
+<descr>
+<var>LoadProperties</var> loads the values of all properties in
+<var>PropList</var> from the storage mechanism. The list should contain
+names of published properties of the <link
+id="TPropsStorage.AObject">AObject</link>
+object.
+</descr>
+<errors>
+If an invalid property name is specified, an exception will be raised.
+</errors>
+<seealso>
+<link id="TPropsStorage.AObject">AObject</link>
+<link id="TPropsStorage.StoreAnyProperty">StoreAnyProperty</link>
+<link id="TPropsStorage.StoreProperties">StoreProperties</link>
+<link id="TPropsStorage.LoadAnyProperty">LoadAnyProperty</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropsStorage.LoadProperties.PropList">
+<short>List with names of properties whose value should be loaded</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TPropsStorage.LoadObjectsProps">
+<short>Load a list of component properties</short>
+<descr>
+<p>
+<var>LoadObjectsProps</var> loads a list of component properties, relative
+to <var>AComponent</var>: the names of the component properties to load
+are specified as follows:
+</p>
+<pre>
+ComponentName1.PropertyName
+ComponentName2.Subcomponent1.PropertyName
+</pre>
+<p>
+The component instances will be located relative to <var>AComponent</var>, 
+and must therefore be names of components owned by <var>AComponent</var>, 
+followed by a valid property of these components. If the componentname is
+missing, the property name will be assumed to be a property of
+<var>AComponent</var> itself.
+</p>
+<p>
+The <var>Objects</var> property of the stringlist should be filled with the
+instances of the components the property references refer to: they can be
+filled with the <link id="UpdateStoredList"/> call.
+</p>
+<p>
+For example, to load the checked state of a checkbox named 'CBCheckMe' and
+the caption of a button named 'BPressMe', both owned by a form, the
+following strings should be passed:
+</p>
+<pre>
+CBCheckMe.Checked
+BPressMe.Caption
+</pre>
+<p>
+and the <var>ACompontent</var> should be the form component that owns the
+button and checkbox.
+</p>
+<p>
+Note that this call removes the value of the <link
+id="TPropsStorage.AObject">AObject</link> property.
+</p>
+</descr>
+<errors>
+If an invalid component is specified, an exception will be raised.
+</errors>
+<seealso>
+<link id="UpdateStoredList"/>
+<link id="TPropsStorage.StoreObjectsProps">StoreObjectsProps</link>
+<link id="TPropsStorage.LoadProperties">LoadProperties</link>
+<link id="TPropsStorage.LoadAnyProperty">LoadAnyProperty</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropsStorage.LoadObjectsProps.AComponent">
+<short>Owner component of the components.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropsStorage.LoadObjectsProps.StoredList">
+<short>List of components and their properties to load</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TPropsStorage.StoreObjectsProps">
+<short>Store a list of component properties</short>
+<descr>
+<p>
+<var>StoreObjectsProps</var> stores a list of component properties, relative
+to <var>AComponent</var>: the names of the component properties to store
+are specified as follows:
+</p>
+<pre>
+ComponentName1.PropertyName
+ComponentName2.Subcomponent1.PropertyName
+</pre>
+<p>
+The component instances will be located relative to <var>AComponent</var>,
+and must therefore be names of components owned by <var>AComponent</var>,
+followed by a valid property of these components. If the componentname is
+missing, the property name will be assumed to be a property of
+<var>AComponent</var> itself.
+</p>
+<p>
+The <var>Objects</var> property of the stringlist should be filled with the
+instances of the components the property references refer to: they can be
+filled with the <link id="UpdateStoredList"/> call.
+</p>
+<p>
+For example, to store the checked state of a checkbox named 'CBCheckMe' and
+the caption of a button named 'BPressMe', both owned by a form, the
+following strings should be passed:
+</p>
+<pre>
+CBCheckMe.Checked
+BPressMe.Caption
+</pre>
+<p>
+and the <var>ACompontent</var> should be the form component that owns the
+button and checkbox.
+</p>
+<p>
+Note that this call removes the value of the <link
+id="TPropsStorage.AObject">AObject</link> property.
+</p>
+</descr>
+<seealso>
+<link id="UpdateStoredList"/>
+<link id="TPropsStorage.LoadObjectsProps">LoadObjectsProps</link>
+<link id="TPropsStorage.LoadProperties">LoadProperties</link>
+<link id="TPropsStorage.LoadAnyProperty">LoadAnyProperty</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropsStorage.StoreObjectsProps.AComponent">
+<short>Owner component of the components</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropsStorage.StoreObjectsProps.StoredList">
+<short>List of components and their properties to load</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPropsStorage.AObject">
+<short>Object to load or store properties from</short>
+<descr>
+<var>AObject</var> is the object instance whose properties
+will be loaded or stored with any of the methods in the
+<var>TPropsStorage</var> class. Note that a call to 
+<link id="TPropsStorage.StoreObjectsProps">StoreObjectProps</link> or
+<link id="TPropsStorage.LoadObjectsProps">LoadObjectProps</link> will
+destroy any value that this property might have.
+</descr>
+<seealso>
+<link id="TPropsStorage.LoadProperties">LoadProperties</link>
+<link id="TPropsStorage.LoadAnyProperty">LoadAnyProperty</link>
+<link id="TPropsStorage.StoreProperties">StoreProperties</link>
+<link id="TPropsStorage.StoreAnyProperty">StoreAnyProperty</link>
+<link id="TPropsStorage.StoreObjectsProps">StoreObjectProps</link>
+<link id="TPropsStorage.LoadObjectsProps">LoadObjectProps</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPropsStorage.Prefix">
+<short>Prefix to use in storage</short>
+<descr>
+<var>Prefix</var> is prepended to all property names to form the key name
+when writing a property to storage, or when reading a value from storage.
+This is useful when storing properties of multiple forms in a single
+section.
+</descr>
+<seealso>
+<link id="TPropsStorage.Section"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPropsStorage.Section">
+<short>Section name for storage</short>
+<descr>
+<var>Section</var> is used as the section name when writing values to
+storage. Note that when writing properties of subcomponents, their names
+will be appended to the value specified here.
+</descr>
+<seealso>
+<link id="TPropsStorage.Section"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPropsStorage.OnReadString">
+<short>Read a string value from storage</short>
+<descr>
+<var>OnReadString</var> is the event handler called whenever
+<var>TPropsStorage</var> needs to read a string from storage.
+It should be set whenever properties need to be loaded, or an 
+exception will be raised.
+</descr>
+<seealso>
+<link id="TPropsStorage.OnWriteString">OnWriteString</link>
+<link id="TPropsStorage.OnEraseSection">OnEraseSection</link>
+<link id="TReadStrEvent"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPropsStorage.OnWriteString">
+<short>Write a string value to storage</short>
+<descr>
+<var>OnWriteString</var> is the event handler called whenever
+<var>TPropsStorage</var> needs to write a string to storage.
+It should be set whenever properties need to be stored, or an exception will
+be raised.
+</descr>
+<seealso>
+<link id="TPropsStorage.OnReadString">OnReadString</link>
+<link id="TPropsStorage.OnEraseSection">OnEraseSection</link>
+<link id="TWriteStrEvent"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPropsStorage.OnEraseSection">
+<short>Erase a section in storage</short>
+<descr>
+<var>OnEraseSection</var> is the event handler called whenever
+<var>TPropsStorage</var> needs to clear a complete storage section.
+It should be set whenever stringlist properties need to be stored, 
+or an exception will be raised.
+</descr>
+<seealso>
+<link id="TPropsStorage.OnReadString">OnReadString</link>
+<link id="TPropsStorage.OnWriteString">OnWriteString</link>
+<link id="TEraseSectEvent"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="UpdateStoredList">
+<short>Update a stringlist with object references</short>
+<descr>
+<p>
+<var>UpdateStoredList</var> will parse the strings in <var>AStoredList</var>
+using <link id="ParseStoredItem"/> and will replace the <var>Objects</var> 
+properties with the instance of the object whose name each property path in 
+the list refers to. If <var>FromForm</var> is <var>True</var>, then all 
+instances are searched relative to <var>AComponent</var>, i.e. they must be
+owned by <var>AComponent</var>. If <var>FromForm</var> is <var>False</var>
+the instances are searched in the global list of streamed components. (the
+<link id="FindGlobalComponentCallBack"/> callback must be set for the search
+to work correctly in this case)
+</p>
+<p>
+If a component cannot be found, the reference string to the property is removed
+from the stringlist.
+</p>
+</descr>
+<errors>
+If <var>AComponent</var> is <var>Nil</var>, an exception may be raised.
+</errors>
+<seealso>
+<link id="ParseStoredItem"/>
+<link id="TPropsStorage.StoreObjectsProps"/>
+<link id="TPropsStorage.LoadObjectsProps"/>
+<link id="FindGlobalComponentCallBack"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="UpdateStoredList.AComponent">
+<short>Root component</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="UpdateStoredList.AStoredList">
+<short>List of property references to resolve</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="UpdateStoredList.FromForm">
+<short>Start search from form or search globally</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CreateStoredItem">
+<short>Concatenates component and property name</short>
+<descr>
+<p>
+<var>CreateStoredItem</var> concatenates <var>CompName</var> and
+<var>PropName</var> if they are both empty. The names are separated by a
+dot (.) character. If either of the names is empty, an empty string is
+returned.
+</p>
+<p>
+This function can be used to create items for the list of properties such as
+used in <link id="UpdateStoredList"/>, <link id="TPropsStorage.StoreObjectsProps"/>
+or <link id="TPropsStorage.LoadObjectsProps"/>.
+</p>
+</descr>
+<seealso>
+<link id="ParseStoredItem"/>
+<link id="UpdateStoredList"/>
+<link id="TPropsStorage.StoreObjectsProps"/>
+<link id="TPropsStorage.LoadObjectsProps"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="CreateStoredItem.Result">
+<short>Full property path</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CreateStoredItem.CompName">
+<short>Component name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CreateStoredItem.PropName">
+<short>Property name</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ParseStoredItem">
+<short>Split a property reference to component reference and property name </short>
+<descr>
+<var>ParseStoredItem</var> parses the property reference <var>Item</var> and
+splits it in a reference to a component (returned in <var>CompName</var>)
+and a name of a property (returned in <var>PropName</var>). This function
+basically does the opposite of <link id="CreateStoredItem"/>. Note that both
+names should be non-empty, i.e., at least 1 dot character must appear in
+<var>Item</var>.
+</descr>
+<errors>
+If an error occurred during parsing, <var>False</var> is returned.
+</errors>
+<seealso>
+<link id="CreateStoredItem"/>
+<link id="UpdateStoredList"/>
+<link id="TPropsStorage.StoreObjectsProps"/>
+<link id="TPropsStorage.LoadObjectsProps"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ParseStoredItem.Result">
+<short><var>True</var> if <var>Item</var> contains a valid property reference</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ParseStoredItem.Item">
+<short>Property reference to parse</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ParseStoredItem.CompName">
+<short>Component part of property reference.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ParseStoredItem.PropName">
+<short>Property name part of property reference.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="sPropNameDelimiter">
+<short>Separator used when constructing section/key names</short>
+</element>
+
+<!-- function type Visibility: default -->
+<element name="TFindComponentEvent">
+<short>Event callback to locate a component instance</short>
+<descr>
+<var>TFindComponentEvent</var> should return the component instance
+for the component with name path <var>Name</var>. The name path should 
+be relative to the global list of loaded components.
+</descr>
+<seealso>
+<link id="UpdateStoredList"/>
+<link id="FindGlobalComponentCallBack"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFindComponentEvent.Result">
+<short>Component instance</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFindComponentEvent.Name">
+<short>Name path of component to search for</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="FindGlobalComponentCallBack">
+<short>Callback used when component references must be resolved.</short>
+<descr>
+<var>FindGlobalComponentCallBack</var> is called by
+<link id="UpdateStoredList"/> whenever it needs to resolve component
+references. It should be set to a routine that locates a loaded component in
+the global list of loaded components.
+</descr>
+<seealso>
+<link id="UpdateStoredList"/>
+<link id="TPropsStorage.StoreObjectsProps"/>
+<link id="TPropsStorage.LoadObjectsProps"/>
+</seealso>
+</element>
+
+</module> <!-- rttiutils -->
+
+</package>
+</fpdoc-descriptions>
