@@ -466,6 +466,11 @@ The \file{system} unit is compiled without ansistrings, all its functions accept
 shortstring arguments. The same is true for all RTL units, except the
 \file{sysutils} unit, which is compiled with ansistrings.
 
+However, the \var{\{\$MODE\}} statement influences the default value of
+\var{\{\$H\}}: a \var{\{\$MODE DELPHI\}} statement implies a
+\var{\{\$H+\}} statement. This behaviour has changed, in older \fpc
+versions this was not so.
+
 \subsection{\var{\protect\$HINT} : Generate hint message}
 
 If the generation of hints is turned on, through the \var{-vh} command-line
@@ -1500,7 +1505,9 @@ is equivalent to setting one of the command-line options \var{-So},
 \item[Default] Default mode. This reverts back to the mode that was set on
 the command-line.
 \item[Delphi] Delphi compatibility mode. All object-pascal extensions are
-enabled. This is the same as the command-line option \var{-Sd}.
+enabled. This is the same as the command-line option \var{-Sd}. Note that
+this also implies \var{\{\$H ON\}} (i.e., in Delphi mode, ansistrings are
+the default).
 \item[TP] Turbo pascal compatibility mode. Object pascal extensions are
 disabled, except ansistrings, which remain valid.
 This is the same as the command-line option \var{-So}.
@@ -6757,6 +6764,8 @@ this mode is selected by the \var{-Mdelpih} switch.
 \item A forward declaration must not be repeated exactly the same by the
 implementation of a function/procedure. In particular, you not omit the
 parameters when implementing the function or procedure.
+\item Ansistrings are default, this means that \var{{\$MODE DELPHI}} implies
+an implicit \var{\{\$H ON\}}.
 \item Overloading of functions is not allowed.
 \item Nested comments are not  allowed.
 \item The Objpas unit is loaded right after the \file{system} unit. One of the
