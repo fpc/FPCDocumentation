@@ -1700,10 +1700,33 @@ None.
 <descr>
 <p>
 <var>FindFirst</var> looks for files that match the name (possibly with
-wildcards) in <var>Path</var> and attributes <var>Attr</var>. It then fills up the
+wildcards) in <var>Path</var> and extra attributes <var>Attr</var>. It then fills up the
 <var>Rslt</var> record with data gathered about the file. It returns 0 if a file
 matching the specified criteria is found, a nonzero value (-1 on linux)
 otherwise.
+</p>
+<p>
+<var>Attr</var> is an or-ed combination of the following constants:
+</p>
+<dl>
+<dt>faReadOnly</dt><dd>The file is read-only.</dd>
+<dt>faHidden</dt><dd>The file is hidden. (On unix, this means that the filename starts with a dot)</dd>
+<dt>faSysFile</dt><dd>The file is a system file (On unix, this means that the file is a character,
+block or FIFO file).</dd>
+<dt>faVolumeId</dt><dd>Drive volume Label. Not possible under unix.</dd>
+<dt>faDirectory</dt><dd>File is a directory.</dd>
+<dt>faArchive</dt><dd> file is an archive. Not possible on Unix</dd>
+</dl>
+<p>
+It is a common misconception that <var>Attr</var> specifies a set of attributes 
+which must be matched in order for a file to be included in the list. This is not 
+so: The value of <var>Attr</var> specifies <em>additional</em> attributes, this means
+that the returned files are either normal files or have an attribute which
+is present in <var>Attr</var>. </p>
+<p>
+Specifically: specifying <var>faDirectory</var> as a value for <var>Attr</var>
+does not mean that only directories will be returned. Normal files
+<em>and</em> directories will be returned.
 </p>
 <p>
 The <var>Rslt</var> record can be fed to subsequent calls to <var>FindNext</var>, in
