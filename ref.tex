@@ -1129,12 +1129,80 @@ structured types, as can be seen in the syntax diagram. It will be mentioned
 when a type supports the \var{packed} keyword.
 In the following, each of the possible structured types is discussed.
 %
+\subsubsection{Packed structured types}
+When a structured type is declared, no assumptions should be made about
+the internal position of the elements in the type. The compiler will lay
+out  the elements of the structure in memory as it thinks will be most
+suitable. That is, the order of the elements will be kept, but the location
+of the elements is not guaranteed, and is partially governed by the \var{\$PACKRECORDS}
+directive (this directive is explained in the \progref).
+
+However, \fpc allows to control the layout with the \var{Packed} and
+\var{Bitpacked} keywords. The meaning of these words depends on the context:
+\begin{description}
+\item[Bitpacked] In this case, the compiler will attempt to align ordinal
+types on bit boundaries, as explained below.
+\item[Packed] the meaning of the \var{Packed} keyword depends on the
+situation:
+\begin{enumerate}
+\item in \var{MACPAS} mode, it is equivalent to the \var{Bitpacked} keyword.
+\item In other modes, with the \var{\$BITPACKING} directive set to \var{ON},
+it is also equivalent to the \var{Bitpacked} keyword.
+\item In other modes, with the \var{\$BITPACKING} directive set to \var{OFF},
+it signifies normal packing on byte boundaries.
+\end{enumerate}
+Packing on byte boundaries means that each new element of a structured type
+starts on a byte boundary.
+\end{description}
+
+The byte packing mechanism is simple: the compiler aligns each element of
+the structure on the first available byte boundary, even if size of the
+previous element (small enumerated types, subrange types) is less than a
+byte.
+
+When using the bit packing mechanism, the compiler calculates for each
+ordinal type how many bits are needed to store it. The next ordinal type
+is then stored on the next free bit. Non-ordinal types such as sets, floats, 
+strings, (bitpacked) records, (bitpacked) arrays, pointers, classes, objecten, 
+procvars, are stored on the first available byte boundary.
+
+Note that the internals of the bitpacking are opaque: they can change
+at any tome in the future. What is more: the internal packing depends
+on the endianness of the platform for which the compilation is done,
+and no conversion between platforms is possible. This makes bitpacked
+structures unsuitable for storing on disk or transport over networks.
+
+There are some more restrictions to elements of bitpacked structures:
+\begin{itemize}
+\item The address cannot be retrieved, unless the bit size is a multiple of
+8 and the element happens to be stored on a byte boundary.
+\item An element of a bitpacked structure cannot be used as a var parameter,
+unless the bit size is a multiple of 8 and the element happens to be stored 
+on a byte boundary.
+\end{itemize}
+
+To determine the size of an element in a bitpacked structure, there is the 
+\var{BitSizeOf} function. It returns the size - in bits - of the element. 
+For other types or elements of structures which are not bitpacked, this will 
+simply return the size in bytes multiplied by 8, i.e., the return value is 
+then the same as \var{8*SizeOf}.
+
+The size of bitpacked records and arrays is limited:
+\begin{itemize}
+\item On 32 bit systems the maximal size is $2^29$ bytes (512 MB).
+\item On 32 bit systems the maximal size is $2^61$ bytes.
+\end{itemize}
+The reason is that the offset of an element must be calculated with 
+the maximum integer size of the system.
+
+%
 \subsection{Arrays}
 \index{Types!Array}\index{Array}
 \fpc supports arrays as in Turbo Pascal, multi-dimensional arrays
 and packed arrays are also supported, as well as the dynamic arrays of
 Delphi:
 \input{syntax/typearr.syn}
+Note that arrays can be packed or bitpacked.
 %
 \subsubsection{Static arrays}
 \index{Types!Array}\index{Array!Static}\keywordlink{array}
@@ -1323,6 +1391,31 @@ The \var{Low} function on a dynamic array will always return 0, and the
 High function will return the value \var{Length-1}, i.e., the value of the
 highest allowed array index. The \var{Length} function will return the
 number of elements in the array.
+
+
+\subsubsection{Packing and unpacking an array}
+Arrays can be packed and bitpacked. 2 array types which have the same index
+type but which are differently packed are not assignment compatible.
+
+However, it is possible to convert a normal array to a bitpacked array with the
+\var{pack} routine. The reverse operation is possible as well; a bitpacked
+array can be converted to a normally packed array using the \var{unpack}
+routine, as in the following example:
+\begin{verbatim}
+Var
+  foo : array [ 'a'..'f' ] of Boolean 
+    = ( false, false, true, false, false, false );
+  bar : packed array [ 42..47 ] of Boolean;
+  baz : array [ '0'..'5' ] of Boolean;
+
+begin
+  pack(foo,'a',bar);
+  unpack(bar,baz,'0');
+end.
+\end{verbatim}
+More information about the pack and unpack routines can be found in the unit
+reference.
+
 %
 \subsection{Record types}
 \index{Record}\index{Types!Record}\index{Fields}\keywordlink{record}

@@ -181,6 +181,32 @@ This can be used mainly for debugging purposes. The \file{system} unit sets the
 and simply exits. The \file{sysutils} unit catches the run-time error 227
 and raises an \var{EAssertionFailed} exception.
 
+\subsection{\var{\protect\$BITPACKING} : Enable bitsize packing}
+\label{se:dirbitpacking}
+The \var{\$BITPACKING} directive tells the compiler whether
+it should use bitpacking or not when it encounters the \var{packed}
+keyword for a structured type. The possible values are \var{ON} and
+\var{OFF}. If \var{ON}, then the compiler will bitpack structures when it
+encounters the \var{Packed} keyword.
+
+In the following example, the \var{TMyRecord} record will be bitpacked:
+\begin{verbatim}
+{$BITPACKING ON}
+Type
+  TMyRecord = packed record
+    B1,B2,B3,B4 : Boolean;
+  end;
+\end{verbatim}
+
+Note that:
+\begin{itemize}
+\item The \var{\$BITPACKING} directive is ignored in macpas mode, where
+packed records are always bitpacked.
+\item The \var{bitpacked} keyword can always be used to force bitwise
+packing, regardless of the value of the \var{\$BITPACKING} directive, and
+regardless of the mode.
+\end{itemize}
+
 \subsection{\var{\protect\$CALLING} : Specify calling convention}
 \label{se:dircalling}
 The \var{\{\$CALLING \}} directive tells the compiler which calling 
