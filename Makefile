@@ -1860,10 +1860,10 @@ distclean: clean cleanexamples
 	-rm -f *.tar.gz *.zip
 date.inc:
 	@echo \\date\{`date +'%B %Y'`\} > date.inc
-$(FPCSRCDIR)/compiler/msg2inc$(EXEEXT):
-	$(MAKE) -C $(FPCSRCDIR)/compiler msg2inc
-messages.inc: $(FPCSRCDIR)/compiler/msg2inc$(EXEEXT) $(FPCSRCDIR)/compiler/msg/errore.msg
-	$(FPCSRCDIR)/compiler/msg2inc -TE $(FPCSRCDIR)/compiler/msg/errore.msg messages.inc
+$(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT):
+	$(MAKE) -C $(FPCSRCDIR)/compiler/utils msg2inc$(EXEEXT)
+messages.inc: $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT) $(FPCSRCDIR)/compiler/msg/errore.msg
+	$(FPCSRCDIR)/compiler/utils/msg2inc -TE $(FPCSRCDIR)/compiler/msg/errore.msg messages.inc
 comphelp.inc:
 	echo "% Automatically generated. Do not edit" > comphelp.inc
 	echo "\begin{verbatim}" >> comphelp.inc
@@ -1947,7 +1947,7 @@ RTLUNITS=sysutils strutils dateutils strings mouse keyboard \
 	 crt video dos sockets objects heaptrc mmx ipc printer typinfo \
 	 ports getopts emu387 dxeload go32 gpm oldlinux baseunix \
 	 unixtype unix classes unixutil x86 dynlibs linux math matrix \
-	 system objpas dateutils rtl
+	 system objpas dateutils rtl wincrt
 RTLXML=$(addsuffix .xml,$(RTLUNITS))
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
 RTLSTRUTILS= --descr=strutils.xml --input="$(FPCSRCDIR)/rtl/objpas/strutils.pp ${OSDIRINCLUDES}"
@@ -1972,6 +1972,7 @@ RTLDXELOAD= --descr=dxeload.xml --input="$(FPCSRCDIR)/rtl/go32v2/dxeload.pp -Fi$
 RTLGO32= --descr=go32.xml --input="$(FPCSRCDIR)/rtl/go32v2/go32.pp -Fi$(FPCSRCDIR)/rtl/i386 ${OSDIRINCLUDES}"
 RTLGPM= --descr=gpm.xml --input="-dVER1_0 $(FPCSRCDIR)/rtl/linux/gpm.pp -Fi$(FPCSRCDIR)/rtl/i386 ${OSDIRINCLUDES}"
 RTLGRAPH= --descr=graph.xml --input="$(GRAPHDIR)/unix/graph.pp -Fi$(GRAPHDIR)/inc ${OSDIRINCLUDES}"
+RTLWINCRT= --descr=wincrt.xml --input="$(GRAPHDIR)/win32/wincrt.pp"
 RTLOLDLINUX= --descr=oldlinux.xml --input="$(FPCSRCDIR)/rtl/linux/oldlinux.pp -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/unix ${OSDIRINCLUDES}"
 RTLUNIXTYPE= --descr=unixtype.xml --input="$(FPCSRCDIR)/rtl/unix/unixtype.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 ${OSDIRINCLUDES}"
 RTLBASEUNIX= --descr=baseunix.xml --input="$(FPCSRCDIR)/rtl/unix/baseunix.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 ${OSDIRINCLUDES}"
@@ -1993,7 +1994,7 @@ RTLOPTS+= $(RTLPORTS) $(RTLGETOPTS) $(RTLEMU387) $(RTLDXELOAD) $(RTLGO32)
 RTLOPTS+= $(RTLGPM) $(RTLGRAPH) $(RTLOLDLINUX) $(RTLUNIXTYPE) $(RTLBASEUNIX)
 RTLOPTS+= $(RTLUNIX) $(RTLCLASSES) $(RTLUNIXUTIL) $(RTLX86) $(RTLDYNLIBS)
 RTLOPTS+= $(RTLLINUX) $(RTLMATH) $(RTLMATRIX) $(RTLSYSTEM) $(RTLOBJPAS)
-RTLOPTS+= $(RTLDATEUTILS)
+RTLOPTS+= $(RTLDATEUTILS) $(RTLWINCRT)
 endif
 updatexml: updatefclxml updatertlxml
 updatertlxml: cleanxml
