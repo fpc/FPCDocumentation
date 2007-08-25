@@ -1852,7 +1852,7 @@ help:
 	@echo ' pdfdist       : pdf, and archive result.'
 clean:
 	-rm -f preamble.inc date.inc messages.inc rtl.inc
-	-rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref
+	-rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref *.kwd *.xct
 	-rm -rf $(DOCS)
 	-rm -f $(CHK) $(TOC) $(LOG) $(DVI) $(PDF) $(AUX) $(OUT) $(PS) $(HTML) *.i* $(LOT) $(TXT)
 	-rm -f $(notdir $(wildcard styles/*.sty))
