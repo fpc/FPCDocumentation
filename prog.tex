@@ -143,9 +143,13 @@ The default assembler reader is the AT\&T reader.
 
 \subsection{\var{\protect\$B} or \var{\protect\$BOOLEVAL} : Complete boolean evaluation}
 
-This switch is understood by the \fpc compiler, but is ignored. The compiler
-always uses shortcut evaluation, i.e. the evaluation of a boolean expression
-is stopped once the result of the total exression is known with certainty.
+Be default, the compiler always uses shortcut evaluation, i.e. the evaluation 
+of a boolean expression is stopped once the result of the total exression is 
+known with certainty. The \var{\{\$B \}} switch can be used to change this
+behaviour: if it's argument is \var{ON}, then the compiler will always
+evaluate all terms in the expression. If it is \var{OFF} (the default) then
+the compiler will only evaluate as many terms as is necessary to determine
+the outcome.
 
 So, in the following example, the function \var{Bofu}, which has a boolean
 result, will never get called.
@@ -154,7 +158,8 @@ If False and Bofu then
   ...
 \end{verbatim}
 This has as a consequence that any additional actions that are done by
-\var{Bofu} are not executed.
+\var{Bofu} are not executed. If compiled with \var{\{\$B ON\}}, then
+\var{BoFu} will be called anyway.
 
 \subsection{\var{\protect\$C} or \var{\protect\$ASSERTIONS} : Assertion support}
 
