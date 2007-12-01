@@ -1874,7 +1874,7 @@ help:
 	@echo ' pdfdist       : pdf, and archive result.'
 clean:
 	-rm -f preamble.inc date.inc messages.inc rtl.inc
-	-rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref *.kwd *.xct
+	-rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref *.kwd *.xct *.haux *.hind
 	-rm -rf $(DOCS)
 	-rm -f $(CHK) $(TOC) $(LOG) $(DVI) $(PDF) $(AUX) $(OUT) $(PS) $(HTML) *.i* $(LOT) $(TXT)
 	-rm -f $(notdir $(wildcard styles/*.sty))
@@ -2177,12 +2177,10 @@ txtinstall: txt
 htmlinstall: html
 	install -d -m 755 $(INSTALL_DOCDIR)
 	cp fpctoc.html $(INSTALL_DOCDIR)
-	install -d -m 755 $(INSTALL_DOCDIR)/buttons
-	cp buttons/*.* $(INSTALL_DOCDIR)/buttons
-	install -d -m 755 $(INSTALL_DOCDIR)/pics
-	cp pics/*.* $(INSTALL_DOCDIR)/pics
+	cp -R buttons $(INSTALL_DOCDIR)
+	cp -R pics $(INSTALL_DOCDIR)
 	cp -R $(HTML) $(INSTALL_DOCDIR)
-	find $(INSTALL_DOCDIR) -name 'CVS' -or -name '*.eps' | xargs -n1 rm -rf
+	find $(INSTALL_DOCDIR) -name 'CVS' -or -name '.svn' -or -name '*.eps' | xargs -n1 rm -rf
 install:
 	@echo Choose install from:
 	@echo pdfinstall,htmlinstall,htmldosinstall
