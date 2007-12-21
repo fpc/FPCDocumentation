@@ -160,6 +160,7 @@ LOT = $(addsuffix .lot, $(DOCS))
 OUT = $(addsuffix .out, $(DOCS))
 # Html files are build in a directory
 HTML = $(DOCS)
+CHM = $(addsuffix .chm, $(DOCS))
 CHK = $(addsuffix .chk, $(DOCS))
 
 
@@ -215,6 +216,7 @@ help:
         @echo ' dvi           : Make documentation using latex.'
         @echo ' ps            : Make documentation using latex and dvips.'
         @echo ' html          : Make HTML documentation using default converter.'
+        @echo ' chm           : Make Compressed HTML documentation. (only the FCL and RTL)'
         @echo ' hevea         : Make HTML documentation using hevea'
         @echo ' l2h           : Make HTML documentation using latex2html'
         @echo ' 4ht           : Make HTML documentation using tex4ht'
@@ -232,7 +234,7 @@ help:
 
 clean:
         -rm -f preamble.inc date.inc messages.inc rtl.inc
-        -rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref *.kwd *.xct
+        -rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref *.kwd *.xct *.chm
         -rm -rf $(DOCS)
         -rm -f $(CHK) $(TOC) $(LOG) $(DVI) $(PDF) $(AUX) $(OUT) $(PS) $(HTML) *.i* $(LOT) $(TXT)
 # Styles
@@ -309,10 +311,6 @@ GRAPHDIR=$(FPCSRCDIR)/packages/extra/graph
 else
 GRAPHDIR=$(FPCSRCDIR)/rtl
 endif
-ifndef RTLLINKPREFIX
-RTLLINKPREFIX=../rtl/
-endif
-FCLOPTS=$(FPDOCOPTS) --package=fcl --hide-protected --warn-no-node --descr=fcl.xml --content=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX)
 #
 # Standard Makeskel update options.
 #
@@ -366,11 +364,11 @@ FCLSIMPLEIPC= --descr=simpleipc.xml --input="$(FCLPROCESSDIR)/simpleipc.pp"
 FCLZSTREAM= --descr=zstream.xml --input="$(FCLZLIBDIR)/zstream.pp"
 
 # Now add to the FCL fpdoc opts.
-FCLOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
-FCLOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
-FCLOPTS+= $(FCLGETTEXT) $(FCLEZCGI) $(FCLPOOLEDMM) $(FCLDBUGMSG) $(FCLSTREAMEX)
-FCLOPTS+= $(FCLINICOL) $(FCLSTREAMCOL) $(FCLCACHECLS) $(FCLEVENTLOG) $(FCLSYNCOBJS)
-FCLOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES) $(FCLRTTIUTILS)
+FCLUNITOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
+FCLUNITOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
+FCLUNITOPTS+= $(FCLGETTEXT) $(FCLEZCGI) $(FCLPOOLEDMM) $(FCLDBUGMSG) $(FCLSTREAMEX)
+FCLUNITOPTS+= $(FCLINICOL) $(FCLSTREAMCOL) $(FCLCACHECLS) $(FCLEVENTLOG) $(FCLSYNCOBJS)
+FCLUNITOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES) $(FCLRTTIUTILS)
 
 RTLOPTS=$(FPDOCOPTS) --hide-protected --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifdef CURRENTXMLONLY
@@ -597,12 +595,27 @@ include Makefile.4ht
 endif  # USEL2H
 endif  # USEHEVEA
 
+ifndef HTMLFMT
+  HTMLFMT=html
+endif
+
+ifndef RTLLINKPREFIX
+  ifeq (HTMLFMT,html)
+    RTLLINKPREFIX=../rtl/
+  else
+    RTLLINKPREFIX=ms-its:rtl.chm::/
+  endif
+endif
+
+FCLOPTS=$(FPDOCOPTS) --package=fcl --hide-protected --warn-no-node --descr=fcl.xml --content=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX) $(FCLUNITOPTS)
+
+
 fcl.chk: $(FCLXML)
-        $(FPDOC) $(FCLOPTS) --format=html --output=fcl
+        $(FPDOC) $(FCLOPTS) --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS)
         touch fcl.chk
 
 rtl.chk: $(RTLXML)
-        $(FPDOC) $(RTLOPTS) --format=html --output=rtl
+        $(FPDOC) $(RTLOPTS) --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS)
         touch rtl.chk
 
 user.chk: $(INCLUDES) user.tex messages.inc
@@ -613,6 +626,15 @@ fpdoc.chk: $(INCLUDES) fpdoc.tex
 chart.chk: $(INCLUDES) chart.tex
 
 html: $(INCLUDES) $(CHK)
+
+chm: html
+HTMLFMT=chm
+HTMLSUFFIX=.chm
+FPDOCHTMLOPTS=--auto-toc --auto-index
+ifdef CSSFILE
+  FPDOCHTMLOPTS+=--css-file=$(CSSFILE)
+endif
+
 
 endif  # INSTALLDEBUG
 #######################################################################
