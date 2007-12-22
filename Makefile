@@ -1776,6 +1776,24 @@ endif
 ifndef ASCIIMODE
 ASCIIMODE=NO
 endif
+ifndef HTMLFMT
+  HTMLFMT=html
+endif
+ifndef RTLLINKPREFIX
+  ifeq (chm, $(HTMLFMT))
+    RTLLINKPREFIX:=ms-its:rtl.chm::/    
+  else
+    RTLLINKPREFIX:=../rtl/    
+  endif
+endif
+FCLOPTS=$(FPDOCOPTS) --package=fcl --hide-protected --warn-no-node --descr=fcl.xml --content=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX) $(FCLUNITOPTS)
+ifeq (chm,$(HTMLFMT))
+  HTMLSUFFIX:=.chm
+  FPDOCHTMLOPTS=--auto-toc --auto-index
+  ifdef CSSFILE
+    FPDOCHTMLOPTS+=--css-file=$(CSSFILE)
+  endif
+endif
 ifndef LATEX
 LATEX = latex
 endif
@@ -2132,17 +2150,6 @@ else
 include Makefile.4ht
 endif  # USEL2H
 endif  # USEHEVEA
-ifndef HTMLFMT
-  HTMLFMT=html
-endif
-ifndef RTLLINKPREFIX
-  ifeq (HTMLFMT,html)
-    RTLLINKPREFIX=../rtl/
-  else
-    RTLLINKPREFIX=ms-its:rtl.chm::/
-  endif
-endif
-FCLOPTS=$(FPDOCOPTS) --package=fcl --hide-protected --warn-no-node --descr=fcl.xml --content=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX) $(FCLUNITOPTS)
 fcl.chk: $(FCLXML)
 	$(FPDOC) $(FCLOPTS) --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS)
 	touch fcl.chk
@@ -2156,13 +2163,8 @@ ref.chk: $(INCLUDES) ref.tex
 fpdoc.chk: $(INCLUDES) fpdoc.tex
 chart.chk: $(INCLUDES) chart.tex
 html: $(INCLUDES) $(CHK)
-chm: html
-HTMLFMT=chm
-HTMLSUFFIX=.chm
-FPDOCHTMLOPTS=--auto-toc --auto-index
-ifdef CSSFILE
-  FPDOCHTMLOPTS+=--css-file=$(CSSFILE)
-endif
+chm: 
+   $(MAKE) html HTMLFMT=chm
 endif  # INSTALLDEBUG
 hevea:
 	$(MAKE) html USEHEVEA=1
