@@ -866,7 +866,7 @@ To declare a variable as a string, use the following type specification:
 
 The meaning of a string declaration statement is interpreted differently
 depending on the \var{\{\$H\}} switch. The above declaration can declare an
-ansistrng or a short string.
+ansistring or a short string.
 
 Whatever the actual type, ansistrings and short strings can be used
 interchangeably. The compiler always takes care of the necessary type
@@ -880,17 +880,16 @@ A string declaration declares a short string in the following cases:
 \begin{enumerate}
 \item If the switch is off: \var{\{\$H-\}}, the string declaration
 will always be a short string declaration.
-\item If the switch is on \var{\{\$H+\}}, and there is a length
+\item If the switch is on \var{\{\$H+\}}, and there is a maximum length
 specifier, the declaration is a short string declaration.
 \end{enumerate}
 The predefined type \var{ShortString} is defined as a string of length 255:
 \begin{verbatim}
  ShortString = String[255];
 \end{verbatim}
-
 If the size of the string is not specified, \var{255} is taken as a
-default. The length of the string can be obtained with the \var{Length}
-standard runtime routine.
+default. The actual length of the string can be obtained with the
+\var{Length} standard runtime routine.
 For example in
 \begin{verbatim}
 {$H-}
@@ -901,6 +900,23 @@ Type
 \end{verbatim}
 \var{NameString} can contain a maximum of 10 characters. While
 \var{StreetString} can contain up to 255 characters.
+
+\begin{remark}
+Short strings have a maxmimum length of 255 characters: when specifying a
+maximum length, the maximum length may not exceed 255. If a length larger
+than 255 is attempted, then the compiler will give an error message:
+\begin{verbatim}
+Error: string length must be a value from 1 to 255
+\end{verbatim}
+
+For short strings, the length is stored in the character at index 0. Old
+Turbo Pascal code relies on this, and it is implemented similarly in Free
+Pascal. For Ansistrings this is not correct, and the compiler will give a 
+warning if it detects this construct. For ansistrings, the length must be
+retrieved with the \var{Length} function or set with the \var{SetLength}
+function. Both functions work on shortstrings as well, and should be used
+for code that must compile in both Object Pascal as old Turbo Pascal mode.
+\end{remark}
 
 \subsection{Ansistrings}
 \index{Ansistring}\index{Types!Ansistring}\index{Types!Reference counted}
@@ -971,10 +987,23 @@ then a copy of the string is created before the assignment. This is known
 as {\em copy-on-write} semantics.
 
 The \var{Length} function must be used to get the length of an
-ansistring.
+ansistring: the lentgth is not stored at character 0 of the ansistring. The
+construct
+\begin{verbatim}
+ L:=ord(S[0]);
+\end{verbatim}
+which was valid for Turbo Pascal shortstrings, is no longer correct for
+Ansistrings. The compiler will warn if such a construct is encountered.
 
 To set the length of an ansistring, the \var{SetLength} function must be used.
-Constant ansistrings have a reference count of -1 and are treated specially.
+Constant ansistrings have a reference count of -1 and are treated specially,
+The same remark as for \var{Length} must be given: The construct
+\begin{verbatim}
+  L:=12;
+  S[0]:=Char(L);
+\end{verbatim}
+which was valid for Turbo Pascal shortstrings, is no longer correct for
+Ansistrings. The compiler will warn if such a construct is encountered.
 
 Ansistrings are converted to short strings by the compiler if needed,
 this means that the use of ansistrings and short strings can be mixed
