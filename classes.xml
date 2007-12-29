@@ -406,7 +406,8 @@ from or writng to a stream: Possible causes are
 <li>Trying to seek beyond the beginning or end of the stream.</li>
 <li>Trying to set the capacity of a memory stream and no memory is
 available.</li>
-<li>Trying to write to a resource stream.</li>
+<li>Trying to write to a read-only stream, such as a resource stream.</li>
+<li>Trying to read from a write-only stream.</li>
 </ol>
 </descr>
 <seealso>
@@ -4514,13 +4515,13 @@ id="TstringList.OnChange"/> event occurs.
 <descr>
 <p>
 <var>TStream</var> is the base class for all streaming classes. It defines
-abstract methods for <link id="TStream.Read">reading</link>, <link
+methods for <link id="TStream.Read">reading</link>, <link
 id="TStream.Write">writing</link> from and to streams, as well as functions to
 determine the size of the stream as well as the current position of the
 stream.
 </p>
 <p>Descendent classes such as <link id="TMemoryStream"/> or <link
-id="TFileStream"/> then implement these abstract methods to write streams to
+id="TFileStream"/> then override these methods to write streams to
 memory or file.
 </p>
 </descr>
@@ -4558,13 +4559,15 @@ If a specific number of bytes is expected, use <link
 id="TSTream.ReadBuffer"/> instead. 
 </p>
 <p>
-<var>Read</var> is an abstract method that is overridden by descendent
-classes to do the actual reading.
+As implemented in <var>TStream</var>, <var>Read</var> does nothing but
+raises an <link id="EStreamError"/> exception to indicate that reading 
+is not supported. Descendent classes that allow reading must override 
+this method to do the actual reading.
 </p>
 </descr>
 <errors>
-Descendent classes that do not allow reading from the stream may raise an
-exception when the <var>Read</var> is used.
+In case a descendent class does not allow reading from the stream, an
+exception is raised.
 </errors>
 <seealso>
 <link id="TStream.Write"/>
@@ -4586,13 +4589,14 @@ written is not determined. If a specific number of bytes should be
 written, use <link id="TSTream.WriteBuffer"/> instead. 
 </p>
 <p>
-<var>Write</var> is an abstract method that is overridden by descendent
-classes to do the actual writinging.
+As implemented in <var>TStream</var>, <var>Write</var> does nothing but
+raises <link id="EStreamError"/> exception to indicate that writing is not supported.
+Descendent classes that allow writing must override this method to do the actual writing.
 </p>
 </descr>
 <errors>
-Descendent classes that do not allow writing to the stream may raise an
-exception when <var>Write</var> is used.
+In case a descendent class does not allow writing to the stream, an
+exception is raised.
 </errors>
 <seealso>
 <link id="TStream.Read"/>
@@ -5178,7 +5182,7 @@ then calls the inherited constructor.
 <short>Overrides standard read method.</short>
 <descr>
 <p>
-<var>Read</var> implements the abstract <link id="TStream.Read">Read</link> 
+<var>Read</var> overrides the <link id="TStream.Read">Read</link> 
 method of <var>TStream</var>. It uses the <link
 id="THandleStream.Handle">Handle</link> property to read the
 <var>Count</var> bytes into <var>Buffer</var>
@@ -5203,7 +5207,7 @@ is returned.
 <short>Overrides standard write method.</short>
 <descr>
 <p>
-<var>Write</var> implements the abstract <link id="TStream.Write">Write</link> 
+<var>Write</var> overrides the <link id="TStream.Write">Write</link> 
 method of <var>TStream</var>. It uses the <link
 id="THandleStream.Handle">Handle</link> property to write the
 <var>Count</var> bytes from <var>Buffer</var>. 
@@ -5252,7 +5256,7 @@ stores or reads it's data from a named file in the filesystem of
 the operating system.
 </p>
 <p>
-To this end, it overrides some of the abstract methods in <var>TStream</var>
+To this end, it overrides some of the methods in <var>TStream</var>
 and implements them for the case of files on disk, and it adds the <link
 id="TFileStream.Filename">FileName</link> property to the list of public
 properties.
@@ -5448,7 +5452,7 @@ pointed to by <var>buffer</var>. It returns the number of bytes actually
 read.
 </p>
 <p>
-This method overrides the abstract <link id="TStream.Read"/> method of <link
+This method overrides the <link id="TStream.Read"/> method of <link
 id="TStream"/>. It will read as much bytes as are still available in the
 memory area pointer to by <link id="TCustomMemoryStream.Memory">Memory</link>.
 After the bytes are read, the internal stream position is updated.
@@ -5578,7 +5582,7 @@ content may be read-only, and thus writing to it may cause errors.
 <p>
 <var>TMemoryStream</var> is a <link id="TStream"/> descendent that stores
 it's data in memory. It descends directly from <link id="TCustomMemoryStream"/>
-and implements the necessary to allocate and de-allocate memory diretly from
+and implements the necessary to allocate and de-allocate memory directly from
 the heap. It implements the <link id="TMemoryStream.Write">Write</link> method
 which is missing in <var>TCustomMemoryStream</var>.
 </p>
@@ -5746,7 +5750,7 @@ overwritten. The function returns the number of bytes actually written
 (which should under normal circumstances always equal <var>Count</var>).
 </p>
 <p>
-This method overrides the abstract <link id="TStream.Write"/> method.
+This method overrides the <link id="TStream.Write"/> method.
 </p>
 </descr>
 <errors>
@@ -5817,7 +5821,7 @@ the size of the stream will equal the length of the string.
 <element name="TStringStream.Read">  <!-- Function -->
 <short>Reads from the stream.</short>
 <descr>
-<var>Read</var> implements the abstract <link id="TStream.Read">Read</link>
+<var>Read</var> overrides the <link id="TStream.Read">Read</link>
 from <link id="TStream"/>. It tries to read <var>Count</var> bytes into
 <var>Buffer</var>. It returns the number of bytes actually read. The
 position of the stream is advanced with the number of bytes actually read;
@@ -5863,7 +5867,7 @@ method.
 </element>
 
 <element name="TStringStream.Write">  <!-- Function -->
-<short><var>Write</var> implements the abstract <link id="TStream.Write"/>
+<short><var>Write</var> overries the <link id="TStream.Write"/>
 method.</short>
 <descr>
 </descr>
@@ -5933,14 +5937,6 @@ method.</short>
 </seealso>
 </element>
 
-<element name="TResourceStream.Write">  <!-- Function -->
-<short><var>Write</var> implements the abstract <link id="TStream.Write"/>
-method.</short>
-<descr>
-</descr>
-<seealso>
-</seealso>
-</element>
 
 <element name="TValueType">  <!-- Enumeration type -->
 <short>Enumerated type used to identify the kind of streamed property</short>
