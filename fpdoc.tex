@@ -289,6 +289,21 @@ options, which will be explained in the next section.
 \section{\fpdoc command-line options reference}
 In this section all \fpdoc command-line options are explained.
 
+% auto-index
+\subsection{auto-index}
+This option generates an index of all the types including objects, 
+classes, their methods and enums, sorted alphabhetically. Methods 
+of classes and objects will appear as subitems of their class. If used
+in combination with --index-file this option will be used instead. 
+This option only applies to the chm backend.
+
+% auto-toc
+\subsection{auto-toc}
+This option generates a Table of Contents that displays all classes,
+objects and routines in several ways. If used in combination with
+--toc-file this option will be used instead. This option only applies 
+to the chm backend.
+
 % content
 \subsection{content}
 \label{suse:content}
@@ -298,6 +313,21 @@ possible anchors (labels) in the generated documentation file, and can be
 used to create cross-links in documentation for units in other packages, 
 using the counterpart of the content option, the \var{import} option
 (\seesu{import}).
+
+% css-file
+\subsection{css-file}
+\label{suse:css-file}
+This option only applies to the chm backend. Use this option to set the css
+file used to style the html when the html is rendered by a viewer.
+
+% default-page
+\subsection{default-page}
+\label{suse:default-page}
+This option only applies to the chm backend. The default page to load 
+when the chm is opened by a viewer. Using this option does not include a file
+but instead specifies a file you have included using --other-files. You only 
+need to use this option if you have used the --other-files option and included 
+a page you wish to use instead of the default page.
 
 %descr
 \subsection{descr}
@@ -420,6 +450,14 @@ with \file{ms-its:fcl.chm::/}. This is how chm's are crosslinked.
 
 Note that for Latex documentation, this option is ignored.
 
+% index-file
+\subsection{index-file}
+\label{suse:index-file}
+Use this option to specify a local file to include and use as the index. This 
+file is in the sitemap format. You can use the unit chmsitemap in your 
+programs to read and write this type of file. Usually this file ends with .hhk. 
+This option only applies to the chm backend.
+
 % input
 \subsection{input}
 \label{suse:input}
@@ -466,6 +504,16 @@ Switches on an internal latex syntax highlighter. This is not yet
 implemented. By default, syntax highlighting is provided by the syntax
 package that comes with \fpc.
 
+% other-files
+\subsection{other-files}
+\label{suse:other-files}
+This option specifies a text file with one filename per line to be included in
+the chm. You can include any type of file you want; it does not have to be a
+html file. For instance you can include images that you have linked to in the
+xml descr files. The files should be in a subfolder of the working directory 
+and within their own folder to avoid naming conflicts with the auto generated
+files. This option only applies to the chm backend.
+
 % output
 \subsection{output}
 \label{suse:output}
@@ -506,6 +554,13 @@ will also be used as a default for the \var{output} option (\seesu{output}).
 By default, no documentation is generated for private methods or fields of
 classes or objects. This option causes \fpdoc to generate documentation 
 for these methods and fields as well.
+
+% toc-file
+\subsection{toc-file}
+Use this option to specify a local file to include as a the Table of Contents.
+The table of contents is in the sitemap format and usually ends in .hhc. You
+can use the unit chmsitemap in your programs to read and write files of this type.
+This option only applies to the chm backend of \fpdoc.
 
 % warn-no-node
 \subsection{warn-no-node}
@@ -1784,6 +1839,18 @@ function.
 After the methods, a list of properties is given , formatted as a method,
 with an additional \var{Access} list element, specifying whether the
 property is read/write or not.
+
+% CHM output
+\section{CHM output}
+
+The chm output in \fpdoc is actually inherited from the HTML backend so 
+everything that applies to the HTML backend applies to the chm backend, except
+that all generated HTML files are written directly to a stream. After all the
+HTML files are generated the compression is begun. Once all the auto generated
+files are compressed, if the --other-files option is used these files are 
+collected and compressed. Now if the --auto-index or --auto-toc are used
+the Index and Table of Contents are created and the compression is finished.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % End of file
