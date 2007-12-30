@@ -5348,17 +5348,42 @@ thread has accessed it.
 \begin{verbatim}
 Type
   TThreadFunc = function(parameter : pointer) : longint;
-function BeginThread(ThreadFunction: tthreadfunc) : DWord;
 
-function BeginThread(ThreadFunction: tthreadfunc;
-                     p: pointer): DWord;
-function BeginThread(ThreadFunction: tthreadfunc;
-                     p: pointer; 
-                     var ThreadId : THandle) : DWord;
+function BeginThread(sa : Pointer;
+                     stacksize : SizeUInt;
+                     ThreadFunction : tthreadfunc;
+                     p : pointer;
+                     creationFlags : dword;
+                     var ThreadId : TThreadID) : TThreadID;
 \end{verbatim}
-If present, the pointer \var{p} will be passed to the thread function 
-when it is started (otherwise, \var{Nil} is passed). If \var{ThreadID}
-is present, the ID of the thread will be stored in it.
+This rather complicated full form of the function also comes in more simplified
+forms:
+\begin{verbatim}
+function BeginThread(ThreadFunction : tthreadfunc) : TThreadID;
+
+function BeginThread(ThreadFunction : tthreadfunc;
+                     p : pointer) : TThreadID;
+
+function BeginThread(ThreadFunction : tthreadfunc;
+                     p : pointer; 
+                     var ThreadId : TThreadID) : TThreadID;
+
+function BeginThread(ThreadFunction : tthreadfunc;
+                     p : pointer;
+                     var ThreadId : TThreadID; 
+                     const stacksize: SizeUInt) : TThreadID;
+\end{verbatim}
+The parameters have the following meaning:
+\begin{description}
+\item[ThreadFunction] is the function that should be executed in the thread.
+\item[p] If present, the pointer \var{p} will be passed to the thread function 
+when it is started. If \var{p} is not specified, \var{Nil} is passed). 
+\item[ThreadID] If \var{ThreadID} is present, the ID of the thread will be stored in it. 
+\item[stacksize] if present, this parameter specifies the stack size used for the thread.
+\item[sa] signal action. Important for linux only.
+\item[creationflags] these are system-specific creation flags. Important for
+windows only.
+\end{description}
 
 The newly started thread will run until the \var{ThreadFunction} exits, 
 or until it explicitly calls the \var{EndThread} function:
