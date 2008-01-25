@@ -2771,6 +2771,45 @@ section.\keywordlink{published}
 In the syntax diagram, it can be seen that a class lists implemented
 interfaces. This will be discussed in the next chapter.
 
+Classes can contain \var{Class} methods: these are functions that do not
+require an instance: The \var{Self} identifier refers to the class pointer 
+in such methods. 
+
+Similarly, if the \var{\{\$STATIC ON\}} directive is active, then a class
+can contain static fields: these fields are global to the class, and act
+like global variables, but are known only as part of the class. They can be
+referenced from within the classes' methods, but can also be referenced from
+outside the class by providing the fully qualified name.
+
+For instance, the output of the following program:
+\begin{verbatim}
+{$mode objfpc}
+{$static on}
+type
+  cl=class
+    l : longint;static;
+  end;
+var
+  c1,c2 : cl;
+begin
+  c1:=cl.create;
+  c2:=cl.create;
+  c1.l:=2;
+  writeln(c2.l);
+  c2.l:=3;
+  writeln(c1.l);
+  Writeln(cl.l);
+end.
+\end{verbatim}
+will be the following
+\begin{verbatim}
+2
+3
+3
+\end{verbatim}
+Note that the last line of code references the class type itself (\var{cl}}, 
+and not an instance of the class (\var{cl1} or \var{cl2}).
+
 It is also possible to define class reference types:
 \input{syntax/classref.syn}
 Class reference types are used to create instances of a certain class, which
