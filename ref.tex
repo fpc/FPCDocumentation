@@ -2406,7 +2406,41 @@ With AnObject do
 \end{verbatim}
 In this example, between the \var{begin} and \var{end}, it is as if
 \var{AnObject} was prepended to the \var{Afield} and \var{Amethod}
-identifiers. More about this in \sees{With}
+identifiers. More about this in \sees{With}.
+
+\section{Static fields}
+When the \var{\{\$STATIC ON\}} directive is active, then an object
+can contain static fields: these fields are global to the object type, and act
+like global variables, but are known only as part of the object. They can be
+referenced from within the objects methods, but can also be referenced from
+outside the object by providing the fully qualified name.
+
+For instance, the output of the following program:
+\begin{verbatim}
+{$static on}
+type
+  cl=object
+    l : longint;static;
+  end;
+var
+  c1,c2 : cl;
+begin
+  c1.l:=2;
+  writeln(c2.l);
+  c2.l:=3;
+  writeln(c1.l);
+  Writeln(cl.l);
+end.
+\end{verbatim}
+will be the following
+\begin{verbatim}
+2
+3
+3
+\end{verbatim}
+Note that the last line of code references the object type itself (\var{cl}), 
+and not an instance of the object (\var{cl1} or \var{cl2}).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Constructors and destructors
@@ -2775,7 +2809,7 @@ Classes can contain \var{Class} methods: these are functions that do not
 require an instance: The \var{Self} identifier refers to the class pointer 
 in such methods. 
 
-Similarly, if the \var{\{\$STATIC ON\}} directive is active, then a class
+Similar to objects, if the \var{\{\$STATIC ON\}} directive is active, then a class
 can contain static fields: these fields are global to the class, and act
 like global variables, but are known only as part of the class. They can be
 referenced from within the classes' methods, but can also be referenced from
@@ -2807,7 +2841,7 @@ will be the following
 3
 3
 \end{verbatim}
-Note that the last line of code references the class type itself (\var{cl}}, 
+Note that the last line of code references the class type itself (\var{cl}), 
 and not an instance of the class (\var{cl1} or \var{cl2}).
 
 It is also possible to define class reference types:
