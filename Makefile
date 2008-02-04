@@ -1935,7 +1935,7 @@ FCLBASEINC=$(FCLBASEDIR)inc
 FCLPROCESSDIR=$(FPCSRCDIR)/packages/fcl-process/src/
 FCLZLIBDIR=$(FPCSRCDIR)/packages/paszlib/src/
 ifndef OLDGRAPH
-GRAPHDIR=$(FPCSRCDIR)/packages/graph
+GRAPHDIR=$(FPCSRCDIR)/packages/graph/src
 else
 GRAPHDIR=$(FPCSRCDIR)/packages/extra/graph
 endif
