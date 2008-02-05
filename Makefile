@@ -1930,9 +1930,10 @@ endif
 ifneq ($(findstring $(OS_SOURCE),freebsd),)
 OSDIRINCLUDES+=-Fi${FPCSRCDIR}/rtl/bsd
 endif
-FCLBASEDIR=$(FPCSRCDIR)/packages/fcl-base/src/
-FCLPROCESSDIR=$(FPCSRCDIR)/packages/fcl-process/src/
-FCLZLIBDIR=$(FPCSRCDIR)/packages/paszlib/src/
+FCLBASEDIR=$(FPCSRCDIR)/packages/fcl-base/src
+FCLPROCESSDIR=$(FPCSRCDIR)/packages/fcl-process/src
+FCLWEBDIR=$(FPCSRCDIR)/packages/fcl-web/src
+FCLZLIBDIR=$(FPCSRCDIR)/packages/paszlib/src
 ifndef OLDGRAPH
 GRAPHDIR=$(FPCSRCDIR)/packages/graph/src
 else
@@ -1948,14 +1949,12 @@ FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEDIR)/iostream.pp"
-FCLPIPES= --descr=pipes.xml --input="$(FCLBASEDIR)/pipes.pp"
 FCLSTREAMIO= --descr=streamio.xml --input="$(FCLBASEDIR)/streamio.pp"
 FCLCONTNRS= --descr=contnrs.xml --input="$(FCLBASEDIR)/contnrs.pp"
 FCLIDEA= --descr=idea.xml --input="$(FCLBASEDIR)/idea.pp"
 FCLBUFSTREAM= --descr=bufstream.xml --input="$(FCLBASEDIR)/bufstream.pp"
 FCLBASE64= --descr=base64.xml --input="$(FCLBASEDIR)/base64.pp"
 FCLGETTEXT= --descr=gettext.xml --input="$(FCLBASEDIR)/gettext.pp"
-FCLEZCGI= --descr=ezcgi.xml --input="$(FCLBASEDIR)/ezcgi.pp"
 FCLPOOLEDMM= --descr=pooledmm.xml --input="$(FCLBASEDIR)/pooledmm.pp"
 FCLSTREAMEX= --descr=streamex.xml --input="$(FCLBASEDIR)/streamex.pp"
 FCLINICOL= --descr=inicol.xml --input="$(FCLBASEDIR)/inicol.pp"
@@ -1972,6 +1971,7 @@ FCLPIPES= --descr=pipes.xml --input="$(FCLPROCESSDIR)/pipes.pp"
 FCLDBUGINTF= --descr=dbugintf.xml --input="$(FCLPROCESSDIR)/dbugintf.pp" 
 FCLDBUGMSG= --descr=dbugmsg.xml --input="$(FCLPROCESSDIR)/dbugmsg.pp"
 FCLSIMPLEIPC= --descr=simpleipc.xml --input="$(FCLPROCESSDIR)/simpleipc.pp"
+FCLEZCGI= --descr=ezcgi.xml --input="$(FCLWEBDIR)/ezcgi.pp"
 FCLZSTREAM= --descr=zstream.xml --input="$(FCLZLIBDIR)/zstream.pp"
 FCLUNITOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLUNITOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
