@@ -1931,7 +1931,6 @@ ifneq ($(findstring $(OS_SOURCE),freebsd),)
 OSDIRINCLUDES+=-Fi${FPCSRCDIR}/rtl/bsd
 endif
 FCLBASEDIR=$(FPCSRCDIR)/packages/fcl-base/src/
-FCLBASEINC=$(FCLBASEDIR)inc
 FCLPROCESSDIR=$(FPCSRCDIR)/packages/fcl-process/src/
 FCLZLIBDIR=$(FPCSRCDIR)/packages/paszlib/src/
 ifndef OLDGRAPH
@@ -1948,26 +1947,26 @@ FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream
 	 eventlog syncobjs custapp blowfish simpleipc inifiles rttiutils
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
-FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEINC)/iostream.pp"
-FCLPIPES= --descr=pipes.xml --input="$(FCLBASEINC)/pipes.pp"
-FCLSTREAMIO= --descr=streamio.xml --input="$(FCLBASEINC)/streamio.pp"
-FCLCONTNRS= --descr=contnrs.xml --input="$(FCLBASEINC)/contnrs.pp"
-FCLIDEA= --descr=idea.xml --input="$(FCLBASEINC)/idea.pp"
-FCLBUFSTREAM= --descr=bufstream.xml --input="$(FCLBASEINC)/bufstream.pp"
-FCLBASE64= --descr=base64.xml --input="$(FCLBASEINC)/base64.pp"
-FCLGETTEXT= --descr=gettext.xml --input="$(FCLBASEINC)/gettext.pp"
-FCLEZCGI= --descr=ezcgi.xml --input="$(FCLBASEINC)/ezcgi.pp"
-FCLPOOLEDMM= --descr=pooledmm.xml --input="$(FCLBASEINC)/pooledmm.pp"
-FCLSTREAMEX= --descr=streamex.xml --input="$(FCLBASEINC)/streamex.pp"
-FCLINICOL= --descr=inicol.xml --input="$(FCLBASEINC)/inicol.pp"
-FCLSTREAMCOL= --descr=streamcoll.xml --input="$(FCLBASEINC)/streamcoll.pp"
-FCLCACHECLS= --descr=cachecls.xml --input="$(FCLBASEINC)/cachecls.pp"
-FCLEVENTLOG= --descr=eventlog.xml --input="$(FCLBASEINC)/eventlog.pp"
-FCLSYNCOBJS= --descr=syncobjs.xml --input="$(FCLBASEINC)/syncobjs.pp"
-FCLCUSTAPP= --descr=custapp.xml --input="$(FCLBASEINC)/custapp.pp"
-FCLBLOWFISH= --descr=blowfish.xml --input="$(FCLBASEINC)/blowfish.pp"
-FCLINIFILES= --descr=inifiles.xml --input="$(FCLBASEINC)/inifiles.pp"
-FCLRTTIUTILS= --descr=rttiutils.xml --input="$(FCLBASEINC)/rttiutils.pp"
+FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEDIR)/iostream.pp"
+FCLPIPES= --descr=pipes.xml --input="$(FCLBASEDIR)/pipes.pp"
+FCLSTREAMIO= --descr=streamio.xml --input="$(FCLBASEDIR)/streamio.pp"
+FCLCONTNRS= --descr=contnrs.xml --input="$(FCLBASEDIR)/contnrs.pp"
+FCLIDEA= --descr=idea.xml --input="$(FCLBASEDIR)/idea.pp"
+FCLBUFSTREAM= --descr=bufstream.xml --input="$(FCLBASEDIR)/bufstream.pp"
+FCLBASE64= --descr=base64.xml --input="$(FCLBASEDIR)/base64.pp"
+FCLGETTEXT= --descr=gettext.xml --input="$(FCLBASEDIR)/gettext.pp"
+FCLEZCGI= --descr=ezcgi.xml --input="$(FCLBASEDIR)/ezcgi.pp"
+FCLPOOLEDMM= --descr=pooledmm.xml --input="$(FCLBASEDIR)/pooledmm.pp"
+FCLSTREAMEX= --descr=streamex.xml --input="$(FCLBASEDIR)/streamex.pp"
+FCLINICOL= --descr=inicol.xml --input="$(FCLBASEDIR)/inicol.pp"
+FCLSTREAMCOL= --descr=streamcoll.xml --input="$(FCLBASEDIR)/streamcoll.pp"
+FCLCACHECLS= --descr=cachecls.xml --input="$(FCLBASEDIR)/cachecls.pp"
+FCLEVENTLOG= --descr=eventlog.xml --input="$(FCLBASEDIR)/eventlog.pp"
+FCLSYNCOBJS= --descr=syncobjs.xml --input="$(FCLBASEDIR)/syncobjs.pp"
+FCLCUSTAPP= --descr=custapp.xml --input="$(FCLBASEDIR)/custapp.pp"
+FCLBLOWFISH= --descr=blowfish.xml --input="$(FCLBASEDIR)/blowfish.pp"
+FCLINIFILES= --descr=inifiles.xml --input="$(FCLBASEDIR)/inifiles.pp"
+FCLRTTIUTILS= --descr=rttiutils.xml --input="$(FCLBASEDIR)/rttiutils.pp"
 FCLPROCESS= --descr=process.xml --input="$(FCLPROCESSDIR)/process.pp"
 FCLPIPES= --descr=pipes.xml --input="$(FCLPROCESSDIR)/pipes.pp"
 FCLDBUGINTF= --descr=dbugintf.xml --input="$(FCLPROCESSDIR)/dbugintf.pp" 
