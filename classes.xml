@@ -229,6 +229,11 @@ input stream.
 </short>
 </element>
 
+<element name="toWString">
+<short>Value returned by <link id='TParser.Token'/> when a Widestring was
+found in the input stream</short>
+</element>
+
 <element name="toInteger">
 <short>
 Value returned by <link id='TParser.Token'/> when an integer was found in the 
@@ -10442,6 +10447,14 @@ linefeed character.
 <short>Quadruple mouse click</short>
 </element>
 
+<element name="TShiftStateEnum.ssExtra1">
+<short>Extra key 1</short>
+</element>5A
+
+<element name="TShiftStateEnum.ssExtra2">
+<short>Extra key 2</short>
+</element>
+
 <!-- enumeration value Visibility: default -->
 <element name="THelpType.htKeyword">
 <short>Help type: Keyword help</short>
@@ -13018,6 +13031,425 @@ currently does not do anything useful.
 </descr>
 </element>
 
+
+
+
+<!-- enumeration type Visibility: default -->
+<element name="TListAssignOp">
+<short>List assign operation</short>
+<descr>
+This type determines what operation <link id="TList.Assign"> or <link
+id="TFPList.assign"> performs.
+</descr>
+<seealso>
+<link id="TList.Assign">
+<link id="TFPList.assign">
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TListAssignOp.laCopy">
+<short>Clear list and copy all strings from second list.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TListAssignOp.laAnd">
+<short>Remove all elements not first second list </short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TListAssignOp.laOr">
+<short>Add all elements from second (and optional third) list, eliminate duplicates</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TListAssignOp.laXor">
+<short>Remove elements in second lists, Add all elements from second list not in first list</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TListAssignOp.laSrcUnique">
+<short>Just keep all elements that exist only in source list</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TListAssignOp.laDestUnique">
+<short>Keep all elements that exists only in list2</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPList.AddList">
+<short>Add all pointers from another list</short>
+<descr>
+<var>AddList<Var> adds all pointers from <var>AList</var> to the list.
+If a pointer is already present, it is added a second time.
+</descr>
+<seealso>
+<link id="TFPList.Assign">
+<link id="TList.AddList">
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TList.AddList">
+<short>Add all pointers from another list</short>
+<descr>
+<var>AddList<Var> adds all pointers from <var>AList</var> to the list.
+If a pointer is already present, it is added a second time.
+</descr>
+<seealso>
+<link id="TList.Assign">
+<link id="TFPList.AddList">
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStrings.ExtractName">
+<short>Extract the name part of a string</short>
+<descr>
+<var>ExtractName<var> returns the name part (the part before the <link
+id="TStrings.NameValueSeparator">NameValueSeparator</link> character) of the
+string. If the character is not present, an empty string is returned. The
+resulting string is not trimmed, it can end or start with spaces.
+</descr>
+<seealso>
+<link id="TStrings.NameValueSeparator">NameValueSeparator</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStrings.TextLineBreakStyle">
+<short>Determines which line breaks to use in the <link
+id="#rtl.classes.TStrings.Text">Text</link> property</short>
+<descr>
+<p>
+<var>TextLineBreakStyle</var> determines which linebreak style is used when
+constructing the Text property: the same rules are used as in the writing to
+text files:
+<p>
+<dl>
+<dt>tlbsLF</dt><dd>Lines are separated with a linefeed character \#10.</dd>
+<dt>tlbsCRLF</dt><dd>Lines are separated with a carriage-return/linefeed character
+pair: \#13\#10.</dd>
+<dt>tlbsCR</dt><dd>Lines are separated with a carriage-return character \#13.</dd>
+</dl>
+It has no effect when setting the text property.
+</descr>
+<seealso>
+<link id="#rtl.classes.TStrings.Text">Text</link>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TStreamOwnership">
+<short>Determines the ownership of a TStreamAdapter</short>
+<descr>
+The ownership of a streamadapter determines what happens with the stream
+on which a <link id="TStreamAdapter"/> acts, when the adapter is freed.
+</descr>
+<seealso>
+<link id="TStreamAdapter"/>
+<link id="IStream"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStreamOwnership.soReference">
+<short>Stream is referenced only, it is not freed by the adapter</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStreamOwnership.soOwned">
+<short>Stream is owned: it will be freed when the adapter is freed.</short>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.Classes.TStreamAdapter
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TStreamAdapter">
+<short>Implements IStream for <link id="#rtl.classes.TSTream">TStream</link> descendents</short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!--
+   constructor Create(Stream: TStream; Ownership: TStreamOwnership = soReference);
+   destructor Destroy; override;
+   function Read(pv: Pointer; cb: DWORD; pcbRead: PDWORD): HResult;  virtual; stdcall;
+   function Write(pv: Pointer; cb: DWORD; pcbWritten: PDWORD): HResult;  virtual; stdcall;
+   function Seek(dlibMove: Largeint; dwOrigin: Longint; out libNewPosition: Largeint): HResult; virtual; stdcall;
+   function SetSize(libNewSize: Largeint): HResult; virtual; stdcall;
+   function CopyTo(stm: IStream; cb: Largeint; out cbRead:
+   Largeint; out cbWritten: Largeint): HResult; virtual; stdcall;
+   function Commit(grfCommitFlags: Longint): HResult; virtual; stdcall;
+   function Revert: HResult; virtual; stdcall;
+   function LockRegion(libOffset: Largeint; cb: Largeint; dwLockType: Longint): HResult; virtual; stdcall;
+   function UnlockRegion(libOffset: Largeint; cb: Largeint; dwLockType: Longint): HResult; virtual; stdcall;
+   function Stat(out statstg: TStatStg; grfStatFlag: Longint):  HResult; virtual; stdcall;
+   function Clone(out stm: IStream): HResult; virtual; stdcall;
+   property Stream: TStream read FStream;
+   property StreamOwnership: TStreamOwnership read  FOwnership write FOwnership;
+-->                    
+<!-- constructor Visibility: public -->
+<element name="TStreamAdapter.Create">
+<short>Create a new instance of <var>TStreamAdapter</var></short>
+<descr>
+<p>
+<var>Create</var> creates a new instance of <var>TStreamAdaptor</var>. It
+initializes <link id="TStreamAdapter.Stream"/> with <var>Stream</var> and initializes <link
+id="TStreamAdapter.StreamOwnerShip">StreamOwnerShip</link> with
+<var>Ownership</var>.
+</p>
+<p>
+<var>TStreamAdapter</var> is an abstract class: descendents must be created
+that implement the actual functionality.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TStreamAdapter.StreamOwnerShip">StreamOwnerShip</link>
+<link id="TStreamAdapter.Stream"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TStreamAdapter.Destroy">
+<short>Free the <var>TStreamAdapter</var> instance</short>
+<descr>
+Explicitly free the <var>TStreamAdapter</var> instance. Normally, this is
+done automatically if a reference to the <var>IStream</var> interface is freed.
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStreamAdapter.Read">
+<short>Read from the stream.</short>
+<descr>
+<var>Read</var> implements <link id="IStream.Read"/> by reading from the stream
+specified at creation.
+</descr>
+<errors>
+This function  must be overridden and will raise a runerror 217 when called
+directly.
+<errors>
+<seealso>
+<link id="IStream.Read"/>.
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStreamAdapter.Write">
+<short>Write to the stream</short>
+<descr>
+<var>Write</var> implements <link id="IStream.Write"/> by writing to the
+stream specified at creation.
+</descr>
+<errors>
+This function  must be overridden and will raise a runerror 217 when called
+directly.
+</errors>
+<seealso>
+<link id="IStream.Write"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStreamAdapter.Seek">
+<short>Set the stream position</short>
+<descr>
+<var>Seek</var> implements <link id="IStream.Seek"/> by setting the
+position of the stream specified at creation.
+</descr>
+<errors>
+This function  must be overridden and will raise a runerror 217 when called
+directly.
+</errors>
+<seealso>
+<link id="IStream.Seek"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStreamAdapter.SetSize">
+<short>Set the stream size</short>
+<descr>
+<var>SetSize</var> implements <link id="IStream.Setsize"/> by setting the
+size of the stream specified at creation.
+</descr>
+<errors>
+This function  must be overridden and will raise a runerror 217 when called
+directly.
+</errors>
+<seealso>
+<link id="IStream.Setsize"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStreamAdapter.CopyTo">
+<short>Copy data to destination stream</short>
+<descr>
+<var>CopyTo</var> implements <link id="IStream.CopyTo"/>.
+</descr>
+<errors>
+This function  must be overridden and will raise a runerror 217 when called
+directly.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStreamAdapter.Commit">
+<short>Commit data to the stream</short>
+<descr>
+<var>Commit</var> implements <link id="IStream.Commit"/>.
+</descr>
+<errors>
+This function  must be overridden and will raise a runerror 217 when called
+directly.
+</errors>
+<seealso>
+<link id="IStream.Commit"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStreamAdapter.Revert">
+<short>Revert operations on the stream</short>
+<descr>
+<var>Revert</var> implements <link id="IStream.Revert"/>.
+</descr>
+<errors>
+This function must be overridden and will raise a runerror 217 when called
+directly.
+</errors>
+<seealso>
+<link id="IStream.Revert"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStreamAdapter.LockRegion">
+<short>Lock a region of the stream</short>
+<descr>
+<var>LockRegion</var> implements <link id="IStream.LockRegion"/>.
+</descr>
+<errors>
+This function  must be overridden and will raise a runerror 217 when called
+directly.
+</errors>
+<seealso>
+<link id="IStream.LockRegion"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStreamAdapter.UnlockRegion">
+<short>Unlock a region of the stream</short>
+<descr>
+<var>UnLockRegion</var> implements <link id="IStream.UnLockRegion"/>.
+</descr>
+<errors>
+This function  must be overridden and will raise a runerror 217 when called
+directly.
+</errors>
+<seealso>
+<link id="IStream.UnLockRegion"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStreamAdapter.Stat">
+<short>Return statistical data from the stream</short>
+<descr>
+<var>Stat</var> implements <link id="IStream.Stat"/>.
+</descr>
+<errors>
+This function  must be overridden and will raise a runerror 217 when called
+directly.
+</errors>
+<seealso>
+<link id="IStream.Stat"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStreamAdapter.Clone">
+<short>Clone the stream</short>
+<descr>
+<var>Clone</var> implements <link id="IStream.Clone"/>.
+</descr>
+<errors>
+This function  must be overridden and will raise a runerror 217 when called
+directly.
+</errors>
+<seealso>
+<link id="IStream.Clone"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStreamAdapter.Stream">
+<short>Stream on which adaptor works</short>
+<descr>
+This is the stream on which the adaptor works. It was specified at
+rreation.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStreamAdapter.StreamOwnership">
+<short>Determines what happens with the stream when the adaptor is freed</short>
+<descr>
+<var>StreamOwnership</var> determines what happens when the adaptor
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWriter.PropertyPath">
+<short>Path to the property that is currently being written</short>
+<descr>
+<var>PropertyPath</var> is set to the property name of the class currently
+being written to stream. This is only done when <link id="TPersistent"/>
+descendent class properties are written.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TParser.FloatType">
+<short>Indicates what kind of float was read</short>
+<descr>
+<p>
+<var>FloatType</var> indicates what kind of float was just read. This can be
+one of \#0 (not specified) 'S' (single), 'D' (date) or 'C' (currency). It is
+the letter appended to the float value that was read:
+</p>
+<pre>
+ 1.0E10S
+</pre>
+<p>
+would indicate a single value, and would result in a <var>FloatType</var> of
+'S'.
+</p>
+</descr>
+<seealso>
+<link id="TParser.TokenString"/>
+</seealso>
+</element>
 
 <!-- Template for copy&paste:
 <element name="">
