@@ -371,6 +371,51 @@ character, or an underscore (\var{\_})
 The following diagram gives the basic syntax for identifiers.
 \input{syntax/identifier.syn}
 
+\section{Hint directives}
+\index{Hint directives}\index{Directives!Hint}
+Most identifiers (constants, variables, functions or methods, properties) can have a 
+hint directive prepended to their definition:
+
+\input{syntax/hintdirective.syn}
+Whenever the identifier is used, then a warning will be displayed,
+corresponding to the hint that was specified.
+\begin{description}
+\item[deprecated] The use of this identifier is deprecated, use an
+alternative instead.
+\item[experimental] The use of this identifier is experimental: this can be
+used to flag new features that should be used with caution.
+\item[platform] This is a platform-dependent identifier: it may not be
+defined on all platforms.
+\item[Uninmplemented] This should be used on functions and procedures only;
+it should be used to signal that a particular feature has not yet been
+implemented.
+\end{description}
+
+The following are examples:
+\begin{verbatim}
+Const
+  AConst = 12 deprecated;
+
+var
+  p : integer platform;
+
+Function Something : Integer; experimental;
+
+begin
+  Something:=P+AConst;
+end;
+
+begin
+  Something;
+end.
+\end{verbatim}
+This would result in the following output:
+\begin{verbatim}
+testhd.pp(11,15) Warning: Symbol "p" is not portable
+testhd.pp(11,22) Warning: Symbol "AConst" is deprecated
+testhd.pp(15,3) Warning: Symbol "Something" is experimental
+\end{verbatim}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Numbers
 \section{Numbers}
