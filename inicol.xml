@@ -533,6 +533,208 @@ reading or writing the collection.
 </descr>
 </element>
 
+
+<!--
+  ********************************************************************
+    #fcl.inicol.TNamedIniCollectionItem
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TNamedIniCollectionItem">
+<short><link id="#fcl.inicol.TIniCollectionItem">TIniCollectionItem</link> with a name property</short>
+<descr>
+<var>TNamedIniCollectionItem</var> is a <link id="TIniCollectionItem"/>
+descent with a published name property. The name is used as the section name
+when saving the item to the ini file.
+</descr>
+<seealso>
+<link id="TIniCollectionItem"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TNamedIniCollectionItem.UserData">
+<short>User-defined data</short>
+<descr>
+<var>UserData</var> can be used to associate an arbitrary object with the
+item - much like the <var>Objects</var> property of a <var>TStrings</var>.
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TNamedIniCollectionItem.Name">
+<short>Name of the item</short>
+<descr>
+<var>Name</var> is the name of this item. It is also used as the section
+name when writing the collection item to the .ini file.
+</descr>
+<seealso>
+<link id="TNamedIniCollectionItem.UserData"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.inicol.TNamedIniCollection
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TNamedIniCollection">
+<short>Collection of named collection items</short>
+<descr>
+<var>TNamedIniCollection</var> is the collection to go with the
+<link id="TNamedIniCollectionItem"/> item class. it provides some
+functions to look for items based on the <link
+id="TNamedIniCollection.IndexOfUserData">UserData</link> or based
+on the <link id="TNamedIniCollection.IndexOfName">Name</link>.
+</descr>
+<seealso>
+<link id="TNamedIniCollectionItem"/> 
+<link id="TNamedIniCollection.IndexOfUserData">IndexOfUserData</link>
+<link id="TNamedIniCollection.IndexOfName">IndexOfName</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TNamedIniCollection.IndexOfUserData">
+<short>Search for an item based on it's <var>UserData</var> property</short>
+<descr>
+<p>
+<var>IndexOfUserData</var> searches the list of items and returns the index
+of the item which has <var>UserData</var> in its <link id="TNamedIniCollection.IndexOfUserData">UserData</link>
+property. If no such item exists, -1 is returned.
+</p>
+<p>
+Note that the (linear) search starts at the last element and works it's way back
+to the first.
+</p>
+</descr>
+<errors>
+If no item exists, -1 is returned.
+</errors>
+<seealso>
+<link id="TNamedIniCollection.IndexOfName">IndexOfName</link>
+<link id="TNamedIniCollectionItem.UserData"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TNamedIniCollection.IndexOfUserData.Result">
+<short>Index of found item, or -1 if none was found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TNamedIniCollection.IndexOfUserData.UserData">
+<short>UserData to search for</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TNamedIniCollection.IndexOfName">
+<short>Search for an item, based on its name, and return its position</short>
+<descr>
+<p>
+<var>IndexOfName</var> searches the list of items and returns the index
+of the item which has name equal to <var>AName</var> (case insentitive).
+If no such item exists, -1 is returned.
+</p>
+<p>
+Note that the (linear) search starts at the last element and works it's way
+back to the first.
+</p>
+</descr>
+<errors>
+If no item exists, -1 is returned.
+</errors>
+<seealso>
+<link id="TNamedIniCollection.IndexOfUserData">IndexOfUserData</link>
+<link id="TNamedIniCollectionItem.Name"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TNamedIniCollection.IndexOfName.Result">
+<short>Index of found item or -1 if none was found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TNamedIniCollection.IndexOfName.AName">
+<short>Name to look for (case insensitive)</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TNamedIniCollection.FindByName">
+<short>Return the item based on its name</short>
+<descr>
+<var>FindByName</var> returns the collection item whose name matches <var>AName</var>
+(case insensitive match). It calls <link
+id="TNamedIniCollection.IndexOfName">IndexOfName</link> and returns the item
+at the found position. If no item is found, <var>Nil</var> is returned.
+</descr>
+<errors>
+If no item is found, <var>Nil</var> is returned.
+</errors>
+<seealso>
+<link id="TNamedIniCollection.IndexOfName">IndexOfName</link>
+<link id="TNamedIniCollection.FindByUserData">FindByUserData</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TNamedIniCollection.FindByName.Result">
+<short>Named item, or <var>Nil</var> if none was found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TNamedIniCollection.FindByName.AName">
+<short>Name to look for</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TNamedIniCollection.FindByUserData">
+<short>Return the item based on its <var>UserData</var></short>
+<descr>
+<var>FindByName</var> returns the collection item whose <link
+id="TNamedIniCollectionItem.UserData">UserData</link> property value
+matches the <var>UserData</var> parameter. If no item is found,
+<var>Nil</var> is returned.
+</descr>
+<errors>
+If no item is found, <var>Nil</var> is returned.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TNamedIniCollection.FindByUserData.Result">
+<short>Found item, or <var>Nil</var> if none was found.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TNamedIniCollection.FindByUserData.UserData">
+<short>Userdata to look for</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TNamedIniCollection.NamedItems">
+<short>Indexed access to the <var>TNamedIniCollectionItem</var> items</short>
+<descr>
+<var>NamedItem</var> is the default property of the <var>TNamedIniCollection</var> collection. 
+It allows indexed access to the <link id="TNamedIniCollectionItem"/> items.
+The index is zero based.
+</descr>
+<seealso>
+<link id="TNamedIniCollectionItem"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TNamedIniCollection.NamedItems.Index">
+<short>Integer index, zero based.</short>
+</element>
+
 </module> <!-- inicol -->
 
 </package>
