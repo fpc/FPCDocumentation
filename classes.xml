@@ -206,20 +206,23 @@ the stream.
 
 <element name="toEof">
 <short>
-Token returned by <link id='TParser.Token'/>, meaning the end of the input stream was reached. 
+Value returned by <link id='TParser.Token'/> when the end of the input stream was reached.
 </short>
-</element>
-
-<element name="toEof">
-<short>
-Value returned by <link id='TParser.Token'/> when the end of the input stream was reached. 
-</short>
+<seealso>
+<link id="TParser.Token"/>
+</seealso>
 </element>
 
 <element name="toSymbol">
 <short>
 Value returned by <link id='TParser.Token'/> when a symbol was found in the input stream.
 </short>
+<seealso>
+<link id="TParser.CheckTokenSymbol"/>
+<link id="TParser.Token"/>
+<link id="TParser.TokenComponentIdent"/>
+<link id="TParser.TokenSymbolIs"/>
+</seealso>
 </element>
 
 <element name="toString">
@@ -227,11 +230,10 @@ Value returned by <link id='TParser.Token'/> when a symbol was found in the inpu
 Value  returned by <link id='TParser.Token'/> when a string was found in the
 input stream.
 </short>
-</element>
-
-<element name="toWString">
-<short>Value returned by <link id='TParser.Token'/> when a Widestring was
-found in the input stream</short>
+<seealso>
+<link id="TParser.Token"/>
+<link id="TParser.TokenString"/>
+</seealso>
 </element>
 
 <element name="toInteger">
@@ -239,6 +241,10 @@ found in the input stream</short>
 Value returned by <link id='TParser.Token'/> when an integer was found in the 
 input stream.
 </short>
+<seealso>
+<link id="TParser.Token"/>
+<link id="TParser.TokenInt"/>
+</seealso>
 </element>
 
 <element name="toFloat">
@@ -246,6 +252,22 @@ input stream.
 Value returned by <link id='TParser.Token'/> when a floating point value was found in the 
 input stream.
 </short>
+<seealso>
+<link id="TParser.FloatType"/>
+<link id="TParser.Token"/>
+<link id="TParser.TokenFloat"/>
+</seealso>
+</element>
+
+<element name="toWString">
+<short>
+Value  returned by <link id='TParser.Token'/> when a widestring was found in the
+input stream.
+</short>
+<seealso>
+<link id="TParser.Token"/>
+<link id="TParser.TokenWideString"/>
+</seealso>
 </element>
 
 <element name="FilerSignature">
@@ -7645,16 +7667,27 @@ Not yet implemented.
 <element name="TParser">  <!-- Class -->
 <short>Class to parse the contents of a stream containing text data.</short>
 <descr>
+<p>This class breaks a stream of text data in tokens. Its primary use is to help reading the contents of a form file (usually a file with dfm, xfm or lfm extension), and for this reason it isn't suitable to be used as a general parser.</p>
+<p>The parser is always positioned on a certain token, whose type is stored in the <link id="TParser.Token">Token</link> property. Various methods are provided to obtain the token value in the desired format.</p>
+<p>To advance to the next token, invoke <link id="TParser.NextToken">NextToken</link> method.</p>
 </descr>
 <seealso>
+<link id="TParser.Token"/>
+<link id="TParser.NextToken"/>
 </seealso>
 </element>
 
 <element name="TParser.Create">  <!-- Constructor -->
 <short>Creates a new parser instance.</short>
 <descr>
+<p><var>Create</var> creates a new <var>TParser</var> instance, using <var>Stream</var> as the stream to read data from, and reads the first token from the stream.</p>
 </descr>
+<errors>
+<p>If an error occours while parsing the first token, an <link id="EParserError"/> exception is raised.</p>
+</errors>
 <seealso>
+<link id="TParser.NextToken"/>
+<link id="TParser.Token"/>
 </seealso>
 </element>
 
@@ -7662,6 +7695,9 @@ Not yet implemented.
 <short>Destroys the parser instance.</short>
 <descr>
 </descr>
+<errors>
+None.
+</errors>
 <seealso>
 </seealso>
 </element>
@@ -7670,15 +7706,26 @@ Not yet implemented.
 <short>Checks whether the token if of the given type.</short>
 <descr>
 </descr>
+<errors>
+<p>If current token isn't of type <var>T</var>, an <link id="EParserError"/> exception is raised.</p>
+</errors>
 <seealso>
+<link id="TParser.Token"/>
 </seealso>
 </element>
 
 <element name="TParser.CheckTokenSymbol">  <!-- Procedure -->
 <short>Checks whether the token equals the given symbol</short>
 <descr>
+<p><var>CheckTokenSymbol</var> performs a case-insensitive comparison of current token value with <var>S</var>.</p>
+<p>Current token must be of type <link id="toSymbol"/>, otherwise an <link id="EParserError"/> exception is raised.</p>
 </descr>
+<errors>
+<p>If the comparison fails, or current token isn't a symbol, an <link id="EParserError"/> exception is raised.</p>
+</errors>
 <seealso>
+<link id="TParser.TokenSymbolIs"/>
+<link id="toSymbol"/>
 </seealso>
 </element>
 
@@ -7707,9 +7754,18 @@ Not yet implemented.
 </element>
 
 <element name="TParser.HexToBinary">  <!-- Procedure -->
-<short>Writes hexadecimal data to the stream.</short>
+<short>Writes hexadecimal data to a stream.</short>
 <descr>
+<p><var>HexToBinary</var> reads a sequence of hexadecimal characters from the input stream and converts them to a sequence of bytes which is written to <var>Stream</var>. Each byte is represented by two contiguous hexadecimal characters.</p>
+<p>Whitespace is allowed between hexadecimal characters if it doesn't appear between two characters that form the same byte.</p>
+<p><var>HexToBinary</var> stops when the first non-hexadecimal and non-whitespace character is found, or the end of the input stream is reached.</p>
+<remark>
+<p>This method begins reading after the current token: that is, current token, even if it's a valid hexadecimal value, isn't included.</p>
+</remark>
 </descr>
+<errors>
+<p>If a single hexadecimal character is found, an <link id="EParserError"/> exception is raised.</p>
+</errors>
 <seealso>
 </seealso>
 </element>
@@ -7717,72 +7773,210 @@ Not yet implemented.
 <element name="TParser.NextToken">  <!-- Function -->
 <short>Reads the next token and returns its type.</short>
 <descr>
+<p><var>NextToken</var> parses the next token in the stream and returns its type. The type of the token can also be retrieved later reading <link id="TParser.Token">Token</link> property.</p>
+<p>If the end of the stream is reached, <link id="toEOF"/> is returned.</p>
+<p>For details about token types, see <link id="TParser.Token"/></p>
 </descr>
+<errors>
+<p>If an error occours while parsing the token, an <link id="EParserError"/> exception is raised.</p>
+</errors>
 <seealso>
+<link id="TParser.Token"/>
 </seealso>
 </element>
 
 <element name="TParser.SourcePos">  <!-- Function -->
 <short>Returns the current position in the stream.</short>
 <descr>
+<remark>This is not the character position relative to the current source line, but the byte offset from the beginning of the stream.</remark>
 </descr>
+<errors>
+None.
+</errors>
 <seealso>
+<link id="TParser.SourceLine"/>
 </seealso>
 </element>
 
 <element name="TParser.TokenComponentIdent">  <!-- Function -->
-<short>Checks whether the current token is a component identifier.</short>
+<short>Returns the path of a subcomponent starting from the current token.</short>
 <descr>
+<p>If current token is <link id="toSymbol"/>, <var>TokenComponentIdent</var> tries to find subcomponent names separated by a dot (<var>.</var>). The returned string is the longest subcomponent path found. If there are no subcomponents, current symbol is returned.</p>
+<remark><p>After this method has been called, subsequent calls to <link id="TParser.TokenString">TokenString</link> or <link id="TParser.TokenWideString">TokenWideString</link> return the same value returned by <var>TokenComponentIdent</var>.</p></remark>
+<p><b>Example</b></p>
+<p>If source stream contains <var>a.b.c</var> and <var>TParser</var> is positioned on the first token (<var>a</var>), this method returns <var>a.b.c</var>.</p>
 </descr>
+<errors>
+<p>If <link id="TParser.Token">Token</link> isn't <link id="toSymbol"/>, or no valid symbol is found after a dot, an <link id="EParserError"/> exception is raised.</p>
+</errors>
 <seealso>
+<link id="TParser.NextToken"/>
+<link id="TParser.Token"/>
+<link id="TParser.TokenString"/>
+<link id="TParser.TokenWideString"/>
+<link id="toSymbol"/>
 </seealso>
 </element>
 
 <element name="TParser.TokenFloat">  <!-- Function -->
 <short>Returns the current token as a float.</short>
 <descr>
+<p>If current token type is <link id="toFloat"/>, this method returns the token value as a float.</p>
+<p>To specify a negative number, no space must exist between unary minus and number.</p>
+<p>Floating point numbers can be postfixed with a character that specifies the floating point type. See <link id="TParser.FloatType">FloatType</link> for further information.</p>
+<remark>
+<p>In the input stream the decimal separator, if present, must be a dot (<var>.</var>).</p>
+</remark>
 </descr>
+<errors>
+<p>If <link id="TParser.Token">Token</link> isn't <link id="toFloat"/>, an <link id="EParserError"/> exception is raised.</p>
+</errors>
 <seealso>
+<link id="TParser.FloatType"/>
+<link id="TParser.NextToken"/>
+<link id="TParser.Token"/>
+<link id="toFloat"/>
 </seealso>
 </element>
 
 <element name="TParser.TokenInt">  <!-- Function -->
 <short>Returns the current token as an integer.</short>
 <descr>
+<p>If current token type is <link id="toInteger"/>, this method returns the token value as an integer.</p>
+<p>In the input stream an integer can be an hexadecimal (prefixed by <var>'$'</var> character) or decimal number. Decimal numbers can be prefixed by an unary minus: if this is the case, no space must exist between minus and number.</p>
 </descr>
+<errors>
+<p>If <link id="TParser.Token">Token</link> isn't <link id="toInteger"/>, an <link id="sysutils.EConvertError">EConvertError</link> exception is raised.</p>
+</errors>
 <seealso>
+<link id="TParser.NextToken"/>
+<link id="TParser.Token"/>
+<link id="toInteger"/>
 </seealso>
 </element>
 
 <element name="TParser.TokenString">  <!-- Function -->
 <short>Returns the current token as a string.</short>
 <descr>
+<p>If current token type is <link id="toString"/> or <link id="toWString"/>, this method returns the contents of the string. That is, enclosing quotes are removed, embedded quotes are unescaped and control strings are converted to the appropriate sequence of characters.</p>
+<p>If current token type isn't a string, a string containing the token representation in the input stream is returned, without any conversion: hexadecimal integers are returned with the leading <var>$</var>, and floating point suffixes like <var>s</var>, <var>c</var> or <var>d</var> are kept. For tokens whose type isn't a special type, return value of <var>TokenString</var> equals <link id="TParser.Token">Token</link>.</p>
+<remark><p>If <link id="TParser.Token">Token</link> is <link id="toWString"/>, <link id="TParser.TokenWideString">TokenWideString</link> should be used instead.</p></remark>
 </descr>
+<errors>
+None.
+</errors>
 <seealso>
+<link id="TParser.NextToken"/>
+<link id="TParser.TokenWideString"/>
+<link id="TParser.Token"/>
+<link id="toString"/>
+<link id="toWString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TParser.TokenWideString">
+<short>Returns the current token as a widestring</short>
+<descr>
+<p>If current token type is <link id="toWString"/>, this method returns the contents of the string. That is, enclosing quotes are removed, embedded quotes are unescaped and control strings are converted to the appropriate sequence of characters.</p>
+<p>If current token isn't a widestring, <var>TokenWideString</var> behaviour is the same as <link id="TParser.TokenString">TokenString</link>.</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TParser.NextToken"/>
+<link id="TParser.TokenString">TokenString</link>
+<link id="TParser.Token"/>
+<link id="toWString"/>
 </seealso>
 </element>
 
 <element name="TParser.TokenSymbolIs">  <!-- Function -->
-<short>Returns <var>True</var> if the current token is a symbol.</short>
+<short>Returns <var>True</var> if the token equals the given symbol.</short>
 <descr>
+<p><var>TokenSymbolIs</var> performs a case-insensitive comparison of current token value with <var>S</var>.</p>
+<p>If current token isn't of type <link id="toSymbol"/>, or comparison fails, <var>False</var> is returned.</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TParser.CheckTokenSymbol"/>
+<link id="TParser.Token"/>
+</seealso>
+</element>
+
+<element name="TParser.FloatType">  <!-- Property -->
+<short>The type of a float token.</short>
+<descr>
+<p>Floating point numbers can be postfixed with a character specifying the type of floating point value. When specified, this property holds the character postfixed to the number.</p>
+<p>It can be one of the following values:</p>
+<table>
+<tr>
+<td><var>s</var> or <var>S</var></td><td>Value is a single.</td>
+</tr>
+<tr>
+<td><var>c</var> or <var>C</var></td><td>Value is a currency.</td>
+</tr>
+<tr>
+<td><var>d</var> or <var>D</var></td><td>Value is a date.</td>
+</tr>
+</table>
+<p>If <link id="TParser.Token">Token</link> isn't <link id="toFloat"/> or one of the above characters wasn't specified, <var>FloatType</var> is the null character (zero).</p>
 </descr>
 <seealso>
+<link id="TParser.NextToken"/>
+<link id="TParser.Token"/>
+<link id="TParser.TokenFloat"/>
+<link id="toFloat"/>
 </seealso>
 </element>
 
 <element name="TParser.SourceLine">  <!-- Property -->
-<short>Current source linenumber.</short>
+<short>Current source line number.</short>
 <descr>
 </descr>
 <seealso>
+<link id="TParser.SourcePos"/>
 </seealso>
 </element>
 
 <element name="TParser.Token">  <!-- Property -->
-<short>Contents of the current token.</short>
+<short>The type of the current token.</short>
 <descr>
+<p>This property holds the type of the current token. When <var>Token</var> isn't one of the special token types (whose value can be retrieved with specific methods) it is the character representing the current token.</p>
+<p>Special token types:</p>
+<table>
+<tr>
+<td><link id="toEOF"/></td><td><printshort id="toEOF"/></td>
+</tr>
+<tr>
+<td><link id="toSymbol"/></td><td><printshort id="toSymbol"/></td>
+</tr>
+<tr>
+<td><link id="toString"/></td><td><printshort id="toString"/></td>
+</tr>
+<tr>
+<td><link id="toInteger"/></td><td><printshort id="toInteger"/></td>
+</tr>
+<tr>
+<td><link id="toFloat"/></td><td><printshort id="toFloat"/></td>
+</tr>
+<tr>
+<td><link id="toWString"/></td><td><printshort id="toWString"/></td>
+</tr>
+</table>
+<p>To advance to the next token, use <link id="TParser.NextToken">NextToken</link> method.</p>
 </descr>
 <seealso>
+<link id="TParser.CheckToken"/>
+<link id="TParser.NextToken"/>
+<link id="TParser.TokenComponentIdent"/>
+<link id="TParser.TokenFloat"/>
+<link id="TParser.TokenInt"/>
+<link id="TParser.TokenString"/>
+<link id="TParser.TokenWideString"/>
 </seealso>
 </element>
 
@@ -12192,21 +12386,6 @@ This method does nothing except call the driver method of the driver being used.
 </seealso>
 </element>
 
-<!-- function Visibility: public -->
-<element name="TParser.TokenWideString">
-<short>Token as widestring</short>
-<descr>
-<var>TokenWideString</var> returns the current token as a widestring.
-</descr>
-<errors>
-None.
-</errors>
-<seealso>
-<link id="TParser.TokenString">TokenString</link>
-<link id="TParser.NextToken">NextToken</link>
-</seealso>
-</element>
-
 <!-- enumeration value Visibility: default -->
 <element name="TComponentStyle.csSubComponent">
 <short>Subcomponent - streamed as part of the owning component</short>
@@ -13428,28 +13607,6 @@ being written to stream. This is only done when <link id="TPersistent"/>
 descendent class properties are written.
 </descr>
 <seealso>
-</seealso>
-</element>
-
-<!-- property Visibility: public -->
-<element name="TParser.FloatType">
-<short>Indicates what kind of float was read</short>
-<descr>
-<p>
-<var>FloatType</var> indicates what kind of float was just read. This can be
-one of \#0 (not specified) 'S' (single), 'D' (date) or 'C' (currency). It is
-the letter appended to the float value that was read:
-</p>
-<pre>
- 1.0E10S
-</pre>
-<p>
-would indicate a single value, and would result in a <var>FloatType</var> of
-'S'.
-</p>
-</descr>
-<seealso>
-<link id="TParser.TokenString"/>
 </seealso>
 </element>
 
