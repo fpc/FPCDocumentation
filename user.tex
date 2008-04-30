@@ -2264,46 +2264,46 @@ ppumove [options] unit1.ppu unit2.ppu ... unitn.ppu
 \end{verbatim}
 where \var{options} is a combination of:
 \begin{description}
-\item[-b:\ ] If specified, ppumve will generate a batch file that will
+\item[-b:\ ] Generate a batch file that will
 contain the external linking and archiving commands that must be
-executed. The name of this batch file is \file{pmove.sh} on \linux, and
-\file{pmove.bat} otherwise.
-\item[-d xxx:\ ] If specified, the output files will put in the directory
-\file{xxx}
-\item[-e xxx:\ ] Sets the extension of the moved unit files to \file{xxx}.
+executed. The name of this batch file is \file{pmove.sh} on \linux (and Unix
+like OSes), and \file{pmove.bat} on \windows and \dos.
+\item[-d xxx:\ ] Set the directory in which to place the output files to
+\file{xxx}.
+\item[-e xxx:\ ] Set the extension of the moved unit files to \file{xxx}.
 By default, this is \file{.ppl}. You don't have to specify the dot.
-\item[-o xxx:\ ] Sets the name of the output file, i.e. the name of the file
+\item[-o xxx:\ ] Set the name of the output file, i.e. the name of the file
 containing all the units. This parameter is mandatory when you use multiple
 files. On \linux, \file{ppumove} will prepend this name with \file{lib} if it isn't
 already there, and will add an extension appropriate to the type of library.
-\item [-q:\ ] Causes \file{ppumove} to operate silently.
-\item [-s:\ ] Tells \file{ppumove} to make a static library instead of a
+\item [-q:\ ] Operate silently.
+\item [-s:\ ] Make a static library instead of a
 dynamic one; By default a dynamic library is made on \linux.
-\item [-w:\ ] Tells ppumove that it is working under \windowsnt. This will
+\item [-w:\ ] Tell \file{ppumove} that it is working under \windowsnt. This will
 change the names of te linker and archiving program to \file{ldw} and
 \file{arw}, respectively.
-\item[-h or -?:\ ] will display a short help.
+\item[-h or -?:\ ] Display a short help.
 \end{description}
 
-The action of the ppumve program is as follows:
+The action of the \file{ppumove} program is as follows:
 It takes each of the unit files, and modifies it so that the compile will
 know that it should look for the unit code in the library. The new unit
-files will have an extension \file{.ppu}, this can be changed with the
+files will have an extension \file{.ppu}; this can be changed with the
 \var{-e} option. It will then put together all the object files of the units
 into one library, static or dynamic, depending on the presence of the
 \var{-s} option.
 
 The name of this library must be set with the \var{-o} option.
-If needed, the prefix \file{lib} will be prepended under \linux..
+If needed, the prefix \file{lib} will be prepended under \linux.
 The extension will be set to \file{.a} for static libraries,
-for shared libraries the extensions are \var{.so} on linux, and \var{.dll}
+for shared libraries, the extensions are \var{.so} on linux, and \var{.dll}
 under \windowsnt and \ostwo.
 
 As an example, the following command
 \begin{verbatim}
 ./ppumove -o both -e ppl ppu.ppu timer.ppu
 \end{verbatim}
-under linux, will generate the following output:
+will generate the following output under \linux{}:
 \begin{verbatim}
 PPU-Mover Version 0.99.7
 Copyright (c) 1998 by the Free Pascal Development Team
@@ -2321,7 +2321,7 @@ And it will produce the following files:
 \item \file{timer.ppl} : The unit file that tells the \fpc compiler to look
 for the timer code in the library.
 \item \file{ppu.ppl} : The unit file that tells the \fpc compiler to look
-for the timer code in the library.
+for the ppu code in the library.
 \end{enumerate}
 You could then use or distribute the files \file{libboth.so}, \file{timer.ppl}
 and \file{ppu.ppl}.
@@ -2334,65 +2334,69 @@ and \file{ppu.ppl}.
 % object. MVC.
 
 \file{ptop} is a source beautifier written by Peter Grogono based on the ancient pretty-printer
-by Ledgard, Hueras, and Singer, modernized by the \fpc team (objects, streams, configurability etc)
+by Ledgard, Hueras, and Singer, modernized by the \fpc team (objects, streams, configurability
+etc).
 
 This configurability, and the thorough bottom-up design are the advantages of this program over
-the diverse TurboPascal sourcebeautifiers on e.g. SIMTEL.
+the diverse Turbo Pascal source beautifiers on e.g. SIMTEL.
 
 The program is quite simple to operate:
 
 ptop "[-v] [-i indent] [-b bufsize ][-c \file{optsfile}] \file{infile} \file{outfile}"
 
-The \file{Infile} parameter is the Pascal file to be processed, and will be written
+The \file{infile} parameter is the Pascal file to be processed, and will be written
 to \file{outfile}, overwriting an existing \file{outfile} if it exists.
 
 Some options modify the behaviour of ptop:
 
 \begin{description}
-\item[-h] Writes an overview of the possible parameters and commandline syntax.
+\item[-h] Write an overview of the possible parameters and command line syntax.
 \item[-c \file{ptop.cfg}] Read some configuration data from configuration file instead of using
   the internal defaults then. A config file is not required, the program can
   operate without one. See also -g.
-\item[-i ident] Sets the number of indent spaces used for BEGIN END; and other blocks.
-\item[-b bufsize] Sets the streaming buffersize to bufsize. Default 255, 0 is considered non-valid and ignored.
-\item[-v] be verbose. Currently only outputs the number of lines read/written and some error messages.
-\item[-g \file{ptop.cfg}] Writes a default configuration file to be edited to the file "ptop.cfg"
+\item[-i ident] Set the number of indent spaces used for BEGIN END; and other blocks.
+\item[-b bufsize] Set the streaming buffersize to bufsize. The default is 255; 
+0 is considered non-valid and ignored.
+\item[-v] Be verbose. Currently only outputs the number of lines read/written and some error messages.
+\item[-g \file{ptop.cfg}] Write \file{ptop} configuration defaults to the file
+"ptop.cfg". The contents of this file can be changed to your liking, and it
+can be used with the -c option.
 \end{description}
 
 \subsection{The ptop configuration file}
 
-Creating and distributing a configuration file for ptop is not necesarry,
+Creating and distributing a configuration file for ptop is not necessary,
 unless you want to modify the standard behaviour of \file{ptop}. The configuration
 file is never preloaded, so if you want to use it you should always specify
 it with a \var{-c ptop.cfg} parameter.
 
-The structure of a ptop configuration file is a simple buildingblock repeated
+The structure of a ptop configuration file is a simple building block repeated
 several (20-30) times, for each Pascal keyword known to the \file{ptop} program.
-(see the default configuration file or \file{ptopu.pp} source to
-find out which keywords are known)
+(See the default configuration file or \file{ptopu.pp} source to
+find out which keywords are known).
 
-The basic building block of the configuration file consists out of one or two
+The basic building block of the configuration file consists of one or two
 lines, describing how \file{ptop} should react on a certain keyword.
-First a line without square brackets with the following format:
+First comes a line without square brackets with the following format:
 
 keyword=option1,option2,option3,...
 
 If one of the options is "dindonkey" (see further below), a second line
-(with square brackets) is needed like this:
+- with square brackets - is needed:
 
 [keyword]=otherkeyword1,otherkeyword2,otherkeyword3,...
 
-As you can see the block contains two types of identifiers, keywords(keyword and otherkeyword1..3 in above example)
-and options, (option1..3 above).
+As you can see the block contains two types of identifiers: keywords 
+(keyword and otherkeyword1..3 in above example) and options, (option1..3 above).
 
 \var{Keywords} are the built-in valid Pascal structure-identifiers like BEGIN, END, CASE, IF,
 THEN, ELSE, IMPLEMENTATION. The default configuration file lists most of these.
 
 Besides the real Pascal keywords, some other codewords are used for operators
-and comment expressions. \seet{keywords}
+and comment expressions as in \seet{keywords}.
 
-\begin{FPCltable}{lll}{keywords for operators}{keywords}
-Name of codeword       &     operator \\  \hline
+\begin{FPCltable}{lll}{Keywords for operators}{keywords}
+Name of codeword       &     Operator \\  \hline
 casevar                &     : in a case label ( unequal 'colon') \\
 becomes                &     := \\
 delphicomment          &     // \\
@@ -2406,44 +2410,42 @@ closeparen             &     ] \\
 period                 &     . \\
 \end{FPCltable}
 
-The \textbf{Options} codewords define actions to be taken when the keyword before
-the equal sign is found, \seet{ptopoptions}
+The \textbf{options} codewords define actions to be taken when the keyword before
+the equal sign is found, as listed in \seet{ptopoptions}.
 
 \begin{FPCltable}{lll}{Possible options}{ptopoptions}
 Option         &     does what \\ \hline
-crsupp         &     suppress CR before the keyword.\\
-crbefore       &     force CR before keyword\\
-               &     (doesn't go with crsupp :) )\\
-blinbefore     &     blank line before keyword.\\
-dindonkey      &     de-indent on associated keywords\\
+crsupp         &     Suppress CR before the keyword.\\
+crbefore       &     Force CR before keyword.\\
+               &     (do not use with crsupp.)\\
+blinbefore     &     Blank line before keyword.\\
+dindonkey      &     De-indent on associated keywords.\\
                &     (see below)\\
-dindent        &     deindent (always)\\
-spbef          &     space before\\
-spaft          &     space after\\
+dindent        &     Deindent (always)\\
+spbef          &     Space before\\
+spaft          &     Space after\\
 gobsym         &     Print symbols which follow a\\
                &     keyword but which do not\\
                &     affect layout. prints until\\
                &     terminators occur.\\
                &     (terminators are hard-coded in pptop,\\
                &     still needs changing)\\
-inbytab        &     indent by tab.\\
-crafter        &     force CR after keyword.\\
-upper          &     prints keyword all uppercase\\
-lower          &     prints keyword all lowercase\\
-capital        &     capitalizes keyword: 1st letter\\
+inbytab        &     Indent by tab.\\
+crafter        &     Force CR after keyword.\\
+upper          &     Prints keyword all uppercase\\
+lower          &     Prints keyword all lowercase\\
+capital        &     Capitalizes keyword: 1st letter\\
                &     uppercase, rest lowercase.\\
 \end{FPCltable}
 
-The option "dindonkey" requires some extra parameters, which are
-set by a second line for that option (the one with the square brackets), which is
-therefore is only needed if the options contain "dinkdonkey" (contraction of
-de-indent on assiociated keyword).
-
-"dinkdonkey" deindents if any of the keywords specified by the extra options of the
-square-bracket line is found.
+The option "dindonkey" given in table \seet{ptopoptions} requires some
+further explanation. "dindonkey" is a contraction of "DeINDent ON
+associated KEYword". When it is present as an option in the first
+line, then a second, square-bracketed, line is required. 
+A de-indent will be performed when any of the other keywords listed
+in the second line are encountered in the source.
 
 Example: The lines
-
 \begin{verbatim}
 else=crbefore,dindonkey,inbytab,upper
 [else]=if,then,else
@@ -2457,7 +2459,7 @@ of both equal signs.
 \item The option \var{crbefore} signals not to allow other code (so just spaces)
 before the ELSE keyword on the same line.
 \item The option \var{dindonkey} de-indents if the parser finds any of the keywords
- in the square brackets line (if,then,else)
+ in the square brackets line (if,then,else).
 \item The option \var{inbytab} means indent by a tab.
 \item The option \var{upper} uppercase the keyword (else or Else becomes ELSE)
 \end{itemize}
@@ -2467,18 +2469,18 @@ The configurability and possibilities of ptop are quite large. E.g. I like all
 keywords uppercased instead of capitalized, so I replaced all capital keywords in
 the default file by upper.
 
-\file{ptop} is still development software, so it is wise to visually check the generated
-source and try to compile it, to see if \file{ptop} hasn't made any errors.
+\file{ptop} is still development software. So it is wise to visually check the generated
+source and try to compile it, to see if \file{ptop} hasn't introduced any errors.
 
 \subsection{ptopu unit}
 
 The source of the \file{PtoP} program is conveniently split in two files:
-One is a unit containing an object that does the actual beautifying of the
+one is a unit containing an object that does the actual beautifying of the
 source, the other is a shell built around this object so it can be used
 from the command line. This design makes it possible to include the object
-in some program (e.g. an IDE) and use its features to format code.
+in a program (e.g. an IDE) and use its features to format code.
 
-The object resided in the \file{PtoPU} unit, and is declared as follows
+The object resides in the \file{PtoPU} unit, and is declared as follows
 \begin{verbatim}
   TPrettyPrinter=Object(TObject)
       Indent : Integer;    { How many characters to indent ? }
@@ -2494,20 +2496,20 @@ The object resided in the \file{PtoPU} unit, and is declared as follows
 Using this object is very simple. The procedure is as follows:
 \begin{enumerate}
 \item Create the object, using its constructor.
-\item Set the \var{Ins} stream. This is an open stream, from which Pascal source will be
+\item Set the \var{InS} stream. This is an open stream, from which Pascal source will be
 read. This is a mandatory step.
 \item Set the \var{OutS} stream. This is an open stream, to which the
 beautified Pascal source will be written. This is a mandatory step.
 \item Set the \var{DiagS} stream. Any diagnostics will be written to this
 stream. This step is optional. If you don't set this, no diagnostics are
 written.
-\item Set the \var{Cfgs} stream. A configuration is read from this stream.
+\item Set the \var{CfgS} stream. A configuration is read from this stream.
 (see the previous section for more information about configuration). This
 step is optional. If you don't set this, a default configuration is used.
 \item Set the \var{Indent} variable. This is the number of spaces to use
 when indenting. Tab characters are not used in the program. This step is
 optional. The indent variable is initialized to 2.
-\item Call \var{PrettyPrint}. This will pretty-print the source in \var{Ins}
+\item Call \var{PrettyPrint}. This will pretty-print the source in \var{InS}
 and write the result to \var{OutS}. The function returns \var{True} if no
 errors occurred, \var{False} otherwise.
 \end{enumerate}
@@ -2535,7 +2537,7 @@ suitable for editors.
 
 \section{rstconv program}
 
-The \file{rstconv} program converts the resource string files generates by
+The \file{rstconv} program converts the resource string files generated by
 the compiler (when you use resource string sections) to \file{.po} files
 that can be understood by the GNU \file{msgfmt} program.
 
@@ -2543,8 +2545,8 @@ Its usage is very easy; it accepts the following options:
 \begin{description}
 \item[-i file] Use the specified file instead of stdin as input file. This
 option is optional.
-\item[-o file] write output to the specified file. This option is required.
-\item[-f format] Specifies the output format. At the moment, only one output
+\item[-o file] Write output to the specified file. This option is required.
+\item[-f format] Specify the output format. At the moment, only one output
 format is supported: {\em po} for GNU gettext \file{.po} format.
 It is the default format.
 \end{description}
@@ -2560,7 +2562,7 @@ under the chapter about resource strings.
 \section{unitdiff program}
 
 \subsection{Synopsis}
-\file{unitdiff} shows differences between 2 unit interface sections. 
+\file{unitdiff} shows the differences between two unit interface sections. 
 \begin{verbatim}
 unitdiff [--disable-arguments] [--disable-private] [--disable-protected] 
 [--help] [--lang=language] [--list] [--output=filename] [--sparse] 
@@ -2573,10 +2575,10 @@ file1 file2
 available identifiers, or describes the differences in identifiers
 between the two units.
 
-You can invoke \file{unitdiff} with as the only required argument a
-\file{input} filename. It will then simply list all available identifiers.
+You can invoke \file{unitdiff} with an input filename as the only required
+argument. It will then simply list all available identifiers.
 
-The regular use is to invoke \file{unitdiff} with 2 arguments:
+The regular usage is to invoke \file{unitdiff} with two arguments:
 \begin{verbatim}
 unitdiff input1 input2
 \end{verbatim}
@@ -2585,30 +2587,33 @@ units, or list the available identifiers in both units. The output of
 \file{unitdiff} will go to standard output by default.
 
 \subsection{Options}
-\file{unitdiff} has some options, most of them optional, defaults will be used in most
+Most of the \file{unitdiff} options are not required. Defaults will be used in most
 cases.
 
 \begin{description}
-\item[--disable-arguments] If this option is specified,  \file{unitdiff}
-will not check the arguments of functions and procedures. By default, 
-these are checked as well.
-\item[--disable-private] By default, private methods of classes are checked. 
-if this option is specified, private fields or methods are not checked.
-\item[--disable-protected] By default, protected  methods of classes are 
-checked. if this option is specified, protected and private fields or 
-methods are not checked.
+\item[--disable-arguments] Do not check the arguments of functions 
+and procedures. The default action is to check them.
+\item[--disable-private] Do not check private fields or methods of
+classes. The default action is to check them.
+\item[--disable-protected] Do not check protected fields or methods of
+classes. The default action is to check them.
 \item[--help] Emit a short help text and exit.
-\item[--lang=language] Sets the language for the output file. This will mainly 
+\item[--lang=language] Set the language for the output file. This will mainly 
 set the strings used for the headers in various parts of the documentation files 
-(by default they're in english). Currently, valid options are
-\item[--list] If this option is specified, only the list of available identifiers will be
-specified for the unit or units. If only 1 unit is specified, this option is
-automatically assumed.
-\item[--output=filename] This option tells \file{unitdiff} where the output should go. 
-If this option is not specified, the output is sent to standard output (the screen).
-\item[--sparse] Turns on sparse mode. In this mode, the output will not contain the types of
-the identifiers. Only the names of the identifiers are written to the
-output. By default, also type descriptions are written.
+(by default they're in English). Currently, valid options are:
+\begin{itemize}
+\item \var{de}: German.
+\item \var{fr}: French.
+\item \var{nl}: Dutch.
+\end{itemize}
+\item[--list] Display just the list of available identifiers for the unit
+or units. If only one unit is specified on the command line, this option 
+is automatically assumed.
+\item[--output=filename] Specify where the output should go. The default
+action is to send the output is sent to standard output (the screen).
+\item[--sparse] Turn on sparse mode. Output only the identifier names.
+Do not output types or type descriptions. By default, type descriptions 
+are also written.
 \end{description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2619,7 +2624,7 @@ output. By default, also type descriptions are written.
 
 Here we list the units that come with the \fpc distribution. Since there is
 a difference in the supplied units per operating system, we first describe
-the generic ones, then describe those which are operating specific. 
+the generic ones, then describe those which are operating system specific. 
 
 %
 % Common units
@@ -2627,11 +2632,11 @@ the generic ones, then describe those which are operating specific.
 \section{Standard units}
 
 The following units are standard and are meant to be ported to
-all supported platforms by \fpc. A brief description of each unit
+all platforms supported by \fpc. A brief description of each unit
 is also given.
 
 \begin{description}
-\item[charset] a unit to provide mapping of character sets.
+\item[charset] A unit to provide mapping of character sets.
 \item[cmem] Using this unit replaces the Free Pascal memory manager with the 
 memory manager of the C library.
 \item[crt] This unit is similar to the unit of the same name of
@@ -2642,30 +2647,30 @@ system. This includes file searching, environment variables access,
 getting the operating system version, getting and setting the
 system time. It is to note that some of these routines are duplicated
 in functionality in the \var{sysutils} unit.
-\item[dynlibs] provides cross-platform access to loading dynamical libraries.
-\item[errors] returns 
+\item[dynlibs] Provides cross-platform access to loading dynamical libraries.
+%\item[errors] returns 
 \item[getopts] This unit gives you the \gnu \var{getopts} command line
-arguments  handling mechanism. It also supports long options.
+arguments handling mechanism. It also supports long options.
 \item[graph] \emph{This unit is deprecated}. This unit provides basic graphics handling, with routines to
-draw lines on the screen, display texts etc. It provides the same functions
+draw lines on the screen, display text etc. It provides the same functions
 as the Turbo Pascal unit. 
 \item[heaptrc] a unit which debugs the heap usage. When the program exits, it outputs a summary of the used memory, and dumps a summary of unreleased memory blocks (if any).
 \item[keyboard] provides basic keyboard handling routines in a platform independent way,
 and supports writing custom drivers.
-\item[macpas] this unit implements several functions available only in macpas mode. This unit
-should not be included, it's automatically included when the MACPAS mode is used.
+\item[macpas] This unit implements several functions available only in MACPAS mode. 
+This unit should not be included; it's automatically included when the MACPAS mode is used.
 \item[math] This unit contains common mathematical routines (trigonometric
 functions, logarithms, etc.) as well as more complex ones (summations of arrays,
 normalization functions, etc.).
-\item[matrix] a unit providing matrix manipulation routines.
+\item[matrix] A unit providing matrix manipulation routines.
 \item[mmx] This unit provides support for \var{mmx} extensions in your
 code. 
-\item[mouse] provides basic mouse handling routines in a platform independent way,
+\item[mouse] Provides basic mouse handling routines in a platform independent way,
 and supports writing custom drivers. 
 \item [objects]  This unit provides the base object for standard Turbo Pascal
 objects. It also implements File and Memory stream objects, as well as sorted
 and non-sorted collections, and string streams.
-\item[objpas] is used for Delphi compatibility; you should never load this
+\item[objpas] Is used for Delphi compatibility. You should never load this
 unit explicitly; it is automatically loaded if you request Delphi mode.
 \item[printer]  This unit provides all you need for rudimentary access
 to the printer using standard I/O routines.
@@ -2677,17 +2682,17 @@ libraries.
 \item[system] This unit is available for all supported platforms. It includes
 among others, basic file I/O routines, memory management routines, all compiler 
 helper routines, and directory services routines. 
-\item[strutils] offers a lot of extended string handling routines. 
-\item[dateutils] offers a lot of extended date/time handling routines for 
+\item[strutils] Offers a lot of extended string handling routines. 
+\item[dateutils] Offers a lot of extended date/time handling routines for 
 almost any date and time math. 
-\item[sysutils] is an alternative implementation of the sysutils unit of
+\item[sysutils] Is an alternative implementation of the sysutils unit of
 Delphi. It includes file I/O access routines which takes care of file
 locking, date and string handling routines, file search, date and string 
 conversion routines.
-\item[typinfo] Provides functions to acces Run-Time Type Information, just
+\item[typinfo] Provides functions to access runtime Type Information, just
 like Delphi.
-\item[variants] provides basic variant handling.
-\item[video] provides basic screen handling in a platform independent way,
+\item[variants] Provides basic variant handling.
+\item[video] Provides basic screen handling in a platform independent way,
 and supports writing custom drivers.
 \end{description}
 
@@ -2697,7 +2702,7 @@ and supports writing custom drivers.
 \section{Under DOS}
 \begin{description}
 \item [emu387] This unit provides support for the coprocessor emulator.
-\item [go32] This unit provides access to possibilities of the \var{GO32}
+\item [go32] This unit provides access to capabilities of the \var{GO32}
 \dos extender.
 \end{description}
 
@@ -2708,13 +2713,13 @@ and supports writing custom drivers.
 \begin{description}
 \item[wincrt] This implements a console in a standard GUI window, contrary
 to the \var{crt} unit which is for the Windows console only.
-\item[Windows] This unit provides access to al Win32 API calls. Effort has
+\item[Windows] This unit provides access to all Win32 API calls. Effort has
 been taken to make sure that it is compatible to the Delphi version of this
 unit, so code for Delphi is easily ported to \fpc.
-\item[opengl] provides access to the low-level opengl functions in \windows.
-\item[winmouse] provides access to the mouse in \windows.
-\item[ole2] provides access to the OLE capabilities of \windows.
-\item[winsock] provides acces to the \windows sockets API Winsock.
+\item[opengl] Provides access to the low-level opengl functions in \windows.
+\item[winmouse] Provides access to the mouse in \windows.
+\item[ole2] Provides access to the OLE capabilities of \windows.
+\item[winsock] Provides access to the \windows sockets API Winsock.
 \end{description}
 
 %
@@ -2722,33 +2727,33 @@ unit, so code for Delphi is easily ported to \fpc.
 %
 \section{Under Linux and BSD-like platforms}
 \begin{description}
-\item[baseunix] basic unix operations, basically a subset of the POSIX specification. 
+\item[baseunix] Basic Unix operations, basically a subset of the POSIX specification. 
 Using this unit should ensure portability across most unix systems.
-\item[errors] returns a string describing an operating system error code.
-\item[oldlinux]  \emph{This unit is deprecated}. This unit provides access to the
+\item[errors] Returns a string describing an operating system error code.
+\item[oldlinux] \emph{This unit is deprecated}. This unit provides access to the
 \linux operating system. It provides most file and I/O handling routines
 that you may need. It implements most of the standard \var{C} library constructs
 that you will find on a Unix system. If you do a lot of disk/file
 operations, the use of this unit is recommended over the one you use under
-Dos.
+\dos.
 \item[ports] This implements the various \var{port[]} constructs. These are
 provided for compatibility only, and it is not recommended to use them
 extensively. Programs using this construct must be run as ruit or setuid
 root, and are a serious security risk on your system.
-\item[unix] extende unix operations.
-\item[unixtype] all types used commonly on unix platforms.
+\item[unix] Extended Unix operations.
+\item[unixtype] All types used commonly on Unix platforms.
 \end{description}
 
 \section{Under OS/2}
 \begin{description}
-\item[doscalls] interface to \file{doscalls.dll}.
-\item[dive] interface to \file{dive.dll}
-\item[emx] provides access to the EMX extender.
-\item[pm*] interface units for the program manager functions.
-\item[viocalls] interface to \file{viocalls.dll} screen handling library.
-\item[moucalls] interface to \file{moucalls.dll} mouse handling library.
-\item[kbdcalls] interface to \file{kbdcalls.dll} keyboard handling library.
-\item[moncalls] interface to \file{moncalls.dll} monitoring handling library.
+\item[doscalls] Interface to \file{doscalls.dll}.
+\item[dive] Interface to \file{dive.dll}
+\item[emx] Provides access to the EMX extender.
+\item[pm*] Interface units for the program manager functions.
+\item[viocalls] Interface to \file{viocalls.dll} screen handling library.
+\item[moucalls] Interface to \file{moucalls.dll} mouse handling library.
+\item[kbdcalls] Interface to \file{kbdcalls.dll} keyboard handling library.
+\item[moncalls] Interface to \file{moncalls.dll} monitoring handling library.
 \end{description}
 
 \section{Unit availability}
@@ -2760,17 +2765,17 @@ is given in the FAQ / Knowledge base.
 % Debugging
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Debugging your Programs}
+\chapter{Debugging your programs}
 
 \fpc supports debug information for the \gnu debugger \var{gdb}, or
 its derivatives \file{Insight} on win32 or \file{ddd} on \linux.
 
-This chapter describes shortly how to use this feature. It doesn't attempt
+This chapter briefly describes how to use this feature. It doesn't attempt
 to describe completely the \gnu debugger, however.
-For more information on the workings of the \gnu debugger, see the \var{gdb}
-users' guide.
+For more information on the workings of the \gnu debugger, see the \var{GDB}
+User Manual.
 
-\fpc also suports \var{gprof}, the \gnu profiler, see section \ref{se:gprof}
+\fpc also suports \var{gprof}, the \gnu profiler. See section \ref{se:gprof}
 for more information on profiling.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2785,12 +2790,12 @@ option on the command line, as follows:
 \begin{verbatim}
 fpc -g hello.pp
 \end{verbatim}
-This will generate debugging information in the executable from your
-program. You will notice that the size of the executable increases
-substantially because of this\footnote{A good reason not to include debug
+This will incorporate debugging information in the executable generated 
+from your program source. You will notice that the size of the executable 
+increases substantially because of this\footnote{A good reason not to include debug
 information in an executable you plan to distribute.}.
 
-Note that the above will only generate debug information {\em for the code
+Note that the above will only incorporate debug information {\em for the code
 that has been generated} when compiling \file{hello.pp}. This means that if
 you used some units (the system unit, for instance) which were not compiled
 with debugging support, no debugging support will be available for the code
@@ -2805,7 +2810,7 @@ each of the units.
 \end{enumerate}
 The second option may have undesirable side effects. It may be that some
 units aren't found, or compile incorrectly due to missing conditionals,
-etc..
+etc.
 
 If all went well, the executable now contains the necessary information with
 which you can debug it using \gnu \var{gdb}.
@@ -2831,13 +2836,18 @@ into memory, but it does not run the program yet. Instead, you are presented
 with the following (more or less) message, followed by the \var{gdb} prompt
 \var{'(gdb)'}:
 \begin{verbatim}
-GDB is free software and you are welcome to distribute copies of it
- under certain conditions; type "show copying" to see the conditions.
-There is absolutely no warranty for GDB; type "show warranty" for details.
-GDB 4.15.1 (i486-slackware-linux),
-Copyright 1995 Free Software Foundation, Inc...
+GNU gdb 6.6.50.20070726-cvs
+Copyright (C) 2007 Free Software Foundation, Inc.
+GDB is free software, covered by the GNU General Public License, and you are
+welcome to change it and/or distribute copies of it under certain conditions.
+Type "show copying" to see the conditions.
+There is absolutely no warranty for GDB.  Type "show warranty" for details.
+This GDB was configured as "x86_64-suse-linux".
 (gdb)
 \end{verbatim}
+The actual prompt will vary depending on  your operating system and
+installed version of gdb, of course.
+
 To start the program you can use the \var{run} command. You can optionally
 specify command line parameters, which will then be fed to your program, for
 example:
@@ -2848,7 +2858,7 @@ If your program runs without problems, \var{gdb} will inform you of this,
 and return the exit code of your program. If the exit code was zero, then
 the message \var{'Program exited normally'} is displayed.
 
-If something went wrong (a segmentation fault or so), \var{gdb} will stop
+If something went wrong (a segmentation fault or such), \var{gdb} will stop
 the execution of your program, and inform you of this with an appropriate
 message. You can then use the other \var{gdb} commands to see what happened.
 Alternatively, you can instruct \var{gdb} to stop at a certain point in your
@@ -2857,28 +2867,29 @@ program, with the \var{break} command.
 Here is a short list of \var{gdb} commands, which you are likely to need when
 debugging your program:
 \begin{description}
-\item [quit\ ] Exits the debugger.
-\item [kill\ ] Stops a running program.
-\item [help\ ] Gives help on all \var{gdb} commands.
-\item [file\ ] Loads a new program into the debugger.
+\item [quit\ ] Exit the debugger.
+\item [kill\ ] Stop a running program.
+\item [help\ ] Give help on all \var{gdb} commands.
+\item [file\ ] Load a new program into the debugger.
 \item [directory\ ] Add a new directory to the search path for source
 files.\\
-\begin{remark} My copy of gdb needs '.' to be added explicitly to the search
+\begin{remark} 
+My copy of gdb needs '.' to be added explicitly to the search
 path, otherwise it doesn't find the sources.
 \end{remark}
-\item [list\ ] Lists the program sources per 10 lines. As an option you can
+\item [list\ ] List the program sources in chunks of 10 lines. As an option you can
 specify a line number or function name.
-\item [break\ ] Sets a breakpoint at a specified line or function
-\item [awatch\ ] Sets a watch-point for an expression. A watch-point stops
+\item [break\ ] Set a breakpoint at a specified line or function.
+\item [awatch\ ] Set a watch-point for an expression. A watch-point stops
 execution of your program whenever the value of an expression is either
 read or written.
 \end{description}
 
-for more information, see the \var{gdb} users' guide, or use the \var{'help'}
-function in \var{gdb}.
-
-The appendix {\ref{ch:GdbIniFile}} contains a sample init file for
+Appendix {\ref{ch:GdbIniFile}} contains a sample init file for
 \var{gdb}, which produces good results when debugging \fpc programs.
+
+For more information, refer to the \var{gdb} User Manual, or use the 
+\var{'help'} function in \var{gdb}.
 
 It is also possible to use \file{RHIDE}, a text-based IDE that uses gdb.
 There is a version of RHIDE available that can work together with FPC.
@@ -2888,17 +2899,17 @@ There is a version of RHIDE available that can work together with FPC.
 There are some peculiarities of \fpc which you should be aware of when using
 \var{gdb}. We list the main ones here:
 \begin{enumerate}
-\item \fpc generates information for GDB in uppercare letters. This is a
+\item \fpc generates information for GDB in uppercase letters. This is a
 consequence of the fact that Pascal is a case insensitive language. So, when
 referring to a variable or function, you need to make its name all
 uppercase.
 
-As an example, of you want to watch the value of a loop variable
+As an example, if you want to watch the value of a loop variable
 \var{count}, you should type
 \begin{verbatim}
 watch COUNT
 \end{verbatim}
-Or if you want stop when a certain function (e.g \var{MyFunction}) is called,
+Or if you want to stop when a certain function (e.g \var{MyFunction}) is called,
 type
 \begin{verbatim}
 break MYFUNCTION
@@ -2907,7 +2918,7 @@ break MYFUNCTION
 \item \var{gdb} does not know sets.
 
 \item \var{gdb} doesn't know strings. Strings are represented in \var{gdb}
-as records with a length field and an array of char contaning the string.
+as records with a length field and an array of char containing the string.
 
 You can also use the following user function to print strings:
 \begin{verbatim}
@@ -2927,11 +2938,11 @@ function. There is a sample \file{gdb.ini} in appendix \ref{ch:GdbIniFile}.
 \item Objects are difficult to handle, mainly because \var{gdb} is oriented
 towards C and C++. The workaround implemented in \fpc is that object methods
 are represented as functions, with an extra parameter \var{this} (all
-lowercase !) The name of this function is a concatenation of the object type
+lowercase!) The name of this function is a concatenation of the object type
 and the function name, separated by two underscore characters.
 
 For example, the method \var{TPoint.Draw} would be converted to
-\var{TPOINT\_\_DRAW}, and could be stopped at with
+\var{TPOINT\_\_DRAW}, and you could stop at it by using:
 \begin{verbatim}
 break TPOINT__DRAW
 \end{verbatim}
@@ -2939,7 +2950,7 @@ break TPOINT__DRAW
 \item Global overloaded functions confuse \var{gdb} because they have the same
 name. Thus you cannot set a breakpoint at an overloaded function, unless you
 know its line number, in which case you can set a breakpoint at the
-starting linenumber of the function.
+starting line number of the function.
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2947,26 +2958,26 @@ starting linenumber of the function.
 \section{Support for \var{gprof}, the \gnu profiler}
 \label{se:gprof}
 
-You can compile your programs with profiling support. for this, you just
-have to use the compiler switch \var{-pg}. The compiler wil insert the
+You can compile your programs with profiling support. For this, you just
+have to use the compiler switch \var{-pg}. The compiler will insert the
 necessary stuff for profiling.
 
-When you have done this, you can run your program as you normally would run
-it.
+When you have done this, you can run your program as you would normally 
+run it:
 \begin{verbatim}
 yourexe
 \end{verbatim}
 Where \file{yourexe} is the name of your executable.
 
-When your program finishes a file called gmon.out is generated. Then you can start
-the profiler to see the output. You can better redirect the output to a file, becuase
-it could be quite a lot:
+When your program finishes, a file called gmon.out is generated. Then you can start
+the profiler to see the output. You can benefit from redirecting the output to a file,
+because it could be quite a lot:
 \begin{verbatim}
 gprof yourexe > profile.log
 \end{verbatim}
 
 Hint: you can use the --flat option to reduce the amount of output of gprof. It will
-then only output the information about the timings
+then only output the information about the timings.
 
 For more information on the \gnu profiler \var{gprof}, see its manual.
 
@@ -2976,10 +2987,10 @@ For more information on the \gnu profiler \var{gprof}, see its manual.
 \label{se:heaptrc}
 \fpc has a built in mechanism to detect memory leaks. There is a plug-in
 unit for the memory manager that analyses the memory allocation/deallocation
-and which prints a memory usage report after the program exits.
+and prints a memory usage report after the program exits.
 
 The unit that does this is called \file{heaptrc}. If you want to use it,
-you should include it as the first unit in you uses clause. Alternatively,
+you should include it as the first unit in your uses clause. Alternatively,
 you can supply the \var{-gh} switch to the compiler, and it will include
 the unit automatically for you.
 
@@ -3046,7 +3057,7 @@ Runtime error 255 at 0x0040BDE5
   0x0040BE0C  main,  line 17 of testline.pp
   0x0040B7B1
 \end{verbatim}
-Which is more understandable than the normal message. Make sure that all
+This is more understandable than the normal message. Make sure that all
 units you use are compiled with debug info, because if they are not, no
 line number and filename can be found.
 
@@ -3069,8 +3080,8 @@ Call trace for block 0x00410DA0 size 128
   0x0040D8ED  main,  line 23 of heapex.pp
   0x0040D231
 \end{verbatim}
-If lines without filename/line-number occur, this means there is a unit which
-has no debug info included. (in the above case, the getmem call itself)
+If lines without filename / line number occur, this means there is a unit which
+has no debug info included (in the above case, the getmem call itself).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3085,7 +3096,7 @@ has no debug info included. (in the above case, the getmem call itself)
 
 \chapter{Alphabetical listing of command line options}
 \label{ch:commandlineoptions}
-The following is alphabetical listing of all command line options, as
+The following is an alphabetical listing of all command line options, as
 generated by the compiler:
 \input{comphelp.inc}
 
@@ -3106,7 +3117,7 @@ generated by the compiler:
 \chapter{Compiler messages}
 \label{ch:ErrorMessages}
 This appendix is meant to list all the compiler messages. The list of
-messages is generated from he compiler source itself, and should be faitly
+messages is generated from he compiler source itself, and should be fairly
 complete. At this point, only assembler errors are not in the list.
 
 % Message file is generated with msg2inc.
@@ -3123,12 +3134,12 @@ They are {\em not} the messages of the assembler itself.
 \subsection{General assembler errors}
 \begin{description}
 \item [Divide by zero in asm evaluator]
-This fatal error is reported when a constant assembler expressions
-does a division by zero.
+This fatal error is reported when a constant assembler expression
+performs a division by zero.
 
 \item [Evaluator stack overflow, Evaluator stack underflow]
-These fatal errors are reported when a constant assembler expression
-is too big to evaluate by the constant parser. Try reducing the
+These fatal error is reported when a constant assembler expression
+is too big to be evaluated by the constant parser. Try reducing the
 number of terms.
 
 \item [Invalid numeric format in asm evaluator]
@@ -3144,21 +3155,21 @@ This fatal error is reported when an internal error is detected
 by the constant parser. Normally this error should never occur.
 
 \item [Invalid numeric value]
-This warning is emitted when a conversion from octal,binary or hexadecimal
-to decimal is outside of the supported range.
+This warning is emitted when a conversion from octal, binary 
+or hexadecimal to decimal is outside of the supported range.
 
 \item [Escape sequence ignored]
 This error is emitted when a non ANSI C escape sequence is detected in
 a C string.
 
 \item [Asm syntax error - Prefix not found]
-This occurs when trying to use a non-valid prefix instruction
+This occurs when trying to use a non-valid prefix instruction.
 
 \item [Asm syntax error - Trying to add more than one prefix]
-This occurs when you try to add more than one prefix instruction
+This occurs when you try to add more than one prefix instruction.
 
 \item [Asm syntax error - Opcode not found]
-You have tried to use an unsupported or unknown opcode
+You have tried to use an unsupported or unknown opcode.
 
 \item [Constant value out of bounds]
 This error is reported when the constant parser determines that the
@@ -3166,8 +3177,8 @@ value you are using is out of bounds, either with the opcode or with
 the constant declaration used.
 
 \item [Non-label pattern contains @]
-This only applied to the m68k and Intel styled assembler, this is reported
-when you try to use a non-label identifier with a '@' prefix.
+This only applied to the m68k and Intel styled assembler. 
+This is reported when you try to use a non-label identifier with an '@' prefix.
 \item [Internal error in Findtype()]
 \item [Internal Error in ConcatOpcode()]
 \item [Internal Errror converting binary]
@@ -3179,7 +3190,7 @@ when you try to use a non-label identifier with a '@' prefix.
 \item [internal error in HandleExtend()]
 \item [Internal error in ConcatLabeledInstr()]
 \label{InternalError}
-These errors should never occur, if they do then you have found
+These errors should never occur. If they do then you have found
 a new bug in the assembler parsers. Please contact one of the
 developers.
 \item [Opcode not in table, operands not checked]
@@ -3195,12 +3206,12 @@ Modulo constant operation is not supported.
 \item [Floating point binary representation ignored]
 \item [Floating point hexadecimal representation ignored]
 \item [Floating point octal representation ignored]
-These warnings occur when a floating point constant are declared in
-a base other then decimal. No conversion can be done on these formats.
+These warnings occur when a floating point constant is declared in
+a base other than decimal. No conversion can be done on these formats.
 You should use a decimal representation instead.
 \item [Identifier supposed external]
-This warning occurs when a symbol is not found in the symolb table, it
-is therefore considered external.
+This warning occurs when a symbol is not found in the symbol table. 
+It is therefore considered external.
 \item [Functions with void return value can't return any value in asm code]
 Only routines with a return value can have a return value set.
 
@@ -3209,8 +3220,8 @@ Only routines with a return value can have a return value set.
 \item [Error in hexadecimal constant]
 \item [Error in integer constant]
 \label{ErrorConst}
-These errors are reported when you tried using an invalid constant expression,
-or that the value is out of range.
+These errors are reported when you tried using a constant
+expression that is invalid or whose value is out of range.
 
 \item [Invalid labeled opcode]
 \item [Asm syntax error - error in reference]
@@ -3221,7 +3232,7 @@ or that the value is out of range.
 \item [Invalid three operand opcode]
 \item [Assembler syntax error]
 \item [Invalid operand type]
-You tried using an invalid combination of opcode and operands, check the syntax
+You tried using an invalid combination of opcode and operands. Check the syntax
 and if you are sure it is correct, please contact one of the developers.
 
 \item [Unknown identifier]
@@ -3231,7 +3242,7 @@ current scope.
 \item [Trying to define an index register more than once]
 \item [Trying to define a segment register twice]
 \item [Trying to define a base register twice]
-You are trying to define an index/segment register more then once.
+You are trying to define an index/segment register more than once.
 
 \item [Invalid field specifier]
 The record or object field you are trying to access does not exist, or
@@ -3248,10 +3259,10 @@ You are trying to access the SELF identifier for objects outside a method.
 
 
 \item [Invalid combination of prefix and opcode]
-This opcode cannot be prefixed by this instruction
+This opcode cannot be prefixed by this instruction.
 
 \item [Invalid combination of override and opcode]
-This opcode cannot be overriden by this combination
+This opcode cannot be overriden by this combination.
 
 \item [Too many operands on line]
 At most three operand instructions exist on the m68k, and i386, you
@@ -3263,7 +3274,7 @@ You are trying to redefine a local symbol, such as a local label.
 \item [Unknown label identifer]
 \item [Undefined local symbol]
 \item [local symbol not found inside asm statement]
-This label does not seem to have been defined in the current scope
+This label does not seem to have been defined in the current scope.
 
 
 \item [Assemble node syntax error]
@@ -3282,7 +3293,7 @@ A problem with interrupts and a prefix instruction may occur and may cause
 false results on 386 and earlier computers.
 
 \item [Fwait can cause emulation problems with emu387]
-This warning is reported when using the FWAIT instruction, it can
+This warning is reported when using the FWAIT instruction. It can
 cause emulation problems on systems which use the em387.dxe emulator.
 
 \item [You need GNU as version >= 2.81 to compile this MMX code]
@@ -3291,14 +3302,14 @@ MMX assembler code can only be compiled using GAS v2.8.1 or later.
 \item [NEAR ignored]
 \item [FAR ignored]
 \label{FarIgnored}
-\var{NEAR} and \var{FAR} are ignored in the intel assemblers, but are still accepted
-for compatiblity with the 16-bit code model.
+\var{NEAR} and \var{FAR} are ignored in the Intel assemblers, but 
+are still accepted for compatiblity with the 16-bit code model.
 
 \item [Invalid size for MOVSX/MOVZX]
 
 \item [16-bit base in 32-bit segment]
 \item [16-bit index in 32-bit segment]
-16-bit addressing is not supported, you must use 32-bit addressing.
+16-bit addressing is not supported. You must use 32-bit addressing.
 
 
 \item [Constant reference not allowed]
@@ -3306,10 +3317,10 @@ It is not allowed to try to address a constant memory address in protected
 mode.
 
 \item [Segment overrides not supported]
-Intel style (eg: rep ds stosb) segment overrides are not support by
+Intel style (eg: rep ds stosb) segment overrides are not supported by
 the assembler parser.
 
-\item [Expressions of the form [sreg:reg...] are currently not supported]
+\item [{Expressions of the form [sreg:reg...] are currently not supported}]
 To access a memory operand in a different segment, you should use the
 sreg:[reg...] snytax instead of [sreg:reg...]
 
@@ -3369,7 +3380,7 @@ not concord with the operand size specified.
 You are trying to use dec/inc mode together.
 
 \item [Invalid Register list in movem/fmovem]
-The register list is invalid, normally a range of registers should
+The register list is invalid. Normally a range of registers should
 be separated by - and individual registers should be separated by
 a slash.
 \item [Invalid Register list for opcode]
@@ -3381,10 +3392,9 @@ a slash.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Run-time errors}
 
-Applications generated  by \fpc might generate
-Run-time error when certain abnormal conditions are
-detected in the application. This appendix lists the possible run-time
-errors and gives information on why they might be produced.
+Applications generated  by \fpc might generate run-time errors when certain 
+abnormal conditions are detected in the application. This appendix lists the 
+possible run-time errors and gives information on why they might be produced.
 
 \begin{description}
 \item [1  Invalid function number]
@@ -3400,28 +3410,25 @@ exist or is invalid. Also reported when trying to access a
 non-existent file.
 
 \item [4  Too many open files]
-The maximum number of currently opened files by your process
+The maximum number of files currently opened by your process
 has been reached. Certain operating systems limit the number
 of files which can be opened concurrently, and this error
 can occur when this limit has been reached.
 
 \item [5  File access denied]
-Permission accessing the file is denied. This error might
-be caused by several reasons:
-    \begin{itemize}
-       \item   Trying to open for writing a file which is
-               read only, or which is actually a directory.
-       \item   File is currently locked or used by another process.
-       \item   Trying to create a new file, or directory while a 
-               file or directory of the same name already exists.
-       \item   Trying to read from a file which was opened
-               in write only mode.
-       \item   Trying to write from a file which was opened
-               in read only mode.
-       \item   Trying to remove a directory or file while
-               it is not possible.
-       \item   No permission to access the file or directory.        
-    \end{itemize}
+Permission to access the file is denied. This error might
+be caused by one of several reasons:
+\begin{itemize}
+\item Trying to open for writing a file which is
+read-only, or which is actually a directory.
+\item File is currently locked or used by another process.
+\item Trying to create a new file, or directory while a 
+file or directory of the same name already exists.
+\item Trying to read from a file which was opened in write-only mode.
+\item Trying to write from a file which was opened in read-only mode.
+\item Trying to remove a directory or file while it is not possible.
+\item No permission to access the file or directory.        
+\end{itemize}
 
 \item [6  Invalid file handle]
 If this happens, the file variable you are using is trashed; it
@@ -3443,7 +3450,7 @@ You cannot rename a file such that it would end up on another disk or
 partition.
 
 \item [100  Disk read error]
-An error occurred when reading from disk. Typically when you try
+An error occurred when reading from disk. Typically happens when you try
 to read past the end of a file.
 
 \item [101  Disk write error]
@@ -3467,7 +3474,7 @@ the file is not opened with \var{Reset}.
 Reported by write if a text file isn't opened with \var{Rewrite}.
 
 \item [106  Invalid numeric format]
-Reported when a non-numeric value is read from a text file, when a numeric
+Reported when a non-numeric value is read from a text file, and a numeric
 value was expected.
 
 \item [150  Disk is write-protected]
@@ -3508,25 +3515,25 @@ local variables should be reduced to avoid this error), or the stack has
 become corrupt. This error is only reported when stack checking is enabled.
 \item [203  Heap overflow error]
 The heap has grown beyond its boundaries. This is caused when trying to allocate
-memory exlicitly with \var{New}, \var{GetMem} or \var{ReallocMem}, or when
+memory explicitly with \var{New}, \var{GetMem} or \var{ReallocMem}, or when
 a class or object instance is created and no memory is left. Please note 
 that, by default, \fpc provides a growing heap, i.e. the heap will
 try to allocate more memory if needed. However, if the heap has reached the
 maximum size allowed by the operating system or hardware, then you will get
 this error.
 \item [204  Invalid pointer operation]
-This you will get if you call \var{Dispose} or \var{Freemem} with an invalid 
-pointer (notably, \var{Nil})
+You will get this if you call \var{Dispose} or \var{Freemem} with an invalid 
+pointer (notably, \var{Nil}).
 \item [205  Floating point overflow]
-You are trying to use or produce too large real numbers.
+You are trying to use or produce real numbers that are too large.
 \item [206  Floating point underflow]
-You are trying to use or produce too small real numbers.
+You are trying to use or produce real numbers that are too small.
 \item [207  Invalid floating point operation]
 Can occur if you try to calculate the square root or logarithm of a negative
 number.
 \item [210  Object not initialized]
 When compiled with range checking on, a program will report this error if
-you call a virtual method without having called istr constructor.
+you call a virtual method without having called its object's constructor.
 \item [211  Call to abstract method]
 Your program tried to execute an abstract virtual method. Abstract methods
 should be overridden, and the overriding method should be called.
@@ -3548,7 +3555,7 @@ doing the actual arithmetic operation.
 The application tried to access invalid memory space. This can
 be caused by several problems:
 \begin{enumerate}
- \item Deferencing a \var{nil} pointer
+ \item Dereferencing a \var{nil} pointer.
  \item Trying to access memory which is out of bounds
        (for example, calling \var{move} with an invalid length).
 \end{enumerate}
@@ -3556,7 +3563,7 @@ be caused by several problems:
 \item [217 Unhandled exception occurred]
 An exception occurred, and there was no exception handler present.
 The \var{sysutils} unit installs a default exception handler which catches
-all excpetions and exits gracefully.
+all exceptions and exits gracefully.
 
 \item [219 Invalid typecast]
 
@@ -3594,9 +3601,9 @@ available.
 
 \item [232 Threads not supported]
 Thread management relies on a separate driver on some operating systems
-(notably, unixes). The unit with this driver needs to be specified on
-the uses clause of the program, preferably as the first unit.
-(\file{cthreads} on unix)
+(notably, Unixes). The unit with this driver needs to be specified on
+the uses clause of the program, preferably as the first unit
+(\file{cthreads} on unix).
 
 \end{description}
 
@@ -3610,7 +3617,7 @@ the uses clause of the program, preferably as the first unit.
 
 Here you have a sample \file{gdb.ini} file listing, which gives better
 results when using \var{gdb}. Under \linux you should put this in a
-\file{.gdbinit} file in your home directory or the current directory..
+\file{.gdbinit} file in your home directory or the current directory.
 
 \begin{verbatim}
 set print demangle off
