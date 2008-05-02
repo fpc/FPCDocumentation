@@ -142,6 +142,8 @@ combination of keys will execute a command immediately.
 key combination with \key{Alt} may not be available. To remedy this, the
 \key{Ctrl-Z} combination can be typed first. This means that e.g. \key{Alt-X}
 can be replaced by \key{Ctrl-Z X}.
+\item Alternatively, you can try the key combination ESC-X for \key{Alt-X}
+when working on \linux.
 \item A complete reference of all keyboard shortcuts can be found in
 \sees{keyshortcuts}.
 \end{itemize}
@@ -175,7 +177,9 @@ The mouse is not always available, even if a mouse is installed:
 \begin{itemize}
 \item The IDE is running under \linux through a telnet connection from
 a \windows machine.
-\item The IDE is running under \linux in an X-term under X-windows.
+\item The IDE is running under \linux in an X-term under X-windows. In this
+case it depends on the terminal program: under Konsole (the KDE terminal) it
+works.
 \end{itemize}
 \item On Windows, the console has an option 'Quick edit', allowing text
 to be copied to the clipboard by selecting text in the console window. If this
@@ -405,7 +409,7 @@ the selected file in a new editor window.
 \item[Reload] Reload a file from disk.
 \item[Save] (\key{F2}) Saves the contents of the current edit window
 with the current filename. If the current edit window does not yet have
-a filename, a dialog is presented to enter a filename.
+a filename, a dialog is presented to enter a new filename.
 \item[Save as] Presents a dialog in which a filename can be entered. The
 current window's contents are then saved to this new filename, and the
 filename is stored for further save actions.
@@ -449,7 +453,7 @@ copies it to the clipboard. Any previous clipboard contents are lost.
 The new clipboard contents are available for pasting elsewhere.
 \item[Copy] (\key{Ctrl-INS}) Copies the current selection to the clipboard.
 Any previous clipboard contents are lost. The new clipboard
-contents are available for pasting elsewhere
+contents are available for pasting elsewhere.
 \item[Paste] (\key{Shift-INS}) Inserts the current clipboard contents in the
 text at the cursor position. The clipboard contents remain as they were.  
 \item[Clear] (\key{Ctrl-DEL}) Clears (i.e. deletes) the current
@@ -518,13 +522,13 @@ successful, the program is executed. If the primary file  was set, then
 that is used to determine which program to execute. See \sees{menucompile}
 for more information on how to set the primary file.
 \item[Step over] (\key{F8})
-Runs the program until the next source line is reached. If any calls to
+Run the program until the next source line is reached. If any calls to
 procedures are made, these will be executed completely as well.
 \item[Trace into] (\key{F7})
-Executes the current line. If the current line contains a call to another
+Execute the current line. If the current line contains a call to another
 procedure, the process will stop at the entry point of the called procedure.
 \item[Goto cursor] (\key{F4})
-Runs the program until the execution point matches the line where the cursor
+Run the program until the execution point matches the line where the cursor
 is.
 \item[Until return] Runs the current procedure until it exits.
 \item[Run directory] Set the working directory to change to when 
@@ -646,9 +650,9 @@ be set. These options will be used when compiling a program.
 Presents a dialog where some linker options can be set. These options will
 be used when a program or library is compiled.
 \item[Debugger]
-Presents a dialog where the debugging options can be stored. These options
+Presents a dialog where the debugging options can be set. These options
 are used when compiling units or programs. Note that the debugger will not
-work unless debugging information is generated in the program.
+work unless debugging information is generated for the program.
 \item[Directories]
 Presents a dialog where the various directories needed by the compiler can
 be set. These directories will be used when a program or unit is compiled.
@@ -663,8 +667,8 @@ Presents a dialog to configure the behaviour of the IDE. A sub menu is
 presented with the various aspects of the IDE:
 \begin{description}
 \item[Preferences]
-General preferences, such as whether to save files or not, and which files
-should be saved. The video mode can also be set here.
+General preferences, such as whether to save files automatically or not, 
+and which files should be saved. The video mode can also be set here.
 \item[Editor]
 Controls various aspects of the edit windows.
 \item[CodeComplete]
@@ -894,7 +898,7 @@ the keyword will be presented in a small colored box under the typed text.
 Pressing the \key{Enter} key will complete the word in the text.
 
 There is no code completion yet for filling in function arguments, or choosing
-object methods as in e.g. \delphi.
+object methods as in e.g. the Lazarus or \delphi IDEs.
 
 Code completion can be customized in the Code completion dialog, reachable
 through the menu option \menu{Options|\-Preferences|\-Codecomple}.
@@ -1116,7 +1120,7 @@ Once the program has started, it will continue to run, until
 \begin{enumerate}
 \item the program quits normally,
 \item an error happens,
-\item a breakpoint is encountered or
+\item a breakpoint is encountered, or
 \item the program is reset by the user.
 \end{enumerate}
 The last alternative is only possible if the program is compiled
@@ -1197,7 +1201,8 @@ The breakpoint properties dialog is shown in \seefig{brkprop}
 
 The following properties can be set:
 \begin{description}
-\item[Type]
+\item[Type] Set the type of the breakpoint. The following types of breakpoints
+exist:
 \begin{description}
 \item[function] Function breakpoint. The program will stop when the function
 with the given name is reached.
@@ -1214,7 +1219,7 @@ memory location may be entered, and the program will stop as soon as
 the memory indicated by the expression is read.
 \end{description}
 \item[Name] Name of the function or file where to stop.
-\item[Conditions] Here an expression can be entered which must evaluate
+\item[Conditions] Here an expression can be entered which must evaluate to
 \var{True} for the program to stop at the breakpoint. The expressions that
 can be entered must be valid GDB expressions.
 \item[Line] Line number in the file where to stop. Only for breakpoints of
@@ -1225,7 +1230,7 @@ before the program stops.
 \begin{remark}
 \begin{enumerate}
 \item Because the IDE uses GDB to do its debugging, it is necessary to enter all
-expressions in {\em uppercase} on \freebsd.
+expressions in {\em uppercase}.
 \item Expressions that reference memory locations should be no longer than 16
 bytes on \linux or go32v2 on an Intel processor, since the Intel processor's
 debug registers are used to monitor these locations.
@@ -1346,7 +1351,8 @@ menu item to call the \file{grep} utility (\menu{Tools|Grep} or
 \key{Shift-F2}). \file{Grep} searches for a given string in files and
 returns the lines which contain the string. The search string can
 even be a regular expression. For this menu item to work, the
-\file{grep} program must be installed, since it does not come with \fpc.
+\file{grep} program must be installed, since it is not distributed
+with \fpc.
 
 The messages window displayed in \seefig{messages} in the previous
 section shows the output of a typical \file{grep} session. The messages
@@ -1578,7 +1584,7 @@ Writes the parsed tool output information to a file with name as in the argument
 \label{se:commanddialogs}
 When defining a tool, it is possible to show a dialog to the user, asking for
 additional arguments, using the \var{\$PROMPT(filename)} command-macro.
-\fpc comes with some dialogs, such as a 'grep' dialog, a 'cvs checkout' dialog
+The \fpc distribution contains some ready-made dialogs, such as a 'grep' dialog, a 'cvs checkout' dialog
 and a 'cvs check in' dialog. The files for these dialogs are in the binary
 directory and have an extension \file{.tdf}.
 
@@ -1808,7 +1814,8 @@ supports.
 
 \FPCpic{The compilation target dialog}{ide}{target}
 
-The following targets can be set:
+The following targets can be set (the list depends on the platform for
+which the IDE was compiled):
 \begin{description}
 \item[Dos (go32v1)] This switch will dissapear in time as this target is no
 longer being maintained.
@@ -2010,7 +2017,7 @@ is written to the assembler file. (\var{-an} on the command line).
 assembler code to an external assembler.
 \end{description}
 The latter three of these options are mainly useful for debugging the
-compiler itself, it should be rarely necessary to use these.
+compiler itself, it should rarely be necessary to use these.
 \item[Assembler output] This option tells the compiler what assembler output
 should be generated.
 \begin{description}
@@ -2458,7 +2465,7 @@ by pressing \key{F1}.
 \subsection{Navigating in the help system}
 The help system contains hyperlinks; these are sensitive locations that
 lead to another topic in the help system. They are marked by a different
-color. The hyperlinks can be activated in 2 ways:
+color. The hyperlinks can be activated in one of two ways:
 \begin{enumerate}
 \item by directly clicking the one you want with the mouse, or
 \item by using the \key{Tab} and \key{Shift-Tab} keys to move between
@@ -2483,7 +2490,7 @@ The IDE contains a help system which can display the following file formats:
 \item[HTML] HTML files.
 \end{description}
 In future some more formats may be added. However, the above formats should
-cover already a wide spectrum of help files available.
+cover already a wide spectrum of available help files.
 
 \begin{remark}
 Concerning the support for HTML files the following should be noted:
@@ -2621,7 +2628,7 @@ Page up & \key{PageUp} & \key{Ctrl-R} \\
 Page down & \key{PageDown} & \\
 Beginning of Line & \key{Pos1} & \key{Ctrl-Q-S} \\
 End of Line & \key{End} & \key{Ctrl-Q-D} \\
-First line of window & \key{Ctrl-Pos1} & \key{Ctrl-Q-E} \\
+First line of window & \key{Ctrl-Home} & \key{Ctrl-Q-E} \\
 Last line of window & \key{Ctrl-End} & \key{Ctrl-Q-X} \\
 First line of file & \key{Ctrl-PageUp} & \key{Ctrl-Q-R} \\
 Last line of file & \key{Ctrl-PageDown} & \key{Ctrl-Q-C} \\
