@@ -24,8 +24,8 @@
 \begin{latexonly}
   \ifpdf
   \pdfinfo{/Author(Michael Van Canneyt)
-           /Title(Programmers' Guide)
-           /Subject(Free Pascal Programmers' guide)
+           /Title(Programmer's Guide)
+           /Subject(Free Pascal Programmer's guide)
            /Keywords(Free Pascal)
            }
   \fi
@@ -40,8 +40,8 @@
 % Start of document.
 %
 \begin{document}
-\title{Free Pascal \\ Programmers' manual}
-\docdescription{Programmers' manual for \fpc, version \fpcversion}
+\title{Free Pascal \\ Programmer's Guide}
+\docdescription{Programmer's Guide for \fpc, Version \fpcversion}
 \docversion{2.0}
 \input{date.inc}
 \author{Micha\"el Van Canneyt}
@@ -114,16 +114,51 @@ of the current unit or program is reached.
 \label{se:Align}
 
 The \var{\{\$ALIGN} directive can be used to select the data alignment 
-strategy of the compiler for the \macos. Only valid in MACPAS mode, 
-it can have the following values:
+strategy of the compiler for records. It takes a numerical argument
+which can be 1, 2, 4, 8, 16 or 32, specifying the alignment boundary 
+in bytes. For these values, it has the same effect as the 
+\var{\{\$PACKRECORDS\}} directive (see \sees{Packrecords}).
+
+Thus, the following
+\begin{verbatim}
+{$A 8}
+\end{verbatim}
+is equivalent to 
+\begin{verbatim}
+{$PACKRECORDS 8}
+\end{verbatim}
+and specifies to the compiler that all data inside a record should be aligned on 
+8 byte boundaries.
+
+In MACPAS mode, additionally it can have the following values:
 \begin{description}
-\item[MAC68K]
-\item[POWER]
-\item[RESET]
+\item[MAC68K] Specifies alignment following the m68K ABI.
+\item[POWER] Specifies alignment following the PowerPC ABI.
+\item[RESET] Resets the default alignment.
+\item[ON] Same as specifying 4.
+\item[OFF] Same as specifying 1.
 \end{description}
+These values are not available in the \var{\{\$PACKRECORDS\}} directive. 
+
+\subsection{\var{\protect\$A1}, \var{\protect\$A2},\var{\protect\$A4} and \var{\protect\$A8}}
+\label{se:An}
+
+These directives are the same as the \var{\$PACKRECORDS} directive 
+(see \sees{Packrecords}), but they have the alignment specifier embedded in the
+directive. Thus the following:
+\begin{verbatim}
+{$A8 }
+\end{verbatim}
+is equivalent to 
+\begin{verbatim}
+{$PACKRECORDS 8}
+\end{verbatim}
+Note that the special cases of \var{\$PACKRECORDS} cannot be expressed this
+way.
 
 \subsection{\var{\protect\$ASMMODE} : Assembler mode (Intel 80x86 only)}
 \label{se:AsmReader}
+
 
 The \var{\{\$ASMMODE XXX\}} directive informs the compiler what kind of assembler
 it can expect in an \var{asm} block. The \var{XXX} should be replaced by one
@@ -310,7 +345,7 @@ begin
 end;  
 \end{verbatim}
 
-\subsection{\var{\protect\$DEFINE} : Define a symbol}
+\subsection{\var{\protect\$DEFINE} or \var{\protect\$DEFINEC} : Define a symbol}
 
 The directive
 \begin{verbatim}
@@ -324,6 +359,9 @@ insensitive.
 
 The symbols that are defined in a unit, are not saved in the unit file,
 so they are also not exported from a unit.
+
+Under Mac Pascal mode, the \var{\$DEFINEC} directive is equivalent to the 
+\var{\$DEFINE} directive and is provided for Mac Pascal compatibility.
 
 \subsection{\var{\protect\$ELSE} : Switch conditional compilation}
 
@@ -365,7 +403,7 @@ is the same as
 \end{verbatim}
 This is useful for indication what switch is meant to be ended.
 
-\subsection{\var{\protect\$ERROR} : Generate error message}
+\subsection{\var{\protect\$ERROR} or \var{\protect\$ERRORC} : Generate error message}
 
 The following code
 \begin{verbatim}
@@ -374,6 +412,8 @@ The following code
 will display an error message when the compiler encounters it,
 and increase the error count of the compiler.
 The compiler will continue to compile, but no code will be emitted.
+
+The \var{\$ERRORC} variant is supplied for Mac Pascal compatibility.
 
 \subsection{\var{\protect\$EXTENDEDSYM}: Ignored}
 This directive is parsed for Delphi compatibility but otherwise ignored.
@@ -801,6 +841,10 @@ they will be passed to the linker, in the order that they were specified on
 the command line, just before the names of the object files that must be
 linked.
 
+\subsection{\var{\protect\$LINKFRAMEWORK} : Link to a framework}
+The \var{\{\$LINKFRAMEWORK name\}} will link to a framework named
+\var{name}. This switch is available only on the Darwin platform.
+
 \subsection{\var{\protect\$LINKLIB} : Link to a library}
 \label{se:linklib}
 
@@ -902,6 +946,31 @@ option, then
 will display an info message when the compiler encounters it. The effect is
 the same as the \var{\{\$INFO\}} directive.
 
+\subsection{\var{\protect \$MINENUMSIZE} : Specify minimum enumeration size}
+
+This directive is provided for Delphi compatibility: it has the same effect
+as the \var{\$PACKENUM} directive (see \sees{Packenum}).
+
+\subsection{\var{\protect \$MINFPCONSTPREC} : Specify floating point constant precision}
+\label{se:Minfpconstprec}
+
+This switch is the equivalent of the \var{-CF} command line switch. It
+sets the minimal precision of floating point constants. 
+Supported values are 32, 64 and \var{DEFAULT}. 
+80 is not supported for implementation reasons.
+
+Note that this has nothing to do with the actual precision used by
+calculations: there the type of the variable will determine what precision
+is used. This switch determines only with what precision a constant 
+declaration is stored:
+\begin{verbatim}
+{$MINFPCONSTPREC 64}
+Const
+  MyFloat = 1.23;
+\end{verbatim}
+Will use 64 bits precision to store the constant.
+
+Note that a value of 80 (Extended precision) is not supported.
 
 \subsection{\var{\protect\$MMX} : Intel MMX support (Intel 80x86 only)}
 
@@ -1029,7 +1098,8 @@ PECOFF    & PECOFF object file (Win32).\\
 TASM      & Tasm assembler file.\\
 \end{FPCltable}
 
-\subsection{\var{\protect\$PACKENUM} : Minimum enumeration type size}
+\subsection{\var{\protect\$PACKENUM} or \var{\protect\$Z} : Minimum enumeration type size}
+\label{se:Packenum}
 
 This directive tells the compiler the minimum number of bytes it should
 use when storing enumerated types. It is of the following form:
@@ -1043,6 +1113,9 @@ Where the form with \var{\$MINENUMSIZE} is for Delphi compatibility.
 
 As an alternative form one can use \var{\{\$Z1\}}, \var{\{\$Z2\}}
 \var{\{\$Z4\}}. Contrary to Delphi, the default is (\var{\{\$Z4\}}).
+
+The \var{\{\$Z\}} form takes a boolean argument, where \var{ON} is equivalent
+to \var{\{\$Z4\}} and \var{OFF} is equivalent to \var{\{\$Z1\}}.
 
 So the following code
 \begin{verbatim}
@@ -1059,10 +1132,16 @@ Type
   Days = (monday, tuesday, wednesday, thursday, friday,
           saturday, sunday);
 \end{verbatim}
-
+or equivalent to
+\begin{verbatim}
+{$Z OFF}
+Type
+  Days = (monday, tuesday, wednesday, thursday, friday,
+          saturday, sunday);
+\end{verbatim}
 
 \subsection{\var{\protect\$PACKRECORDS} : Alignment of record elements}
-
+\label{se:Packrecords}
 This directive controls the byte alignment of the elements in a record,
 object or class type definition.
 
@@ -1071,7 +1150,7 @@ It is of the following form:
 {$PACKRECORDS n}
 \end{verbatim}
 
-Where \var{n} is one of 1, 2, 4, 16, \var{C}, \var{NORMAL} or \var{DEFAULT}.
+Where \var{n} is one of 1, 2, 4, 8, 16, \var{C}, \var{NORMAL} or \var{DEFAULT}.
 This means that the elements of a record that have size greater than \var{n}
 will be aligned on \var{n} byte boundaries. Elements with size less than or
 equal to \var{n} will be aligned to a natural boundary, i.e. to a power of
@@ -1093,8 +1172,46 @@ The following shorthands can be used for this directive:
 {$A8 }
 \end{verbatim}
 
+\subsection{\var{\protect\$PACKSET} : Specify set size}
+\label{se:Packset}
+The \var{\$PACKSET} directive takes a numeric argument of 1, 2, 4 or 8.
+This number determines the number of bytes used to store a set: 
+The compiler rounds the number of bytes needed to store the set 
+down/up to the closest multiple of the \var{PACKSET} setting, 
+with the exception that 3-byte sets are always rounded up to 4-byte 
+sets.
 
-\subsection{\var{\protect\$Q} \var{\protect\$OVERFLOWCHECKS}: Overflow checking}
+Other allowed values are \var{FIXED}, \var{DEFAULT}, or \var{NORMAL}. 
+With these values, the compiler stores sets with less than 32 elements 
+in 4 bytes, and sets with less than 256 elements in 32 bytes. 
+
+\subsection{\var{\protect\$POP} : Restore compiler settings}
+\label{se:Pop}
+The \var{\$POP} directive restores the values of all local compiler
+directives with the last values that were stored on the settings stack. 
+The settings are then deleted from the stack.
+
+The settings can be stored on the stack with the \var{\$PUSH} directive
+(see \sees{Push}).
+
+Note that global settings are not restored by this directive.
+
+\subsection{\var{\protect\$PUSH} : Save compiler settings}
+\label{se:Push}
+The \var{\$POP} directive saves the values of all local compiler
+directives that were stored on the settings stack. Up to 20 sets of
+settings can be stored on the stack.
+
+The settings can be restored from the stack using the \var{\$POP} directive
+(see \sees{Pop}).
+
+Note that global settings (search paths etc.) are not saved by this 
+directive.
+
+The settings stack is preserved accross units, i.e. when the compiler starts
+compiling a new unit, the stack is not emptied.
+
+\subsection{\var{\protect\$Q} or \var{\protect\$OVERFLOWCHECKS}: Overflow checking}
 The \var{\{\$Q+\}} or \var{\{\$OVERFLOWCHECKS ON\}} directive turns on
 integer overflow checking. This means that the compiler inserts code
 to check for overflow when doing computations with integers.
@@ -1210,7 +1327,7 @@ type of the variable is \var{T}. In the \var{\{\$T-\}} state, the result is
 always an untyped pointer, which is assignment compatible with all other
 pointer types.
 
-\subsection{\var{\protect\$UNDEF} : Undefine a symbol}
+\subsection{\var{\protect\$UNDEF} or \var{\protect\$UNDEFC} : Undefine a symbol}
 
 The directive
 \begin{verbatim}
@@ -1218,6 +1335,10 @@ The directive
 \end{verbatim}
 un-defines the symbol \var{name} if it was previously defined.
 \var{Name} is case insensitive.
+
+In Mac Pascal mode, \var{\$UNDEFC} is equivalent to \var{\$UNDEF}, and is 
+provided for Mac Pascal compatibility.
+
 
 
 \subsection{\var{\protect\$V} or \var{\protect\$VARSTRINGCHECKS} : Var-string checking}
@@ -1278,6 +1399,11 @@ Contrary to the command-line option \var{-vw} this
 is a local switch, this is useful for checking parts of your code.
 
 By default, no warnings are emitted.
+
+\subsection{\var{\protect \$Z1}, \var{\protect \$Z2} and \var{\protect \$Z4}}
+
+This switch is an equivalent of the var{\{\$PACKENUM \}} switch
+(see \sees{Packenum}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Global switches
@@ -1628,6 +1754,33 @@ with the \var{High(P)} call.
 
 Default the use of openstrings is off.
 
+\subsection{\var{\protect\$PASCALMAINNAME} : Set entry point name}
+\label{se:Pascalmainname}
+The \var{\{\$PASCALMAINNAME NNN\}} directive sets the assembler
+symbol name of the program or library entry point to \var{NNN}.
+This directive is the equivalent of the \var{-XM} command line switch.
+
+Under normal circumstances, it should not be necessary to use this
+switch.
+
+\subsection{\var{\protect\$PIC} : Generate PIC code or not}
+\label{se:Pic}
+The \var{\{\$PIC \}} directive takes a boolean argument and tells the
+compiler whether it should generate PIC (Position Indepedent Code) or not.
+This directive is the equivalent of the \var{-Cg} command line switch.
+
+
+This directive is only useful on Unix platforms: Units should be compiled 
+using PIC code if they are supposed to be in a library. For programs, using
+PIC code is not needed, but it doesn't hurt either (although PIC code is
+slower).
+
+The following 
+\begin{verbatim}
+{$PIC ON}
+unit MyUnit;
+\end{verbatim}
+tells the compiler to compile \file{myunit} using PIC code.
 
 \subsection{\var{\protect\$PROFILE} : Profiling}
 
@@ -8098,7 +8251,7 @@ on stack checking when compiling for this target platform.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Operating system specific behavior}
-\label{ch:AppH}
+\label{ch:AppI}
 
 This appendix describes some special behaviors which vary
 from operating system to operating system. This is described
