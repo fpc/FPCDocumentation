@@ -73,7 +73,7 @@ Since the compiler is continuously under development, this document may get
 out of date. Wherever possible, the information in this manual will be
 updated. If you find something which isn't correct, or you think something
  is missing, feel free to contact me\footnote{at
-\var{Michael.VanCanneyt@wisa.be}}.
+\var{michael@freepascal.org}}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Compiler switches
@@ -81,15 +81,25 @@ updated. If you find something which isn't correct, or you think something
 \chapter{Compiler directives}
 \label{ch:CompSwitch}
 
-\fpc supports compiler directives in the source file. They are not the same
-as Turbo Pascal directives, although some are supported for compatibility.
-There is a distinction between local and global directives; local directives
-take effect from the moment they are encountered, global directives have an
-effect on all of the compiled code.
+\fpc supports compiler directives in the source file: Basically the same
+directives as in \tp, \delphi and Mac OS pascal compilers.
+Some are recognized for compatibility only, and have no effect.
+There is a distinction between local and global directives:
+\begin{itemize}
+\item Local directives take effect from the moment they are encountered till
+they are changed by another directive or the same directive with a different
+argument: they can be specified more than once in a source file.
+\item global directives have an effect on all of the compiled code. They
+can, in general, only be specified once per source file.
+\end{itemize}
 
+Some directives can only take a boolean value, a '+' to switch them on,
+or a '-' to switch them off. These directives are also known as switches.
 Many switches have a long form also. If they do, then the name of the
-long form is given also. For long switches, the + or - character to switch
-the option on or off, may be replaced by \var{ON} or \var{OFF} keywords.
+long form is given also. 
+
+For long switches, the + or - character to switch the option on or off, 
+may be replaced by the \var{ON} or \var{OFF} keywords.
 
 Thus \verb|{$I+}| is equivalent to \verb|{$IOCHECKS ON}| or
 \verb|{$IOCHECKS +}| and
@@ -104,7 +114,7 @@ counterparts.
 \section{Local directives}
 \label{se:LocalSwitch}
 Local directives can occur more than once in a unit or program,
-If they have a command-line counterpart, the command-line argument is
+If they have a command line counterpart, the command line argument is
 restored as the default for each compiled file. The local directives
 influence the compiler's behaviour from the moment they're encountered
 until the moment another switch annihilates their behaviour, or the end
@@ -168,23 +178,24 @@ of the following:
 \item [intel\ ] Indicates that \var{asm} blocks contain Intel syntax
 assembler.
 \item [direct\ ] Tells the compiler that asm blocks should be copied
-directly to the assembler file.
+directly to the assembler file. It is not possible to use such assembler
+blocks when the internal assembler of the compiler is used.
 \end{description}
 These switches are local, and retain their value to the end of the unit that
 is compiled, unless they are replaced by another directive of the same type.
-The command-line switch that corresponds to this switch is \var{-R}.
+The command line switch that corresponds to this switch is \var{-R}.
 
 The default assembler reader is the AT\&T reader.
 
 \subsection{\var{\protect\$B} or \var{\protect\$BOOLEVAL} : Complete boolean evaluation}
 
-By default, the compiler uses shortcut evaluation, i.e.\ the evaluation
+By default, the compiler uses shortcut boolean evaluation, i.e., the evaluation
 of a boolean expression is stopped once the result of the total
 exression is known with certainty. The \var{\{\$B \}} switch can be used
-to change this behaviour: if it's argument is \var{ON}, then the
+to change this behaviour: if its argument is \var{ON}, then the
 compiler will always evaluate all terms in the expression. If it is
 \var{OFF} (the default) then the compiler will only evaluate as many
-terms as is necessary to determine the outcome.
+terms as are necessary to determine the result of the complete expression.
 
 So, in the following example, the function \var{Bofu}, which has a boolean
 result, will never get called.
@@ -192,7 +203,7 @@ result, will never get called.
 If False and Bofu then
   ...
 \end{verbatim}
-This has as a consequence that any additional actions that are done by
+A consequence of this is that any additional actions that are done by
 \var{Bofu} are not executed. If compiled with \var{\{\$B ON\}}, then
 \var{BoFu} will be called anyway.
 
@@ -203,7 +214,7 @@ compiled into the binary or not. If the switch is on, the statement
 \begin{verbatim}
 Assert(BooleanExpression,AssertMessage);
 \end{verbatim}
-Will be compiled in the binary. If te \var{BooleanExpression} evaluates to
+Will be compiled in the binary. If the \var{BooleanExpression} evaluates to
 \var{False}, the RTL will check if the \var{AssertErrorProc} is set. If it
 is set, it will be called with as parameters the \var{AssertMessage}
 message, the name of the file, the LineNumber and the address. If it is not
@@ -212,13 +223,14 @@ set, a runtime error 227 is generated.
 The \var{AssertErrorProc} is defined as
 \begin{verbatim}
 Type
-  TAssertErrorProc=procedure(const msg,fname:string;lineno,erroraddr:longint);
+  TAssertErrorProc=procedure(Const msg,fname : String;
+                             lineno,erroraddr : Longint);
 Var
   AssertErrorProc = TAssertErrorProc;
 \end{verbatim}
 This can be used mainly for debugging purposes. The \file{system} unit sets the
 \var{AssertErrorProc} to a handler that displays a message on \var{stderr}
-and simply exits. The \file{sysutils} unit catches the run-time error 227
+and simply exits with a run-time error 227. The \file{sysutils} unit catches the run-time error 227
 and raises an \var{EAssertionFailed} exception.
 
 \subsection{\var{\protect\$BITPACKING} : Enable bitsize packing}
@@ -264,7 +276,7 @@ convention should be used if none is specified:
 \item[stdcall]
 \item[oldfpccall]
 \end{description}
-For a more detailed explanation of calling conventions, \sees{CallingConventions}.
+For a more detailed explanation of calling conventions, see \sees{CallingConventions}.
 As a special case, \var{DEFAULT} can be used, to restore the default calling
 convention.
 
@@ -319,14 +331,14 @@ maximum alignment (e.g. VARMAX) to 4, the alignment is forced to
 be at most 4 bytes: The \var{Int64} will then also be aligned at 
 4 bytes. The \var{SmallInt} will still be aligned at 2 bytes.
 
-These values can also be specified on the command-line as
+These values can also be specified on the command line as
 \begin{verbatim}
 -OaPARAM=VALUE
 \end{verbatim}
 
 \subsection{\var{\protect\$COPERATORS} : Allow C like operators}
-This boolean switch determines whether C like operators are allowed. 
-By default they are not allowed.
+This boolean switch determines whether C like assignment operators 
+are allowed. By default, these assignments are not allowed.
 After the following statement:
 \begin{verbatim}
 {$COPERATORS ON}
@@ -383,6 +395,34 @@ In MACPAS mode, this directive can be used as an alternative to the \var{\$ELSE}
 directive. It is supported for compatibility with existing \macos pascal
 compilers.
 
+\subsection{\var{\protect\$ELSEIF} or \var{\protect\$ELIFC} : Switch conditional compilation}
+This directive can be used as a shortcut for a new
+\var{\{\$IF \}} directive inside an \var{\{\$ELSE \}} clause:
+\begin{verbatim}
+{$IF XXX}
+  // XXX Code here
+{$ELSEIF YYY}
+  // YYY code here
+{$ELSE}
+  // And default code here
+{$ENDIF}
+\end{verbatim}
+is equivalent to
+\begin{verbatim}
+{$IF XXX}
+  // XXX Code here
+{$ELSE }
+{$IF YYY}
+  // YYY code here
+{$ELSE}
+  // And default code here
+{$ENDIF}
+{$ENDIF}
+\end{verbatim}
+The directive is followed by an expression like the ones recognized by the 
+\var{\{\$IF \}} directive.
+
+The \var{\{\$ELIFC \}} variant is allowed only in MACPAS mode.
 
 \subsection{\var{\protect\$ENDC} : End conditional compilation}
 In MACPAS mode, this directive can be used as an alternative to the
@@ -416,7 +456,8 @@ The compiler will continue to compile, but no code will be emitted.
 The \var{\$ERRORC} variant is supplied for Mac Pascal compatibility.
 
 \subsection{\var{\protect\$EXTENDEDSYM}: Ignored}
-This directive is parsed for Delphi compatibility but otherwise ignored.
+This directive is parsed for Delphi compatibility but otherwise ignored. A
+warning will be displayed when this directive is encountered.
 
 \subsection{\var{\protect\$F} : Far or near functions}
 This directive is recognized for compatibility with Turbo Pascal. Under the
@@ -477,7 +518,7 @@ The following code
 will display an error message when the compiler encounters it,
 and the compiler will immediatly stop the compilation process.
 
-This is mainly useful inc conjunction wih \var{\{\$IFDEF\}} or
+This is mainly useful in conjunction wih \var{\{\$IFDEF\}} or
 \var{\{\$IFOPT\}} statements.
 
 \subsection{\var{\protect\$FPUTYPE} : Select coprocessor type}
@@ -499,13 +540,13 @@ and above or Athlon64 and above
 \item[arm] \var{LIBGCC}, \var{FPA}, \var{FPA10}, \var{FPA11},\var{VFP}.
 \end{description} 
 
-This directive corresponds to the \var{-Cf} command-line option.
+This directive corresponds to the \var{-Cf} command line option.
 
 \subsection{\var{\protect\$GOTO} : Support \var{Goto} and \var{Label}}
 
 If \var{\{\$GOTO ON\}} is specified, the compiler will support \var{Goto}
 statements and \var{Label} declarations. By default, \var{\$GOTO OFF} is
-assumed. This directive corresponds to the \var{-Sg} command-line option.
+assumed. This directive corresponds to the \var{-Sg} command line option.
 
 As an example, the following code can be compiled:
 \begin{verbatim}
@@ -516,7 +557,7 @@ label Theend;
 begin
   If ParamCount=0 then
     GoTo TheEnd;
-  Writeln ('You specified command-line options');
+  Writeln ('You specified command line options');
 TheEnd:
 end.
 \end{verbatim}
@@ -531,7 +572,8 @@ the \var{\{\$GOTO ON\}} directive should be used.
 If \var{\{\$LONGSTRINGS ON\}} is specified, the keyword \var{String} (no
 length specifier) will be treated as \var{AnsiString}, and the compiler
 will treat the corresponding variable as an ansistring, and will
-generate corresponding code.
+generate corresponding code. This switch corresponds to the \var{-Sh}
+command line option.
 
 By default, the use of ansistrings is off, corresponding to \var{\{\$H-\}}.
 The \file{system} unit is compiled without ansistrings, all its functions accept
@@ -539,13 +581,14 @@ shortstring arguments. The same is true for all RTL units, except the
 \file{sysutils} unit, which is compiled with ansistrings.
 
 However, the \var{\{\$MODE\}} statement influences the default value of
-\var{\{\$H\}}: a \var{\{\$MODE DELPHI\}} statement implies a
-\var{\{\$H+\}} statement. This behaviour has changed, in older \fpc
-versions this was not so.
+\var{\{\$H\}}: a \var{\{\$MODE DELPHI\}} directive implies a
+\var{\{\$H+\}} statement, all other modes switch it off. As a result,
+you should always put \var{\{\$H+\}} after a mode directive. 
+This behaviour has changed, in older \fpc versions this was not so. 
 
 \subsection{\var{\protect\$HINT} : Generate hint message}
 
-If the generation of hints is turned on, through the \var{-vh} command-line
+If the generation of hints is turned on, through the \var{-vh} command line
 option or the \var{\{\$HINTS ON\}} directive, then
 \begin{verbatim}
 {$Hint This code should be optimized }
@@ -558,7 +601,7 @@ By default, no hints are generated.
 
 \var{\{\$HINTS ON\}} switches the generation of hints on.
 \var{\{\$HINTS OFF\}} switches the generation of hints off.
-Contrary to the command-line option \var{-vh} this is a local switch,
+Contrary to the command line option \var{-vh} this is a local switch,
 this is useful for checking parts of the code.
 
 \subsection{\var{\protect\$HPPEMIT}: Ignored}
@@ -567,8 +610,8 @@ This directive is parsed for Delphi compatibility but otherwise ignored.
 \subsection{\var{\protect\$IF} : Start conditional compilation}
 
 The directive \var{\{\$IF expr\}} will continue the compilation
-if the boolean expression \var{expr} evaluates to \var{true}. If the
-compilation evaluates to false, then the source is skipped to the first
+if the boolean expression \var{expr} evaluates to \var{True}. If the
+compilation evaluates to \var{False}, then the source is skipped to the first
 \var{\{\$ELSE\}} or \var{\{\$ENDIF\}} directive.
 
 The compiler must be able to evaluate the expression at parse time.
@@ -612,7 +655,7 @@ As an example:
   Writeln ('Compiled with type information');
 {$ENDIF}
 \end{verbatim}
-Will compile the writeln statement if generation of type information is on.
+Will compile the \var{Writeln} statement only if generation of type information is on.
 
 \begin{remark}The \var{\{\$IFOPT\}} directive accepts only short options,
 i.e. \var{\{\$IFOPT TYPEINFO\}} will not be accepted.
@@ -624,14 +667,15 @@ finalization code}
 The compiler generates an implicit \var{try}...\var{finally} frame around
 each procedure that needs initialization or finalization of variables, and
 finalizes the variables in the \var{finally} block. This
-slows down these procedures (with 5-10% sometimes). With this directive, the generation of such
-frames can be disabled. One should be careful with this directive, because
-it can lead to memory leaks if an exception occurs inside the routine.
-Therefore, standard it is set to \var{OFF}.
+slows down these procedures (up to 5-10\% sometimes). 
+With this directive, the generation of such frames can be disabled. 
+One should be careful with this directive, because it can lead to memory 
+leaks if an exception occurs inside the routine. 
+Therefore, it is set to \var{OFF} by default.
 
 \subsection{\var{\protect\$INFO} : Generate info message}
 
-If the generation of info is turned on, through the \var{-vi} command-line
+If the generation of info is turned on, through the \var{-vi} command line
 option, then
 \begin{verbatim}
 {$INFO This was coded on a rainy day by Bugs Bunny}
@@ -651,7 +695,7 @@ to where the procedure is needed, this results in faster execution speed if
 the function or procedure is used a lot.
 
 By default, \var{Inline} procedures are not allowed. This directive must be 
-specified to use inlined code. The directive is equivalent to the command-line
+specified to use inlined code. The directive is equivalent to the command line
  switch \var{-Si}. For more information on inline routines, consult the \refref.
 
 \subsection{\var{\protect\$INTERFACES} : Specify Interface type.}
@@ -662,8 +706,10 @@ interface is used. Other implementations of interfaces (CORBA or Java) do
 not necessarily have this interface, and for such cases, this directive can
 be used. It accepts the following three values:
 \begin{description}
-\item[COM] Interfaces will descend from \var{IUnknown}.
-\item[CORBA] Interfaces will not have a parent.
+\item[COM] Interfaces will descend from \var{IUnknown} and will be reference
+counted.
+\item[CORBA] Interfaces will not have a parent and are not reference
+counted.
 \item[DEFAULT] Currently, this is COM.
 \end{description}
 
@@ -730,16 +776,18 @@ The compiler will look for the file to include in the following places:
 \item it will look in all directories specified in the include file search
 path.
 \end{enumerate}
-Directories can be added to the include file search path with the \var{-I}
-command-line option.
+Directories can be added to the include file search path with the \var{-Fi}
+command line option.
 
 \subsection{\var{\protect\$I} or \var{\protect\$INCLUDE} : Include compiler info}
-
 In this form:
 \begin{verbatim}
-{$INCLUDE %xxx%}
+{$INCLUDE %XXX%}
 \end{verbatim}
-where \var{xxx} is one of the following:
+the \var{\{\$INCLUDE\}} directive inserts a string constant in the source
+code. 
+
+Here \var{XXX} can be one of the following:
 \begin{description}
 \item[DATE] Inserts the current date.
 \item[FPCTARGET] Inserts the target CPU name. (deprecated, use
@@ -751,10 +799,11 @@ where \var{xxx} is one of the following:
 \item[LINE] Linenumer on which the directive is found.
 \item[TIME] Current time.
 \end{description}
-If \var{xxx} is none of the above, then it is assumed to be the name of
-an environment variable. Its value will be fetched.
-As a reult, this will generate a macro with the value of these things,
-as if it were a string.
+If \var{XXX} is none of the above, then it is assumed to be the name of
+an environment variable. Its value will be fetched from the environment,
+if it exists, otherwise an empty string is inserted.
+As a result, this will generate a macro with the value of the \var{XXX}
+specifier, as if it were a string.
 
 For example, the following program
 \begin{verbatim}
@@ -812,18 +861,16 @@ Var
 
 The \var{\{\$L filename\}} or \var{\{\$LINK filename\}} directive
 tells the compiler that the file \file{filename} should be linked to
-the program. This cannot be used for libraries, see section
-\sees{linklib} for that.
+the program. This cannot be used for libraries, see \sees{linklib} for that.
 
-The compiler will look for this file in the following way:
-
+The compiler will look for this file in the following locations:
 \begin{enumerate}
-\item It will look in the path specified in the object file name.
-\item It will look in the directory where the current source file is.
-\item it will look in all directories specified in the object file search path.
+\item In the path specified in the object file name.
+\item In the directory where the current source file is.
+\item In all directories specified in the object file search path.
 \end{enumerate}
 Directories can be added to the object file search path with the \var{-Fo}
-option.
+command line option.
 
 On \linux systems and on operating systems with case-sensitive filesystems
 (such as \unix systems), the name is case sensitive, and must be typed
@@ -836,7 +883,7 @@ you're on. Typing \var{ld} or \var{ld --help} on the command line gives a list o
 \end{remark}
 
 Other files and options can be passed to the linker using the \var{-k}
-command-line option. More than one of these options can be used, and
+command line option. More than one of these options can be used, and
 they will be passed to the linker, in the order that they were specified on
 the command line, just before the names of the object files that must be
 linked.
@@ -874,20 +921,29 @@ where foo.pp has the above unit in its \var{uses} clause,
 then the compiler would link the program to the c library, by passing the
 linker the \var{-lc} option.
 
-The same effect could be obtained by removing the linklib directive in the
-above unit, and specify \var{-k-lc} on the command-line:
+The same can be obtained by removing the linklib directive in the
+above unit, and specify \var{-k-lc} on the command line:
 \begin{verbatim}
 ppc386 -k-lc foo.pp
 \end{verbatim}
+Note that the linker will look for the library in the linker library search path:
+one should never specify a complete path to the library.
+The linker library search path can be set with the \var{-Fl} command line option.
 
 \subsection{\var{\protect\$M} or \var{\protect\$TYPEINFO} : Generate type info}
 
 For classes that are compiled in the \var{\{\$M+\}} or \var{\{\$TYPEINFO ON\}}
 state, the compiler will generate Run-Time Type Information (RTTI). All
-descendent objects of an object that was compiled in the \var{\{\$M+\}} state
-will get RTTI information too, as well as any published classes.
+descendent class of a class that was compiled in the \var{\{\$M+\}} state
+will get RTTI information too. Any class that is used as a field or property 
+in a published section will also get RTTI information.
+
+Reversely, in order to use the \var{Published} keyword in a class, it must
+be a descendent of a class that was compiled in the \var{\$M+} state, or be
+compiled in the \var{\$M+}
+
 By default, no Run-Time Type Information is generated. The \var{TPersistent}
-object that is present in the FCL (Free Component Library) is generated in
+object that is present in the \file{classes} unit (part of the RTL) is generated in
 the \var{\{\$M+\}} state. The generation of RTTI allows programmers to
 stream objects, and to access published properties of objects, without
 knowing the actual class of the object.
@@ -897,18 +953,21 @@ which is part of the \fpc Run-Time Library.
 
 \begin{remark}
 The streaming system implemented by \fpc requires that all
-streamable components be descendent from \var{TPersistent}.
+streamable components be descendent from \var{TPersistent}. It is possible
+to create classes with published sections that do not descend from
+\var{TPersistent}, but those classes will not be streamed correctly by the
+streaming system of the \file{Classes} unit. 
 \end{remark}
 
 \subsection{\var{\protect\$MACRO} : Allow use of macros.}
 
-In the \var{\{\$MACRO ON\}} state, the compiler allows to use C-style
+In the \var{\{\$MACRO ON\}} state, the compiler allows the use of C-style
 (although not as elaborate) macros. Macros provide a means for simple text
-substitution. More information on using macros can be found in the
-\sees{Macros} section. This directive is equivalent to the command-line
-switch \var{-Sm}.
-
+substitution. This directive is equivalent to the command line option \var{-Sm}.
 By default, macros are not allowed.
+
+More information on using macros can be found in \sees{Macros}. 
+
 
 \subsection{\var{\protect\$MAXFPUREGISTERS} : Maximum number of FPU registers for variables}
 
@@ -921,7 +980,7 @@ This is quite tricky because the Intel FPU stack is limited to 8 entries.
 The compiler uses a heuristic algorithm to determine how much variables should be
 put onto the stack: in leaf procedures it is limited to 3 and in non leaf
 procedures to 1. But in case of a deep call tree or, even worse, a recursive
-procedure this can still lead to a FPU stack overflow, so the user can tell
+procedure, this can still lead to a FPU stack overflow, so the user can tell
 the compiler how much (floating point) variables should be kept in registers.
 
 The directive accepts the following arguments:
@@ -938,7 +997,7 @@ Currently this can be in the range 0 to 7.
 
 \subsection{\var{\protect\$MESSAGE} : Generate info message}
 
-If the generation of info is turned on, through the \var{-vi} command-line
+If the generation of info is turned on, through the \var{-vi} command line
 option, then
 \begin{verbatim}
 {$MESSAGE This was coded on a rainy day by Bugs Bunny }
@@ -1017,7 +1076,7 @@ begin
    ...
 end.
 \end{verbatim}
-See, however, the chapter on MMX (\ref{ch:MMXSupport}) for more information
+See the chapter on MMX (\ref{ch:MMXSupport}) for more information
 on this topic.
 
 \subsection{\var{\protect\$NODEFINE} : Ignored}
@@ -1025,7 +1084,7 @@ This directive is parsed for Delphi compatibility but is otherwise ignored.
 
 \subsection{\var{\protect\$NOTE} : Generate note message}
 
-If the generation of notes is turned on, through the \var{-vn} command-line
+If the generation of notes is turned on, through the \var{-vn} command line
 option or the \var{\{\$NOTES ON\}} directive, then
 \begin{verbatim}
 {$NOTE Ask Santa Claus to look at this code}
@@ -1037,21 +1096,21 @@ will display a note message when the compiler encounters it.
 
 \var{\{\$NOTES ON\}} switches the generation of notes on.
 \var{\{\$NOTES OFF\}} switches the generation of notes off.
-Contrary to the command-line option \var{-vn} this is a local switch,
+Contrary to the command line option \var{-vn} this is a local switch,
 this is useful for checking parts of the code.
 
 By default, \var{\{\$NOTES\}} is off.
 
 \subsection{\var{\protect\$OBJECTCHECKS} : Check Object}
 This boolean switch determines whether code to test the \var{SELF} 
-pointer is inserted in methods. By default it is of
+pointer is inserted in methods. By default it is \var{OFF}. For example:
 \begin{verbatim}
 {$OBJECTCHECKS ON}
 \end{verbatim}
 If the \var{SELF} pointer is \var{NIL} a run-time error \var{210} 
 (range check) will be generated.
 
-This switch is also activated by the \var{-CR} command-line switch.
+This switch is also activated by the \var{-CR} command line option.
 
 \subsection{\var{\protect\$OPTIMIZATION} : Enable Optimizations}
 This switch enables optimization. It can have the following possible values:
@@ -1060,7 +1119,7 @@ This switch enables optimization. It can have the following possible values:
 \item[OFF] Switches of all kinds of optimizations.
 \item[XYZ] Parses the string and switches on the optimizations found in the
 string. The possible strings are the same as can be specified on the
-command-line and are documented in the user's guide.
+command line and are documented in the user's guide.
 \end{description}
 Example:
 \begin{verbatim}
@@ -1071,12 +1130,13 @@ is equivalent to
 {$OPTIMIZATION 2}
 \end{verbatim}
 
-This switch is also activated by the \var{-Oxxx} command-line switch.
+This switch is also activated by the \var{-Oxxx} command line switch.
 
 \subsection{\var{\protect\$OUTPUT\_FORMAT} : Specify the output format}
 
-\var{\{\$OUTPUT\_FORMAT format\}} has the same functionality as the \var{-A}
-command-line option: it tells the compiler what kind of object file must be
+The directive \var{\{\$OUTPUT\_FORMAT format\}} has the same functionality 
+as the \var{-A} command line option: it tells the compiler what kind of 
+object file must be
 generated. You can specify this switch only {\em before} the \var{Program}
 or \var{Unit} clause in your source file. The different kinds of formats are
 shown in \seet{Formats}.
@@ -1151,12 +1211,12 @@ It is of the following form:
 \end{verbatim}
 
 Where \var{n} is one of 1, 2, 4, 8, 16, \var{C}, \var{NORMAL} or \var{DEFAULT}.
-This means that the elements of a record that have size greater than \var{n}
+This means that the elements of a record which have size greater than \var{n}
 will be aligned on \var{n} byte boundaries. Elements with size less than or
 equal to \var{n} will be aligned to a natural boundary, i.e. to a power of
-two that is equal to or larger than the element's size. The type \var{C}
-is used to specify alignment as by the GNU CC compiler. It should be used
-only when making import units for C routines.
+two that is equal to or larger than the element's size. The special value 
+\var{C} is used to specify alignment as by the GNU CC compiler. It should 
+be used only when making import units for C routines.
 
 The default alignment (which can be selected with \var{DEFAULT}) is 2,
 contrary to Turbo Pascal, where it is 1.
@@ -1215,8 +1275,8 @@ compiling a new unit, the stack is not emptied.
 The \var{\{\$Q+\}} or \var{\{\$OVERFLOWCHECKS ON\}} directive turns on
 integer overflow checking. This means that the compiler inserts code
 to check for overflow when doing computations with integers.
-When an overflow occurs, the run-time library will print a message
-\var{Overflow at xxx}, and exit the program with exit code 215.
+When an overflow occurs, the run-time library will generate a run-time error
+215: It prints a message \var{Overflow at xxx}, and exits the program with exit code 215.
 
 \begin{remark}Overflow checking behaviour is not the same as in
 Turbo Pascal since all arithmetic operations are done via 32-bit or
@@ -1228,7 +1288,7 @@ Using the \var{\{\$Q-\}} switch switches off the overflow checking code
 generation.
 
 The generation of overflow checking code can also be controlled
-using the \var{-Co} command line compiler option (see \userref).
+using the \var{-Co} command line compiler option (see the \userref).
 
 \subsection{\var{\protect\$R} or \var{\protect\$RANGECHECKS} : Range checking}
 
@@ -1250,11 +1310,15 @@ when the call is compiled in \var{\{\$R+\}} mode.
 \end{remark}
 
 \subsection{\var{\protect\$R} or \var{\protect\$RESOURCE} : Include resource}
-This directive includes a resource in the binary. The argument to this directive is the resource to include:
+This directive includes a resource in the binary. The argument to this directive is the resource
+file to include in the binary:
 \begin{verbatim}
 {$R icons.res}
 \end{verbatim}
-Will include the file \file{icons.res} as a resource in the binary. Currently resources are supported only for Windows (native resources are used) and for platforms using ELF binaries (linux, BSD).
+Will include the file \file{icons.res} as a resource in the binary. Up to
+version 2.2.N, resources are supported only for Windows (native resources are used) 
+and for platforms using ELF binaries (linux, BSD). As of version 2.3.1,
+resources have been implemented for all supported platforms.
 
 The asterix can be used as a placeholder for the current unit/program filename:
 \begin{verbatim}
@@ -1274,7 +1338,7 @@ on the effect of this directive.
 
 In MAC mode, this directive can be used to define compiler symbols. It is
 an alternative to the \var{\$DEFINE} directive for macros. It is supported for 
-compatibility with existing \macos pascal compilers. It will define a symbol
+compatibility with existing \macos Pascal compilers. It will define a symbol
 with a certain value (called a compiler variable expression). 
 
 The expression syntax is similar to expressions used in macros, but the
@@ -1293,7 +1357,7 @@ operators:
 The \var{:=} assignment symbol may be replaced with the \var{=} symbol.
 
 Note that this command works only in MACPAS mode, but independent of the
-\var{-Sm} command-line option or \var{\{\$MACRO \}} directive.
+\var{-Sm} command line option or \var{\{\$MACRO \}} directive.
 
 
 \subsection{\var{\protect\$STATIC} : Allow use of \var{Static} keyword.}
@@ -1304,9 +1368,7 @@ a \var{Self} variable. They are equivalent to \var{Class} methods for
 classes. By default, \var{Static} methods are not allowed. Class methods
 are always allowed.
 
-By default, the address operator returns an untyped pointer.
-
-This directive is equivalent to the \var{-St} command-line option.
+This directive is equivalent to the \var{-St} command line option.
 
 \subsection{\var{\protect\$STOP} : Generate fatal error message}
 
@@ -1321,11 +1383,30 @@ It has the same effect as the \var{\{\$FATAL\}} directive.
 
 \subsection{\var{\protect\$T} or \var{\protect\$TYPEDADDRESS} : Typed address operator (@)}
 
-In the \var{\{\$T+\}} or \var{\{\$TYPEDADDRESS ON\}} state the @ operator,
+In the \var{\{\$T+\}} or \var{\{\$TYPEDADDRESS ON\}} state, the @ operator,
 when applied to a variable, returns a result of type \var{\^{}T}, if the
 type of the variable is \var{T}. In the \var{\{\$T-\}} state, the result is
 always an untyped pointer, which is assignment compatible with all other
 pointer types.
+
+For example, the following code will not compile:
+\begin{verbatim}
+{$T+}
+
+Var
+  I : Integer;
+  P : PChar;
+
+begin
+  P:=@I;
+end.
+\end{verbatim}
+The compiler will give a type mismatch error:
+\begin{verbatim}
+testt.pp(8,6) Error: Incompatible types: got "^SmallInt" expected "PChar"
+\end{verbatim}
+
+By default however, the address operator returns an untyped pointer.
 
 \subsection{\var{\protect\$UNDEF} or \var{\protect\$UNDEFC} : Undefine a symbol}
 
@@ -1340,12 +1421,41 @@ In Mac Pascal mode, \var{\$UNDEFC} is equivalent to \var{\$UNDEF}, and is
 provided for Mac Pascal compatibility.
 
 
-
 \subsection{\var{\protect\$V} or \var{\protect\$VARSTRINGCHECKS} : Var-string checking}
 
-When in the \var{+} or \var{ON} state, the compiler checks that strings
-passed as parameters are of the same, identical, string type as the declared
+The \var{\{\$VARSTRINGCHECKS \}} determines how strict the compiler is when 
+checking string type compatibility for strings passed by reference. When in the \var{+} or \var{ON} state, 
+the compiler checks that strings passed as parameters are of the string type as the declared
 parameters of the procedure.
+
+By default, the compiler assumes that all short strings are type compatible.
+That is, the following code will compile:
+\begin{verbatim}
+Procedure MyProcedure(var Arg: String[10]);
+
+begin
+  Writeln('Arg ',Arg);
+end;
+
+Var
+  S : String[12];
+
+begin
+  S:='123456789012';
+  Myprocedure(S);
+end.
+\end{verbatim}
+The types of \var{Arg} and \var{S} are strictly speaking not compatible:
+The \var{Arg} parameter is a string of length 10, and the variable \var{S}
+is a string of length 12: The value will be silently truncated to a string
+of length 10.
+
+In the \var{\{\$V+\}} state, this code will trigger a compiler error:
+\begin{verbatim}
+testv.pp(14,16) Error: string types doesn't match, because of $V+ mode
+\end{verbatim}
+Note that this is only for strings passed by reference, not for strings
+passed by value.
 
 \subsection{\var{\protect\$W} or \var{\protect\$STACKFRAMES} : Generate stackframes}
 
@@ -1378,14 +1488,15 @@ will display the following message:
 Press <return> to continue
 \end{verbatim}
 before waiting for a keypress.
-\begin{remark}This may interfere with automatic
-compilation processes. It should be used for debugging purposes only.
+\begin{remark}
+This may interfere with automatic compilation processes. 
+It should be used only for compiler debugging purposes.
 \end{remark}
 
 \subsection{\var{\protect\$WARNING} : Generate warning message}
 
 If the generation of warnings is turned on, through the \var{-vw}
-command-line option or the \var{\{\$WARNINGS ON\}} directive, then
+command line option or the \var{\{\$WARNINGS ON\}} directive, then
 \begin{verbatim}
 {$WARNING This is dubious code}
 \end{verbatim}
@@ -1395,7 +1506,7 @@ will display a warning message when the compiler encounters it.
 
 \var{\{\$WARNINGS ON\}} switches the generation of warnings on.
 \var{\{\$WARNINGS OFF\}} switches the generation of warnings off.
-Contrary to the command-line option \var{-vw} this
+Contrary to the command line option \var{-vw} this
 is a local switch, this is useful for checking parts of your code.
 
 By default, no warnings are emitted.
@@ -1410,7 +1521,7 @@ This switch is an equivalent of the var{\{\$PACKENUM \}} switch
 \section{Global directives}
 \label{se:GlobalSwitch}
 Global directives affect the whole of the compilation process. That is why
-they also have a command-line counterpart. The command-line counterpart is
+they also have a command line counterpart. The command line counterpart is
 given for each of the directives. They must be specified {\em before} the
 \var{unit} or \var{program} clause in a source file, or they will have no
 effect.
@@ -1446,7 +1557,7 @@ standard input, output and standard error file descriptors will be
 initialized. In Windows, a terminal window will be created. This is the
 default. 
 
-Note that on \macos such applications cannot take command-line
+Note that on \macos such applications cannot take command line
 options, nor return a result code. They will run in a special 
 terminal window, implemented as a SIOW application, see the MPW 
 documentation for details.
@@ -1457,23 +1568,23 @@ window.
 \linux applications are always console applications. The application itself
 can decide to close the standard files, though.
 
-\item[FS] specifies a full-screen VIO application on \ostwo. These
+\item[FS] Specifies a full-screen VIO application on \ostwo. These
 applications use a special BIOS-like API to program the screen. \ostwo
 starts these application allways in full screen.
 
 \item[GUI] Specifying the \var{\{\$APPTYPE GUI\}} directive will mark the 
 application as a graphical application; no console window will be opened 
-when the application is run. No stanrdard file descriptors will be
+when the application is run. No standard file descriptors will be
 initialized, using them (with e.g. \var{writeln} statements) will produce  a
-run-time error. If run from the command-line, the command prompt will be
+run-time error. If run from the command line, the command prompt will be
 returned immediatly after the application was started.
 
 On \ostwo and \macos, the GUI application type creates a GUI application, as
 on Windows. On \ostwo, this is a real Presentation Manager application.
 
-\item[TOOL] this is a special directive for the \macos. It tells the compiler
-to create a tool application: It initializes input, output, stderr files,
-it can take parameters and return a result code. It is implemented as an MPW
+\item[TOOL] This is a special directive for the \macos. It tells the compiler
+to create a tool application: It initializes \var{Input}, \var{Output} and
+\var{StdErr} files, it can take parameters and return a result code. It is implemented as an MPW
 tool which can only be run by MPW or ToolServer.
 \end{description} 
 Care should be taken when compiling \var{GUI} applications; the \var{Input}
@@ -1491,26 +1602,26 @@ contains \var{True} if the application is a console application, \var{False}
 if the application is a GUI application.
 
 \subsection{\var{\protect\$CALLING} : Default calling convention}
-This directive allows to specify the default calling convention used by the
+This directive allows specifying the default calling convention used by the
 compiler, when no calling convention is specified for a procedure or
 function declaration. It can be one of the following values:
 \begin{description}
 \item[CDECL] C compiler calling convention.
 \item[CPPDECL] C++ compiler calling convention.
-\item[FAR16] Ignored, but parsed for compatibility reasons.
+\item[FAR16] Ignored, but parsed for \tp compatibility reasons.
 \item[FPCCALL] Older FPC (1.0.X and before) standard calling convention. If
 a lot of direct assembler blocks are used, this mode should be used for
 maximum compatibility.
 \item[INLINE] Use inline code: the code for the function is inserted
 whenever it is called.
 \item[PASCAL] Pascal calling convention.
-\item[REGISTER] Register calling convention.
+\item[REGISTER] Register calling convention (the default).
 \item[SAFECALL] Safecall calling convention (used in COM): The called
 procedure/function saves all registers.
 \item[STDCALL] Windows library calling convention.
 \item[SOFTFLOAT] For ARM processors.
 \end{description}
-It is equivalent to the \var{-Cc} command-line option.
+This directive is equivalent to the \var{-Cc} command line option.
 
 \subsection{\var{\protect\$CODEPAGE} : Set the source codepage}
 This switch sets the codepage of the rest of the source file. 
@@ -1537,7 +1648,7 @@ For example:
 
 When this switch is on,
 the compiler inserts GNU debugging information in
-the executable. The effect of this switch is the same as the command-line
+the executable. The effect of this switch is the same as the command line
 switch \var{-g}.
 
 By default, insertion of debugging information is off.
@@ -1547,14 +1658,10 @@ By default, insertion of debugging information is off.
 This switch is recognised for compatibility only, but is ignored completely
 by the compiler. At a later stage, this switch may be activated.
 
-\subsection{\var{\protect\$D} \var{\protect\$DEBUGINFO} : Include debug info}
-Setting this boolean switch to ON will include debug information in the unit 
-or program. It has the same effect as the \var{-g} command-line option.
-
 \subsection{\var{\protect\$E} : Emulation of coprocessor}
 
 This directive controls the emulation of the coprocessor. There is no
-command-line counterpart for this directive.
+command line counterpart for this directive.
 
 \subsubsection{Intel 80x86 version}
 
@@ -1564,12 +1671,12 @@ a warning.
 
 The compiler itself doesn't do the emulation of the coprocessor.
 
-To use coprocessor emulation under \dos go32v2 you must use the
+To use coprocessor emulation under \dos (go32v2) you must use the
 emu387 unit, which contains correct initialization code for the
 emulator.
 
 Under \linux and most \unix'es, the kernel takes care of the
-coprocessor support.
+coprocessor support, so this switch is not necessary on those platforms.
 
 \subsubsection{Motorola 680x0 version}
 
@@ -1591,9 +1698,12 @@ since the compiler works only on 32-bit and 64-bit processors.
 \subsection{\var{\protect\$INCLUDEPATH} : Specify include path.}
 
 This option serves to specify the include path, where the compiler looks for
-include files. \var{\{\$INCLUDEPATH XXX\}} will add \var{XXX} to the include
-path. \var{XXX} can contain one or more paths, separated by semi-colons or
-colons.
+include files. Used as
+\begin{verbatim}
+\var{\{\$INCLUDEPATH XXX\}}
+\end{verbatim}
+it will add \var{XXX} to the include path. The value \var{XXX} can contain one or more paths, 
+separated by semi-colons or colons.
 
 For example:
 \begin{verbatim}
@@ -1605,34 +1715,32 @@ For example:
 will add the directories \file{../inc} and \file{../i386} to the include
 path of the compiler. The compiler will look for the file \file{strings.inc}
 in both these directories, and will include the first found file. This directive is
-equivalent to the \var{-Fi} command-line switch.
+equivalent to the \var{-Fi} command line switch.
 
 Caution is in order when using this directive: If you distribute files, the
 places of the files may not be the same as on your machine; moreover, the
 directory structure may be different. In general it would be fair to say
-that you should avoid using {\em absolute} paths, instead use {\em relative}
-paths, as in the example above. Only
-
- use this directive if you are certain
-of the places where the files reside. If you are not sure, it is better
-practice to use makefiles and makefile variables.
+that you should avoid using {\em absolute} paths. Instead, one should use 
+{\em relative} paths only, as in the example above. 
 
 \subsection{\var{\protect\$INTERFACES} : Default interface type}
 This interface selects the style of interface that the compiler will use:
 \begin{verbatim}
 {$INTERFACES COM}
 \end{verbatim}
-selects COM compatible interfaces, while
+selects COM compatible interfaces (descendent from \var{IUnknown} and
+reference counted), while
 \begin{verbatim}
 {$INTERFACES CORBA}
 \end{verbatim}
-selects CORBA compatible interfaces. 
+selects CORBA compatible interfaces (no parent interface, and not reference
+counted).
 
-This switch is equivalent to the \var{-SI} command-line option.
+This switch is equivalent to the \var{-SI} command line option.
 
 \subsection{\var{\protect\$L} or \var{\protect\$LOCALSYMBOLS} : Local symbol information}
 
-This switch (not to be confused with the \var{\{\$L file\}} file linking
+This switch (not to be confused with the local \var{\{\$L file\}} file linking
 directive) is recognised for Turbo Pascal compatibility, but is ignored.
 Generation of symbol information is controlled by the \var{\$D} switch.
 
@@ -1653,7 +1761,7 @@ For example:
 will add the directories \file{/usr/X11/lib} and \file{/usr/local/lib} to
 the linker library path. The linker will look for the library \file{libX11.so}
 in both these directories, and use the first found file. This directive is
-equivalent to the \var{-Fl} command-line switch.
+equivalent to the \var{-Fl} command line switch.
 
 Caution is in order when using this directive: If you distribute files, the
 places of the libraries may not be the same as on your machine; moreover, the
@@ -1663,7 +1771,7 @@ practice to use makefiles and makefile variables.
 
 \subsection{\var{\protect\$M} or \var{\protect\$MEMORY} : Memory sizes}
 
-This switch can be used to set the heap and stacksize. It's format is as
+This switch can be used to set the heap and stacksize. Its format is as
 follows:
 \begin{verbatim}
 {$M StackSize,HeapSize}
@@ -1677,23 +1785,23 @@ and \var{-Cs} switches.
 \subsection{\var{\protect\$MODE} : Set compiler compatibility mode}
 
 The \var{\{\$MODE\}} sets the compatibility mode of the compiler. This
-is equivalent to setting one of the command-line options \var{-So},
+is equivalent to setting one of the command line options \var{-So},
 \var{-Sd}, \var{-Sp} or \var{-S2}. it has the following arguments:
 \begin{description}
 \item[Default] Default mode. This reverts back to the mode that was set on
-the command-line.
+the command line.
 \item[Delphi] Delphi compatibility mode. All object-pascal extensions are
-enabled. This is the same as the command-line option \var{-Sd}. Note that
+enabled. This is the same as the command line option \var{-Sd}. Note that
 this also implies \var{\{\$H ON\}} (i.e., in Delphi mode, ansistrings are
 the default).
 \item[TP] Turbo pascal compatibility mode. Object pascal extensions are
 disabled, except ansistrings, which remain valid.
-This is the same as the command-line option \var{-So}.
-\item[FPC] FPC mode. This is the default, if no command-line switch is
+This is the same as the command line option \var{-So}.
+\item[FPC] FPC mode. This is the default, if no command line switch is
 supplied.
 \item[OBJFPC] Object pascal mode. This is the same as the \var{-S2}
-command-line option.
-\item[GPC] GNU pascal mode. This is the same as the \var{-Sp} command-line
+command line option.
+\item[GPC] GNU pascal mode. This is the same as the \var{-Sp} command line
 option.
 \item[MACPAS] MACPAS mode. In this mode, the compiler tries to be more compatible
 to commonly used pascal dialects on the \macos, such as Think Pascal, Metrowerks 
@@ -1712,7 +1820,10 @@ mathematics.
 \subsection{\var{\protect\$O} : Overlay code generation }
 
 This switch is recognised for Turbo Pascal compatibility, but is otherwise
-ignored.
+ignored: The concept of overlay code is not needed in 32-bit or 64-bit
+programs.
+
+The compiler will write a warning when it is encountered.
 
 \subsection{\var{\protect\$OBJECTPATH} : Specify object path.}
 
@@ -1731,7 +1842,7 @@ For example:
 will add the directories \file{../inc} and \file{../i386} to the
 object path of the compiler. The compiler will look for the file \file{strings.o}
 in both these directories, and will link the first found file in the
-program. This directive is equivalent to the \var{-Fo} command-line switch.
+program. This directive is equivalent to the \var{-Fo} command line switch.
 
 Caution is in order when using this directive: If you distribute files, the
 places of the files may not be the same as on your machine; moreover, the
@@ -1752,7 +1863,7 @@ from the type of string that is actually passed, even for strings that are
 passed by reference. The declared size of the string passed can be examined
 with the \var{High(P)} call.
 
-Default the use of openstrings is off.
+By default, the use of openstrings is off.
 
 \subsection{\var{\protect\$PASCALMAINNAME} : Set entry point name}
 \label{se:Pascalmainname}
@@ -1785,7 +1896,7 @@ tells the compiler to compile \file{myunit} using PIC code.
 \subsection{\var{\protect\$PROFILE} : Profiling}
 
 This directive turns the generation of profiling code on (or off). It is
-equivalent to the \var{-gp} command-line option. Default is \var{OFF}. This
+equivalent to the \var{-gp} command line option. Default is \var{OFF}. This
 directive only makes sense in a program source file, not in a unit.
 
 
@@ -1799,7 +1910,7 @@ program will exit with exit code 202.
 
 Specifying \var{\{\$S-\}} will turn generation of stack-checking code off.
 
-The command-line compiler switch \var{-Ct} has the same effect as the
+The command line compiler switch \var{-Ct} has the same effect as the
 \var{\{\$S+\}} directive.
 
 By default, no stack checking is performed.
@@ -1816,9 +1927,9 @@ Will set the screenname of the current application to 'My Nice Screen'.
 
 A unit that is compiled in the \var{\{\$SMARTLINK ON\}} state will be
 compiled in such a way that it can be used for smartlinking. This means that
-the unit is chopped in logical pieces: each procedure is put in it's own
+the unit is chopped in logical pieces: each procedure is put in its own
 object file, and all object files are put together in a big archive. When
-using such a unit, only the pieces of code that you really need or call,
+using such a unit, only the pieces of code that you really need or call
 will be linked in your program, thus reducing the size of your executable
 substantially.
 
@@ -1839,7 +1950,7 @@ Interface
  ...
 \end{verbatim}
 
-This directive is equivalent to the \var{-Cx} command-line switch.
+This directive is equivalent to the \var{-Cx} command line switch.
 
 \subsection{\var{\protect\$THREADNAME} : Set thread name in Netware}
 This directive can be set to specify the thread name when compiling for
@@ -1849,6 +1960,7 @@ Netware.
 
 This directive is obsolete. It is no longer used, and is recognized for
 backwards compatibility only.
+The compiler will write a warning when it is encountered.
 
 \subsection{\var{\protect\$UNITPATH} : Specify unit path.}
 
@@ -1867,7 +1979,7 @@ Uses strings;
 will add the directories \file{../units} and \file{../i386/units} to the unit
 path of the compiler. The compiler will look for the file \file{strings.ppu}
 in both these directories, and will link the first found file in the
-program. This directive is equivalent to the \var{-Fu} command-line switch.
+program. This directive is equivalent to the \var{-Fu} command line switch.
 
 Caution is in order when using this directive: If you distribute files, the
 places of the files may not be the same as on your machine; moreover, the
@@ -1898,12 +2010,13 @@ This can not yet be used for executables on Windows, but may be activated in
 the future.
 
 \subsection{\var{\protect\$WEAKPACKAGEUNIT} : ignored}
-This switch is parsed for Delphi compatibility but is otherwise ignored.
+This switch is parsed for Delphi compatibility but is otherwise ignored. 
+The compiler will write a warning when it is encountered.
 
 \subsection{\var{\protect\$X} or \var{\protect\$EXTENDEDSYNTAX} : Extended syntax}
 
 Extended syntax allows you to drop the result of a function. This means that
-you can use a function call as if it were a procedure. Standard this feature
+you can use a function call as if it were a procedure. By default this feature
 is on. You can switch it off using the \var{\{\$X-\}} or
 \var{\{\$EXTENDEDSYNTAX OFF\}}directive.
 
@@ -1924,7 +2037,7 @@ function for certain side-effects it has, but you don't need the function
 result. In this case you don't need to assign the function result, saving
 you an extra variable.
 
-The command-line compiler switch \var{-Sa1} has the same effect as the
+The command line compiler switch \var{-Sa1} has the same effect as the
 \var{\{\$X+\}} directive.
 
 By default, extended syntax is assumed.
@@ -1932,7 +2045,7 @@ By default, extended syntax is assumed.
 
 \subsection{\var{\protect\$Y} or \var{\protect\$REFERENCEINFO} : Insert Browser information}
 
-This switch controls the generation of browser inforation. It is recognized
+This switch controls the generation of browser information. It is recognized
 for compatibility with Turbo Pascal and Delphi only, as Browser information
 generation is not yet fully supported.
 
@@ -1942,16 +2055,16 @@ generation is not yet fully supported.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Using conditionals, messages and macros}
 \label{ch:CondMessageMacro}
-The \fpc compiler supports conditionals as in normal Turbo Pascal. It does,
-however, more than that. It allows you to make macros which can be used in
+The \fpc compiler supports conditionals as in normal \tp, \delphi or Mac OS
+Pascal. It does, however, more than that. It allows you to make macros which can be used in
 your code, and it allows you to define messages or errors which will be
 displayed when compiling. It also has support for compile-time variables and
 compile-time expressions, as commonly found in \macos compilers.
 
 The various conditional compilation directives (\var{\$IF},  \var{\$IFDEF},
 \var{\$IFOPT} are used in combination with \var{\$DEFINE}
-to allow the programmer to choose at compile time, which portions 
-of the code should be compiled.  This can be used for instance for
+to allow the programmer to choose at compile time which portions 
+of the code should be compiled.  This can be used for instance
 \begin{itemize}
 \item To choose an implementation for one operating system over another.
 \item To choose a demonstration version or a full version.
@@ -1987,7 +2100,7 @@ existed previously, the symbol will be erased, and will not be recognized
 any more in the code following the \verb|{$undef ...}| statement.
 
 You can also undefine symbols from the command line with the \var{-u}
-command-line switch.
+command line switch.
 
 To compile code conditionally, depending on whether a symbol is defined or
 not, you can enclose the code in a \verb|{$ifdef Symbol}| \dots \verb|{$endif}|
@@ -2002,7 +2115,7 @@ pair. For instance the following code will never be compiled:
 
 Similarly, you can enclose your code in a \verb|{$ifndef Symbol}| \dots \verb|{$endif}|
 pair. Then the code between the pair will only be compiled when the used
-symbol doesn't exist. For example, in the following example, the call to the
+symbol doesn't exist. For example, in the following code, the call to the
 \var{DoSomething} will always be compiled:
 \begin{verbatim}
 {$undef MySymbol}
@@ -2045,7 +2158,7 @@ the difference is that macros have a value whereas a symbol simply is defined
 or is not defined. Furthermore, following the definition of a macro, any
 occurrence of the macro in the pascal source will be replaced with the value
 of the macro (much like the macro support in the C preprocessor). If macro 
-support is required, the \var{-Sm} command-line switch must be used to
+support is required, the \var{-Sm} command line switch must be used to
 switch it on, or the directive must be inserted:
 \begin{verbatim}
 {$MACRO ON}
@@ -2085,7 +2198,7 @@ sum          { will be expanded to 'a:=a+b;'
                remark the absence of the semicolon}
 ...
 {$define b=sum} { DON'T do this !!!}
-sum          { Will be infinitely recursively expanded \dots }
+sum          { Will be infinitely recursively expanded... }
 ...
 \end{verbatim}
 On my system, the last example results in a heap error, causing the compiler
@@ -2107,7 +2220,7 @@ Symbol & Contains \\ \hline
 \end{FPCltable}
 
 \begin{remark}Don't forget that macro support isn't on by default. It must
-be turned on  with the \var{-Sm} command-line switch or using the
+be turned on  with the \var{-Sm} command line switch or using the
 \var{\{\$MACRO ON\}} directive.
 \end{remark}
 
@@ -2204,15 +2317,15 @@ defined.
 In expressions, the following rules are used for evaluation:
 \begin{itemize}
 \item If all parts of the expression can be evaluated as booleans (with 1
-and 0 representing \var{TRUE} and \var{FALSE}, the expression is evaluated
+and 0 representing \var{TRUE} and \var{FALSE}), the expression is evaluated
 using booleans. 
 \item If all parts of the expression can be evaluated as nuumbers, then the
 expression is evaluated using numbers.
 \item In all other cases, the expression is evaluated using strings.
 \end{itemize}
 If the complete expression evaluates to \var{'0'}, then it is considered
-false and rejected. Otherwise it is considered true and accepted. This may
-have unexpected consequences:
+\var{False} and rejected. Otherwise it is considered \var{True} and accepted. 
+This may have unexpected consequences:
 \begin{verbatim}
 {$if 0}
 \end{verbatim}
@@ -2270,8 +2383,8 @@ the above is completely equivalent to the following construct in MacPas mode:
 {$ENDC}
 \end{verbatim}
 that is, \var{IFC} corresponds to \var{IF}, \var{ELIFC} corresponds to
-\var{ELSEIF}, \var{ELSEC} is equivalent with \var{ELSEC} and \var{ENDC} is
-the equivalent of \var{ENDIF}. Additionally, \var{IFEND} is an equivalent to
+\var{ELSEIF}, \var{ELSEC} is equivalent with \var{ELSE} and \var{ENDC} is
+the equivalent of \var{ENDIF}. Additionally, \var{IFEND} is equivalent to
 \var{ENDIF}:
 \begin{verbatim}
 {$IF EXPR}
@@ -2407,7 +2520,7 @@ end.
 As you can see from the example, this construct isn't useful when used
 with normal symbols, only if you use macros, which are explained in
 \sees{Macros}. They can be very useful. When trying this example, you must
-switch on macro support, with the \var{-Sm} command-line switch.
+switch on macro support, with the \var{-Sm} command line switch.
 
 The following example works only in MacPas mode:
 \begin{verbatim}
@@ -2489,11 +2602,13 @@ to compile. With a fatal error, the compiler stops.
 this will be treated as the closing brace of the message.
 \end{remark}
 As an example, the following piece of code will generate an error when
-the symbol \var{RequiredVar} isn't defined:
+neither of the symbols \var{RequiredVar1} or \var{RequiredVar2} are defined:
 \begin{verbatim}
-{$ifndef RequiredVar}
-{$Error Requiredvar isn't defined !}
-{$endif}
+{$IFNDEF RequiredVar1}
+{$IFNDEF RequiredVar2}
+{$Error One of Requiredvar1 or Requiredvar2 must be defined}
+{$ENDIF}
+{$ENDIF}
 \end{verbatim}
 But the compiler will continue to compile. It will not, however, generate a
 unit file or a program (since an error occurred).
@@ -2909,7 +3024,7 @@ an object file (with extension \file{.o}) which can then be linked to other
 units and your program, to form an executable.
 
 By default, the assembly file is removed after it has been compiled.
-Only in the case of the \var{-s} command-line option, the assembly file
+Only in the case of the \var{-s} command line option, the assembly file
 will be left on disk, so the assembler can be called later. You can
 disable the erasing of the assembler file with the \var{-a} switch.
 
@@ -2947,7 +3062,7 @@ and memory allocations for all used variables.
 linker must link together.
 \end{enumerate}
 The link response file is, by default, removed from the disk. Only when you
-specify the \var{-s} command-line option or when linking fails, then the file
+specify the \var{-s} command line option or when linking fails, then the file
 is left on the disk. It is named \file{link.res}.
 
 The assembly language file is converted to an object file by the assembler,
@@ -2959,10 +3074,10 @@ point for the program. This is where the execution of your program starts,
 so it depends on the operating system, because operating systems pass
 parameters to executables in wildly different ways.
 
-It's name is \file{prt0.o}, and the
+Its name is \file{prt0.o}, and the
 source file resides in \file{prt0.as} or some variant of this name. It
 usually resided where the system unit source for your system resides.
-It's main function is to save the environment and command-line arguments and
+Its main function is to save the environment and command line arguments and
 set up the stack. Then it calls the main program.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3857,7 +3972,7 @@ The effect of this declaration is twofold:
 This is a case sensitive name, so you must be careful.
 \end{enumerate}
 The variable will be
-accessible with it's declared name, i.e. \var{MyVar} in this case.
+accessible with its declared name, i.e. \var{MyVar} in this case.
 
 A second possibility is the declaration:
 \begin{verbatim}
@@ -4026,7 +4141,7 @@ This will link to the \file{gpm} library. On \unix systems (such as \linux),
 you must not specify the extension or 'lib' prefix of the library. The compiler takes
 care of that. On other systems (such as \windows ), you need to specify the full
 name.
-\item You can also tell the compiler on the command-line to link in a
+\item You can also tell the compiler on the command line to link in a
 library: The \var{-k} option can be used for that. For example
 \begin{verbatim}
 ppc386 -k'-lgpm' myprog.pp
@@ -4208,7 +4323,7 @@ decide which unit search path to set. For example, on \linux:
 -Up/usr/lib/fpc/linuxunits/sharedunits
 #ENDIF
 \end{verbatim}
-With such a configuration file, the compiler will look for it's units in
+With such a configuration file, the compiler will look for its units in
 different directories, depending on whether \var{-XD} or \var{-XS} is used.
 
 \section{Using smart linking}
@@ -4826,7 +4941,7 @@ the default memory manager error handler.
 \fpc provides a unit that allows you to trace allocation and deallocation
 of heap memory: \file{heaptrc}.
 
-If you specify the \var{-gh} switch on the command-line, or if you include
+If you specify the \var{-gh} switch on the command line, or if you include
 \var{heaptrc} as the first unit in your uses clause, the memory manager
 will trace what is allocated and deallocated, and on exit of your program,
 a summary will be sent to standard output.
@@ -4918,7 +5033,7 @@ will then be initialized before all other units (except of the \file{system} uni
 
 This also means that it is not possible to use the \file{heaptrc} unit in
 combination with a custom memory manager, since the \file{heaptrc} unit uses
-the system memory manager to do all it's allocation. Putting the
+the system memory manager to do all its allocation. Putting the
 \file{heaptrc} unit after the unit implementing the memory manager would
 overwrite the memory manager record installed by the custom memory manager,
 and vice versa.
@@ -5207,7 +5322,7 @@ a uniform way of handling constant strings.
 
 Most applications communicate with the user through some messages on the
 graphical screen or console. Storing these messages in special constants
-allows to store them in a uniform way in separate files, which can be used
+allows storing them in a uniform way in separate files, which can be used
 for translation. A programmers interface exists to manipulate the actual
 values of the constant strings at runtime, and a utility tool comes with the
 Free Pascal compiler to convert the resource string files to whatever format
@@ -5284,8 +5399,8 @@ the \file{objpas} unit. The value is the same value that the GNU gettext
 mechanism uses. It is in no way unique, and can only be used to speed up
 searches.
 
-The \file{rstconv} utility that comes with the \fpc compiler allows to
-manipulate these resource string files. At the moment, it can only be used
+The \file{rstconv} utility that comes with the \fpc compiler allows 
+manipulation of these resource string files. At the moment, it can only be used
 to make a \file{.po} file that can be fed to the GNU \file{msgfmt} program.
 If someone wishes to have another format (Win32 resource files spring to
 mind), one can enhance the \file{rstconv} program so it can generate
@@ -5316,7 +5431,7 @@ to use resource strings, the unit is always loaded when needed.
 
 The resource strings are stored in tables, one per unit, and one for the
 program, if it contains a \var{resourcestring} section as well. Each
-resourcestring is stored with it's name, hash value, default value, and
+resourcestring is stored with its name, hash value, default value, and
 the current value, all as \var{AnsiStrings}.
 
 The objpas unit offers methods to retrieve the number of resourcestring
@@ -5788,8 +5903,8 @@ TRelocateThreadVarHandler = Function(offset : dword) : pointer;
 \end{verbatim}
 It should return the new location for the thread-local variable.
 \item[AllocateThreadVars] is called when room must be allocated for all
-threadvars for a new thread. It's a simple procedure, without parameters. The total size of the threadvars is
-stored by the compiler in the \var{threadvarblocksize} global variable.
+threadvars for a new thread. It's a simple procedure, without parameters. 
+The total size of the threadvars is stored by the compiler in the \var{threadvarblocksize} global variable.
 The heap manager may {\em not} be used in this procedure: the heap manager
 itself uses threadvars, which have not yet been allocated.
 \item[ReleaseThreadVars] This procedure (without parameters) is called when
@@ -5894,7 +6009,7 @@ Alignment on the stack and in the data section is processor dependant.
 This feature removes all unreferenced code in the final executable
 file, making the executable file much smaller.
 
-Smart linking is switched on with the \var{-Cx} command-line switch, or
+Smart linking is switched on with the \var{-Cx} command line switch, or
 using the \var{\{\$SMARTLINK ON\}} global directive.
 
 \subsection{Inline routines}
@@ -6131,7 +6246,7 @@ require a lot of code overhead.
 \item Profile your code (see the -pg switch) to find out where the
 bottlenecks are. If you want, you can rewrite those parts in assembler.
 You can take the code generated by the compiler as a starting point. When
-given the \var{-a} command-line switch, the compiler will not erase the
+given the \var{-a} command line switch, the compiler will not erase the
 assembler file at the end of the assembly process, so you can study the
 assembler file.
 
@@ -6337,7 +6452,7 @@ another location in memory if the ImageBase address it wants is already
 in use.
 \item[-WB] Specify the ImageBase address for the generated library.
 The standard ImageBase used by \fpc is \var{0x10000000}. This switch
-allows to change that by specifying another address, for instance
+allows changing that by specifying another address, for instance
 \var{-WB11000000}.
 \end{description}
 The first option is preferred, as a program may load many libraries
@@ -6452,7 +6567,7 @@ which can then be used. Both calls are in the \file{windows} unit.
 
 \section{Inserting version information}
 
-The win32 API allows to store version information in your binaries.
+The win32 API allows the storing of version information in your binaries.
 This information can be made visible with the \windows Explorer, by
 right-clicking on the executable or library, and selecting the
 'Properties' menu. In the tab 'Version' the version information will
@@ -6959,7 +7074,7 @@ set with the \var{\$Mode} switch, or by command line switches.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FPC mode
 \section{FPC mode}
-This mode is selected by the \var{{\$MODE FPC}} switch. On the command-line,
+This mode is selected by the \var{{\$MODE FPC}} switch. On the command line,
 this means that you use none of the other compatibility mode switches.
 It is the default mode of the compiler (\var{-Mfpc}). This means essentially:
 \begin{enumerate}
@@ -6978,7 +7093,7 @@ parameters when implementing the function or procedure.
 % TP mode
 \section{TP mode}
 This mode is selected by the \var{{\$MODE TP}} switch. It tries to emulate, 
-as closely as possible, the behavior of Turbo Pascal 7. On the command-line,
+as closely as possible, the behavior of Turbo Pascal 7. On the command line,
 this mode is selected by the \var{-Mtp} switch.
 
 \begin{enumerate}
@@ -6998,7 +7113,7 @@ parameters when implementing the function or procedure.
 % Delphi mode.
 \section{Delphi mode}
 This mode is selected by the \var{{\$MODE DELPHI}} switch. It tries to emulate,
-as closely as possible, the behavior of Delphi 4 or higher. On the command-line,
+as closely as possible, the behavior of Delphi 4 or higher. On the command line,
 this mode is selected by the \var{-Mdelpih} switch.
 \begin{enumerate}
 \item You can not use the address operator to assign procedural variables.
@@ -7019,7 +7134,7 @@ properties (although it is bad programming practice).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % GPC Mode
 \section{GPC mode}
-This mode is selected by the \var{{\$MODE GPC}} switch. On the command-line,
+This mode is selected by the \var{{\$MODE GPC}} switch. On the command line,
 this mode is selected by the \var{-Mgpc} switch.
 \begin{enumerate}
 \item You must use the address operator to assign procedural variables.
@@ -7035,7 +7150,7 @@ parameters when implementing the function or procedure.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Objfpc mode
 \section{OBJFPC mode}
-This mode is selected by the \var{{\$MODE OBJFPC}} switch. On the command-line,
+This mode is selected by the \var{{\$MODE OBJFPC}} switch. On the command line,
 this mode is selected by the \var{-Mobjfpc} switch.
 \begin{enumerate}
 \item You must use the address operator to assign procedural variables.
@@ -7055,7 +7170,7 @@ properties.
 
 \section{MAC mode}
 This mode is selected by the \var{{\$MODE MAC}} switch. On the
-command-line, this mode is selected by the \var{-MMAC} switch. It mainly
+command line, this mode is selected by the \var{-MMAC} switch. It mainly
 switches on some extra features:
 \begin{enumerate}
 \item Support for the \var{\$SETC} directive.
@@ -7126,7 +7241,7 @@ which can be used to
 \end{enumerate}
 \file{fpcmake} knows how the \fpc compiler operates, which command line
 options it uses, how it searches for files and so on; It uses this knowledge
-to construct sensible command-lines. 
+to construct sensible command lines. 
 
 Specifically, it constructs the following targets in the final makefile:
 \begin{description}
@@ -7171,7 +7286,7 @@ to compile your projects. It is similar in functionality to GNU
 \file{configure} or \file{Imake} for making X projects.
 
 \fpcmake{} accepts filenames of makefile description files
-as its command-line arguments. For each of these files it will
+as its command line arguments. For each of these files it will
 create a \file{Makefile} in the same directory where the file is
 located, overwriting any existing file with that name.
 
@@ -7182,9 +7297,9 @@ given. Any previously existing \file{Makefile} will be erased.
 
 if the \var{-p} option is given, instead of a \file{Makefile}, a
 \var{Package.fpc} is generated. A \file{Package.fpc} file describes the
-package and it's dependencies on other packages.
+package and its dependencies on other packages.
 
-Additionally, the following command-line options are recognized:
+Additionally, the following command line options are recognized:
 \begin{description}
 \item[-p] A \file{Package.fpc} file is generated.
 \item[-w] A \file{Makefile} is generated.
@@ -7475,7 +7590,7 @@ into account when set.
 These variables can be split in two groups:
 \begin{itemize}
 \item Directory variables.
-\item Compiler command-line variables.
+\item Compiler command line variables.
 \end{itemize}
 Each group will be discussed separately.
 
@@ -7483,14 +7598,14 @@ Each group will be discussed separately.
 
 The first set of variables controls the directories that are
 recognised in the makefile. They should not be set in the
-\file{Makefile.fpc} file, but can be specified on the commandline.
+\file{Makefile.fpc} file, but can be specified on the command line.
 \begin{description}
 \item[INCDIR] this is a list of directories, separated by spaces, that will
-be added as include directories to the compiler command-line.  Each
+be added as include directories to the compiler command line.  Each
 directory in the list is prepended with \var{-I} and added to the
 compiler options.
 \item[UNITDIR] this is a list of directories, separated by spaces, that will
-be added as unit search directories to the compiler command-line.  Each
+be added as unit search directories to the compiler command line.  Each
 directory in the list is prepended with \var{-Fu} and added to the
 compiler options.
 \item[LIBDIR] is a list of library paths, separated by spaces. Each
@@ -7501,30 +7616,30 @@ added to the object files path, i.e. Each directory in the list is prepended wit
 \var{-Fo}.
 \end{description}
 
-\subsection{Compiler command-line variables }
-The following variable can be set on the \file{make} command-line,
-they will be recognised and integrated in the compiler command-line options.:
+\subsection{Compiler command line variables }
+The following variable can be set on the \file{make} command line,
+they will be recognised and integrated in the compiler command line options.:
 
 \begin{description}
 \item[CREATESMART] If this variable is defined, it tells the compiler to 
-create smartlinked units. Adds \var{-CX} to the command-line options.
+create smartlinked units. Adds \var{-CX} to the command line options.
 \item[DEBUG] If defined, this will cause the compiler to include debug information in
 the generated units and programs. It adds \var{-gl} to the compiler
-command-line, and will define the \var{DEBUG} define.
+command line, and will define the \var{DEBUG} define.
 \item[LINKSMART] Defining this variable tells the compiler to use smartlinking. 
-It adds \var{-XX} to the compiler command-line options.
+It adds \var{-XX} to the compiler command line options.
 \item[OPT] Any options that you want to pass to the compiler. The contents
-of \var{OPT} is simply added to the compiler command-line.
-\item[OPTDEF] Are optional defines, added to the command-line of the
+of \var{OPT} is simply added to the compiler command line.
+\item[OPTDEF] Are optional defines, added to the command line of the
 compiler. They get \var{-d} prepended to them.
 \item[OPTIMIZE] if this variable is defined, this will add \var{-OG2p3} to
-the command-line options.
+the command line options.
 \item[RELEASE] if this variable is defined, this will add the \var{-Xs -OG2p3 -n} 
-options to the command-line options, and will define the \var{RELEASE} define.
+options to the command line options, and will define the \var{RELEASE} define.
 \item[STRIP] if this variable is defined, this will add the \var{-Xs} option 
-to the command-line options.
+to the command line options.
 \item[VERBOSE] if this variable is defined, then \var{-vnwi} will be added
-to the command-line options.
+to the command line options.
 \end{description}
 
 \section{Variables set by \fpcmake{}}
@@ -7594,7 +7709,7 @@ Set by the \var{unitdir} keyword in the \var{Compiler} section.
 
 \item[GCCLIBDIR] (\linux only) is set to the directory where \file{libgcc.a}
 is. If \var{needgcclib} is set to \var{True} in the \var{Libs} section, then
-this directory is added to the compiler commandline with \var{-Fl}.
+this directory is added to the compiler command line with \var{-Fl}.
 
 \item[OTHERLIBDIR] is a space-separated list of library paths. Each
 directory in the list is prepended with \var{-Fl} and added to the 
@@ -7669,9 +7784,9 @@ It is set by the \var{ziptarget} keyword in the \var{Zip} section.
 
 \end{description}
 
-\subsection{Compiler command-line variables}
+\subsection{Compiler command line variables}
 
-The following variables control the compiler command-line:
+The following variables control the compiler command line:
 \begin{description}
 
 \item[CPU\_SOURCE] the target CPU type is added as a define to the compiler
@@ -7684,7 +7799,7 @@ command line. This is determined by the Makefile itself.
 automatically.
 
 \item[OS\_TARGET] What platform will be compiled for. Added to the
-compiler command-line with a \var{-T} prepended.
+compiler command line with a \var{-T} prepended.
 \end{description}
 
 
@@ -7750,7 +7865,7 @@ targets. This serves so packages can be made for different OSes.
 
 The following variables are defined to make targets and rules easier:
 \begin{description}
-\item[COMPILER] is the complete compiler commandline, with all options
+\item[COMPILER] is the complete compiler command line, with all options
 added, after all \file{Makefile} variables have been examined.
 \item[DATESTR] contains the date.
 \item[UNITPPUFILES] a list of unit files that will be made. This is just
@@ -7970,7 +8085,7 @@ that was generated by the \var{make all} instruction.
 
 In all cases, many options can be passed to \var{make} to influence the
 compile process. In general, the makefiles add any needed compiler options
-to the command-line, so that the RTL and compiler can be compiled. 
+to the command line, so that the RTL and compiler can be compiled. 
 Additional options (e.g. optimization options) can be specified by passing them in
 \var{OPT}.
 
@@ -8007,7 +8122,7 @@ ppc386 -Tlinux -b- -Fi../inc -Fi../i386 -FE. -di386 ../inc/strings.pp
 ppc386 -Tlinux -b- -Fi../inc -Fi../i386 -FE. -di386 dos.pp
 ppc386 -Tlinux -b- -Fi../inc -Fi../i386 -FE. -di386 ../inc/objects.pp
 \end{verbatim}
-These are the minimum command-line options, needed to compile the RTL.
+These are the minimum command line options, needed to compile the RTL.
 
 For another processor, the \var{i386} should be changed into the appropriate
 processor. For another operating system (target) the
@@ -8045,7 +8160,7 @@ on \linux, and on \dos
 del *.ppu
 del *.o
 \end{verbatim}
-After this, the compiler can be compiled with the following command-line:
+After this, the compiler can be compiled with the following command line:
 \begin{verbatim}
 ppc386 -Tlinux  -Fu../rtl/linux -di386 -dGDB pp.pas
 \end{verbatim}
@@ -8067,7 +8182,7 @@ So the absolute minimal command line is
 ppc386 -di386 -dGDB -Sg pp.pas
 \end{verbatim}
 
-Some other command-line options can be used, but the above are the
+Some other command line options can be used, but the above are the
 minimum. A list of recognised options can be found in \seet{FPCdefines}.
 
 \begin{FPCltable}{ll}{Possible defines when compiling FPC}{FPCdefines}
