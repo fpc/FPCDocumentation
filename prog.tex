@@ -2619,7 +2619,7 @@ unit file or a program (since an error occurred).
 \chapter{Using Assembly language}
 \label{ch:AsmLang}
 \fpc supports inserting assembler statements in between Pascal code. The
-mechanism for this is the same as under Turbo Pascal. There are, however
+mechanism for this is the same as under \tp and \delphi. There are, however
 some substantial differences, as will be explained in the following
 sections.
 
@@ -2660,12 +2660,12 @@ asm
   movl %edi,saveedi
 end;
 \end{verbatim}
-The compiler will reserve space on the stack for these variables.
-(it inserts some commands for this).
+The compiler will reserve space on the stack for these variables,
+it inserts some commands for this.
 
 Note that the assembler name of an assembler function will still be 'mangled' 
 by the compiler, i.e. the label for this function will not be the name of
-the function as declared. To change this, a \var{Alias} modifier can be
+the function as declared. To change this, an \var{Alias} modifier can be
 used:
 \begin{verbatim}
 function geteipasebx : pointer;assembler;[alias:'FPC_GETEIPINEBX'];
@@ -2700,7 +2700,7 @@ The Intel syntax in your \var{asm} block is converted to AT\&T syntax by the
 compiler, after which it is inserted in the compiled source.
 The supported assembler constructs are a subset of the normal assembly
 syntax. In what follows we specify what constructs are not supported in
-\fpc, but which exist in Turbo Pascal:
+\fpc, but which exist in \tp:
 
 \begin{itemize}
 \item  The \var{TBYTE} qualifier is not supported.
@@ -2731,15 +2731,15 @@ mov al, byte(t)            -- syntax error!
 In this parser, either of those  cases will give out a syntax error.
 \item  Constant references expressions with constants only are not
    allowed (in all cases they do not work in protected mode,
-    under \linux i386). Examples:
+   e.g. under \linux i386). Examples:
 \begin{verbatim}
 mov al,byte ptr ['c']      -- not allowed.
 mov  al,byte ptr [100h]    -- not allowed.
 \end{verbatim}
- (This is due to the limitation of Turbo Assembler).
+ (This is due to the limitation of the GNU Assembler).
 \item  Brackets within brackets are not allowed
 \item  Expressions with segment overrides fully in brackets are
-presently not supported, but they can easily be implemented
+currently not supported, but they can easily be implemented
 in BuildReference if requested. Example:
 \begin{verbatim}
 mov al,[ds:bx]     -- not allowed
@@ -2786,17 +2786,17 @@ mov al, byte ptr [esi+ebx*1]
 \item  \var{[ref].ID.subfield.subfield \dots}
 \item  \var{[ref].typename.subfield \dots}
 \end{enumerate}
-\item  Local abels: Contrary to Turbo Pascal, local labels, must
+\item  Local labels: Contrary to \tp, local labels, must
 at least contain one character after the local symbol indicator.
 Example:
 \begin{verbatim}
 @:                -- not allowed
 \end{verbatim}
-  use instead, for example:
+use instead:
 \begin{verbatim}
 @1:               -- allowed
 \end{verbatim}
-\item  Contrary to Turbo Pascal local references cannot be used as references,
+\item Contrary to \tp, local references cannot be used as references,
    only as displacements. Example:
 \begin{verbatim}
 lds si,@mylabel   -- not allowed
@@ -2832,11 +2832,14 @@ The Intel inline assembler supports the following macros:
 % AT&T syntax
 \subsection{AT\&T Syntax}
 \label{se:AttSyntax}
-\fpc uses the \gnu \var{as} assembler to generate its object files for
-the Intel Ix86 processors. Since
-the \gnu assembler uses AT\&T assembly syntax, the code you write should
+In earlier versions, \fpc used only the \gnu \var{as} assembler to generate 
+its object files for the Intel x86 processors. Only after some time, an
+internal assembler was created, which wrote directly to an object file.
+
+
+Since the \gnu assembler uses AT\&T assembly syntax, the code you write should
 use the same syntax. The differences between AT\&T and Intel syntax as used
-in Turbo Pascal are summarized in the following:
+in \tp are summarized in the following:
 \begin{itemize}
 \item The opcode names include the size of the operand. In general, one can
 say that the AT\&T opcode name is the Intel opcode name, suffixed with a
@@ -2857,7 +2860,7 @@ Source}'. Thus the Intel construct '\var{add eax, 4}' transforms to
 '\var{addl \$4, \%eax}' in the AT\&T dialect.
 \item Immediate long jumps are prefixed with the '\var{l}' prefix. Thus the
 Intel '\var{call/jmp section:offset'} is transformed to '\var{lcall/ljmp
-\$section,\$offset}'. Similarly the far return is '\var{lret}', instead of the
+\$section,\$offset}'. Similarly, the far return is '\var{lret}', instead of the
 Intel '\var{ret far}'.
 \item Memory references are specified differently in AT\&T and Intel
 assembly. The Intel indirect memory reference
@@ -2895,13 +2898,14 @@ into account:
 \end{description}
 Eventually they will be supported.
 \item Directives are case sensitive, other identifiers are not case sensitive.
-\item  Contrary to GAS local labels/symbols {\em must} start with \var{.L}
+\item  Contrary to \file{gas}, local labels/symbols {\em must} start with
+\var{.L}.
 \item  The not operator \var{'!'} is not supported.
 \item  String expressions in operands are not supported.
-\item  CBTW,CWTL,CWTD and CLTD are not supported, use the normal intel
+\item  CBTW,CWTL,CWTD and CLTD are not supported, use the normal Intel
 equivalents instead.
 \item  Constant expressions which represent memory references are not
-allowed even though constant immediate value expressions are supported.
+allowed, even though constant immediate value expressions are supported.
 Examples:
 \begin{verbatim}
 const myid = 10;
@@ -2909,9 +2913,9 @@ const myid = 10;
 movl $myid,%eax       -- allowed
 movl myid(%esi),%eax  -- not allowed.
 \end{verbatim}
-\item When the \var{.globl} directive is found, the symbol following
-    it is made public and is immediately emitted.
-    Therefore label names with this name will be ignored.
+\item When the \var{.globl} directive is found, the symbol immediatly following
+it is made public and is immediately emitted.
+Therefore label names with this name will be ignored.
 \item  Only Single and Double FPU opcodes are supported.
 \end{itemize}
 
@@ -2926,8 +2930,8 @@ The AT\&T inline assembler supports the following macros:
 % Motorola 680x0 assembler
 \section{Motorola 680x0 Inline assembler}
 
-The inline assembler reader for the Motorola 680x0 family of processors,
-uses the Motorola Assembler syntax (q.v). A few differences do exit:
+The inline assembler reader for the Motorola 680x0 family of processors
+uses the Motorola Assembler syntax (q.v). A few differences do exist:
 
 \begin{itemize}
 \item Local labels start with the @ character, such as
@@ -2942,9 +2946,9 @@ be used to declare constants which will be stored in the
 code segment.
 \item The \var{Align} directive is not supported.
 \item Arithmetic operations on constant expression use the same
-operands as the intel version (e.g : \var{AND}, \var{XOR} ...)
+operands as the intel version, e.g,  \var{AND}, \var{XOR} ...
 \item Segment directives are not supported
-\item Only 68000 and a subset of 68020 opcodes are currently supported
+\item Only 68000 and a subset of 68020 opcodes are currently supported.
 \end{itemize}
 
 The inline assembler supports the following macros:
@@ -3004,9 +3008,11 @@ programmer.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Generated code}
 \label{ch:GenCode}
-The \fpc compiler relies on the assembler to make object files. It generates
-just the assembly language file. In the following two sections, we discuss
-what is generated when you compile a unit or a program.
+As noted in the previous chapter, older \fpc compilers relied on the \gnu
+assembler to make object files. The compiler only generated an assembly 
+language file which was then passed on to the assembler. In the following 
+two sections, we discuss what is generated when you compile a unit or a 
+program.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Units
@@ -3074,11 +3080,14 @@ point for the program. This is where the execution of your program starts,
 so it depends on the operating system, because operating systems pass
 parameters to executables in wildly different ways.
 
-Its name is \file{prt0.o}, and the
-source file resides in \file{prt0.as} or some variant of this name. It
-usually resided where the system unit source for your system resides.
-Its main function is to save the environment and command line arguments and
-set up the stack. Then it calls the main program.
+By default, its name is \file{prt0.o}, and the
+source file resides in \file{prt0.as} or some variant of this name: Which
+file is actually used depends on the system, and on \linux systems, whether
+the C library is used or not.
+
+It usually resides where the system unit source for your system resides.
+Its main function is to save the environment and command line arguments 
+and set up the stack. Then it calls the main program.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MMX Support
@@ -3192,10 +3201,10 @@ This routine restores the FPU registers.
 {\em Careful:} The compiler doesn't warn if you mix floating point and
 MMX operations, so be careful.
 
-The MMX instructions are optimized for multi media (what else?).
-So it isn't possible to perform each operation, some operations
+The MMX instructions are optimized for multimedia operations (what else?).
+So it isn't possible to perform all possible operations: some operations
 give a type mismatch, see section \ref{se:SupportedMMX} for the supported
-MMX operations
+MMX operations.
 
 An important restriction is that MMX operations aren't range or overflow
 checked, even when you turn range and overflow checking on. This is due to
@@ -3351,7 +3360,7 @@ Contrary to most C compilers and assemblers, all labels generated
 to pascal variables and routines have mangled names\footnote{This can be avoided
 by using the \var{alias} or \var{cdecl} modifiers}. This
 is done so that the compiler can do stronger type checking when parsing
-the pascal code. It also permits function and procedure overloading.
+the Pascal code. It also permits function and procedure overloading.
 
 \subsection{Mangled names for data blocks}
 
@@ -3360,21 +3369,14 @@ are as follows:
 
 \begin{itemize}
 \item All variable names are converted to upper case
-\item Variables in the main program or private to a unit have an \_ prepended to their names
-\item Typed constants in the main program have an TC\_\_ prepended to their names
+\item Variables in the main program or private to a unit have an underscore
+(\_) prepended to their names.
+\item Typed constants in the main program have a TC\_\_ prepended to their names
 \item Public variables in a unit have their unit name prepended to them : U\_UNITNAME\_
 \item Public and private typed constants in a unit have their unit name prepended to them :TC\_\_UNITNAME\$\$
 \end{itemize}
-
-Currently, in \fpc v1.0, if you declare a variable in unit name \var{tunit},
-with the name \var{\_a}, and you declare the same variable with name \var{a}
-in unit name \var{tunit\_}, you will get the same mangled name. This is
-a limitation of the compiler which will be fixed in release v1.1.
-
-Examples
-
+Examples:
 \begin{verbatim}
-
 unit testvars;
 
 interface
@@ -3391,13 +3393,9 @@ var
  privatevar : integer;
 
 end.
-
 \end{verbatim}
-
-Will give the following assembler output under GNU as :
-
+Will result in the following assembler code for the \gnu assembler :
 \begin{verbatim}
-
 	.file "testvars.pas"
 
 .text
@@ -3435,9 +3433,7 @@ is given in the mangled name; The mangled name is as follows: \_\$\$\_TYPEDECL\_
 optionally preceded by mangled name of the unit and finishing with the method
 name.
 \end{itemize}
-
 The following constructs
-
 \begin{verbatim}
 unit testman;
 
@@ -3450,28 +3446,25 @@ type
 
 implementation
 
-  constructor myobject.init;
-  begin
-  end;
+constructor myobject.init;
+begin
+end;
 
-  procedure myobject.mymethod;
-  begin
-  end;
+procedure myobject.mymethod;
+begin
+end;
 
-  function myfunc: pointer;
-  begin
-  end;
+function myfunc: pointer;
+begin
+end;
 
-  procedure myprocedure(var x: integer; y: longint; z : pchar);
-  begin
-  end;
+procedure myprocedure(var x: integer; y: longint; z : pchar);
+begin
+end;
 
 end.
-
 \end{verbatim}
-
 will result in the following assembler file for the Intel 80x86 target:
-
 \begin{verbatim}
 	.file "testman.pas"
 
@@ -3557,8 +3550,8 @@ creating shared libraries, \seec{libraries}.
 
 By default, the calling mechanism the compiler uses is \var{register}, 
 that is, the compiler will try to pass as much parameters as posible by 
-storing them in a free register. Not all registers are used, some 
-registers have a special meaning, but this depends on the CPU.
+storing them in a free register. Not all registers are used, because
+some registers have a special meaning, but this depends on the CPU.
 
 Function results are returned in the accumulator (first register), 
 if they fit in the register. Methods calls (from either objects or 
@@ -3582,13 +3575,14 @@ subroutine.
 Modifier & Pushing order & Stack cleaned by & alignment & registers saved \\
 \hline
 <none>  & Left-to-right & Function & default & None\\
-register & Left-to-right & Function & default & None \\ \hline
+register & Left-to-right & Function & default & None \\ 
 cdecl   & Right-to-left & Caller   & GCC alignment & GCC registers\\
 interrupt & Right-to-left & Function & default & all registers\\
 pascal  & Left-to-right & Function & default & None\\
 safecall & Right-to-left & Function & default & GCC registers\\
 stdcall & Right-to-left & Function & GCC alignment & GCC registers \\
 oldfpccall & Right-to-left & Caller  & default & None \\
+\hline
 \end{FPCltable}
 
 More about this can be found in \seec{Linking} on linking. Information
@@ -3853,7 +3847,7 @@ The linker is only called when you compile a program. When compiling units,
 the linker isn't invoked.
 
 However, there are times that linking to C libraries, or to external
-object files created by other compilers may be necessary. The \fpc compiler
+object files created by other compilers, may be necessary. The \fpc compiler
 can generate calls to a C function, and can generate functions that can
 be called from C (exported functions).
 
@@ -3943,12 +3937,13 @@ to specify an external function: In \file{.DLL} files, functions also have
 a unique number (their index). It is possible to refer to these fuctions
 using their index:
 \begin{verbatim}
-Procedure ProcName (Args : TPRocArgs); external 'Name' Index SomeIndex;
+Procedure ProcName (Args : TPRocArgs); external 'Name' 
+                                       Index SomeIndex;
 \end{verbatim}
 This tells the compiler that the procedure \var{ProcName} resides in a
-dynamic link library, with index {SomeIndex}.
+dynamic link library, with index \var{SomeIndex}.
 
-\begin{remark}Note that this is ONLY available under \windows and \ostwo.
+\begin{remark}Note that this is {\em only} available under \windows and \ostwo.
 \end{remark}
 \end{enumerate}
 
@@ -4034,9 +4029,9 @@ calling convention modifier. When linking with code blocks
 compiled with standard C compilers (such as GCC), the \var{cdecl}
 modifier should be used so as to indicate that the external
 routine uses C type calling conventions. For more information
-on the supported calling conventions, \sees{CallingConventions}.
+on the supported calling conventions, see \sees{CallingConventions}.
 
-As might expected, external variable declarations do not require
+As might be expected, external variable declarations do not require
 any calling convention modifier.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4150,7 +4145,7 @@ Is equivalent to the above method, and tells the linker to link to the
 \file{gpm} library.
 \end{enumerate}
 
-As an example; consider the following program:
+As an example, consider the following program:
 \begin{verbatim}
 program printlength;
 
@@ -4194,7 +4189,24 @@ The output of this program looks like this:
 \begin{verbatim}
 This example uses printf to print numbers (123) and strings.
 \end{verbatim}
+As an alternative, the program can be constructed as follows:
+\begin{verbatim}
+program testaocc;
 
+Const
+  P : Pchar
+    = 'example';
+  F : Pchar
+    = 'This %s uses printf to print numbers (%d) and strings.'#10;
+
+procedure printf(fm: pchar);cdecl;varargs;external 'c';
+
+begin
+ printf(F,P,123);
+end.
+\end{verbatim}
+The \var{varargs} modifier signals the compiler that the function allows
+a variable number of arguments (the ellipsis notation in C).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Making a library
 \section{Making libraries}
@@ -4233,8 +4245,9 @@ For more information on how these different modifiers change the name
 mangling of the routine \sees{NameMangling}.
 
 
-\begin{remark}If you use in your unit functions that are in other units, or
-system functions, then the C program will need to link in the object files
+\begin{remark}
+If in your unit, you use functions that are in other units, or system 
+functions, then the C program will need to link in the object files
 from these units too.
 \end{remark}
 
@@ -4242,7 +4255,7 @@ from these units too.
 % Exporting variables.
 \subsection{Exporting variables}
 Similarly as when you export functions, you can export variables.
-When exportig variables, one should only consider the names of the
+When exporting variables, one should only consider the names of the
 variables. To declare a variable that should be used by a C program,
 one declares it with the \var{cvar} modifier:
 \begin{verbatim}
@@ -4426,12 +4439,11 @@ variable is stored as a longword (unsigned 32-bit quantity).
 
 \subsection{Char types}
 
-A \var{char}, or a subrange of the char type is stored
+A \var{char}, or a subrange of the char type, is stored
 as a byte. A WideChar is stored as a word, i.e. 2 bytes.
 
 \subsection{Boolean types}
-
-The \var{boolean} type is stored as a byte and can take
+The \var{Boolean} type is stored as a byte and can take
 a value of \var{true} or \var{false}.
 
 A \var{ByteBool} is stored as a byte, a \var{WordBool}
@@ -4460,11 +4472,10 @@ space used is shown in \seet{enumstoragetp}.
 \hline
 \end{FPCltable}
 
-When the \var{\{\$Z2\}} or \var{\{\$PACKENUM 2\}}
-switches are in effect, the value is stored on 2
-bytes (word), if the enumeration has less or equal
-then 65535 elements, otherwise, the enumeration
-value is stored as a 4 byte value (longword).
+When the \var{\{\$Z2\}} or \var{\{\$PACKENUM 2\}} switches are in 
+effect, the value is stored in 2 bytes (a word), if the enumeration 
+has less or equal than 65535 elements. If there are more elements,
+the enumeration value is stored as a 4 byte value (a longword).
 
 \subsection{Floating point types}
 
@@ -4527,7 +4538,7 @@ the \{\$E+\} switch), the \var{extended} type usually maps to the
 
 For Intel 80x86 processors, the \var{comp} type contains
 a 63-bit integral value, and a sign bit (in the MSB position).
-The \var{comp} type takes up 8 bytes of storage space.
+The \var{comp} type uses 8 bytes of storage space.
 
 On other processors, the \var{comp} type is not supported.
 
@@ -4590,8 +4601,9 @@ byte followed by 255 characters.
 
 \subsubsection{Widestring types}
 
-The widestring (composed of unicode characters) is not supported
-in \fpc v1.0.
+A widestring is allocated on the heap, much like an ansistring. Unlike the
+ansistring, a widestring takes 2 bytes per character, and is terminated with
+a double null. 
 
 \subsection{Set types}
 
@@ -4600,8 +4612,8 @@ if the element is in the set or excluded from the set. The maximum
 number of elements in a set is 256.
 
 If a set has less than 32 elements, it is coded as an unsigned
-32-bit value. Otherwise it is coded as a 8 element array of
-32-bit unsigned values (longword) (hence a size of 256 bytes).
+32-bit value. Otherwise it is coded as an array of 8 
+unsigned 32-bit values (longwords), and hence has a size of 256 bytes.
 
 The longword number of a specific element \var{E} is given by :
 
@@ -4633,14 +4645,15 @@ to. It should not be used.
 
 \subsection{Record types}
 
-Each field of a record are stored in a contigous sequence
+Each field of a record is stored in a continguous sequence
 of variables, where the first field is stored at the
 lowest address in memory. In case of variant fields in
 a record, each variant starts at the same address in
 memory. Fields of record are usually aligned, unless
 the \var{packed} directive is specified when declaring
-the record type. For more information on field alignment,
-consult \sees{StructuredAlignment}.
+the record type. 
+
+For more information on field alignment, consult \sees{StructuredAlignment}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % memory storage of Objects
@@ -4652,7 +4665,7 @@ a pointer to the Virtual Method Table (VMT). This field is stored first, and
 all fields in the object are stored in the order they are declared (with possible
 alignment of field addresses, unless the object was declared as being \var{packed}).
 
-This field is initialized by the call to the object's \var{Constructor} method.
+The VMT is initialized by the call to the object's \var{Constructor} method.
 If the \var{new} operator was used to call the constructor, the data fields
 of the object will be stored in heap memory, otherwise they will directly
 be stored in the data section of the final executable.
@@ -4743,13 +4756,17 @@ File types are represented as records. Typed files and untyped
 files are represented as a fixed record:
 
 \begin{verbatim}
+Const
+  PrivDataLength=3*SizeOf(SizeInt) + 5*SizeOf(pointer);
+
+Type
   filerec = packed record
-    handle    : longint;
-    mode      : longint;
-    recsize   : longint;
-    _private  : array[1..32] of byte;
-    userdata  : array[1..16] of byte;
-    name      : array[0..255] of char;
+    handle   : THandle;
+    mode     : longint;
+    recsize  : Sizeint;
+    _private : array[1..PrivDataLength] of byte;
+    userdata : array[1..32] of byte;
+    name     : array[0..filerecnamelength] of char;
   End;
 \end{verbatim}
 
@@ -4758,19 +4775,20 @@ Text files are described using the following record:
 \begin{verbatim}
   TextBuf = array[0..255] of char;
   textrec = packed record
-    handle    : longint;
+    handle    : THandle;
     mode      : longint;
-    bufsize   : longint;
-    _private  : longint;
-    bufpos    : longint;
-    bufend    : longint;
+    bufsize   : SizeInt;
+    _private  : SizeInt;
+    bufpos    : SizeInt;
+    bufend    : SizeInt;
     bufptr    : ^textbuf;
     openfunc  : pointer;
     inoutfunc : pointer;
     flushfunc : pointer;
     closefunc : pointer;
-    userdata  : array[1..16] of byte;
+    userdata  : array[1..32] of byte;
     name      : array[0..255] of char;
+    LineEnd   : TLineEndStr;
     buffer    : textbuf;
   End;
 \end{verbatim}
@@ -4788,8 +4806,8 @@ and the \var{fminout} indicates read-write access to the file.
 \item[name] The \var{name} field is a null terminated character string representing
 the name of the file.
 
-\item[userdata] The \var{userdata} field is never used by \fpc, and can
-be used for special purposes by software developpers.
+\item[userdata] The \var{userdata} field is never used by \fpc file handling
+routines, and can be used for special purposes by software developers.
 \end{description}
 
 \subsection{Procedural types}
@@ -4811,7 +4829,7 @@ one being a pointer to \var{self} (the object instance).
 \subsection{Typed constants and variable alignment}
 
 All static data (variables and typed constants) which are greater than
-a byte are usually aligned on a power of two boundary. This alignment
+a byte are usually aligned on a multiple of two boundary. This alignment
 applies only to the start address of the variables, and not the alignment
 of fields within structures or objects for example. For more information
 on structured alignment, \sees{StructuredAlignment}. The alignment
@@ -4832,8 +4850,8 @@ Data size (bytes) & Alignment (small size) & Alignment (fast)\\
 The alignment columns indicates the address alignment of the variable,
 i.e the start address of the variable will be aligned on that boundary.
 The small size alignment is valid when the code generated should be
-optimized for size (\var{-Og} compiler option) and not speed, otherwise and
-by default, the fast alignment is used to align the data.
+optimized for size (\var{-Og} compiler option) and not speed, otherwise 
+the fast alignment is used to align the data (this is the default).
 
 \subsection{Structured types alignment}
 \label{se:StructuredAlignment}
@@ -4864,7 +4882,7 @@ size of the allocated memory block. This has the effect of stacking
 dynamic variables on top of each other.
 
 Each time a block is allocated, its size is normalized to have
-a granularity of 16 bytes.
+a granularity of 16 (or 32 on 64 bit systems) bytes.
 
 When \var{Dispose} or \var{FreeMem} is called to dispose of a
 memory block which is not on the top of the heap, the heap becomes
@@ -4896,7 +4914,7 @@ the \var{Prev} field points to the previous free block.
 The algorithm for allocating memory is as follows:
 
 \begin{enumerate}
-\item The size of the block to allocate is adjusted to a 16 byte granularity.
+\item The size of the block to allocate is adjusted to a 16 (or 32) byte granularity.
 \item The cached free list is searched to find a free block of the specified
  size or bigger size, if so it is allocated and the routine exits.
 \item The \var{freelist} is searched to find a free block of the specified size
@@ -4974,6 +4992,9 @@ the \var{TMemoryManager} record is defined as follows:
     AllocMem    : Function(Size:PtrInt):Pointer;
     ReAllocMem  : Function(var p:pointer;Size:PtrInt):Pointer;
     MemSize     : function(p:pointer):PtrInt;
+    InitThread          : procedure;
+    DoneThread          : procedure;
+    RelocateHeap        : procedure;
     GetHeapStatus       : function :THeapStatus;
     GetFPCHeapStatus    : function :TFPCHeapStatus;
   end;
@@ -4987,14 +5008,15 @@ Each of these fields corresponds to the corresponding call in the \file{system}
 unit. We'll describe each one of them:
 \begin{description}
 \item[NeedLock] This boolean indicates whether the memory manager needs a lock:
-if the memory manager itself is not thread-safe, then this can be set to True,
-and the Memory routines will use a lock for all memory routines. If this field is set to false, no lock will be used.
+if the memory manager itself is not thread-safe, then this can be set to
+\var{True} and the Memory routines will use a lock for all memory routines. 
+If this field is set to \var{False}, no lock will be used.
 \item[Getmem] This function allocates a new block on the heap. The block
 should be \var{Size} bytes long. The return value is a pointer to the newly
 allocated block.
 \item[Freemem] should release a previously allocated block. The pointer
 \var{P} points to a previously allocated block. The Memory manager should
-implement a mechanism to determine what the size of the memory block is
+implement a mechanism to determine what the size of the memory block is.
 \footnote{By storing its size at a negative offset for instance.} The
 return value is optional, and can be used to return the size of the freed
 memory.
@@ -5013,6 +5035,12 @@ behaviour is equivalent to \var{GetMem}.
 \item[MemSize] should return the total amount of memory available for
 allocation. This function may return zero if the memory manager does not
 allow to determine this information.
+\item[InitThread] This routine is called when a new thread is started:
+it should initialize the heap structures for the current thread (if any).
+\item[DoneThread] This routine is called when a thread is ended:
+it should clean up any heap structures for the current thread.
+\item[RelocateHeap] Relocates the heap - this is only for thread-local
+heaps.
 \item[GetHeapStatus] should return a \var{THeapStatus} record with the
 status of the memory manager. This record should be filled with
 Delphi-compliant values.
@@ -5029,7 +5057,8 @@ program, i.e. before any call to \var{getmem} is processed.
 
 This means in practice that the unit implementing the memory manager should
 be the first in the \var{uses} clause of your program or library, since it
-will then be initialized before all other units (except of the \file{system} unit)
+will then be initialized before all other units - except the \file{system} unit
+itself, of course.
 
 This also means that it is not possible to use the \file{heaptrc} unit in
 combination with a custom memory manager, since the \file{heaptrc} unit uses
@@ -5173,6 +5202,9 @@ Const
       AllocMem : @CAllocMem;
       ReallocMem : @CReAllocMem;
       MemSize : @CMemSize;
+      InitThread : Nil;
+      DoneThread : Nil;
+      RelocateHeap : Nil;
       GetHeapStatus : @CGetHeapStatus;
       GetFPCHeapStatus: @CGetFPCHeapStatus;	
     );
@@ -5233,14 +5265,25 @@ end;
 (You need to free this memory using the \var{global\_dos\_free} function.)
 
 You can access any place in memory using a selector. You can get a selector
-using the \var{allocate\_ldt\_descriptor} function, and then let this selector
-point to the physical memory you want using the
-\var{set\_segment\_base\_address} function, and set its length using
-\var{set\_segment\_limit} function.
+using the function:
+\begin{verbatim}
+function allocate_ldt_descriptors(count : word) : word;
+\end{verbatim} 
+and then let this selector point to the physical memory you want using the
+function
+\begin{verbatim}
+function set_segment_base_address(d : word;s : longint) : boolean;
+\end{verbatim}
+Its length can be set using the function:
+\begin{verbatim}
+function set_segment_limit(d : word;s : longint) : boolean;
+\end{verbatim}
 You can manipulate the memory pointed to by the selector using the functions
 of the GO32 unit. For instance with the \var{seg\_fillchar} function.
-After using the selector, you must free it again using the
-\var{free\_ldt\_selector} function.
+After using the selector, you must free it again using the function:
+\begin{verbatim}
+function free_ldt_descriptor(d : word) : boolean;
+\end{verbatim}
 
 More information on all this can be found in the \unitsref, the chapter on
 the \file{go32} unit.
@@ -5419,15 +5462,16 @@ compiled without it, but then the translation of the strings isn't possible.
 \section{Updating the string tables}
 Having compiled a program with resourcestrings is not enough to
 internationalize your program. At run-time, the program must initialize
-the string tables with the correct values for the anguage that the user
+the string tables with the correct values for the language that the user
 selected. By default no such initialization is performed. All strings
 are initialized with their declared values.
 
 The \file{objpas} unit provides the mechanism to correctly initialize
 the string tables. There is no need to include this unit in a \var{uses}
 clause, since it is automatically loaded when a program or unit is
-compiled in \var{Delphi} or \var{objfpc} mode. Since this is required
-to use resource strings, the unit is always loaded when needed.
+compiled in \var{Delphi} or \var{objfpc} mode. Since one of these mode 
+is required to use resource strings, the unit is always loaded when needed
+anyway.
 
 The resource strings are stored in tables, one per unit, and one for the
 program, if it contains a \var{resourcestring} section as well. Each
@@ -5441,23 +5485,23 @@ string. It also offers a method to set the current value of the strings.
 Here are the declarations of all the functions:
 \begin{verbatim}
 Function ResourceStringTableCount : Longint;
-Function ResourceStringCount(TableIndex : longint) : longint;
+Function ResourceStringCount(TableIndex: longint): longint;
 Function GetResourceStringName(TableIndex,
-                               StringIndex : Longint) : Ansistring;
+                               StringIndex: Longint): Ansistring;
 Function GetResourceStringHash(TableIndex,
-                               StringIndex : Longint) : Longint;
+                               StringIndex: Longint): Longint;
 Function GetResourceStringDefaultValue(TableIndex,
-                                       StringIndex : Longint) : AnsiString;
+                               StringIndex: Longint): AnsiString;
 Function GetResourceStringCurrentValue(TableIndex,
-                                       StringIndex : Longint) : AnsiString;
+                               StringIndex: Longint): AnsiString;
 Function SetResourceStringValue(TableIndex,
                                 StringIndex : longint;
-                                Value : Ansistring) : Boolean;
-Procedure SetResourceStrings (SetFunction :  TResourceIterator);
+                                Value: Ansistring): Boolean;
+Procedure SetResourceStrings (SetFunction: TResourceIterator);
 \end{verbatim}
 Two other function exist, for convenience only:
 \begin{verbatim}
-Function Hash(S : AnsiString) : longint;
+Function Hash(S: AnsiString): longint;
 Procedure ResetResourceTables;
 \end{verbatim}
 Here is a short explanation of what each function does. A more detailed
@@ -5489,7 +5533,8 @@ Two other functions exist, for convenience only:
 \begin{description}
 \item [Hash] can be used to calculate the hash value of a string. The hash
 value stored in the tables is the result of this function, applied on the
-default value. That value is calculated at compile time by the compiler.
+default value. That value is calculated at compile time by the compiler:
+having the value available can speed up translation operations. 
 \item[ResetResourceTables] will reset all the resource strings to their
 default values. It is called by the initialization code of the objpas unit.
 \end{description}
@@ -5526,7 +5571,7 @@ the program.
 \item Run the \file{msgfmt} formatting program on all the \file{.po} files,
 resulting in a set of \file{.mo} files, which can be distributed with your
 application.
-\item Call the \file{gettext} unit's \var{TranslateReosurceStrings} method,
+\item Call the \file{gettext} unit's \var{TranslateResourceStrings} method,
 giving it a template for the location of the \file{.mo} files, e.g. as in
 \begin{verbatim}
 TranslateResourcestrings('intl/restest.%s.mo');
@@ -5534,7 +5579,7 @@ TranslateResourcestrings('intl/restest.%s.mo');
 the \var{\%s} specifier will be replaced by the contents of the \var{LANG}
 environment variable. This call should happen at program startup.
 \end{enumerate}
-An example program exists in the FCL sources, in the \file{fcl/tests}
+An example program exists in the FCL-base sources, in the \file{fcl-base/tests}
 directory.
 \section{Caveat}
 In principle it is possible to translate all resource strings at any time in
@@ -5652,10 +5697,10 @@ The parameters have the following meaning:
 \begin{description}
 \item[ThreadFunction] is the function that should be executed in the thread.
 \item[p] If present, the pointer \var{p} will be passed to the thread function 
-when it is started. If \var{p} is not specified, \var{Nil} is passed). 
+when it is started. If \var{p} is not specified, \var{Nil} is passed. 
 \item[ThreadID] If \var{ThreadID} is present, the ID of the thread will be stored in it. 
 \item[stacksize] if present, this parameter specifies the stack size used for the thread.
-\item[sa] signal action. Important for linux only.
+\item[sa] signal action. Important for \linux only.
 \item[creationflags] these are system-specific creation flags. Important for
 windows only.
 \end{description}
@@ -5741,11 +5786,12 @@ The meaning of these functions should be clear:
 The function returns when the thread has finished executing, or 
 when the timeout expired.
 \item[ThreadSetPriority] Sets the execution priority of the thread. 
-This call is not always allowed.
+This call is not always allowed: your process may not have the necessary
+permissions to do this.
 \item[ThreadGetPriority] Returns the current execution priority of the thread.
 \item[GetCurrentThreadId] Returns the ID of the current thread.
-\item[ThreadSwitch] Allows other threads to execute at this point, 
-can cause a thread switch, but this is not guaranteed, it depends 
+\item[ThreadSwitch] Allows other threads to execute at this point. This
+means that it can cause a thread switch, but this is not guaranteed, it depends 
 on the OS and the number of processors.
 \end{description}
 
@@ -5890,7 +5936,8 @@ management:
 \item[InitThreadVar] is called when a thread variable must be initialized.
 It is of type
 \begin{verbatim}
-TInitThreadVarHandler = Procedure(var offset : dword;size : dword);
+TInitThreadVarHandler = Procedure(var offset: dword;
+                                  size: dword);
 \end{verbatim}
 The \var{offset} parameter indicates the offset in the thread variable
 block: All thread variables are located in a single block, one after the
@@ -5963,11 +6010,11 @@ were evaluated.
 Using the \var{in} operator is always more efficient then using the
 equivalent \verb|<>|, \verb|=|, \verb|<=|, \verb|>=|, \verb|<| and \verb|>|
 operators. This is because range comparisons can be done more easily with
-\var{in} then with normal comparison operators.
+the \var{in} operator than with normal comparison operators.
 
 \subsection{Small sets}
 
-Sets which contain less then 33 elements can be directly encoded
+Sets which contain less than 33 elements can be directly encoded
 using a 32-bit value, therefore no run-time library calls to
 evaluate operands on these sets are required; they are directly encoded
 by the code generator.
@@ -6002,7 +6049,7 @@ shifts instead of the multiply instruction.
 By default all variables larger then a byte are guaranteed to be aligned
 at least on a word boundary.
 
-Alignment on the stack and in the data section is processor dependant.
+Alignment on the stack and in the data section is processor dependent.
 
 \subsection{Smart linking}
 
@@ -6160,13 +6207,13 @@ Using the \var{-O2} (the default) switch does several optimizations
 in the code produced, the most notable being:
 
 \begin{itemize}
-\item Sign extension from byte to long will use \var{EXTB}
-\item Returning of functions will use \var{RTD}
-\item Range checking will generate no run-time calls
+\item Sign extension from byte to long will use \var{EXTB}.
+\item Returning of functions will use \var{RTD}.
+\item Range checking will generate no run-time calls.
 \item Multiplication will use the long \var{MULS} instruction, no
-runtime library call will be generated
+runtime library call will be generated.
 \item Division will use the long \var{DIVS} instruction, no
-runtime library call will be generated
+runtime library call will be generated.
 \end{itemize}
 
 \section{Optimization switches}
@@ -6278,7 +6325,7 @@ require a lot of code overhead.
 
 \item Turn off range checking and stack-checking.
 
-\item Turn off runtime type information generation
+\item Turn off runtime type information generation.
 
 \end{itemize}
 
@@ -6469,9 +6516,14 @@ done if the ImageBase address is not yet in use.
 
 \section{The resource directive \var{\$R}}
 
-Under \windows, you can include resources in your executable or library
-using the \var{\{\$R filename\}} directive. These resources can then
-be accessed through the standard \windows API calls.
+Under \windows and \linux (or any platform using ELF binaries)
+\footnote{As of development version 2.3.1, all FPC supported 
+platforms now have resources available.}, 
+you can include resources in your executable or library using 
+the \var{\{\$R filename\}} directive. These resources can then
+be accessed through the standard \windows API calls: these calls
+have been made available in the other platforms as well.
+
 
 When the compiler encounters a resource directive, it just creates an
 entry in the unit \file{.ppu} file; it doesn't link the resource. Only
@@ -6549,7 +6601,11 @@ Uses Windows;
   Function LoadResourceString (Index : longint): Shortstring;
 
   begin
-    SetLength(Result,LoadString(FindResource(0,Nil,RT_STRING),Index,@Result[1],SizeOf(Result)))
+    SetLength(Result,LoadString(FindResource(0,Nil,RT_STRING),
+                                Index,
+                                @Result[1],
+                                SizeOf(Result))
+             )
   end;
 
 Var
@@ -6623,7 +6679,7 @@ AppIcon ICON "filename.ico"
 This will read the file \file{filename.ico} and insert it in the
 resource file.
 
-\section{Using a pascal preprocessor}
+\section{Using a Pascal preprocessor}
 
 Sometimes you want to use symbolic names in your resource file, and
 use the same names in your program to access the resources. To accomplish
@@ -6635,7 +6691,7 @@ The idea is that the preprocessor reads a pascal unit that has some
 symbolic constants defined in it, and replaces symbolic names in the
 resource file by the values of the constants in the unit:
 
-As an example: consider the follwoing unit:
+As an example: consider the following unit:
 \begin{verbatim}
 unit myunit;
 
@@ -6658,11 +6714,11 @@ STRINGTABLE { First, "hello World !"
               Third, "last hello world !" }
 
 \end{verbatim}
-if you invoke windres with the \var{--preprocessor} option:
+If you invoke \file{windres} with the \var{\-\-preprocessor} option:
 \begin{verbatim}
 windres --preprocessor fprcp -i myunit.rc -o myunit.res
 \end{verbatim}
-Then the preprocessor will replace the symbolic names 'first', 'second'
+then the preprocessor will replace the symbolic names 'first', 'second'
 and 'third' with their actual values.
 
 In your program, you can then refer to the strings by their symbolic
@@ -6783,7 +6839,7 @@ value & description \\
 \hline
 \end{FPCltable}
 
-Some of the possible flags in the header, are described in \seet{PPUHeaderFlags}.
+Some of the possible flags in the header are described in \seet{PPUHeaderFlags}.
 Not all the flags are described, for more information, read the source code of
 \file{ppu.pas}.
 
@@ -6954,17 +7010,16 @@ ppufile.NewEntry;
 \end{verbatim}
 This will give you a clean header or entry. Normally this is called
 automatically in \var{ppufile.writeentry}, so there should be no need to
-call these methods.
+call these methods. You can call
 \begin{verbatim}
 ppufile.flush;
 \end{verbatim}
-
-to flush the current buffers to the disk
+to flush the current buffers to the disk, and you can set
 \begin{verbatim}
 ppufile.do_crc:boolean;
 \end{verbatim}
-set to false if you don't want that the crc is updated, this is necessary
-if you write for example the browser data.
+to \var{False} if you don't want the crc to be updated when writing to disk.
+This is necessary if you write for example the browser data.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Appendix B
@@ -7000,45 +7055,58 @@ structured and easy to understand. It mainly consists of three parts:
 each operating system. When compiling the RTL, you should do it here. The
 following directories exist:
 \begin{itemize}
-\item \file{atari} for the \atari.
 \item \file{amiga} for the \amiga.
-\item \file{beos}  for \beos. It has one subdirectory for each of the
-supported processors.
+\item \file{atari} for the \atari.
+\item \file{beos}  for \beos. 
+It has one subdirectory for each of the supported processors.
+\item \file{bsd} Common files for the various BSD platforms.
 \item \file{darwin} for the unix-compatibility layer on \macos.
+\item \file{embedded} A template for embedded targets.
+\item \file{emx} OS/2 using the EMX extender.
 \item \file{freebsd} for the \freebsd platform.
-\item \file{go32v1} For \dos, using the GO32v1 extender. Not maintained any
-more.
+\item \file{gba} Game Boy Advanced.
 \item \file{go32v2} For \dos, using the GO32v2 extender.
 \item \file{linux} for \linux platforms. It has one subdirectory for each of the supported
 processors.
 \item \file{macos} for the \macos platform. 
 \item \file{morphos} for the MorphOS platform. 
+\item \file{nds} for the Nintendo DS platform.
 \item \file{netbsd} for \netbsd platforms. It has one subdirectory for each of the supported
 processors.
 \item \file{netware} for the Novell netware platform.
+\item \file{netwlibc} for the Novell netware platform using the C library.
 \item \file{openbsd} for the OpenBSD platform.
-\item \file{palmos} for the \palmos Dragonball processor based platform.
 \item \file{os2} for \ostwo.
-\item \file{sunos} for the \solaris platform. It has one subdirectory for each of the supported
-processors.
-\item \file{qnx} for the \qnx.
-\item \file{win32} for Win32 platforms.
+\item \file{palmos} for the \palmos Dragonball processor based platform.
 \item \file{posix} for posix interfaces (used for easier porting).
+\item \file{solaris} for the \solaris platform. It has one subdirectory for each of the supported
+processors.
+\item \file{symbian} for the symbian mobile phone OS.
+\item \file{qnx} for the \qnx.
 \item \file{unix} for unix common interfaces (used for easier porting).
+\item \file{win32} for Windows 32-bit platforms.
+\item \file{win64} for Windows 64-bit platforms.
+\item \file{wince} for the Windows CE embedded platform (arm CPU).
+\item \file{posix} for posix interfaces (used for easier porting).
 \end{itemize}
 \item A processor dependent directory. This contains files that are system
 independent, but processor dependent. It contains mostly optimized routines
 for a specific processor. The following directories exist:
 \begin{itemize}
+\item \file{arm} for the ARM series of processors.
 \item \file{i386} for the Intel 80x86 series of processors.
 \item \file{m68k} for the Motorola 680x0 series of processors.
 \item \file{powerpc} for the PowerPC processor.
+\item \file{powerpc64} for the PowerPC 64-bit processor.
 \item \file{sparc} for the SUN SPARC processor.
 \item \file{x86\_64} for Intel compatible 64-bit processors such as the AMD64.
 \end{itemize}
 \item An OS-independent and Processor independent directory: \file{inc}. This
 contains complete units, and include files containing interface parts of
 units as well as generic versions of processor specific routines.
+\item The Object Pascal extensions (mainly \delphi compatibility units) are
+in the \file{objpas} directory. The \file{sysutils} and \file{classes} units
+are in separate subdirectories of the \file{objpas} directory.
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7056,7 +7124,8 @@ You can change this by redefining the \var{maxunits} constant in the compiler
 source file.
 \item The maximum nesting level of pre-processor macros is 16. This can be
 changed by changing the value of \var{max\_macro\_nesting}.
-\item Arrays are limited to 2 GBytes in size in the default processor mode.
+\item Arrays are limited to 2 GBytes in size in the default (32-bit) 
+processor mode.
 \end{enumerate}
 
 For processor specific compiler limitations refer to the Processor
@@ -7087,6 +7156,7 @@ parameters when implementing the function or procedure.
 \item The Objpas unit is NOT loaded.
 \item You can use the cvar type.
 \item PChars are converted to strings automatically.
+\item Strings are shortstrings by default.
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7107,6 +7177,7 @@ parameters when implementing the function or procedure.
 \item The Objpas unit is NOT loaded.
 \item Nested comments are not allowed.
 \item You can not use the cvar type.
+\item Strings are shortstrings by default.
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7166,6 +7237,8 @@ consequences of this is that the type \var{Integer} is redefined as
 \item PChars are converted to strings automatically.
 \item Parameters in class methods cannot have the same names as class
 properties.
+\item Strings are shortstrings by default. You can use the \var{-Sh}
+command line switch or the \var{\{\$H+\}} switch to change this.
 \end{enumerate}
 
 \section{MAC mode}
@@ -7250,7 +7323,7 @@ Specifically, it constructs the following targets in the final makefile:
 \item[smart] Makes all units and programs in smartlinked version.
 \item[examples] Makes all example units and programs.
 \item[shared] Makes all units and programs in shared library version
-(currently disabled)
+(currently disabled).
 \item[install] Installs all units and programs.
 \item[sourceinstall] Installs the sources to the \fpc source tree.
 \item[exampleinstall] Installs any example programs and units.
@@ -7277,7 +7350,7 @@ file and directory locations, where things will go when installing and so
 on.
 \end{description}
 Each of these targets can be highly configured, or even totally overridden
-by the configuration file \file{Makefile.fpc}
+by the configuration file \file{Makefile.fpc}.
 
 \section{Usage}
 \file {fpcmake} reads a \file{Makefile.fpc} and converts it to a
@@ -7304,7 +7377,7 @@ Additionally, the following command line options are recognized:
 \item[-p] A \file{Package.fpc} file is generated.
 \item[-w] A \file{Makefile} is generated.
 \item[-T targets] Support only specified target systems. \var{Targets} is a
-comma-separated list of targets. Only rule for the specified targets
+comma-separated list of targets. Only rules for the specified targets
 will be written.
 \item[-v] Be more verbose.
 \item[-q] be quiet.
@@ -7314,7 +7387,7 @@ will be written.
 % Makefile.fpc format.
 \section{Format of the configuration file}
 This section describes the rules that can be present in the file
-that is fed to \fpcmake{}.
+that is processed by \fpcmake{}.
 
 The file \file{Makefile.fpc} is a plain ASCII file that contains
 a number of pre-defined sections as in a \windows \file{.ini}-file,
@@ -7348,7 +7421,9 @@ The following entries are recognized:
 \begin{description}
 \item[units] names of all units that should be removed when cleaning.
 Don't specify extensions, the makefile will append these by itself.
-\item[files] names of files that should be removed. Specify full filenames.
+\item[files] names of additional (not unit files) files that should 
+be removed. Specify full filenames. The resource string table files
+(\file{.rst} files) are cleaned if they are specified in the \var{files} section.
 \end{description}
 
 \subsection{compiler}
@@ -7357,8 +7432,8 @@ such as the location of several directories and search paths.
 
 The following general keywords are recognised:
 \begin{description}
-\item[options] The value of this key will be passed on to the compiler as
-options.
+\item[options] The value of this key will be passed on to the compiler
+(verbatim) as command line options.
 \item[version] If a specific or minimum compiler version is needed to
 compile the units or programs, then this version should be specified here.
 \end{description}
@@ -7368,24 +7443,25 @@ directories used by the compiler:
 \begin{description}
 \item[unitdir]
 A colon-separated list of directories that must be added to the unit
-search path of the compiler.
+search path of the compiler (using the \var{-Fu} option).
 \item[librarydir]
 A colon-separated list of directories that must be added to the library
-search path of the compiler.
+search path of the compiler (using the \var{-Fl} option).
 \item[objectdir]
 A colon-separated list of directories that must be added to the object file
-search path of the compiler.
+search path of the compiler (using the \var{-Fo} option).
 \item[targetdir]
-Specifies the directory where the compiled programs should go.
+Specifies the directory where the compiled programs should go (using the
+\var{-FE} option). 
 \item[sourcedir]
 A space separated list of directories where sources can reside.
 This will be used for the \var{vpath} setting of \gnu \file{make}.
 \item[unittargetdir]
-Specifies the directory where the compiled units should go.
+Specifies the directory where the compiled units should go (using the
+\var{-FU} option).
 \item[includedir]
 A colon-separated list of directories that must be added to the include file
-search path of the compiler.
-\item[sourcedir]
+search path of the compiler (using the \var{-Fi} option).
 \end{description}
 
 
@@ -7396,13 +7472,13 @@ are recognized:
 \item[cpu]
 Specifies the default target processor for which the \file{Makefile}
 should compile the units and programs. By default this is determined from
-the default compiler processor.
+the compiler info.
 \item[dir]
 Specifies any subdirectories that make should also descend in and
 make the specified target there as well.
 \item[fpcdir]
 Specifies the directory where all the \fpc source trees reside. Below this
-directory the \file{Makefile} expects to find the \file{rtl}, \file{fcl} and
+directory the \file{Makefile} expects to find the \file{rtl} and
 \file{packages} directory trees.
 \item[rule] Specifies the default rule to execute. \fpcmake{}
 will make sure that this rule is executed if make is executed without
@@ -7429,13 +7505,13 @@ archive file is made. This defaults to \var{install}.
 \end{description}
 
 \subsection{Install}
-Contains instructions for installation of the compiler units and programs. The
+Contains instructions for installation of the compiled units and programs. The
 following keywords are recognized:
 \begin{description}
 \item[basedir]
 The directory that is used as the base directory for the installation of
 units. Default this is \var{prefix} appended with \var{/lib/fpc/FPC\_VERSION}
-for \linux or simply the \var{prefix} on other platforms.
+for \linux or simply the \var{prefix} directory on other platforms.
 \item[datadir] Directory where data files will be installed, i.e. the files
 specified with the \var{Files} keyword.
 \item[fpcpackage] A boolean key. If this key is specified and equals \var{y}, 
@@ -7445,7 +7521,7 @@ specified in the \var{package} section.
 \item[files] extra data files to be installed in the directory specified
 with the \var{datadir} key.
 \item[prefix] is the directory below which all installs are done.
-This corresponds to the \var{--prefix} argument to \gnu \file{configure}.
+This corresponds to the \var{\-\-prefix} argument to \gnu \file{configure}.
 It is used for the installation of programs and units. By default, this is
 \file{/usr} on \linux, and \file{/pp} on all other platforms.
 \item[units] extra units that should be installed, and which are not part of
@@ -7462,7 +7538,7 @@ The following information can be stored:
 \begin{description}
 \item[name] The name of the package. When installing it under the package
 directory, this name will be used to create a directory (unless it is
-overridden by one of the installation options)
+overridden by one of the installation options).
 \item[version] The version of this package.
 \item[main] If the package is part of another package, this key can be
 specified to indicate which package it is part of.
@@ -7483,9 +7559,9 @@ or tools. The following keywords can be used:
 can be compiled. Note that this will also add all packages these packages
 depend on to the dependencies of this package. By default, the \fpc Run-Time
 Library is added to this list.
-\item[libc] a boolean value that indicates whether this package needs the C
+\item[libc] A boolean value that indicates whether this package needs the C
 library.
-\item[nortl] a boolean that prevents the addition of the \fpc Run-Time 
+\item[nortl] A boolean that prevents the addition of the \fpc Run-Time 
 Library to the required packages.
 \item[unitdir] These directories will be added to the units search path of
 the compiler.
@@ -7543,6 +7619,7 @@ A space separated list of program names that need to be compiled. Do not
 specify an extension, the extension will be appended.
 \item[rsts] a list of \file{rst} files that needs to be converted to \file{.po}
 files for use with \gnu \file{gettext} and internationalization routines.
+These files will be installed together with the unit files.
 \item[units]
 A space separated list of unit names that need to be compiled. Do not
 specify an extension, just the name of the unit as it would appear un a
@@ -7553,14 +7630,14 @@ specify an extension, just the name of the unit as it would appear un a
 At least the following programs are needed by the generated \file{Makefile}
 to function correctly:
 \begin{description}
-\item[cp] a copy program.
-\item[date] a program that prints the date.
-\item[install] a program to install files.
-\item[make] the \file{make} program, obviously.
-\item[pwd] a program that prints the current working directory.
-\item[rm] a program to delete files.
-\item[zip] the zip archiver program. (on dos/windows/OS2 systems only)
-\item[tar] the tar archiver program (on Unix systems only).
+\item[cp] A copy program.
+\item[date] A program that prints the date.
+\item[install] A program to install files.
+\item[make] The \file{make} program, obviously.
+\item[pwd] A program that prints the current working directory.
+\item[rm] A program to delete files.
+\item[zip] The zip archiver program. (on dos/windows/OS2 systems only)
+\item[tar] The tar archiver program (on Unix systems only).
 \end{description}
 These are standard programs on \linux systems, with the possible exception of
 \file{make}. For \dos or \windowsnt, they can be found in the
@@ -7569,16 +7646,16 @@ file \file{makeutil.zip} on the \fpc FTP site.
 The following programs are optionally needed if you use some special targets.
 Which ones you need are controlled by the settings in the \var{tools} section.
 \begin{description}
-\item[cmp] a \dos and \windowsnt file comparer. 
-\item[diff] a file comparer. 
-\item[ppdep] the ppdep depency lister. Distributed with \fpc.
-\item[ppufiles] the ppufiles unit file dependency lister. Distributed with \fpc.
-\item[ppumove] the \fpc unit mover. 
-\item[sed] the \file{sed} program. 
-\item[upx] the UPX executable packer. 
+\item[cmp] A \dos and \windowsnt file comparer. 
+\item[diff] A file comparer. 
+\item[ppdep] The \file{ppdep} dependency lister. Distributed with \fpc.
+%\item[ppufiles] The file{ppufiles} unit file dependency lister. Distributed with \fpc.
+\item[ppumove] The \fpc unit mover. 
+\item[sed] The \file{sed} stream editor program. 
+\item[upx] The UPX executable packer. 
 \end{description}
 All of these can also be found on the \fpc FTP site for \dos and \windowsnt.
-\file{ppdep,ppufiles} and \file{ppumove} are distributed with the \fpc
+\file{ppdep} and \file{ppumove} are distributed with the \fpc
 compiler.
 
 %
@@ -7600,24 +7677,24 @@ The first set of variables controls the directories that are
 recognised in the makefile. They should not be set in the
 \file{Makefile.fpc} file, but can be specified on the command line.
 \begin{description}
-\item[INCDIR] this is a list of directories, separated by spaces, that will
+\item[INCDIR] This is a list of directories, separated by spaces, that will
 be added as include directories to the compiler command line.  Each
-directory in the list is prepended with \var{-I} and added to the
+directory in the list is prepended with \var{-Fi} and added to the
 compiler options.
-\item[UNITDIR] this is a list of directories, separated by spaces, that will
+\item[UNITDIR] This is a list of directories, separated by spaces, that will
 be added as unit search directories to the compiler command line.  Each
 directory in the list is prepended with \var{-Fu} and added to the
 compiler options.
-\item[LIBDIR] is a list of library paths, separated by spaces. Each
+\item[LIBDIR] Is a list of library paths, separated by spaces. Each
 directory in the list is prepended with \var{-Fl} and added to the
 compiler options.
-\item[OBJDIR] is a list of object file directories, separated by spaces, that is
+\item[OBJDIR] Is a list of object file directories, separated by spaces, that is
 added to the object files path, i.e. Each directory in the list is prepended with
 \var{-Fo}.
 \end{description}
 
 \subsection{Compiler command line variables }
-The following variable can be set on the \file{make} command line,
+The following variables can be set on the \file{make} command line,
 they will be recognised and integrated in the compiler command line options.:
 
 \begin{description}
@@ -7632,13 +7709,13 @@ It adds \var{-XX} to the compiler command line options.
 of \var{OPT} is simply added to the compiler command line.
 \item[OPTDEF] Are optional defines, added to the command line of the
 compiler. They get \var{-d} prepended to them.
-\item[OPTIMIZE] if this variable is defined, this will add \var{-OG2p3} to
+\item[OPTIMIZE] If this variable is defined, this will add \var{-OG2p3} to
 the command line options.
-\item[RELEASE] if this variable is defined, this will add the \var{-Xs -OG2p3 -n} 
+\item[RELEASE] If this variable is defined, this will add the \var{-Xs -OG2p3 -n} 
 options to the command line options, and will define the \var{RELEASE} define.
-\item[STRIP] if this variable is defined, this will add the \var{-Xs} option 
+\item[STRIP] If this variable is defined, this will add the \var{-Xs} option 
 to the command line options.
-\item[VERBOSE] if this variable is defined, then \var{-vnwi} will be added
+\item[VERBOSE] If this variable is defined, then \var{-vnwi} will be added
 to the command line options.
 \end{description}
 
@@ -7676,42 +7753,42 @@ Each of these sets is discussed in the subsequent:
 The following compiler directories are defined by the makefile:
 
 \begin{description}
-\item[BASEDIR] is set to the current directory if the \file{pwd} command is
+\item[BASEDIR] Is set to the current directory if the \file{pwd} command is
 available. If not, it is set to '.'.
 
-\item[COMPILER\_INCDIR] is a space-separated list of library paths. Each
+\item[COMPILER\_INCDIR] Is a space-separated list of library paths. Each
 directory in the list is prepended with \var{-Fl} and added to the
 compiler options. Set by the \var{incdir} keyword in the \var{Compiler} section.
 
-\item[COMPILER\_LIBDIR] is a space-separated list of library paths. Each
+\item[COMPILER\_LIBDIR] Is a space-separated list of library paths. Each
 directory in the list is prepended with \var{-Fl} and added to the 
 compiler options. Set by the \var{libdir} keyword in the \var{Compiler} section.
 
-\item[COMPILER\_OBJDIR] is a list of object file directories, separated by
+\item[COMPILER\_OBJDIR] Is a list of object file directories, separated by
  spaces. Each directory in the list is prepended with \var{-Fo} and
 added to the compiler options.
 Set by the \var{objdir} keyword in the \var{Compiler} section.
 
 \item[COMPILER\_TARGETDIR] This directory is added as the output directory of
 the compiler, where all units and executables are written, i.e. it gets
-\var{-FE} prepended. It is set by the \var{targtdir} keyword in the
+\var{-FE} prepended. It is set by the \var{targetdir} keyword in the
 \var{Compiler} section.
 
 \item[COMPILER\_TARGETUNITDIR] If set, this directory is added as the output directory of
 the compiler, where all units and executables are written, i.e. it gets
-\var{-FU} prepended.It is set by the \var{targtdir} keyword in the
+\var{-FU} prepended.It is set by the \var{targetdir} keyword in the
 \var{Dirs} section.
 
-\item[COMPILER\_UNITDIR] is a list of unit directories, separated by spaces.
+\item[COMPILER\_UNITDIR] Is a list of unit directories, separated by spaces.
 Each directory in the list is prepended with \var{-Fu} and is added to the
 compiler options.
 Set by the \var{unitdir} keyword in the \var{Compiler} section.
 
-\item[GCCLIBDIR] (\linux only) is set to the directory where \file{libgcc.a}
+\item[GCCLIBDIR] (\linux only) Is set to the directory where \file{libgcc.a}
 is. If \var{needgcclib} is set to \var{True} in the \var{Libs} section, then
 this directory is added to the compiler command line with \var{-Fl}.
 
-\item[OTHERLIBDIR] is a space-separated list of library paths. Each
+\item[OTHERLIBDIR] Is a space-separated list of library paths. Each
 directory in the list is prepended with \var{-Fl} and added to the 
 compiler options.  If it is not defined on linux, then the contents of 
 the \file{/etc/ld.so.conf} file is added.
@@ -7719,27 +7796,27 @@ the \file{/etc/ld.so.conf} file is added.
 
 The following directories are used for installs:
 \begin{description}
-\item[INSTALL\_BASEDIR] is the base for all directories where units are
+\item[INSTALL\_BASEDIR] Is the base for all directories where units are
 installed. By default, On \linux, this is set to 
 \mvar{INSTALL\_PREFIX}\var{/lib/fpc/}\mvar{RELEASEVER}.\\ On other systems,
 it is set to \mvar{PREFIXINSTALLDIR}. You can also set it with the
 \var{basedir} variable in the \var{Install} section.
 
-\item[INSTALL\_BINDIR] is set to \mvar{INSTALL\_BASEDIR}/\var{bin} on \linux,
+\item[INSTALL\_BINDIR] Is set to \mvar{INSTALL\_BASEDIR}/\var{bin} on \linux,
 and\\ \mvar{INSTALL\_BASEDIR}/\var{bin}/\mvar{OS\_TARGET} on other systems.
 This is the place where binaries are installed.
 
 \item[INSTALL\_DATADIR] The directory where data files are installed. Set by
 the \var{Data} key in the \var{Install} section.
 
-\item[INSTALL\_LIBDIR] is set to \mvar{INSTALL\_PREFIX}/lib on \linux,\\
+\item[INSTALL\_LIBDIR] Is set to \mvar{INSTALL\_PREFIX}/lib on \linux,\\
  and \mvar{INSTALL\_UNITDIR} on other systems.
 
-\item[INSTALL\_PREFIX] is set to \file{/usr/local} on \linux, \file{/pp} on \dos
+\item[INSTALL\_PREFIX] Is set to \file{/usr/local} on \linux, \file{/pp} on \dos
 or \windowsnt. Set by the \var{prefix} keyword in the \var{Install}
 section.
 
-\item[INSTALL\_UNITDIR] is where units will be installed. This is set to\\
+\item[INSTALL\_UNITDIR] Is where units will be installed. This is set to\\
 \mvar{INSTALL\_BASEDIR}/units/\mvar{OS\_TARGET}. If the units are compiled
 as a package, \mvar{PACKAGE\_NAME} is added to the directory.
 \end{description}
@@ -7757,11 +7834,11 @@ into when compiling. Set by the \var{Dirs} key in the \var{Target} section?
 \item[TARGET\_EXAMPLES] The list of examples programs that must be compiled.
 Set by the \var{examples} key in the \var{Target} section.
 
-\item[TARGET\_EXAMPLEDIRS] the list of directories that make will descend
+\item[TARGET\_EXAMPLEDIRS] The list of directories that make will descend
 into when compiling examples. Set by the \var{exampledirs} key in the 
 \var{Target} section.
 
-\item[TARGET\_LOADERS] is a list of space-separated names that identify
+\item[TARGET\_LOADERS] Is a list of space-separated names that identify
 loaders to be compiled. This is mainly used in the compiler's RTL sources.
 It is set by the \var{loaders} keyword in the \var{Targets} section.
 
@@ -7774,12 +7851,12 @@ makefile appends \mvar{PPUEXT} to each of these names to form the unit file
 name. The sourcename is formed by adding \mvar{PASEXT}.
 It is set by the \var{units} keyword in the \var{Target} section.
 
-\item[ZIPNAME] is the name of the archive that will be created by the
+\item[ZIPNAME] Is the name of the archive that will be created by the
 makefile.
 It is set by the \var{zipname} keyword in the \var{Zip} section.
 
-\item[ZIPTARGET] is the target that is built before the archive is made.
-this target is built first. If successful, the zip archive will be made.
+\item[ZIPTARGET] Is the target that is built before the archive is made.
+This target is built first. If successful, the zip archive will be made.
 It is set by the \var{ziptarget} keyword in the \var{Zip} section.
 
 \end{description}
@@ -7789,10 +7866,10 @@ It is set by the \var{ziptarget} keyword in the \var{Zip} section.
 The following variables control the compiler command line:
 \begin{description}
 
-\item[CPU\_SOURCE] the target CPU type is added as a define to the compiler
+\item[CPU\_SOURCE] The target CPU type is added as a define to the compiler
 command line. This is determined by the Makefile itself.
 
-\item[CPU\_TARGET] the target CPU type is added as a define to the compiler
+\item[CPU\_TARGET] The target CPU type is added as a define to the compiler
 command line. This is determined by the Makefile itself.
 
 \item[OS\_SOURCE] What platform the makefile is used on. Detected
@@ -7808,37 +7885,37 @@ compiler command line with a \var{-T} prepended.
 The following variables are program names, used in makefile targets.
 \begin{description}
 \item[AS] The assembler. Default set to \file{as}.
-\item[COPY] a file copy program. Default set to \file{cp -fp}.
-\item[COPYTREE] a directory tree copy program. Default set to \file{cp -frp}.
-\item[CMP] a program to compare files. Default set to \var{cmp}.
-\item[DEL] a file removal program. Default set to \file{rm -f}.
-\item[DELTREE] a directory removal program. Default set to \file{rm -rf}.
-\item[DATE] a program to display the date.
-\item[DIFF] a program to produce diff files.
-\item[ECHO] an echo program.
-\item[FPC] the Free Pascal compiler executable. Default set to
+\item[COPY] A file copy program. Default set to \file{cp -fp}.
+\item[COPYTREE] A directory tree copy program. Default set to \file{cp -frp}.
+\item[CMP] A program to compare files. Default set to \var{cmp}.
+\item[DEL] A file removal program. Default set to \file{rm -f}.
+\item[DELTREE] A directory removal program. Default set to \file{rm -rf}.
+\item[DATE] A program to display the date.
+\item[DIFF] A program to produce diff files.
+\item[ECHO] An echo program.
+\item[FPC] The Free Pascal compiler executable. Default set to
 \var{ppc386.exe}
-\item[INSTALL] a program to install files. Default set to \file{install -m
+\item[INSTALL] A program to install files. Default set to \file{install -m
 644} on \linux.
-\item[INSTALLEXE] a program to install executable files. Default set to \file{install -m
+\item[INSTALLEXE] A program to install executable files. Default set to \file{install -m
 755} on \linux.
 \item[LD] The linker. Default set to \file{ld}.
-\item[LDCONFIG] (\linux only) the program used to update the loader cache.
-\item[MKDIR] a program to create directories if they don't exist yet. Default
+\item[LDCONFIG] (\linux only) The program used to update the loader cache.
+\item[MKDIR] A program to create directories if they don't exist yet. Default
 set to \file{install -m 755 -d}
-\item[MOVE] a file move program. Default set to \file{mv -f}
-\item[PP] the Free Pascal compiler executable. Default set to
+\item[MOVE] A file move program. Default set to \file{mv -f}
+\item[PP] The Free Pascal compiler executable. Default set to
 \var{ppc386.exe}
-\item[PPAS] the name of the shell script created by the compiler if the
+\item[PPAS] The name of the shell script created by the compiler if the
 \var{-s} option is specified. This command will be executed after
 compilation, if the \var{-s} option was detected among the options.
-\item[PPUMOVE] the program to move units into one big unit library.
-\item[PWD] the pwd program.
-\item[SED] a stream-line editor program. Default set to \file{sed}.
-\item[UPX] an executable packer to compress your executables into
+\item[PPUMOVE] The program to move units into one big unit library.
+\item[PWD] The pwd program.
+\item[SED] A stream-line editor program. Default set to \file{sed}.
+\item[UPX] An executable packer to compress your executables into
 self-extracting compressed executables.
-\item[ZIPPROG] a zip program to compress files. zip targets are made with
-this program
+\item[ZIPPROG] A zip program to compress files. Zip targets are made with
+this program.
 \end{description}
 
 \subsection{File extensions}
@@ -7847,28 +7924,28 @@ The following variables denote extensions of files. These variables include
 the \var{.} (dot) of the extension. They are appended to object names.
 
 \begin{description}
-\item[ASMEXT] is the extension of assembler files produced by the compiler.
-\item[LOADEREXT] is the extension of the assembler files that make up the
+\item[ASMEXT] Is the extension of assembler files produced by the compiler.
+\item[LOADEREXT] Is the extension of the assembler files that make up the
 executable startup code.
-\item[OEXT] is the extension of the  object files that the compiler creates.
-\item[PACKAGESUFFIX] is a suffix that is appended to package names in zip
+\item[OEXT] Is the extension of the  object files that the compiler creates.
+\item[PACKAGESUFFIX] Is a suffix that is appended to package names in zip
 targets. This serves so packages can be made for different OSes.
-\item[PPLEXT] is the extension of shared library unit files.
-\item[PPUEXT] is the extension of default units.
-\item[RSTEXT] is the extension of the \file{.rst} resource string files.
-\item[SHAREDLIBEXT] is the extension of shared libraries.
-\item[SMARTEXT] is the extension of smartlinked unit assembler files.
-\item[STATICLIBEXT] is the extension of static libraries.
+\item[PPLEXT] Is the extension of shared library unit files.
+\item[PPUEXT] Is the extension of default units.
+\item[RSTEXT] Is the extension of the \file{.rst} resource string files.
+\item[SHAREDLIBEXT] Is the extension of shared libraries.
+\item[SMARTEXT] Is the extension of smartlinked unit assembler files.
+\item[STATICLIBEXT] Is the extension of static libraries.
 \end{description}
 
 \subsection{Target files}
 
 The following variables are defined to make targets and rules easier:
 \begin{description}
-\item[COMPILER] is the complete compiler command line, with all options
+\item[COMPILER] Is the complete compiler command line, with all options
 added, after all \file{Makefile} variables have been examined.
-\item[DATESTR] contains the date.
-\item[UNITPPUFILES] a list of unit files that will be made. This is just
+\item[DATESTR] Contains the date.
+\item[UNITPPUFILES] A list of unit files that will be made. This is just
 the list of unit objects, with the correct unit extension appended.
 \end{description}
 
@@ -7882,61 +7959,61 @@ your own targets. They have names that resemble default names (such as
 
 The makefile makes the following pattern rules:
 \begin{description}
-\item[units] how to make a pascal unit form a pascal source file.
-\item[executables] how to make an executable from a pascal source file.
-\item[object file] how to make an object file from an assembler file.
+\item[units] How to make a pascal unit form a pascal source file.
+\item[executables] How to make an executable from a pascal source file.
+\item[object file] How to make an object file from an assembler file.
 \end{description}
 
 \subsection{Build rules}
 
 The following build targets are defined:
 \begin{description}
-\item[fpc\_all] target that builds all units and executables as well as
+\item[fpc\_all] Builds all units and executables as well as
 loaders. If \var{DEFAULTUNITS} is defined, executables are excluded from the
 targets.
-\item[fpc\_debug] the same as \var{fpc\_all}, only with debug information
+\item[fpc\_debug] The same as \var{fpc\_all}, only with debug information
 included.
-\item[fpc\_exes] target to make all executables in \var{EXEOBJECTS}.
-\item[fpc\_loaders] target to make all files in \var{LOADEROBJECTS}.
-\item[fpc\_packages] target to make all packages that are needed to make
+\item[fpc\_exes] Make all executables in \var{EXEOBJECTS}.
+\item[fpc\_loaders] Make all files in \var{LOADEROBJECTS}.
+\item[fpc\_packages] Make all packages that are needed to make
 the files.
-\item[fpc\_shared] target that makes all units as dynamic libraries.
-\item[fpc\_smart] target that makes all units as smartlinked units.
-\item[fpc\_units] target to make all units in \var{UNITOBJECTS}.
+\item[fpc\_shared] Make all units as dynamic libraries.
+\item[fpc\_smart] Make all units as smartlinked units.
+\item[fpc\_units] Make all units in \var{UNITOBJECTS}.
 \end{description}
 
 \subsection{Cleaning rules}
 
 The following cleaning targets are defined:
 \begin{description}
-\item[fpc\_clean] cleans all files that result when \var{fpc\_all} was made.
-\item[fpc\_distclean] is the same as both previous target commands, but also
+\item[fpc\_clean] Cleans all files that result when \var{fpc\_all} was made.
+\item[fpc\_distclean] Is the same as both previous target commands, but also
 deletes all object, unit and assembler files that are present.
 \end{description}
 
-\subsection{archiving rules}
+\subsection{Archiving rules}
 
 The following archiving targets are defined:
 \begin{description}
-\item[fpc\_zipdistinstall] Target to make a distribution install of the
+\item[fpc\_zipdistinstall] Make a distribution install of the
 package.
-\item[fpc\_zipinstall] Target to make an install zip of the compiled units
+\item[fpc\_zipinstall] Make an install zip of the compiled units
 of the  package.
-\item[fpc\_zipexampleinstall] Target to make a zip of the example files.
-\item[fpc\_zipsourceinstall] Target to make a zip of the source files.
+\item[fpc\_zipexampleinstall] Make a zip of the example files.
+\item[fpc\_zipsourceinstall] Make a zip of the source files.
 \end{description}
 The zip is made uzing the \var{ZIPEXE} program. Under \linux, a
 \file{.tar.gz} file is created.
 
 \subsection{Installation rules}
 \begin{description}
-\item[fpc\_distinstall] target which calls the \var{install} and
+\item[fpc\_distinstall] Target which calls the \var{install} and
 \var{exampleinstall} targets. 
-\item[fpc\_install] target to install the units.
-\item[fpc\_sourceinstall] target to install the sources (in case a
-distribution is made)
-\item[fpc\_exampleinstall] target to install the examples. (in case
- a distribution is made)
+\item[fpc\_install] Install the units.
+\item[fpc\_sourceinstall] Install the sources, in case a
+distribution is made.
+\item[fpc\_exampleinstall] Install the examples, in case
+ a distribution is made.
 \end{description}
 
 \subsection{Informative rules}
@@ -7945,12 +8022,12 @@ variables, rules and targets: \var{fpc\_info}.
 
 The following information about the makefile is presented:
 \begin{itemize}
-\item general configuration information: the location of
+\item general Configuration information: the location of
 the makefile, the compiler version, target OS, CPU.
-\item the directories, used by the compiler.
-\item all directories where files will be installed.
-\item all objects that will be made.
-\item all defined tools.
+\item The directories, used by the compiler.
+\item All directories where files will be installed.
+\item All objects that will be made.
+\item All defined tools.
 \end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7967,8 +8044,9 @@ compiler and units all ready to use, the so-called releases.  After a
 release, work on the compiler continues, bugs are fixed and features are
 added. The \fpc team doesn't make a new release whenever they change
 something in the compiler, instead the sources are available for anyone to
-use and compile. Compiled versions of RTL and compiler are also made daily,
-and put on the web.
+use and compile. There is an automated process that creates compiled 
+versions of RTL and compiler are also made daily, and put on the web (if the
+build succeeds). Zip files with the sources are also created daily.
 
 There are, nevertheless, circumstances when the compiler must be recompiled
 manually. When changes are made to compiler code, or when the compiler is
@@ -8012,8 +8090,8 @@ doesn't know about these changed internal routines, it will emit function
 calls that are based on the old compiled RTL, and hence are not correct.
 Either the result will not link, or the binary will give errors.
 \item The second case is when something is added to the RTL that the
-compiler needs to know about (a new default assembler mechanism, for
-example).
+compiler needs to know about: a new default assembler mechanism, for
+example.
 \end{enumerate}
 How to know if one of these things has occurred? There is no way to know,
 except by mailing the \fpc team. When the compiler cannot be recompiled
@@ -8066,15 +8144,16 @@ When compiling a new compiler and the compiler should be compiled using an
 existing compiled RTL,  the \var{all} target must be used, and another RTL 
 directory than the default (which is the \file{../rtl/\$(OS\_TARGET)} 
 directory) must be indicated. For instance, assuming that the compiled RTL 
-units are in \var{/pp/rtl}, typing
+units are in \var{/pp/rtl/units/i386-linux}, typing
 \begin{verbatim}
 cd compiler
 make clean
-make all UNITDIR=/pp/rtl
+make all UNITDIR=/pp/rtl/units/i386-linux
 \end{verbatim}
-should use the RTL from the \var{/pp/rtl} dirrectory.
+should use the RTL from the \var{/pp/rtl/units/i386-linux} directory.
 
-This will then compile the compiler using the RTL units in \file{/pp/rtl}.
+This will then compile the compiler using the RTL units in
+\file{/pp/rtl/units/i386-linux}.
 After this has been done, the 'make cycle' can be used, starting with this
 compiler:
 \begin{verbatim}
@@ -8098,13 +8177,13 @@ compilation of RTL and compiler will be treated separately.
 To recompile the RTL, so a new compiler can be built, at least the following
 units must be built, in the order specified:
 \begin{enumerate}
-\item[loaders] the program stubs, that are the startup code for each pascal
+\item[loaders] The program stubs, that are the startup code for each pascal
 program. These files have the \file{.as} extension, because they are written
 in assembler. They must be assembled with the \gnu \file{as} assembler. These stubs
 are in the OS-dependent directory, except for \linux, where they are in a
 processor dependent subdirectory of the \linux directory (\file{i386} or
 \file{m68k}).
-\item[system] the \file{system} unit. This unit resides in the OS-dependent 
+\item[system] The \file{system} unit. This unit resides in the OS-dependent 
 subdirectories of the RTL.
 \item[strings] The strings unit. This unit resides in the \file{inc}
 subdirectory of the RTL.
@@ -8112,12 +8191,12 @@ subdirectory of the RTL.
 of the RTL. Possibly other units will be compiled as a consequence of trying
 to compile this unit (e.g. on \linux, the \file{linux} unit will be
 compiled, on go32, the \file{go32} unit will be compiled).
-\item[objects] the objects unit. It resides in the \file{inc} subdirectory
+\item[objects] The objects unit. It resides in the \file{inc} subdirectory
 of the RTL.
 \end{enumerate}
 To compile these units on a i386, the following statements will do:
 \begin{verbatim}
-ppc386 -Tlinux -b- -Fi../inc -Fi../i386 -FE. -di386 -Us -Sg syslinux.pp
+ppc386 -Tlinux -b- -Fi../inc -Fi../i386 -FE. -di386 -Us -Sg system.pp
 ppc386 -Tlinux -b- -Fi../inc -Fi../i386 -FE. -di386 ../inc/strings.pp
 ppc386 -Tlinux -b- -Fi../inc -Fi../i386 -FE. -di386 dos.pp
 ppc386 -Tlinux -b- -Fi../inc -Fi../i386 -FE. -di386 ../inc/objects.pp
@@ -8125,27 +8204,26 @@ ppc386 -Tlinux -b- -Fi../inc -Fi../i386 -FE. -di386 ../inc/objects.pp
 These are the minimum command line options, needed to compile the RTL.
 
 For another processor, the \var{i386} should be changed into the appropriate
-processor. For another operating system (target) the
-\file{syslinux} should be changed in the appropriate system unit file, 
-and the target OS setting (\var{-T}) must be set accordingly.
+processor. For another target OS, the target OS setting (\var{-T}) must be 
+set accordingly.
 
 Depending on the target OS there are other units that can be 
 compiled, but which are not strictly needed to recompile the compiler.
 The following units are available for all plaforms:
 \begin{description}
-\item[objpas] Needed for Delphi mode. Needs \var{-S2} as an option. Resides
+\item[objpas] Needed for Delphi mode. Needs \var{-Mobjpas} as an option. Resides
 in the \file{objpas} subdirectory.
-\item[sysutils] many utility functions, like in Delphi. Resides in the
-\file{objpas} directory, and needs \var{-S2} to compile.
-\item[typinfo] functions to access RTTI information, like Delphi. Resides in
+\item[sysutils] Many utility functions, like in Delphi. Resides in the
+\file{objpas} directory, and needs \var{-MObjpas} to compile.
+\item[typinfo] Functions to access RTTI information, like Delphi. Resides in
 the \file{objpas} directory.
-\item[math] math functions like in Delphi. Resides in the \file{objpas}
+\item[math] Math functions like in Delphi. Resides in the \file{objpas}
 directory.
-\item[mmx] extensions for MMX class Intel processors. Resides in
+\item[mmx] Extensions for MMX class Intel processors. Resides in
 in the \file{i386} directory.
-\item[getopts] a GNU compatible getopts unit. resides in the \file{inc}
+\item[getopts] A GNU compatible getopts unit. Resides in the \file{inc}
 directory.
-\item[heaptrc] to debug the heap. resides in the \file{inc} directory.
+\item[heaptrc] To debug the heap. Resides in the \file{inc} directory.
 \end{description}
 
 \subsection{Compiling the compiler}
@@ -8162,7 +8240,7 @@ del *.o
 \end{verbatim}
 After this, the compiler can be compiled with the following command line:
 \begin{verbatim}
-ppc386 -Tlinux  -Fu../rtl/linux -di386 -dGDB pp.pas
+ppc386 -Tlinux  -Fu../rtl/units/i386-linux -di386 -dGDB pp.pas
 \end{verbatim}
 So, the minimum options are:
 \begin{enumerate}
@@ -8231,19 +8309,20 @@ FPC\_LINK\_SMART & Defined when the output will be smartlinked.\\
 FPC\_PROFILE & Defined when profiling code is added to program.\\
 & This is defined when using the -pg compiler switch.\\
 FPC & Always defined for \fpc. \\
-VER1 & Always defined for \fpc version 1.x.x. \\
-VER1\_0 & Always defined for \fpc version 1.0.x. \\
+VER2 & Always defined for \fpc version 2.x.x. \\
+VER2\_0 & Always defined for \fpc version 2.0.x. \\
+VER2\_2 & Always defined for \fpc version 2.2.x. \\
 ENDIAN\_LITTLE & Defined when the \fpc target is a little-endian processor \\
 & (80x86, Alpha, ARM). \\
 ENDIAN\_BIG & Defined when the \fpc target is a big-endian processor \\
 & (680x0, PowerPC, SPARC, MIPS). \\
-FPC\_DELPHI & \fpc is in Delphi mode, either using compiler switch -Sd or \\
+FPC\_DELPHI & \fpc is in Delphi mode, either using compiler switch -MDelphi or \\
 & using the \var{\$MODE DELPHI} directive. \\
-FPC\_OBJFPC & \fpc is in OBJFPC mode, either using compiler switch -S2 or \\
+FPC\_OBJFPC & \fpc is in OBJFPC mode, either using compiler switch -Mobjfpc or \\
 & using the \var{\$MODE OBJFPC} directive. \\
-FPC\_TP & \fpc is in Turbo Pascal mode, either using compiler switch -So or \\
+FPC\_TP & \fpc is in Turbo Pascal mode, either using compiler switch -Mtp or \\
 & using the \var{\$MODE TP} directive. \\
-FPC\_GPC & \fpc is in GNU Pascal mode, either using compiler switch -Sp or \\
+FPC\_GPC & \fpc is in GNU Pascal mode, either using compiler switch -SP or \\
 & using the \var{\$MODE GPC} directive. \\
 \end{FPCltable}
 
