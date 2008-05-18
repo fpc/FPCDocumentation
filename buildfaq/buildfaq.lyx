@@ -1,0 +1,7949 @@
+#LyX 1.5.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 276
+\begin_document
+\begin_header
+\textclass book
+\begin_preamble
+\usepackage{hyperref}
+\renewcommand{\chaptername}{}
+\end_preamble
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\paperfontsize default
+\spacing single
+\papersize a4paper
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\leftmargin 1cm
+\topmargin 1cm
+\rightmargin 1cm
+\bottommargin 1cm
+\headheight 1cm
+\headsep 1cm
+\footskip 1cm
+\secnumdepth 2
+\tocdepth 2
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Development Tutorial (a.k.a Build FAQ) 
+\end_layout
+
+\begin_layout Author
+by Marco van de Voort 
+\end_layout
+
+\begin_layout Date
+May 17 2008
+\end_layout
+
+\begin_layout Section*
+Foreword to the Development Tutorial 
+\end_layout
+
+\begin_layout Standard
+FAQ version 0.06
+\end_layout
+
+\begin_layout Standard
+FPC version 2.2.2/2.3.1x (release/devel) 2.2.2 is still in preparation
+\end_layout
+
+\begin_layout Standard
+Lately, I noticed that there are more people playing with the more advanced
+ aspects of the buildprocess of FPC, tracking daily CVS status, trying things
+ that used to be only done by a small circle of core developpers and maybe
+ a select few on the maillists and in the Lazarus project.
+ Things like bootstrapping a new version, release building, crosscompiling,
+ parameterising the build process, attempting to port to new OSes etc.
+ This is logical, because due to (mainly) Peter’s efforts, the building
+ process is a lot more robust and flexible then it used to be.
+ Since the first version of this faq I’ve debugged specially the crosscompiling
+ part of the process a bit more.
+\end_layout
+
+\begin_layout Standard
+The Development Tutorial was originally meant as the successor of the old
+ 0.99.x make cycle FAQ, which had gotten horribly outdated.
+ Moreover, the basic idea of the make cycle faq didn’t work in practice.
+ The FAQ contained only a step by step treatise of the basic features, and
+ when something went wrong (e.g.
+ a .ppu of an old version somewhere), users often had no idea how to solve
+ the problem.
+ So this faq is set up more as an indepth treatise of building FPC and related
+ issues, with much more background information that can assist general problem
+ hunting procedures.
+ So if you think that this FAQ is too verbose and even pedantic at times,
+ and should be limited to the bare essentials, my answer will be: been there,
+ done that, didn’t work :-) 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+This tutorial is not even close to being a replacement for the real manuals.
+
+\series default
+ Most of it will be in the manual though, except some of the outlook on
+ future versions.
+ Try to read the tutorial entirely at least once, including parts that are
+ not so relevant to you.
+ It is all connected, and reading the parts less useful for you might help
+ you see the bigger picture.
+\end_layout
+
+\begin_layout Standard
+The purpose of the faq is different from the docs because it tries to document
+ use cases rather than a reference, and also because it is not fully synchronize
+d with a compiler version.
+\end_layout
+
+\begin_layout Standard
+If you have more questions, suggestions, try the FPC maillists http://www.freepas
+cal.org/maillist.html or irc 
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+irc.freenode.net channel #fpc, best populated in the late evenings CET.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Versioning of the faq 
+\end_layout
+
+\begin_layout Itemize
+Versions 0.01 and 0.02 were continuously updated, both exist in multiple versions.
+ 
+\end_layout
+
+\begin_layout Itemize
+Version 0.03 mainly is an update for the $FPCTARGET and related directory
+ layout modifications in 1.9.5, and improves the index and glossary significantly.
+ Also 1.0.x topics are phased out.
+ 
+\end_layout
+
+\begin_layout Itemize
+Version 0.04 is an update for 2.0 and post 2.0 development.
+ Peter has big plans with the build process (replacing MAKE with a more
+ FPC friendly solution), so 0.05 could be a major update.
+ Also needs SVN tutorials.
+ 
+\end_layout
+
+\begin_layout Itemize
+Version 0.05 is an update after some progress on cross compiling, and the
+ emerging of an internal linker 
+\end_layout
+
+\begin_layout Itemize
+Version 0.06 is an update after a long break due to losing the LyX source
+ as a result of a stolen computer.
+ A PDF version was OCRed and reformatted, and some updating was done:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Compiler version numbers updated to 2.2.2
+\end_layout
+
+\begin_layout Itemize
+New packages structure.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+\begin_inset LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part
+Ordinary building
+\end_layout
+
+\begin_layout Chapter
+Base principles, naming, versions, requirements etc
+\end_layout
+
+\begin_layout Section
+Versions, branches, tags 
+\end_layout
+
+\begin_layout Standard
+Roughly there are four versions categories of FPC now: 
+\end_layout
+
+\begin_layout Description
+pre-1.0 These are versions are usually numbed 0.99.x Versions before 0.99.8 don’t
+ have Delphi features.
+ In general these are non supported, but specially versions (0.99.12 and 0.99.14
+ based versions) are essentially beta’s for 1.0.
+ However we are talking 5-6 year old betas here, and a lot has changed,
+ even during the 1.0.x series.
+ 
+\end_layout
+
+\begin_layout Description
+1.0.x The so called FIXES_1_0_0 branch.
+ These versions (1.0, 1.0.2, 1.0.4, 1.0.6 and 1.0.10 ) are bugfix releases of what
+ is basically 1.0.
+ However sometimes TP and Delphi compability fixes can break backwards compabili
+ty.
+ 1.0.x is frozen, and there will be no new releases or even fixes, after 1.0.10
+ from may 2003, and we strongly recommend upgrading to 2.0 
+\end_layout
+
+\begin_layout Description
+1.1.x/1.9.x/2.0.x This is the branch that yielded 2.0.x series.
+ It used to be called the development branch before 2.0,0, but now that 2.0
+ is declared stable, the best name would be 2.0.x stable branch.
+ Compared to the 1.0.x branch, it adds most of the missing Delphi features
+ (dynamic arrays, interfaces, default parameters) and supports several processor
+s.
+ This branch has multiple version numbers, since while in alpha it was called
+ 1.1.x, while in beta 1.9.x and the real releases were called 2.0.x.
+ This branch is now closed , 2.0.4 will probably be the last release.
+ 
+\end_layout
+
+\begin_layout Description
+2.1.x/2.2.x This is the branch for the FPC 2.2.x series.
+ Main highlights are support for internal linking for windows (win32/win64/wince
+).
+ Win64 and WinCE are also new.
+ 
+\end_layout
+
+\begin_layout Description
+2.3.x The branch for post 2.2 development, will become 2.4.0 in time.
+\end_layout
+
+\begin_layout Standard
+Releases are tagged with a RELEASE_x_y_z for release x.y.z.
+ So release 1.0.2 is tagged RELEASE_1_0_2 in CVS.
+ While 1.0.8 tags might exist in CVS, there is no official 1.0.8 version , this
+ because creating the 1.0.8 release took a long time, and the package was
+ rebuilt several times, while already downloadable via FTP.
+ Because the core team was afraid all those versions with the same number
+ would create confusion, it was decided to increase the version number for
+ the final release to 1.0.10.
+ The version history is illustrated in the following graph:
+\end_layout
+
+\begin_layout Standard
+timeline.png not found! 
+\end_layout
+
+\begin_layout Standard
+While 1.0.x also supports two processors (intel x86 and Motorola m68k), the
+ 1.1.x branch contains a more fundamentally en- gineered approach to make
+ FPC a multi architecture compiler.
+ Currently it looks like the first release of the 1.1.x branch will support
+ x86, ppc, Arm (Zaurus and similar devices) AMD64(x86-64)and Sparc (V8,V9).
+ 
+\end_layout
+
+\begin_layout Section
+Requirements 
+\end_layout
+
+\begin_layout Standard
+A supported OS and processor are of course the main requirements.
+ Such info can be better gotten from the website, since the status changes
+ frequently.
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+Actually, while writing this, I witnessed the first working “Hello world”
+ program on the Sparc V8 architecture :-)
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+The FPC build process needs certain tools.
+ While usually this is all provided by the OS, or installed by the FPC release
+ package, I name them here explicitely to make it easier for people to debug
+ build problems.
+ 
+\end_layout
+
+\begin_layout Standard
+The main tools: 
+\end_layout
+
+\begin_layout Description
+ld The GNU linker.
+ Links a bunch of .o and .a’s together to form a library (.dll or .so) or a
+ finished program (like .exe on windows, extensionless on Unix) 
+\end_layout
+
+\begin_layout Description
+as The GNU assembler.
+ Assembles the textform representation in a .s or .as file to an .o file.
+ 
+\end_layout
+
+\begin_layout Description
+ar needed for creating static libraries (.a) from .o’s.
+ Static libraries are used when building for smartlinking.
+ 
+\end_layout
+
+\begin_layout Description
+make GNU make.
+ Determines the order of what to build.
+ Both on file as on directory level.
+ Called gmake on *BSD 
+\end_layout
+
+\begin_layout Description
+ppc386 or ppc<processor> in general, preferably the last release version.
+ Bootstrapping from other compilers is not realistic, and, to my best knowledge,
+ hasn't been attempted in years (1.0.x times)
+\end_layout
+
+\begin_layout Standard
+The first three are found in the package “binutils”, the version doesn’t
+ matter much as long as it is not a fossil.
+ At least on major platforms.
+ Some platforms package an old version, e.g.
+ OpenBSD used to package fossils because it still used a.out as a binary
+ format, though I heard that they finally got rid of that in version 3.4.
+ These utils are rarely a source of errors, but depend on the target OS
+ and CPU, which complicates cross-compiling a bit.
+\end_layout
+
+\begin_layout Standard
+Make is usually obtained from the same source as binutils, but packaged
+ separately.
+ See the separate section on make below for some common caveats.
+ 
+\end_layout
+
+\begin_layout Standard
+Windows users that build a system from scratch, should get the makew32.zip
+ and asldw32.zip (or similar) files from the “separate” subdirectory of the
+ last release to get the needed external tools.
+ 
+\end_layout
+
+\begin_layout Standard
+Under 
+\emph on
+Mac OS X/Darwin
+\emph default
+ , the binutils and make are part of the Apple developertools, which for
+ 10.3 are automatically installed when you install XCode.
+ Fink (an open source software distribution for Mac OS X) is not strictly
+ required for FPC operation, but most Unix libraries you might need (like
+ mysql, ncurses etc) are part of Fink.
+ The rumour is that in 10.4 these tools were finally based on recent GNU
+ versions, 
+\end_layout
+
+\begin_layout Subsection
+ld: The GNU linker.
+ 
+\end_layout
+
+\begin_layout Standard
+The GNU linker is the final step in the building process of a FPC source
+ to a runnable binary.
+ As said before, a recent version that supports linkerscript files is the
+ only prerequisite for an easy ride, except for win32, where the linker
+ should understand –base-file and –image-base parameters.
+ (these are also already supported over 2 years though).
+ The supported Win32 platform as far as buildtools are concerned, is mingw32,
+ not cygwin.
+ FPC can link to cygwin libraries though.
+ 
+\end_layout
+
+\begin_layout Standard
+One could maybe use other linkers then GNU, but that’d require reimplementing
+ the part that calls the linker (this has been done e.g.
+ for OpenBSD a.out in the 1.0.x compiler and Darwin's mach-O LD in 2.0+).
+ However keep in mind that the connection between the assembler and the
+ linker is a commonformat for the object file (.o).
+ Changing to a linker that uses a different format might also require a
+ different assembler, and in turn, a different assembler might require adaptions
+ to the FPC part that writes the assembler code.
+ However all these are doable, even for people that aren’t complete compiler
+ wizards.
+ 
+\end_layout
+
+\begin_layout Standard
+If your platform is not a mainstream *nix or windows, try to find a linker
+ that supports the –ld-sections parameter.
+ The new smartlinking will be based on this LD parameter.
+ 
+\end_layout
+
+\begin_layout Standard
+Starting with FPC 2.1.1, the compiler also has a linker internal for some
+ platforms which is enabled using -Xi.
+ This internal linker links way faster, and uses less memory,specially when
+ using smartlinking
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+About 250-275 MB as maximum amount of memory used to fully smartlink Lazarus,
+ as opposed to +/- 1.5GB for GNU LD
+\end_layout
+
+\end_inset
+
+ .
+ At the time of writing the Windows platforms (PE) are supported by this
+ internal linker.
+ 
+\end_layout
+
+\begin_layout Subsection
+as: GNU asssembler 
+\end_layout
+
+\begin_layout Standard
+The assembler must be GNU (G)AS, and must be relatively recent.
+ Really old x86 GNU assemblers might have hidden bugs that don’t surface
+ when used with gcc.
+ Since GNU AS is a typical backend assembler, in the past adressing modes
+ and opcodes that aren’t emitted by gcc could be problematic.
+ 
+\end_layout
+
+\begin_layout Standard
+An example of this is the OpenBSD 3.x series, where by just substituting
+ a newer assembler from the ports tree FPC suddenly builds, while it fails
+ with the packaged assembler.
+ A relatively recent version is also nice because these probably support
+ newer x86 instructions (SSE2,SSE3).
+\end_layout
+
+\begin_layout Standard
+On some platforms (win32 and x86 ELF), FPC has an internal assembler, and
+ avoids AS for performance reasons.
+ This internal assembler is called the binwriter in FPC jargon.
+ The binwriter is a bit more than a pure assembler though, since it can
+ also directly write static libraries (*.a) .
+ While noticable with ordinary compiles too, the performance problems that
+ the binwriter solves are mainly noticable when smartlinking.
+ 
+\end_layout
+
+\begin_layout Standard
+FPC also has the ability to generate code in TASM, NASM, MASM and WASM (watcom)
+ format.
+ However these aren’t fre- quently tested, so your mileage may vary.
+ 
+\end_layout
+
+\begin_layout Subsection
+ar: GNU archiver 
+\end_layout
+
+\begin_layout Standard
+The archiver creates archive ( .a) files out of object code files (.o).
+ This is mainly done to reduce the number of files involved in the linking
+ process, and on disc.
+ Archive files are often called static libraries because they contain roughly
+ the same code for static linking as the .so (or .DLL) files do for dynamic
+ code.
+ (a .dll and .so can be more than one .o too).
+ The GNU linker can directly access .a libraries.
+ 
+\end_layout
+
+\begin_layout Standard
+AR can be a problem sometimes, since the compiler passes all individual
+ files on the commandline.
+ Due to e.g.
+ smartlinking and this really can be a lot, and be larger than the maximal
+ allowed nr of parameters for the OS.
+ (64k params is too little, 128k is still ok)
+\end_layout
+
+\begin_layout Subsection
+make: GNU make 
+\end_layout
+
+\begin_layout Standard
+The build process of Free Pascal uses plain (GNU make) makefiles that are
+ generated by FPCmake.
+ FPCmake generates the Makefiles from a global template and the Makefile.fpc
+ in each directory.
+ This Makefile.fpc is a simple INI file that extends and parameterises the
+ global template
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+which can be found in fpc/utils/fpcm/fpcmake.ini 
+\end_layout
+
+\end_inset
+
+.
+ There are plans for the future to get rid of the MAKE utility all together
+ and replace it with a more specialised own version, but these are still
+ in the initial stages.
+ The current system is also quite nice and flexible.
+ 
+\end_layout
+
+\begin_layout Standard
+The currently used make is GNU make, it’s available for nearly all platforms.
+ However there are some platform specific oddities listed below.
+\end_layout
+
+\begin_layout Description
+Linux The only without much oddities.
+ Of all Unices, Linux uses relatively a lot GNU tools, and less tools descending
+ from the original unix.
+ If there is a make or make-package on Linux it is most likely GNU.
+ 
+\end_layout
+
+\begin_layout Description
+*BSD The default make is a pmake variant which is slightly different from
+ GNU's.
+ The makefile template used by FPC isn’t compatible with pmake at this moment.
+ (hint, hint) GNU make is installable from the ports tree, usually as devel/gmak
+e.
+ Don’t forget to put the bin directory of the ports-$PREFIX (/usr/local/bin,
+ /usr/pkg/bin etc) into your path, and substitute all use of make by “gmake”.
+ In practice this is no big problem, since gmake is generally available
+ on BSD systems, installed as dependancy of a lot of development related
+ packages.
+\end_layout
+
+\begin_layout Description
+BeOS On my installation (BeOS 5 Personal Edition) both binutils and GNU
+ make came with the developper kit.
+ 
+\end_layout
+
+\begin_layout Description
+OS/2 I honestly don’t know.
+ There are EMX and native versions, and of course dos also.
+ Afaik FPC used to be EMX based, but is currently gearing towards native.
+ I’ll have to research this myself first :-) 
+\end_layout
+
+\begin_layout Description
+Dos/Go32V2 Uses DJGPP Go32V2 utilities.
+ This because FPC uses the go32v2 extender, and for safe nesting of programs
+ using an extender, all extenders have to be the same.
+ Including the utils :-) 
+\end_layout
+
+\begin_layout Description
+Netware Not even an idea.
+ I never saw this port operational.
+ 
+\end_layout
+
+\begin_layout Description
+win32/win64 Use the mingw set, and preferably the one distributed with the
+ most recent FPC release.
+ See below.
+ 
+\end_layout
+
+\begin_layout Description
+wince My experiences are limited to CE as crosscompilation target.
+ Some people have e.g.
+ NAS boxes that might allow bootstrap FPC on a WinCE based host.
+\end_layout
+
+\begin_layout Description
+Mac OS X Come with Apple Developer tools (which are installed with XCode
+ on 10.3).
+ Using generic Unix libraries like mysql, ncurses, postgresql etc might
+ require FINK.
+ 
+\end_layout
+
+\begin_layout Standard
+The situation on win32 often confuses people.
+ This mainly because there are at least three available sets of the above
+ utils (ar,ld,as,make) that run on Windows.
+ Any mixing (one util from one category, one from the other) can also lead
+ to unpredictable results.
+ Anyway, the three candidates are: 
+\end_layout
+
+\begin_layout Description
+Mingw (sometimes called mingw32) which is the one to use.
+ Win32 native tools with a real win32 feel.
+ (driveletters and backslashes in paths etc) Preferably versions distributed
+ with FPC releases, since they might include FPC specific critical patches.
+ E.g.
+ at a certain point it turned out that mingw tools only searched for a capitalis
+ed PATH variable, and not one spelled like “Path” which is common on NT
+ based Windows versions.
+ See the win32 specific part of the FAQ on the FPC website for more info.
+ 
+\end_layout
+
+\begin_layout Description
+Cygwin provides maximal compabilitywith Unix, and can be seen as a Unix
+ compability layer.
+ FPC however is really native on windows, and having half a windows, and
+ half a (compability) unix build system is hard to maintain.
+ FPC does compile with a current Cygwin install though, but the resulting
+ compiler is no cygwin program.
+ Also cygwin programs need cygwin1.dll in the correct version .
+ Note : FPC can link to cygwin, however doesn’t need it for operation (except
+ for the textmode IDE).
+ Recently, Cygwin improved in native path support, if the paths are fully
+ qualified.
+ Mingw is still better, but cygwin is usable for emergency operation.
+ 
+\end_layout
+
+\begin_layout Description
+go32v2 Go32v2 is dos based, and used via the dos compability system of Windows,
+ don’t use it with the win32 compiler, it would be like using the win32
+ tools via Wine on Linux :-) 
+\end_layout
+
+\begin_layout Standard
+A common problem I encountered on win32 is putting the cygwin “bin” directoryin
+ the win32 search path.
+ The mingw make.exe finds the cygwin shell, and tries to execute certain
+ programs with it.
+ Cygwin has improved a lot recently though, and currently this seems to
+ work again, at least if everything is situated on one drive (one can recompile
+ FPC with only cygwin and a FPC commandline compiler).
+ 
+\end_layout
+
+\begin_layout Standard
+Note that some other development tools (Borland, Microsoft, java) might
+ also package a make version.
+ Always put FPC as the first directory in the PATH.
+ 
+\end_layout
+
+\begin_layout Standard
+Due to some new developments with parallel compiling using the FPC makefiles,
+ 
+\series bold
+make 3.80 is strongly recommended as of FPC 2.1.1 (januari 2007 and later)
+\series default
+\emph on
+.
+
+\emph default
+ Unix people with dual cores and up to date source trees might want to try
+ “make -j 2”.
+\end_layout
+
+\begin_layout Subsection
+FPC itself.
+ ppc386, ppcppc, ppcsparc, fpc.
+ 
+\end_layout
+
+\begin_layout Standard
+Free Pascal is written primarily in itself, in the Pascal dialects it supports.
+ This has some consequences for beginning the bootstraps.
+ 
+\end_layout
+
+\begin_layout Itemize
+A normal build of FPC is pretty much only doable with FPC as starting compiler.
+\end_layout
+
+\begin_layout Itemize
+Bootstrapping from Delphi was possible for a while under certain circumstances,
+ but requires some skill, since the make- files don’t support it.
+ Delphi compability has been neglected, since too many Delphi bugs popped
+ up, and keeping it compilable was a problem.
+ Somewhere between 1.9.4 and 1.9.6 most Delphi workarounds were removed.
+ D2005 was never tested.
+ The possibility with Delphi as starting compiler probably failed because
+ while Delphi would have been great from an availability point, it was easier
+ to use FPC because of Delphi’s bugs.
+\end_layout
+
+\begin_layout Itemize
+Bootstrapping from TP should possible for 1.0.x versions and earlier.
+ 1.1.x uses delphi classes.
+ However already quite some mastership was required for this, since the
+ compiler is a large program, and the single datasegment limitation of TP
+ was severe.
+\end_layout
+
+\begin_layout Itemize
+Bootstrapping from GNU GPC or p2c is not doable.
+ Their TP modi are not even close to being TP/BP compatible enough, and
+ FPC 1.1.x and beyond need Delphi compability.
+ 
+\end_layout
+
+\begin_layout Itemize
+Bootstrapping though VP might be doable in theory, at least for 1.0.x with
+ some considerable skill.
+ This has never been tested though, since FPC is better on nearly all platforms
+ anyway for basic recompilation, and less buggy.
+ 
+\end_layout
+
+\begin_layout Standard
+The reasons for these choices belong in an advocacy document rather than
+ here.
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+The FAQ lists some reasons, but IMHO not all.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+However practically there is one major disadvantage: you need FPC to build
+ FPC, and one major advantage: FPC generally needs much less tools installed
+ to build, compared to e.g.
+ a GCC build.
+ One also needs only a suitable compiler binary to bootstrap FPC, not even
+ a fully fledged FPC installation.
+ (on platforms that don’t come with it, you need the GNU build tools though,
+ see paragraphs above), and there are essentially 
+\series bold
+no library requirements
+\series default
+.
+ 
+\end_layout
+
+\begin_layout Standard
+With the internal linker, in time even the GNU tool requirements may disappear,
+ allowing a single compiler binary to fully bootstrap the whole FPC/Lazarus
+ project.
+ 
+\end_layout
+
+\begin_layout Standard
+The file you need to start an ordinary snapshot build is “ppc<processor>”,
+ so ppc386 for x86, ppcppc for PowerPC.
+ ppcsparc for Sun Sparc V8 systems etc.
+ Till now these files always have been statically linked.
+ so there is only one Linux compiler, one FreeBSD compiler etc.
+ Kernel, library and distribution versions don’t matter.
+ (except maybe major kernel changes in extreme, rare cases like Linux 1.0.x
+ to 2.0.x) 
+\end_layout
+
+\begin_layout Standard
+For crossbuilds to the same processor but a different OS you don’t need
+ a special cross-compiler.
+ Only for crossbuilding to different processors you’ll need a different
+ one.
+\end_layout
+
+\begin_layout Standard
+Besides this, there is the “ 
+\series bold
+fpc
+\series default
+” binary.
+ This is a common frontend to all ppc<cpu> compilers on a system, one that
+ compiles for the current architecture and one that compiles for the rest.
+ The reason for this is that one can use one binary, and specify the processor
+ with -P.
+ So 
+\end_layout
+
+\begin_layout LyX-Code
+fpc -Ppowerpc compileme.pp 
+\end_layout
+
+\begin_layout Standard
+will compile “compileme.pp” using the PowerPC (ppcppc) compiler if everything
+ is set up correctly.
+ But we’ll get into that later :-) 
+\end_layout
+
+\begin_layout Standard
+The fpc binary can also be used to set compiler version: 
+\end_layout
+
+\begin_layout LyX-Code
+fpc -V1.0 compileme.pp 
+\end_layout
+
+\begin_layout Standard
+will execute the default compiler (ppc<current processor>) with -1.0 suffixed.
+ Combining with -P is possible.
+ fpc -Ppowerpc -V1.0 will try to run a binary ppcppc-1.0 as the real compiler.
+ Specially on Unix this is nice, since only a couple of symlinks allow to
+ switch versions easily.
+ 
+\end_layout
+
+\begin_layout Standard
+Combined with a masterfully created fpc.cfg file one can build very powerful
+ crosscompiling systems that autoselect the right targets.
+ We’ll get to that later.
+ 
+\end_layout
+
+\begin_layout Section
+Obtaining source 
+\end_layout
+
+\begin_layout Subsection
+Introduction 
+\end_layout
+
+\begin_layout Standard
+Right after the FPC 2.0 release, the FPC project change to use SVN as source
+ version managament system, for reasons mostly related to merging and branching.
+ 
+\end_layout
+
+\begin_layout Standard
+Usually when building a snapshot, the source is obtained via SVN, and comes
+ as a large sourcetree with fpc/ as the root directory of the repository.
+ However the source is usually also downloadable as an archive from the
+ main site
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+
+\backslash
+href{ftp://ftp.freepascal.org/pub/fpc/snapshot/v22/source/fpc.zip}{ftp://ftp.freepas
+cal.org/pub/fpc/snapshot/v22/source/fpc.zip (2.2.x)}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+
+\backslash
+href{ftp://ftp.freepascal.org/pub/fpc/snapshot/v23/source/fpc.zip}{ftp://ftp.freepas
+cal.org/pub/fpc/snapshot/v23/source/fpc.zip (2.3.x development series)}
+\end_layout
+
+\end_inset
+
+.
+ This archive is getting larger each month though, and is already 25M zipped.
+ 
+\end_layout
+
+\begin_layout Standard
+A better way is to get the sources via SVN, which allows to upgrade sources
+ to more recent versions incrementally.
+ (i.o.w.
+ the second time, it only downloads changes)
+\end_layout
+
+\begin_layout Subsection
+SVN Modules
+\end_layout
+
+\begin_layout Standard
+The FPC and Lazarus source is spread out over several SVN modules:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="2">
+<features>
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" rightline="true" width="0">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+Module 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+fpc
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+The core FPC repository.
+ Contains compiler, RTL, textmode IDE and most non visual libraries 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+fpcdocs
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+The FPC documentation source (in 
+\begin_inset ERT
+status open
+
+\begin_layout Standard
+
+
+\backslash
+LaTeX
+\end_layout
+
+\end_inset
+
+ and fpdoc XML format)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+fpcprojects
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+Projects not yet suitable for distribution together with FPC are parked
+ here.
+ (includes IRC bot)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+fpcbuild
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+Contains fpc and fpdocs tree as well as the install and demo dirs and a
+ makefile for release packaging.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+lazarus 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+The Lazarus project (visual classes library LCL and the Lazarus IDE/RAD)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Downloading source via SVN 
+\end_layout
+
+\begin_layout Standard
+To check out a module, use the follow line:
+\end_layout
+
+\begin_layout LyX-Code
+svn co http://svn.freepascal.org/svn/<module>/trunk <module> 
+\end_layout
+
+\begin_layout LyX-Code
+#
+\end_layout
+
+\begin_layout LyX-Code
+# Examples: 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# FPC 
+\end_layout
+
+\begin_layout LyX-Code
+# svn co http://svn.freepascal.org/svn/fpc/trunk fpc 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# fpcdocs 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+svn co http://svn.freepascal.org/svn/fpcdocs/trunk fpcdocs 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# fpcprojects (has no branches, maybe you don't need /trunk at the end)
+ 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+svn co http://svn.freepascal.org/svn/fpcprojects/trunk fpcprojects 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# lazarus 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+svn co http://svn.freepascal.org/svn/lazarus/trunk lazarus 
+\end_layout
+
+\begin_layout Standard
+To check out a branch, replace “trunk” in the above lines with the branches/<bra
+nch name>.
+ E.g.
+ to check out the branch fixes_2_2: 
+\end_layout
+
+\begin_layout LyX-Code
+svn co http://svn.freepascal.org/svn/fpc/branches/fixes_2_2 fpc-2.2.x 
+\end_layout
+
+\begin_layout Standard
+Specific releases are tagged with a tag that is formated like RELEASE_2_2_2
+ , and can be checked out like this: 
+\end_layout
+
+\begin_layout LyX-Code
+svn co http://svn.freepascal.org/svn/fpc/tags/RELEASE_2_2_2 fpc-2.2.2 
+\end_layout
+
+\begin_layout Subsection
+Updating the source via SVN 
+\end_layout
+
+\begin_layout Standard
+The advantage of getting source via SVN is of course the incremental updating.
+ This is very simple with SVN, simply use “svn up x”, if x is a directory
+ where you have checked out something before.
+ http path, fixes and branches are automatically read from the system.
+ 
+\end_layout
+
+\begin_layout Standard
+Examples: 
+\end_layout
+
+\begin_layout LyX-Code
+svn up fpc 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+svn up fpc-2.2.2
+\end_layout
+
+\begin_layout Subsection
+Reverting SVN checkouts 
+\end_layout
+
+\begin_layout Standard
+Something new in SVN is reverting.
+ If local edits cause conflicts when updating your checkout, or if you want
+ to be 100% sure that there are no local edits, you should revert your checkout,
+ to make sure that your local copy is really in sync with the SVN server.
+ 
+\end_layout
+
+\begin_layout Standard
+You should do this if you’re having a problem that other people on IRC and
+ maillists can’t duplicate, and your starting compiler is correct.
+ 
+\end_layout
+
+\begin_layout Standard
+Examples: 
+\end_layout
+
+\begin_layout LyX-Code
+svn revert -R fpc 
+\end_layout
+
+\begin_layout Subsection
+Exporting (win32 users, read this!) 
+\end_layout
+
+\begin_layout Standard
+Exportingis basically retrieving a local working copy from a checkout.
+ Typical reasons to buildin an exportinstead ofa checkout are: 
+\end_layout
+
+\begin_layout Itemize
+You are doing a release build.
+ E.g.
+ making RPMs, debs, freebsd ports entries etc.
+ 
+\end_layout
+
+\begin_layout Itemize
+You are building on win32 , and want to use “make install” to install the
+ build, AND you want to install examples.
+\end_layout
+
+\begin_layout Standard
+The problem on windows is that some tools get confused by the read-only
+ attributes set on adminstrative files by some SVN clients.
+ Since svn export only copies the repository’s content, and not the administrati
+ve files, this is a good workaround.
+ Exporting is effectively copying, so this workaround takes about the same
+ time and space as manually copying the checkout.
+ 
+\end_layout
+
+\begin_layout Standard
+The format of the export command is: 
+\end_layout
+
+\begin_layout LyX-Code
+svn export path
+\backslash
+to
+\backslash
+checkout exportdirectory 
+\end_layout
+
+\begin_layout Standard
+Example: 
+\end_layout
+
+\begin_layout LyX-Code
+svn export d:
+\backslash
+fpc fpcexport 
+\end_layout
+
+\begin_layout LyX-Code
+or 
+\end_layout
+
+\begin_layout LyX-Code
+svn export /usr/local/src/fpc fpc 
+\end_layout
+
+\begin_layout Standard
+If the second argument already exists, SVN will refuse to do this.
+ In that case use –force to force svn to update.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Not
+\series default
+e 1: I haven’t tested this yet, but cleaning the repository before exporting
+ could speed up somewhat, specially on windows.
+\end_layout
+
+\begin_layout Standard
+Note 2: For a 
+\series bold
+faster solution
+\series default
+ see the build tricks section.
+\end_layout
+
+\begin_layout Subsection
+More info about SVN 
+\end_layout
+
+\begin_layout Standard
+More info about FPC and SVN can be found here 
+\begin_inset ERT
+status open
+
+\begin_layout Standard
+
+
+\backslash
+href{http://www.freepascal.org/wiki/index.php/SVN
+\backslash
+_Migration}{http://www.freepascal.org/wiki/index.php/SVN
+\backslash
+_Migration}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Extension conventions 
+\end_layout
+
+\begin_layout Standard
+FPC defines some extensions that need some clarification: 
+\end_layout
+
+\begin_layout Description
+.o The actual code of a compiled unit or main program 
+\end_layout
+
+\begin_layout Description
+.a The actual code of a compiled unit or main program when smartlinking.
+ 
+\end_layout
+
+\begin_layout Description
+.ppu The rest of the compiled unit that is not actual code.
+ (like information about directives that where defined when compiling, the
+ parsed interface etc) 
+\end_layout
+
+\begin_layout Description
+.s Assembler code (to be assembled .o) generated by the compiler.
+ 
+\end_layout
+
+\begin_layout Description
+.as Assembler code in source form (there never was a pascal equivalent).
+ Usually program startup code.
+ 
+\end_layout
+
+\begin_layout Description
+.ow In old versions, the win32 version of .o files.
+ 
+\end_layout
+
+\begin_layout Description
+.ppw In old versions, the win32 version of .ppu files.
+ 
+\end_layout
+
+\begin_layout Description
+.aw In old versions, the win32 version of .a files.
+ 
+\end_layout
+
+\begin_layout Description
+.sw In old versions, the win32 version of 
+\end_layout
+
+\begin_layout Description
+.s files.
+ .rst resourcestring files for internationalisation.
+ 
+\end_layout
+
+\begin_layout Description
+.$$$ temporary files.
+ Can be safely removed usually 
+\end_layout
+
+\begin_layout Description
+.res Windows or OS/2 resource file 
+\end_layout
+
+\begin_layout Description
+link.res Linker script file.
+ Contains which files make up the binary, and what external libraries are
+ used.
+ 
+\end_layout
+
+\begin_layout Description
+ppas.sh (or .bat) batchfile that calls the linker with the correct arguments.
+ 
+\end_layout
+
+\begin_layout Standard
+The renaming of the extensions on win32 was originally done to avoid confusion
+ with dos compilers on the same system.
+ However this has been superceded by a better directory structure which
+ was needed for easy crosscompiling, and in the 1.1.x/1.9.x branch the extensions
+ for win32 are renamed back to .ppu/.a/.o 
+\end_layout
+
+\begin_layout Standard
+So in the FPC distribution you will find a .ppu, an .a and an .o per compiled
+ unit.
+\end_layout
+
+\begin_layout Section
+Directory layout 
+\begin_inset LatexCommand label
+name "sec:Directory-layout"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Essentially the FPC layout is quite flexible.
+ The binary (ppc386, ppc68k or ppcppc) must be able to find a configuration
+ file, and that file can specify the rest.
+ So the layouts described here are the default layouts as installed by the
+ releases, or as planned for future releases.
+ (the latter of course are mainly the multi processor design)
+\end_layout
+
+\begin_layout Standard
+The base installation of FPC has these main categories: 
+\end_layout
+
+\begin_layout Description
+binaries The base binaries (fpc, ppc68k and ppcppc, ppcsparc, ppcx64) must
+ be in the search PATH of the OS.
+ If you execute fpc, fpc must be able to find the other ones (ppcppc, ppc386
+ etc), also via the PATH.
+ 
+\end_layout
+
+\begin_layout Description
+fpc.cfg The binarymust be able to find the configurationfile in one of the
+ defaultlocations as specified for that OS.
+ (see platform dependant sections) 
+\end_layout
+
+\begin_layout Description
+units The configurationfile must define the correct path to the RTL and
+ other packages compiled for that platformand cpu.
+ This is usually a tree.
+ Crosscompile units also belong in this tree.
+ 
+\end_layout
+
+\begin_layout Description
+(binutils) The binutils (LD,AS,AR) have to be in the PATH, or their directory
+ should be specified in the fpc.cfg file or on the commandline with the -FD
+ parameter.
+ On operating systems that don’t install the binutils by default, these
+ are installed by the FPC installation process in the same directory as
+ the main binaries, so this is usually not a problem when not crosscompiling
+ or mixing two FPC installations (e.g.
+ a DOS and Windows installation on one machine).
+ Note that specifying in the fpc.cfg file only works when compiling programs
+ by hand.
+ When compiling a new compiler, the fpc.cfg file is ignored by the makefile.
+\end_layout
+
+\begin_layout Standard
+Besides these there are source tree, documentation,the compiler localisation
+ (language) and example directories.
+ However these are only interesting for real release distribution engineering,an
+d don’tinfluence the workingsof the compileritself.
+ This because the compiler has the source already in compiled form in the
+ .o, .a and .ppu files in the units directory.
+ The place of the source doesn’t really matter.
+ The only thing that needs the source directory for automated processing
+ is lazarus, and one can enter any path in Lazarus’ FPC source dialogue.
+ 
+\end_layout
+
+\begin_layout Standard
+When writing paths in fpc.cfg, some substitutions are automatically done,
+ e.g.
+ 
+\end_layout
+
+\begin_layout Description
+$FPCTARGET is replaced by the architecture - operating system combination
+ you are compiling for.
+ (e.g.
+ i386-linux) 
+\end_layout
+
+\begin_layout Description
+$FPCVERSION is replaced by the version of the FPC compiler reading it, and
+ finally 
+\end_layout
+
+\begin_layout Description
+$FPCCPU is replaced by the processor which the compiler is targeting.
+ $FPCOS is replaced by the operating system.
+ 
+\end_layout
+
+\begin_layout Description
+$FPCFULLVERSION is replaced by a compiler version with an extra patchlevel.
+ (1.9.5.x) 
+\end_layout
+
+\begin_layout Description
+$FPCDATE is replaced by the current date.
+\end_layout
+
+\begin_layout Standard
+Since filesystems hierachies differ with the OS, I’ll put some OS specific
+ information in the following sections.
+\end_layout
+
+\begin_layout Subsection
+Unix (and full clones like Linux) 
+\begin_inset LatexCommand label
+name "sub:unix dir layout"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Under Unix, most directories are relative to the so called prefix.
+ A prefix is a kind of root directory for package installing.
+ Common prefixes are /usr, /usr/local, /usr/exp and /usr/pkg (the last one
+ is common on NetBSD).
+ 
+\end_layout
+
+\begin_layout Standard
+The usual convention is that programs that come with the base-distribution
+ go into /usr, and hand-compiled or hand-installed packages go to /usr/local.
+ However the definition of base-distribution varies with the distribution
+ and OS.
+ The main idea is to give root (the administrator) trusted users the ability
+ to install and manage less important packages in /usr/local while keeping
+ the base system only writable for the administrator (group) himself.
+ Linux distributions are traditionally more likely to install packages into
+ /usr instead of /usr/local, but not every distribution does that.
+ “man hier” should list some of the conventions used on your Unix version.
+\end_layout
+
+\begin_layout Standard
+If directories are relative to a prefix, they are noted as $PREFIX/the/rest/of/t
+he path.
+ Note that this has nothing to do with $FPC<x> substitutions in fpc.cfg.
+ $PREFIX is shellscript notation for “get content of environmentvariable
+ PREFIX”.
+ Compiled units go into $PREFIX/fpc/$FPCVERSION/units/$FPCTARGET.
+ Units used for crosscompiling also go into $PREFIX/fpc/$FPCVERSION/units/$FPCTA
+RGET.
+\end_layout
+
+\begin_layout Standard
+Binaries go into directory $PREFIX/bin, however sometimes these are only
+ symlinks to the actual files in $PREFIX/lib/fpc/$FPCVERSION directory to
+ easily switch versions.
+ Since the binary can find its own unit files using versioned info in fpc.cfg
+ when properly set up, usually the default binary is the only thing that
+ needs to be swapped.
+ 
+\end_layout
+
+\begin_layout Standard
+The place where configuration files are searched on unix are: /etc/fpc.cfg,
+ ~/.fpc.cfg.
+ $PREFIX/etc/fpc.cfg is searched from 1.9.8 onwards.
+ (note; ~ means home directory on Unix)
+\end_layout
+
+\begin_layout Standard
+So let’s take $PREFIX=/usr/local, $VERSION=2.2.2, $FPCCPU=i386, $FPCOS=freebsd
+ and $FPCTARGET=i386-freebsd as an example, and see what file goes where:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="8" columns="3">
+<features>
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" rightline="true" width="0">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+File(s)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+location 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+remarks
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+fpc
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+/usr/local/bin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+ppc386
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+/usr/local/bin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+actually symlinked to /usr/local/lib/fpc/2.2.2/ppc386
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+ppcppc
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+/usr/local/bin
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+actually symlinked to /usr/local/lib/fpc/2.2.2/ppcppc
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+rtl for i386-freebsd
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+/usr/local/lib/fpc/2.2.2/units/i386-freebsd/rtl
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+rtl for i386-linux
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+/usr/local/lib/fpc/2.2.2/units/i386-linux/rtl 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+(cross operating system compiling)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+rtl for powerpc-netbsd
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+/usr/local/lib/fpc/2.2.2/units/powerpc-netbsd/rtl
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+(cross architecture and OS compiling, endianness) 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+rtl for x86_64-win64
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+/usr/local/lib/fpc/2.2.2/units/x86_64-win64/rtl
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+(cross arch, OS, wordsize)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Note:
+\series default
+ 1.9-1.9.4 stored libraries for cross compilation in $PREFIX/lib/fpc/$FPCVERSION/cr
+oss/$cpu/$target.
+ Because all platforms are now fully qualified with architecture, a separate
+ directory for CPU is no longer necessary, and FPC 1.9.5 and above store everythin
+g in $PREFIX/lib/fpc/$FPCVERSION/units and below.
+\end_layout
+
+\begin_layout Subsection
+Windows and Dos 
+\end_layout
+
+\begin_layout Standard
+The windows and dos case is pretty much the same.
+ Except that $FPCTARGET=i386-win32 for windows, and $FPCTARGET=i386-go32v2
+ for dos.
+
+\series bold
+ It is advised to avoid using spaces in directory names.
+ While (win32) fpc can handle it, some versions of the binutils and other
+ tools can not (yet), or need carefully placed quotes.
+ 
+\end_layout
+
+\begin_layout Standard
+Both these two OSes have a specific directory with all FPC related files
+ (including the documentation etc) in them, default is usually used to be
+ c:
+\backslash
+pp, but has been changed to c:
+\backslash
+fpc
+\backslash
+2.2.2 since 2.0.
+ I call this path $INSTALLDIR.
+ Usually there aren’t other versions in the same $INSTALLDIR A different
+ version means a different $INSTALLDIR, at least in the default situation.
+ 
+\end_layout
+
+\begin_layout Standard
+All binaries go into $INSTALLDIR
+\backslash
+bin
+\backslash
+$FPCTARGET.
+ This directory should be in the PATH.
+ This directory is quite full, since there are other tools and utilities
+ installed.
+ 
+\end_layout
+
+\begin_layout Standard
+Compiled units go into $INSTALLDIR
+\backslash
+units
+\backslash
+$FPCTARGET and deeper, at least under 2.0+.
+ 
+\end_layout
+
+\begin_layout Standard
+Configuration files are searched in the same directory as the binary ($INSTALLDI
+R
+\backslash
+bin
+\backslash
+$FPCTARGET), but if a environment variable HOME exists also in %HOME%/.fpc.cfg.
+\end_layout
+
+\begin_layout Standard
+So let’s assume $INSTALLDIR=c:
+\backslash
+fpc
+\backslash
+2.2.2 andthe default $FPCTARGET=win32 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="11" columns="3">
+<features>
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" width="0">
+<column alignment="left" valignment="top" leftline="true" rightline="true" width="0">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+File(s)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+location 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+remarks
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+fpc
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+c:
+\backslash
+fpc
+\backslash
+2.2.2
+\backslash
+bin
+\backslash
+i386-win32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+ppc386
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+c:
+\backslash
+fpc
+\backslash
+2.2.2
+\backslash
+bin
+\backslash
+i386-win32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+actually symlinked to /usr/local/lib/fpc/2.2.2/ppc386
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+ppcppc
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+c:
+\backslash
+fpc
+\backslash
+2.2.2
+\backslash
+bin
+\backslash
+i386-win32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+actually symlinked to /usr/local/lib/fpc/2.2.2/ppcppc
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+rtl for i386-win32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+c:
+\backslash
+fpc
+\backslash
+2.2.2
+\backslash
+units
+\backslash
+i386-win32
+\backslash
+rtl
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+(cross architecture and OS compiling) 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+rtl for i386-linux
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+c:
+\backslash
+fpc
+\backslash
+2.2.2
+\backslash
+units
+\backslash
+i386-linux
+\backslash
+rtl
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+(cross operating system compiling)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+rtl for powerpc-netbsd
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+c:
+\backslash
+fpc
+\backslash
+2.2.2
+\backslash
+units
+\backslash
+powerpc-netbsd
+\backslash
+rtl
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+rtl for x86_64-win64
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+c:
+\backslash
+fpc
+\backslash
+2.2.2
+\backslash
+units
+\backslash
+x86_64-win64/
+\backslash
+rtl
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+Cross binutils
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+c:
+\backslash
+fpc
+\backslash
+2.2.2
+\backslash
+cross
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+(not installed by default setup) 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+libs for i386-win32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+c:
+\backslash
+fpc
+\backslash
+2.2.2
+\backslash
+libs
+\backslash
+i386-win32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+(not installed by default setup) 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+libs for i386-linux
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+c:
+\backslash
+fpc
+\backslash
+2.2.2
+\backslash
+libs
+\backslash
+i386-linux
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+(not installed by default setup) 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Where are my units? 
+\end_layout
+
+\begin_layout Standard
+Starting with later versions of FPC 1.9.5, the fpc makefiles create a directory
+ to store the created units.
+ The main reason for this is building for multiple targets without cleaning
+ in between.
+ 
+\end_layout
+
+\begin_layout Standard
+So when just build (not installed), the rtl units files are in fpc/rtl/freebsd/u
+nits/$FPCTARGET.
+ This is a silly example of course, since the RTL is platform specific,
+ but this change is systematic, so for the RTL too.
+\end_layout
+
+\begin_layout Section
+The fpc.cfg configuration file 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Note: 
+\series default
+Former versions used ppc386.cfg as configuration file.
+ Even latere 1.0.x versions already support fpc.cfg.
+ In time ppc386.cfg will be dropped, so 
+\emph on
+please
+\emph default
+ use fpc.cfg.
+\end_layout
+
+\begin_layout Standard
+A correct configuration file should at least do the follow things: 
+\end_layout
+
+\begin_layout Enumerate
+( 
+\series bold
+most important 
+\series default
+) Provide the place where to find the correct precompiled units for the
+ current selected operating system and architecture.
+ In IDE’s this option is usually called UNITPATH Option:
+\series bold
+ -Fu 
+\end_layout
+
+\begin_layout Enumerate
+If other binutils then for the default platform need to be used (like in
+ the case of crosscompiling), then fpc.cfg should allow the compiler to find
+ them.
+ I don’t know what name IDE’s typically use for this, but BINUTILS PATH
+ or GNU UTILS PATH would be appopriate Option: 
+\series bold
+-FD
+\series default
+ 
+\end_layout
+
+\begin_layout Enumerate
+Extra paths where static and shared libraries are searched.
+ Often called library path Option: 
+\series bold
+-Fl 
+\end_layout
+
+\begin_layout Enumerate
+( minor ) By default the compiler shows only very little errors, warnings
+ and information.
+ It’s convenient to add some verbosity parameters to fpc.cfg.
+ Option 
+\series bold
+-vihw -l
+\series default
+.
+ 
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+The warning system is currently being expanded to have more flexibility.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+(crosscompiling) Binutils for cross compiling are often prefix with cpu-operatin
+gsystem(e.g.
+ i686-ming32),this prefix can be specified using -XP<prefix> parameter,
+ or using makefiles using BINUTILSPREFIX.
+ Option 
+\series bold
+-XP
+\series default
+ 
+\end_layout
+
+\begin_layout Standard
+There are other interesting possibilities of fpc.cfg, (like internationalised
+ errormessages, setting the compiler in a different mode per default, always
+ to try smartlinking etc) but these are the important ones for normal developmen
+t.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Note: 
+\series default
+Keep in mind that when using the makefiles supplied with the FPC source,
+ the fpc.cfg is 
+\series bold
+NOT
+\series default
+ read.
+ This is to avoid problems with two RTLs, the old and the new one, when
+ bootstrapping the system.
+\end_layout
+
+\begin_layout Subsection
+Unit path -Fu 
+\end_layout
+
+\begin_layout Standard
+The -Fu case is pretty much as described in the directory layout paragraphs
+ (
+\begin_inset LatexCommand ref
+reference "sec:Directory-layout"
+
+\end_inset
+
+), there are two things in which the -Fu compiler option differs from the
+ directory layout as described before.
+ If I append an asterisk (*) to a path, it means that it should search all
+ directories below that directory too, and that the layout for crosscompiled
+ units is a bit different.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Unix:
+\series default
+ If we assume that the compiler is installed to PREFIX /usr/local, and we
+ are using FreeBSD/i386 as host OS, this becomes: 
+\end_layout
+
+\begin_layout LyX-Code
+# This is pretty generic for OSes with *nix filesystem layout 
+\end_layout
+
+\begin_layout LyX-Code
+-Fu/usr/local/lib/fpc/$FPCVERSION/units/$FPCtarget/* 
+\end_layout
+
+\begin_layout LyX-Code
+#....or suitable for crosscompiling.
+ Note that the /cross/ dir is not necessary 
+\end_layout
+
+\begin_layout LyX-Code
+# and only added as example.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+#ifndef freebsd 
+\end_layout
+
+\begin_layout LyX-Code
+# OS not default -> CROSS 
+\end_layout
+
+\begin_layout LyX-Code
+-Fu/usr/local/lib/fpc/$FPCversion/cross/$fpctarget/units/* 
+\end_layout
+
+\begin_layout LyX-Code
+#else 
+\end_layout
+
+\begin_layout LyX-Code
+ #ifndef cpu86 
+\end_layout
+
+\begin_layout LyX-Code
+ # Processor not default -> CROSS 
+\end_layout
+
+\begin_layout LyX-Code
+  -Fu/usr/local/lib/fpc/$FPCversion/cross/$fpctarget/units/* 
+\end_layout
+
+\begin_layout LyX-Code
+ #else 
+\end_layout
+
+\begin_layout LyX-Code
+  -Fu/usr/local/lib/fpc/$FPCVERSION/units/$FPCtarget/* 
+\end_layout
+
+\begin_layout LyX-Code
+ #endif 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout Standard
+Win32 and Dos installed in c:
+\backslash
+fpc
+\backslash
+2.2.2 
+\end_layout
+
+\begin_layout LyX-Code
+-Fuc:
+\backslash
+fpc
+\backslash
+2.2.2
+\backslash
+units
+\backslash
+$FPCtarget
+\backslash
+* 
+\end_layout
+
+\begin_layout LyX-Code
+# or suitable for crosscompiling 
+\end_layout
+
+\begin_layout LyX-Code
+# OS not default -> CROSS 
+\end_layout
+
+\begin_layout LyX-Code
+-Fuc:
+\backslash
+fpc
+\backslash
+2.2.2
+\backslash
+units
+\backslash
+$fpctarget
+\backslash
+* 
+\end_layout
+
+\begin_layout LyX-Code
+# win32 binutils are in the path 
+\end_layout
+
+\begin_layout LyX-Code
+#ifndef win32 
+\end_layout
+
+\begin_layout LyX-Code
+# set path to crossutils.
+ Assuming in one dir.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+-FDc:
+\backslash
+fpc
+\backslash
+2.2.2
+\backslash
+bin
+\backslash
+cross 
+\end_layout
+
+\begin_layout LyX-Code
+# this is not 100% safe.
+ GNU and FPC target naming differ 
+\end_layout
+
+\begin_layout LyX-Code
+-XP$FPCTARGET- 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout Standard
+Keep in mind that extra paths (e.g.
+ for own custom packages) can be added.
+ There is also no reason not to use $FPCVERSION in the win32 case.
+ It is just an example.
+\end_layout
+
+\begin_layout Subsection
+Binutils path -FD 
+\end_layout
+
+\begin_layout Standard
+The problems with binutils 
+\end_layout
+
+\begin_layout Enumerate
+We only have to set -FD if we set up for crosscompiling.
+ Either when cross compiling to a different processor or a different OS.
+ So we have to determine default OS and CPU somehow.
+\end_layout
+
+\begin_layout Enumerate
+Under Unix, there are usually specific dirs for crossutils, but the exact
+ place and name differs with version.
+ Win32 doesn’t have something like that at all.
+ For win32 I propose an example layout as described above.
+ 
+\end_layout
+
+\begin_layout Enumerate
+FPC and GNU platform naming differ
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Unix
+\series default
+ : As an example I take FreeBSD on an ordinary PC.
+ The location below (/usr/local/processor-operatingsystem) is where the
+ binutils base distribution installs cross compiled utils by default under
+ FreeBSD.
+ However sometimes how FPC names an OS can differ from how the binutils
+ name it.
+ In that case you have to be more verbose, which I have done for the case
+ of crosscompiling to windows
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+
+\size small
+Lazy people simply would make a symlink from the fpc naming to the binutils
+ naming.
+ However being lazy is not allowed for tutorial writers.
+\end_layout
+
+\end_inset
+
+ .
+ 
+\end_layout
+
+\begin_layout Standard
+So our configuration file becomes: 
+\end_layout
+
+\begin_layout LyX-Code
+#ifndef freebsd 
+\end_layout
+
+\begin_layout LyX-Code
+# other binutils if OS differs 
+\end_layout
+
+\begin_layout LyX-Code
+#ifdef win32 
+\end_layout
+
+\begin_layout LyX-Code
+# win32 is an exception 
+\end_layout
+
+\begin_layout LyX-Code
+# FPC OS name : win32 Binutils OS name : mingw32 
+\end_layout
+
+\begin_layout LyX-Code
+# FPC processor: i386 Binutils processor: i686 
+\end_layout
+
+\begin_layout LyX-Code
+-FD/usr/local/i686-unknown-mingw32/bin 
+\end_layout
+
+\begin_layout LyX-Code
+#else # we hope that the fpc and binutils name match:-) 
+\end_layout
+
+\begin_layout LyX-Code
+-FD/usr/local/$FPCTARGET/cross 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout LyX-Code
+#else 
+\end_layout
+
+\begin_layout LyX-Code
+#ifndef cpu86 
+\end_layout
+
+\begin_layout LyX-Code
+# other binutils if processor differs 
+\end_layout
+
+\begin_layout LyX-Code
+-FD/usr/local/$FPCTARGET/cross 
+\end_layout
+
+\begin_layout LyX-Code
+#endif #endif 
+\end_layout
+
+\begin_layout Standard
+Win32 and Dos: Pretty much the same.
+ However contrary to Unix I haven’t really tested this.
+ Again I assume FPC to be installed in c:
+\backslash
+fpc
+\backslash
+2.2.2 .However the binutils are in d:
+\backslash
+binutils and deeper and named like under *BSD:
+\end_layout
+
+\begin_layout LyX-Code
+#ifndef win32 
+\end_layout
+
+\begin_layout LyX-Code
+# other binutils if OS differs 
+\end_layout
+
+\begin_layout LyX-Code
+-FDd:
+\backslash
+binutils
+\backslash
+$FPCTARGET
+\backslash
+bin 
+\end_layout
+
+\begin_layout LyX-Code
+#else 
+\end_layout
+
+\begin_layout LyX-Code
+#ifndef cpu86
+\end_layout
+
+\begin_layout LyX-Code
+# other binutils if processor differs 
+\end_layout
+
+\begin_layout LyX-Code
+-FDd:
+\backslash
+binutils
+\backslash
+$FPCTARGET
+\backslash
+bin
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Using makefiles 
+\end_layout
+
+\begin_layout Standard
+When using makefiles, one can set the -FD parameter by passing CROSSBINDIR=<path
+> to make.
+ This ensures that the parameter is passed correctly from makefile to makefile
+ (in nested directory hierarchies).
+\end_layout
+
+\begin_layout Subsection
+Binutils prefix, all binutils in one directory
+\end_layout
+
+\begin_layout Standard
+A somewhat newer addition is the -XP parameter which sets a prefix for all
+ binutils, so if you add 
+\series bold
+-XPbla-die-bla-
+\series default
+ to the fpc commandline then all calls to as and ld will be prefixed with
+ 
+\series bold
+bla-die-bla-
+\series default
+ .
+ The main reason for this is that by default, cross compiled binutils are
+ named <cpu>-<target>-<filename>,and not just <filename>.
+\end_layout
+
+\begin_layout Standard
+When doing a cross snapshot (or cycle), setting the make variable BINUTILSPREFIX
+ will make sure that -XP is passed on the right moments.
+ 
+\end_layout
+
+\begin_layout Standard
+If we assume the binutils for cross compiling are all in one directory,
+ the above piece of code becomes:  
+\end_layout
+
+\begin_layout LyX-Code
+#ifndef freebsd 
+\end_layout
+
+\begin_layout LyX-Code
+# other binutils if OS differs 
+\end_layout
+
+\begin_layout LyX-Code
+#define iscross 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout LyX-Code
+#ifndef cpu86 
+\end_layout
+
+\begin_layout LyX-Code
+#define iscross 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout LyX-Code
+ #ifdef iscross 
+\end_layout
+
+\begin_layout LyX-Code
+# other binutils directory if processor or target OS differs 
+\end_layout
+
+\begin_layout LyX-Code
+ -FD/usr/local/cross/bin 
+\end_layout
+
+\begin_layout LyX-Code
+# set prefix to select the right ones from that directory: 
+\end_layout
+
+\begin_layout LyX-Code
+ -XP$FPCTARGET- 
+\end_layout
+
+\begin_layout LyX-Code
+ #endif 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout Standard
+This assumes that binutils naming of platforms is the same as FPC’s.
+ It isn’t however, there are a few exceptions: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="4">
+<features>
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" rightline="true" width="0">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+Usual name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+FPC name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+Binutils name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+ppc<x> name
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+(32-bit windows)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+win32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+cygwin or mingw32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+(OS not CPU)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+i386 or x86
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+i386
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+i386,i486,i586,i686
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+386
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+Sunos/Solaris
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+sunos
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+solaris
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+PowerPC
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+powerpc
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+powerpc
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\size small
+ppc
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So for these targets we would have to make exceptions.
+ (see e.g.
+ script code in the fpcbuild/install repository, e.g.
+ samplecfg and install.sh)
+\end_layout
+
+\begin_layout Subsection
+Library path
+\end_layout
+
+\begin_layout Standard
+The library path is where static libraries (and shared libs under unix)
+ can be found.
+ While this is very important for the Unix platform, the FPC compiler on
+ windows and dos also can link to GCC (and variants) libraries, so FPC must
+ be able to find them.
+ 
+\end_layout
+
+\begin_layout Standard
+The library path is of course target and processor dependant.
+ One couldn’t link FreeBSD/x86 libraries to a Linux/Powerpc binary.
+ So essentially we are doing the same trick as with the unit path.
+ If the default targets are used, on unix it is set to the default directories,
+ otherwise it is set to some hierarchy where the user is supposed to install
+ his cross libraries.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Unix
+\series default
+ : As an example I take FreeBSD on an ordinary PC, because most BSDs, specially
+ on ordinary PCs have a “compability” Linux libraryset to run proprietary
+ Linux programs for which no FreeBSD version exists.
+ This mode is called the Linuxator
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+The linuxator is strictly speaking an emulator.
+ However the emulation layer is so thin (a few 10’s of kbs) that there is
+ no noticable performance loss.
+ Since all libs are in memory twice (Linux+FreeBSD) it eats some extra memory
+ though.
+ 
+\end_layout
+
+\end_inset
+
+.
+ The Linuxator libs are usually SUSE based and in /compat/linux/ and deeper.
+ NetBSD has a huge set of such emulations.
+ Anyway, here is the snippet, it assumes the user to build a hierarchy of
+ cross libs under /usr/local/crosslibs 
+\end_layout
+
+\begin_layout LyX-Code
+#undef specialoscpu 
+\end_layout
+
+\begin_layout LyX-Code
+#ifdef freebsd 
+\end_layout
+
+\begin_layout LyX-Code
+#ifdef cpu86 
+\end_layout
+
+\begin_layout LyX-Code
+# DEFAULT 
+\end_layout
+
+\begin_layout LyX-Code
+#define specialoscpu 
+\end_layout
+
+\begin_layout LyX-Code
+# libraries outside base are installed with PREFIX=/usr/local 
+\end_layout
+
+\begin_layout LyX-Code
+-Fl/usr/local/lib 
+\end_layout
+
+\begin_layout LyX-Code
+# however X stuff is installed with PREFIX=/usr/X11R6 
+\end_layout
+
+\begin_layout LyX-Code
+-Fl/usr/X11R6/lib 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout LyX-Code
+#ifdef linux 
+\end_layout
+
+\begin_layout LyX-Code
+#ifdef cpu86 
+\end_layout
+
+\begin_layout LyX-Code
+# CROSS, BUT SPECIAL, FreeBSD optionally has a Linux userland on board 
+\end_layout
+
+\begin_layout LyX-Code
+# for the linuxator.
+ Usually it is some SUSE version.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+#define specialoscpu 
+\end_layout
+
+\begin_layout LyX-Code
+-Fl/compat/linux/lib 
+\end_layout
+
+\begin_layout LyX-Code
+-Fl/compat/linux/usr/lib 
+\end_layout
+
+\begin_layout LyX-Code
+-Fl/compat/linux/usr/X11R6/lib 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout LyX-Code
+# libraries not existing on target by default.
+ Reverting 
+\end_layout
+
+\begin_layout LyX-Code
+# to special cross directories 
+\end_layout
+
+\begin_layout LyX-Code
+#ifndef specialoscpu 
+\end_layout
+
+\begin_layout LyX-Code
+-Fl/usr/local/crosslibs/$FPCTARGET/lib 
+\end_layout
+
+\begin_layout LyX-Code
+-Fl/usr/local/crosslibs/$FPCTARGET/usr/lib 
+\end_layout
+
+\begin_layout LyX-Code
+-Fl/usr/local/crosslibs/$FPCTARGET/usr/local/lib 
+\end_layout
+
+\begin_layout LyX-Code
+-Fl/usr/local/crosslibs/$FPCTARGET/usr/X11R6/lib 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Win32 and Dos
+\series default
+: Exactly the same idea.
+ Some directory with the hierarchy (d:
+\backslash
+crosslibs for now), but none as default.
+ If you have a suitable gcc equivalent (djgpp for dos, cygwin and mingw
+ for win32), you could add it to the space for the default.
+\end_layout
+
+\begin_layout LyX-Code
+#ifndef win32 
+\end_layout
+
+\begin_layout LyX-Code
+# other binutils if OS differs 
+\end_layout
+
+\begin_layout LyX-Code
+-Fld:
+\backslash
+crosslibs
+\backslash
+$FPCTARGET
+\backslash
+lib 
+\end_layout
+
+\begin_layout LyX-Code
+-Fld:
+\backslash
+crosslibs
+\backslash
+$FPCTARGET
+\backslash
+usr
+\backslash
+lib 
+\end_layout
+
+\begin_layout LyX-Code
+#etc 
+\end_layout
+
+\begin_layout LyX-Code
+#else 
+\end_layout
+
+\begin_layout LyX-Code
+#ifndef cpu86 
+\end_layout
+
+\begin_layout LyX-Code
+# other binutils if processor differs 
+\end_layout
+
+\begin_layout LyX-Code
+# maybe somebody does a port for win32/Sparc or so.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+-Fld:
+\backslash
+crosslibs
+\backslash
+$FPCTARGET
+\backslash
+lib 
+\end_layout
+
+\begin_layout LyX-Code
+-Fld:
+\backslash
+crosslibs
+\backslash
+$FPCTARGET
+\backslash
+usr
+\backslash
+lib 
+\end_layout
+
+\begin_layout LyX-Code
+#else 
+\end_layout
+
+\begin_layout LyX-Code
+# DEFAULT 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout LyX-Code
+#endif 
+\end_layout
+
+\begin_layout Subsection
+Verbosity options 
+\end_layout
+
+\begin_layout Standard
+Well, there is not much to tell.
+ The default is ok, and I never change it (I wrote it down below for completenes
+s), for more info see the manual.
+ Note that any verbosity setting in fpc.cfg can be overriden on the commandline
+ (e.g.
+ for debugging, typically uses -va on the cmdline ) 
+\end_layout
+
+\begin_layout LyX-Code
+# write FPC logo lines.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+-l 
+\end_layout
+
+\begin_layout LyX-Code
+# Display Info, Warnings, Notes and Hints 
+\end_layout
+
+\begin_layout LyX-Code
+-viwn 
+\end_layout
+
+\begin_layout Section
+The order to compile parts of FPC
+\end_layout
+
+\begin_layout Standard
+Packages is a bit of an ambiguous term when used in the FPC project
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+See also
+\begin_inset LatexCommand htmlurl
+name "http://wiki.freepascal.org/packages"
+target "http://wiki.freepascal.org/packages"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ Sometimes “packages” refers exclusively to the separate unit sets in the
+ packages/ directory of the source tree, sometimes it also includes the
+ other separately compilable parts of the project (like compiler, rtl, fcl,
+ ide, fvision, lazarus, installer and utils).
+ In this paragraph it’s the latter one.
+ 
+\end_layout
+
+\begin_layout Standard
+The directory structure of the packages has been reorganized starting with
+ FPC 2.2.2.
+ 
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+This reorganization was made possible with improvements in the fpcmake system.
+ However in time, the fpcmake system will disappear, and be replaced with
+ the fpmake/fppkg system that is already included for testing in 2.2.2+
+\end_layout
+
+\end_inset
+
+.
+ Most importantly, the fpcmake system now figures out its own dependancies,
+ so all packages (including FCL and FV) could move to /fpc/packages.
+ This great simplifies building and maintenance of the packages.
+ The units of the FCL were also regrouped into multiple packages.
+\end_layout
+
+\begin_layout Standard
+Of course there iss till a certain sequence one should follow when building
+ FPC, which is hardcoded in the top Makefile.
+ This because some packages need other packages and need to be build first.
+ The usual order is:
+\end_layout
+
+\begin_layout Enumerate
+bootstrap the compiler (make cycle) 3x compiler, 3x rtl 
+\end_layout
+
+\begin_layout Enumerate
+Rebuild the RTL smartlinking 
+\end_layout
+
+\begin_layout Enumerate
+Build the packages directory including the FCL and FV packages.
+\end_layout
+
+\begin_layout Enumerate
+Build the textmode IDE.
+ 
+\end_layout
+
+\begin_layout Enumerate
+utils/ directory including fpcmake in utils/fpcm 
+\end_layout
+
+\begin_layout Standard
+Lazarus can be built after the main build (with or without IDE).
+ However install the main build 
+\emph on
+first
+\emph default
+.
+ Some directories are not built at all in a standard build of the fpc repository
+:
+\end_layout
+
+\begin_layout Enumerate
+demoes and example directories of packages
+\end_layout
+
+\begin_layout Enumerate
+the regression testing suite (tests/) 
+\end_layout
+
+\begin_layout Standard
+Examples are often compilable by descending into the package directory and
+ executing 
+\begin_inset Quotes eld
+\end_inset
+
+make examples
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Some interesting build scripts
+\end_layout
+
+\begin_layout Standard
+Some of these principles are used in some of the scripts used to build releases,
+ test crosscompiling etc.
+ 
+\end_layout
+
+\begin_layout Itemize
+fpc/installl/install.sh is the installer script for unix.
+ Nicely demonstrates platform name (GNU->FPC) conversion 
+\end_layout
+
+\begin_layout Itemize
+fpc/install/cross/buildcrossbinutils is a script to mass-build cross binutils
+ 
+\end_layout
+
+\begin_layout Itemize
+fpc/install/cross/buildcrosssnapshot is an attempt at building cross snapshots.
+ Works in principle, however the shared linking of mkxmlrpc and the textmode
+ IDE are troublesome.
+ 
+\end_layout
+
+\begin_layout Itemize
+fpc/install/makepack is a release building script.
+ It requires the target name (i386-linux, i386-win32 etc) as parameter 
+\end_layout
+
+\begin_layout Section
+Smart linking 
+\end_layout
+
+\begin_layout Standard
+Smartlinking (ld/gcc documentation calls it dead code elimination ) essentially
+ means avoiding linking of unused code into the final binary.
+ 
+\end_layout
+
+\begin_layout Standard
+The problem is that the GNU linker can do dead code elimination, but usually
+ (read: with gcc) only does this on a compilation unit level.
+ In other words, it still will link in the entire unit when only one file
+ is used.
+ 
+\end_layout
+
+\begin_layout Standard
+Newer binutils use can do deadcode elimination based on sections, however
+ the problem with this is that it ups the version requirements on binutils,
+ which is a problem specially for operating systems as classic MacOS, older
+ Mac OS X versions, OS/2 etc.
+ The new form is also not entirely stable yet.
+\end_layout
+
+\begin_layout Standard
+Using the old style smartlinking, FPC circumvents this by generating a .o
+ for each symbol in a unit.
+ So each procedure, method, variable or typed constant gets its own .o file.
+ Since this can be thousands of .o files in a unit (unit Windows has about
+ 20000-30000),and the .o files are added to an .a archive using GNU AR.
+ 
+\end_layout
+
+\begin_layout Standard
+All together this is a pretty complicated process: 
+\end_layout
+
+\begin_layout Enumerate
+a unit is compiled by fpc to a lot of assembler source (.s) files,
+\end_layout
+
+\begin_layout Enumerate
+that get assembled by a lot of calls to AS to generate a lot of .o files
+ 
+\end_layout
+
+\begin_layout Enumerate
+that are read again by AR to form one .a file 
+\end_layout
+
+\begin_layout Standard
+....
+ which is why smartinking performance really benefits from the binwriter
+ (see 
+\begin_inset LatexCommand ref
+reference "par:Glossary"
+
+\end_inset
+
+), which causes FPC to write the .a directly without thousands of calls to
+ AS.
+\end_layout
+
+\begin_layout Standard
+Besides tightening code, smartlinking also solves a problem when a unit
+ interfaces to a shared library (unix .so or win32 .dll) and certain unused
+ calls aren’t available.
+ An example would be if unit windows contains calls added in later Windows
+ versions that you don’t use for your program and you work on/for Windows
+ 98.
+ when not smartlinking, the whole of unit windows would be linked in, and
+ the linker wouldn’t be able to find the calls from later Windows versions
+ in the Windows 98 kernel32.dll and user32.dll.
+\end_layout
+
+\begin_layout Standard
+Be careful when trying to guess the savings of smartlinking.
+ Often people forget unit initialisation (both of the unit in question,
+ and the unit it USES) and all the classes, procedures and functions the
+ initialisation uses are always linked in, and units (even if they are unused)
+ are always initialised, since the compiler can’t see that the effect of
+ the initialisation on the working of the program is zero.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+A word of caution
+\series default
+: In C, an .o file usually corresponds to one .c or .cpp file, so one .a contains
+ <n> .o’s that correspond to <n> .c’s.
+ However under FPC, when smartlinking per unit (.pp , .pas) the file that
+ is ultimately written is an .a which contains a lot of .o’s.
+ So an FPC .a corresponds to one unit only.
+ 
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+At least for now, developments in library generation might change this in
+ time, but not before 2.4
+\end_layout
+
+\end_inset
+
+ An .o however is the same unit as the .a without smartlinking.
+\end_layout
+
+\begin_layout Standard
+A known problem with old style smartlinking is its 
+\series bold
+memory usage
+\series default
+.
+ Ld doesn’t manage a lot (100000+) of small object files (.o) efficiently,
+ and memory requirements increase enormously.
+ Smartlinking a fully static Lazarus wasn’t possible because it bombed out
+ on my OS’ 512 MB memory limit for ordinary processes, a rough estimate
+ of the memory needed was 1.5 GB.
+ A rule of thumb for memory usage in extreme cases is between 50 and 100
+ times the size of the final binary.
+\end_layout
+
+\begin_layout Standard
+It seems that ld can do deadcode elimination nowadays, however the compiler
+ needs to be adopted for this, and there is also some movement in having
+ an own internal linker.
+ The advantages of this system is less memory use by LD, and the fact that
+ .a files will disappear (in the new method, the smartlink data is added
+ to the .o files).
+ However no matter how fast this becomes usable, old style smartlinking
+ is still needed for quite a while, for OSes with binutils that are not
+ recent or complete.
+ 
+\end_layout
+
+\begin_layout Chapter
+Standard building 
+\end_layout
+
+\begin_layout Standard
+The start of the FPC buildprocess is bootstrapping a compiler.
+ Bootstrapping the compiler is the start of every build process, because
+ changes in the compiler source must be actived before one can start compiling
+ the libraries.
+ Usually the bootstrap is only a minor part in an automised snapshot or
+ full build.
+ However some knowledge about the process can be handy for crosscompiling
+ purposes and development on FPC itself.
+ 
+\end_layout
+
+\begin_layout Standard
+The other two typical build processes are building and installing a snapshot,
+ and building a release.
+ Somewhat less streamlined are building the IDE and documentation.
+ Building Lazarus on the other hand is fairly easy.
+\end_layout
+
+\begin_layout Standard
+For the average user, building a snapshot and/or lazarus are the interesting
+ parts.
+ 
+\end_layout
+
+\begin_layout Section
+Cleaning 
+\end_layout
+
+\begin_layout Subsection
+Make clean
+\end_layout
+
+\begin_layout Standard
+In nearly any place in the FPC tree a “make clean” will try to remove compiler
+ generated files of snapshot or cycle building.
+ A “make distclean” in the upper level is even a bit more thorough, and
+ also removes files generated while building releases (zips etc) 
+\end_layout
+
+\begin_layout Standard
+Note that the make files usually delete what they generate.
+ So if e.g.
+ the generation of certain files depends on certain makefile defines and/or
+ compiler version, make sure that the right compiler and defines are passed
+ to make.
+ 
+\end_layout
+
+\begin_layout Standard
+A good check to see if the repository is clean, is to check standard output
+ and -error of the svn update process.
+ If you see errors, then revert the SVN checkout.
+ 
+\end_layout
+
+\begin_layout Subsection
+make distclean
+\end_layout
+
+\begin_layout Standard
+make distclean is the more rigorous way of cleaning.
+ If you experiencing build problems, always do this first.
+ If you have snapshot scripts, add make distclean in the top level dir as
+ a first line.
+ This became a lot more important in 1.9.5, since recent 1.9.5’s store their
+ units in a separate units/$fpctarget hierarchy.
+ Cleaning before SVN update can speed up the SVN update process significantly,
+ specially on OSes that have relatively slow directory searching (like windows
+ and netbsd) 
+\end_layout
+
+\begin_layout Subsection
+Cleaning of crosscompile builds
+\end_layout
+
+\begin_layout Standard
+Note that the clean targets of the makefile only clean for current $FPCTARGET.
+ To rigorously clean everything, kill all .o, .a and .ppu files, and then SVN
+ update again, to recover the few .o files in the FPC tree (mostly for testsuite
+ tests relating to C linking)
+\end_layout
+
+\begin_layout Section
+Bootstrapping: make cycle 
+\end_layout
+
+\begin_layout Standard
+“make cycle” is a bootstrap of the compiler, and builds the rtl and compiler
+ at least three times.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+The only starting compiler that is guaranteed to work is the most recent
+ release compiler for that series
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+E.g.
+ For the 1.9.x series, even though 1.9.6 and 1.9.8 will probably work, the only
+ guaranteed starting compiler is 1.0.10!
+\end_layout
+
+\end_inset
+
+.
+ 
+\emph default
+So if you have a problem in any aspect of building the FPC source tree and
+ you are not using the most recent release compiler, 
+\emph on
+please try first
+\emph default
+ with the most recent release compiler.
+ It is possible to specify the name of the starting compiler (see below),
+ so saving the release compiler under some name (I’ll use 
+\emph on
+ppcrel
+\emph default
+ from now on in this tutorial) is advised.
+ 
+\end_layout
+
+\begin_layout Standard
+The make cycle process compiles RTL and compiler three times:
+\end_layout
+
+\begin_layout Description
+RTL\InsetSpace ~
+1st Since the we start with only the starting compiler, a new RTL must
+ be built first before we can link a program.
+ 
+\end_layout
+
+\begin_layout Description
+Compiler\InsetSpace ~
+1st A new compiler is created.
+ However the new compiler is still compiled by the release compiler, so
+ newer optimisation and changes aren’t active yet in this binary.
+ For that reason, both the RTL and the compiler have to be rebuilt.
+ 
+\end_layout
+
+\begin_layout Description
+RTL\InsetSpace ~
+2nd So we rebuild the RTL and...
+ 
+\end_layout
+
+\begin_layout Description
+Compiler\InsetSpace ~
+2nd the compiler.
+ However to make sure the compiler is deterministic (compiles the same program
+ to the same executable each time it is run), the compiler and RTL are compiled......
+\end_layout
+
+\begin_layout Description
+RTL\InsetSpace ~
+3rd again....
+ 
+\end_layout
+
+\begin_layout Description
+Compiler\InsetSpace ~
+3rd and after building the compiler for the third time the 2nd and
+ 3rd compiler are compared to see if there they are the same.
+ If not, everything is compiled again.
+ (for some rare secundary effects)
+\end_layout
+
+\begin_layout Standard
+This entire process is run by simply type “make cycle” in the compiler directory.
+ If you want to use an alternative compiler, specify it with PP=[full/path/to/]<
+compiler>.
+ When using the PP= option, use a compiler in the PATH or an absolute path,
+ not a relative path.
+ Using a relative path usually won’t work since during the process, the
+ make utility changes directories.
+ If you try to bootstrap without a full instaltion, you sometimes need to
+ specify FPC=[full/path/to/]<compiler> 
+\end_layout
+
+\begin_layout Standard
+Additional compiler options can be added using OPT=”<the options>”, often
+ used options are turning on debugginginformation with lineinformation (-gl),
+ and increase the verbosity level (-va).
+ However since -va produces a _lot_ of output, it is wise to pipe it to
+ file.
+\end_layout
+
+\begin_layout Standard
+Some examples: 
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+The lines starting with “#” in the example below are comments.
+ Don’t enter them 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+# go to the right directory on unix 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+cd /fpc/devel/fpc/compiler 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+# go to the right directory on windows 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+cd d:
+\backslash
+svn
+\backslash
+fpc
+\backslash
+compiler 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+# do an ordinary make cycle: 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+make cycle 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+# Use a starting compiler in the OS search PATH 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+make cycle PP=ppcrel 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+# use a starting compiler with (unix) absolute path 
+\end_layout
+
+\begin_layout LyX-Code
+# and enable line info and debugging 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+make cycle PP=/fpc/startcompilers/ppcrel OPT='--gl'
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+# Use LOTS of verbosity in the process and redirect it to file.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+make cycle OPT=
+\begin_inset Quotes erd
+\end_inset
+
+-va
+\begin_inset Quotes erd
+\end_inset
+
+ >cycle.log 
+\end_layout
+
+\begin_layout Section
+Compiling a snapshot; make all or make build 
+\end_layout
+
+\begin_layout Standard
+“Make all” is the most important build process, it essentially builds (but
+ not installs) the general purpose parts of the standard SVN tree (see 1.7),
+ except sideways related stuff like documentation, examples and tests.
+ Installing is one additional makefile command.
+ 
+\end_layout
+
+\begin_layout Standard
+In its simplest form, build a snapshot is checking out SVN (see 1.3.3), and
+ changing to the top fpc/ directory and call “make all”.
+ Installing to the default location is done by executing “make install”.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+cd /fpc/devel/fpc make all 
+\end_layout
+
+\begin_layout LyX-Code
+# lots of building.
+ Think 3 minutes on a XP2000+, 10-15 minutes on a 500MHz machine.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+make install  
+\end_layout
+
+\begin_layout LyX-Code
+# Installs the snapshot to the default location 
+\end_layout
+
+\begin_layout LyX-Code
+# (/usr/local/lib/fpc/$FPCVERSION and deeper probably) 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# or on Windows: 
+\end_layout
+
+\begin_layout LyX-Code
+cd c:
+\backslash
+cvs
+\backslash
+devel
+\backslash
+fpc 
+\end_layout
+
+\begin_layout LyX-Code
+make all 
+\end_layout
+
+\begin_layout LyX-Code
+make install COPYTREE=echo
+\end_layout
+
+\begin_layout LyX-Code
+# (default is c:
+\backslash
+pp
+\backslash
+ and deeper) 
+\end_layout
+
+\begin_layout Standard
+If you track FPC SVN very closely, this is probably what you’ll do quite
+ often.
+ However in some special cases, more parameters are needed.
+ Essentially this is building a snapshot.
+ If you trick “make install” into installing in a different directory, the
+ contents of that directory are essentially the snapshot.
+ 
+\end_layout
+
+\begin_layout Standard
+The simplest variation is a different starting compiler.
+ This can be done by simply entering PP=<compiler> or PP=/full/path/to/<compiler
+> after the “make all” prompt:
+\end_layout
+
+\begin_layout LyX-Code
+cd /fpc/devel/fpc 
+\end_layout
+
+\begin_layout LyX-Code
+make all PP=/my/starting/compiler 
+\end_layout
+
+\begin_layout LyX-Code
+# lots of building.
+ Think 3 minutes on a XP2000+, 10-15 minutes on a 500MHz machine.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+make install 
+\end_layout
+
+\begin_layout LyX-Code
+# Installs the snapshot to the default location 
+\end_layout
+
+\begin_layout LyX-Code
+# (/usr/local/lib/fpc/$FPCVERSION and typically)
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# or on Windows: 
+\end_layout
+
+\begin_layout LyX-Code
+cd c:
+\backslash
+cvs
+\backslash
+devel
+\backslash
+fpc 
+\end_layout
+
+\begin_layout LyX-Code
+make all PP=ppcrel 
+\end_layout
+
+\begin_layout LyX-Code
+make install COPYTREE=echo
+\end_layout
+
+\begin_layout LyX-Code
+# (default is c:
+\backslash
+pp
+\backslash
+ and deeper) 
+\end_layout
+
+\begin_layout Standard
+A standard confusing detail when installing a snapshot is that the target
+ directory (e.g.
+ /usr/local/lib/fpc/2.2.2) depends on the version number.
+ If you would follow the above sequence, and the generated compiler (say
+ version 2.3.1) is not equal to the starting compiler (say version 2.2.2), then
+ make install will install into the wrong directory.
+ The same goes for windows ( c:
+\backslash
+fpc
+\backslash
+2.2.2 ...
+ ) This can be solved by setting the compiler that is generated in the “make
+ all” step as a starting compiler to the “make install” step.
+ This will ensure that the “make install” sequence gets the correct versioning
+ info.
+ Since we can’t use relative paths, this must be a full path: 
+\end_layout
+
+\begin_layout LyX-Code
+cd /fpc/devel/fpc 
+\end_layout
+
+\begin_layout LyX-Code
+make all PP=/my/starting/compiler/path/ppc386-someversion
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+# Now install using the NEW compiler for the correct version info: 
+\end_layout
+
+\begin_layout LyX-Code
+make install PP=/fpc/devel/fpc/compiler/ppc386 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# Installs the snapshot to the default location 
+\end_layout
+
+\begin_layout LyX-Code
+# (/usr/local/lib/fpc/$FPCVERSION and deeper probably) 
+\end_layout
+
+\begin_layout LyX-Code
+#
+\end_layout
+
+\begin_layout LyX-Code
+# and for windows:
+\end_layout
+
+\begin_layout LyX-Code
+cd c:
+\backslash
+repository
+\backslash
+fpc
+\end_layout
+
+\begin_layout LyX-Code
+make all PP=c:
+\backslash
+fpc
+\backslash
+startingcompilers
+\backslash
+ppc386-someversion
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# and installing use the NEW compiler
+\end_layout
+
+\begin_layout LyX-Code
+make install PP=c:
+\backslash
+repository
+\backslash
+fpc
+\backslash
+compiler
+\backslash
+ppc386
+\end_layout
+
+\begin_layout Standard
+Another very common variation is installing into a different base directory
+ ($PREFIX), this is done by setting a variable INSTALL_PREFIX to the desired
+ directory: 
+\end_layout
+
+\begin_layout LyX-Code
+cd /fpc/devel/fpc 
+\end_layout
+
+\begin_layout LyX-Code
+make all PP=/my/starting/compiler
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# Stack installs packages that don't come with the package system in /usr/exp
+ 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+make install INSTALL_PREFIX=/usr/exp 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# Or on Windows: 
+\end_layout
+
+\begin_layout LyX-Code
+# My FPC directory is on d:
+\backslash
+pp 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+cd c:
+\backslash
+cvs
+\backslash
+devel
+\backslash
+fpc 
+\end_layout
+
+\begin_layout LyX-Code
+make all PP=ppcrel 
+\end_layout
+
+\begin_layout LyX-Code
+make install INSTALL_PREFIX=d:
+\backslash
+pp 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# Or lets make a snapshot to upload to some site on some unix: 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+cd /fpc/devel/fpc 
+\end_layout
+
+\begin_layout LyX-Code
+make all PP=/my/starting/compiler 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# Make a scratch directory in /tmp 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+mkdir /tmp/fpc 
+\end_layout
+
+\begin_layout LyX-Code
+make install INSTALL_PREFIX=/tmp/fpc 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# archive 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+cd /tmp/fpc 
+\end_layout
+
+\begin_layout LyX-Code
+tar cvzf /tmp/newsnapshot.tar.gz * 
+\end_layout
+
+\begin_layout LyX-Code
+#  remove temp dir.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+cd /tmp 
+\end_layout
+
+\begin_layout LyX-Code
+rm -rf fpc 
+\end_layout
+
+\begin_layout LyX-Code
+#
+\end_layout
+
+\begin_layout Standard
+Finally, adding parameters to every compiler commandline is interesting
+ too.
+ This can be done by adding OPT=’<the parameters>’ to the commandline.
+ Often used parameters for this purpose are -d<xxx> to define a value which
+ can be tested using e.g.
+ {$IFDEF xxx} in the source, and -gl to include debug info.
+ -va is also often used to debug the snapshot building process.
+ If you add -va, pipe the output to file, or the building will slow down
+ due to the massive amounts of output written to screen.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Adding -gl when you are developping with FPC is a good habit, since it allows
+ you to single step all of the FPC runtime libraries in GDB (roughly equivalent
+ to the “use debug .DCUs” options in Delphi).
+ The generated snapshot gets somewhat larger though.
+
+\emph default
+ 
+\end_layout
+
+\begin_layout LyX-Code
+cd /fpc/devel/fpc 
+\end_layout
+
+\begin_layout LyX-Code
+make all OPT='-gl' 
+\end_layout
+
+\begin_layout LyX-Code
+# lots of building.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+make install 
+\end_layout
+
+\begin_layout LyX-Code
+# Installs the snapshot to the default location 
+\end_layout
+
+\begin_layout LyX-Code
+# (/usr/local/lib/fpc/$FPCVERSION and deeper probably) 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# or on Windows: 
+\end_layout
+
+\begin_layout LyX-Code
+cd c:
+\backslash
+cvs
+\backslash
+devel
+\backslash
+fpc 
+\end_layout
+
+\begin_layout LyX-Code
+make all OPT='-va' &> d:
+\backslash
+buildlog.log 
+\end_layout
+
+\begin_layout LyX-Code
+make install 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# multiple parameters are passed like this: 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+# 
+\end_layout
+
+\begin_layout LyX-Code
+make all OPT=
+\begin_inset Quotes erd
+\end_inset
+
+-gl -va
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+A word of caution: 
+\series default
+When I build snapshots for home use, I simply “make install” them over the
+ old snapshot, at least if “make all” succeeds.
+ If you encounter errors during build or install, or even after install
+ (like the notorious “can’t find unit xxx”, while it is there), try to remove
+ the units/ directory in the FPC homedir, and re-execute the “make install”
+ used to install it.
+ This should resolve the problem.
+ If not check as much settings as you can check and read chapter 4 
+\end_layout
+
+\begin_layout Standard
+The problem is usually caused by units changing directories (or packages)
+ in CVS.
+ Since the usual procedure doesn’t clean the units/ directory, after installatio
+n two instances of that unit exist, which could lead to conflicts.
+ 
+\end_layout
+
+\begin_layout Standard
+A good habit is to backup source tree before updating and the FPC install
+ directory (compiler + units/ directory) before installing a new snapshot.
+ This just to make sure you will have a working compiler in case something
+ goes wrong during building or installing.
+ This can easily be automated using a script that updates - backups - builds
+ - installs.
+ Since I’m not that fond of unix scripting, I’ll leave that as an exercise
+ to the reader.
+ 
+\end_layout
+
+\begin_layout Section
+Current build procedure on win32 
+\end_layout
+
+\begin_layout Standard
+The situation on win32 with current SVN is a bit complex, so I decided to
+ dedicate a separate paragraph listing the procedure, combining all the
+ above data.
+ The problem on win32 is that SVN markes its own config files as read-only,
+ which leads to problems with installing examples, and the cp utils provided
+ with 2.0 have some unix path <-> windows paths troubles.
+ Most notable, they don’t see 
+\backslash
+xxx
+\backslash
+yyy as a windows path, but they do see d:
+\backslash
+xxx
+\backslash
+yyy as a windows path.
+ 
+\end_layout
+
+\begin_layout Standard
+There are two solutions, the quick one simply omits the examples, the slow
+ one does.
+ Best is to do the slow one once in a while to have up to date examples,
+ and for the rest use the quick solution.
+ The slow solution also fixes some problems with older versions of the mingw
+ utils.
+\end_layout
+
+\begin_layout Standard
+Besides the read-only svn dirs problem, there is also a problem with Vista,
+ and some mingw binaries have problems with the casing of PATH statements.
+\end_layout
+
+\begin_layout Subsection
+The slow solution: SVN exporting
+\end_layout
+
+\begin_layout Standard
+Before we begin, lets define the directories (my defaults) 
+\end_layout
+
+\begin_layout Itemize
+d:
+\backslash
+pp is the directory where I currently have installed FPC, and d:
+\backslash
+pp
+\backslash
+bin
+\backslash
+i386-win32is the FPC dir in my %PATH%.
+ 
+\end_layout
+
+\begin_layout Itemize
+d:
+\backslash
+fpcSVN is the directory where I checked out the SVN repository.
+ I don’t build in it.
+ 
+\end_layout
+
+\begin_layout Itemize
+d:
+\backslash
+fpc is the directory where I export the SVN repository too.
+\end_layout
+
+\begin_layout Itemize
+d:
+\backslash
+fpcrel is the directory containing FPC 2.2.0 for bootstrapping purposes.
+ 
+\end_layout
+
+\begin_layout Standard
+Another important issue: 
+\series bold
+MAKE ABSOLUTELY SURE THAT THE CYGWIN DIRECTORY IS NOT IN THE PATH!!!!!!
+\series default
+ The reason for this is that some mingw utils start using cygwin sh.exe when
+ found, and that in turn swaps some utils from the FPC delivered mingw tools
+ to cygwin ones.
+ 
+\end_layout
+
+\begin_layout Standard
+Then, to make and install a snapshot, we update the SVN: 
+\end_layout
+
+\begin_layout LyX-Code
+d: 
+\end_layout
+
+\begin_layout LyX-Code
+cd 
+\backslash
+fpc 
+\end_layout
+
+\begin_layout LyX-Code
+svn up fpcSVN 
+\end_layout
+
+\begin_layout Standard
+Then we export it: 
+\end_layout
+
+\begin_layout LyX-Code
+# Cleaning improves performance, 
+\end_layout
+
+\begin_layout LyX-Code
+cd fpc 
+\end_layout
+
+\begin_layout LyX-Code
+make clean 
+\end_layout
+
+\begin_layout LyX-Code
+cd ..
+ 
+\end_layout
+
+\begin_layout LyX-Code
+svn export --force fpcSVN fpc 
+\end_layout
+
+\begin_layout Standard
+Now, the building can start: 
+\end_layout
+
+\begin_layout LyX-Code
+cd fpc 
+\end_layout
+
+\begin_layout LyX-Code
+make clean all OPT='-gl' FPC=d:
+\backslash
+fpcrel
+\backslash
+bin
+\backslash
+i386-win32
+\backslash
+ppc386.exe 
+\end_layout
+
+\begin_layout Standard
+If this is successful we install: (all on one line) 
+\end_layout
+
+\begin_layout LyX-Code
+make install OPT='-gl' INSTALL_PREFIX=d:
+\backslash
+pp11 UPXPROG=echo FPC=d:
+\backslash
+fpcrel
+\backslash
+bin
+\backslash
+i386-win32
+\backslash
+ppc386 
+\end_layout
+
+\begin_layout Standard
+Some things to notice: 
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+MAKE ABSOLUTELY SURE THAT THE CYGWIN DIRECTORY IS NOT IN THE PATH!!!!!!
+ 
+\series default
+Same for mingw
+\end_layout
+
+\begin_layout Itemize
+The options (OPT='-gl') are passed both to the make and install lines.
+ This because sometimes due to unit dependancy glitches and utils, a minor
+ amount of code is (re) built during install.
+ This goes for 
+\series bold
+ALL
+\series default
+ build options that are not installing related 
+\end_layout
+
+\begin_layout Itemize
+UPXPROG=echo avoids UPXing of the resulting binaries, so that the FPC binaries
+ can be debugged.
+ If you want as small FPC bins as possible, leave it away, and add SMART=1
+ to both make lines.
+ Note that UPXing wastes memory that is more expensive than disk.
+ 
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+\begin_inset LatexCommand htmlurl
+name "http://wiki.freepascal.org/Size\\_Matters"
+target "http://wiki.freepascal.org/Size\\_Matters"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+We add --force to the SVN export line to force overwriting of the previous
+ repository.
+ If building goes wrong, day after day, try erasing the export directory
+ (d:
+\backslash
+fpc) before exporting.
+ 
+\end_layout
+
+\begin_layout Subsection
+The Quick solution: COPYTREE
+\end_layout
+
+\begin_layout Standard
+The quick solution exploits that the recursive copying is done using a command
+ that is 
+\emph on
+only 
+\emph default
+used for copying the examples.
+ And updating the (installed) examples is not that important when daily
+ updating, one typically wants to avoid the slow SVN export step.
+ The makefile macro that is used internally in the makefile for copying
+ files recursively is COPYTREE, we then use the same trick as earlier to
+ disable functionality by specifying the 
+\begin_inset Quotes eld
+\end_inset
+
+echo
+\begin_inset Quotes erd
+\end_inset
+
+ command:
+\end_layout
+
+\begin_layout LyX-Code
+make install COPYTREE=echo
+\end_layout
+
+\begin_layout Subsection
+VISTA specific topics: install.exe
+\end_layout
+
+\begin_layout Standard
+Vista is quite draconian in some things, and there will be a lot more problems
+ in the future, specially for release engineering.
+ (think about temporary files in the root, not allowing writes in the appdir
+ etc).
+ However there is one little gotcha that also affects normal building.
+ 
+\end_layout
+
+\begin_layout Standard
+This gotcha is actually the result of an attempt to minimalize trouble for
+ existing installers by automatically popping up UAC (otherwise you would
+ have to do 
+\begin_inset Quotes eld
+\end_inset
+
+run as admininstrator
+\begin_inset Quotes erd
+\end_inset
+
+ which is not end user friendly), but it was implemented half-assed.
+ Any EXE with install, setup or update in its name will pop up UAC, but....
+ 
+\emph on
+UAC prompts fail for console apps
+\emph default
+ .
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+\begin_inset LatexCommand url
+name "http://technet2.microsoft.com/WindowsVista/en/library/00d04415-2b2f-422c-b70e-b18ff918c2811033.mspx"
+target "http://technet2.microsoft.com/WindowsVista/en/library/00d04415-2b2f-422c-b70e-b18ff918c2811033.mspx"
+
+\end_inset
+
+ search for 
+\begin_inset Quotes eld
+\end_inset
+
+keyword
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The FPC build system uses GNU install (as ginstall.exe) to install files
+ with proper permissions, and that fails due to UAC.
+\end_layout
+
+\begin_layout Standard
+The definition of the problem also implies the solution:
+\end_layout
+
+\begin_layout Enumerate
+Copy the (g)install.exe binary to a new name without the keywords, I use
+ 
+\begin_inset Quotes eld
+\end_inset
+
+myinst.exe
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Pass GINSTALL=myinst.exe to the make commandline :
+\end_layout
+
+\begin_layout LyX-Code
+make install GINSTALL=myinst.exe
+\end_layout
+
+\begin_layout Standard
+Probably this will fixed in a while by mingw, e.g.
+ by adding a manifest.
+\end_layout
+
+\begin_layout Subsection
+Putting it all together
+\end_layout
+
+\begin_layout Standard
+Here is the batchfile that I use on Windows:
+\end_layout
+
+\begin_layout LyX-Code
+@echo off 
+\end_layout
+
+\begin_layout LyX-Code
+d: 
+\end_layout
+
+\begin_layout LyX-Code
+cd 
+\backslash
+repo
+\backslash
+fpc 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+REM the next on one line
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+make clean all UPXPROG=echo COPYTREE=echo OPT="-gl" GINSTALL=myinst.exe FPC=c:
+\backslash
+fpc
+\backslash
+2.2.0
+\backslash
+bin
+\backslash
+i386-win32
+\backslash
+ppc386.exe > d:
+\backslash
+repo
+\backslash
+buildlog.txt 
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+REM separate install step for crossversion purposes
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+make install UPXPROG=echo COPYTREE=echo OPT="-gl" INSTALL_PREFIX=c:
+\backslash
+fpc GINSTALL=myinst.exe FPC=d:
+\backslash
+repo
+\backslash
+fpc
+\backslash
+compiler
+\backslash
+ppc386.exe > d:
+\backslash
+repo
+\backslash
+installlog.txt 
+\end_layout
+
+\begin_layout Standard
+Actually, I have two such files, another one for 64-bit, which differs only
+ in 
+\begin_inset Quotes eld
+\end_inset
+
+x86_64-win64
+\begin_inset Quotes erd
+\end_inset
+
+ in the path and ppcx64 instead of ppc386.
+\end_layout
+
+\begin_layout Section
+Lazarus 
+\end_layout
+
+\begin_layout Standard
+Building lazarus is actually pretty much the same as building a snapshot,
+ except that you have to enter directory lazarus/ instead of fpc/.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+cd /repo/ 
+\end_layout
+
+\begin_layout LyX-Code
+svn update lazarus
+\end_layout
+
+\begin_layout LyX-Code
+cd lazarus 
+\end_layout
+
+\begin_layout LyX-Code
+make all 
+\end_layout
+
+\begin_layout LyX-Code
+# you might want to check if the return value of 
+\begin_inset Quotes eld
+\end_inset
+
+make install
+\begin_inset Quotes erd
+\end_inset
+
+ is zero before installing.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+make install INSTALL_PREFIX=/usr/local 
+\end_layout
+
+\begin_layout LyX-Code
+#
+\end_layout
+
+\begin_layout Standard
+At the moment of writing this there was some problem with installing lazarus.
+ It seems that the makefiles aren’t entirely up to date.
+ I usually move the lazarus repository to /usr/local/lazarus, and set some
+ symlinks to execute the right binary.This isn’t that bad, since you need
+ to save the lazarus source for Lazarus’ operation anyway.
+ 
+\end_layout
+
+\begin_layout Section
+Typical Problems
+\end_layout
+
+\begin_layout Subsection
+cannot find -l<xxxx> 
+\end_layout
+
+\begin_layout Standard
+Since Lazarus need to link to shared libraries, building lazarus tests an
+ aspect of the FPC configuration that hasn’t been tested by the parts above.
+ A typical error is 
+\end_layout
+
+\begin_layout LyX-Code
+Linking ./lazarus 
+\end_layout
+
+\begin_layout LyX-Code
+/usr/libexec/elf/ld: cannot find -lglib12 
+\end_layout
+
+\begin_layout LyX-Code
+lazarus.pp(334) Error: Error while linking 
+\end_layout
+
+\begin_layout LyX-Code
+Closing script ./ppas.sh 
+\end_layout
+
+\begin_layout Standard
+This means that the linker, when building the final binary, couldn’t find
+ libglib12.a or libglib12.so.
+ This is officially not an FPC error, since glib is part of GTK, which belongs
+ to the operating system.
+
+\emph on
+ So maybe the gtk (or a corresponding gtk-devel package) is simply not installed.
+
+\emph default
+ There are four other possibilities:
+\end_layout
+
+\begin_layout Enumerate
+While the package is installed, the package manger didn’t create a symlink
+ that refers the libglib.12.so.x to libglib12.so.
+ A quick cd /usr/local/lib; ln -s libglib12.so.2 libglib12.so would have solved
+ that in this case.
+ 
+\end_layout
+
+\begin_layout Enumerate
+(the actual problem in the case above) The directory with the correct file
+ isn’t searched for libraries by FPC, because you didn’t specify the directory
+ in fpc.cfg using -Fl.
+ A mere adding of -Fl/usr/local/lib to /etc/fpc.cfg solved the problem in
+ this case.
+ 
+\end_layout
+
+\begin_layout Enumerate
+You have a {$LINKLIB xx} in the source somewhere, or a -l<xx> parameter
+ in some script or makefile that forces FPC to try to link the library,
+ but it isn’t necessary anymore, grep is your best friend in such cases.
+\end_layout
+
+\begin_layout Enumerate
+Your distribution for some reason names it libraries differently.
+ Again, symlinking the searched name to the real name is the solution.
+ 
+\end_layout
+
+\begin_layout Subsection
+With FPC 1.0.10 under FreeBSD anything using OpenGL wants to link -ldl 
+\end_layout
+
+\begin_layout Standard
+The OpenGL distribution of 1.0.10 erroneously forced a link with libdl on
+ FreeBSD, this can be problematic when installing lazarus.
+ I added the corrected units here: 
+\begin_inset LatexCommand url
+name "http://www.stack.nl/~marcov/openglfreebsd.tar.gz"
+target "http://www.stack.nl/~marcov/openglfreebsd.tar.gz"
+
+\end_inset
+
+ .
+ Please extract in directory $PREFIX/fpc/1.0.10/units/freebsd.
+ (remove the old contents first) 
+\end_layout
+
+\begin_layout Chapter
+Crosscompiling 
+\end_layout
+
+\begin_layout Standard
+(you need to have read the previous chapters too, since they already contain
+ a lot of crosscompiling related info that I won’t duplicate here) 
+\end_layout
+
+\begin_layout Section
+Basic crosscompiling of a snapshot 
+\end_layout
+
+\begin_layout Standard
+Let’s have two examples, freebsd to win32-mingw crosscompile, and a FreeBSD
+ to AMD64 linux one.
+ 
+\end_layout
+
+\begin_layout Standard
+Assume we have the following items set up correctly: 
+\end_layout
+
+\begin_layout Enumerate
+Cross binutils have been compiled, and are installed with $PREFIX=~/cross.
+ The correct prefix has been identified (probably something like i686-ming32-and
+ x86-64-linux-in our example) 
+\end_layout
+
+\begin_layout Enumerate
+The FPC sources are in fpc/ 
+\end_layout
+
+\begin_layout Enumerate
+FPC was installed in /usr/local/lib/fpc/$FPCVERSION and deeper 
+\end_layout
+
+\begin_layout Standard
+Then we execute:
+\end_layout
+
+\begin_layout LyX-Code
+cd ~/fpc 
+\end_layout
+
+\begin_layout LyX-Code
+gmake distclean 
+\end_layout
+
+\begin_layout LyX-Code
+# next all on one line 
+\end_layout
+
+\begin_layout LyX-Code
+gmake all install OS_TARGET=win32 CROSSBINDIR=~/cross/bin BINUTILSPREFIX=i686-mi
+ng32- INSTALL_PREFIX=/usr/local 
+\end_layout
+
+\begin_layout Standard
+to build the first snapshot (note that CPU_TARGET isn’t set, and that OS_TARGET
+ uses the FPC platform naming (win32), while BINUTILSPREFIX uses the GNU
+ one (since it is for the binutils).
+ Also note that the BINUTILSPREFIX ends with a dash.
+ This is on purpose.
+ 
+\end_layout
+
+\begin_layout Standard
+Similarly, for x86_64-linux the line becomes
+\end_layout
+
+\begin_layout LyX-Code
+cd ~/fpc 
+\end_layout
+
+\begin_layout LyX-Code
+gmake distclean 
+\end_layout
+
+\begin_layout LyX-Code
+# next all on one line 
+\end_layout
+
+\begin_layout LyX-Code
+gmake all install CPU_TARGET=x86_64 OS_TARGET=linux CROSSBINDIR=~/cross/bin
+ BINUTILSPREFIX=x86_64-linux- INSTALL_PREFIX=/usr/local 
+\end_layout
+
+\begin_layout Section
+Crosscompiling without cross-assembler.
+ 
+\end_layout
+
+\begin_layout Standard
+Sometimes one doesn’t want to really crosscompile, just test if something
+ like the RTL compiles under target <x>.
+ If this target is on the same architecture, one can try to use
+\end_layout
+
+\begin_layout LyX-Code
+gmake fpc_units OPT='-s'
+\end_layout
+
+\begin_layout Standard
+The -s skips calling the assembler/linker and the use to the fpc_units makefile-
+target skips the assembling of the RTL’s loadercode.
+ Another such trick is to pass AS=echo or AS=gecho to gmake.
+ Note that in former (2.4.x/4.x) times, crosscompiling between Linux/x86 and
+ FreeBSD/x86 was possible without cross assemblers and linkers.
+ This to my knowledge hasn’t been retested with newer versions of these
+ OSes.
+\end_layout
+
+\begin_layout Section
+Crosscompiling Lazarus
+\end_layout
+
+\begin_layout Subsection
+Crosscompiling Lazarus from windows to Linux 
+\end_layout
+
+\begin_layout Standard
+First, we need a set of cross binutils.
+ For windows->other platforms, these are on FPC FTP 
+\begin_inset LatexCommand url
+target "ftp://freepascal.stack.nl/pub/fpc/contrib/cross/mingw/binutils-2.15-win32-i386-linux.zip"
+
+\end_inset
+
+ .
+ Download and extract them to the same directory as your “ppc386” compiler
+ binary.
+ Verify their install by running i386-linux-ld on the command prompt.
+ 
+\end_layout
+
+\begin_layout Standard
+Second, we need FPC and Lazarus source trees.
+ Note that the FPC tree must be an exported tree, since we are going to
+ use make install, and make install trips over SVN directories.
+ So after checkout svn export the sources (see SVN paragraph for examples)
+\end_layout
+
+\begin_layout Standard
+Now we are going to build and install FPC for crosscompiling (assume FPC
+ is installed in c:
+\backslash
+fpc
+\backslash
+2.2.0) 
+\end_layout
+
+\begin_layout LyX-Code
+make clean make OS_TARGET=linux all make OS_TARGET=linux install INSTALL_PREFIX=
+c:
+\backslash
+fpc
+\backslash
+2.2.0
+\end_layout
+
+\begin_layout Standard
+Lazarus is a different matter however, since it uses shared libraries.
+ So I copied Linux libraries from my target system and put them in d:
+\backslash
+linuxlib.
+ Which libraries I copied is described in the separate paragraph below.
+ 
+\end_layout
+
+\begin_layout Standard
+Before we really start, we have to workaround a different problem.
+ The compiler still has a detection for pre-glibc systems which is easy
+ to trip if you make a mistake.
+ So go into i386-linux rtl directory (probably c:
+\backslash
+fpc
+\backslash
+2.0.4
+\backslash
+units
+\backslash
+i386-linux
+\backslash
+rtl)and copy cprt21.o over cprt0.o so that both files are in f in fact cprt21.o.
+\end_layout
+
+\begin_layout Standard
+Now we start with the Lazarus building, enter the lazarus directory and
+ give a 
+\end_layout
+
+\begin_layout LyX-Code
+make OS_TARGET=linux all OPT=
+\begin_inset Quotes erd
+\end_inset
+
+-gl -Fld:
+\backslash
+fpc
+\backslash
+linuxlib -Xr/usr/lib -FL/usr/lib/ld-linux.so.2 -XLAc=c,dl,gmodule
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The -gl is about adding debuginfo (good to have a traceback if something
+ goes wrong), the Fl argument specifies the directory to look for the linux
+ libraries, and the -Xr argument makes the linker create the binary so that
+ it searches in /usr/lib for libraries.
+ The -FL argument is the name of the dynamic linker, and the -XLA line adds
+ two libraries (dl and gmodule) if libc is included.
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+Alternately, you can add {$linklib dl} and {$linklib gmodule} to the main
+ lazarus sourcefile lazarus.pp 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This should build a Linux lazarus.
+ However most likely, it will bomb out missing some library.
+ The solutions to that are editing the linker file “link.res” and rerunning
+ ppas.sh again, or adapting the d:
+\backslash
+fpc
+\backslash
+linuxlib dir with more or renamed libraries.
+ The link alias options (as -XLA above) are really handy to avoid repeated
+ editing.
+\end_layout
+
+\begin_layout Subsection
+Preparing a directory with Linux libraries 
+\end_layout
+
+\begin_layout Standard
+For the crosscompile I copied a bunch of files of the target linux distribution
+ (and yes, these are possibly distribution and version dependant!).
+ Some of these are also needed for the textmode IDE.
+ If library files were named libname.so.x.y on linux I renamed them to libname.so
+ in my Windows directory, since the symlinks used for that on Linux are
+ not easily copied.
+ 
+\end_layout
+
+\begin_layout Standard
+Most of these libs are in directories like /lib, /usr/lib and maybe /usr/local/l
+ib, /usr/X11R6/lib and /opt/gnome/lib.
+ libgcc however is in a GCC install dir, which can be found by doing a gcc
+ -v and then look for a line like 
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Quotes eld
+\end_inset
+
+Reading specs from /usr/lib/gcc-lib/i486-linux/3.3.5/specs
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+then some of the libs are in /usr/lib/gcc-lib/i486-linux/3.3.5/ Anyway, these
+ are the files I copied (FC4 iirc): 
+\end_layout
+
+\begin_layout LyX-Code
+libpthread.so.0 
+\end_layout
+
+\begin_layout LyX-Code
+libdl.so 
+\end_layout
+
+\begin_layout LyX-Code
+libc.so 
+\end_layout
+
+\begin_layout LyX-Code
+ld-linux.so.2 
+\end_layout
+
+\begin_layout LyX-Code
+crtbegin.o 
+\end_layout
+
+\begin_layout LyX-Code
+crtbeginS.o 
+\end_layout
+
+\begin_layout LyX-Code
+crtbeginT.o 
+\end_layout
+
+\begin_layout LyX-Code
+crtend.o 
+\end_layout
+
+\begin_layout LyX-Code
+crtendS.o 
+\end_layout
+
+\begin_layout LyX-Code
+crtn.o 
+\end_layout
+
+\begin_layout LyX-Code
+crti.o 
+\end_layout
+
+\begin_layout LyX-Code
+libgcc.a 
+\end_layout
+
+\begin_layout LyX-Code
+libX11.so 
+\end_layout
+
+\begin_layout LyX-Code
+libXi.so 
+\end_layout
+
+\begin_layout LyX-Code
+libglib-1.2.so  
+\end_layout
+
+\begin_layout LyX-Code
+libgmodule-1.2.so.0 
+\end_layout
+
+\begin_layout LyX-Code
+libgdk_pixbuf.so 
+\end_layout
+
+\begin_layout LyX-Code
+libgdk-1.2.so 
+\end_layout
+
+\begin_layout LyX-Code
+libgtk-1.2.so 
+\end_layout
+
+\begin_layout LyX-Code
+libXext.so 
+\end_layout
+
+\begin_layout LyX-Code
+libm.so 
+\end_layout
+
+\begin_layout LyX-Code
+libdl.so.2 
+\end_layout
+
+\begin_layout LyX-Code
+libgmodule-1.2.so 
+\end_layout
+
+\begin_layout Standard
+Note that some directories are duplicate, with a suffix (like libgmodule-1.2.0)and
+ not.
+ I need them twice because some of the other libraries names the full name
+ (so the form lib<name>.so.x) as an dependancy and we can’t symlink on windows,
+ so I simply copy it.
+\end_layout
+
+\begin_layout Standard
+Making mistakes with renaming is not that bad, there will be chances to
+ fix it.
+ Make sure all crt* and a file “libc.so” are available or generating link.res
+ will go wrong.
+ In my case compilation for step 11 will go ok, but the linker will complain
+ it can’t find libgtk.so and because on the target system, libgtk is gtk
+ 2.0, while we want gtk1.2 for lazarus which is named libgtk-1.2.
+ I solve this with the so called linkordering switch -XLAgtk=gtk-1.2 and
+ similarly for gdk and glib.
+ See the separate paragraph about this switch and its limitations for more
+ info.
+ 
+\end_layout
+
+\begin_layout Section
+Interesting linker options
+\end_layout
+
+\begin_layout Subsection
+Skipping built in directories: -Xd 
+\end_layout
+
+\begin_layout Standard
+On Unix targets, Free Pascal often automatically passes default libraries
+ like /lib and /usr/lib as include directories to the linker.
+ This can be a problem when experimenting with crosscompiling (and dual
+ architecture) systems.
+ The parameter -Xd convinces the compiler to not add these directories.
+ 
+\end_layout
+
+\begin_layout Subsection
+Difference in paths: -Xr<directory> 
+\end_layout
+
+\begin_layout Standard
+-Xr configures where the linker should look for libraries when crosscompiling.
+ It is translates to the ld –rpath-link parameter.
+ 
+\end_layout
+
+\begin_layout Subsection
+-Xt static linking 
+\end_layout
+
+\begin_layout Standard
+The -Xt parameter tries to link static as much as possible by passing -static
+ to LD, the linker.
+ A more finely grained control over what libraries are linked statically,
+ and which ones are linked dynamically can at this time only be achieved
+ by postediting the linker “link.res” file.
+ Compile with -s, edit link.res, and then run ppas.bat or .sh to resume the
+ linking process.
+ 
+\end_layout
+
+\begin_layout Chapter
+Systematic problem solving for the FPC build proces 
+\end_layout
+
+\begin_layout Standard
+The questions of people that read the previous “make cycle faq” on the FPC
+ maillists suggested that the main remaining problem is what to do if something
+ goes wrong, and to determine the exact cause of the problem.
+ 
+\end_layout
+
+\begin_layout Standard
+The usual problems are: 
+\end_layout
+
+\begin_layout Enumerate
+Wrong versions of FPC for a certain job or trying to combine compiler and
+ rtl that don’t belong together (2.3 with the 2.2.x RTL, or trying to generate
+ windows binaries with the go32v2 binutils).
+ Specially Lazarus users often try to build with a too old version anyway,
+ despite the minimal version advise on the main Lazarus site.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Leftovers of the previous install/build frustrate the current build process
+ (not deleting old directories etc, stale .ppu’s or .o’s) Be hygienic with
+ respect to old .ppu, .o’s, binaries and buildtrees! 
+\end_layout
+
+\begin_layout Enumerate
+Omitting details that don't have to be done for each install, (not fixing
+ the symlink in /usr/local/bin/ that points to the real installation) 
+\end_layout
+
+\begin_layout Enumerate
+Directory inclusion problems (fpc.cfg inclusive).
+ Directories not being searched, or wrong ones included 
+\end_layout
+
+\begin_layout Enumerate
+(windows) Having cygwin in the PATH, which causes fatal mixing of the mingw
+ FPC build tools and their cygwin counterparts.
+ Same for other development packages that e.g.
+ provide “make” 
+\end_layout
+
+\begin_layout Enumerate
+(unix and strictly not a FPC problem) not installing operation system parts
+ and libraries.
+ Most notably the -devel libraries on Linux, or ports on *BSD.
+ 
+\end_layout
+
+\begin_layout Enumerate
+(development versions only) Trying to compile something in a directory that
+ contains files with the same name as files in the FPC cvs.
+ The compiler find these, and thinks they are the RTL sources that need
+ recompilation.
+ Release versions are protected against this (by compiling the RTL with
+ -Ur) 
+\end_layout
+
+\begin_layout Standard
+Double checking that you are not having these specific common problems is
+ worth the effort.
+ 
+\end_layout
+
+\begin_layout Section
+Determining the problem, increasing the verbosity.
+ 
+\end_layout
+
+\begin_layout Standard
+The standard systematic search for the problem starts with increasing the
+ verbosity level, by passing OPT=<switches> after make.
+ This works when executing the commandline compiler too.
+ 
+\end_layout
+
+\begin_layout Standard
+The commonly used verbosity options are 
+\end_layout
+
+\begin_layout Description
+-vt (show filesearching information, searched paths etc) If you expect problems
+ with what directories are searched, you usually choose this to keep the
+ amount of logged data down.
+\end_layout
+
+\begin_layout Description
+-va (show all info.
+ REDIRECT THIS!) 
+\end_layout
+
+\begin_layout Standard
+This is the ultimate source if something goes wrong.
+ The rest is pretty much guess work and experience.
+ The verbose compiler messages are the best source by far, and the only
+ one that allows some systematic problem searching.
+ Nobody expects the Spanish Inquisition, but try to answer these questions
+ for yourself when looking at the -va output.
+ 
+\end_layout
+
+\begin_layout Itemize
+Is the correct compiler executed? 
+\end_layout
+
+\begin_layout Itemize
+Does the compiler version match with the version that you’d expect ? (You
+ can also use ppc386 -i to check version).
+ This includes verifying the compiler date! 
+\end_layout
+
+\begin_layout Itemize
+Are the operating system and processor you are compiling for correctly named
+ in the output? 
+\end_layout
+
+\begin_layout Itemize
+Is the correct fpc.cfg (name and location) loaded and is it preprocessed
+ as you think? 
+\end_layout
+
+\begin_layout Itemize
+Are linker, include and unit directories correct? 
+\end_layout
+
+\begin_layout Itemize
+If the compiler can’t find a unit, does a line like “unit changed, recompiling”
+ exist a bit higher? If so see the separate section on the “recompiling”
+ problem.
+ 
+\end_layout
+
+\begin_layout Itemize
+If you are using FPC supplied makefiles, keep in mind that the fpc.cfg file
+ is ignored while building a “cycle” or a larger target that depends on
+ cycle (like “make all”) Add parameters to the make commandline, set environment
+ variables, or fix config files (e.g.
+ /etc/ld.so.conf if it is a linker directory problem) to fix this.
+\end_layout
+
+\begin_layout Standard
+If you do use nested includefiles, is the nesting the same way as you expect?
+ ( a small filter program can be quite handy to “graph” how includefiles
+ are included for complex files)
+\end_layout
+
+\begin_layout Section
+Checklist 
+\end_layout
+
+\begin_layout Standard
+Some other things easily checked without extra verbosity : 
+\end_layout
+
+\begin_layout Itemize
+(on unix) Check the compiler location with 
+\begin_inset Quotes eld
+\end_inset
+
+which ppc386
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Check the compiler version and date with ppc386 -i 
+\end_layout
+
+\begin_layout Itemize
+Look at your path variable ( echo $PATH on unix, echo %PATH% on dos/windows),
+ and check that the FPC directory for the target you choose is first.
+ Specially make sure that 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+there is no cygwin directory in the path at all (cygwin tools use non-dos
+ path layout, and need special handling.
+ FPC’s mingw based versions of make and the binutils don’t mix well with
+ cygwin’s) 
+\end_layout
+
+\begin_layout Enumerate
+(Windows) there is no other directory of a development tool (Delphi, JBuilder,
+ VC++) in your path.
+ These can contain own versions of certain tools, mainly make that are not
+ compatible.
+ A make -v or make –version can be useful too.
+\end_layout
+
+\begin_layout Enumerate
+the PATH variable is spelled in all capital letters.
+ If you have this problem, correct it in the windows environment dialogue
+ (one of the tabs of System settings) A batchfile that can fix this on the
+ go for if you don’t have permissions to fix it directly on your work system
+ is 
+\newline
+set a=%PATH% 
+\newline
+set Path= 
+\newline
+set PATH=%A%
+\newline
+set a= 
+\end_layout
+
+\begin_layout Enumerate
+Check your fpc.cfg.
+ I know, you never edit that one, and it has worked always, but do so anyway.
+ Quickly inserted 
+\begin_inset Quotes eld
+\end_inset
+
+I have to get this working now!
+\begin_inset Quotes erd
+\end_inset
+
+ changes are easily forgotten.
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Recompiling 
+\end_layout
+
+\begin_layout Standard
+A standard gotcha for FPC newbies is when the compiler says it can’t find
+ unit xxx, while you are really 100% sure it is there, and the directory
+ with that file is searched.
+ ( note : make 100% sure that this is the case, before continuing)
+\end_layout
+
+\begin_layout Standard
+The most common causes are:
+\end_layout
+
+\begin_layout Enumerate
+(by far the most common) stale .o and .ppu’s, or incorrect settings that include
+ wrong directories.
+ (with .ppu and .o’s).
+ Run make distclean 
+\end_layout
+
+\begin_layout Enumerate
+includefiles and unit names that are not unique.
+ 
+\end_layout
+
+\begin_layout Enumerate
+A difference in the defines.
+ 
+\end_layout
+
+\begin_layout Standard
+If so, if you do the same build with OPT=’-va’ and search for 
+\begin_inset Quotes eld
+\end_inset
+
+Recompiling
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+[Unfinished] 
+\end_layout
+
+\begin_layout Chapter
+Misc topics 
+\end_layout
+
+\begin_layout Section
+Programming models.
+ 
+\end_layout
+
+\begin_layout Standard
+Over the last few years, FPC has started to support an increasing amount
+ of platforms that use the Unix specific RTL parts.
+\end_layout
+
+\begin_layout Standard
+Some form of reorganisation was necessary, and because more processor platforms
+ are in preparation for FPC, I decided to look into portability issues,
+ specially creating 64-bit clean code, and alignment and endianness.
+ The main reasons for researching portability for Object Pascal were Free
+ Pascal’s plans to port to 64-bits platforms like x86_64, Sparc64 and PowerPC
+ G5.
+ 
+\end_layout
+
+\begin_layout Standard
+The term 64-bit clean is somewhat misleading, because it is not limited
+ to 64-bit architectures alone, but a general principle for writing code
+ in a way that it runs on a lot of processors.
+ The basic principle is to only allow conversion between a certain integer
+ type and pointer, and always have a certain integer type (PtrInt) that
+ is guaranteed to scale with pointer size.
+\end_layout
+
+\begin_layout Standard
+In C, the standard ''long'', or a new ''long long'' type is used for this.
+ Since pointers aren’t generally regarded as ''signed'', it seems logical
+ to pick an unsigned type to be compatible with a pointer.
+ Signed or unsigned doesn’t much matter for compability with C as long as
+ integers are coded using two’s complement, and because the interface between
+ C and another language is untyped.
+ 
+\end_layout
+
+\begin_layout Standard
+The reason to define a new type Long Long is simple, to allow legacy code
+ that assumes that integer and long are equal in size to keep on working
+ without modification.
+ 
+\end_layout
+
+\begin_layout Standard
+A chosen set of types is refered to in C faqs as a ''programmingmodel'',
+ and are named ILP-x, LLP-x or LP-x with x the processor’s wordsize in bits,
+ typically 32 or 64.
+ ILP-x means that Integer, Long and Pointer are x bits wide, LP-x that Long
+ and Pointer are x bits wide, and LLP that Long Long and Pointer are x bits
+ wide.
+\end_layout
+
+\begin_layout Standard
+Some typical programming models are listed in the table below.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="8" columns="7">
+<features>
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" width="0">
+<column alignment="center" valignment="top" leftline="true" rightline="true" width="0">
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Ctype
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+objpas
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+Size in model
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+ILP32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+LP32
+\begin_inset LatexCommand index
+name "LP32"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+LP64
+\begin_inset LatexCommand index
+name "LP64"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+ILP64
+\begin_inset LatexCommand index
+name "ILP64"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+LLP64
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+char
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+byte/char/smallint
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+8
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+short
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+shortint
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+16
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+16
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+16
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+16
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+16
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+int
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+integer/longint
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+16
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+64
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+32
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+long
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+64
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+64
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+64
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+long long
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+-(32) 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+-(64)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+-(64)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+64
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topline="true" bottomline="true">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+pointer
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+pointer types
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+64
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+64
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Standard
+64
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Some points in the table need explaining: 
+\end_layout
+
+\begin_layout Itemize
+Standard programming model for current (intel family) PC processors is ILP32
+\begin_inset LatexCommand index
+name "ILP32"
+
+\end_inset
+
+.
+ All 32-bits OSes use it.
+ 
+\end_layout
+
+\begin_layout Itemize
+The problem with long in C was that there are both large codebases that
+ expect pointer and long to have the same size, while there are also large
+ codebases that expect int and long to be the same size.
+ The compability model LLP64 was designed to keep the long<->int compability
+ by introducing a new type to remain compatible with pointer (long long)
+ 
+\end_layout
+
+\begin_layout Itemize
+long long doesn’t exist except in LLP64
+\begin_inset LatexCommand index
+name "LLP64"
+
+\end_inset
+
+, and both long and longlong don’t have an clear equivalent in Object Pascal
+ yet.
+ A new type would have to be created just like under C.
+ Since Pascal has no long<-> ptr equivalence established yet, the long vs
+ long long discussion is unimported.
+ It was however decided to create both a signed ( PtrInt
+\begin_inset LatexCommand index
+name "PtrInt"
+
+\end_inset
+
+ ) and an unsigned (PtrUint
+\begin_inset LatexCommand index
+name "PtrUint"
+
+\end_inset
+
+ ) type that scale with pointer size
+\end_layout
+
+\begin_layout Itemize
+LP32 is used as model for the win-16 APIs of Windows 3.1 
+\end_layout
+
+\begin_layout Itemize
+Most *nixes use LP64, mainly to conserve memory space compared to ILP64,
+ since using full 64-bit ints is hardly necessary and a waste of memory.
+ Examples: 64-bit Linux, FreeBSD,NetBSD,OpenBSD 
+\end_layout
+
+\begin_layout Itemize
+Win64 uses the LLP64 model, which was also known as P64.
+ This model conserves type compability between long and int, but loses type
+ compability between long and pointer types.
+ Any cast between a pointer and an existing type requires modification.
+ 
+\end_layout
+
+\begin_layout Itemize
+ILP64 is the easiest model to work with, since it retains all compability
+ with the much used ILP32 model, except specific assumptions that the core
+ types are 32-bit.
+ However this model is quite memory-hungry,and both code and data size significa
+ntly increase.
+ Typically used by commercial unices, like IBM AIX.
+\end_layout
+
+\begin_layout Itemize
+There are no dos models in the table, since dos doesn’t have a flat memory
+ model.
+ (a pointer can’t be represented by a single value in these models.
+ DJGPP extender models are ILP32 though.
+\end_layout
+
+\begin_layout Section
+Link ordering
+\end_layout
+
+\begin_layout Standard
+Starting with 2.0.4 some switches were added that simplify dealing with changing
+ library names.
+ These switches are 
+\series bold
+BETA
+\series default
+ and may change or 
+\series bold
+disappear
+\series default
+ at any time, e.g.
+ when a linker description language is implemented.
+ They were mostly added to be able inventorize how useful such a system
+ would be in practice, mostly it is meant to deal with changes in library
+ names and keep a release running without repackaging it before a final
+ decision is made.
+ They are BETA also because the internal linker might totally change the
+ linking backend in the near future.
+ 
+\end_layout
+
+\begin_layout Standard
+The main problem it solves is that with FPC, names of libraries can be hardcoded
+ in the FPC source in 
+\series bold
+$linklib
+\series default
+ or
+\series bold
+ EXTERNAL 
+\series default
+declaractions.
+ While this is generally a good thing that makes it way easier for the user
+ and avoids kludges like having to specify each and every library on the
+ commandline like gcc, it can be annoying in times when librarynames go
+ through a transition, and you use a distribution that renames libraries.
+ 
+\end_layout
+
+\begin_layout Standard
+Besides the name, also the order of libraries might sometimes be a problem,
+ specially when libraries don’t specify their dependancies correctly.
+ Most of these issues are with relative lowlevel libs like libgcc.
+\end_layout
+
+\begin_layout Standard
+FPC 2.0.4 introduces several 
+\series bold
+beta
+\series default
+ switches to deal with this.
+ There are three new parameters:
+\end_layout
+
+\begin_layout Enumerate
+-XLAlibname=[libname1][,libname2..] 
+\end_layout
+
+\begin_layout Enumerate
+-XLOlibname=<number> 
+\end_layout
+
+\begin_layout Enumerate
+-XLD 
+\end_layout
+
+\begin_layout Standard
+A limitation that remains is that there is no way to allow the user to decide
+ which libraries are to be linked statically, and which are to be linked
+ dynamically.
+ This mainly for easier deployment on linux (non standard libs? -> force
+ static).
+ Another limitation recently surfaced is that this only goes for libraries.
+ Object files, and their order are untouched
+\end_layout
+
+\begin_layout Subsection
+-XLA 
+\end_layout
+
+\begin_layout Standard
+The first parameter, -XLA, defines a subsitution of library name.
+ The libs on the right side are added to the parameters of the linker if
+ the lib on the left side is in the list with libraries to link that is
+ constructed from the source.
+ The right side can be empty, and can also contain the libname that is already
+ specified on the left.
+ Examples: 
+\end_layout
+
+\begin_layout Itemize
+-XLAc=c,dl makes sure that libdl is added if libc is in the list, libc remains
+ in the list.
+ 
+\end_layout
+
+\begin_layout Itemize
+-XLAdl= removes libdl from the list of libraries to link even if it was
+ {$linklib xx}’ed in the source 
+\end_layout
+
+\begin_layout Itemize
+-XLAgtk-12=gtk12translates a link to libgtk12 to search for libgtk-12 
+\end_layout
+
+\begin_layout Subsection
+-XLO 
+\end_layout
+
+\begin_layout Standard
+The parameter XLO defines a weight.
+ Libraries are sorted on weight into descending order.
+ Defaults weight is 1000.
+ If you decrease the weight, it will be lower in the list with libraries
+ to link.
+ This is mainly useful to link certain libraries (typically the more lowlevel
+ ones) in a certain order, like e.g.
+ with libc_r and libc on FreeBSD4, or to get programs to link that made
+ a mess of their dependancies.
+ This possibility removes the need for a few ad-hoc ordering hacks, and
+ the special parameter for the FreeBSD 4->5 transition that was one such
+ kludge, -Xf was reimplemented using this functionality.
+ The compiler has default weights on a per target basis.
+ This mainly means that libc usually will be somewhere near the end.
+ 
+\end_layout
+
+\begin_layout Standard
+Example: 
+\end_layout
+
+\begin_layout LyX-Code
+-XLOc=1050
+\end_layout
+
+\begin_layout Standard
+puts libc before libraries that don’t have a weight specified in link.res
+ (since the default is 1000) 
+\end_layout
+
+\begin_layout Subsection
+-XLD 
+\end_layout
+
+\begin_layout Standard
+The parameter -XLD simply makes the compiler forget the defaults for weights
+ and aliases.
+ This can be useful if something changes for a library that has a hardcoded
+ weight, or when a built-in alias is not needed anymore.
+\end_layout
+
+\begin_layout Subsection
+Example: Fixing the FreeBSD GTK breakage with linkordering 
+\end_layout
+
+\begin_layout Standard
+The FreeBSD ports maintainers decided to force large changes related to
+ linking using libtool on the ports tree in november 2005 (in UPDATING),
+ but they were not into effect till April 2006.
+ One of sideeffects of these changes were renaming of the GTK 1 libraries
+ to gtk-12, gdk-12 and glib-12, where they used to be gtk12, gdk12 and glib12.
+ These changes affected all users that tracked 5 and 6 stable, since they
+ didn’t wait for a major version transition to introduce this.
+ Ports maintainers also refused to add a few symlinks for a while to ease
+ the transitions, and pointed to gcc specific tools like gtkconfig and libtool.
+ (these emit gcc commandlines).
+ 
+\end_layout
+
+\begin_layout Standard
+Most users track STABLE by default out of practical purposes, and changing
+ the FPC binary to call external programs and to parse them, would only
+ make the whole process more fragile and harder to support.
+ I myself decided to give up working on FPC ports tree entries because I
+ really start wondering where I benefited from participating in the ports
+ tree process.
+ The work is immense, and the uses for the users are small if such changes
+ break packages so hard and relatively often.
+ 
+\end_layout
+
+\begin_layout Standard
+Since in time, more and more users will use either -STABLE or a release
+ based on -STABLE after the change, in FPC 2.2.0 I changed the default name
+ of the GTK libraries to their new names, and introduced linkordering switches
+ to keep older installations working.
+ So if you have a system from before this change, and don’t track stable,
+ you can workaroundthis by putting the following in your fpc.cfg or .fpc.cfg:
+ 
+\end_layout
+
+\begin_layout Itemize
+-XLAglib-12=glib12 
+\end_layout
+
+\begin_layout Itemize
+-XLAgdk-12=gdk12 
+\end_layout
+
+\begin_layout Itemize
+-XLAgtk-12=gtk12 
+\end_layout
+
+\begin_layout Subsection
+Example II: FreeBSD 4 vs 5 pthreads:-Xf 
+\end_layout
+
+\begin_layout Standard
+Another item is the ppc<x> parameter -Xf, which signals an alternate pthreads
+ layout.
+ Currently it only exists for FreeBSD.
+ On versions 2.0 and 2.0.2 the parameter signals FreeBSD 5.x libpthread behaviour,
+ and on 2.0.4 it signals 4.x libc_r behaviour.
+ In 2.0.4 the parameter was reimplemented on top of the linkordering routines,
+ so that when compiling for 4.x libc_r can be used , 
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+2.0.4 doesn’t provide a out of the box 4.x setup anymore, though generally
+ the functionality should be preserved.
+ 
+\end_layout
+
+\end_inset
+
+ en when compiling for FreeBSD 5.x libpthread will be linked in.
+ Also the ordering is fixed using internal equivalents of -XLO, and the
+ defaults are also overridable with -XLD.
+ 
+\end_layout
+
+\begin_layout Part
+Glossary
+\begin_inset LatexCommand label
+name "par:Glossary"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that this glossary tries to explain compiler and FPC project specific
+ jargon, not Pascal/Delphi in general.
+ 
+\end_layout
+
+\begin_layout Description
+architecture
+\begin_inset LatexCommand index
+name "architecture"
+
+\end_inset
+
+ Roughly the processor family.
+ Note that for PC’s, the x86 architecture (all 80x86 chips) is often misused,
+ where the i386 architecture (80386 and higher) is meant.
+ The PC version of FPC is i386 architecture, and doesn’t run on older x86
+ proc essors.
+ Other architectures are PowerPC (which is subdivided into power32 (=32-bits)
+ and power64 (=64-bit)), m68k (68030+ in practice), Sparc V7, Sparc V8,
+ Sparc V9 (the latter better known as Ultra Sparc).
+ ARM versioning is more complex, since those processors can be built to
+ order, a customer can choose from several cores, and add modules like FPU,
+ memorysystem (endianness), DSP functionality etc.
+ 
+\end_layout
+
+\begin_layout Description
+AR
+\begin_inset LatexCommand index
+name "AR"
+
+\end_inset
+
+ The GNU archiver.
+ Combines .o files into .a files.
+ .a files are used for smartlinking, though that might change in the near
+ future.
+ 
+\end_layout
+
+\begin_layout Description
+AS
+\begin_inset LatexCommand index
+name "AS"
+
+\end_inset
+
+ The GNU assembler.
+ The backend assembler that is used if FPC needs an external assembler.
+ 
+\end_layout
+
+\begin_layout Description
+assembler
+\begin_inset LatexCommand index
+name "assembler"
+
+\end_inset
+
+ a textual representation of the binary machinecode that is fed to the processor.
+ 
+\end_layout
+
+\begin_layout Description
+alias
+\begin_inset LatexCommand index
+name "alias"
+
+\end_inset
+
+ A function or variable with a name that doesn’t adhere to standard name
+ mangling, usually for internal functions or foreign language interfacing.
+ 
+\end_layout
+
+\begin_layout Description
+binwriter
+\begin_inset LatexCommand index
+name "binwriter"
+
+\end_inset
+
+ The part of FPC that directly writes .a’s and .o’s.
+ Since using the binwriter eliminates executing AS (and possibly AR), building
+ is much faster.
+ The reason why it is not available for each platform is that there is no
+ universal .o format.
+ Every binary type often has its own .o variant, and all need special support
+ in FPC.
+ 
+\end_layout
+
+\begin_layout Description
+branch
+\begin_inset LatexCommand index
+name "branch"
+
+\end_inset
+
+(CVS,SVN) Normally versions of a file in CVS are a linear series of updates,
+ a new version after each update.
+ This can be thought of as the trunk of a tree.
+ However at a certain point you might want to add an update that might e.g.
+ break backwards compability or that introduces instability for some time.
+ The solution then is to have two sequences of versions.
+ One with that update (a development series of update), and one without.
+ These separate series are the branches of a tree.
+ 
+\end_layout
+
+\begin_layout Description
+bootstrapping
+\begin_inset LatexCommand index
+name "bootstrapping"
+
+\end_inset
+
+ is the entire process of creating a compiler starting from another compiler
+ (another version or a totally different compiler).
+ See also
+\series bold
+ make cycle
+\series default
+ 
+\end_layout
+
+\begin_layout Description
+Carbon
+\begin_inset LatexCommand index
+name "Carbon"
+
+\end_inset
+
+ A Mac OS widgetset/API, which is essentially the cleansed subset of the
+ classic Mac OS API that works with Mac OS X.
+ 
+\end_layout
+
+\begin_layout Description
+CLX
+\begin_inset LatexCommand index
+name "CLX"
+
+\end_inset
+
+ A library from Borland that is a bit more multiplatform and should have
+ replaced VCL.
+ However users stayed away in droves.
+ CLX is GPLed, and thus is not very usable for FPC, library wise.
+ 
+\end_layout
+
+\begin_layout Description
+COCOA
+\begin_inset LatexCommand index
+name "COCOA"
+
+\end_inset
+
+ A Mac OS X widgetset/API written for use with Objective C.
+ 
+\end_layout
+
+\begin_layout Description
+contrib
+\begin_inset LatexCommand index
+name "contrib"
+
+\end_inset
+
+ directory A directory in SVN (module fpcprojects) where some ported Delphi
+ packages are kept (ICS, Abbrevia, Decal).
+ This directory is a subdirectory of the projects directory.
+ 
+\end_layout
+
+\begin_layout Description
+Cross 
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+(cross\InsetSpace ~
+-compiling
+\begin_inset LatexCommand index
+name "crosscompiling"
+
+\end_inset
+
+,\InsetSpace ~
+-linking
+\begin_inset LatexCommand index
+name "crosslinking"
+
+\end_inset
+
+\InsetSpace ~
+and\InsetSpace ~
+-assembling
+\begin_inset LatexCommand index
+name "crossassembling"
+
+\end_inset
+
+) Generating binaries or libraries for other operating system and/or processor
+ than that you are currently working on.
+\end_layout
+
+\begin_layout Description
+(crossbinutils
+\begin_inset LatexCommand index
+name "crossbinutils"
+
+\end_inset
+
+) binutils (ld,as,ar) that generate binaries for other operating systems
+ and processors.
+ 
+\end_layout
+
+\begin_layout Description
+(crossbindir
+\begin_inset LatexCommand index
+name "crossbindir"
+
+\end_inset
+
+) Place where the crossbinutils can be found.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Description
+CVS
+\begin_inset LatexCommand index
+name "CVS"
+
+\end_inset
+
+ A version management tool used by the FPC tool to manage the FPC source
+ code before may 2005 
+\end_layout
+
+\begin_layout Description
+dead\InsetSpace ~
+code\InsetSpace ~
+elimination
+\begin_inset LatexCommand index
+name "dead code elimination"
+
+\end_inset
+
+ GCC or maybe general C jargon for smartlinking.
+ The default dead code elimination of gcc is not as finely grained as FPC
+ smartlinking though.
+\end_layout
+
+\begin_layout Description
+ELF
+\begin_inset LatexCommand index
+name "ELF"
+
+\end_inset
+
+ binary format of most modern unices and unix likes.
+ Except for Mac OS X (see Mach-O) 
+\end_layout
+
+\begin_layout Description
+Export
+\begin_inset LatexCommand index
+name "Export"
+
+\end_inset
+
+ (libraries) Making symbols (procedures, variables) available to the outside.
+ (e.g.
+ outside the unit, outside the library/program) (SVN) 
+\end_layout
+
+\begin_layout Description
+FCL
+\begin_inset LatexCommand index
+name "FCL"
+
+\end_inset
+
+ Free Component Libraries.
+ Non visual class libraries, provided for partial Delphi source compability,
+ at least at a non visual/GUI level.
+ See also 
+\series bold
+VCL
+\series default
+.
+ 
+\end_layout
+
+\begin_layout Description
+FPC
+\begin_inset LatexCommand index
+name "FPC"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Free Pascal Compiler abbrev.
+\end_layout
+
+\begin_layout Enumerate
+The fpc compiler frontend binary.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Description
+FPCMAKE
+\begin_inset LatexCommand index
+name "FPCMAKE"
+
+\end_inset
+
+ util to convert Makefile.fpc to Makefile
+\end_layout
+
+\begin_layout Description
+FPMAKE
+\begin_inset LatexCommand index
+name "FPMAKE"
+
+\end_inset
+
+ The succesor to fpcmake and make/makefiles in general that is supposed
+ to render the latter obsolete in 2.2.
+ The main features are a more maintainable and performant build system (crosscom
+piling inclusive)
+\end_layout
+
+\begin_layout Description
+FPPKG
+\begin_inset LatexCommand index
+name "FPPKG"
+
+\end_inset
+
+ Another build tool scheduled for 2.2 which should allow auto download+compile
+ of packages, a bit like what the FreeBSD ports tree with a apt-get like
+ cmdline frontend would look like.
+ (or portupgrade, which is the proper FreeBSD pendant) 
+\end_layout
+
+\begin_layout Description
+FPDOC
+\begin_inset LatexCommand index
+name "FPDOC"
+
+\end_inset
+
+ A documentation generation system used by FPC internally, but also usable
+ for external use.
+ fpdoc takes a XML file generated by makeskel, and postedited with fpde,
+ processes the file and generates multiple documentation formats from it
+ (html,text,T E X) 
+\end_layout
+
+\begin_layout Description
+GO32v2
+\begin_inset LatexCommand index
+name "GO32v2"
+
+\end_inset
+
+ Pure Dos is 16-bit.
+ FPC programs are 32-bit.
+ The program that hides the 16-bit nature a bit, and does 32-bit DPMI dos
+ memory management for 32-bits applications is called the Dos-Extender.
+ FPC uses the GNU Go32 version 2 dos extender.
+ (though others are possible in theory, like pmode.
+ See manual)
+\end_layout
+
+\begin_layout Description
+Inline
+\begin_inset LatexCommand index
+name "Inline"
+
+\end_inset
+
+ If procedure X calls procedure Y, and Y is flagged for inlining, then Y
+ will be totally optimised away, and in the final code (in the binary),
+ the code of Y will appear to be in X.
+ If Y is called on two separate places in X, the code will appear twice
+ in X.
+ While nearly anything can be flagged “ inline;”, some kinds of procedures/metho
+ds are excluded from inlining, like virtual methods.
+\end_layout
+
+\begin_layout Description
+Internal\InsetSpace ~
+linker
+\begin_inset LatexCommand index
+name "Internal linker"
+
+\end_inset
+
+ A linker built in to the compiler, as opposed to an external linker like
+ GNU LD.
+ FPC uses an internal linker in FPC 2.2+ for the three windows platforms
+ (win32/win64/wince) 
+\end_layout
+
+\begin_layout Description
+Lazarus
+\begin_inset LatexCommand index
+name "Lazarus"
+
+\end_inset
+
+ A multi widget GUI RAD for Free Pascal.
+ Not a blind Delphi drop in replacement, but the support of GTK makes it
+ useful.
+ At the moment of writing this, Lazarus is developing rather fast, for up
+ to date information, see their site http://lazarus.freepascal.org .
+ 
+\end_layout
+
+\begin_layout Description
+LCL
+\begin_inset LatexCommand index
+name "LCL"
+
+\end_inset
+
+ The set of Visual classes used by Lazarus and the programs it generates.
+ The LCL is generally independant of platform or GUI widget library.
+ Currently, an implementation based on GTK 1.2.x is ready and a win32 (Windows)
+ implementation is in advanced stages of development.
+\end_layout
+
+\begin_layout Description
+LD
+\begin_inset LatexCommand index
+name "LD"
+
+\end_inset
+
+ The GNU linker, which is nearly always the one used by FPC.
+ 
+\end_layout
+
+\begin_layout Description
+Mach-O
+\begin_inset LatexCommand index
+name "Mach\\-O"
+
+\end_inset
+
+ binary format of OS X/Darwin make cycle A command to rebuild the FPC compiler
+ and core RTL from source.
+ (bootstrap, building a new compiler from an older, or other compiler) 
+\end_layout
+
+\begin_layout Description
+make\InsetSpace ~
+all
+\begin_inset LatexCommand index
+name "make all"
+
+\end_inset
+
+ A command to rebuild the entire base FPC sourcecode.
+ This is roughly equivalent to the snapshots.
+ 
+\end_layout
+
+\begin_layout Description
+mangling see namemangling
+\end_layout
+
+\begin_layout Description
+Namemangling
+\begin_inset LatexCommand index
+name "Namemangling"
+
+\end_inset
+
+ Languages can have different namespaces that can contain the same name,
+ however on the linker level there is only one namespace.
+ Namemangling is the process that maps the multiple language level namespaces
+ onto the single linker level namespace.
+ An example is e.g.
+ the unitsystem.
+ Units can contain variables with the same name.
+ Say unit A contains variable “buildfaq”, and unit B does too.
+ Naming both “buildfaq” would make them clash on the linker level.
+ A solution is to prefix the variable name with the unitname.
+ So “buildfaq” in unit A will be called A_buildfaq, and in unit B B_buildfaq.
+ Namemangling is compiler (and -version) specific, and since the namespace
+ rules vary with the language also somewhat language specific.
+ An exception is the C (not C++) language which barely has namespaces, and
+ therefore often has little or no mangling.
+ The C++ namemangling is a notorious case, since it changes from compiler
+ to compiler and version to version.
+ 
+\end_layout
+
+\begin_layout Description
+NEWRA
+\begin_inset LatexCommand index
+name "NEWRA"
+
+\end_inset
+
+ The new improved register allocator of the 1.1.x (2.0+) series.
+ The new register allocator should improve compiler performance and maintainabil
+ity by automatically arranging a fairly optimal register usage.
+ Since this removes the need for manually keeping track of registers in
+ the codegenerator,this improves maintainability a lot.
+ 
+\end_layout
+
+\begin_layout Description
+Packages
+\begin_inset LatexCommand index
+name "Packages"
+
+\end_inset
+
+ is a bit of an ambiguous term when used in the FPC project.
+ (see also 
+\begin_inset LatexCommand url
+name "http://wiki.freepascal.org/packages"
+target "http://wiki.freepascal.org/packages"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Sometimes “packages” refers exclusively to the separate unit sets in the
+ packages/ directory of the source tree, 
+\end_layout
+
+\begin_layout Enumerate
+sometimes it also includes the other separately compilable parts of the
+ project (like compiler, rtl, fcl, ide, fvision, lazarus, installer and
+ utils), 
+\end_layout
+
+\begin_layout Enumerate
+a third description is the Delphi language feature with the same name, a
+ more automated form of dynamic libraries.
+ In this document it’s usually the second one.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Description
+PIC
+\begin_inset LatexCommand index
+name "PIC"
+
+\end_inset
+
+ (Position Independant Code) a system for Unix (*BSD, Linux) that ensures
+ relocatability of shared libraries, and allows easy minor version upgrades
+ of libc libraries without recompiling the library.
+\end_layout
+
+\begin_layout Description
+Prefix
+\begin_inset LatexCommand index
+name "Prefix"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+($PREFIX
+\begin_inset LatexCommand index
+name "\\$PREFIX"
+
+\end_inset
+
+) place where the snapshot building (make all install) will use as root
+ directory for the installation of the files.
+ (default: 
+\backslash
+pp on windows, /usr/local on most unices) 
+\end_layout
+
+\begin_layout Enumerate
+(BINUTILSPREFIX
+\begin_inset LatexCommand index
+name "BINUTILSPREFIX"
+
+\end_inset
+
+) A string that is prefixed to the binutils when crosscompiling.
+ Usually in the form processor-operatingsystem-(like “i686-mingw32-”) 
+\end_layout
+
+\end_deeper
+\begin_layout Description
+Projects
+\begin_inset LatexCommand index
+name "Projects"
+
+\end_inset
+
+ directory a directory in CVS where experimental and independant projects
+ are stored.
+ Usually Delphi code ported to FPC (see contrib directory), and Lazarus.
+ 
+\end_layout
+
+\begin_layout Description
+Ptrint
+\begin_inset LatexCommand index
+name "Ptrint"
+
+\end_inset
+
+ A integer type that has the same size (in bits) as the pointer type.
+ 
+\end_layout
+
+\begin_layout Description
+PtrUint
+\begin_inset LatexCommand index
+name "PtrUint"
+
+\end_inset
+
+ is the unsigned form.
+ Register allocator The engine that tries to make optimal use of the processor
+ registers to avoid reloading from memory.
+ 
+\end_layout
+
+\begin_layout Description
+Register\InsetSpace ~
+parameters
+\begin_inset LatexCommand index
+name "Register parameters"
+
+\end_inset
+
+ A calling convention that tries to put parameters to procedures in registers.
+ Delphi has a register calling convention by default.
+ FPC is slowly starting to support register parameters now (thanks to NEWRA
+ changes).
+ Most non PC processortypes also use register parameters.
+ Since december 2003, FPC defaults to this convention on i386 too, for Delphi
+ compability.Duringthe last months of 2006, a bug was found in the Delphi
+ compability of register parameters; when procedures use more than 4 parameters
+ (one less for methods), the fact that FPC pushes the parameters in the
+ opposite order of Delphi becomes a problem.
+ This probably will be tackled in FPC 2.1.1 in spring 2007.
+ 
+\end_layout
+
+\begin_layout Description
+Register\InsetSpace ~
+variables
+\begin_inset LatexCommand index
+name "variables"
+
+\end_inset
+
+ An optimization technique that avoids reloading variables from memory into
+ the main CPU’s registers by trying to keep frequently used variables in
+ registers as much as possible.
+ FPC 1.0.x had this in a primitive way based on reserving a few registers
+ for variables.
+ FPC 2.x has a way more intelligent system as a part of the registerallcoater
+ 
+\end_layout
+
+\begin_layout Description
+RTL
+\begin_inset LatexCommand index
+name "RTL"
+
+\end_inset
+
+ RunTime libraries.
+ The base set of libraries used by FPC.
+ These include e.g.
+ the System unit, the dos unit, the sysutils unit and a platform dependant
+ unit.
+ The System unit also contains functions that the compiler calls internally
+ to do more complex language operations like SET and string handling.
+ 
+\end_layout
+
+\begin_layout Description
+shared\InsetSpace ~
+linking
+\begin_inset LatexCommand index
+name "shared linking"
+
+\end_inset
+
+ Linking with dynamic libraries (unix: .so shared libraries; win32: .dll shared
+ libraries) 
+\end_layout
+
+\begin_layout Description
+smart\InsetSpace ~
+linking
+\begin_inset LatexCommand index
+name "smart linking"
+
+\end_inset
+
+ essentially avoids linking of unused code into the final binary.
+ See the separate paragraph (1.8) elsewhere in this document for more details.
+ 
+\end_layout
+
+\begin_layout Description
+static\InsetSpace ~
+linking
+\begin_inset LatexCommand index
+name "static linking"
+
+\end_inset
+
+ The ordinary way of linking, producing one standalone binary, though sometimes
+ smartlinking is also called “static” linking.
+ This might be true for C, but FPC has two different modes because with
+ FPC the granularity of smartlinking typically is higher.
+ 
+\end_layout
+
+\begin_layout Description
+Starting\InsetSpace ~
+compiler
+\begin_inset LatexCommand index
+name "starting compiler"
+
+\end_inset
+
+ A compiler that is used to build a new compiler.
+\end_layout
+
+\begin_layout Description
+Subversion
+\begin_inset LatexCommand index
+name "Subversion"
+
+\end_inset
+
+(SVN
+\begin_inset LatexCommand index
+name "SVN"
+
+\end_inset
+
+) The current version management system.
+\end_layout
+
+\begin_layout Description
+tag
+\begin_inset LatexCommand index
+name "tag"
+
+\end_inset
+
+(CVS,SVN) A tag simply identifies a bunch of different files that belong
+ together.
+ It’s commonly used to mark a the set of versions that are released as a
+ formal (pre)release.
+ E.g.
+ the FPC 1.0.10 release is tagged with RELEASE_1_0_10 etc.
+ 
+\end_layout
+
+\begin_layout Description
+target
+\begin_inset LatexCommand index
+name "target"
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Roughly the operating system and CPU that the binary must run on, typically
+ in CPU-OS notation (e.g.
+ i386-freebsd) There are exceptions though, like Dos has a target for each
+ extender, and some compilers have multiple targets for Windows (gcc: mingw,
+ cygwin) too.
+ Some toolchain let the CPU reflect the CPU that is optimised for (i386,i486,
+ i586 etc), some not.
+ FPC does not (all i<x>86 platforms, x>=3, are called i386) 
+\end_layout
+
+\begin_layout Enumerate
+Lazarus adds the widget set too, e.g.
+ x86-win32-win32 (i386+ processor, win32 OS, and win32 (GDI) widgetset)
+ and x86_64-win64-win32 (means 64-bit x86 CPU, win64 OS, and win32 widgetset
+ (GDI)).
+\begin_inset Foot
+status collapsed
+
+\begin_layout Standard
+The fact that lazarus names the widgetset for win64 
+\begin_inset Quotes eld
+\end_inset
+
+win32
+\begin_inset Quotes erd
+\end_inset
+
+ doesn't mean it is some form of 32-bit emulation.
+ The differences were simply too small to define an additional target
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Description
+VCL
+\begin_inset LatexCommand index
+name "VCL"
+
+\end_inset
+
+ Borland’s classes libraries.
+ Since these contain bot win32 GUI and non-GUI classes.
+ the VCL rougly equates to the non visual FCL classes plus the visual classes
+ in Lazarus’ LCL.
+ 
+\end_layout
+
+\begin_layout Description
+Widgetset
+\begin_inset LatexCommand index
+name "Widgetset"
+
+\end_inset
+
+ A library or API for visual output.
+ (originates on Unix where core drawing, and windowing is separated) 
+\end_layout
+
+\begin_layout Description
+win32
+\begin_inset LatexCommand index
+name "win32"
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+The API of Windows 9x and NT,2000,XP that is roughly the same over all versions.
+ (though newer versions add more calls).
+ A cut down win32 api is available for win3.1x and is called “win32s”.
+ FPC doesn’t support win32s (actually: it was never tested is a better descripti
+on) 
+\end_layout
+
+\begin_layout Enumerate
+The FPC target for this api
+\end_layout
+
+\begin_layout Enumerate
+In Lazarus it is also the designation for the graphical part of the win32
+ api (which is actually called GDI, roughly the widgetset).
+ Lazarus windows binaries for target win32 and win64, have as widget set.
+\end_layout
+
+\end_deeper
+\begin_layout Description
+wince
+\begin_inset LatexCommand index
+name "wince"
+
+\end_inset
+
+ The windows api the mobile Windows versions (wince/pocketpc/windowsmobile)
+ are based on.
+ Note that nowadays also “XP embedded” exists which is win32 based, but
+ based on the NT kernel, so specially with tablet PCs make sure what you
+ exactly have.
+ 
+\end_layout
+
+\begin_layout Description
+Win64
+\begin_inset LatexCommand index
+name "Win64"
+
+\end_inset
+
+ The 64-bit variant of the win32 API.
+ Very close to win32.
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand printindex
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
