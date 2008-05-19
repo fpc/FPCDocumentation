@@ -934,15 +934,19 @@ two times successively, thus \var{''''} represents the single quote character.
 
 \subsection{Strings}
 \index{Types!String}
-\fpc supports the \var{String} type as it is defined in \tp
-(A sequence of characters with a specified length) and it
-supports ansistrings as in Delphi.
+\fpc supports the \var{String} type as it is defined in \tp:
+a sequence of characters with an optional size specification.
+It also supports ansistrings (with unlimited length) as in Delphi.
+
 To declare a variable as a string, use the following type specification:
 \input{syntax/sstring.syn}
+If there is a size specifier, then its maximum value - indicating the maximum 
+size of the string - is 255.
 
-The meaning of a string declaration statement is interpreted differently
-depending on the \var{\{\$H\}} switch. The above declaration can declare an
-ansistring or a short string.
+The meaning of a string declaration statement without size indicator is 
+interpreted differently depending on the \var{\{\$H\}} switch. If no size
+indication is present, the above declaration can declare an ansistring or 
+a short string.
 
 Whatever the actual type, ansistrings and short strings can be used
 interchangeably. The compiler always takes care of the necessary type
@@ -952,14 +956,13 @@ ansistrings and short strings will always be an ansistring.
 \subsection{Short strings}
 \index{Shortstring}
 A string declaration declares a short string in the following cases:
-
 \begin{enumerate}
 \item If the switch is off: \var{\{\$H-\}}, the string declaration
 will always be a short string declaration.
-\item If the switch is on \var{\{\$H+\}}, and there is a maximum length
-specifier, the declaration is a short string declaration.
+\item If the switch is on \var{\{\$H+\}}, and there is a maximum length (the
+size) specifier, the declaration is a short string declaration.
 \end{enumerate}
-The predefined type \var{ShortString} is defined as a string of length 255:
+The predefined type \var{ShortString} is defined as a string of size 255:
 \begin{verbatim}
  ShortString = String[255];
 \end{verbatim}
@@ -997,7 +1000,7 @@ for code that must compile in both Object Pascal as old \tp mode.
 \subsection{Ansistrings}
 \index{Ansistring}\index{Types!Ansistring}\index{Types!Reference counted}
 Ansistrings are strings that have no length limit. They are reference
-counted and null terminated. Internally, an ansistring is treated as 
+counted and are guaranteed to be null terminated. Internally, an ansistring is treated as 
 a pointer: the actual content of the string is stored on the heap, as much
 memory as needed to store the string content is allocated. 
 
@@ -1223,7 +1226,7 @@ end.
 \end{verbatim}
 This will have the same result as the previous two examples.
 Null-terminated strings cannot be added as normal Pascal
-strings. If two \var{PChar} strings mustt be concatenated; the functions from
+strings. If two \var{PChar} strings must be concatenated; the functions from
 the unit \seestrings must be used.
 
 However, it is possible to do some pointer arithmetic. The \index{Operators}
