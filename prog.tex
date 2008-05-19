@@ -2411,8 +2411,13 @@ var
 
 begin
 
-{$if (fpc_version=2) and (fpc_release>0)}
-{$info At least this is version 2.0}
+{$IF (FPC_VERSION > 2) or 
+     ((FPC_VERSION = 2) 
+       and ((FPC_RELEASE > 0) or 
+            ((FPC_RELEASE = 0) and (FPC_PATCH >= 1))))}
+   {$DEFINE FPC_VER_201_PLUS}
+ {$ENDIF}
+{$info At least this is version 2.0.1}
 {$else}
 {$fatal Problem with version check}
 {$endif}
