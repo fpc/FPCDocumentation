@@ -5882,6 +5882,11 @@ end.
 This will make the routine \var{testroutine} available publicly to
 external object files under the label name \var{ARoutine}.
 
+\begin{verbatim}
+The \var{alias} directive is considered deprecated. Please use the
+\var{public name} directive. See \sees{public}.
+\end{verbatim}
+
 \subsection{cdecl}
 \label{se:cdecl}\index{cdecl}\index{Modifiers!cdecl}
 The \var{cdecl} modifier can be used to declare a function that uses a C
@@ -6068,7 +6073,7 @@ classic pascal type calling convention (passing parameters from left to right).
 For more information on the pascal calling convention, consult the \progref.
 
 \subsection{public}
-\index{Modifiers!public}\index{public}
+\label{se:public}\index{Modifiers!public}\index{public}
 The \var{Public} keyword is used to declare a function globally in a unit.
 This is useful if the function should not be accessible from the unit
 file (i.e. another unit/program using the unit doesn't see the function),
@@ -6092,6 +6097,26 @@ If another program or unit uses this unit, it will not be able to use the
 function \var{Second}, since it isn't declared in the interface part.
 However, it will be possible to access the function \var{Second} at the
 assembly-language level, by using its mangled name (see the \progref).
+
+The \var{public} modifier can also be followed by a \var{name} directive to
+specify the assembler name, as follows:
+\begin{verbatim}
+Unit someunit;
+interface
+Function First : Real; 
+Implementation
+Function First : Real;
+begin
+  First := 0;
+end;
+Function Second : Real; Public name 'second';
+begin
+  Second := 1;
+end;
+end.
+\end{verbatim}
+The assembler symbol as specified by the 'public name' directive will 
+be 'second', in all lowercase letters.
 
 \subsection{register}
 \label{se:register}\index{register}\index{Modifiers!register}
