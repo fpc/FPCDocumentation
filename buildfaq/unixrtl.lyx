@@ -1,0 +1,1248 @@
+#LyX 1.5.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 276
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{a4wide}
+\usepackage{times}
+\end_preamble
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\paperfontsize default
+\spacing single
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 0
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\leftmargin 1.5cm
+\topmargin 1cm
+\rightmargin 1.5cm
+\bottommargin 1cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+The new Unix RTL.
+\end_layout
+
+\begin_layout Author
+Marco van de Voort (marco@freepascal.org)
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+As a lot of people already noticed, the Unix rtl has been nearly entirely
+ changed in the 1.1.x/1.9.x/2.0.x branch
+\begin_inset Foot
+status collapsed
+
+\begin_layout Standard
+These versions are all the same series.
+ It was called 1.1.x when pre-beta, 1.9.x when in beta stage, and will be 2.0.x
+ when released.
+\end_layout
+
+\end_inset
+
+ .
+ There are still more things to change, but the basic restructuring has
+ been done I think.
+ This document tries to explain some of the design considerations behind
+ these changes.
+\end_layout
+
+\begin_layout Section
+History
+\end_layout
+
+\begin_layout Standard
+The Unix rtl started life as the Linux rtl.
+ I don't have the exact date, but the design of the linux unit of the 0.9(9).x
+ and 1.0.x series dates back to 1996, and was made by Michael van Canneyt
+ based on the kernels of that era.
+ (1.1.x, pre-glibc).
+ This rtl was maintained and slightly expanded during the 1996-2000 period,
+ but no fundamental rearrangements were made.
+\end_layout
+
+\begin_layout Standard
+Just before the 1.0 release Marco van de Voort started tinkering with FreeBSD,
+ and the unit linux was a major problem, at least for his skills then :-)
+ However FPC was already too deep into the codefreeze that was needed to
+ stabilize the upcoming 1.0 release to allow a junior member to fully redesign
+ the Unix rtl.
+ 
+\end_layout
+
+\begin_layout Standard
+That's why 1.0 was released without formal FreeBSD support, and a 1.0 FreeBSD
+ beta release was delivered a few weeks after the formal release.
+ The minimal modifications for FreeBSD were merged into the CVS system before
+ the 1.0.2 release, and the FreeBSD platform was reasonably established and
+ regarded stable with the release of FPC 1.0.4.
+\end_layout
+
+\begin_layout Standard
+In hindsight however not forcing more fundamental changes at the 1.0.2 release
+ point was a pity.
+ At least a few exotic linux functions should have been banned (sysinfo,
+ clone), and unix typing should have been introduced, and preferably the
+ unit should have been renamed to Unix.
+ Also the syscall interface should have been changed.
+ However besides the conservatism that resulted from the code freeze, I
+ wasn't too certain about the future of the BSD ports then, and didn't push
+ it hard enough.
+ 
+\end_layout
+
+\begin_layout Standard
+During the 1.0.x lifetime, I regretted this deeply, specially after 1.0.6 when
+ other Unix ports appeared.
+ The things that could be solved with a simple IFDEF when the FreeBSD port
+ was done, turned out to be annoying and complicated with multiple ports,
+ and likely to introduce bugs.
+ Small fixes done to the linux rtl by others constantly broke the BSD ports.
+ The 1.1 branch was made already a year before 1.0.
+ Bugfixes and restructures were only partially ported to the 1.1.x branch,
+ and the OpenBSD/NetBSD/Solaris/QNX/BeOS ports were never ported to 1.1.x.
+ 
+\end_layout
+
+\begin_layout Standard
+Because of these facts, there was a lot of maintenance work to do for 1.1.x,
+ and I decided to combine the needed maintenance and updating work with
+ the postponed restructure described above, and along the way tackle as
+ many other problems as possible.
+\end_layout
+
+\begin_layout Section
+What's wrong with the situation in 1.0?
+\end_layout
+
+\begin_layout Standard
+Well, there are a lot of reasons actually.
+ Some important ones:
+\end_layout
+
+\begin_layout Enumerate
+The linux unit was originally targeted at linux only, 1.x kernels even.
+\end_layout
+
+\begin_layout Enumerate
+Quite a lot of different groups of functions with different portability
+ aspects are stuffed together in one unit.
+\end_layout
+
+\begin_layout Enumerate
+The linux unit doesn't have any form of Unix typing.
+ Parameters types are translated to TP integer or longint, using the size
+ in bytes they had in linux 1.0.
+ This creates portability problems to other Unices, linux on other architectures
+, and makes it harder to fix the unit for newer linux versions.
+\end_layout
+
+\begin_layout Enumerate
+The errorhandling of the linux unit is an own invention, and not compatible
+ with libc, without any major benefits.
+ This complicates the situation when the base library bases on libc.
+\end_layout
+
+\begin_layout Enumerate
+The name is wrong, at least for the current FPC.
+ It doesn't make sense to import an Linux unit under FreeBSD to access Unix
+ functions.
+ Also, in which unit do Linux specific functions end up? 
+\begin_inset Quotes eld
+\end_inset
+
+Linux
+\begin_inset Quotes erd
+\end_inset
+
+ would be logical, but is already taken.
+\end_layout
+
+\begin_layout Enumerate
+Syscalls that are both used in unit linux and unix are duplicated.
+ Some other units also include these.
+ This adds a small overhead only (typically a few hunderds till several
+ kb) under linux, but can dramatically increase if wrappers become complex.
+ See also next point.
+\end_layout
+
+\begin_layout Enumerate
+The current readdir situation on Linux is bad.
+ Each readdir to get an entry is a syscall, which can be slow.
+ This can sped up by moving parts of the readdir call to userland, and only
+ calling the kernel once in every so and so many blocks (call getdents or
+ getdirentries).
+ Linux implements this too, since the old libc->glibc change, but FPC hadn't
+ caught up yet.
+ The *BSD ports do use this, but it is handcoded, and not a translated libc
+ version, which might cause problems with unusual filesystemdrivers.
+ (due to AMD64/Linux rtl work, I believe this has been remedied by Peter)
+\end_layout
+
+\begin_layout Enumerate
+(see also 6) The structure of the includefiles was quite linux centric,
+ and not very flexible.
+ System and linux/unix unit are too rigidly entangled.
+\end_layout
+
+\begin_layout Enumerate
+Functions weren't named consistently.
+ Some have fd- prefix, some none, some have a slightly different name from
+ libc etc etc.
+ (hmm, this was partially correct in hindsight.
+ fd* functions use the C file type, while the normal (without prefix) are
+ syscalls and use a kernel handle as first argument)
+\end_layout
+
+\begin_layout Enumerate
+(minor) The parameter passing of the syscall interface was system dependant.
+ (Linux: record, BSD: pseudo procedural), this is bad because the syscall
+ interface was exported too.
+\end_layout
+
+\begin_layout Standard
+These reasons are made worse because 2.0 is supposed to support several architect
+ures, and probably more OSes.
+ During the 1.0 lifetime, the linux unit was ported to *BSD and BeOS, and
+ that already stretched the design to its limits.
+ 2.0 is expected to grow beyond 20 OS-architecture combinations, so that
+ makes it much worse.
+ Portability aspects become more important if we want to avoid having 2
+ 
+\begin_inset Quotes eld
+\end_inset
+
+good
+\begin_inset Quotes erd
+\end_inset
+
+ platforms, and the rest outdated crap.
+ 
+\end_layout
+
+\begin_layout Standard
+These reasons except number two could be fixed by some major, but doable
+ refactoring of unit linux, and renaming it to unix (as was done originally).
+ However reason two couldn't be fixed this way.
+\end_layout
+
+\begin_layout Standard
+Since full compability would be broken by all those other changes anyway,
+ it was decided to do a full redesign, and start from the bottom up, and
+ take care of all these issues, with special attention to ease of maintenance,
+ portability (read: separating portable from unportable code).
+ The design must also scale enough to last for while, 2.0 shipped in 2005,
+ so the 1.0.x series roughly had a lifespan of about 5 years.
+ So a fundamental RTL design must be at least as durable.
+\end_layout
+
+\begin_layout Subsection
+Why is it necessary to split up the unit?
+\end_layout
+
+\begin_layout Standard
+The main reasons are related to portability and maintenance.
+ It's easier to do a new port (only the necessary units will be implemented),
+ units will less often be 
+\begin_inset Quotes eld
+\end_inset
+
+incomplete
+\begin_inset Quotes erd
+\end_inset
+
+ for some targets.
+ 
+\end_layout
+
+\begin_layout Standard
+An important sideeffect is that future source will show more clearly in
+ the USES clause what unix functionality is actually used.
+ Use Termio or Syscall is more clear than 
+\begin_inset Quotes eld
+\end_inset
+
+linux
+\begin_inset Quotes erd
+\end_inset
+
+.
+ People often think that a single unit is easier than many, but this isn't
+ the case anymore if it stuffed from top till bottom with IFDEFs, and some
+ functions are not defined on some platforms.
+ 
+\end_layout
+
+\begin_layout Section
+What are the basic idea's behind the new 1.1.x/1.9/2.0.x RTL?
+\end_layout
+
+\begin_layout Enumerate
+Introduce Unix typing, so dev_t, off_t etc.
+\end_layout
+
+\begin_layout Enumerate
+Fix the errorhandling to be compatible with normal Unix (posix) errno.
+ 
+\series bold
+\emph on
+(
+\emph default
+Threadsafe)
+\end_layout
+
+\begin_layout Enumerate
+At least keep a possible implementation on top of libc in mind while designing
+ the new RTL.
+ The libraries must be recompilable with a define to keep them syscall free.
+\end_layout
+
+\begin_layout Enumerate
+No more duplication of code.
+ Currently code is duplicated between RTL and the unix/linux unit.
+\end_layout
+
+\begin_layout Enumerate
+Split up and rename the unit into parts.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Baseunix which contains the reasonably portable calls (selection loosely
+ based on POSIX)
+\end_layout
+
+\begin_layout Enumerate
+Termio which contains the 
+\begin_inset Quotes eld
+\end_inset
+
+termio
+\begin_inset Quotes erd
+\end_inset
+
+ calls.
+\end_layout
+
+\begin_layout Enumerate
+The syscalls moved to the syscall unit.
+\end_layout
+
+\begin_layout Enumerate
+The inport, outport calls move to the x86 unit.
+\end_layout
+
+\begin_layout Enumerate
+Some very Linux specific calls move to unit Linux.
+ This includes calls like Clone and SysInfo
+\end_layout
+
+\begin_layout Enumerate
+Unixutil which contains a few calls that are not Unix specific (usually
+ more general C interfacing).
+ A good place still has to be found for these
+\end_layout
+
+\begin_layout Enumerate
+Unix pretty much contains a cleaned up version of the rest.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Functions that have an equivalent in libc are renamed to fp<libcname>.
+ All non fp functions that were added to ease the transition were deprecated
+ in 2.2
+\end_layout
+
+\begin_layout Enumerate
+Introducing a modern readdir will be done too, but as one of the last things
+ to do, since it can be done 
+\begin_inset Quotes eld
+\end_inset
+
+under the hood
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Restructuring the includefiles, and detangling the includefiles, and redividing
+ the contents into a platformspecific and -independant parts.
+\end_layout
+
+\begin_layout Enumerate
+The linux syscalls were changed to the BSD way, instead of something that
+ can only be expressed in assembler, the BSDs internally have a pseudo procedura
+l syntax for syscalls.
+ (which is quite generic, probably NetBSD's influence).
+ This spells the end for the syscallreg record that was linux AND x86 centric.
+\end_layout
+
+\begin_layout Subsection
+Phasing of the changes.
+\end_layout
+
+\begin_layout Standard
+The restructuring of the code was done in several phases, because the 1.1
+ branch should remain compilable, so that the compiler developers could
+ keep on working on it.
+ Usually after each phase there was some pauze for stabilising and clean-ups.
+ Roughly these phases were followed:
+\end_layout
+
+\begin_layout Enumerate
+Renaming the linux unit to unix was the first step This sounds trivial,
+ but in practice it turned out to be adding {$ifdef ver1_0} uses linux{$else}
+ uses unix{$endif} for two days.
+ (called 
+\emph on
+Renamefest
+\emph default
+ in cvs logs)
+\end_layout
+
+\begin_layout Enumerate
+Restructuring of the syscall interface.
+ This affected both unit Unix and System.
+ All was changed to use the BSD structure as much as possible.
+ 
+\end_layout
+
+\begin_layout Enumerate
+At the roughly the same time, the unix typing was introduced.
+\end_layout
+
+\begin_layout Enumerate
+These all needed a lot of cleanup.
+ The BSD ports turned out to be so familiar, that I roughly redivided the
+ BSD rtl between a generic Unix, generic BSD and OS specific part.
+ The BSD rtls share a lot more code now.
+\end_layout
+
+\begin_layout Enumerate
+The system unit was cleaned of linuxisms (mainly sysunix.inc), and parts
+ were made more OS specific
+\end_layout
+
+\begin_layout Enumerate
+A rough first implementation of the baseunix unit was made, using via 
+\emph on
+external alias
+\emph default
+ exported syscalls from system.
+ All the rearranging of the includefiles was quite a lot of work.
+ First for FreeBSD, then for Linux.
+\end_layout
+
+\begin_layout Enumerate
+The complete CVS was checked, and changed to use functions from baseunix
+ instead of unit unix.
+ Again (for compiler, fcl, packages, ide) under $IFDEF VER1_0.
+ 
+\emph on
+(Renamefest II
+\emph default
+ in CVS logs)
+\end_layout
+
+\begin_layout Enumerate
+Functions both in baseunix and unix were removed from unit unix.
+ Unit baseunix was also extended a bit in this phase.
+\end_layout
+
+\begin_layout Enumerate
+Unit unix was cleaned up and split up into multiple units (still in progress)
+\end_layout
+
+\begin_layout Enumerate
+A possibility to recompile unix rtl using libc 
+\end_layout
+
+\begin_layout Enumerate
+Cleanup, redividing unix unit over platform (in)dependant includefiles.
+ (mostly done)
+\end_layout
+
+\begin_layout Enumerate
+Darwin port, beos port, more non x86 ports.
+ 
+\end_layout
+
+\begin_layout Subsection
+Unix errorhandling
+\end_layout
+
+\begin_layout Standard
+The rules of Unix errorhandling are quite easy: 
+\end_layout
+
+\begin_layout Itemize
+Each function call indicates somehow if an error occurs.
+ Usually by returning -1.
+ For other functions check the manpages.
+ (typically these functions return a different type then a (C) integer).
+\end_layout
+
+\begin_layout Itemize
+You are only allowed to read the error variable (errno, cerrno, see below)
+ if the function indicates an error.
+\end_layout
+
+\begin_layout Standard
+Besides compability there is another nice thing about this scheme: if an
+ error occurs, one can simply bail out of the function with -1 in some situation
+s, like in the next example:
+\end_layout
+
+\begin_layout LyX-Code
+Function somefunc:cint;   // a 
+\begin_inset Quotes eld
+\end_inset
+
+unix
+\begin_inset Quotes erd
+\end_inset
+
+ function.
+\end_layout
+
+\begin_layout LyX-Code
+Var st : Stat;
+\end_layout
+
+\begin_layout LyX-Code
+Begin
+\end_layout
+
+\begin_layout LyX-Code
+If FpStat('/',st)=-1 Then
+\end_layout
+
+\begin_layout LyX-Code
+  exit(-1);               // exit, errno is already set by fpstat.
+\end_layout
+
+\begin_layout LyX-Code
+...
+ more code...
+\end_layout
+
+\begin_layout LyX-Code
+If FpRmdir('/')=-1 Then
+\end_layout
+
+\begin_layout LyX-Code
+  exit(-1);               // exit, errno is already set by fprmdir.
+\end_layout
+
+\begin_layout LyX-Code
+...
+ more code
+\end_layout
+
+\begin_layout LyX-Code
+  somefunc:=0;
+\end_layout
+
+\begin_layout LyX-Code
+end;
+\end_layout
+
+\begin_layout LyX-Code
+etc etc.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+The FPC errorhandling situation, errno and cerrno
+\end_layout
+
+\begin_layout Standard
+FPC normally does its own system calls, and doesn't always to link to libc,
+ which is why the FPC rtl needs an own, independant errorvariable.
+ However when linking to libc or other libraries that use libc it needs
+ access to the libc error variable too.
+ In theory, we could let FPC's syscall write to libc's errno when libc is
+ (also) used, but since that could introduce subtle but hard to trace compabilit
+y problems, it was decided to keep both errorvariables separate at all times,
+ except when FPC doesn't do syscalls internally at all.
+\end_layout
+
+\begin_layout Standard
+FPC's own errornumber is called errno and is accessable via unit baseunix,
+ libc's errno is accesable via unit initc, and called cerrno.
+ If FPC uses libc for OS interfacing, then both errno's will point to the
+ libc errno.
+\end_layout
+
+\begin_layout Standard
+What does this mean in practice? You need to know if the function you are
+ calling is from a unit that bases on libc calls or can also be based on
+ (FPC internal) syscalls.
+ Then select the errorcode (errno,cerrno) accordingly.
+ So if you use unix, linux or similar units, you should get errno (baseunix.fpget
+errno/fpseterrno), if you want to for e.g.
+ unit inet (a typically libc using unit), you need cerrno (initc.fpgetCerrno/fpse
+tCerrno)
+\end_layout
+
+\begin_layout Standard
+Don't worry about that a syscall using unit uses libc when compiled with
+ FPC_USE_LIBC, that is taken care of properly.
+ (when FPC_USE_LIBC, get/seterrno also update libc's errno)
+\end_layout
+
+\begin_layout Subsection
+Libc or syscall?
+\end_layout
+
+\begin_layout Standard
+From time to time, people are asking why FPC isn't using libc, and resorts
+ to syscalls.
+\end_layout
+
+\begin_layout Standard
+There are several reasons for this, but the most important ones are the
+ constant small incompabilities in (Linux) glibc, and the large amount of
+ glibc versions in circulation.
+ (again, mainly for Linux).
+ Moving to use libc by default would mean more than one binary distribution
+ per platform (mainly for Linux, but maybe also for other *nix OSes), without
+ much gain.
+ (the binaries would become slightly larger even when dynlinked with libc,
+ contrary to what you would expect, which is about a 10-40kb.
+ This is probably due to larger libc stubs and relocation data, if PIC is
+ used when linking to libc, the difference might be larger even).
+ Statically linked to libc the binaries are huge.
+\end_layout
+
+\begin_layout Standard
+Not being libc based also avoids some minor binary loader incompabilities
+ that creep up, even if the libc is statically linked.
+\end_layout
+
+\begin_layout Standard
+Another reason is that FPC programs have structures for use with certain
+ functions (like struct STAT) defined in the Pascal rtl, while one calls
+ the C function directly in libc.
+ A C program that calls the same libc function, always uses the right stat
+ because it uses headers supplied with the OS, at least as long as field
+ renaming is consistent.
+ And you'll get a warning if it isn't.
+ But FPC always uses the same one in the RTL.
+ This can be problematic if there are multiple libc's in circulation that
+ use different versions of the structure.
+ (like a 64-bit filesystem version of STAT, and an ordinary one).
+ The kernel doesn't have this, since incompatible versions of the call always
+ get a different syscall number.
+ Sometimes this is possible for libc too (e.g.
+ by always using stat32 or so), but the libc situation is generally a bit
+ more difficult.
+ In the stat example, some distributions didn't support stat32 (to force
+ quicker migration to 64-bit fs)
+\end_layout
+
+\begin_layout Standard
+However all this doesn't meant that an compile option for a libc based rtl
+ isn't nice, since linking to libc can be useful for
+\end_layout
+
+\begin_layout Itemize
+porting purposes (to get the compiler working on a platform for the first
+ time), platforms that are poorly maintained.
+ (QNX, BeOS)
+\end_layout
+
+\begin_layout Itemize
+Darwin (Mac OS X), an OS where the syscalls are a bit more in a state of
+ flux.
+\end_layout
+
+\begin_layout Itemize
+debugging purposes, switch to libc and see if the problem disappears.
+ This works both ways (switch to syscall to detect slight libc incompabilities)
+\end_layout
+
+\begin_layout Itemize
+saving space, e.g programs like Lazarus will link to libc no matter what.
+ Having the RTL link to libc might save a few tens of kb's per application.
+ The exact savings in such case still have to be tested.
+\end_layout
+
+\begin_layout Itemize
+Some functions can be 
+\begin_inset Quotes eld
+\end_inset
+
+enhanced
+\begin_inset Quotes erd
+\end_inset
+
+ in libc.
+ Specially for security and nameresolving related functionality.
+\end_layout
+
+\begin_layout Standard
+Moreover when done during a large restructure and considered during the
+ design (errno handling), introducing libc support isn't really a lot of
+ work.
+ (initial implementation, generic parts+FreeBSD, about 6-7 hours)
+\end_layout
+
+\begin_layout Standard
+A solution would be a GUI installer (e.g.
+ in Lazarus) that bootstraps FPC, and allows configuring by simply toggling
+ switches.
+ However such an app is a lot of work.
+ The FreeBSD ports system is also a natural fit, if somebody with enough
+ knowledge of it would step up.
+\end_layout
+
+\begin_layout Subsubsection
+Basic libc Implementation 
+\end_layout
+
+\begin_layout Standard
+The units that are primarily affected by libc are system, baseunix and unix.
+ This because these contain a lot of functions that are also in libc, or
+ access these via assembler aliases.
+ Secondary units are nearly all units that are based on syscall, like sockets,
+ ipc etc
+\end_layout
+
+\begin_layout Standard
+A global define FPC_USE_LIBC is introduced that signals 
+\begin_inset Quotes eld
+\end_inset
+
+use base functions from libc
+\begin_inset Quotes erd
+\end_inset
+
+.
+ (-Ur might be necessary to avoid recompilation).
+ The syscall primitives remain available via unit syscall (and units other
+ than baseunix and unix should use unit syscall and not the aliases)
+\end_layout
+
+\begin_layout Standard
+The 1.0.x compability unit 
+\begin_inset Quotes eld
+\end_inset
+
+oldlinux
+\begin_inset Quotes erd
+\end_inset
+
+ isn't touched, and always uses syscalls.
+\end_layout
+
+\begin_layout Subsubsection
+pipe functions, popen/pclose, a problem?
+\end_layout
+
+\begin_layout Standard
+At first it looked that the pipe functions popen/pclose would become a problem.
+ The FILE type used by these records is the libc internal file structure.
+ Internally these are backed by plain files in libc, and the implementation
+ of these functions in FPC is trivial (using FPC's own internal file record).
+\end_layout
+
+\begin_layout Standard
+A solution proposed by another coremember could be to try keeping the pointer
+ type opague and retrieve the kernel filehandle with fileno() to be able
+ to overload the popen functions with proper pascal filetypes.
+ At least on the platforms where fileno() is a function (and not only a
+ macro).
+ For the closing operation, the FILE pointer should be stored somewhere
+ in the pascal filerecord too.
+ 
+\end_layout
+
+\begin_layout Subsection
+__errno, __error, _errno_location, h_errno etc.
+\end_layout
+
+\begin_layout Standard
+C is an ancient language which is pretty much frozen due to the enormous
+ amounts of Unix code, and doesn't have an in language threadvar system.
+ However (c)errno is an important global variable that must be threadsafe.
+ This is solved in libc by using some form of macro that usually transforms
+ an errno access to a function call that returns a pointer to the actual
+ errno (right threadinstance) Macro's don't exist after preprocessing, let
+ alone compilation.
+ So when linking to libc we have to poke in the internals, and somehow use
+ the function that returns the pointer to errno directly.
+ This situation is far from ideal, but the problem is made worse by Unix
+ API designers who simply aren't aware of the existance of other languages.
+\end_layout
+
+\begin_layout Standard
+The problem is that the name isn't uniform over platforms, even the free
+ ones.
+ FreeBSD calls it __error, NetBSD __errno and Linux __errno_location.
+ The initc.setcerrno/initc.getcerrno routines wrap this difference.
+\end_layout
+
+\begin_layout Standard
+h_errno is the symbol in the libc library for the non threadsafe variant,
+ and was used in 1.0.x.
+ However this isn't threadsafe, and newer glibc libraries seem to omit it.
+ By default, 1.1.x will use the threadsafe variants, but support for h_errno
+ is still under {$IFDEF }in the initc unit in case you need to work with
+ older libc's.
+\end_layout
+
+\begin_layout Standard
+In general, try to avoid to update C style error variables directly, always
+ use either set/getcerrno or get/seterrno.
+ (the symbols errno and cerrno are ok, these call get/set(c)errno internally)
+\end_layout
+
+\begin_layout Subsection
+Exec() functions
+\end_layout
+
+\begin_layout Standard
+The exec() functions have been replaced by the fpexec functions.
+ The old functions will be left in for now, but will probably get removed
+ in 2.0, to give some depending programs some time to adjust.
+\end_layout
+
+\begin_layout Standard
+The main idea behind the new functions is the use of 
+\begin_inset Quotes eld
+\end_inset
+
+array of ansistring
+\begin_inset Quotes erd
+\end_inset
+
+ for the argument of the execl functions.
+ This means a programmer can specify the arguments himself, and are then
+ (with zero copy) passed to the OS.
+ The new way decreases the amount of string operations, and avoids the problems
+ with arguments and filenames that contain spaces that the old functions
+ had.
+ The old functions have been fixed for the most basic quote problems though.
+\end_layout
+
+\begin_layout Subsubsection
+SysUtils.Executeprocess
+\end_layout
+
+\begin_layout Standard
+The new execute functions are used in SysUtils.Executeprocess, which is the
+ new platform independant way of running a program.
+ (comparable to dos.exec, but without the 255 char limit)
+\end_layout
+
+\begin_layout Standard
+Slowly the unit Dos interface is getting increasingly uncomfortable because
+ of shortstrings and dosisms.
+ In general, currently it is recommended to use sysutils as much as possible.
+\end_layout
+
+\begin_layout Subsection
+The 
+\begin_inset Quotes eld
+\end_inset
+
+FP
+\begin_inset Quotes erd
+\end_inset
+
+ prefix
+\end_layout
+
+\begin_layout Standard
+During the past years, I've been pestered about both the need for and choice
+ of a prefix again and again.
+ The new Unix rtl was written pretty much from scratch, but due to similarity
+ in design requirements resembled the POSIX pretty much.
+ The improved Unix typing was the biggest difference, as well as the splitting
+ up in .inc file that resulted from supporting multiple platforms (posix
+ only supported BeOS afaik).
+\end_layout
+
+\begin_layout Standard
+The prefix was IIRC already in Carl's predecessor the POSIX unit, but there
+ it was 
+\begin_inset Quotes eld
+\end_inset
+
+POSIX_
+\begin_inset Quotes erd
+\end_inset
+
+.
+ The reason for the prefix was pretty much to have one uniform rule to transform
+ the 
+\begin_inset Quotes eld
+\end_inset
+
+C
+\begin_inset Quotes erd
+\end_inset
+
+ name to the FPC one.
+ No prefix was dangerous because of clashes with the (then still supported)
+ Linux unit, and long term also for other functions like write and read
+ and with OS specific units.
+\end_layout
+
+\begin_layout Standard
+I didn't want anything with 
+\begin_inset Quotes eld
+\end_inset
+
+POSIX
+\begin_inset Quotes erd
+\end_inset
+
+ in the Unix rtl, because I didn't want to commit outright to POSIX compability
+ due to the possible issues with macroed functionality, and definition on
+ the libc level (vs kernel level).
+ IOW, be close to POSIX, but never guarantee it.
+\end_layout
+
+\begin_layout Standard
+In early versions of the , the prefix was 
+\begin_inset Quotes eld
+\end_inset
+
+unx_
+\begin_inset Quotes erd
+\end_inset
+
+, but this was considered ugly (and not pascal due to the underscore).
+ 
+\end_layout
+
+\begin_layout Standard
+Who and when actually 
+\begin_inset Quotes eld
+\end_inset
+
+fp
+\begin_inset Quotes erd
+\end_inset
+
+ was decided I don't know.
+ Probably during the BBQ at Rosa and Joerg's place in France, where Carl,
+ Michael and I shouted a bit about the Unix RTL, or the correspondance to
+ work out the details afterwards.
+ It could have been somebody else on IRC even who suggested it.
+ (Florian, Peter or Jonas being the main possibilities)
+\end_layout
+
+\begin_layout Standard
+However in retrospect I still stand by the need to add an prefix, and a
+ short prefix is fine.
+ People often bang on about the 
+\begin_inset Quotes eld
+\end_inset
+
+confusion
+\begin_inset Quotes erd
+\end_inset
+
+ it will cause, but that would have been much worse IMHO, when one had to
+ explain the non prefixed case: the exceptions, the name clashes with the
+ libc and linux and other platform specific units.
+ Yes, the transition
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+the 
+\begin_inset Quotes eld
+\end_inset
+
+renamefests
+\begin_inset Quotes erd
+\end_inset
+
+ and the dual maintainenance of 1.0.x and the 1.9.x branch before 2.0 came out,
+ also for Lazarus.
+ However with over 5 years between the 1.0 and 2.0 release, there was no way
+ to do it more gradual without compromising 1.0.x internal compability.
+ (though IMHO that wouldn't have been a bad thing)
+\end_layout
+
+\end_inset
+
+ hurt, but IMHO we are in way a better supportable place now.
+ 
+\end_layout
+
+\begin_layout Standard
+In my opinion the only way without a prefix would be a Modula-2 like extension
+ that forced all relevant identifiers from the baseunix,unix and socket
+ units to mandatorily prefix with unix name (EXPORT QUALIFIED)
+\end_layout
+
+\begin_layout Section
+RTL layout
+\end_layout
+
+\begin_layout Standard
+The following picture tries to explain some of the unit dependancies in
+ the Unix rtl, of course like all documentation, it is probably already
+ outdated :-)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename deeperrtl.png
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Includefiles
+\end_layout
+
+\begin_layout Subsubsection
+Why so many includefiles and ifdefs?
+\end_layout
+
+\begin_layout Standard
+There are many reasons why the FPC rtl is organised as it is.
+ Some of the reasons are:
+\end_layout
+
+\begin_layout Enumerate
+The includefiles allow sharing of code used in multiple places, and that
+ eases maintaining.
+ 
+\end_layout
+
+\begin_layout Enumerate
+A higher granularity of the source helps working with CVS somewhat.
+ There is less chance that two people work on the same file and have to
+ merge their changes.
+\end_layout
+
+\begin_layout Enumerate
+The implementation of a system unit uses a lot of OS dependant types, records
+ and functions that are also used in other units.
+ Includefiles and some tricks allow to reuse the declarations, usually without
+ increasing the size of the binaries.
+ Particularly the Unix system unit exports syscalls via an external alias
+ mechanism.
+ See the separate paragraph about this subject
+\end_layout
+
+\begin_layout Enumerate
+Exactly what includefiles are OS dependant, and which not, is susceptable
+ to change in the long run.
+ Moving an inc file is easier than totally revising the ifdef system of
+ a huge unit.
+\end_layout
+
+\begin_layout Enumerate
+The system must allow to make exceptions.
+ This is why key units (like System, Baseunix, and in the future unix) are
+ system dependant, but include generic parts.
+ The idea is that a porter can say 
+\begin_inset Quotes eld
+\end_inset
+
+I want to implement these parts in a generic way by including the generic
+ includefiles
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+I want to override this functionality with my own code
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset Quotes eld
+\end_inset
+
+
+\noun on
+improper
+\noun default
+
+\begin_inset Quotes erd
+\end_inset
+
+ exporting from the Unix system unit.
+\end_layout
+
+\begin_layout Standard
+As said in one of the previous paragraphs, the unix system unit exports
+ some OS dependant functions via the [public, alias: 'xxx']; construct.
+ This construct is used to declare names without mangling.
+ This means that functions in system get a name in a namespace outside the
+ pascal realm, so that other units can import them, like you would from
+ a DLL or from external code.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+client
+\begin_inset Quotes erd
+\end_inset
+
+ unit is mainly BaseUnix, but unit Unix also reuses a few functions from
+ system, and exports them.
+\end_layout
+
+\begin_layout Standard
+This is all done to avoid duplication of functions between system on one
+ side and baseunix/unix on the otherside.
+ This saves a few tens of kbs.
+\end_layout
+
+\begin_layout Section
+Remaining problems
+\end_layout
+
+\begin_layout Standard
+Besides already named problems (e.g.
+ popen), there are some todo's left.
+ Most of these surfaced while porting Kylix apps, and there were some situations
+ where a FPC substitute wasn't easily found:
+\end_layout
+
+\begin_layout Enumerate
+64-bit file access.
+ The best way to do this, is to simply only have a 64-bit interface, and
+ translate this internally on the few platforms that don't do 64-bit access.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Access to security data (/etc/passwd /etc/groups files etc).
+ Should be extracted and abstract to a separate unit, _with_ a FPC_USE_LIBC
+ option, so that via that avenue users can make sure their apps access via
+ libc, and tie in with all kinds of authentication systems.
+\end_layout
+
+\begin_layout Enumerate
+Improve DNS resolving and accessing.
+ Netdb is not perfect yet, and needs a FPC_USE_LIBC option.
+\end_layout
+
+\begin_layout Enumerate
+Kylixcomp unit for 
+\begin_inset Quotes eld
+\end_inset
+
+easy
+\begin_inset Quotes erd
+\end_inset
+
+ substitutes for certain constants that ease libc->baseunix porting that
+ we don't want to expose in the proper RTL.
+\end_layout
+
+\begin_layout Enumerate
+the unicode primitives are also among the most used functions in unit libc.
+ The widestring manager has some support for these.
+\end_layout
+
+\begin_layout Enumerate
+A lot of the transitional functionality still has to be phased out.
+ See separate paragraph.
+\end_layout
+
+\begin_layout Subsection
+Solved problems
+\end_layout
+
+\begin_layout Enumerate
+unit libc is no longer needed for dynamic loading of libraries
+\end_layout
+
+\begin_layout Enumerate
+unit libc is no longer needed for basic user/group querying (v2.2.2 
+\begin_inset Quotes eld
+\end_inset
+
+users
+\begin_inset Quotes erd
+\end_inset
+
+ package)
+\end_layout
+
+\begin_layout Subsection
+Deprecating transitional functionality
+\end_layout
+
+\begin_layout Standard
+A start has been made to remove the helpers and transitional functionality,
+ and a some calls are marked and documented deprecated in 2.2 and 2.2.2 (mantis
+ #0011119), and will be removed in 2.3/2.4.
+ This is a bit hampered by the fact that not all symbols can be marked with
+ deprecated yet.
+\end_layout
+
+\begin_layout Standard
+Some of the deprecated functionality is listed below:
+\end_layout
+
+\begin_layout Enumerate
+1.0.x fields of the Linux stat record that require a ifdef.
+\end_layout
+
+\begin_layout Enumerate
+non fp socket functions.
+ These were buggy in some cases (formal parameter bug?)
+\end_layout
+
+\begin_layout Enumerate
+non fp functions in the unix rtl
+\end_layout
+
+\end_body
+\end_document
