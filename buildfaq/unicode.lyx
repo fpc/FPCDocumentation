@@ -90,6 +90,39 @@ I decided to try to summarize all positions and requirements, at least as
  
 \end_layout
 
+\begin_layout Standard
+Versioning:
+\end_layout
+
+\begin_layout Itemize
+First version mostly my own writeup.
+ Was originally meant to highlight the flaws that I saw in Florian's original
+ proposal.
+ There might still be some of the negative sentiment left, please skip it.
+\end_layout
+
+\begin_layout Itemize
+Second version mostly Florian's feedback which I commented on
+\end_layout
+
+\begin_layout Itemize
+Third version vastly expanded the Tiburón paragraph when CG lifted the veil
+ a bit late July/early August, and the hybrid model.
+\end_layout
+
+\begin_layout Itemize
+Fourth version added the 
+\begin_inset Quotes eld
+\end_inset
+
+economics
+\begin_inset Quotes erd
+\end_inset
+
+ paragraph, expanded the hybrid model and mentions Yury's proposal and wiki
+ page.
+\end_layout
+
 \begin_layout Subsection
 Tiburón
 \end_layout
@@ -180,6 +213,8 @@ The use of windows specific codepage enumeration values in language syntax.
  is livable.
  In my opinion it is the VCLs job to encapsulate the winapi gore, and if
  it can't be avoided, at least encourage a clean use.
+ Daniel notes that there are not much platform independant choices to begin
+ with.
 \end_layout
 
 \begin_layout Enumerate
@@ -243,6 +278,7 @@ forget the big endian and little endianess
  This kind of cross-platform compability is fairly rarely a problem.
  Only files that share that between different architectures need to insert
  conversions, and this can be better done manually.
+ The same goes for arbitrary other sources that might have a different encoding.
 \end_layout
 
 \begin_layout Standard
@@ -251,6 +287,71 @@ Besides these three main encodings, conversions of the string type to and
  unicode instantly, and ansistrings are here to stay for a while.
  Most notably Florian's proposal has some (potential) support for other
  codepages too, though not many details.
+\end_layout
+
+\begin_layout Subsection
+Economics of the encodings
+\end_layout
+
+\begin_layout Standard
+In one of the unicode discussions Daniel posted this link: 
+\begin_inset LatexCommand url
+name " http://unicode.org/notes/tn12/ "
+target " http://unicode.org/notes/tn12/ "
+
+\end_inset
+
+.
+ I just had some discussion about this in a different maillist on the subject
+ of which is the ideal encoding, and here is my opinion some comments about
+ encoding enconomics.
+ Note that not all points are meant as arguments in favour of UTF-8 per
+ se, just observations.
+\end_layout
+
+\begin_layout Itemize
+First and for all, the question is mostly irrelevant since the choice of
+ primary encoding (and endianness if>8) for a platform/target has been made
+ already by the OS and the general ABI.
+ Deviating from this to simply possible multiplatform programmers at the
+ expensive of people programming for the platform natively is IMHO not an
+ option.
+\end_layout
+
+\begin_layout Itemize
+An often misinformed statement is that everything but ansi is worse in utf-8.
+ This is not true, everything up from ascii to codepoint $0800 is equal
+ in size between UTF-8 and UTF-16.
+ This plane contains Cyrillic as well as several popular languages from
+ the Semetic group like Hebrew and Arabic.
+\end_layout
+
+\begin_layout Itemize
+The simplicity of UTF-16 is quoted in a lot of place, the above link inclusive.
+ While some may see it acceptable to cut corners in applications, it is
+ IMHO not acceptable to break full unicode compliance in a serious library,
+ and most of all, a RTL.
+ This means that most speeddependant routines in an app must be able to
+ handle UTF-16 surrogates and maybe also endianness.
+ I personally think that serious applications shouldn't cut corners either.
+ Note though that surrogates don't hinder all string routines.
+\end_layout
+
+\begin_layout Itemize
+Routines that don't need to process UTF-8 surrogates and encounter mostly
+ Latin scripts are faster in UTF-8.
+ (less bytes to move)
+\end_layout
+
+\begin_layout Standard
+Btw I use 
+\begin_inset LatexCommand url
+name "http://www.unicode.org/roadmaps/bmp/"
+target "http://www.unicode.org/roadmaps/bmp/"
+
+\end_inset
+
+ to quickly see what language groups are where in the BMP.
 \end_layout
 
 \begin_layout Subsection
@@ -343,8 +444,10 @@ is very expensive since
 
 \begin_layout Itemize
 the address of s[x] depends on all codepoints before codepoints x.
- This can make the above loop quadratic in the number of karakters ( on
- average (n^2)/2)
+ This can make the above loop quadratic in the number of codepoints jumps
+ ( on average (n^2)/2).
+ Most platforms also use a procedure to iterate over codepoints.
+ 
 \end_layout
 
 \begin_layout Itemize
@@ -354,7 +457,19 @@ each codepoint assignment can possibly be an insertion or deletion of bytes,
 \end_layout
 
 \begin_layout Standard
-IMHO this opens a can of worms where we don't want to go.
+IMHO this opens a can of worms where we don't want to go
+\begin_inset Foot
+status collapsed
+
+\begin_layout Standard
+Since we don't have any optimizations that optimize loops in an advance
+ way, I don't think it is acceptable to waive this point in the hope that
+ future optimizations will solve this.
+\end_layout
+
+\end_inset
+
+.
  However it might be an argument to (also) support UTF-32, since that does
  allow fairly easy char manipulation, with minimal limitations: If it is
  a routine that is not really much used, the simplest way to convert would
@@ -399,8 +514,9 @@ end;
 
 \begin_layout Standard
 Of course this is not perfect (e.g.
- charsets won't work), but it is easy, and avoids messing too much with
- working code.
+ charsets won't work because even a charset for the defined codepoints would
+ be in the magnitude of 125k), but it is easy, and avoids messing too much
+ with working code.
 \end_layout
 
 \begin_layout Section
@@ -483,6 +599,12 @@ charat(n) - returns codepoint [n]...
 
 \begin_layout Enumerate
 charnext (strnext out of delphi compat?)
+\end_layout
+
+\begin_layout Standard
+How much of these will/should be (partially) inlinable? Is it worth it?
+ It seems that most libc's use functions, not macro's, which might be an
+ indicator that procedural overhead is less than the actual operation.
 \end_layout
 
 \begin_layout Subsection
@@ -580,6 +702,16 @@ winnt
 \end_inset
 
  are better target names.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+NOTE:
+\series default
+ I haven't seen any clear evidence yet to which set of API functions UTF_8
+ needs to be pasted (NT Only).
+ If any.
 \end_layout
 
 \begin_layout Section
@@ -702,6 +834,10 @@ Only overloading and conversion as instrument for routines that must accept
 
 \begin_layout Enumerate
 More types also means a lot more vt<x> constants in tvarrecs, variants etc.
+\end_layout
+
+\begin_layout Enumerate
+Prefix records of types can't be Tiburón compatible
 \end_layout
 
 \begin_layout Subsubsection
@@ -1122,10 +1258,10 @@ leave out routines
 \end_inset
 
  argument is IMHO bogus, since if the types of my proposal autoconvert (not
- unlike uniquestring()), the more complex routines like the bulky datetimeformat
-ters could also be available only in the system encoding (which is most
- likely to happen), give or take a few small wrappers to work around VAR
- parameter problems.
+ unlike uniquestring()), the more complex routines like the bulky floating
+ point and datetimeformatters could also be available only in the system
+ encoding (which is most likely to happen), give or take a few small wrappers
+ to work around VAR parameter problems.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1181,12 +1317,41 @@ existing code
 \begin_inset Quotes erd
 \end_inset
 
- problem:
+ problem,
+\begin_inset Foot
+status collapsed
+
+\begin_layout Standard
+Note that existing code is not only code that is 
+\begin_inset Quotes eld
+\end_inset
+
+old
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Tiburón
+\begin_inset Quotes erd
+\end_inset
+
+ but in general all code that can only accept one encoding.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-Existing code Indeed, it requires some work but there are several possibilities:
- 
+(quote Florian)
+\end_layout
+
+\begin_layout Standard
+Indeed, it requires some work but there are several possibilities: 
 \end_layout
 
 \begin_layout Enumerate
@@ -1209,6 +1374,52 @@ The code needs to be reworked anyways.
 \begin_layout Standard
 I think this is butt ugly, and overly complicated, but at least it fixes
  my most major problem.
+ Maybe if we can predeclare a lot of these as types, we can actually confine
+ the clutter.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+note:
+\series default
+ see also the 
+\begin_inset LatexCommand vref
+reference "sub:Problems-of-hybrid:"
+
+\end_inset
+
+ paragraph, and the hybrid paragraph in general.
+ There are complications.
+\end_layout
+
+\begin_layout Subsection
+Yury's proposal
+\end_layout
+
+\begin_layout Standard
+Yury wrote something up independantly at 
+\begin_inset LatexCommand htmlurl
+name "FPC wiki about FPC Unicode support"
+target "http://wiki.freepascal.org/FPC_Unicode_support"
+
+\end_inset
+
+.
+ It is the same basic idea as Florian's: encodingtype and granularity-of-encodin
+g in the prefix of the string.
+ He goes a step further and also seems to hint on reimplementing existing
+ types on this scheme.
+ (which is not realistic for shortstring, and maybe widestring).
+\end_layout
+
+\begin_layout Standard
+What I like in Yury's proposal is that he combines the implementation from
+ Florian with the declaration that shows real types that I favour, in short,
+ essentially it is the hybrid detail of the next paragraph in the rough.
+ The hybrid model does divide some of the types over two types, the new
+ unicodestring and ansistring (the codepage stuff, if we do that, there
+ is no need to be Tiburón incompatible)
 \end_layout
 
 \begin_layout Subsection
@@ -1216,40 +1427,238 @@ The hybrid model
 \end_layout
 
 \begin_layout Standard
-This is just a short thought experiment, I don't know if it is possible
- at all, BUT
+This is just a short thought experiment, this part hasn't been discussed
+ with Florian and Michael much yet (though Yuri seems to come up with it
+ independantly).
+ The main reason is that the typing is my main grudge against Florian's
+ proposal, and the performance less.
+ It builds a bit on Florian's willingness to tackle some of those with directive
+s.
+ If that gives enough leeway to define types, Florian's proposal morphs
+ into this hybrid model.
 \end_layout
 
 \begin_layout Standard
-assume we combine Florian's and Marco's example.
- Then we get 
+So assume we combine Florian's and some of the requirements (but not implementat
+ion) that are the basis for Marco's example.
+ This means one base unicode type that can be parameterized to four types
+ for declaration purposes (a single implementation of generic runtime dependant
+ unicodestring as per Florian's proposal, but separate (sub)types per encoding
+ (TUtf8string,TUtfstring16 and TUtfstring32)).
+ These latter might be not real (compiler) types, but defined like below.
+\end_layout
+
+\begin_layout LyX-Code
+Type
+\end_layout
+
+\begin_layout LyX-Code
+  tutf8string = type tunicodestring(Mandatory_UTF8); // or however we style
+ the modifier.
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+alternate syntax (?), more in Florian's style with directives
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+type 
+\end_layout
+
+\begin_layout LyX-Code
+  {$unicodetype mandatory_utf8}
+\end_layout
+
+\begin_layout LyX-Code
+  tutf8string = tunicodestring;
+\end_layout
+
+\begin_layout LyX-Code
+  {$unicodetype general}
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout Standard
+However because these forced types are 100% compatible with the full type,
+ there is less of a multitude of overloads for VAR or overloading of helpers
+ (for e.g.
+ variant which only contains the general type).
+ 
 \end_layout
 
 \begin_layout Itemize
-the desired compiletime declarative behaviour, 
+the desired compiletime declarative behaviour, to be able to declare when
+ a certain routine only accepts/expects a certain encoding.
 \end_layout
 
 \begin_layout Itemize
-the ability to rearrange expressions to prefer the systemencoding result
- (the performance paragraph)
+the ability to have compiletime type knowledge to rearrange expressions
+ to prefer a certain encoding result (see the performance paragraph) by
+ using a different declaration (much like the Tiburón ansistring), if all
+ components are typed.
 \end_layout
 
 \begin_layout Itemize
-A single runtime.
+In Tiburón mode, the string type is equal to TUTF16string, but can be mixed
+ with any of the other types.
+\end_layout
+
+\begin_layout Itemize
+On implementation level, a single runtime implementation.
+ No 3 ways of overloading.
+\end_layout
+
+\begin_layout Itemize
+The whole situation is then a bit analog to shortstring vs shortstring[]
+ (from a typing point of view).
+ All RTL routines are var shortstring, and accept all.
+ However if you want to only support a certain size (like extensions), you
+ can declare it using var s:shortstring[2].
+ But the unicode equivalent would be expected encoding, not size.
+ Also e.g.
+ variant would hold an FPC unicodestring, which is compatible without conversion
+ to utf8string, utf16string,utf32string
 \end_layout
 
 \begin_layout Standard
 The main advantage of would be keeping the number of type dependant (not
- the more general routines) down.
- I'm don't think it is worth the trouble, but I wrote it down anyway :-)
+ the more general routines) down, but to be able to retain the compiletime
+ typed behaviour.
+ Slowly I'm convinced this might be a doable way, but I need Florian's input
+ for that.
 \end_layout
 
 \begin_layout Standard
-As a bonus, a hybrid with Tiburon is also possible by moving the UTF-8 to
- Tunicodestring as per Florian's proposal, but keep the codepage functionality
- in ansistring, Tiburon style.
- (and maybe an additional UTF-8 there too).
- It furfills the requirements.
+As a bonus, expanding this hybrid with Tiburón functionality is also possible,
+ with quite high Tiburón compat, at the expense of having two UTF-8 types:
+\end_layout
+
+\begin_layout Itemize
+Implement the hybrid type as above.
+ Only TUnicodestring only has the base three encodings.
+\end_layout
+
+\begin_layout Itemize
+Implement the Tiburón ansistring.
+ utf-8 inclusive.
+ This also includes the codepage support then.
+\end_layout
+
+\begin_layout Itemize
+In Delphi (Tiburón?) mode, the default unicodestring is an alias for TFlorianStr
+ing(talwaysutf16).
+\end_layout
+
+\begin_layout Standard
+This trick allows to simply add Tiburón code under the relative IFDEFS,
+ and keep it working.
+ And to gain maximum performance (avoid too much conversions in one codepage)
+ on Unix utf-8 people would could remove the Tiburón flags on a per unit
+ basis after inspecting the encoding state of an unit.
+\end_layout
+
+\begin_layout Standard
+The problems that I can think of, is that there is still a VAR problem,
+ and the type and conversion situation in the compiler might get complicated
+ (a lot of combinations), even though the number of overloads might be less.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Problems of hybrid: var 
+\begin_inset LatexCommand label
+name "sub:Problems-of-hybrid:"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+VAR remains a problem, but afaik it is fixable.
+\end_layout
+
+\begin_layout Standard
+Assume we have RTL routine that does
+\end_layout
+
+\begin_layout LyX-Code
+procedure stringroutine (var s:TUNICODESTRING);
+\end_layout
+
+\begin_layout LyX-Code
+begin
+\end_layout
+
+\begin_layout LyX-Code
+  forceencoding(s,utf16); // code only can deal with utf16
+\end_layout
+
+\begin_layout LyX-Code
+  process;                // the utf16 processing code.
+\end_layout
+
+\begin_layout LyX-Code
+end;
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+and
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+var n : tUTF8String;
+\end_layout
+
+\begin_layout LyX-Code
+begin
+\end_layout
+
+\begin_layout LyX-Code
+   {assign n}
+\end_layout
+
+\begin_layout LyX-Code
+  stringroutine(n); // we can pass, since this is not a fully different
+ type, but a TUNICODESTRING with a bit of afinity
+\end_layout
+
+\begin_layout LyX-Code
+  // BUT: here n would be UTF16, a violation of the type declaration.
+\end_layout
+
+\begin_layout LyX-Code
+end
+\end_layout
+
+\begin_layout Standard
+This means that the compiler should insert a forceencoding after passing
+ a string with encoding affinity to a generic VAR parameter.
+ I hope that is doable.
+ 
+\end_layout
+
+\begin_layout LyX-Code
+  
 \end_layout
 
 \end_body

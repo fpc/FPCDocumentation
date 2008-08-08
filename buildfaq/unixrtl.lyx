@@ -42,6 +42,7 @@
 \tracking_changes false
 \output_changes false
 \author "" 
+\author "" 
 \end_header
 
 \begin_body
@@ -52,6 +53,45 @@ The new Unix RTL.
 
 \begin_layout Author
 Marco van de Voort (marco@freepascal.org)
+\end_layout
+
+\begin_layout Section*
+Versions
+\end_layout
+
+\begin_layout Standard
+Current version: 1.2
+\end_layout
+
+\begin_layout Description
+1.0 The version of 2005.
+ No version but the date in the PDF.
+ 
+\end_layout
+
+\begin_layout Description
+1.1 Unversioned PDF with 
+\begin_inset Quotes eld
+\end_inset
+
+June 10th, 2008
+\begin_inset Quotes erd
+\end_inset
+
+ as date in it.
+ Mostly adds the 
+\begin_inset Quotes eld
+\end_inset
+
+prefix
+\begin_inset Quotes erd
+\end_inset
+
+ section.
+\end_layout
+
+\begin_layout Description
+1.2 First numbered version.
 \end_layout
 
 \begin_layout Section
@@ -118,14 +158,15 @@ In hindsight however not forcing more fundamental changes at the 1.0.2 release
  unit should have been renamed to Unix.
  Also the syscall interface should have been changed.
  However besides the conservatism that resulted from the code freeze, I
- wasn't too certain about the future of the BSD ports then, and didn't push
- it hard enough.
+ had some dobuts about the feasability of the BSD ports then, and didn't
+ push it hard enough.
  
 \end_layout
 
 \begin_layout Standard
 During the 1.0.x lifetime, I regretted this deeply, specially after 1.0.6 when
- other Unix ports appeared.
+ other Unix ports appeared, and the FreeBSD port turned out to be qualitatively
+ good.
  The things that could be solved with a simple IFDEF when the FreeBSD port
  was done, turned out to be annoying and complicated with multiple ports,
  and likely to introduce bugs.
@@ -154,19 +195,30 @@ Well, there are a lot of reasons actually.
 
 \begin_layout Enumerate
 The linux unit was originally targeted at linux only, 1.x kernels even.
+ Some details 
+\begin_inset Quotes eld
+\end_inset
+
+bled
+\begin_inset Quotes erd
+\end_inset
+
+ through in the units interface.
 \end_layout
 
 \begin_layout Enumerate
 Quite a lot of different groups of functions with different portability
  aspects are stuffed together in one unit.
+ This makes porting the complete unit nearly impossible, and also poses
+ some challenges to keep the unit long term compatible on Linux.
 \end_layout
 
 \begin_layout Enumerate
-The linux unit doesn't have any form of Unix typing.
+The linux unit doesn't have any form of (Unix) typing.
  Parameters types are translated to TP integer or longint, using the size
- in bytes they had in linux 1.0.
- This creates portability problems to other Unices, linux on other architectures
-, and makes it harder to fix the unit for newer linux versions.
+ in bytes they had in linux 1.0.x This creates portability problems to other
+ Unices, linux on other architectures, and makes it harder to fix the unit
+ for newer linux versions.
 \end_layout
 
 \begin_layout Enumerate
@@ -199,15 +251,16 @@ Syscalls that are both used in unit linux and unix are duplicated.
 \end_layout
 
 \begin_layout Enumerate
-The current readdir situation on Linux is bad.
+The then-current readdir situation on Linux was bad.
  Each readdir to get an entry is a syscall, which can be slow.
  This can sped up by moving parts of the readdir call to userland, and only
  calling the kernel once in every so and so many blocks (call getdents or
  getdirentries).
  Linux implements this too, since the old libc->glibc change, but FPC hadn't
  caught up yet.
- The *BSD ports do use this, but it is handcoded, and not a translated libc
- version, which might cause problems with unusual filesystemdrivers.
+ The *BSD ports did this from the start, but it is handcoded, and not a
+ translated libc version, which might cause problems with unusual filesystemdriv
+ers.
  (due to AMD64/Linux rtl work, I believe this has been remedied by Peter)
 \end_layout
 
@@ -233,14 +286,14 @@ Functions weren't named consistently.
 \end_layout
 
 \begin_layout Standard
-These reasons are made worse because 2.0 is supposed to support several architect
-ures, and probably more OSes.
+These reasons are made worse because 2.0 was supposed to support several
+ architectures, and probably more OSes.
  During the 1.0 lifetime, the linux unit was ported to *BSD and BeOS, and
  that already stretched the design to its limits.
- 2.0 is expected to grow beyond 20 OS-architecture combinations, so that
- makes it much worse.
- Portability aspects become more important if we want to avoid having 2
- 
+ 2.0 was expected to grow beyond 20 OS-architecture combinations, so that
+ made it much worse.
+ Portability aspects became more important if we wanted to avoid having
+ 2 
 \begin_inset Quotes eld
 \end_inset
 
@@ -248,8 +301,7 @@ good
 \begin_inset Quotes erd
 \end_inset
 
- platforms, and the rest outdated crap.
- 
+ platforms, and the rest outdated builds that are only partially implemented.
 \end_layout
 
 \begin_layout Standard
@@ -377,6 +429,13 @@ Unixutil which contains a few calls that are not Unix specific (usually
 
 \begin_layout Enumerate
 Unix pretty much contains a cleaned up version of the rest.
+\end_layout
+
+\begin_layout Enumerate
+If the number of function-categories expands, add additional units instead
+ of adding it to an existing one.
+ E.g.
+ users,sockets,netdb cwstring etc.
 \end_layout
 
 \end_deeper
@@ -727,7 +786,7 @@ Moreover when done during a large restructure and considered during the
 A solution would be a GUI installer (e.g.
  in Lazarus) that bootstraps FPC, and allows configuring by simply toggling
  switches.
- However such an app is a lot of work.
+ However such an app is a lot of work, and keeps always a bit of a DIY shine.
  The FreeBSD ports system is also a natural fit, if somebody with enough
  knowledge of it would step up.
 \end_layout
@@ -839,12 +898,14 @@ Exec() functions
 
 \begin_layout Standard
 The exec() functions have been replaced by the fpexec functions.
- The old functions will be left in for now, but will probably get removed
- in 2.0, to give some depending programs some time to adjust.
+ Moreover, platform independant alternatives like TProcess and ExecuteProcess()
+ are more mature now.
+ The old 1.0.x linux.exec() functions remained in 2.0.x as legacy functions,
+ but were removed starting with 2.2.0
 \end_layout
 
 \begin_layout Standard
-The main idea behind the new functions is the use of 
+The main idea behind all new functions is the use of 
 \begin_inset Quotes eld
 \end_inset
 
@@ -890,10 +951,10 @@ FP
 \end_layout
 
 \begin_layout Standard
-During the past years, I've been pestered about both the need for and choice
+During the past years, I've been pestered about both the need for, and choice
  of a prefix again and again.
  The new Unix rtl was written pretty much from scratch, but due to similarity
- in design requirements resembled the POSIX pretty much.
+ in design requirements resembled Carl's POSIX unit pretty to an high degree.
  The improved Unix typing was the biggest difference, as well as the splitting
  up in .inc file that resulted from supporting multiple platforms (posix
  only supported BeOS afaik).
@@ -989,7 +1050,7 @@ confusion
 status open
 
 \begin_layout Standard
-the 
+The pains mostly were the 
 \begin_inset Quotes eld
 \end_inset
 
@@ -997,8 +1058,9 @@ renamefests
 \begin_inset Quotes erd
 \end_inset
 
- and the dual maintainenance of 1.0.x and the 1.9.x branch before 2.0 came out,
- also for Lazarus.
+ and a fat year long dual maintainenance to keep code working with both
+ the1.0.x and the 1.9.x branch till 2.0 came out.
+ Not only for the FPC project, but also for Lazarus.
  However with over 5 years between the 1.0 and 2.0 release, there was no way
  to do it more gradual without compromising 1.0.x internal compability.
  (though IMHO that wouldn't have been a bad thing)
@@ -1056,9 +1118,9 @@ The includefiles allow sharing of code used in multiple places, and that
 \end_layout
 
 \begin_layout Enumerate
-A higher granularity of the source helps working with CVS somewhat.
+A higher granularity of the source helps working with CVS'/SVN somewhat.
  There is less chance that two people work on the same file and have to
- merge their changes.
+ merge their changes, a problem with units that are thousands of lines.
 \end_layout
 
 \begin_layout Enumerate
@@ -1068,7 +1130,9 @@ The implementation of a system unit uses a lot of OS dependant types, records
  increasing the size of the binaries.
  Particularly the Unix system unit exports syscalls via an external alias
  mechanism.
- See the separate paragraph about this subject
+ See the separate paragraph about this subject.
+ The main reason for this is to precisely control how many and which symbols
+ the system unit exports, since these are always visible.
 \end_layout
 
 \begin_layout Enumerate
@@ -1102,6 +1166,12 @@ I want to override this functionality with my own code
 
 \end_layout
 
+\begin_layout Enumerate
+It allows for the situation where Pascal/Delphi tradition stuffs all related
+ headers in one unit, and still have a file per C header file, which eases
+ header maintenance.
+\end_layout
+
 \begin_layout Subsubsection
 \begin_inset Quotes eld
 \end_inset
@@ -1121,9 +1191,11 @@ improper
 As said in one of the previous paragraphs, the unix system unit exports
  some OS dependant functions via the [public, alias: 'xxx']; construct.
  This construct is used to declare names without mangling.
- This means that functions in system get a name in a namespace outside the
- pascal realm, so that other units can import them, like you would from
- a DLL or from external code.
+ This means that some os specific functions in system get a name in a namespace
+ outside the pascal realm, so that other units can import them, like you
+ would from a DLL or from external code.
+ The functions are not expored by normal pascal declarations, thus keeping
+ the interface of the system unit OS-independant.
  The 
 \begin_inset Quotes eld
 \end_inset
@@ -1134,6 +1206,7 @@ client
 
  unit is mainly BaseUnix, but unit Unix also reuses a few functions from
  system, and exports them.
+ 
 \end_layout
 
 \begin_layout Standard
