@@ -1,0 +1,1380 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass article
+\begin_preamble
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\end_preamble
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Title
+
+Porting Delphi/Kylix code to FPC;
+\layout Title
+
+Creating a portable Pascal codebase.
+\layout Author
+
+Marco van de Voort
+\layout Section
+
+Introduction
+\layout Standard
+
+There is a lot of (Object) Pascal code available on the web, usually for
+ Turbo Pascal and Delphi.
+ Since Free Pascal supports both these dialects, most code should in theory
+ be recompilable with FPC.
+ (and to a lesser degree with other compilers with the appropiate Borland
+ mode) The main showstopper problems are a too big dependancy on 16-bit
+ functionality (TP/BP), or on the Visual part of the VCL (Delphi).
+ A lot of Delphi code is also too Windows dependant for use on other platforms,
+ but this (the Windows dependance) is no real long term problem for FPC/win32.
+ There can be a few small problems though because not all Delphi winapi
+ units are supported at the moment.
+ Currently most code that can be shared between FPC and Delphi are libraries
+ that are not visual, but since Lazarus
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Lazarus (http://lazarus.freepascal.org ) is a graphical IDE/RAD for Free Pascal.
+\end_inset 
+
+ is maturing fast, this will improve in time.
+\layout Standard
+
+In early 2000, I started to test FPC with Delphi code, mostly to test the
+ new Delphi compability mode of FPC.
+ Quite soon, it turned out that the Delphi compability of the 1.0.x compiler
+ series was too limited, so I switched to the development series (1.1.x/1.9.x,
+ which will become 2.0.x in the future).
+ Since then I have kept on getting Delphi packages to work with FPC, to
+ test new features, libraries etc.
+ The packages that were regularly tested for FPC compability are:
+\layout Enumerate
+
+Jedi Winapi headers (current status: 99% working, most of the remain problems
+ are related to dispinterfaces)
+\layout Enumerate
+
+ICS networking components (current status: win32 works fine with recent
+ release versions of both ICS and FPC, the problems were in the preprocessor
+ area and uses clauses mostly) This package pretty much was the first to
+ get selected, mostly because it was compatible with a lot of Delphi versions.
+ Some work has been done on getting the Kylix port to run on *nix platforms,
+ but this is hard, since a lot of linux specific functionality and artefacts
+ are exist, due to the heavy libc unit dependance) 
+\layout Enumerate
+
+Jedi JCL (large parts working, but this is the most difficult package by
+ far, since it is mostly a collection of all kinds of OS dependant routines)
+\layout Enumerate
+
+Decal, a STL substitute (compiles with fairly minimal changes, but hard
+ to test without demoes)
+\layout Enumerate
+
+Jedi SDL headers (Works pretty well)
+\layout Enumerate
+
+Jedi Math
+\layout Standard
+
+Other packages were tested on an incidental basis too.
+ Because of all this testing, a set of common problems started to surface
+ which are usually 
+\emph on 
+not 
+\emph default 
+FPC specific.
+ These problems are more about multiplatform and multicompiler design, specially
+ related to preprocessor (defines, ifdef's) symbols, most of the others
+ with adding units to the USES clause without thinking.
+ Most packages don't seem to spend any effort to come up with a decent system
+ behind the preprocessor symbols (DEFINE/IFDEF's).
+ 
+\layout Standard
+
+The most common problems while porting software occur in the following categorie
+s:
+\layout Enumerate
+
+True multiplatform considerations, like processor and OS dependant code.
+\layout Enumerate
+
+preprocessor symbols.
+ 
+\layout Enumerate
+
+separation of general (Object) Pascal code and visual code.
+ (widgetset dependant
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+A widget is the general term for what is often called 
+\begin_inset Quotes eld
+\end_inset 
+
+a control
+\begin_inset Quotes erd
+\end_inset 
+
+ in windows terminology.
+\end_inset 
+
+ is a better term for this category)
+\layout Standard
+
+...
+ These problems are very common in the Delphi/Pascal world.
+ Most can be avoided relatively easy in the early design stage and hopefully
+ this article increases programmers awareness regarding these issues.
+\layout Section
+
+A generic preprocessor design.
+\layout Standard
+
+As said in the previous paragraph, one of the primary problems of existing
+ Delphi packages
+\begin_inset Foot
+collapsed true
+
+\layout Standard
+
+Some of the above mentioned packages already changed their ways, when they
+ started implementing FPC compability
+\end_inset 
+
+ is that there usually is no system with respect to preprocessor defines.
+\layout Standard
+
+Nearly each unit has some preprocessor defines and compiler switches in
+ the first few lines of the unit.
+ FPC needs a few modifications here to put the FPC compiler in Delphi mode
+ ( {$mode Delphi} ).
+ Usually there are some package specific defines too.
+ The problem is that Delphi packages typically duplicate the few defines
+ they need in all units, often even directly using Delphi VER<xx> defines
+ instead of using a central includefile that defines properties.
+\layout Standard
+
+The solution is as obvious as simple: a central include file that maps compiler
+ versions to compiler and rtl properties.
+ Preferably two even, one for the libraries, and one (extra) for the demoes/exam
+ples with extra directives for final programs.
+ The average reader will probably frown on this trivial detail, but believe
+ me, when porting, this very simple change saves an enormous amount of work.
+ Specially if the other conditions described in the next few paragraphs
+ are met.
+\layout Subsection
+
+
+\emph on 
+Do
+\emph default 
+ use a central includefile with defines in EVERY file 
+\layout Standard
+
+A lot of Delphi programmers have a natural aversion against includefiles.
+ This probably stems from the fact that C uses them heavily, and Borland
+ also doesn't really encourage the usage of includefiles.
+ The gigantically complicated automake and autoconf systems often scare
+ Delphi programmers to a 
+\begin_inset Quotes eld
+\end_inset 
+
+anything but that
+\begin_inset Quotes erd
+\end_inset 
+
+ kind of attitude.
+\layout Standard
+
+However nearly each project that reaches a certain size starts to use a
+ central includefile when faced with multiple compilers and/or -versions.
+ The contents vary, but usually contain defines that optionally add extra
+ debugging code, turn parts off etc.
+ 
+\layout Standard
+
+The main reason for including the central includefile by default in 
+\emph on 
+every
+\emph default 
+ file, is that when creating a certain package for compiler A, you usually
+ can't predict in which units the includefile is also needed in the future.
+ E.g.
+ when somebody tries to implement compiler/rtl/OS dependant parts for a
+ compiler (version) B, with as little changes as possible.
+ It is simpler to simply give up administrating why unit X needs the includefile
+, and unit Y doesn't, and simply include it everywhere.
+ This avoids creeping-in of local defines via the backdoor.
+\layout Subsection
+
+
+\emph on 
+Don't
+\emph default 
+ make your main sourcecode directly dependant on Delphi version defines
+\layout Standard
+
+A lot of Delphi packages directly use Delphi version defines in their source
+ code, like
+\layout LyX-Code
+
+{$ifdef ver90}
+\layout LyX-Code
+
+Dosomething;
+\layout LyX-Code
+
+{$else}
+\layout LyX-Code
+
+Dosomethingelse;
+\layout LyX-Code
+
+{$endif}
+\layout Standard
+
+Some others hide this a bit by using defines like 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|Delphi4up| or 
+\backslash 
+verb|Delphi4plus| 
+\end_inset 
+
+, but that is the same thing in practice.
+ Conditional code should never interact directly with the Delphi versions.
+ Why? The main reason is that FPC is Delphi 2 in some respect, and Delphi
+ 7 in another respect, but also for Delphi usage this is a bit dangerous;
+ consider the following bit of code:
+\layout LyX-Code
+
+{$ifdef delphi4up}
+\layout LyX-Code
+
+something=array of integer; // dynamic array
+\layout LyX-Code
+
+{$else
+\layout LyX-Code
+
+something =^integer;        // workaround using pointers;
+\layout LyX-Code
+
+{$endif}
+\layout LyX-Code
+
+\layout Standard
+
+What if we encounter a problem with the dynamic array support for this particula
+r construct in say Delphi 5? It is hard to disable dynamic arrays usage
+ for Delphi 5 alone, since the source code assumes D4+ can use dynamic arrays,
+ and 
+\emph on 
+all
+\emph default 
+ defines that interact with 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|ver<x>| 
+\end_inset 
+
+ defines and derived 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|delphi4plus| 
+\end_inset 
+
+ variants will have to be checked to make exceptions for Delphi 5.
+ Runtime library changes are even more problematic.
+ Sometimes a feature got added with D3, changed to use D4 features like
+ int64 and cardinal, but moved to another unit with D6 or D7, and will be
+ different again with .NET.
+\layout Standard
+
+In other words: the main problem is that a certain 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|ver<x>|
+\layout Standard
+
+\end_inset 
+
+ define stands for a lot of different compiler properties, and the source
+ loses information if you use these defines directly.
+ This problem is illustrated in the following similar source bit:
+\layout LyX-Code
+
+type
+\layout LyX-Code
+
+{$ifdef Delphi4plus}
+\layout LyX-Code
+
+  something = array of integer;
+\layout LyX-Code
+
+  myfunc    = function (something:integer=50):pointer; 
+\layout LyX-Code
+
+{$else
+\layout LyX-Code
+
+  something = ^integer;
+\layout LyX-Code
+
+  myfunc    = function (something:integer):pointer; 
+\layout LyX-Code
+
+{$endif}  
+\layout LyX-Code
+
+..
+\layout LyX-Code
+
+..
+\layout LyX-Code
+
+Uses
+\layout LyX-Code
+
+{$ifdef Delphi4plus}
+\layout LyX-Code
+
+  variants
+\layout LyX-Code
+
+{$endif}
+\layout LyX-Code
+
+,windows;
+\layout Standard
+
+While this example might not be ideal, it does illustrate the basic problem,
+ 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|Delphi4plus| 
+\end_inset 
+
+ define is used to trigger both default parameters, variants and dynamic
+ arrays u4sage.
+ Usually the (mis)usage of the 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|ver<x>| 
+\end_inset 
+
+ defines are not limited to language features, but also for identifiers
+ exported by system, sysutils and other basic units.
+ It is simply impossible to automatically determine if a certain ifdef is
+ for an identifier, a language feature or something else, without knowing
+ all compilers and compilerversions involved intimately.
+\layout Standard
+
+
+\series bold 
+The solution
+\series default 
+ is as obvious as simple.
+ Each often used capability of the compiler-library system gets its own
+ preprocessor symbol, and the mapping between 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|ver<x>|
+\end_inset 
+
+ defines and these capabilities is done in the central include file.
+ So everything after Delphi 4 defines HAS_DYNAMIC_ARRAY, HAS_DEFAULT_PARAMS
+ etc.
+ This allows a non Delphi compiler to define e.g.
+ HAS_DEFAULT_PARAMS, but not HAS_DYNAMIC_ARRAY, something that is not possible
+ when 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|ver<x>|
+\end_inset 
+
+ is used directly in source.
+ But it also allows to disable a certain feature for a certain Delphi version
+ (e.g.
+ when it is bugged) without having an effect on the other capabilities of
+ that version, even temporarily for testing purposes only (simply comment
+ 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|{$DEFINE HAS_DYNAMIC ARRAYS}|
+\end_inset 
+
+ in the 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|{$ifdef ver120}|
+\end_inset 
+
+ part of the central includefile)
+\layout Standard
+
+A typical includefile of a project that uses capabilities instead of Delphi
+ versions might look like this:
+\layout LyX-Code
+
+{$ifdef ver80}
+\layout LyX-Code
+
+{$define i386}
+\layout LyX-Code
+
+{$define CPU32}                // 32-bits CPU
+\layout LyX-Code
+
+{$define ENDIAN_LITTLE}
+\layout LyX-Code
+
+{$define has_classes}
+\layout LyX-Code
+
+{$define win16}
+\layout LyX-Code
+
+{$endif}
+\layout LyX-Code
+
+..
+\layout LyX-Code
+
+..
+\layout LyX-Code
+
+{$ifdef ver140}
+\layout LyX-Code
+
+{$define has_dynarray}
+\layout LyX-Code
+
+{$define has_defparam}
+\layout LyX-Code
+
+{$define i386}
+\layout LyX-Code
+
+{$define ENDIAN_LITTLE}
+\layout LyX-Code
+
+{$define CPU32}
+\layout LyX-Code
+
+{$define win32}
+\layout LyX-Code
+
+{$define has_stream_permissions}
+\layout LyX-Code
+
+{$endif}
+\layout LyX-Code
+
+..
+\layout LyX-Code
+
+..
+\layout LyX-Code
+
+{$ifdef FPC}
+\layout LyX-Code
+
+   {$mode Delphi}   // put in Delphi mode
+\layout LyX-Code
+
+{$ifndef ver1_0}  { only in   FPC version 2+}
+\layout LyX-Code
+
+   {$define has_dynarray}
+\layout LyX-Code
+
+   {$define has_defparam}
+\layout LyX-Code
+
+   {$define has_interface}
+\layout LyX-Code
+
+// fpc already defines i386, cpu32/CPU64 and ENDIAN_LITTLE/ENDIAN_BIG for
+ all platforms
+\layout LyX-Code
+
+{$endif}
+\layout LyX-Code
+
+{$endif}
+\layout Standard
+
+The earlier bit of source code then becomes:
+\layout LyX-Code
+
+type
+\layout LyX-Code
+
+{$ifdef HAS_DYNARRAY}
+\layout LyX-Code
+
+  something = array of integer;
+\layout LyX-Code
+
+  {$else
+\layout LyX-Code
+
+  something = ^integer;
+\layout LyX-Code
+
+{$endif}  
+\layout LyX-Code
+
+\layout LyX-Code
+
+{$ifdef HAS_DEFAULT_PARAM}
+\layout LyX-Code
+
+myfunc    = function (something:integer=50):pointer; 
+\layout LyX-Code
+
+{$else}
+\layout LyX-Code
+
+myfunc    = function (something:integer):pointer; 
+\layout LyX-Code
+
+{$endif}
+\layout LyX-Code
+
+.
+\layout LyX-Code
+
+..
+\layout LyX-Code
+
+Uses
+\layout LyX-Code
+
+{$ifdef HAS_VARIANTS}
+\layout LyX-Code
+
+  variants
+\layout LyX-Code
+
+{$endif}
+\layout LyX-Code
+
+,windows;
+\layout Standard
+
+It is almost too trivial to mention isn't it? However it really saves enormous
+ amounts of time porting packages set up like this to other compilers, custom
+ runtime and classes libraries (VCL substitutes) etc etc.
+ Also keep in mind that porters are often not as familiar with the package
+ as you, and little things that seem trivial to you, might not be for them.
+\layout Subsection
+
+
+\emph on 
+Don't
+\emph default 
+ use {$ifdef Linux} if you mean {$ifdef Unix}
+\layout Standard
+
+Kylix users often put Kylix specific changes under {$ifdef linux}.
+ Don't fall for this trap, since this often causes both linux kernel specific
+ code and general unix functionality as trivial as backward vs forward slashes
+ under the same {$ifdef linux}, which is far to generic.
+\layout Standard
+
+Include 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|{$ifdef Linux}{$define Unix}{$endif}|
+\end_inset 
+
+ in your central includefiles, and use Unix if it is generic.
+ Better yet, use 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|{$ifdef Unix}|
+\end_inset 
+
+ even if you don't know for sure if it is linux specific, since there really
+ isn't that much linux specific in the average application source.
+\layout Subsection
+
+
+\emph on 
+Don't 
+\emph default 
+assume too much about {$else} cases.
+\layout Standard
+
+Don't use constructs like:
+\layout LyX-Code
+
+{$ifdef win32}
+\layout LyX-Code
+
+Do_My_Windows_Thing;
+\layout LyX-Code
+
+{$else}
+\layout LyX-Code
+
+Do_My_Linux_Thing;
+\layout LyX-Code
+
+{$endif}
+\layout Standard
+
+This is even a bigger 
+\series bold 
+\emph on 
+don't
+\series default 
+\emph default 
+ than the previous one.
+ What to substitute this construct with, depends on how secure you want
+ it to be.
+ As usual, the best way is also the most work:
+\layout LyX-Code
+
+{$undef platformcheck}
+\layout LyX-Code
+
+{$ifdef Win32}
+\layout LyX-Code
+
+{$define platformcheck}
+\layout LyX-Code
+
+Do_My_Window_Thing;
+\layout LyX-Code
+
+{$endif}
+\layout LyX-Code
+
+{$ifdef Linux}
+\layout LyX-Code
+
+{$define platformcheck}
+\layout LyX-Code
+
+Do_My_Linux_Thing;
+\layout LyX-Code
+
+{$endif}
+\layout LyX-Code
+
+{$ifndef Platformcheck}
+\layout LyX-Code
+
+{$info this code must be implemented for this platform} 
+\layout LyX-Code
+
+{$endif}
+\layout Standard
+
+However you would make most people already very happy if you just used:
+\layout LyX-Code
+
+{$ifdef Win32}
+\layout LyX-Code
+
+Do_My_Window_Thing;
+\layout LyX-Code
+
+{$endif}
+\layout LyX-Code
+
+{$ifdef Unix}
+\layout LyX-Code
+
+Do_My_Linux_Thing;
+\layout LyX-Code
+
+{$endif}
+\layout Standard
+
+This way, people porting the source to a new platform will have to quickly
+ check most ifdef linux/unix clauses.
+ But they'll probably have to anyway.
+ 
+\layout Subsection
+
+An alternate approach
+\layout Standard
+
+Another possible solution is using an external preprocessor.
+ Some packages tried this approach, but the problem is that building the
+ source conveniently means also porting the preprocessor.
+ I don't really like this solution, but I can imagine modest use can have
+ its advantages.
+ Specially concerning uses clauses, which simply tend to become a mess.
+ Also large bodies of EXTERNAL declarations can sometimes become much readable
+ without the 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|{$ifdef win32}stdcall;{$else}cdecl;{$endif}|
+\end_inset 
+
+ appended to every declaration.
+\layout Standard
+
+The limited FPC macro facility can also be used for these purposes, (by
+ defining the macro's in the central includefile), but this approach has
+ the fundamental problem that it is FPC only.
+ 
+\layout Standard
+
+Combining these two could be a step forward (use FPC macro's , but expand
+ them by external preprocessor for non FPC compilers).
+ Since FPC runs on the most targets by far, this means the preprocessor
+ only has to run on linux/i386 and win32.
+\layout Section
+
+OS and widget set independant design.
+\layout Standard
+
+90% of making a certain package operating system independant lies in starting
+ out with OS independance in mind, not in incorporting a few changes after
+ the main development is done.
+ While this sounds like a cliche, it is like with many cliche's: it is based
+ on real life and generally there is a lot of truth in it.
+\layout Standard
+
+OS independance is not really something fundamentally different, but mainly
+ a 
+\series bold 
+state of mind.
+
+\series default 
+ Separating OS (in)dependant code, widget dependant and independant code
+ etc.
+ What is commonly considered as OS independance is only the implementation
+ of this state of mind.
+ 
+\layout Standard
+
+Note that Kylix is a particular problem.
+ While Kylix is brilliant from the Borland perspective (keep as much win32
+ Delphi code running as possible), it often conceals the real truth: Unix
+ is fundamentally different from win32.
+ Kylix is often also too linux specific, which is sane from a Borland perspectiv
+e (they'll probably never support anything else than Linux), but might not
+ be the best solution to get the most of your codebase.
+ However there are two ways of looking at this: 
+\layout Itemize
+
+
+\begin_inset Quotes eld
+\end_inset 
+
+the glass is half empty
+\begin_inset Quotes erd
+\end_inset 
+
+: Linux is totally different from win32.
+\layout Itemize
+
+
+\begin_inset Quotes eld
+\end_inset 
+
+the glass is half full
+\begin_inset Quotes erd
+\end_inset 
+
+: If you want to support Linux+win32, then it is only a 
+\emph on 
+really small 
+\emph default 
+extra effort to support most other platforms too.
+ Specially if you start with that attitude from the beginning.
+\layout Standard
+
+The most important thing is to isolate five basic types of code as much
+ apart as possible.
+\layout Enumerate
+
+widget set dependant code.
+\layout Enumerate
+
+OS dependant code 
+\layout Enumerate
+
+Architecture dependant code (processor independant)
+\layout Enumerate
+
+Generic, in general platform independant code.
+\layout Enumerate
+
+Compiler implementation dependant code
+\layout Standard
+
+Specially the second and third category can mix.
+ So there can be some OS dependant code that is also architecture dependant,
+ and some that is not.
+ 
+\layout Description
+
+Widget\SpecialChar ~
+set\SpecialChar ~
+dependant This class of code is the easiest type to define: it
+ is simply code that depends on widget set.
+ In other words, GUI code, code that uses X11, QT, GTK, win32 GDI or Aqua,
+ directly or indirectly.
+ There is a slight gotcha though, code depending on unit FORMS is usually
+ considered GUI code even if it only uses allocatehwnd or the application
+ object, since unit forms is the core of the GUI part of the VCL.
+ Also, some widgetsets (Win32, Aqua) are tied to one platform and one architectu
+re in practice, and some OS dependant entanglement might be hard to avoid
+ in these cases.
+\layout Description
+
+OS\SpecialChar ~
+dependant\SpecialChar ~
+code OS dependant code simply uses OS dependant features.
+ So unit Windows, ActiveX (the whole WinApi set), Kylix unit Libc etc.
+ However there are gradations when you think of Operating systems in terms
+ of related families.
+ A feature might not be unique for one operating system alone, but for a
+ whole group.
+ The picture below should illustrate this a bit.
+ Specially the difference between Unix and Linux is a mean one, as already
+ discussed.
+\layout Standard
+
+
+\begin_inset Graphics
+	filename ostree2.png
+	scale 30
+
+\end_inset 
+
+
+\layout Standard
+
+The picture should be read from top to bottom; POSIX systems have something
+ in common, UNIX systems have a bit more in common, BSDs have even more
+ in common etc.
+ (for the upper levels think about having driveletters or not, forward or
+ backward directory separator, case sensitive/insensitive/preserving filesystem
+ level etc.
+ This is partially what makes Windows and Dos similar) The picture is not
+ really historically correct, but is only meant as the illustration of a
+ possible classification of platforms from a programming perspective.
+ While making this picture, the position of Solaris/SunOS was a bit of a
+ problem.
+ The original SunOS was BSD oriented, but Solaris is formally Sys V certified
+ to my best knowledge.
+ Linux is a clone that is effectively a SysV and BSD hybrid.
+\layout Description
+
+Architecture\SpecialChar ~
+dependant\SpecialChar ~
+code is processor dependant code.
+ Usually assembler, but there are differences between processors that affect
+ the pascal code too:
+\begin_deeper 
+\layout Itemize
+
+endianness (byte ordering, are values stored with the byte with the highest
+ value first, or not)
+\layout Itemize
+
+32-bit vs 64-bit architecture (pointers become 64-bit, and might not fit
+ a simple (long) integer anymore, record/structure sizes change)
+\layout Itemize
+
+alignment requirements (structures/record size change)
+\layout Itemize
+
+calling convention (not all calling conventions are available for all processors
+ and compilers)
+\layout Itemize
+
+size of e.g.
+ floating point registers determines which floating point types have decent
+ performance, and how wide they are.
+ Specifically 
+\begin_inset Quotes eld
+\end_inset 
+
+extended
+\begin_inset Quotes erd
+\end_inset 
+
+ can be 64,80 or 128 bits.
+ Avoid COMP as the plague, it is too intel specific, and doesn't have much
+ advantages, use int64 as much as possible.
+\end_deeper 
+\layout Description
+
+Generic\SpecialChar ~
+code is code that isn't really dependant on the OS and doesn't heavily
+ depends on architecture.
+ This doesn't mean it doesn't do any I/O at all, but more that all performed
+ I/O is done via OS independant units (think system,sysutils,classes)
+\layout Description
+
+Compiler\SpecialChar ~
+dependant\SpecialChar ~
+code This relatively small class consists of code that
+ depends on compiler internals.
+ Typical examples are directly accessing the VMT, or assuming too much about
+ the size of a set, calling conventions and exploiting knowledge about the
+ binary format of .EXE files (lowlevel RTTI (introspection), accessing debug
+ metadata and/or sections)
+\layout Subsection
+
+Directory structure.
+\layout Standard
+
+Besides conditional compilation, includefiles can also help sorting out
+ the complexity of code with different portability aspects.
+ By simply keeping OS or architecture specific code in a separate directory,
+ selection of the right piece of code is then as easy as making sure the
+ right directories are included while building.
+ This can reduce complexity and amount of ifdefs somewhat.
+ The main problem of this approach is that the way a project is built is
+ not standarized.
+ FPC typically uses GNU Makefiles (though some external projects use scripts/bat
+ch files), while Delphi has a build system depending on all kinds of project
+ and configuration files.
+ (which is usually horribly version, installation and OS dependant)
+\layout Subsubsection
+
+FPC RTL/packages directory structure
+\layout Standard
+
+An example of how to organize this is the FPC directory structure used in
+ the RTL and packages, that looks like this ($OS is the OS we compile for,
+ $CPU the architecture):
+\layout Itemize
+
+<pachagename>/$OS (OS dependant stuff goes here)
+\layout Itemize
+
+<packagename/$OS/$CPU (OS and arch dependanty stuff.
+ Startup code, syscalls, asm interfacing with the OS etc)
+\layout Itemize
+
+<packagename>/$CPU (CPU specific, but not OS specific, math stuff, strings
+ and language helpers mainly)
+\layout Itemize
+
+<packagename>/inc (general totally independant include directory.
+ Both .inc as units)
+\layout Itemize
+
+<packagename>/unix (general shared unix code.
+ Usually 90% of all code for Linux/FreeBSD/ OS X is Unix generic when properly
+ typed and parameterised)
+\layout Itemize
+
+<packagename>/bsd (if it is a codebase with a lot of OS dependancies, it
+ is even worthwhile to factor out common BSD code, with 4-5 BSD supported)
+\layout Standard
+
+One can probably easily imagine adding directories for widgetsets (win32,
+ gtk, qt on a basic level, or CLX, VCL, LCL on a higher level) too.
+\layout Standard
+
+This scheme works very well for libraries that wrap OS dependant functionality
+ in an OS independant way.
+ The avg app can probably do with a subset of these, depending on its nature.
+ (e.g.
+ win32/, unix/, vcl/, clx/ and lcl/).
+ Small differences can better be IFDEFed, but try to do this as general
+ as possible.
+\layout Section
+
+Project building
+\layout Standard
+
+As said earlier, the exact build process varies significantly with the compiler,
+ Delphi integrates package/project support in the IDE and uses several files
+ for this, both global (think package registry) and project specific.
+ Worse, these systems are not 100% the same amongst versions.
+\layout Standard
+
+FPC uses a separate program, GNU Make, and uses a template Makefile.fpc in
+ each build directory that is expanded to the real Makefile by the generator
+ program fpcmake.
+ 
+\layout Standard
+
+At the current time, I'm not aware of efforts to make project building (more)
+ compiler independant.
+ There are two possible approaches:
+\layout Enumerate
+
+Create a new package information fileformat, and generate both package files
+ from it.
+ (probably D4+ only, since older version have binary package formats)
+\layout Enumerate
+
+Try to write converters (makefile.fpc to .dpk and vice versa)
+\layout Standard
+
+Both are not trivial, however can be simplified considerably by moving as
+ much directives as possible to the source.
+ (and of course to the central include file would be best:-) However this
+ is a rough idea, I'd need to know the build system of Delphi much more
+ intimately before pursuing something like this.
+ Waiting till FPC has packages would be wise also, to avoid having to rework
+ the system too soon.
+\layout Section
+
+Missing/buggy language features in FPC 2 
+\layout Enumerate
+
+
+\series bold 
+Missing
+\series default 
+ 
+\begin_inset Quotes eld
+\end_inset 
+
+implements
+\begin_inset Quotes erd
+\end_inset 
+
+ functionality (delegation)
+\layout Enumerate
+
+
+\series bold 
+Missing 
+\series default 
+packages
+\layout Enumerate
+
+
+\series bold 
+Missing 
+\series default 
+dispinterfaces and dispid
+\layout Enumerate
+
+
+\series bold 
+Missing
+\series default 
+ custom variants
+\layout Enumerate
+
+Widestrings and variants need more testing.
+ Widestrings are still missing a lot of RTL routines.
+ Some of the variant wrapper classes are also missed.
+ 
+\layout Enumerate
+
+Currency type used to be on the 
+\begin_inset Quotes eld
+\end_inset 
+
+buggy
+\begin_inset Quotes erd
+\end_inset 
+
+ list too.
+ However there has been quite some work on this recently, so it could be
+ ok.
+\layout Enumerate
+
+Reintroduce; directive is skipped, not processed.
+\layout Enumerate
+
+At the moment of writing (+/- 1.9.4 release), 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|$if defined(x) ... $elseif|
+\end_inset 
+
+ support is just added, and relatively untested.
+\layout Section
+
+Kylix/Libc unit issues
+\layout Standard
+
+The problem with Kylix is that it is more designed to make recompiling (Win32)
+ Delphi apps for Linux easy than to provide a platform to do generic Unix
+ development.
+ From Borlands perspective, this makes sense, but using Kylix-specific units
+ (mainly unit libc) without wrapper seriously decreases portability.
+\layout Standard
+
+Unit libc is a direct translation of the libc headers for modern Linux/i386
+ installations, and thus a lot of unit libc functionality is Linux only,
+ or reveals linux specific undeeded details.
+ There is no attempt at cleaning up the interface presented to the end user.
+ While in theory one could try to emulate certain linux specific calls,
+ the libc-interface was considered too inheritly linux specific and unclean
+ that it was decided to only support unit libc as 
+\emph on 
+legacy 
+\emph default 
+unit on Linux/i386, and modernize the old FPC Unix rtl into something better
+ portable for all Unixy ports.
+ (see the unixrtl.pdf document)
+\layout Standard
+
+The best way to deal with Kylix libc unit dependancies are:
+\layout Itemize
+
+Minimize any use of unit libc if possible (e.g.
+ use SysUtils unit and other such units as much as possible).
+ 
+\layout Itemize
+
+Try to keep the libc unit dependancy localised to as little units as possible.
+ E.g.
+ use a wrapper if you want to use stat64 or so.
+ <functionname>64 functions are a linuxism.
+\layout Itemize
+
+Be very strict about Unix typing, don't assume too much about the sizes
+ of Unix types.
+\layout Itemize
+
+No not directly use the dynamic library functions of Libc.
+ Always employ a wrapper, preferably modelled or equal to FPC's dynlibs
+ unit (which emerged after problems with Jedi SDL related to dyn loading)
+\layout Itemize
+
+Avoid using messaging systems on *nix.
+ While they may work fine on one type, it is nearly impossible to write
+ generic *nix code with it.
+\layout Section
+
+Misc problems
+\layout Description
+
+Comments\SpecialChar ~
+before\SpecialChar ~
+{$mode\SpecialChar ~
+Delphi}\SpecialChar ~
+must\SpecialChar ~
+be\SpecialChar ~
+balanced Only a 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|{$mode Delphi|
+\end_inset 
+
+ puts FPC in Delphi mode.
+ So any comments before this command (or the includefile that contains it)
+ must be balanced, like in TP.
+ This is a 
+\series bold 
+very
+\series default 
+ common problem.
+\layout Description
+
+The\SpecialChar ~
+exact\SpecialChar ~
+size\SpecialChar ~
+that\SpecialChar ~
+a\SpecialChar ~
+set\SpecialChar ~
+occupies\SpecialChar ~
+can\SpecialChar ~
+be\SpecialChar ~
+different FPC currently only supports sets
+ with size 4 and 32 bytes.
+ So everything smaller than 33 elements is 4 bytes in size, 33-256 elements
+ is 32 bytes in size.
+ Also the elements are always counted starting from ordinal value zero.
+ In other words, a 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+verb|set of 20..40|
+\end_inset 
+
+ counts as 41 elements (0..40), even though only 21 (20..40) are used.
+ 
+\layout Description
+
+Wintypes,\SpecialChar ~
+Winprocs These old Delphi 1 units can still be used in Delphi.
+ The project file in Delphi aliases these to unit windows.
+ However FPC doesn't have this feature, and doesn't have a project system
+ like this on the compiler level.
+ D1 and win3.x are really too obsolete to create an ugly hack to support
+ this construct.
+ The best way is to always use unit Windows as much as possible, unless
+ Delphi 1 compability is 
+\emph on 
+really 
+\emph default 
+needed (ICS is one of the few packages that still support D1).
+\layout Description
+
+Avoid\SpecialChar ~
+paths\SpecialChar ~
+in\SpecialChar ~
+USES\SpecialChar ~
+clauses Delphi (and FPC) can use syntax like uses xxx IN
+ ' c:
+\backslash 
+windows
+\backslash 
+interfaces
+\backslash 
+sources
+\backslash 
+include
+\backslash 
+headers.pas'; This is a plague when porting for obvious reasons, so better
+ avoid it.
+ Relative paths are slightly less evil, but as a whole, packages that use
+ this feature are much more costly to reorganise.
+ Note that since FPC and Delphi have separate build systems above the basic
+ <compiler> <file> level (Delphi with .dpk, FPC using gmake to simplify the
+ buildprocess of large pkgs), the buildprocess always needs some work, and
+ hardcoded paths add an unnecessary complication to deal with.
+\layout Subsection
+
+1.9.2 specific (Hopefully fixed in later versions)
+\layout Description
+
+Unit\SpecialChar ~
+Messages FPC 1.9.2 has a small problem with unit messages, since the type
+ 
+\begin_inset Quotes eld
+\end_inset 
+
+TMSG
+\begin_inset Quotes erd
+\end_inset 
+
+ is available in both unit messages and windows.
+ This will is fixed in the next beta for FPC 2.0 (1.9.4) and later, but for
+ now, keep messages before Windows in your uses clause.
+\layout Description
+
+@@xx_is\SpecialChar ~
+not\SpecialChar ~
+supported Procvars using double 
+\begin_inset Quotes eld
+\end_inset 
+
+at
+\begin_inset Quotes erd
+\end_inset 
+
+ sign are not yet supported in 1.9.2
+\layout Subsection
+
+Be very picky about what to put in the USES statement
+\layout Standard
+
+Compared to the good ole Turbo Pascal days, the USES statements in publically
+ available Delphi code are often not cleaned up.
+ Units are USEd that aren't used (:-)), and that has the potential to unnecessar
+y complicate porting.
+ If the unit never used at all, it may even increase your .exe size unnecessarily
+, because (at least AFAIK) unit initialization/finalization code is always
+ run, and never eliminated by smartlinking.
+ Typically when porting problems of this type arise, the units in questions
+ are winapi units, or VCL units like Graphics.
+ See also the section about Kylix.
+\the_end
