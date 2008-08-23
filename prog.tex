@@ -1118,9 +1118,25 @@ This switch enables optimization. It can have the following possible values:
 \item[ON] Switches on optimizations, corresponding to level 2 optimizations.
 \item[OFF] Switches of all kinds of optimizations.
 \item[XYZ] Parses the string and switches on the optimizations found in the
-string. The possible strings are the same as can be specified on the
-command line and are documented in the user's guide.
+string. 
 \end{description}
+The following strings are supported:
+\begin{description}
+\item[LEVEL1] Level 1 optimizations
+\item[LEVEL2] Level 2 optimizations
+\item[LEVEL3] Level 3 optimizations
+\item[REGVAR] Use register variables.
+\item[UNCERTAIN] Use uncertain optimizations.
+\item[SIZE] Optimize for size.
+\item[STACKFRAME] Skip stackframes. 
+\item[PEEPHOLE] Peephole optimizations.
+\item[ASMCSE] Use common subexpression elimination at the assembler level.
+\item[LOOPUNROLL] Unroll loops
+\item[TAILREC] change tail recursion to regular while
+\item[CSE] Use common subexpression elimination
+\item[DFA] Use DFA.
+\end{description}
+
 Example:
 \begin{verbatim}
 {$OPTIMIZATION ON}
@@ -1130,7 +1146,8 @@ is equivalent to
 {$OPTIMIZATION 2}
 \end{verbatim}
 
-This switch is also activated by the \var{-Oxxx} command line switch.
+This switch is also activated by the \var{-Ooxxx} command line switch.
+Note the small 'o': it is -Oo followed by the switch name.
 
 \subsection{\var{\protect\$OUTPUT\_FORMAT} : Specify the output format}
 
@@ -7762,8 +7779,8 @@ The following compiler directories are defined by the makefile:
 \item[BASEDIR] Is set to the current directory if the \file{pwd} command is
 available. If not, it is set to '.'.
 
-\item[COMPILER\_INCDIR] Is a space-separated list of library paths. Each
-directory in the list is prepended with \var{-Fl} and added to the
+\item[COMPILER\_INCDIR] Is a space-separated list of include file paths. Each
+directory in the list is prepended with \var{-Fi} and added to the
 compiler options. Set by the \var{incdir} keyword in the \var{Compiler} section.
 
 \item[COMPILER\_LIBDIR] Is a space-separated list of library paths. Each
@@ -7872,7 +7889,7 @@ It is set by the \var{ziptarget} keyword in the \var{Zip} section.
 The following variables control the compiler command line:
 \begin{description}
 
-\item[CPU\_SOURCE] The target CPU type is added as a define to the compiler
+\item[CPU\_SOURCE] The source CPU type is added as a define to the compiler
 command line. This is determined by the Makefile itself.
 
 \item[CPU\_TARGET] The target CPU type is added as a define to the compiler
