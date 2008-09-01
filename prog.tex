@@ -1832,6 +1832,65 @@ Pascal, MPW Pascal.
 For an exact description of each of these modes, see appendix \ref{ch:AppD},
 on page \pageref{ch:AppD}.
 
+\subsection{\var{\protect\$MODESWITCH} : Select mode features}
+As of FPC 2.3.1, the \var{\{\$MODESWITCH\}} directive selects some of the features that a
+\var{\{\$MODE \}} directive selects: it can be used to use features that
+would otherwise not be available in the current mode. For instance, one
+wishes to program in TP mode, but would like to use the 'Out' parameter,
+an option available only in Delphi mode. The \var{\{\$MODESWITCH \}}
+directive allows to activate or deactivate some individual mode features, 
+while not changing the current compiler mode.
+
+This switch is a global switch, and can be used wherever the \var{\{\$MODE\}}
+switch can be used.
+
+The syntax is as follows:
+\begin{verbatim}
+{$MODESWITCH XXX}
+{$MODESWITCH XXX+}
+{$MODESWITCH XXX-}
+\end{verbatim}
+The first two will switch on feature XXX, the last one will switch it off.
+
+The feature \var{XXX} can be one of the following:
+\begin{description}
+\item[CLASS] Use object pascal classes.
+\item[OBJPAS] Automatically include the ObjPas unit.
+\item[RESULT] Enable the \var{Result} identifier for function results.
+\item[PCHARTOSTRING] Allow automatic conversion of null-terminated strings
+to strings,
+\item[CVAR] Allow the use of the \var{CVAR} keyword.
+\item[NESTEDCOMMENTS] Allow use of nested comments.
+\item[CLASSICPROCVARS] Use classical procedural variables.
+\item[MACPROCVARS] Use mac-style procedural variables.
+\item[REPEATFORWARD] Implementation and Forward declaration must match completely.
+\item[POINTERTOPROCVAR] Allow silent conversion of pointers to procedural
+variables.
+\item[AUTODEREF] Automatic (silent) dereferencing of typed pointers.
+\item[INITFINAL] Allow use of \var{Initialization} and \var{Finalization}
+\item[POINTERARITHMETICS] Allow use of pointer arithmetic.
+\item[ANSISTRINGS] Allow use of ansistrings.
+\item[OUT] Allow use of the \var{out} parameter type.
+\item[DEFAULTPARAMETERS] Allow use of default parameter values.
+\item[HINTDIRECTIVE] Support the hint directives (\var{deprecated}, \var{platform} etc.)
+\item[DUPLICATELOCALS] ?
+\item[PROPERTIES] Allow use of global properties.
+\item[ALLOWINLINE] Allow inline procedures.
+\item[EXCEPTIONS] Allow the use of exceptions.
+\end{description}
+
+Hence, the following:
+\begin{verbatim}
+{$MODE TP}
+{$MODESWITCH OUT}
+\end{verbatim}
+Will switch on the support for the \var{out} parameter type in TP mode. It
+is equivalent to
+\begin{verbatim}
+{$MODE TP}
+{$MODESWITCH OUT+}
+\end{verbatim}
+
 \subsection{\var{\protect\$N} : Numeric processing }
 
 This switch is recognised for Turbo Pascal compatibility, but is otherwise
