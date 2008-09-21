@@ -94,7 +94,14 @@ ifndef RTLLINKPREFIX
   endif
 endif
 
-FCLOPTS=$(FPDOCOPTS) --package=fcl --hide-protected --warn-no-node --descr=fcl.xml --content=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX) $(FCLUNITOPTS)
+ifndef HIDEPROTECTED
+HIDEPROTECTED=YES
+endif
+
+FCLOPTS=$(FPDOCOPTS) --package=fcl --warn-no-node --descr=fcl.xml --content=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX) $(FCLUNITOPTS)
+ifeq ($(HIDEPROTECTED),YES)
+FCLOPTS+= --hide-protected
+endif
 FPDOCHTMLOPTS=--footer-date='mmm dd yyyy'
 
 ifeq (chm,$(HTMLFMT))
@@ -396,7 +403,11 @@ FCLUNITOPTS+= $(FCLGETTEXT) $(FCLEZCGI) $(FCLPOOLEDMM) $(FCLDBUGMSG) $(FCLSTREAM
 FCLUNITOPTS+= $(FCLINICOL) $(FCLSTREAMCOL) $(FCLCACHECLS) $(FCLEVENTLOG) $(FCLSYNCOBJS)
 FCLUNITOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES) $(FCLRTTIUTILS)
 
-RTLOPTS=$(FPDOCOPTS) --hide-protected --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
+RTLOPTS=$(FPDOCOPTS) --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
+ifeq ($(HIDEPROTECTED),YES)
+RTLOPTS+= --hide-protected
+endif
+
 ifdef CURRENTXMLONLY
 RTLXML=crt.xml
 RTLOPTS+=--descr=dateutils.xml --input="$(FPCSRCDIR)/rtl/unix/crt.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
@@ -636,7 +647,7 @@ ref.chk: $(INCLUDES) ref.tex
 fpdoc.chk: $(INCLUDES) fpdoc.tex
 chart.chk: $(INCLUDES) chart.tex
 
-html: $(INCLUDES) $(CHK)
+html: comphelp.inc $(INCLUDES) $(CHK)
 
 chm: 
    $(MAKE) html HTMLFMT=chm
