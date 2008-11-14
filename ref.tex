@@ -4398,6 +4398,34 @@ begin
 \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% aligned typecasts
+\section{Unaligned typecasts}
+\index{Typecast}\index{Typecast!Unaligned}
+A special typecast is the \var{Unaligned} typecast of a variable or
+expression. This is not a real typecast, but is rather a hint for the 
+compiler that the expression may be misaligned (i.e. not on an aligned
+memory address). Some processors do not allow direct access to misaligned
+data structures, and therefor must access the data byte per byte.
+
+Typecasting an expression with the unaligned keyword signals the compiler
+that it should access the data byte per byte.
+
+Example:
+\begin{verbatim}
+program me;
+
+Var
+  A : packed Array[1..20] of Byte;
+  I : LongInt;
+
+begin
+  For I:=1 to 20 do
+    A[i]:=I;
+  I:=PInteger(Unaligned(@A[13]))^;
+end.
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The @ operator
 \section{The @ operator}
 \index{Operators}\index{Address}
