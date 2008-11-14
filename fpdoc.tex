@@ -307,6 +307,23 @@ objects and routines in several ways. If used in combination with
 --toc-file this option will be used instead. This option only applies 
 to the chm backend.
 
+% charset
+\subsection{charset}
+\label{suse:charset}
+This option can be used to specify the character set to be used for
+the HTML backend. It is simply inserted in the HTML tree. The default
+character set is \var{iso-8859-1}
+
+For example
+\begin{verbatim}
+--charset=UTF8
+\end{verbatim}
+will result in an UTF8 specification of the \attr{content} attribute of 
+the \tag{meta} tag in the generated HTML file:
+\begin{verbatim}
+<meta content="text/html; charset=UTF8" http-equiv="Content-Type">
+\end{verbatim}
+
 % content
 \subsection{content}
 \label{suse:content}
@@ -364,6 +381,42 @@ will tell \fpdoc to read filenames from \file{fcl.lst}; each of the
 filenames found in it will be added to the list of files to be scanned for
 descriptions.
 
+%footer
+\subsection{footer}
+\label{suse:footer}
+This option tells the HTML engine to include the file indicated by this
+option as the footer of each generated HTML page. The file is assumed to
+contain a valid XHTML fragment. The contents of the file will be inserted 
+in the HTML tree.
+
+Example:
+\begin{verbatim}
+--footer=footer.xml
+\end{verbatim}
+Where \file{footer.xml} contains for example:
+\begin{verbatim}
+<hr/>
+<i>Date generated : June 1, 2008</i>
+\end{verbatim}
+
+This option is mutually exclusive with the \var{footer-date} option.
+
+%footer
+\subsection{footer-date}
+\label{suse:footerdate}
+This option tells the HTML engine to generate a footer for each page
+containing the current date. The optional format argument can be used
+to specify the format of the date. The format must be a formatting string
+as understoof by the \var{FormatDateTime} function in the \file{sysutils} 
+unit.
+
+For example
+\begin{verbatim}
+--footer-date='mmm dd yyyy'
+\end{verbatim}
+
+This option is mutually exclusive with the \var{footer} option.
+
 %format
 \subsection{format}
 \label{suse:format}
@@ -407,6 +460,33 @@ Example:
 \begin{verbatim}
 --html-search=../search.html
 \end{verbatim}
+
+% image-dir
+\subsection{image-dir}
+\label{suse:imagedir}
+This option tells the \latex backend where the images are located. By
+default, a directory \file{images} is assumed. A path using forward
+slashes must be provided.
+
+Example:
+\begin{verbatim}
+--image-dir=pictures/
+\end{verbatim}
+
+% image-dir
+\subsection{image-url}
+\label{suse:imageurl}
+This option tells the HTML backend where the images are located: the
+argument must be an absolute URL. By default, the images are assumed to be
+in a \var{images} directory below the package directory. Note that the URL 
+must be absolute, i.e. if it is provided, the link to the image will be 
+composed from the argument of this option with the filename.
+
+Example:
+\begin{verbatim}
+--image-url=http://www.mysite.org/docs/pictures/
+\end{verbatim}
+
 
 % import
 \subsection{import}
@@ -452,6 +532,19 @@ directory. But all links to items in the fcl.cnt file, will be prepended
 with \file{ms-its:fcl.chm::/}. This is how chm's are crosslinked.
 
 Note that for Latex documentation, this option is ignored.
+
+% index-colcount
+\subsection{index-colcount}
+\label{suse:index-file}
+For the HTML backend, this option can be used to specify the number of
+columns that should be used when generating an identifier index page.
+By default, 3 columns are used.
+
+Example:
+\begin{verbatim}
+--index-colcount=4
+\end{verbatim}
+Will use 4 columns instead.
 
 % index-file
 \subsection{index-file}
@@ -506,6 +599,12 @@ correctly.
 Switches on an internal latex syntax highlighter. This is not yet
 implemented. By default, syntax highlighting is provided by the syntax
 package that comes with \fpc.
+
+% make-searchable
+\subsection{make-searchable}
+This option generates an index of all the *.htm* files added in the chm, 
+including files added with the --other-files option so that a full text search
+is possible. This option only applies to the chm backend.
 
 % other-files
 \subsection{other-files}
@@ -620,7 +719,7 @@ are discussed below.
 
 % descr
 \subsection{descr}
-\subsection{suse:descr}
+%\subsection{suse:descr}
 When in update mode (\seesu{update}), this opion can be used to add an
 existing documentation file, as for \file{fpdoc}. Nodes that are already 
 in one of the existing documentation files will not be written to the 
@@ -651,6 +750,15 @@ for each function in the interface section. The result node is used in the
 documentation to document the return value of the function under a separate
 heading in the documentation page. Specifying this option suppresses the
 generation of the \tag{element} tag for the function result.
+
+% disable-private
+\subsection{disable-override}
+\label{suse:disableoverride}
+If this option is specified, then no \tag{element} tags will be generated
+for methods that override a method in a parent class. This means that the
+\file{fpdoc} engine will refer to the parent implementation for the documentation
+of the inherited method (provided it can find a parent implementation).
+
 
 % disable-private
 \subsection{disable-private}
@@ -876,6 +984,23 @@ Finally, to cross-reference between related functions, types or classes, a
 of links to related information. This tag can only have sub-tags which are
 \var{link} tags. For more about the \tag{link} tag, see \seetag{link}.
 
+When documenting methods or properties, it is possible to let the \var{fpdoc} engine
+refer to the parent method when it generates an overview of methods or
+properties. There are 2 ways of achieving this: 
+\begin{enumerate}
+\item Do not include an \tag{element} tag
+\item Specify the \attr{link} attribute, with the name of the parent
+method which contains the documentation, as in the following example:
+\begin{verbatim}
+<element name="TParent.SomeMethod">
+</element
+
+<element name="TChild.SomeMethod" link="TParent.SomeMethod"/>
+\end{verbatim}
+this can be used to speed up the search for the parent implementation,
+or to skip several parent classes.
+\end{enumerate}
+
 To add a section or page of documentation that is not directly related to a
 single identifier in a unit, a \tag{topic} tag can be used. This tag can
 appear inside a \var{package} or \var{module} tag, and can contain a
@@ -1028,6 +1153,7 @@ dd & definition data & \pageref{tag:dd} \\
 dl & definition list & \pageref{tag:dl} \\
 dt & Definition term & \pageref{tag:dt} \\
 i & format italics & \pageref{tag:i} \\
+img & include image & \pageref{tag:img} \\
 li & list element & \pageref{tag:li} \\
 link & Cross-reference & \pageref{tag:link} \\
 ol & numbered list & \pageref{tag:ol} \\
@@ -1282,6 +1408,33 @@ will be formatted as:\\
 Normal text \textit{italic text} normal text.
 
 See also: \seetag{b}, \seetag{u}
+
+% Tag img
+\subsection{\tag{img} : include image}
+\label{tag:img} 
+The \tag{img} tag will include an image in the text. It is considered
+equivalent to a paragraph tag. The required attribute \attr{file} can 
+be used to search to specify the filename. What kind of file is used
+depends on the output format. Normally, using \file{png} images should
+work with all output formats.
+
+The \attr{caption} attribute is optional and can be used to specify a
+caption text which will be displayed above or under the figure. 
+Lastly, the \attr{name} attribute can be used to attach
+a name to the figure (a label to which can be referred).
+
+For example:
+\begin{verbatim}
+<p>
+some text
+</p>
+<img file="myfile" caption="A nice caption"/>
+<p>
+Some more text.
+</p>
+\end{verbatim}
+
+See also: \seetag{p}.
 
 % Tag li
 \subsection{\tag{li} : list element}
@@ -1765,6 +1918,8 @@ All units in the \var{uses} clause together with their \tag{short}
 \item A listing of all variables in the unit.
 \item A listing of all functions/procedures in the unit.
 \item A listing of all classes in the unit.
+\item An index page per unit and per package. This is an index page, listing
+all top-level identifiers in the current unit or all units of the package.
 \end{enumerate}
 All these overviews are hyperlinked to pages which contain the documentation
 of each identifier. Each page starts with the name of the identifier,
