@@ -1188,10 +1188,14 @@ descendent can be made to manage collections of various kinds.
 </element>
 
 <element name="TFPList.Assign">
-<short>Assigns all items of a list to this list.</short>
+<short>Assign performs the given operation on the list.</short>
 <descr>
-<var>Assign</var> clears the list and adds all pointers in
-<var>Obj</var> to the list.
+<var>Assign</var> can be used to merge or assign lists It is an extended
+version of the usual <var>TPersistent.Assign</var> mechanism. The arguments
+<var>ListA</var> and <var>ListB</var> are used as sources of pointers to 
+add or remove elements from the current list, depending on the operation 
+<var>AOperation</var>. The available operations are documented in the 
+<link id="TListAssignOp"/> type.
 </descr>
 <seealso>
 <link id="TFPList.Add"/>
@@ -2976,7 +2980,8 @@ collections.
 <remark>
 The items in the collection are identified by their <link
 id="TCollectionItem.Index"/> property, which is a zero-based index, meaning
-that it can take values between <var>0</var> and <var>Count</var>.
+that it can take values between <var>0</var> and <var>Count-1</var>, borders
+included.
 </remark>
 </descr>
 <seealso>
@@ -3861,35 +3866,92 @@ sets the new capacity.
 
 <element name="TStrings.Delimiter">
 <short>Delimiter character used in <link id="#rtl.classes.TStrings.DelimitedText">DelimitedText</link>.</short>
-<descr></descr>
+<descr>
+<var>Delimiter</var> is the delimiter character used to separate the
+different strings in the stringlist when they are read or set through the
+<link id="TStrings.DelimitedText">DelimitedText</link> property.
+</descr>
+<seealso>
+<link id="TStrings.DelimitedText"/>
+</seealso>
 </element>
 
 
 <element name="TStrings.DelimitedText">
 <short>Get or set all strings in the list in a delimited form.</short>
-<descr></descr>
+<descr>
+<p>
+<var>DelimitedText</var> returns all strings, properly quoted with <link
+id="TStrings.Quotechar">QuoteChar</link> and separated by the <link
+id="TStrings.Delimiter">Delimiter</link> character.
+</p>
+<p>
+Strings are quoted if they contain a space or any character with ASCII value
+less than 32.
+</p>
+<p>
+The <link id="TStrings.CommaText">CommaText</link> property is a special
+case of delimited text where the delimiter character is a comma and the
+quote character is a double quote.
+</p>
+</descr>
+<seealso>
+<link id="TStrings.Delimiter"/>
+<link id="TStrings.Text"/>
+<link id="TStrings.QuoteChar"/>
+<link id="TStrings.CommaText"/>
+</seealso>
 </element>
 
 
 <element name="TStrings.QuoteChar">
 <short>Quote character used in <link id="#rtl.classes.TStrings.DelimitedText">DelimitedText</link>.</short>
-<descr></descr>
+<descr>
+<var>QuoteChar</var> is the character used by the  <link
+id="TStrings.DelimitedText">DelimitedText</link>  property to quote strings
+that have a space or non-printing character in it.
+</descr>
 </element>
 
 <element name="TStrings.NameValueSeparator">
 <short>Value of the character used to separate name,value pairs</short>
 <descr>
+<p>
+<var>NameValueSeparator</var> is the character used to separate name,value
+pair. By default, this is the equal sign (=), resulting in Name=Value pairs.
+</p>
+<p>
+It can be set to a colon for Name : Value pairs.
+</p>
 </descr>
 </element>
 
 
-<element name="TStrings.ValueFromIndex"><short></short>
-<descr>Return the value part of a string based on it's index.</descr>
+<element name="TStrings.ValueFromIndex">
+<short>Return the value part of a string based on it's index.</short>
+<descr>
+<var>ValueFromIndex</var> returns the value part of a string based on the
+string index. The value part are all characters in the string after the 
+<link id="TStrings.NameValueSeparator">NameValueSeparator</link>
+character, or all characters if the <var>NameValueSeparator</var> character
+is not present.
+</descr>
 </element>
 
 
-<element name="TStringList.CustomSort"><short></short>
-<descr></descr>
+<element name="TStringList.CustomSort">
+<short>Sort the stringlist using a custom sort algorithm</short>
+<descr>
+<var>CustomSort</var> sorts the stringlist with a custom comparison
+function. The function should compare 2 elements in the list, and return a
+negative number if the first item is before the second. It should return 0
+if the elements are equal, and a positive result indicates that the second
+elements should be before the first.
+</descr>
+<seealso>
+<link id="TStringList.Sorted"/>
+<link id="TStringList.Sort"/>
+</seealso>
 </element>
 
 
@@ -4643,8 +4705,8 @@ values:
 <tr><td>Constant</td><td>Meaning</td></tr>
 <tr><td>soFromBeginning</td><td>Set the position relative to the start of
 the stream.</td></tr>
-<tr><td>soFromCurrent</td><td>Set the position relative to the beginning of
-the stream.</td></tr>
+<tr><td>soFromCurrent</td><td>Set the position relative to the current
+position in the stream.</td></tr>
 <tr><td>soFromEnd</td><td>Set the position relative to the end of the
 stream.</td></tr>
 </table>
@@ -5674,7 +5736,7 @@ occur while writing to the stream.
 <element name="TMemoryStream.Destroy">  <!-- Destructor -->
 <short>Frees any allocated memory and destroys the memory stream.</short>
 <descr>
-<var>Free</var> clears the memory stream, thus in effect freeing any memory 
+<var>Destroy</var> clears the memory stream, thus in effect freeing any memory 
 allocated for it, and then frees the memory stream.
 </descr>
 </element>
@@ -5949,8 +6011,11 @@ method.</short>
 </element>
 
 <element name="TResourceStream.CreateFromID">  <!-- Constructor -->
-<short>Creates a new instance of a resource stream with resource</short>
+<short>Creates a new instance of a resource stream with a resource</short>
 <descr>
+The resource is loaded from the loaded module (identified by the handle
+<var>Instance</var>), identifier <var>ResID</var> and type
+<var>ResType</var>.
 </descr>
 <seealso>
 </seealso>
@@ -6252,7 +6317,7 @@ classes.
 <descr>
 <p>
 This function should return the type of the next value in the stream, 
-but should not read it, i.e. the stream position should not be altered by
+but should not read the actual value, i.e. the stream position should not be altered by
 this method. This is used to 'peek' in the stream what value is next.
 </p>
 </descr>
@@ -6301,6 +6366,10 @@ component definition, as well as <var>AChildPos</var>. The
 <var>CompClassName</var> should be filled with the class name of the
 streamed component, and the <var>CompName</var> argument should be filled
 with the name of the component.
+</p>
+<p>
+<var>AChildPos</var> is used to change the ordering in which components
+appear below their parent component when streaming descendent forms.
 </p>
 </descr>
 <seealso>
@@ -6422,7 +6491,8 @@ an identifier of type <var>ValueType</var> from the stream after a call to
 <link id="TAbstractObjectReader.Readvalue">ReadValue</link> returned
 <var>vaIdent</var>. The identifier 
 should be returned as a string. Note that in some cases the identifier does 
-not actually have to be in the stream;
+not actually have to be in the stream. The following table indicates which
+identifiers must actually be read:
 </p>
 <table>
 <tr><td>ValueType</td><td>Expected value</td></tr>
@@ -6572,7 +6642,7 @@ as <var>1 shl ord(value)</var>.
 <short>Read a shortstring from the stream</short>
 <descr>
 <var>ReadStr</var> is called by the streaming system if it expects to read a
-shortstring from the stream  (i.e. after <link id="TAbstractObjectReader.ReadValue">ReadValue</link> 
+string from the stream  (i.e. after <link id="TAbstractObjectReader.ReadValue">ReadValue</link> 
 returned a valuetype of <var>vaLString</var>,<var>vaWstring</var> or 
 <var>vaString</var>). The return value is the string.
 </descr>
@@ -6885,9 +6955,9 @@ an exception will be raised.
 <element name="TReader.BeginReferences">  <!-- Procedure -->
 <short>Initializes the component referencing mechanism.</short>
 <descr>
+When streaming components, the streaming mechanism keeps a list of existing
+components that can be referenced to. This method initializes up that system.
 </descr>
-<seealso>
-</seealso>
 </element>
 
 <element name="TReader.CheckValue">  <!-- Procedure -->
@@ -6926,6 +6996,8 @@ an exception will be raised.
 <element name="TReader.EndReferences">  <!-- Procedure -->
 <short>Finalizes the component referencing mechanism.</short>
 <descr>
+When streaming components, the streaming mechanism keeps a list of existing
+components that can be referenced to. This method cleans up that system.
 </descr>
 <seealso>
 </seealso>
@@ -7078,6 +7150,8 @@ an exception will be raised.
 <element name="TReader.CopyValue">  <!-- Procedure -->
 <short>Copy a value to a writer.</short>
 <descr>
+<var>CopyValue</var> reads the next value from the reader stream, and writes
+it to the passed <var>Writer</var>.
 </descr>
 <seealso>
 </seealso>
@@ -9161,12 +9235,17 @@ removing the component from it's owner's owned component list using the
 <element name="TComponent.Name">  <!-- Property -->
 <short>Name of the component.</short>
 <descr>
+<p>
 <var>Name</var> is the name of the component. This name should be a valid
-identifier, i.e. must start with a letter, and can contain only letters,
+identifier, i.e. must start with a letter or underscore, and can contain only letters,
 numbers and the underscore character. When attempting to set the name of a
 component, the name will be checked for validity. Furthermore, when a
 component is owned by another component, the name must be either empty
 or must be unique among the child component names.
+</p>
+<p>
+By "letters", 7-bit letters are meant.
+</p>
 </descr>
 <errors>
 Attempting to set the name to an invalid value will result in an exception
@@ -9292,8 +9371,7 @@ directly.
 <descr>
 <p>
 <var>Create</var> calls the inherited constructor, and then initializes the 
-list of clients controls (or action lists) by adding the <var>AClient</var>
-argument to the list of client controls.
+list of clients controls (or action lists).
 </p>
 <p>
 Under normal circumstances it should not be necessary to create a
@@ -10695,10 +10773,14 @@ event will also occur.
 
 <!-- procedure Visibility: public -->
 <element name="TList.Assign">
-<short>Copy the contents of another list.</short>
+<short>Copy the contents of other lists.</short>
 <descr>
-<var>Assign</var> copies the pointers of the <var>Obj</var> list to the list.
-The list is cleared prior to copying.
+<var>Assign</var> can be used to merge or assign lists It is an extended
+version of the usual <var>TPersistent.Assign</var> mechanism. The arguments
+<var>ListA</var> and <var>ListB</var> are used as sources of pointers to 
+add or remove elements from the current list, depending on the operation 
+<var>AOperation</var>. The available operations are documented in the 
+<link id="TListAssignOp"/> type.
 </descr>
 <seealso>
 <link id="TList.Clear"/>
@@ -10884,7 +10966,7 @@ collection.
 <var>cnDeleted</var> notification.
 </descr>
 <errors>
-If an invalid index is specified, an exception is raised.
+If an invalid index is specified, an <var>EListError</var> exception is raised.
 </errors>
 <seealso>
 <link id="TCollection.Items"/>
@@ -11002,12 +11084,13 @@ property is <var>True</var>.
 <short>Reference to the source stream.</short>
 <descr>
 <p>
-<var>Source</var> is the source stream. It should be uses by descendent
+<var>Source</var> is the source stream. It should be used by descendent
 streams to access the source stream to read from or write to.
 </p>
 <p>
-Do not free the <var>Source</var> reference directly. Either the owner
-stream instance should free the source stream or 
+Do not free the <var>Source</var> reference directly if
+<var>SourceOwner</var> is <var>True</var>. In that case the owner
+stream instance will free the source stream itself.
 </p>
 </descr>
 <seealso>
@@ -11402,7 +11485,7 @@ handler, see <link id="TPropertyNotFoundEvent"/>.
 <descr>
 <var>OnSetMethodProperty</var> can be set to handle the setting of method
 properties. This handler can be used by an IDE to prevent methods from
-actually being when an object is being streamed in the designer.
+actually being assigned when an object is being streamed in the designer.
 </descr>
 <seealso>
 <link id="TReader.OnReadStringProperty"/>
@@ -11730,10 +11813,21 @@ The exact moment of triggering is dependent on the value of the
 <short>Determines when <var>OnCreate</var> and <var>OnDestroy</var> are
 triggered.</short>
 <descr>
+<p>
 <var>OldCreateOrder</var> determines when exactly the <link
 id="TDataModule.OnCreate">OnCreate</link> and <link
-id="TDataModule.OnDestroy">OnDestroy</link> event handlers are called:
-
+id="TDataModule.OnDestroy">OnDestroy</link> event handlers are called.
+</p>
+<p>
+If set to <var>True</var>, then the <var>OnCreate</var> event handler is called
+after the data module was streamed. If it is set to <var>False</var>, then
+the handler is called prior to the streaming process.
+</p>
+<p>
+If set to <var>True</var>, then the <var>OnDestroy</var> event handler is called
+before the data module is removed from the streaming system. If it is set to <var>False</var>, then
+the handler is called after the data module was removed from the streaming process.
+</p>
 </descr>
 <seealso>
 <link id="TDataModule.OnDestroy"/>
@@ -12671,7 +12765,7 @@ and returns the position at which it has been added.
 <element name="IInterfaceList.Lock">
 <short>Lock the list</short>
 <descr>
-<var>Lock</var> locks the list and returns an instance to the internal list. 
+<var>Lock</var> locks the list. 
 After a call to lock, the object list can only be accessed by the current
 thread, untill <link id="IInterfaceList.Unlock">UnLock</link> is called.
 </descr>
@@ -12686,7 +12780,7 @@ thread, untill <link id="IInterfaceList.Unlock">UnLock</link> is called.
 <short>Unlock the list.</short>
 <descr>
 <var>Unlock</var> unlocks a locked list. After a call to <var>UnLock</var>,
-other lists are again able to access the list.
+other threads are again able to access the list.
 </descr>
 <seealso>
 <link id="TList.UnLock"/>
@@ -13551,7 +13645,7 @@ directly.
 
 <!-- function Visibility: public -->
 <element name="TStreamAdapter.Stat">
-<short>Return statistical data from the stream</short>
+<short>Return statistical data about the stream</short>
 <descr>
 <var>Stat</var> implements <link id="IStream.Stat"/>.
 </descr>
@@ -13659,8 +13753,8 @@ method should return the current instance.
 a component operation: it is the equivalent of the <link
 id="TComponent.Notification"/> method of <var>TComponent</var> for
 interfaces. If the interface implements <link
-id="IInterfaceComponentReference"/>, then the component that implements it
-is notified of the given operation <var>Op</var>.
+id="IInterfaceComponentReference"/>, then the component that implements the
+interface is notified of the given operation <var>Op</var>.
 </descr>
 <errors>
 None.
