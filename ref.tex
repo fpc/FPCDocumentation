@@ -272,17 +272,21 @@ following keywords:
 \begin{verbatim}
 as
 class
+dispinterface
 except
 exports
 finalization
 finally
 initialization
+inline
 is
 library
 on
 out
+packed
 property
 raise
+resourcestring
 threadvar
 try
 \end{verbatim}
@@ -533,47 +537,21 @@ of version 1.9, 64-bits constants can be specified.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Typed constants
 \section{Typed constants}
+\label{se:typedconstants}
 \index{Constants!Typed}\index{Variables!Initialized}
 Typed constants serve to provide a program with initialised variables.
-Contrary to ordinary constants, they may be assigned to at run-time.
-The difference with normal variables is that their value is initialised
-when the program starts, whereas normal variables must be initialised
-explicitly.\index{Const}
+Contrary to ordinary constants, a value can be assigned to them at 
+run-time. Their definition is quite simple:
+
 \input{syntax/tconst.syn}
-Given the declaration:
-\begin{verbatim}
-Const
-  S : String = 'This is a typed constant string';
-\end{verbatim}
-The following is a valid assignment:
-\begin{verbatim}
- S := 'Result : '+Func;
-\end{verbatim}
-Where \var{Func} is a function that returns a \var{String}.
-Typed constants are often used to initialize arrays and records. For arrays,
-the initial elements must be specified, surrounded by round brackets, and
-separated by commas. The number of elements must be exactly the same as
-the number of elements in the declaration of the type.
-As an example:
-\begin{verbatim}
-Const
-  tt : array [1..3] of string[20] = ('ikke', 'gij', 'hij');
-  ti : array [1..3] of Longint = (1,2,3);
-\end{verbatim}
-For constant records, each element of the record should be specified, in
-the form \var{Field: Value}, separated by semicolons, and surrounded by round
-brackets.\index{Record!Constant}
-As an example:
-\begin{verbatim}
-Type
-  Point = record
-    X,Y : Real
-    end;
-Const
-  Origin : Point = (X:0.0; Y:0.0);
-\end{verbatim}
-The order of the fields in a constant record needs to be the same as in the type declaration,
-otherwise a compile-time error will occur.
+
+This is an old concept from Turbo Pascal, which has been replaced with 
+support for initialized variables: For a detailed description, see 
+\sees{initializedvars}.
+
+Support for typed constants is controlled by the \var{\{\$J\}} directive: 
+it can be switched off, but is on by default (for Turbo Pascal compatibility).
+Initialized variables are always allowed.
 
 \begin{remark}
 It should be stressed that typed constants are initialized at program start.
@@ -582,13 +560,6 @@ also initialized at program start. If their value was changed during previous
 invocations of the function, they will retain their changed value, i.e. they
 are not initialized each time the function is invoked.
 \end{remark}
-
-\begin{remark}
-Support for typed constants is controlled by the \var{\{\$J\}} directive: it
-can be switched off. Initialized variables are always allowed.
-\end{remark}
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % resource strings
@@ -777,7 +748,7 @@ assignments:
 Boolean expressions are also used in conditions.
 
 \begin{remark}
-In \fpc, boolean expressions are always evaluated in such a
+In \fpc, boolean expressions are by default always evaluated in such a
 way that when the result is known, the rest of the expression will no longer
 be evaluated: this is called short-cut boolean evaluation. 
 
@@ -789,6 +760,8 @@ which may have strange side-effects.
  A := B and Func;
 \end{verbatim}
 Here \var{Func} is a function which returns a \var{Boolean} type.
+
+This behaviour is controllable by the \var{\{\$B \}} compiler directive.
 \end{remark}
 
 \subsubsection{Enumeration types}
@@ -993,11 +966,12 @@ Error: string length must be a value from 1 to 255
 
 For short strings, the length is stored in the character at index 0. Old
 \tp code relies on this, and it is implemented similarly in Free
-Pascal. For Ansistrings this is not correct, and the compiler will give a 
-warning if it detects this construct. For ansistrings, the length must be
-retrieved with the \var{Length} function or set with the \var{SetLength}
-function. Both functions work on shortstrings as well, and should be used
-for code that must compile in both Object Pascal as old \tp mode.
+Pascal. 
+Despite this, to write portable code, it is best to set the length of a 
+shortstring  with the \var{SetLength} call, and to retrieve
+it with the \var{Length} call.  These functions will always work, whatever
+the internal representation of the shortstrings or other strings in use:
+this allows easy switching between the various string types.
 \end{remark}
 
 \subsection{Ansistrings}
@@ -1088,13 +1062,14 @@ It's recommended to do this e.g. when typecasting an ansistring to a PChar var
 and passing it to a C routine that modifies the string.
 
 The \var{Length} function must be used to get the length of an
-ansistring: the lentgth is not stored at character 0 of the ansistring. The
-construct
+ansistring: the length is not stored at character 0 of the ansistring. 
+The construct
 \begin{verbatim}
  L:=ord(S[0]);
 \end{verbatim}
 which was valid for \tp shortstrings, is no longer correct for
 Ansistrings. The compiler will warn if such a construct is encountered.
+
 
 To set the length of an ansistring, the \var{SetLength} function must be used.
 Constant ansistrings have a reference count of -1 and are treated specially,
@@ -2289,6 +2264,63 @@ entered.
 Note that the behaviour for local initialized variables is different from
 the one of a local typed constant. A local typed constant behaves like a
 global initialized variable.
+
+\section{Initialized variables}
+\label{se:initializedvars}\index{Variables!Initialized}
+By default, variables in pascal are not initialized after their declaration.
+Any assumption that they contain 0 or any other default value is erroneous:
+They can contain rubbish. To remedy this, the concept of initialized variables 
+exists. The difference with normal variables is that their declaration includes 
+an initial value, as can be seen in the diagram in the previous section.
+
+Given the declaration:
+\begin{verbatim}
+Var
+  S : String = 'This is an initialized string';
+\end{verbatim}
+The value of the variable following will be initialized with the provided
+value. The following is an even better way of doing this:
+\begin{verbatim}
+Const
+  SDefault = This is an initialized string';
+
+Var
+  S : String = SDefault;
+\end{verbatim}
+Initialization is often used to initialize arrays and records. For arrays,
+the initial elements must be specified, surrounded by round brackets, and
+separated by commas. The number of elements must be exactly the same as
+the number of elements in the declaration of the type.
+As an example:
+\begin{verbatim}
+Var
+  tt : array [1..3] of string[20] = ('ikke', 'gij', 'hij');
+  ti : array [1..3] of Longint = (1,2,3);
+\end{verbatim}
+For constant records, each element of the record should be specified, in
+the form \var{Field: Value}, separated by semicolons, and surrounded by round
+brackets.\index{Record!Constant}
+As an example:
+\begin{verbatim}
+Type
+  Point = record
+    X,Y : Real
+    end;
+Var
+  Origin : Point = (X:0.0; Y:0.0);
+\end{verbatim}
+The order of the fields in a constant record needs to be the same as in the type 
+declaration, otherwise a compile-time error will occur.
+
+\begin{remark}
+It should be stressed that initialized variables are initialized when they
+come into scope, in difference with typed constants, which are initialized 
+at program start.
+This is also true for {\em local} initialized variables. Local initialized are
+initialized whenever the routine is called. Any changes that occurred in the
+previous invocation of the routine will be undone, because they are again
+initialized.
+\end{remark}
 
 \section{Thread Variables}
 \index{Thread Variables}\index{Threadvar}\keywordlink{threadvar}
@@ -5253,7 +5285,7 @@ Program testw;
 Type AR = record
       X,Y : Longint;
      end;
-     PAR = Record;
+     PAR = ^Ar;
 
 Var S,T : Ar;
 begin
@@ -5276,7 +5308,6 @@ permitted to change the pointer or the class in the \var{With} block.
 With the definitions of the previous example, the following illustrates
 what it is about:
 \begin{verbatim}
-
 Var p : PAR;
 
 begin
@@ -6643,6 +6674,8 @@ The program header is provided for backwards compatibility, and is ignored
 by the compiler.
 
 The uses clause serves to identify all units that are needed by the program.
+All identifiers which are declared in the the interface section of the units
+in the uses clause are added to the known identifiers of the program.
 The system unit doesn't have to be in this list, since it is always loaded
 by the compiler.
 
@@ -6672,6 +6705,13 @@ support long file names.
 Note that the above search is performed in each directory in the search
 path. 
 
+The program block contains the statements that will be executed when the
+program is started. Note that these statements need not necessarily be the 
+first statements that are executed: the initialization code of the units
+may also contain statements that are executed prior to the program code.
+
+The structure of a program block is discussed below.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Units
 \section{Units}
@@ -6680,15 +6720,112 @@ A unit contains a set of declarations, procedures and functions that can be
 used by a program or another unit.
 The syntax for a unit is as follows:
 \input{syntax/unit.syn}
+As can be seen from the syntax diagram, a unit always consists of a
+interface and an implementation part. Optionally, there is an initialization
+block and a finalization block, containing code that will be executed when
+the program is started, and when the program stops, respectively.
+
+Both the interface part or implementation part can be empty, but the
+keywords \var{Interface} and \var{implementation} must be specified.
+The following is a completely valid unit;
+\begin{verbatim}
+unit a;
+
+interface
+
+implementation
+
+end.
+\end{verbatim}
+
 The interface part declares all identifiers that must be exported from the
 unit. This can be constant, type or variable identifiers, and also procedure
-or function identifier declarations. Declarations inside the
-implementation part are {\em not} accessible outside the unit. The
-implementation must contain a function declaration for each function or
-procedure that is declared in the interface part. If a function is declared
-in the interface part, but no declaration of that function is present in the
-implementation part, then the compiler will give an error.
+or function identifier declarations.  The interface part cannot contain code
+that is executed: only declarations are allowed. The following is a valid
+interface part:
+\begin{verbatim}
+unit a;
 
+interface
+
+uses b;
+
+Function MyFunction : SomeBType;
+
+Implementation
+\end{verbatim}
+The type \var{SomeBType} is defined in unit \var{b}.
+
+All functions and methods that are declared in the interface part must
+be implemented in the implementation part of the unit, except for
+declarations of external functions or procedures. If a declared method 
+or function is not implemented in the implementation part, the compiler
+will give an error, for example the following:
+\begin{verbatim}
+unit unita;
+
+interface
+
+Function MyFunction : Integer;
+
+implementation
+
+end.
+\end{verbatim}
+Will result in the following error:
+\begin{verbatim}
+unita.pp(5,10) Error: Forward declaration not solved "MyFunction:SmallInt;"
+\end{verbatim}
+
+The implementation part is primarily intended for the implementation of the
+functions and procedures declared in the interface part. However, it can
+also contain declarations of it's own: The declarations inside the 
+implementation part are {\em not} accessible outside the unit. 
+
+The initialization and finalization part of a unit are optional:
+
+The initialization block is used to initialize certain variables or 
+execute code that is necessary for the correct functioning of the unit. 
+The initialization parts of the units
+are executed in the order that the compiler loaded the units when compiling 
+a program. They are executed before the first statement of the program is
+executed.
+
+The finalization part of the units are executed in the reverse order of the
+initialization execution. They are used for instance to clean up any resources 
+allocated in the initialization part  of the unit, or during the lifetime of
+the program. The finalization part is always executed in the case of a
+normal program termination: whether it is because the final \var{end} is
+reached in the program code or because a \var{Halt} instruction was executed
+somewhere.
+
+In case the program stops during the execution of the initialization blocks
+of one of the units, only the units that were already initialized will be
+finalized.
+
+Note that if a \var{finalization} block is present, an \var{Initialization}
+block must be present, but it can be empty:
+\begin{verbatim}
+Initialization
+
+Finalization
+  CleanupUnit;
+end.
+\end{verbatim}
+An initialization section by itself (i.e. without finalization) may simply be 
+replaced by a statement block. That is, the following:
+\begin{verbatim}
+Initialization
+  InitializeUnit;
+end.
+\end{verbatim}
+is completely equivalent to
+\begin{verbatim}
+Begin
+  InitializeUnit;
+end.
+\end{verbatim}
+\section{Unit dependencies}
 When a program uses a unit (say \file{unitA}) and this units uses a second
 unit, say \file{unitB}, then the program depends indirectly also on
 \var{unitB}. This means that the compiler must have access to \file{unitB} when
