@@ -1,0 +1,1052 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    AVL_Tree
+  ====================================================================
+-->
+
+<module name="AVL_Tree">
+<short>AVL tree implementation</short>
+<descr>
+The <var>avl_tree</var> unit implements a general-purpose AVL (balanced) tree class:
+the <link id="TAVLTree"/> class and it's associated data node class <link
+id="TAVLTreeNode"/>.
+</descr>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>List classes</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="SysUtils">
+<short>Exception support and string handling</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.AVL_Tree.TAVLTreeNode
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TAVLTreeNode">
+<short>Represents a node in the tree.</short>
+<descr>
+<var>TAVLTreeNode</var> represents a single node in the AVL tree. It
+contains references to the other nodes in the tree, and provides a 
+<link id="TAVLTreeNode.Data">Data</link> pointer which can be used to store
+the data, associated with the node.
+</descr>
+<seealso>
+<link id="TAVLTree"/>
+<link id="TAVLTreeNode.Data"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="TAVLTreeNode.Parent">
+<short>Reference to the parent node in the tree.</short>
+<descr>
+<var>Parent</var> contains a reference to the parent node of the current
+node. It is <var>Nil</var> for the root node.
+</descr>
+<seealso>
+<link id="TAVLTreeNode.Left">left</link>
+<link id="TAVLTreeNode.Right">Right</link>
+</seealso>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="TAVLTreeNode.Left">
+<short>Reference to the left subtree of the current node.</short>
+<descr>
+<var>Left</var> contains a reference to the first node in the left subtree
+of the current node. It is <var>Nil</var> if there is no left subtree.
+</descr>
+<seealso>
+<link id="TAVLTreeNode.Parent">Parent</link>
+<link id="TAVLTreeNode.Right">Right</link>
+</seealso>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="TAVLTreeNode.Right">
+<short>Reference to the right subtree of the current node.</short>
+<descr>
+<var>Right</var> contains a reference to the first node in the right subtree
+of the current node. It is <var>Nil</var> if there is no right subtree.
+</descr>
+<seealso>
+<link id="TAVLTreeNode.Parent">Parent</link>
+<link id="TAVLTreeNode.Left">Left</link>
+</seealso>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="TAVLTreeNode.Balance">
+<short>Balance of the current node</short>
+<descr>
+<var>Balance</var> is the balance of the current node, that is, the <link
+id="TAVLTreeNode.TreeDepth">Depth</link> of the right subtree minus the 
+depth of the left subtree. If <var>balance</var> is one of -1, 0, 1 then 
+the node is considered balanced.
+</descr>
+<seealso>
+<link id="TAVLTreeNode.TreeDepth">TreeDepth</link>
+</seealso>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="TAVLTreeNode.Data">
+<short>The data item associated with this node.</short>
+<descr>
+<var>Data</var> is the data item associated with this node. It is not freed
+when the node is freed, the programmer is responsible for freeing the actual
+data.
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAVLTreeNode.Clear">
+<short>Clears the node's data</short>
+<descr>
+<var>Clear</var> clears all pointers and references in the node. It does not
+free the memory pointed to by these references.
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTreeNode.TreeDepth">
+<short>Level of the node in the tree below</short>
+<descr>
+<var>TreeDepth</var> is the height of the node: this is the largest height of
+the left or right nodes, plus 1. If no nodes appear below this node
+(<var>left</var> and <var>Right</var> are <var>Nil</var>), the depth
+is 1.
+</descr>
+<seealso>
+<link id="TAVLTreeNode.Balance">Balance</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTreeNode.TreeDepth.Result">
+<short>The depth of the current node</short>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TAVLTreeNode.Create">
+<short>Create a new node instance</short>
+<descr>
+Create a new tree node instance. 
+</descr>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TAVLTreeNode.Destroy">
+<short>Free the node</short>
+<descr>
+<var>Destroy</var> frees the current node. It does not free the left or
+right or data nodes.
+</descr>
+<seealso>
+<link id="TAVLTreeNode.Clear">Clear</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.AVL_Tree.TAVLTree
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TAVLTree">
+<short>AVL tree component</short>
+<descr>
+<p>
+<var>TAVLTree</var> maintains a balanced AVL tree. The tree consists of <link
+id="TAVLTreeNode"/> nodes, each of which has a <var>Data</var> pointer 
+associated with it. The <var>TAVLTree</var> component offers methods to
+balance and search the tree.
+</p>
+<p>
+By default, the list is searched with a simple pointer comparison algorithm, 
+but a custom search mechanism can be specified in the <link
+id="TAVLTree.OnCompare">OnCompare</link> property.
+</p>
+</descr>
+<seealso>
+<link id="TAVLTreeNode"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="TAVLTree.Root">
+<short>Root node of the tree</short>
+<descr>
+<var>Root</var> is the root node of the tree. It should not be set
+explicitly, only use the <link id="TAVLTree.Add">Add</link>,
+<link id="TAVLTree.Delete">Delete</link>, 
+<link id="TAVLTree.Remove">Remove</link>, 
+<link id="TAVLTree.RemovePointer">RemovePointer</link>, 
+or <link id="TAVLTree.Clear">Clear</link> methods to manipulate the items in the
+tree.
+</descr>
+<seealso>
+<link id="TAVLTree.Add"/>
+<link id="TAVLTree.Delete"/>
+<link id="TAVLTree.Remove"/>
+<link id="TAVLTree.RemovePointer"/>
+<link id="TAVLTree.Clear"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.Find">
+<short>Find a data item in the tree.</short>
+<descr>
+<p>
+<var>Find</var> uses the default <link id="TAVLTree.OnCompare">OnCompare</link>
+comparing function to find the <var>Data</var> pointer in the tree.
+It returns the <var>TAVLTreeNode</var> instance that results in a successful
+compare with the <var>Data</var> pointer, or <var>Nil</var> if none is found.
+</p>
+<p>
+The default <var>OnCompare</var> function compares the actual pointers,
+which means that by default <var>Find</var> will give the same result
+as <link id="TAVLTree.FindPointer">FindPointer</link>.
+</p>
+</descr>
+<seealso>
+<link id="TAVLTree.OnCompare">OnCompare</link>
+<link id="TAVLTree.FindKey">FindKey</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.Find.Result">
+<short>Tree node corresponding to <var>Data</var> item.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.Find.Data">
+<short>Data item to search for.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.FindKey">
+<short>Find a data item in the tree using alternate compare mechanism</short>
+<descr>
+<var>FindKey</var> uses the specified <var>OnCompareKeyWithData</var>
+comparing function to find the <var>Key</var> pointer in the tree
+It returns the <var>TAVLTreeNode</var> instance that matches the
+<var>Data</var> pointer, or <var>Nil</var> if none is found.
+</descr>
+<seealso>
+<link id="TAVLTree.OnCompare">OnCompare</link>
+<link id="TAVLTree.Find">Find</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.FindKey.Result">
+<short>Tree node corresponding to <var>Key</var> item.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindKey.Key">
+<short>Data item to search for.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindKey.OnCompareKeyWithData">
+<short>Data pointer comparison callback</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.FindSuccessor">
+<short>Find successor to node</short>
+<descr>
+<p>
+<var>FindSuccessor</var> returns the successor to <var>ANode</var>: this is the
+leftmost node in the right subtree, or the leftmost node above the node
+<var>ANode</var>. This can of course be <var>Nil</var>.
+</p>
+<p>
+This method is used when a node must be inserted at the rightmost position.
+</p>
+</descr>
+<seealso>
+<link id="TAVLTree.FindPrecessor"/>
+<link id="TAVLTree.MoveDataRightMost"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.FindSuccessor.Result">
+<short>The succeding node</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindSuccessor.ANode">
+<short>The node from which to start the search</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.FindPrecessor">
+<short></short>
+<descr>
+<p>
+<var>FindPrecessor</var> returns the successor to <var>ANode</var>: this is
+the rightmost node in the left subtree, or the rightmost node above the node
+<var>ANode</var>. This can of course be <var>Nil</var>.
+</p>
+<p>
+This method is used when a node must be inserted at the leftmost position.
+</p>
+</descr>
+<seealso>
+<link id="TAVLTree.FindSuccessor"/>
+<link id="TAVLTree.MoveDataLeftMost"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.FindPrecessor.Result">
+<short>The preceding node</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindPrecessor.ANode">
+<short>The node from which to start the search</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.FindLowest">
+<short>Find the lowest (leftmost) node in the tree.</short>
+<descr>
+<var>FindLowest</var> returns the leftmost node in the tree, i.e. the node
+which is reached when descending from the rootnode via the <link
+id="TAVLTreeNode.Left">left</link> subtrees.
+</descr>
+<seealso>
+<link id="TAVLTree.FindHighest">FindHighest</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.FindLowest.Result">
+<short>The leftmost (lowest) node in the tree.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.FindHighest">
+<short>Find the highest (rightmost) node in the tree.</short>
+<descr>
+<var>FindHighest</var> returns the rightmost node in the tree, i.e. the node
+which is reached when descending from the rootnode via the <link
+id="TAVLTreeNode.Right">Right</link> subtrees.
+</descr>
+<seealso>
+<link id="TAVLTree.FindLowest">FindLowest</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.FindHighest.Result">
+<short>The rightmost (highest) node in the tree.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.FindNearest">
+<short>Find the node closest to the data in the tree</short>
+<descr>
+<var>FindNearest</var> searches the node in the data tree that is closest to
+the specified <var>Data</var>. If <var>Data</var> appears in the tree, then
+its node is returned.
+</descr>
+<seealso>
+<link id="TAVLTree.FindHighest">FindHighest</link>
+<link id="TAVLTree.FindLowest">FindLowest</link>
+<link id="TAVLTree.Find">Find</link>
+<link id="TAVLTree.FindKey">FindKey</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.FindNearest.Result">
+<short>The node that is closest to <var>Data</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindNearest.Data">
+<short>The data item to search for.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.FindPointer">
+<short>Search for a data pointer</short>
+<descr>
+<p>
+<var>FindPointer</var> searches for a node where the actual data pointer
+equals <var>Data</var>. This is a more fine search than <link
+id="TAVLTree.Find">find</link>, where a custom compare function can be used.
+</p>
+<p>
+The default <link id="TAVLTree.OnCompare">OnCompare</link> compares the data
+pointers, so the default <var>Find</var> will return the same node as
+<var>FindPointer</var>
+</p>
+</descr>
+<seealso>
+<link id="TAVLTree.Find"/>
+<link id="TAVLTree.FindKey"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.FindPointer.Result">
+<short>The node that matches <var>Data</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindPointer.Data">
+<short>The data pointer to search for.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.FindLeftMost">
+<short>Find the node most left to a specified data node</short>
+<descr>
+<p>
+<var>FindLeftMost</var> finds the node most left from the 
+<var>Data</var> node. It starts at the preceding node 
+for <var>Data</var> and tries to move as far right in the 
+tree as possible.
+</p>
+<p>
+This operation corresponds to finding the previous item in a list.
+</p>
+</descr>
+<seealso>
+<link id="TAVLTree.FindRightMost"/>
+<link id="TAVLTree.FindLeftMostKey"/>
+<link id="TAVLTree.FindRightMostKey"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.FindLeftMost.Result">
+<short>The leftmost node relative to <var>Data</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindLeftMost.Data">
+<short>The data item where to start the search from</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.FindRightMost">
+<short>Find the node most right to a specified node</short>
+<descr>
+<p>
+<var>FindRightMost</var> finds the node most right from the
+<var>Data</var> node. It starts at the succeding node for 
+<var>Data</var> and tries to move as far left in the tree 
+as possible.
+</p>
+<p>
+This operation corresponds to finding the next item in a list.
+</p>
+</descr>
+<seealso>
+<link id="TAVLTree.FindLeftMost"/>
+<link id="TAVLTree.FindLeftMostKey"/>
+<link id="TAVLTree.FindRightMostKey"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.FindRightMost.Result">
+<short>The rightmost node relative to <var>Data</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindRightMost.Data">
+<short>The data item where to start the search from</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.FindLeftMostKey">
+<short>Find the node most left to a specified key node</short>
+<descr>
+<var>FindLeftMostKey</var> finds the node most left from the
+node associated with <var>Key</var>. It starts at the preceding node
+for <var>Key</var> and tries to move as far left in the
+tree as possible.
+</descr>
+<seealso>
+<link id="TAVLTree.FindLeftMost"/>
+<link id="TAVLTree.FindRightMost"/>
+<link id="TAVLTree.FindRightMostKey"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.FindLeftMostKey.Result">
+<short>The leftmost node for <var>Key</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindLeftMostKey.Key">
+<short>Key identifiying the node where to start the search.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindLeftMostKey.OnCompareKeyWithData">
+<short>Callback to compare key value with data item</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.FindRightMostKey">
+<short>Find the node most right to a specified key node</short>
+<descr>
+<var>FindRightMostKey</var> finds the node most left from the
+node associated with <var>Key</var>. It starts at the succeding node
+for <var>Key</var> and tries to move as far right in the
+tree as possible.
+</descr>
+<seealso>
+<link id="TAVLTree.FindLeftMost"/>
+<link id="TAVLTree.FindRightMost"/>
+<link id="TAVLTree.FindLeftMostKey"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.FindRightMostKey.Result">
+<short>The rightmost node for <var>Key</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindRightMostKey.Key">
+<short>Key identifiying the node where to start the search.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindRightMostKey.OnCompareKeyWithData">
+<short>Callback to compare key value with data item</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.FindLeftMostSameKey">
+<short>Find the node most left to a specified node with the same data</short>
+<descr>
+<var>FindLefMostSameKey</var> finds the node most left from and with the same
+data as the specified node <var>ANode</var>.
+</descr>
+<seealso>
+<link id="TAVLTree.FindLeftMost"/>
+<link id="TAVLTree.FindLeftMostKey"/>
+<link id="TAVLTree.FindRightMostSameKey"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.FindLeftMostSameKey.Result">
+<short>The treenode that was found, or nil if none found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindLeftMostSameKey.ANode">
+<short>The node to start the search from</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.FindRightMostSameKey">
+<short>Find the node most right of a specified node with the same data</short>
+<descr>
+<var>FindRighMostSameKey</var> finds the node most right from and with the
+same data as the specified node <var>ANode</var>.
+</descr>
+<seealso>
+<link id="TAVLTree.FindRightMost"/>
+<link id="TAVLTree.FindRightMostKey"/>
+<link id="TAVLTree.FindLeftMostSameKey"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.FindRightMostSameKey.Result">
+<short>The treenode that was found, or nil if none found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FindRightMostSameKey.ANode">
+<short>The node to start the search from</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAVLTree.Add">
+<short>Add a new node to the tree</short>
+<descr>
+<var>Add</var> adds a new <var>Data</var> or <var>Node</var> to the tree. 
+It inserts the node so that the tree is maximally balanced by rebalancing
+the tree after the insert. In case a <var>data</var> pointer is added to 
+the tree, then the node that was created is returned.
+</descr>
+<seealso>
+<link id="TAVLTree.Delete"/>
+<link id="TAVLTree.Remove"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.Add.ANode">
+<short>Node to add to the tree</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.Add.Result">
+<short>Resulting node in case a data pointer is added.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.Add.Data">
+<short>Data item to add to the tree</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAVLTree.Delete">
+<short>Delete a node from the tree</short>
+<descr>
+<p>
+<var>Delete</var> removes the node from the tree. The node is not freed, but
+is passed to a <link id="TAVLTreeNodeMemManager"/> instance for future
+reuse. The data that the node represents is also not freed.
+</p>
+<p>
+The tree is rebalanced after the node was deleted.
+</p>
+</descr>
+<seealso>
+<link id="TAVLTree.Remove"/>
+<link id="TAVLTree.RemovePointer"/>
+<link id="TAVLTree.Clear"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.Delete.ANode">
+<short>The node to delete from the tree.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAVLTree.Remove">
+<short>Remove a data item from the list.</short>
+<descr>
+<var>Remove</var> finds the node associated with <var>Data</var> using
+<link id="TAVLTree.Find">find</link> and, 
+if found, deletes it from the tree. Only the first occurrence of
+<var>Data</var> will be removed.
+</descr>
+<seealso>
+<link id="TAVLTree.Delete"/>
+<link id="TAVLTree.RemovePointer"/>
+<link id="TAVLTree.Clear"/>
+<link id="TAVLTree.Find"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.Remove.Data">
+<short>Data item to remove from the tree.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAVLTree.RemovePointer">
+<short>Remove a pointer item from the list.</short>
+<descr>
+<var>Remove</var> uses <link id="TAVLTree.FindPointer">FindPointer</link> to find the node associated with
+the pointer <var>Data</var> and, if found, deletes it from the tree. Only the first 
+occurrence of <var>Data</var> will be removed.
+</descr>
+<seealso>
+<link id="TAVLTree.Remove"/>
+<link id="TAVLTree.Delete"/>
+<link id="TAVLTree.Clear"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.RemovePointer.Data">
+<short>Pointer to remove from the tree</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAVLTree.MoveDataLeftMost">
+<short>Move data to the nearest left element</short>
+<descr>
+<p>
+<var>MoveDataLeftMost</var> moves the data from the node <var>ANode</var> to the
+nearest left location relative to <var>Anode</var>. It returns the new node where 
+the data is positioned. The data from the former left node will be switched to 
+<var>ANode</var>.
+</p>
+<p>
+This operation corresponds to switching the current with the previous
+element in a list.
+</p>
+</descr>
+<seealso>
+<link id="TAVLTree.MoveDataRightMost"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.MoveDataLeftMost.ANode">
+<short>Node whose data most be moved</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAVLTree.MoveDataRightMost">
+<short>Move data to the nearest right element</short>
+<descr>
+<p>
+<var>MoveDataRightMost</var> moves the data from the node <var>ANode</var> to the
+rightmost location relative to <var>Anode</var>. It returns the new node where the data is positioned.
+The data from the former rightmost node will be switched to <var>ANode</var>.
+</p>
+<p>
+This operation corresponds to switching the current with the next
+element in a list.
+</p>
+</descr>
+<seealso>
+<link id="TAVLTree.MoveDataLeftMost"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.MoveDataRightMost.ANode">
+<short>Node whose data most be moved</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TAVLTree.OnCompare">
+<short>Compare function used when comparing nodes</short>
+<descr>
+<var>OnCompare</var> is the comparing function used when the data of 2 nodes 
+must be compared. By default, the function simply compares the 2 data
+pointers. A different function can be specified on creation.
+</descr>
+<seealso>
+<link id="TAVLTree.Create"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAVLTree.Clear">
+<short>Clears the tree</short>
+<descr>
+<p>
+<var>Clear</var> deletes all nodes from the tree. The nodes themselves
+are not freed, and the data pointer in the nodes is also not freed.
+</p>
+<p>
+If the node's data must be freed as well, use <link id="TAVLTree.FreeAndClear"/>
+instead.
+</p>
+</descr>
+<seealso>
+<link id="TAVLTree.FreeAndClear"/>
+<link id="TAVLTree.Delete"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAVLTree.FreeAndClear">
+<short>Clears the tree and frees nodes</short>
+<descr>
+<var>FreeAndClear</var> deletes all nodes from the tree. 
+The data pointer in the nodes is assumed to be an object, and is freed prior
+to deleting the node from the tree.
+</descr>
+<seealso>
+<link id="TAVLTree.Clear"/>
+<link id="TAVLTree.Delete"/>
+<link id="TAVLTree.FreeAndDelete"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAVLTree.FreeAndDelete">
+<short>Delete a node from the tree and destroy it</short>
+<descr>
+<var>FreeAndDelete</var> deletes a node from the tree, and destroys the data
+pointer: The data pointer in the nodes is assumed to be an object, and is
+freed by calling its destructor.
+</descr>
+<seealso>
+<link id="TAVLTree.Clear"/>
+<link id="TAVLTree.Delete"/>
+<link id="TAVLTree.FreeAndClear"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.FreeAndDelete.ANode">
+<short>Node which must be deleted</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TAVLTree.Count">
+<short>Number of nodes in the tree.</short>
+<descr>
+<var>Count</var> is the number of nodes in the tree.
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.ConsistencyCheck">
+<short>Check the consistency of the tree</short>
+<descr>
+<p>
+<var>ConsistencyCheck</var> checks the correctness of the tree. It returns 0
+if the tree is internally consistent, and a negative number if the tree
+contais an error somewhere.
+</p>
+<dl>
+<dt>-1</dt><dd>The Count property doesn't match the actual node count</dd>
+<dt>-2</dt><dd>A left node does not point to the correct parent</dd>
+<dt>-3</dt><dd>A left node is larger than parent node</dd>
+<dt>-4</dt><dd>A right node does not point to the correct parent</dd>
+<dt>-5</dt><dd>A right node is less than parent node</dd>
+<dt>-6</dt><dd>The balance of a node is not calculated correctly</dd>
+</dl>
+</descr>
+<seealso>
+<link id="TAVLTree.WriteReportToStream"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.ConsistencyCheck.Result">
+<short>0 if the tree is OK, a negative number if something is wrong.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAVLTree.WriteReportToStream">
+<short>Write the contents of the tree consistency check to the stream</short>
+<descr>
+<var>WriteReportToStream</var> writes a visual representation of the tree to
+the stream <var>S</var>. The total number of written bytes is returnes in
+<var>StreamSize</var>. This method is only useful for debugging purposes.
+</descr>
+<seealso>
+<link id="TAVLTree.ConsistencyCheck"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.WriteReportToStream.s">
+<short>Stream to write the tree report to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.WriteReportToStream.StreamSize">
+<short>Total number of bytes written</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTree.ReportAsString">
+<short>Return the tree report as a string</short>
+<descr>
+<var>ReportAsString</var> calls <link id="TAVLTree.WriteReportToStream">WriteReportToStream</link>
+and retuns the stream data as a string.
+</descr>
+<seealso>
+<link id="TAVLTree.WriteReportToStream"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTree.ReportAsString.Result">
+<short>The tree report as a string</short>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TAVLTree.Create">
+<short>Create a new instance of <var>TAVLTree</var></short>
+<descr>
+<var>Create</var> initializes a new instance of <link id="TAVLTree"/>. 
+An alternate <link id="OnCompare">OnCompare</link> can be provided: the
+default <var>OnCompare</var> method compares the 2 data pointers of a node.
+</descr>
+<seealso>
+<link id="OnCompare">OnCompare</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTree.Create.OnCompareMethod">
+<short>Alternative node comparison method</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TAVLTree.Destroy">
+<short>Destroy the <var>TAVLTree</var> instance</short>
+<descr>
+<var>Destroy</var> clears the nodes (the node data is not freed) and then
+destroys the <var>TAVLTree</var> instance.
+</descr>
+<seealso>
+<link id="TAVLTree.Create"/>
+<link id="TAVLTree.Clean"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.AVL_Tree.TAVLTreeNodeMemManager
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TAVLTreeNodeMemManager">
+<short><var>TAVLTreeNode</var> Node memory manager</short>
+<descr>
+<var>TAVLTreeNodeMemManager</var> is an internal object used by the
+<file>avl_tree</file> unit. Normally, no instance of this object should be
+created: An instance is created by the unit initialization code, and freed
+when the unit is finalized.
+</descr>
+<seealso>
+<link id="TAVLTreeNode"/>
+<link id="TAVLTree"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAVLTreeNodeMemManager.DisposeNode">
+<short>Return a node to the free list</short>
+<descr>
+<p>
+<var>DisposeNode</var> is used to put the node <var>ANode</var> in the list of free nodes, or
+optionally destroy it if the free list is full. After a call to <var>DisposeNode</var>,
+<var>ANode</var> must be considered invalid.
+</p>
+</descr>
+<seealso>
+<link id="TAVLTreeNodeMemManager.NewNode"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAVLTreeNodeMemManager.DisposeNode.ANode">
+<short>Node to dispose of</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAVLTreeNodeMemManager.NewNode">
+<short>Create a new <var>TAVLTreeNode</var> instance</short>
+<descr>
+<var>NewNode</var> returns a new <link id="TAVLTreeNode"/> instance.
+If there is a node in the free list, itare returned. If no more free
+nodes are present, a new node is created.
+</descr>
+<seealso>
+<link id="TAVLTreeNodeMemManager.DisposeNode"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAVLTreeNodeMemManager.NewNode.Result">
+<short>The new node.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TAVLTreeNodeMemManager.MinimumFreeNode">
+<short>Minimum amount of free nodes to be kept.</short>
+<descr>
+<var>MinimumFreeNode</var> is the minimum amount of nodes that must be kept
+in the free nodes list.
+</descr>
+<seealso>
+<link id="TAVLTreeNodeMemManager.MaximumFreeNodeRatio"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TAVLTreeNodeMemManager.MaximumFreeNodeRatio">
+<short>Maximum amount of free nodes in the list</short>
+<descr>
+<var>MaximumFreeNodeRatio</var> is the maximum amount of free nodes that
+should be kept in the list: if a node is disposed of, then the ratio of
+the free nodes versus the total amount of nodes is checked, and if it
+is less than the <var>MaximumFreeNodeRatio</var> ratio but larger than
+the minimum amount of free nodes, then the node
+is disposed of instead of added to the free list.
+</descr>
+<seealso>
+<link id="TAVLTreeNodeMemManager.Count"/>
+<link id="TAVLTreeNodeMemManager.MinimumFreeNode"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TAVLTreeNodeMemManager.Count">
+<short>Number of nodes in the list.</short>
+<descr>
+<var>Count</var> is the total number of nodes in the list, used or not.
+</descr>
+<seealso>
+<link id="TAVLTreeNodeMemManager.MinimumFreeNode"/>
+<link id="TAVLTreeNodeMemManager.MaximumFreeNodeRatio"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAVLTreeNodeMemManager.Clear">
+<short>Frees all unused nodes</short>
+<descr>
+<var>Clear</var> removes all unused nodes from the list and frees them.
+</descr>
+<seealso>
+<link id="TAVLTreeNodeMemManager.MinimumFreeNode"/>
+<link id="TAVLTreeNodeMemManager.MaximumFreeNodeRatio"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TAVLTreeNodeMemManager.Create">
+<short>Create a new instance of <var>TAVLTreeNodeMemManager</var></short>
+<descr>
+<var>Create</var> initializes a new instance of <var>TAVLTreeNodeMemManager</var>.
+</descr>
+<seealso>
+<link id="TAVLTreeNodeMemManager.Destroy"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TAVLTreeNodeMemManager.Destroy">
+<short></short>
+<descr>
+<var>Destroy</var> calls clear to clean up the free node list 
+and then calls the inherited destroy. 
+</descr>
+<seealso>
+<link id="TAVLTreeNodeMemManager.Create"/>
+</seealso>
+</element>
+
+</module> <!-- AVL_Tree -->
+
+</package>
+</fpdoc-descriptions>
