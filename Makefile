@@ -1870,7 +1870,7 @@ RTLUNITS=sysutils strutils dateutils strings mouse keyboard \
 	 crt video dos sockets objects heaptrc mmx ipc printer typinfo \
 	 ports getopts emu387 dxeload go32 gpm oldlinux baseunix \
 	 unixtype unix classes unixutil x86 dynlibs linux math matrix \
-	 system objpas dateutils rtl wincrt
+	 system objpas dateutils rtl wincrt clocale cthreads cmem cwstring
 RTLXML=$(addsuffix .xml,$(RTLUNITS))
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
 RTLSTRUTILS= --descr=strutils.xml --input="$(FPCSRCDIR)/rtl/objpas/strutils.pp ${OSDIRINCLUDES}"
@@ -1913,6 +1913,7 @@ RTLDATEUTILS= --descr=dateutils.xml --input="$(FPCSRCDIR)/rtl/objpas/dateutils.p
 RTLCLOCALE= --descr=clocale.xml --input="$(FPCSRCDIR)/rtl/unix/clocale.pp ${OSDIRINCLUDES}"
 RTLCTHREADS= --descr=cthreads.xml --input="$(FPCSRCDIR)/rtl/unix/cthreads.pp ${OSDIRINCLUDES}"
 RTLCMEM= --descr=cmem.xml --input="$(FPCSRCDIR)/rtl/inc/cmem.pp ${OSDIRINCLUDES}"
+RTLCWSTRING= --descr=cwstring.xml --input="$(FPCSRCDIR)/rtl/unix/cwstring.pp ${OSDIRINCLUDES}"
 RTLOPTS+= $(RTLSTRUTILS) $(RTLSYSUTILS) $(RTLSTRINGS) $(RTLMOUSE) $(RTLKEYBOARD)
 RTLOPTS+= $(RTLCRT) $(RTLVIDEO) $(RTLDOS) $(RTLSOCKETS) $(RTLOBJECTS)
 RTLOPTS+= $(RTLHEAPTRC) $(RTLMMX) $(RTLIPC) $(RTLPRINTER) $(RTLTYPINFO) 
@@ -1921,6 +1922,7 @@ RTLOPTS+= $(RTLGPM) $(RTLGRAPH) $(RTLOLDLINUX) $(RTLUNIXTYPE) $(RTLBASEUNIX)
 RTLOPTS+= $(RTLUNIX) $(RTLCLASSES) $(RTLUNIXUTIL) $(RTLX86) $(RTLDYNLIBS)
 RTLOPTS+= $(RTLLINUX) $(RTLMATH) $(RTLMATRIX) $(RTLSYSTEM) $(RTLOBJPAS)
 RTLOPTS+= $(RTLDATEUTILS) $(RTLWINCRT) $(RTLCLOCALE) $(RTLCTHREADS) $(RTLCMEM)
+RTLOPTS+= $(RTLCWSTRING)
 endif
 updatexml: updatefclxml updatertlxml
 updatertlxml: cleanxml

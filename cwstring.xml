@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="rtl">
+
+<!--
+  ====================================================================
+    cwstring
+  ====================================================================
+-->
+
+<module name="cwstring">
+<short>Implement the widestring manager with a C library based
+implementation</short>
+<descr>
+<p>
+The <var>cwstring</var> unit offers no API by itself: it just initializes the
+widestring manager record of the <link id="#rtl.system">system</link>
+unit with an implementation that uses collation and conversion routines 
+which are provided by the C library found on most Unix or Linux
+systems that are POSIX compliant.
+</p>
+<p>
+The <file>cwstring</file> should simply be included in the uses clause of the
+program, preferably as one of the first units, and the initialization
+section of the unit will do all the work.
+</p>
+<p>
+Note that including this unit links your program to the C library of the
+system.
+</p>
+<p>
+It makes no sense to use this unit on a non-posix system: Windows, OS/2 or
+DOS, therefor it should always between an ifdef statement:
+</p>
+<code>
+program myprogram;
+
+uses 
+  {$ifdef unix}cwstring{$endif},
+   classes, sysutils;
+</code>
+</descr>
+
+<!-- procedure Visibility: default -->
+<element name="SetCWidestringManager">
+<short>Set the Widestring manager of the system unit to the C version</short>
+<descr>
+<var>SetCWidestringManager</var> actually sets the widestring manager record
+of the system unit. It is called automatically by the initialization section
+of the unit.
+</descr>
+</element>
+
+</module> <!-- cwstring -->
+
+</package>
+</fpdoc-descriptions>
