@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="rtl">
+
+<!--
+  ====================================================================
+    exeinfo
+  ====================================================================
+-->
+
+<module name="exeinfo">
+<short>Return executable information</short>
+<descr>
+<p>
+The <file>exeinfo</file> unit implements some cross-platform routines to 
+examine the contents of an executable: information about sections, mapping
+addresses to loaded modules etc.
+</p>
+<p>
+It is mainly used by the <link id="#rtl.lineinfo">lineinfo</link> and
+<link id="#rtl.lnfodwrf">lnfodwrf</link> unit to examine the binary for
+debug info.
+</p>
+</descr>
+
+<!-- record type Visibility: default -->
+<element name="TExeFile">
+<short>Structure describing the binary.</short>
+<descr>
+<p>
+<var>TExeFile</var> is a record used in the various calls of this unit.
+It contains a file descriptor, and various fields that describe the 
+executable.
+</p>
+<p>
+The structure of <var>TExeFile</var> is opaque, that is, one shouldn't
+rely on the exactness of this structure, it may change any time in the
+future.
+</p>
+</descr>
+<seealso>
+<link id="OpenExeFile"/>
+<link id="CloseExeFile"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TExeFile.f">
+<short>File handle to the executable image on disk.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TExeFile.size">
+<short>Size of the executable</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TExeFile.isopen">
+<short>Is the file handle <var>f</var> open ?</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TExeFile.nsects">
+<short>Number of sections in the binary</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TExeFile.sechdrofs">
+<short>Section header offset</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TExeFile.secstrofs">
+<short>Section strings offset.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TExeFile.processaddress">
+<short>Used on BEOS only</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TExeFile.FunctionRelative">
+<short>Internal variable</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TExeFile.ImgOffset">
+<short>Image offset</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TExeFile.filename">
+<short>Filename of binary file</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TExeFile.buf">
+<short>Buffer used in internal read operations</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TExeFile.bufsize">
+<short>Size of internal buffer</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TExeFile.bufcnt">
+<short>Number of bytes in the buffer.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="OpenExeFile">
+<short>Open an executable file</short>
+<descr>
+<p>
+<var>OpenExeFile</var> opens the executable file <var>fn</var> and
+initializes the structure <var>e</var> for subsequent calls to routines in 
+the <var>exeinfo</var> unit.
+</p>
+<p>
+The function returns <var>True</var> if the file was opened succesfully,
+false otherwise.
+</p>
+</descr>
+<seealso>
+<link id="FindExeSection"/>
+<link id="CloseExeFile"/>
+<link id="ReadDebugLink"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="OpenExeFile.Result"> 
+<short><var>True</var> if the file was opened succesfully, <var>false</var> otherwise.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="OpenExeFile.e">
+<short>Record to be used in other calls in this unit.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="OpenExeFile.fn">
+<short>Name of file to be opened.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="FindExeSection">
+<short>Find a section in the binary image.</short>
+<descr>
+<p>
+<var>FindExeSection</var> examines the binary that was opened with <link
+id="OpenExeFile"/> (represented by <var>e</var>) and searches for the
+section named <var>secname</var>. If found, the section offset is returned
+in <var>secofs</var> and the section length (in bytes) is returned in
+<var>seclen</var>.
+</p>
+<p>
+The function returns <var>True</var> if the section was found,
+<var>False</var> if not.
+</p>
+</descr>
+<seealso>
+<link id="OpenExeFile"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="FindExeSection.Result">
+<short><var>True</var> if the section was found, <var>False</var> if not</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="FindExeSection.e">
+<short>Record representing the opened executable image</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="FindExeSection.secname">
+<short>Name of section that must be found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="FindExeSection.secofs">
+<short>Offset of the section in the binary image.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="FindExeSection.seclen">
+<short>Length of the section in bytes.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CloseExeFile">
+<short>Close a previously opened file.</short>
+<descr>
+<p>
+<var>CloseExeFile</var> closes an executable file image previously opened
+with <link id="OpenExeFile"/>, and represented by <var>e</var>. 
+</p>
+<p>
+The function returns <var>True</var> if the file was closed succesfully,
+or <var>False</var> if something went wrong.
+</p>
+</descr>
+<errors>
+In case of an error, <var>False</var> is returned.
+</errors>
+<seealso>
+<link id="OpenExeFile"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="CloseExeFile.Result">
+<short><var>True</var> if the file was closed succesfully, <var>False</var> if not.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CloseExeFile.e">
+<short>Executable to be closed</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ReadDebugLink">
+<short>Read the location of a debug info filename</short>
+<descr>
+<p>
+<var>ReadDebugLink</var> examines the <var>.gnu_debuglink</var> section to
+see if the debug information is stored in an external file. If so, then the
+name of the file with the debug information is returned in the
+<var>dbgfn</var> parameter.
+</p>
+<p>
+The function returns <var>false</var> if there is no external debug information file,
+or if the file with debug information does not exist. It is searched next
+to the binary file or in the current directory.
+</p>
+</descr>
+<seealso>
+<link id="OpenExeFile"/>
+<link id="CloseExeFile"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ReadDebugLink.Result">
+<short><var>True</var> if the file with debug information was found, <var>False</var> if not.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ReadDebugLink.e">
+<short>Handle on the open application binary.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ReadDebugLink.dbgfn">
+<short>Name of the file with the debug information.</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="GetModuleByAddr">
+<short>Return the module name by address</short>
+<descr>
+<var>GetModuleByAddr</var> returns the name of the module that contains
+address <var>addr</var>. If succesful, it returns <var>True</var> and
+returns the filename in <var>FileName</var> and the base address at which
+it is loaded in <var>BaseAddr</var>.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetModuleByAddr.addr">
+<short>Address to examine</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetModuleByAddr.baseaddr">
+<short>Base address at which module is loaded.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetModuleByAddr.filename">
+<short>FileName of the module at address <var>addr</var>.</short>
+</element>
+
+</module> <!-- exeinfo -->
+
+</package>
+</fpdoc-descriptions>

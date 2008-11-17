@@ -1870,7 +1870,8 @@ RTLUNITS=sysutils strutils dateutils strings mouse keyboard \
 	 crt video dos sockets objects heaptrc mmx ipc printer typinfo \
 	 ports getopts emu387 dxeload go32 gpm oldlinux baseunix \
 	 unixtype unix classes unixutil x86 dynlibs linux math matrix \
-	 system objpas dateutils rtl wincrt clocale cthreads cmem cwstring
+	 system objpas dateutils rtl wincrt clocale cthreads cmem cwstring \
+	 exeinfo
 RTLXML=$(addsuffix .xml,$(RTLUNITS))
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
 RTLSTRUTILS= --descr=strutils.xml --input="$(FPCSRCDIR)/rtl/objpas/strutils.pp ${OSDIRINCLUDES}"
@@ -1914,6 +1915,7 @@ RTLCLOCALE= --descr=clocale.xml --input="$(FPCSRCDIR)/rtl/unix/clocale.pp ${OSDI
 RTLCTHREADS= --descr=cthreads.xml --input="$(FPCSRCDIR)/rtl/unix/cthreads.pp ${OSDIRINCLUDES}"
 RTLCMEM= --descr=cmem.xml --input="$(FPCSRCDIR)/rtl/inc/cmem.pp ${OSDIRINCLUDES}"
 RTLCWSTRING= --descr=cwstring.xml --input="$(FPCSRCDIR)/rtl/unix/cwstring.pp ${OSDIRINCLUDES}"
+RTLEXEINFO= --descr=exeinfo.xml --input="$(FPCSRCDIR)/rtl/inc/exeinfo.pp ${OSDIRINCLUDES}"
 RTLOPTS+= $(RTLSTRUTILS) $(RTLSYSUTILS) $(RTLSTRINGS) $(RTLMOUSE) $(RTLKEYBOARD)
 RTLOPTS+= $(RTLCRT) $(RTLVIDEO) $(RTLDOS) $(RTLSOCKETS) $(RTLOBJECTS)
 RTLOPTS+= $(RTLHEAPTRC) $(RTLMMX) $(RTLIPC) $(RTLPRINTER) $(RTLTYPINFO) 
@@ -1922,7 +1924,7 @@ RTLOPTS+= $(RTLGPM) $(RTLGRAPH) $(RTLOLDLINUX) $(RTLUNIXTYPE) $(RTLBASEUNIX)
 RTLOPTS+= $(RTLUNIX) $(RTLCLASSES) $(RTLUNIXUTIL) $(RTLX86) $(RTLDYNLIBS)
 RTLOPTS+= $(RTLLINUX) $(RTLMATH) $(RTLMATRIX) $(RTLSYSTEM) $(RTLOBJPAS)
 RTLOPTS+= $(RTLDATEUTILS) $(RTLWINCRT) $(RTLCLOCALE) $(RTLCTHREADS) $(RTLCMEM)
-RTLOPTS+= $(RTLCWSTRING)
+RTLOPTS+= $(RTLCWSTRING) $(RTLEXEINFO)
 endif
 updatexml: updatefclxml updatertlxml
 updatertlxml: cleanxml
@@ -1962,6 +1964,10 @@ updatertlxml: cleanxml
 	$(RTLMAKESKEL) $(RTLSYSTEM) --output=system.new.xml
 	$(RTLMAKESKEL) $(RTLOBJPAS) --output=objpas.new.xml
 	$(RTLMAKESKEL) $(RTLDATEUTILS) --output=dateutils.new.xml
+	$(RTLMAKESKEL) $(RTLCMEM) --output=cmem.new.xml
+	$(RTLMAKESKEL) $(RTLCLOCALE) --output=clocale.new.xml
+	$(RTLMAKESKEL) $(RTLCWSTRING) --output=cwstring.new.xml
+	$(RTLMAKESKEL) $(RTLEXEINFO) --output=exeinfo.new.xml
 	./cleanxml $(RTLNEWXML)
 updatefclxml: cleanxml
 	$(FCLMAKESKEL) $(FCLIOSTREAM) --output=iostream.new.xml
