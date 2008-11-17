@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="rtl">
+
+<!--
+  ====================================================================
+    cmem
+  ====================================================================
+-->
+
+<module name="cmem">
+<short>Memory manager replacement using the C memory manager</short>
+<descr>
+<p>
+The <file>cmem</file> memory manager sets the system units memory manager
+to a C-based memory manager: all memory management calls are shunted through
+to the C memory manager, using <link id="Malloc"/>, <link id="Free"/> and
+<link id="ReAlloc"/>. For this reason, the <file>cmem</file> unit should be
+the first unit of the uses clause of the program.
+</p>
+<p>
+The unit also offers the C memory calls directly as external declarations
+from the C library, but it is recommended to use the normal FPC routines 
+for this.
+</p>
+<p>
+Obviously, including this unit links your program to the C library.
+</p>
+</descr>
+
+<!-- constant Visibility: default -->
+<element name="LibName">
+<short>Name of the library used</short>
+<descr>
+<var>LibName</var> is the name of the library that is actually used. On most
+systems, this is simply "libc.so".
+</descr>
+</element>
+
+<!-- function Visibility: default -->
+<element name="Malloc">
+<short>Malloc external declaration.</short>
+<descr>
+<var>Malloc</var> is the external declaration of the C librarys
+<var>malloc</var> call. It accepts a size parameter, and returns a
+pointer to a memory block of the requested size or <var>Nil</var>
+if no more memory could be allocated.
+</descr>
+<seealso>
+<link id="Free"/>
+<link id="ReAlloc"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="Malloc.Result">
+<short>A pointer to the newly allocated memory block</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="Malloc.Size">
+<short>Requested size for the new memory block.</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="Free">
+<short>Free a previously allocated block</short>
+<descr>
+<var>Free</var> returns the memory block pointed to by <var>P</var> to the system. After <var>Free</var>
+was called, the pointer <var>P</var> is no longer valid.
+</descr>
+<seealso>
+<link id="Malloc"/>
+<link id="ReAlloc"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="Free.P">
+<short>Pointer to the memory block to be freed.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ReAlloc">
+<short>Reallocates a memory block </short>
+<descr>
+<var>ReAlloc</var> re-allocates a block of memory pointed to by
+<var>p</var>. The new block will have size <var>Size</var>, and
+as much data as was available or as much data as fits is copied from the old
+to the new location.
+</descr>
+<seealso>
+<link id="Malloc"/>
+<link id="Free"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ReAlloc.Result">
+<short>A pointer to the new memory block</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ReAlloc.P">
+<short>Pointer to the old block</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ReAlloc.Size">
+<short>New size for the memory block.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CAlloc">
+<short>Allocate memory based on item size and count</short>
+<descr>
+<var>Calloc</var> allocates memory to hold <var>UnitCount</var> units of
+size <var>UnitSize</var> each. The memory is one block of memory. It returns
+a pointer to the newly allocated memory block.
+</descr>
+<seealso>
+<link id="Malloc"/>
+<link id="Free"/>
+<link id="Realloc"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="CAlloc.Result">
+<short>Pointer to the newly allocated memory block.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CAlloc.unitSize">
+<short>Size of one unit.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CAlloc.UnitCount">
+<short>Number of units.</short>
+</element>
+
+</module> <!-- cmem -->
+
+</package>
+</fpdoc-descriptions>
