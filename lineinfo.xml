@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="rtl">
+
+<!--
+  ====================================================================
+    lineinfo
+  ====================================================================
+-->
+
+<module name="lineinfo">
+<short>Return adress line information</short>
+<descr>
+<p>
+The <file>lineinfo</file> provides a routine that reads the debug
+information of an executable (if any exists) and returns source code
+information about this address. It works with <var>Stabs</var> debug
+information. 
+</p>
+<p>
+For DWARF debug information, the <link id="#rtl.lnfodwrf">lnfodwrf</link> 
+unit must be used.
+</p>
+</descr>
+
+<!-- function Visibility: default -->
+<element name="GetLineInfo">
+<short>Return source line information about an address.</short>
+<descr>
+<var>GetLineInfo</var> returns source line information about the address
+<var>addr</var>. It searches this information in the stabs debugging
+information found in the binary: If the file was compiled without debug
+information, nothing will be returned. Upon succesful retrieval of the
+debug information, <var>True</var> is returned, and the
+<var>func</var> parameter is filled with the name of the function in which the address
+is located. The <var>source</var> parameter contains the name of the file in
+which the function was implemented, and <var>line</var> contains the line
+number in the source file for <var>addr</var>.
+</descr>
+<errors>
+If no debug information is found, <var>False</var> is returned.
+</errors>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="GetLineInfo.Result">
+<short><var>True</var> if the line information was found, <var>False</var> if not.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetLineInfo.addr">
+<short>Address to examine</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetLineInfo.func">
+<short>Name of function in which <var>Addr</var> resides.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetLineInfo.source">
+<short>Source file in which <var>Addr</var> was implemented.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetLineInfo.line">
+<short>Line number on which <var>Addr</var> was implemented.</short>
+</element>
+
+</module> <!-- lineinfo -->
+
+</package>
+</fpdoc-descriptions>

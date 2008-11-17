@@ -1871,7 +1871,7 @@ RTLUNITS=sysutils strutils dateutils strings mouse keyboard \
 	 ports getopts emu387 dxeload go32 gpm oldlinux baseunix \
 	 unixtype unix classes unixutil x86 dynlibs linux math matrix \
 	 system objpas dateutils rtl wincrt clocale cthreads cmem cwstring \
-	 exeinfo
+	 exeinfo lineinfo lnfodwrf
 RTLXML=$(addsuffix .xml,$(RTLUNITS))
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
 RTLSTRUTILS= --descr=strutils.xml --input="$(FPCSRCDIR)/rtl/objpas/strutils.pp ${OSDIRINCLUDES}"
@@ -1916,6 +1916,8 @@ RTLCTHREADS= --descr=cthreads.xml --input="$(FPCSRCDIR)/rtl/unix/cthreads.pp ${O
 RTLCMEM= --descr=cmem.xml --input="$(FPCSRCDIR)/rtl/inc/cmem.pp ${OSDIRINCLUDES}"
 RTLCWSTRING= --descr=cwstring.xml --input="$(FPCSRCDIR)/rtl/unix/cwstring.pp ${OSDIRINCLUDES}"
 RTLEXEINFO= --descr=exeinfo.xml --input="$(FPCSRCDIR)/rtl/inc/exeinfo.pp ${OSDIRINCLUDES}"
+RTLLINEINFO= --descr=lineinfo.xml --input="$(FPCSRCDIR)/rtl/inc/lineinfo.pp ${OSDIRINCLUDES}"
+RTLLNFODWRF= --descr=lnfodwrf.xml --input="$(FPCSRCDIR)/rtl/inc/lnfodwrf.pp ${OSDIRINCLUDES}"
 RTLOPTS+= $(RTLSTRUTILS) $(RTLSYSUTILS) $(RTLSTRINGS) $(RTLMOUSE) $(RTLKEYBOARD)
 RTLOPTS+= $(RTLCRT) $(RTLVIDEO) $(RTLDOS) $(RTLSOCKETS) $(RTLOBJECTS)
 RTLOPTS+= $(RTLHEAPTRC) $(RTLMMX) $(RTLIPC) $(RTLPRINTER) $(RTLTYPINFO) 
@@ -1924,8 +1926,8 @@ RTLOPTS+= $(RTLGPM) $(RTLGRAPH) $(RTLOLDLINUX) $(RTLUNIXTYPE) $(RTLBASEUNIX)
 RTLOPTS+= $(RTLUNIX) $(RTLCLASSES) $(RTLUNIXUTIL) $(RTLX86) $(RTLDYNLIBS)
 RTLOPTS+= $(RTLLINUX) $(RTLMATH) $(RTLMATRIX) $(RTLSYSTEM) $(RTLOBJPAS)
 RTLOPTS+= $(RTLDATEUTILS) $(RTLWINCRT) $(RTLCLOCALE) $(RTLCTHREADS) $(RTLCMEM)
-RTLOPTS+= $(RTLCWSTRING) $(RTLEXEINFO)
-endif
+RTLOPTS+= $(RTLCWSTRING) $(RTLEXEINFO) $(RTLLINEINFO) $(RTLLNFODWRF)
+endif 
 updatexml: updatefclxml updatertlxml
 updatertlxml: cleanxml
 	$(RTLMAKESKEL) $(RTLSTRUTILS) --output=strutils.new.xml
@@ -1968,6 +1970,8 @@ updatertlxml: cleanxml
 	$(RTLMAKESKEL) $(RTLCLOCALE) --output=clocale.new.xml
 	$(RTLMAKESKEL) $(RTLCWSTRING) --output=cwstring.new.xml
 	$(RTLMAKESKEL) $(RTLEXEINFO) --output=exeinfo.new.xml
+	$(RTLMAKESKEL) $(RTLLINEINFO) --output=lineinfo.new.xml
+	$(RTLMAKESKEL) $(RTLLNFODWRF) --output=lnfodwrf.new.xml
 	./cleanxml $(RTLNEWXML)
 updatefclxml: cleanxml
 	$(FCLMAKESKEL) $(FCLIOSTREAM) --output=iostream.new.xml
