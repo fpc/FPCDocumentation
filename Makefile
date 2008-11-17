@@ -1911,6 +1911,7 @@ RTLSYSTEM= --descr=system.xml --input="-dfpdocsystem -dHASGETHEAPSTATUS -dSUPPOR
 RTLOBJPAS= --descr=objpas.xml --input="-dHASINTF $(FPCSRCDIR)/rtl/objpas/objpas.pp ${OSDIRINCLUDES}"
 RTLDATEUTILS= --descr=dateutils.xml --input="$(FPCSRCDIR)/rtl/objpas/dateutils.pp -Fi$(FPCSRCDIR)/rtl/objpas ${OSDIRINCLUDES}"
 RTLCLOCALE= --descr=clocale.xml --input="$(FPCSRCDIR)/rtl/unix/clocale.pp ${OSDIRINCLUDES}"
+RTLCTHREADS= --descr=cthreads.xml --input="$(FPCSRCDIR)/rtl/unix/cthreads.pp ${OSDIRINCLUDES}"
 RTLOPTS+= $(RTLSTRUTILS) $(RTLSYSUTILS) $(RTLSTRINGS) $(RTLMOUSE) $(RTLKEYBOARD)
 RTLOPTS+= $(RTLCRT) $(RTLVIDEO) $(RTLDOS) $(RTLSOCKETS) $(RTLOBJECTS)
 RTLOPTS+= $(RTLHEAPTRC) $(RTLMMX) $(RTLIPC) $(RTLPRINTER) $(RTLTYPINFO) 

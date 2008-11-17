@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="rtl">
+
+<!--
+  ====================================================================
+    cthreads
+  ====================================================================
+-->
+
+<module name="cthreads">
+<short>Initialize the thread manager with a POSIX thread manager</short>
+<descr>
+<p>
+The <file>CThreads</file> unit initializes the system unit's thread
+management routines with an implementation based on the POSIX 
+thread managing routines in the C library. This assures that C libraries
+that are thread-aware still work if they are linked to by a FPC program.
+</p>
+<p>
+It doesn't offer any API by itself: the initialization section of the
+unit just initializes the <var>ThreadManager</var> record in the <link
+id="#rtl.system">System</link> unit. This is done using the <link
+id="SetCThreadManager"/> call
+</p>
+<p>
+<p>
+The <file>cthreads</file> should simply be included in the uses clause of the
+program, preferably the very first unit, and the initialization
+section of the unit will do all the work.
+</p>
+<p>
+Note that including this unit links your program to the C library of the
+system.
+</p>
+<p>
+It makes no sense to use this unit on a non-posix system: Windows, OS/2 or
+DOS, therefor it should always between an ifdef statement:
+</p>
+<code>
+program myprogram;
+
+uses 
+  {$ifdef unix}cthreads{$endif},
+   classes, sysutils;
+</code>
+<p>
+The Lazarus IDE inserts this conditional automatically for each new started
+program.
+</p>
+</descr>
+
+<!-- procedure Visibility: default -->
+<element name="SetCThreadManager">
+<short>Sets the thread manager to the C thread manager</short>
+<descr>
+<var>SetCThreadManager</var> actually sets the thread manager to the C
+thread manager. It can be called to re-set the thread manager if the 
+thread manager was set to some other thread manager during the life-time
+of the program.
+</descr>
+</element>
+
+</module> <!-- cthreads -->
+
+</package>
+</fpdoc-descriptions>
