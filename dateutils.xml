@@ -4652,8 +4652,8 @@ an <var>EConvertError</var> exception is raised.
 with <var>ADay</var>. All other parts of the date/time stamp are left untouched.
 </descr>
 <errors>
-If the <var>ADay</var> value is not within a valid range (1..12) then 
-an <var>EConvertError</var> exception is raised.
+If the <var>ADay</var> value is not within a valid range (1 till the number of
+days in the month) then an <var>EConvertError</var> exception is raised.
 </errors>
 <seealso>
 <link id="RecodeYear"/>
@@ -6073,7 +6073,45 @@ In case of an error, a <link id="#rtl.sysutils.EConvertError">EConvertError</lin
 </seealso>
 </element>
 
+<element name="DateTimeToDosDateTime">
+<short>Convert <var>TDateTime</var> format to DOS date/time format</short>
+<descr>
+<p>
+<var>DateTimeToDosDatetime</var> takes <var>Value</var>, a <var>TDateTime</var> formatted
+timestamp, and recodes it to a MS-DOS encoded date/time value. This is a
+longint with the date/time encoded in the bits as:
+</p>
+<dl>
+<dt>0-4</dt><dd>Seconds divided by 2</dd>
+<dt>5-10</dt><dd>Minutes</dd>
+<dt>11-15</dt><dd>Hours</dd>
+<dt>16-20</dt><dd>Day</dd>
+<dt>21-24</dt><dd>Month</dd>
+<dt>25-31</dt><dd>Years since 1980</dd>
+</dl>
+</descr>
+<seealso>
+<link id="DosDateTimeToDateTime"/>
+</seealso>
+</element>
+
+<element name="DosDateTimeToDateTime">
+<short>Convert DOS date/time format to  <var>TDateTime</var> format</short>
+<descr>
+<p><var>DosDateTimeToDateTime</var> takes a DOS encoded date/time
+<var>AValue</var> and recodes it as a <var>TDateTime</var> value.
+</p>
+<p>
+The bit encoding of the DOS date/time is explained in the <link
+id="DateTimeToDosDateTime"/> function.
+</p>
+</descr>
+<seealso>
+<link id="DateTimeToDosDateTime"/>
+</seealso>
+</element>
 </module>
+
 <!-- dateutils -->
 </package>
 </fpdoc-descriptions>
