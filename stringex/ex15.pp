@@ -7,5 +7,5 @@ Uses strings;
 Const P : PChar = 'This is a PChar string.';
       S : Pchar = 'is';
 begin
-  Writeln ('Position of ''is'' in P : ',longint(StrPos(P,S))-Longint(P));
+  Writeln ('Position of ''is'' in P : ',sizeint(StrPos(P,S))-sizeint(P));
 end.
