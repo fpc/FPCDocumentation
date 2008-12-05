@@ -27,7 +27,7 @@ Begin
       Writeln ('File is a directory');
     end
   else
-   Writeln ('Error reading attribites of ',Name);
+   Writeln ('Error reading attributes of ',Name);
 end;
 
 begin
