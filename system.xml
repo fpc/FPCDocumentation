@@ -3186,7 +3186,16 @@ more information about this type.
 
 <!-- "type" alias type Visibility: default -->
 <element name="Error">
-<short>32-bit signed integer.</short>
+<short>Generate run-time error</short>
+<descr>
+<var>Error</var> generates a run-time error with an exit code corresponding
+to <var>RunTimeError</var>. This function is implemented for Delphi
+compatibility, and is not used by the Free Pascal Run-Time Library.
+</descr>
+<seealso>
+<link id="RunError"/>
+<link id="Halt"/>
+</seealso>
 </element>
 
 <!-- pointer type Visibility: default -->
@@ -10127,45 +10136,68 @@ If no interface was found, <var>False</var> is returned.
 
 
 <element name="TObject.GetInterfaceByStr">
-<short></short>
+<short>Return an interface based on its GUID</short>
 <descr>
+<p>
+<var>GetInterfaceByStr</var> returns in <var>obj</var> a pointer to the interface 
+identified by <var>iidstr</var>. The function returns <var>True</var> if the
+interface is indeed implemented by the class, or <var>False</var> otherwise.
+</p>
+<p>
+The <var>iidstr</var> is the unique GUID by which the interface was declared.
+</p>
 </descr>
 <errors>
+The function returns false if the requested interface is not implemented.
 </errors>
 <seealso>
+<link id="TObject.GetInterfaceEntry"/>
+<link id="TObject.GetInterfaceEntryByStr"/>
 </seealso>
 </element>
 
 
 <element name="TObject.GetInterfaceEntry">
-<short></short>
+<short>Return the interface table entry by GUID</short>
 <descr>
+<var>GetInterfaceEntry</var> returns the internal interface table entry for the
+interface identified by <var>iid</var> (the GUID used in the declaration
+of the interface). If the interface is not implemented by the
+class, the function returns <var>Nil</var>.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TObject.GetInterfaceByStr"/>
+<link id="TObject.GetInterfaceEntryByStr"/>
 </seealso>
 </element>
 
 
 <element name="TObject.GetInterfaceEntryByStr">
-<short></short>
+<short>Return the interface table entry by string</short>
 <descr>
+<var>GetInterfaceEntryByStr</var> returns the internal interface table entry for the
+interface identified by <var>iidstr</var> (A string representation of the GUID used in the declaration
+of the interface). If the interface is not implemented by the
+class, the function returns <var>Nil</var>.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TObject.GetInterfaceByStr"/>
+<link id="TObject.GetInterfaceEntry"/>
 </seealso>
 </element>
 
 
 <element name="TObject.GetInterfaceTable">
-<short></short>
+<short>Return a pointer to the table of implemented interfaces for a class</short>
 <descr>
+<var>GetInterfaceTable</var> returns a pointer to the internal table of
+implemented interfaces for a class. The result will always point to a valid
+address, if the class implements no interfaces the <var>EntryCount</var>
+field of the interface table will be zero.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TObject.GetInterfaceByStr"/>
+<link id="TObject.GetInterfaceEntry"/>
 </seealso>
 </element>
 
@@ -10375,54 +10407,107 @@ address where the error occurred.
 
 
 <element name="UTF8Decode">
-<short></short>
+<short>Convert a widestring to a UTF-8 encoded unicode string</short>
 <descr>
+<p>
+<var>UTF8Decode</var> converts the widestring <var>S</var> to a UTF-8 
+encoded unicode string and returns the resulting string. It calls the
+low-level <link id="Utf8ToUnicode"/> function to do the actual work.
+</p>
+<p>
+For this function to work, a widestring manager must be installed.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="UTF8Encode"/>
+<link id="Utf8ToAnsi"/>
+<link id="SetWideStringManager"/>
+<link id="Utf8ToUnicode"/>
 </seealso>
 </element>
 
 
 <element name="UTF8Encode">
-<short></short>
+<short>Convert a UTF-8 encoded unicode string to a widestring</short>
 <descr>
+<p>
+<var>UTF8Encode</var> converts the UTF-8 encoded unicode string S to a
+widestring and returns the resulting string. It calls the
+low-level <link id="UnicodeToUTF8"/> function to do the actual work.
+</p>
+<p>
+For this function to work, a widestring manager must be installed.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="UTF8Decode"/>
+<link id="Utf8ToAnsi"/>
+<link id="UnicodeToUtf8"/>
+<link id="SetWideStringManager"/>
 </seealso>
 </element>
 
 
 <element name="Utf8ToAnsi">
-<short></short>
+<short>Convert a UTF-8 encoded unicode string to an ansistring</short>
 <descr>
+<p>
+<var>Utf8ToAnsi</var> converts an utf8-encode unicode string to an
+ansistring. It converts the string to a widestring and then converts
+the widestring to an ansistring.
+</p>
+<p>
+For this function to work, a widestring manager must be installed.
+</p>
 </descr>
 <errors>
 </errors>
 <seealso>
+<link id="UTF8Encode"/>
+<link id="UTF8Decode"/>
+<link id="SetWideStringManager"/>
 </seealso>
 </element>
 
 
 <element name="Utf8ToUnicode">
-<short></short>
+<short>Convert a buffer with UTF-8 characters to widestring characters</short>
 <descr>
+<p>
+<var>Utf8ToUnicode</var> converts the buffer in <var>Source</var> with a
+length of <var>SourceBytes</var> or for a maximum length of
+<var>MaxChars</var>  (or <var>MaxDestChars</var>) widestring 
+characters to the buffer pointed to by <var>Dest</var>.
+</p>
+<p>
+The function returns the number of copied widestring characters.
+</p>
+<p>
+For this function to work, a widestring manager must be installed.
+</p>
 </descr>
 <errors>
+On error, -1 is returned.
 </errors>
 <seealso>
+<link id="UTF8Encode"/>
+<link id="UTF8Decode"/>
+<link id="Utf8ToAnsi"/>
+<link id="SetWideStringManager"/>
 </seealso>
 </element>
 
 
 <element name="VarCast">
-<short></short>
+<short>Cast a variant to a certain type</short>
 <descr>
+<var>VarCast</var> converts the variant in <var>Source</var> to the type
+indicated in <var>VarType</var> and returns the result in <var>dest</var>.
+The <var>VarType</var> must be one of the pre-defined <var>VarNNN</var> constants.
 </descr>
 <errors>
+If the conversion is not possible because the value cannot be correctly
+casted, then a run-time error or an exception may occur.
 </errors>
 <seealso>
 </seealso>
@@ -10430,13 +10515,7 @@ address where the error occurred.
 
 
 <element name="varrecord">
-<short></short>
-<descr>
-</descr>
-<errors>
-</errors>
-<seealso>
-</seealso>
+<short>Record variant type</short>
 </element>
 
 
