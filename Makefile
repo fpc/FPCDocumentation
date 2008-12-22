@@ -1957,9 +1957,9 @@ messages.inc: $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT) $(FPCSRCDIR)/compiler
 	$(FPCSRCDIR)/compiler/utils/msg2inc -TE $(FPCSRCDIR)/compiler/msg/errore.msg messages.inc
 comphelp.inc:
 	echo "% Automatically generated. Do not edit" > comphelp.inc
-	echo -e "\begin{verbatim}" >> comphelp.inc
+	echo '\begin{verbatim}' >> comphelp.inc
 	$(FPC) -h >>comphelp.inc
-	echo -e "\end{verbatim}" >> comphelp.inc
+	echo '\end{verbatim}' >> comphelp.inc
 syntax.sty: styles/syntax.sty
 	cp $(wildcard styles/*.sty) .
 INCLUDES=date.inc syntax.sty
