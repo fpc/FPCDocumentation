@@ -1995,7 +1995,7 @@ FCLMAKESKEL=$(MAKESKEL) --package=fcl
 RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-results
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream \
 	 base64 gettext ezcgi pooledmm dbugmsg streamex inicol streamcoll cachecls \
-	 eventlog syncobjs custapp blowfish simpleipc inifiles rttiutils
+	 eventlog syncobjs custapp blowfish simpleipc inifiles rttiutils uriparser
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEDIR)/iostream.pp"
@@ -2023,13 +2023,14 @@ FCLDBUGINTF= --descr=dbugintf.xml --input="$(FCLPROCESSDIR)/dbugintf.pp"
 FCLDBUGMSG= --descr=dbugmsg.xml --input="$(FCLPROCESSDIR)/dbugmsg.pp"
 FCLSIMPLEIPC= --descr=simpleipc.xml --input="$(FCLPROCESSDIR)/simpleipc.pp"
 FCLEZCGI= --descr=ezcgi.xml --input="$(FCLWEBDIR)/ezcgi.pp"
+FCLURIPARSER= --descr=uriparser.xml --input="$(FCLBASEDIR)/uriparser.pp"
 FCLZSTREAM= --descr=zstream.xml --input="$(FCLZLIBDIR)/zstream.pp"
 FCLUNITOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLUNITOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
 FCLUNITOPTS+= $(FCLGETTEXT) $(FCLEZCGI) $(FCLPOOLEDMM) $(FCLDBUGMSG) $(FCLSTREAMEX)
 FCLUNITOPTS+= $(FCLINICOL) $(FCLSTREAMCOL) $(FCLCACHECLS) $(FCLEVENTLOG) $(FCLSYNCOBJS)
 FCLUNITOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES) $(FCLRTTIUTILS)
-FCLUNITOPTS+= $(FCLAVLTREE)
+FCLUNITOPTS+= $(FCLAVLTREE) $(FCLURIPARSER) 
 RTLOPTS=$(FPDOCOPTS) --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifeq ($(HIDEPROTECTED),YES)
 RTLOPTS+= --hide-protected

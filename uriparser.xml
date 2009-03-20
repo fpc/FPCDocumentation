@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    URIParser
+  ====================================================================
+-->
+
+<module name="URIParser">
+<short>URI Parsing routines</short>
+<descr>
+<p>
+The <file>URIParser</file> unit contains a basic type (<link id="TURI"/>) 
+and some routines for the parsing (<link id="ParseURI"/>) and construction 
+(<link id="EncodeURI"/>) of Uniform Resource Indicators, commonly referred 
+to as URL: Uniform Resource Location. It is used in various other units, and
+in itself contains no classes. It supports all protocols,
+username/password/port specification, query parameters and bookmarks etc..
+</p>
+</descr>
+
+<!-- record type Visibility: default -->
+<element name="TURI">
+<short>Record containing all possible parts of a URI </short>
+<descr>
+<var>TURI</var> is the basic record that can be filled by the <link
+id="ParseURI"/> call. It contains the contents of a URI, parsed out
+in it's various pieces.
+</descr>
+<seealso>
+<link id="ParseURI"/>
+<link id="EncodeURI"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TURI.Protocol">
+<short>Protocol of the URI (http, ftp, file, mailto etc.)</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TURI.Username">
+<short>Username part of the URI</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TURI.Password">
+<short>Password part of the URI</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TURI.Host">
+<short>Hostname part of the URI</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TURI.Port">
+<short>Port part of the URI</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TURI.Path">
+<short>Path (directory) part of the URI</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TURI.Document">
+<short>Document (filename) part of the URI</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TURI.Params">
+<short>Query parameter part of the URI</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TURI.Bookmark">
+<short>Bookmark part of the URI</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TURI.HasAuthority">
+<short>Indicates whether an 'Authority' part was present in the URI</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="EncodeURI">
+<short>Form a string representation of the URI</short>
+<descr>
+<var>EncodeURI</var> will return a valid text representation of the URI in the
+<var>URI</var> record. 
+</descr>
+<seealso>
+<link id="ParseURI"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="EncodeURI.Result">
+<short>The text representation of the URI</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="EncodeURI.URI">
+<short>The URI record to encode</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ParseURI">
+<short>Parse a URI and split it into its constituent parts</short>
+<descr>
+<p>
+<var>ParseURI</var> decodes <var>URI</var> and returns the various
+parts of the URI in the result record.
+</p>
+<p>
+The function accepts the most general URI scheme:
+</p>
+<pre>
+proto://user:pwd@host:port/path/document?params#bookmark
+</pre>
+<p>
+Missing (optional) parts in the URI will be left blank in the result record.
+If a default protocol and port are specified, they will be used in the
+record if the corresponding part is not present in the URI.
+</p>
+</descr>
+<seealso>
+<link id="EncodeURI"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ParseURI.Result">
+<short>Record with the URI split out in parts.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ParseURI.URI">
+<short>URI to decode</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ParseURI.DefaultProtocol">
+<short>Default protocol to use if none is specified.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ParseURI.DefaultPort">
+<short>Default port to use if none is specified.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ResolveRelativeURI">
+<short>Return a relative link</short>
+<descr>
+<p>
+<var>ResolveRelativeURI</var> returns in <var>ResultUri</var> an absolute link constructed 
+from a base URI <var>BaseURI</var> and a relative link <var>RelURI</var>. 
+One of the two URI names must have a protocol specified. 
+If the <var>RelURI</var> argument contains a protocol, it is considered 
+a complete (absolute) URI and is returned as the result.
+</p>
+<p>
+The function returns <var>True</var> if a link was succesfully returned.
+</p>
+</descr>
+<errors>
+If no protocols are specified, the function returns <var>False</var>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ResolveRelativeURI.Result">
+<short><var>True</var> if the operation was succesful, <var>False</var> if
+not.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ResolveRelativeURI.BaseUri">
+<short>Base URI</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ResolveRelativeURI.RelUri">
+<short>URI relative to <var>BaseURI</var> or absolute URI.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ResolveRelativeURI.ResultUri">
+<short>Resulting absolute URI</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="URIToFilename">
+<short>Convert a URI to a filename</short>
+<descr>
+<var>URIToFilename</var> returns a filename (using the correct
+Path Delimiter character) from <var>URI</var>. The <var>URI</var>
+must be of protocol <var>File</var> or have no protocol.
+</descr>
+<errors>
+If the URI contains an unsupported protocol, <var>False</var> is returned.
+</errors>
+<seealso>
+<link id="ResolveRelativeURI"/>
+<link id="FilenameToURI"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="URIToFilename.Result">
+<short><var>True</var> if a filename was extracted from the URI</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="URIToFilename.URI">
+<short>URI to analyse</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="URIToFilename.Filename">
+<short>Resulting filename</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="FilenameToURI">
+<short>Construct a URI from a filename</short>
+<descr>
+<var>FilenameToURI</var> takes <var>Filename</var> and constructs a
+<var>file:</var> protocol URI from it.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="URIToFilename"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="FilenameToURI.Result">
+<short>file: protocol URI</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="FilenameToURI.Filename">
+<short>Filename to construct URI from</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsAbsoluteURI">
+<short>Check whether a URI is absolute.</short>
+<descr>
+<var>IsAbsoluteURI</var> returns <var>True</var> if the URI in
+<var>UriReference</var> is absolute, i.e. contains a protocol part.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="FilenameToURI"/>
+<link id="URIToFileName"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsAbsoluteURI.Result">
+<short><var>True</var> if <var>UriReference</var> is absolute.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsAbsoluteURI.UriReference">
+<short>URI to analyse</short>
+</element>
+
+</module> <!-- URIParser -->
+
+</package>
+</fpdoc-descriptions>
