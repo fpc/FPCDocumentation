@@ -69,7 +69,17 @@ by the \fpc compiler. It describes all Pascal constructs supported by
 \fpc, and lists all supported data types. It does not, however, give a 
 detailed explanation of the pascal language: it is not a tutorial. 
 The aim is to list which Pascal constructs are supported, and to show 
-where the \fpc implementation differs from the \tp or \delphi implementations.
+where the \fpc implementation differs from the \tp or \delphi
+implementations. 
+
+The \tp and \delphi Pascal compilers introduced various features in the 
+pascal language. The Free Pascal compiler emulates these compilers in the
+appropriate mode of the compiler: certain features are available only
+if the compiler is switched to the appropriate mode. When required for 
+a certain feature, the use of the \var{-M} command-line switch or 
+\var{\{\$MODE \}} directive will be indicated in the text. More information
+about the various modes can be found in the user's manual and the
+programmer's manual.
 
 Earlier versions of this document also contained the reference documentation
 of the \file{system} unit and \file{objpas} unit. This has been moved to the 
@@ -119,11 +129,54 @@ This means that both the first or second possibility are optional.
 Of course, all these elements can be combined and nested.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% About the pascal language
+\section*{About the Pascal language}
+The language Pascal was originally designed by Niklaus Wirth around 1970. 
+It has evolved significantly since that day, with a lot of contributions 
+by the various compiler constructors (Notably: Borland). The basic elements 
+have been kept throughout the years:
+\begin{itemize}
+\item Easy syntax, rather verbose, yet easy to read. Ideal for teaching.
+\item Strongly typed.
+\item Procedural.
+\item Case insensitive.
+\item Allows nested procedures.
+\item Easy input/output routines built-in.
+\end{itemize}
+
+The \tp and \delphi Pascal compilers introduced various features in the 
+pascal language, most notably easier string handling and object orientedness. 
+The Free Pascal compiler initially emulated most of \tp and lated on
+\delphi. It emulates these compilers in the appropriate mode of the compiler: 
+certain features are available only if the compiler is switched to the appropriate 
+mode. When required for a certain feature, the use of the \var{-M} command-line 
+switch or \var{\{\$MODE \}} directive will be indicated in the text. More information
+about the various modes can be found in the user's manual and the
+programmer's manual.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The Pascal language
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Pascal Tokens}
 \index{Tokens}
+Tokens are the basic lexical building blocks of source code: they are the
+'words' of the language: Characters are combined into tokens according to 
+the rules of the programming language. There are five classes of tokens:
+\begin{description}
+\item[reserved words] These are words which have a fixed meaning in the
+language. They cannot be changed or redefined.
+\item[identifiers] These are names of symbols that the programmer defines.
+They can be changed and re-used. They are subject to the scope rules of the
+language.
+\item[operators] These are usually symbols for mathematical or other
+operations: +, -, * and so on.
+\item[separators] This is usually white-space.
+\item[constants] Numerical or character constants are used to denote actual
+values in the source code, such as 1 (integer constant) or 2.3 (float
+constant) or 'String constant' (a string: a piece of text).
+\end{description}
+
 In this chapter we describe all the pascal reserved words, as well as the
 various ways to denote strings, numbers, identifiers etc.
 
@@ -155,6 +208,48 @@ These character pairs retain their normal meaning in string expressions.
 % Comments
 \section{Comments}
 \index{Comments}\index{Tokens!Symbols}\keywordlink{Comment}
+Comments are pieces of the source code which are completely discarded by the
+compiler. They exist only for the benefit of the programmer, so he can
+explain certain pieces of code. For the compiler, it is as if the comments
+were not present.
+
+The following piece of code demonstrates a comment:
+\begin{verbatim}
+
+(* My beautiful function returns an interesting result *) 
+Function Beautiful : Integer;
+
+\end{verbatim}
+The use of \var{(*} and \var{*)} as comment delimiters dates from the very 
+first days of the Pascal language. It has been replaced mostly by the
+use of \var{\{} and \var{\}} as comment delimiters, as in the following
+example:
+\begin{verbatim}
+
+{ My beautiful function returns an interesting result }
+Function Beautiful : Integer;
+
+\end{verbatim}
+The comment can also span multiple lines:
+\begin{verbatim}
+
+{
+   My beautiful function returns an interesting result,
+   but only if the argument A is less than B.
+}
+Function Beautiful (A,B : Integer): Integer;
+\end{verbatim}
+Single line comments can also be made with the \var{//} delimiter:
+\begin{verbatim}
+
+// My beautiful function returns an interesting result
+Function Beautiful : Integer;
+
+\end{verbatim}
+The comment extends from the // character till the end of the line.
+This kind of comment was introduced by Borland in the Delphi pascal
+compiler.
+
 \fpc supports the use of nested comments. The following constructs are valid
 comments:
 \begin{verbatim}
@@ -194,15 +289,16 @@ maximum compatibility with existing code for those compilers.
 % Reserved words
 \section{Reserved words}
 \index{Reserved words}\index{Tokens!Reserved words}
-Reserved words are part of the Pascal language, and cannot be redefined.
-They will be denoted as {\sffamily\bfseries this} throughout the syntax
-diagrams. Reserved words can be typed regardless of case, i.e. Pascal is
-case insensitive.
+Reserved words are part of the Pascal language, and as such, cannot be redefined
+by the programmer. Throughout the syntax diagrams they will be denoted using
+a {\sffamily\bfseries bold} typeface. Pascal is not case sensitive so the compiler 
+will accept any combination of upper or lower case letters for reserved words.
 
-We make a distinction between \tp and \delphi reserved words, since
-in \var{TP} mode, only the \tp reserved words are recognised, 
-but the \delphi ones can be redefined. By default, \fpc
-recognises the \delphi reserved words.
+
+We make a distinction between \tp and \delphi reserved words. In \var{TP} mode, 
+only the \tp reserved words are recognised, but the \delphi ones can be redefined. 
+By default, \fpc recognises the \delphi reserved words.
+
 \subsection{Turbo Pascal reserved words}
 \index{Reserved words!Turbo Pascal}
 The following keywords exist in \tp mode
@@ -357,24 +453,35 @@ encouraged to do this, as it will cause a lot of confusion.
 % Identifiers
 \section{Identifiers}
 \index{Identifiers}\index{Tokens!Identifiers}
-Identifiers denote constants, types, variables, procedures and functions,
-units, and programs. All names of things that are defined somehow in the
-source code are identifiers.
+Identifiers denote programmer defined names for specific constants, types,
+variables, procedures and functions, units, and programs. All programmer 
+defined names in the source code - excluding reserved words - are designated as
+identifiers. 
 
-An identifier consists of at most 255 significant characters (letters, digits and
-the underscore character), from which the first must be an alphanumeric
-character, or an underscore (\var{\_})
+Identifiers consist of between 1 and 255 significant characters (letters, digits and
+the underscore character), of which the first must be an alphanumeric character, 
+or an underscore (\var{\_}).
 The following diagram gives the basic syntax for identifiers.
 \input{syntax/identifier.syn}
-
+Like pascal reserved words, identifiers are case insensitive, that is, both
+\begin{verbatim}
+  myprocedure;
+\end{verbatim}
+and
+\begin{verbatim}
+ MyProcedure;
+\end{verbatim}
+refer to the same procedure.
+ 
 \section{Hint directives}
 \index{Hint directives}\index{Directives!Hint}
 Most identifiers (constants, variables, functions or methods, properties) can have a 
-hint directive prepended to their definition:
+hint directive appended to their definition:
 
 \input{syntax/hintdirective.syn}
-Whenever an identifier marked with a hint directive is used in the rest of the source 
-code, then a warning will be displayed, corresponding to the hint that was specified.
+Whenever an identifier marked with a hint directive is  later encountered by
+the compiler, then a warning will be displayed, corresponding to the
+specified hint.
 \begin{description}
 \item[deprecated] The use of this identifier is deprecated, use an
 alternative instead.
@@ -442,11 +549,6 @@ specified in binary notation as \var{\%11111111}.\index{Numbers!Binary}
 The following diagrams show the syntax for numbers.
 \input{syntax/numbers.syn}
 
-\begin{remark}
-All decimal constants which do no fit within the -2147483648..2147483647 range are silently and automatically
-parsed as 64-bit integer constants as of version 1.9.0. Earlier
-versions would convert it to a real-typed constant.
-\end{remark}
 
 \begin{remark}
 Octal and Binary notation are not supported in \var{TP} or \var{Delphi} 
@@ -473,9 +575,11 @@ to allow use of labels and the goto statement.
 \section{Character strings}
 \index{String}\index{Constants!String}\index{Tokens!Strings}
 A character string (or string for short) is a sequence of zero or more
-characters (byte sized), enclosed in single quotes, and on 1 line of the 
-program source. A character set with nothing between the quotes (\var{'{}'}) is an empty
-string.
+characters (byte sized), enclosed in single quotes, and on a single 
+line of the program source code: no literal carriage return or linefeed 
+characters can appear in the string.
+
+A character set with nothing between the quotes (\var{'{}'}) is an empty string.
 \input{syntax/string.syn}
 The string consists of standard, 8-bit ASCII characters. The \var{control
 string} can be used to specify characters which cannot be typed on a
@@ -485,6 +589,32 @@ The single quote character can be embedded in the string by typing it twice.
 The C construct of escaping characters in the string (using a backslash) 
 is not supported in Pascal.
 
+The following are valid string constants:
+\begin{verbatim}
+  'This is a pascal string'
+  ''
+  'a'
+  'A tabulator character: '#8' is easy to embed'
+\end{verbatim}
+The following is an invalid string:
+\begin{verbatim}
+  'the string starts here
+   and continues here'
+\end{verbatim}
+The above string must be typed as:
+\begin{verbatim}
+  'the string starts here'#13#10'   and continues here'
+\end{verbatim}
+or
+\begin{verbatim}
+  'the string starts here'#10'   and continues here'
+\end{verbatim}
+on unices and as
+\begin{verbatim}
+  'the string starts here'#13'   and continues here'
+\end{verbatim}
+on a Mac-like operating system.
+ 
 It is possible to use other character sets in strings: in that case the 
 codepage of the source file must be specified with the \var{\{\$CODEPAGE XXX\}}
 directive or with the \var{-Fc} command line option for the compiler. In that
@@ -690,6 +820,12 @@ The \var{integer} type maps to the smallint type in the default\keywordlink{inte
 \fpc mode. It maps to either a longint in either Delphi or ObjFPC
 mode. The \var{cardinal} type is currently always mapped to the 
 longword type. 
+
+\begin{remark}
+All decimal constants which do no fit within the -2147483648..2147483647 range 
+are silently and automatically parsed as 64-bit integer constants as of version 
+1.9.0. Earlier versions would convert it to a real-typed constant.
+\end{remark}
 
 %  This IS NOT TRUE, this is a 32-bit compiler, so the integer type
 % will always be the same independently the CPU type.
