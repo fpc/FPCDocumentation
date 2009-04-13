@@ -1,0 +1,2608 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    daemonapp
+  ====================================================================
+-->
+
+<module name="daemonapp">
+<short>Daemon (service) application class</short>
+<descr>
+<p>
+The <file>daemonapp</file> unit implements a <var>TApplication</var> class
+which encapsulates a daemon or service application. It handles installation
+where this is necessary, and does instantiation of the various daemons where necessary.
+</p>
+<p>
+The unit consists of 3 separate classes which cooperate tightly:
+</p>
+<dl>
+<dt>TDaemon</dt><dd>This is a class that implements the daemon's
+functionality. One or more descendents of this class can be implemented and
+instantiated in a single daemon application. For more information, see <link
+id="TDaemon"/>.</dd>
+<dt>TDaemonApplication</dt><dd>This is  the actual daemon application class. 
+A global instance of this class is instantiated. It handles the command-line
+arguments, and instantiates the various daemons. For more information, see
+<link id="TDaemonApplication"/>.</dd>
+<dt>TDaemonDef</dt><dd>This class defines the daemon in the operation
+system. The <var>TDaemonApplication</var> class has a collection of
+<var>TDaemonDef</var> instances, which it uses to start the various daemons.
+For more information, see <link id="TDaemonDef"/>.
+</dd>
+</dl>
+<p>
+As can be seen, a single application can implement one ore more daemons
+(services). Each daemon will be run in a separate thread which is controlled
+by the application class.
+</p>
+<p>
+The classes take care of logging through the <link id="#fcl.eventlog.teventlog">TEventLog</link> class.
+</p>
+<p>
+Many options are needed only to make the application behave as a windows
+service application on windows. These options are ignored in unix-like
+environment. The documentation will mention this.
+</p>
+</descr>
+
+<topic name="Architecture">
+<short>Daemon application architecture</short>
+<descr>
+</descr>
+</topic>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Custapp">
+<short>Definition of <var>TCustomApplication</var></short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="Classes">
+<short>Components and collections.</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="SysUtils">
+<short>Exception support and formatting routines</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="eventlog">
+<short>Event logging class.</short>
+</element>
+
+<!-- unresolved type reference Visibility: default -->
+<element name="rtlconsts">
+<short>Constant strings for messages</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.TCustomDaemon
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TCustomDaemon">
+<short>Base daemon application class</short>
+<descr>
+<p>
+<var>TCustomDaemon</var> implements all the basic calls that are needed
+for a daemon to function. Descendents of <var>TCustomDaemon</var> can
+override these calls to implement the daemon-specific behaviour. 
+</p>
+<p>
+<var>TCustomDaemon</var> is an abstract class, it should never be
+instantiated. Either a descendent of it must be created and instantiated, or
+a descendent of <link id="TDaemon"/> can be designed to implement the
+behaviour of the daemon.
+</p>
+</descr>
+<seealso>
+<link id="TDaemon"/>
+<link id="TDaemonDef"/>
+<link id="TDaemonController"/>
+<link id="TDaemonApplication"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.TDaemonController
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TDaemonController">
+<short>Internal daemon controller class</short>
+<descr>
+<var>TDaemonController</var> is a class that is used by the <link
+id="TDaemonApplication"/> class to control the daemon during runtime.
+The <var>TDaemonApplication</var> class instantiates an instance of
+<var>TDaemonController</var> for each daemon in the application and 
+communicates with the daemon through the <var>TDaemonController</var> 
+instance. It should rarely be necessary to access or use this class.
+</descr>
+<seealso>
+<link id="TCustomDaemon"/>
+<link id="TDaemonApplication"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TDaemonEvent">
+<short>Daemon event handler prototype</short>
+<descr>
+<var>TDaemonEvent</var> is used in event handling. The <var>Sender</var> 
+is the <link id="TCustomDaemon"/> instance that has initiated the event.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonEvent.Sender">
+<short>Daemon instance</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TDaemonOKEvent">
+<short>Daemon acknowledgement event handler</short>
+<descr>
+<var>TDaemonOKEvent</var> is used in event handling, when a boolean result
+must be obtained, for instance, to see if an operation was performed
+succesfully.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonOKEvent.Sender">
+<short>Daemon instance</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonOKEvent.OK">
+<short>Operation was successful</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TDaemonOption">
+<short>Daemon options</short>
+<descr>
+Enumerated that enumerates the various daemon operation options.
+</descr>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TDaemonOption.doAllowStop">
+<short>The daemon can be stopped.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TDaemonOption.doAllowPause">
+<short>The daemon can be paused.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TDaemonOption.doInteractive">
+<short>The daemon interacts with the desktop.</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TDaemonOptions">
+<short>Set of <link id="TDaemonOption"/> options.</short>
+<descr>
+<var>TDaemonOption</var> enumerates the various options a daemon can have.
+</descr>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TDaemonRunMode">
+<short>Daemon application run mode</short>
+<descr>
+<var>TDaemonRunMode</var> indicates in what mode the daemon application 
+(as a whole) is currently running.
+</descr>
+<seealso>
+<link id="TCustomDaemonApplication.RunMode">RunMode</link>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TDaemonRunMode.drmUnknown">
+<short>Unknown mode</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TDaemonRunMode.drmInstall">
+<short>Daemon install mode (windows only)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TDaemonRunMode.drmUninstall">
+<short>Daemon uninstall mode (windows only)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TDaemonRunMode.drmRun">
+<short>Daemon is running normally</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.TDaemonDef
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TDaemonDef">
+<short>Daemon definition</short>
+<descr>
+<var>TDaemonDef</var> contains the definition of a daemon in the
+application: The name of the daemon, which <link id="TCustomDaemon"/>
+descendent should be started to run the daemon, a description, and various
+other options should be set in this class. 
+The global <var>TDaemonApplication</var> instance maintains a collection
+of <var>TDaemonDef</var> instances and will use these definitions to 
+install or start the various daemons. 
+</descr>
+<seealso>
+<link id="TDaemonApplication"/>
+<link id="TDaemon"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TCurrentStatus">
+<short>Current daemon status</short>
+<descr>
+<var>TCurrentStatus</var> indicates the current state of the daemon. It
+changes from one state to the next during the time the instance is active.
+The daemon application changes the state of the daemon, depending on signals 
+it gets from the operating system, by calling the appropriate methods.
+</descr>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCurrentStatus.csStopped">
+<short>The daemon is stopped, i.e. inactive.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCurrentStatus.csStartPending">
+<short>The daemon is starting, but not yet fully running.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCurrentStatus.csStopPending">
+<short>The daemon is stopping, but not yet fully stopped.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCurrentStatus.csRunning">
+<short>The daemon is running (it is operational).</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCurrentStatus.csContinuePending">
+<short>The daemon is continuing, but not yet running</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCurrentStatus.csPausePending">
+<short>The daemon is about to be paused.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCurrentStatus.csPaused">
+<short>The daemon is paused: running but not active.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomDaemon.LogMessage">
+<short>Log a message to the system log</short>
+<descr>
+<p>
+<var>LogMessage</var> can be used to send a message <var>Msg</var> to the system log.
+A <link id="#fcl.eventlog.Teventlog">TEventLog</link> instance is used to
+actually send messages to the system log.
+</p>
+<p>
+The message is sent with an 'error' flag (using <link
+id="#fcl.eventlog.Teventlog.Error">TEventLog.Error</link>).
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TCustomDaemon.ReportStatus">ReportStatus</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomDaemon.LogMessage.Msg">
+<short>Message to send to the system log</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomDaemon.ReportStatus">
+<short>Report the current status to the operating system</short>
+<descr>
+<p>
+<var>ReportStatus</var> can be used to report the current status to the
+operating system. The start and stop or pause and continue operations
+can be slow to start up. This call can (and should) be used to report the
+current status to the operating system during such lengthy operations, 
+or else it may conclude that the daemon has died.
+</p>
+<p>
+This call is mostly important on windows operating systems, to notify the
+service manager that the operation is still in progress.
+</p>
+<p>
+The implementation of <var>ReportStatus</var> simply calls
+<var>ReportStatus</var> in the controller.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TCustomDaemon.LogMessage">LogMessage</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomDaemon.Definition">
+<short>The definition used to instantiate this daemon instance</short>
+<descr>
+<var>Definition</var> is the <link id="TDaemonDef"/> definition that was
+used to start the daemon instance. It can be used to retrieve additional
+information about the intended behaviour of the daemon.
+</descr>
+<seealso>
+<link id="TDaemonDef"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomDaemon.DaemonThread">
+<short>Thread in which daemon is running</short>
+<descr>
+<var>DaemonThread</var> is the thread in which the daemon instance is running.
+Each daemon instance in the application runs in it's own thread, none of
+which are the main thread of the application. The application main thread is
+used to handle control messages coming from the operating system.
+</descr>
+<seealso>
+<link id="TCustomDaemon.Controller">Controller</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomDaemon.Controller">
+<short><var>TDaemonController</var> instance controlling this daemon instance</short>
+<descr>
+<var>Controller</var> points to the <var>TDaemonController</var> instance
+that was created by the application instance to control this daemon.
+</descr>
+<seealso>
+<link id="TCustomDaemon.DaemonThread">DaemonThread</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomDaemon.Status">
+<short>Current status of the daemon</short>
+<descr>
+<p>
+<var>Status</var> indicates the current status of the daemon. It is set by
+the various operations that the controller operates on the daemon, and
+should not be set manually.
+</p>
+<p>
+<var>Status</var> is the value which <var>ReportStatus</var> will send 
+to the operating system.
+</p>
+</descr>
+<seealso>
+<link id="TCustomDaemon.ReportStatus">ReportStatus</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomDaemon.Logger">
+<short><var>TEventLog</var> instance used to send messages to the system log</short>
+<descr>
+<var>Logger</var> is the <link id="#fcl.eventlog.TEventLog">TEventLog</link>
+instance used to send messages to the system log. It is used by the 
+<link id="TCustomDaemon.LogMessage">LogMessage</link> call, but is acessible
+through the <var>Logger</var> property in case more configurable logging is
+needed than offered by <var>LogMessage</var>.
+</descr>
+<seealso>
+<link id="TCustomDaemon.LogMessage">LogMessage</link>
+<link id="#fcl.eventlog.TEventLog">TEventLog</link>
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TCustomDaemonClass">
+<short>Class type for <var>TCustomDaemon</var></short>
+<descr>
+The class type is needed in the <link id="TDaemonDef"/> definition.
+</descr>
+<seealso>
+<link id="TDaemonDef"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TCustomControlCodeEvent">
+<short>Prototype for event to handle a custom control code</short>
+<descr>
+In case the system sends a non-standard control code to the daemon, an event
+handler is executed with this prototype.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomControlCodeEvent.Sender">
+<short>Daemon instance for which the control event was meant</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomControlCodeEvent.ACode">
+<short>Control code being sent to the daemon</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomControlCodeEvent.Handled">
+<short>Was the control code handled ?</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.TDaemon
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TDaemon">
+<short>Daemon class for visual development</short>
+<descr>
+<p>
+<var>TDaemon</var> is a <link id="TCustomDaemon"/> descendent which is
+meant for development in a visual environment: it contains event handlers
+for all major operations. Whenever a <var>TCustomDaemon</var> method is
+executed, it's execution is shunted to the event handler, which can be
+filled with code in the IDE.
+</p>
+<p>
+All the events of the daemon are executed in the thread in which the 
+daemon's controller is running (as given by 
+<link id="TCustomDaemon.DaemonThread">DaemonThread</link>), which is 
+not the main program thread. 
+</p>
+</descr>
+<seealso>
+<link id="TCustomDaemon"/>
+<link id="TDaemonController"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDaemon.Definition" link="TCustomDaemon.Definition">
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDaemon.Status" link="TCustomDaemon.Status">
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemon.OnStart">
+<short>Daemon start event</short>
+<descr>
+<p>
+<var>OnStart</var> is the event called when the daemon must be started. This
+event handler should return as quickly as possible. If it must perform
+lengthy operations, it is best to report the status to the operating system
+at regular intervals using the <link id="TCustomDaemon.ReportStatus">ReportStatus</link> method.
+</p>
+<p>
+If the start of the daemon should do some continuous action, then this 
+action should be performed in a new thread: this thread should then be
+created and started in the <link id="TDaemon.OnExecute">OnExecute</link> 
+event handler, so the event handler can return at once.
+</p>
+</descr>
+<seealso>
+<link id="TDaemon.OnStop"/>
+<link id="TDaemon.OnExecute"/>
+<link id="TDaemon.OnContinue"/>
+<link id="TCustomDaemon.ReportStatus">ReportStatus</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemon.OnStop">
+<short>Daemon stop event</short>
+<descr>
+<p>
+<var>OnStart</var> is the event called when the daemon must be stopped. This
+event handler should return as quickly as possible. If it must perform
+lengthy operations, it is best to report the status to the operating system
+at regular intervals using the <link id="TCustomDaemon.ReportStatus">ReportStatus</link> method.
+</p>
+<p>
+If a thread was started in the <link id="TDaemon.OnExecute">OnExecute</link>
+event, this is the place where the thread should be stopped.
+</p>
+</descr>
+<seealso>
+<link id="TDaemon.OnStart"/>
+<link id="TDaemon.OnPause"/>
+<link id="TCustomDaemon.ReportStatus">ReportStatus</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemon.OnPause">
+<short>Daemon pause event</short>
+<descr>
+<p>
+<var>OnPause</var> is the event called when the daemon must be stopped. This
+event handler should return as quickly as possible. If it must perform
+lengthy operations, it is best to report the status to the operating system
+at regular intervals using the <link id="TCustomDaemon.ReportStatus">ReportStatus</link> method.
+</p>
+<p>
+If a thread was started in the <link id="TDaemon.OnExecute">OnExecute</link>
+event, this is the place where the thread's execution should be suspended.
+</p>
+</descr>
+<seealso>
+<link id="TDaemon.OnStop"/>
+<link id="TDaemon.OnContinue"/>
+<link id="TCustomDaemon.ReportStatus">ReportStatus</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemon.OnContinue">
+<short>Daemon continue</short>
+<descr>
+<p>
+<var>OnPause</var> is the event called when the daemon must be stopped. This
+event handler should return as quickly as possible. If it must perform
+lengthy operations, it is best to report the status to the operating system
+at regular intervals using the <link
+id="TCustomDaemon.ReportStatus">ReportStatus</link> method.
+</p>
+<p>
+If a thread was started in the <link id="TDaemon.OnExecute">OnExecute</link>
+event and it was suspended in a <link id="TDaemon.OnStart">OnPause</link>
+event, this is the place where the thread's executed should be resumed.
+</p>
+</descr>
+<seealso>
+<link id="TDaemon.OnStart"/>
+<link id="TDaemon.OnPause"/>
+<link id="TCustomDaemon.ReportStatus">ReportStatus</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemon.OnShutDown">
+<short>Daemon shutdown</short>
+<descr>
+<p>
+<var>OnShutDown</var> is the event called when the daemon must be shut down. 
+When the system is being shut down and the daemon does not respond to stop
+signals, then a shutdown message is sent to the daemon. This event can be
+used to respond to such a message. The daemon process will simply be stopped 
+after this event.
+</p>
+<p>
+If a thread was started in the <link id="TDaemon.OnExecute">OnExecute</link>,
+this is the place where the thread's executed should be stopped or the
+thread freed from memory.
+</p>
+</descr>
+<seealso>
+<link id="TDaemon.OnStart"/>
+<link id="TDaemon.OnPause"/>
+<link id="TCustomDaemon.ReportStatus">ReportStatus</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemon.OnExecute">
+<short>Daemon execute event</short>
+<descr>
+<p>
+<var>OnExecute</var> is executed once after the daemon was started. 
+If assigned, it should perform whatever operation the daemon is designed.
+</p>
+<p>
+If the daemon's action is event based, then no <var>OnExecute</var> handler
+is needed, and the events will control the daemon's execution: the daemon
+thread will then go in a loop, passing control messages to the daemon. 
+</p>
+<p>
+If an <var>OnExecute</var> event handler is present, the checking for
+control messages must be done by the implementation of the
+<var>OnExecute</var> handler.
+</p>
+</descr>
+<seealso>
+<link id="TDaemon.OnStart"/>
+<link id="TDaemon.OnStop"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemon.BeforeInstall">
+<short>Called before the daemon will be installed</short>
+<descr>
+<var>BeforeInstall</var> is called before the daemon is installed. It can be
+done to specify extra dependencies, or change the daemon description etc.
+</descr>
+<seealso>
+<link id="TDaemon.AfterInstall">AfterInstall</link>
+<link id="TDaemon.BeforeUnInstall">BeforeUnInstall</link>
+<link id="TDaemon.AfterUnInstall">AfterUnInstall</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemon.AfterInstall">
+<short>Called after the daemon was installed</short>
+<descr>
+<var>AfterInstall</var> is called after the daemon was succesfully installed.
+</descr>
+<seealso>
+<link id="TDaemon.BeforeInstall">BeforeInstall</link>
+<link id="TDaemon.BeforeUnInstall">BeforeUnInstall</link>
+<link id="TDaemon.AfterUnInstall">AfterUnInstall</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemon.BeforeUnInstall">
+<short>Called before the daemon is uninstalled</short>
+<descr>
+<var>BeforeUnInstall</var> is called before the daemon is uninstalled.
+</descr>
+<seealso>
+<link id="TDaemon.BeforeInstall">BeforeInstall</link>
+<link id="TDaemon.AfterInstall">AfterInstall</link>
+<link id="TDaemon.AfterUnInstall">AfterUnInstall</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemon.AfterUnInstall">
+<short>Called after the daemon is uninstalled</short>
+<descr>
+<var>AfterUnInstall</var> is called after the daemon is succesfully uninstalled.
+</descr>
+<seealso>
+<link id="TDaemon.BeforeInstall">BeforeInstall</link>
+<link id="TDaemon.AfterInstall">AfterInstall</link>
+<link id="TDaemon.BeforeUnInstall">BeforeUnInstall</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemon.OnControlCode">
+<short>Called when a control code is received for the daemon</short>
+<descr>
+<var>OnControlCode</var> is called when the daemon receives a control code.
+If the daemon has not handled the control code, it should set the
+<var>Handled</var> parameter to <var>False</var>. By default it is set to
+<var>True</var>.
+</descr>
+<seealso>
+<link id="daemonapp.architecture">Architecture</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TDaemonController.Create">
+<short>Create a new instance of the <var>TDaemonController</var> class</short>
+<descr>
+<var>Create</var> creates a new instance of the <var>TDaemonController</var>
+class. It should never be necessary to create a new instance manually,
+because the controllers are created by the global <link id="TDaemonApplication"/>
+instance, and <var>AOwner</var> will be set to the global <link
+id="TDaemonApplication"/> instance. 
+</descr>
+<seealso>
+<link id="TDaemonApplication"/>
+<link id="TDaemonController.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonController.Create.AOwner">
+<short>Owner of the controller.</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TDaemonController.Destroy">
+<short>Free a <var>TDaemonController</var> instance.</short>
+<descr>
+<var>Destroy</var> deallocates some resources allocated when the instance
+was created.
+</descr>
+<seealso>
+<link id="TDaemonController.Create">Create</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TDaemonController.StartService">
+<short>Start the service</short>
+<descr>
+<var>StartService</var> starts the service controlled by this instance.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TDaemonController.Main"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TDaemonController.Main">
+<short>Daemon main entry point</short>
+<descr>
+<p>
+<var>Main</var> is the service's main entry point, called when the system
+wants to start the service. The global application will call this function 
+whenever required, with the appropriate arguments. 
+</p>
+<p>
+The standard implementation starts the daemon thread, and waits for it to
+stop. All other daemon action - such as responding to control code events - 
+is handled by the thread.
+</p>
+</descr>
+<errors>
+If the daemon thread cannot be created, an exception is raised.
+</errors>
+<seealso>
+<link id="TDaemonThread"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonController.Main.Argc">
+<short>Command-line arguments passed by the OS. The first is normally the
+service name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonController.Main.Args">
+<short>Arguments for the service.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TDaemonController.Controller">
+<short>Controller</short>
+<descr>
+<p>
+<var>Controller</var> is responsible for sending the control code to the
+daemon thread so it can be processed.
+</p>
+<p>
+This routine is currently only used on windows, as there is no service
+manager on linux. Later on this may be changed to respond to signals on
+linux as well.
+</p>
+</descr>
+<seealso>
+<link id="TDaemon.OnControlCode"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonController.Controller.ControlCode">
+<short>Control code sent by the system</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonController.Controller.EventType">
+<short>Event type sent by the system</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonController.Controller.EventData">
+<short>Additional event data sent by the system</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDaemonController.ReportStatus">
+<short>Report the status to the operating system.</short>
+<descr>
+<var>ReportStatus</var> reports the status of the daemon to the operating
+system. On windows, this sends the current service status to the service
+manager. On other operating systems, this sends a message to the system 
+log.
+</descr>
+<errors>
+If an error occurs, an error message is sent to the system log.
+</errors>
+<seealso>
+<link id="TDaemon.ReportStatus"/>
+<link id="TDaemonController.LastStatus"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDaemonController.ReportStatus.Result">
+<short><var>True</var> if the status was reported succesfully</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDaemonController.Daemon">
+<short>Daemon instance this controller controls.</short>
+<descr>
+<var>Daemon</var> is the daemon instance that is controller by this
+instance of the <var>TDaemonController</var> class.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDaemonController.Params">
+<short>Parameters passed to the daemon</short>
+<descr>
+<var>Params</var> contains the parameters passed to the daemon application
+by the operating system, comparable to the application's command-line
+parameters. The property is set by the <link
+id="TDaemonController.Main">Main</link> method.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDaemonController.LastStatus">
+<short>Last reported status</short>
+<descr>
+<var>LastStatus</var> is the last status reported to the operating system.
+</descr>
+<seealso>
+<link id="TDaemonController.ReportStatus">ReportStatus</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDaemonController.CheckPoint">
+<short>Send checkpoint signal to the operating system</short>
+<descr>
+<var>CheckPoint</var> can be used to send a checkpoint signal during lengthy
+operations, to signal that a lengthy operation is in progress. This should
+be used mainly on windows, to signal the service manager that the service is
+alive.
+</descr>
+<seealso>
+<link id="TDaemonController.ReportStatus">ReportStatus</link>
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TDaemonClass">
+<short>Class type of <var>TDaemon</var></short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TServiceType">
+<short>Type of service (Windows only)</short>
+<descr>
+The type of service. This type is used on windows only, 
+to signal the operating system what kind of service is 
+being installed or run.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TServiceType.stWin32">
+<short>Regular win32 service</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TServiceType.stDevice">
+<short>Device driver</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TServiceType.stFileSystem">
+<short>File system driver</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TErrorSeverity">
+<short>Severity of a startup error (Windows only)</short>
+<descr>
+<var>TErrorSeverity</var> determines what action windows takes
+when the daemon fails to start. It is used on windows only, and is ignored
+on other platforms.
+</descr>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TErrorSeverity.esIgnore">
+<short>Ignore startup errors</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TErrorSeverity.esNormal">
+<short>Error is logged, but startup continues</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TErrorSeverity.esSevere">
+<short>Error is logged, and startup is continued if last known good
+configuration is active, or system is restarted using last known good
+configuration</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TErrorSeverity.esCritical">
+<short>Error is logged, and startup is stopped if last known good
+configuration is active, or system is restarted using last known good
+configuration</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TStartType">
+<short>When should the daemon be started (windows only)</short>
+<descr>
+<var>TStartType</var> can be used to define when the service must be started
+on windows. This type is not used on other platforms.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStartType.stBoot">
+<short>During system boot</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStartType.stSystem">
+<short>During load of device drivers</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStartType.stAuto">
+<short>Started automatically by service manager during system startup</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStartType.stManual">
+<short>Started manually by the user or other processes.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStartType.stDisabled">
+<short>Service is not started, it is disabled</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.TDependency
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TDependency">
+<short>Container to define depenencies on other services.</short>
+<descr>
+<var>TDependency</var> is a collection item used to specify dependencies on
+other daemons (services) in windows. It is used only on windows and when 
+installing the daemon: changing the dependencies of a running daemon has no 
+effect.
+</descr>
+<seealso>
+<link id="TDependencies"/>
+<link id="TDaemonDef"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TDependency.Assign" link="#rtl.classes.tpersistent.Assign">
+<short>Assign <var>TDependency</var> instance to another</short>
+<descr>
+<var>Assign</var> is overridden by <var>TDependency</var> to copy all
+properties from one instance to another.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDependency.Assign.Source">
+<short>Source instance to copy properties from</short>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDependency.Name">
+<short>Name of the service</short>
+<descr>
+<var>Name</var> is the name of a service or service group that the current daemon depends on.
+</descr>
+<seealso>
+<link id="TDependency.IsGroup"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDependency.IsGroup">
+<short>Name refers to a service group</short>
+<descr>
+<var>IsGroup</var> can be set to <var>True</var> to indicate that
+<var>Name</var> refers to the name of a service group.
+</descr>
+<seealso>
+<link id="TDependency.Name"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.TDependencies
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TDependencies">
+<short>Dependencies collection for a daemon</short>
+<descr>
+<var>TDependencies</var> is just a descendent of <var>TCollection</var>
+which contains a series of dependencies on other services. It overrides the
+default property of <var>TCollection</var> to return <link
+id="TDependency"/> instances.
+</descr>
+<seealso>
+<link id="TDependency"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TDependencies.Create">
+<short>Create a new instance of a <var>TDependencies</var> collection.</short>
+<descr>
+<var>Create</var> Create a new instance of a <var>TDependencies</var> collection.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDependencies.Create.AOwner">
+<short>Owner of the collection - normally a <var>TDaemonDef</var> instance.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDependencies.Items">
+<short>Default property override</short>
+<descr>
+<var>Items</var> overrides the default property of <var>TCollection</var> so
+the items are of type <link id="TDependency"/>.
+</descr>
+<seealso>
+<link id="TDependency"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDependencies.Items.Index">
+<short>Zero based index of the dependency</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.TWinBindings
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TWinBindings">
+<short>Windows Daemon bindings (windows only)</short>
+<descr>
+<var>TWinBindings</var> contains windows-specific properties for the daemon
+definition (in <link id="TDaemonDef.WinBindings"/>). If the daemon should not run 
+on Windows, then the properties can be ignored.
+</descr>
+<seealso>
+<link id="TDaemonDef"/>
+<link id="TDaemonDef.WinBindings"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TWinBindings.Create">
+<short>Create a new <var>TWinBindings</var> instance</short>
+<descr>
+<var>Create</var> initializes various properties such as the dependencies.
+</descr>
+<seealso>
+<link id="TDaemonDef"/>
+<link id="TDaemonDef.WinBindings"/>
+<link id="TWinBindings.Dependencies"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TWinBindings.Destroy">
+<short>Remove a <var>TWinBindings</var> instance from memory</short>
+<descr>
+<var>Destroy</var> cleans up the <var>TWinBindings</var> instance.
+</descr>
+<seealso>
+<link id="TWinBindings.Dependencies"/>
+<link id="TWinBindings.Create"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TWinBindings.Assign">
+<short>Copies all properties</short>
+<descr>
+<var>Assign</var> is overridden by <var>TWinBindings</var> so all properties
+are copied from <var>Source</var> to the <var>TWinBindings</var> instance.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWinBindings.Assign.Source">
+<short><var>TWinBindings</var> instance to copy properties from</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWinBindings.ErrCode">
+<short>Service specific error code</short>
+<descr>
+<var>ErrCode</var> contains a service specific error code that is reported with 
+<link id="TDaemon.ReportStatus"/> to the windows service manager. If it is zero,
+then the contents of <link id="TWinBindings.Win32ErrCode">Win32ErrCode</link>
+are reported. If it is nonzero, then the windows-errorcode is set to 
+<var>ERROR_SERVICE_SPECIFIC_ERROR</var>.
+</descr>
+<seealso>
+<link id="TWinBindings.Win32ErrCode"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWinBindings.Win32ErrCode">
+<short>General windows error code</short>
+<descr>
+<var>Win32ErrCode</var> is a general windows service error code that can be
+reported with <link id="TDaemon.ReportStatus"/> to the windows service manager.
+It is sent if <link id="TWinBindings.ErrCode">ErrCode</link> is zero.
+</descr>
+<seealso>
+<link id="TWinBindings.ErrCode">ErrCode</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TWinBindings.Dependencies">
+<short>Service dependencies</short>
+<descr>
+<p>
+<var>Dependencies</var> contains the list of other services (or service
+groups) that this service depends on. Windows will first attempt to 
+start these services prior to starting this service. If they cannot be
+started, then the service will not be started either.
+</p>
+<p>
+This property is only used during installation of the service.
+</p>
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TWinBindings.GroupName">
+<short>Service group name</short>
+<descr>
+<p>
+<var>GroupName</var> specifies the name of a service group that the service
+belongs to. If it is empty, then the service does not belong to any group.
+</p>
+<p>
+This property is only used during installation of the service.
+</p>
+</descr>
+<seealso>
+<link id="TDependency.IsGroup"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TWinBindings.Password">
+<short>Password for service startup</short>
+<descr>
+<p>
+<var>Password</var> contains the service password: if the service is started
+with credentials other than one of the system users, then the password for
+the user must be entered here.
+</p>
+<p>
+This property is only used during installation of the service.
+</p>
+</descr>
+<seealso>
+<link id="TWinBindings.UserName">UserName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TWinBindings.UserName">
+<short>Username to run service as</short>
+<descr>
+<p>
+<var>Username</var> specifies the name of a user whose credentials should
+be used to run the service. If it is left empty, the service is run as the
+system user. The password can be set in the <link id="TWinBindings.Password">Password</link>
+property.
+</p>
+<p>
+This property is only used during installation of the service.
+</p>
+</descr>
+<seealso>
+<link id="TWinBindings.Password">Password</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TWinBindings.StartType">
+<short>Service startup type.</short>
+<descr>
+<p>
+<var>StartType</var> specifies when the service should be started during system
+startup.
+</p>
+<p>
+This property is only used during installation of the service.
+</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TWinBindings.WaitHint">
+<short>Timeout wait hint</short>
+<descr>
+<p>
+<var>WaitHint</var> specifies the estimated time for a start/stop/pause or
+continue operation (in milliseconds). Reportstatus should be called prior 
+to this time to report the next status.
+</p>
+</descr>
+<seealso>
+<link id="TDaemon.ReportStatus"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TWinBindings.IDTag">
+<short>Location in the service group</short>
+<descr>
+<p>
+<var>IDTag</var> contains the location of the service in the service group
+after installation of the service. It should not be set, it is reported by
+the service manager.
+</p>
+<p>
+This property is only used during installation of the service.
+</p>
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TWinBindings.ServiceType">
+<short>Type of service</short>
+<descr>
+<p>
+<var>ServiceType</var> specifies what kind of service is being installed.
+</p>
+<p>
+This property is only used during installation of the service.
+</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TWinBindings.ErrorSeverity">
+<short>Error severity in case of startup failure</short>
+<descr>
+<p>
+<var>ErrorSeverity</var> can be used at installation time to tell the windows
+service manager how to behave when the service fails to start during system startup.
+</p>
+<p>
+This property is only used during installation of the service.
+</p>
+</descr>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TDaemonDef.Create">
+<short>Create a new <var>TDaemonDef</var> instance</short>
+<descr>
+<var>Create</var> initializes a new <var>TDaemonDef</var> instance. It
+should not be necessary to instantiate a definition manually, it is handled
+by the collection.
+</descr>
+<seealso>
+<link id="TDaemonDefs"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonDef.Create.ACollection">
+<short>Collection the item belongs in.</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TDaemonDef.Destroy">
+<short>Free a <var>TDaemonDef</var> from memory</short>
+<descr>
+<var>Destroy</var> removes the <var>TDaemonDef</var> from memory.  
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDaemonDef.DaemonClass">
+<short><var>TDaemon</var> class to use for this daemon</short>
+<descr>
+<var>DaemonClass</var> is the <var>TDaemon</var> class that is used
+when this service is requested. It is looked up in the application's
+global daemon mapper by it's name in <link id="TDaemonDef.DaemonClassName">DaemonClassName</link>.
+</descr>
+<seealso>
+<link id="TDaemonDef.DaemonClassName">DaemonClassName</link>
+<link id="TDaemonMapper"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDaemonDef.Instance">
+<short>Instance of the daemon class</short>
+<descr>
+<var>Instance</var> points to the <link id="TDaemon"/> instance that is used
+when the service is in operation at runtime. 
+</descr>
+<seealso>
+<link id="TDaemonDef.DaemonClass"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemonDef.DaemonClassName">
+<short>Name of the <var>TDaemon</var> class to use for this daemon</short>
+<descr>
+<var>DaemonClassName</var> is the name of the <var>TDaemon</var> class that
+will be used whenever the service is needed. The name is used to look up the
+class pointer registered in the daemon mapper, when <link
+id="TCustomDaemonApplication.CreateDaemonInstance"/> creates an instance of
+the daemon.
+</descr>
+<seealso>
+<link id="TDaemonDef.Instance"/>
+<link id="TDaemonDef.DaemonClass"/>
+<link id="RegisterDaemonClass"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemonDef.Name">
+<short>Name of the daemon (service)</short>
+<descr>
+<var>Name</var> is the internal name of the daemon as it is known to the operating
+system.
+</descr>
+<seealso>
+<link id="TDaemonDef.DisplayName"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemonDef.DisplayName">
+<short>Displayed name of the daemon (service)</short>
+<descr>
+<var>DisplayName</var> is the displayed name of the daemon as it is known to the
+operating system.
+</descr>
+<seealso>
+<link id="TDaemonDef.Name"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemonDef.Options">
+<short>Service options</short>
+<descr>
+<p>
+<var>Options</var> tells the operating system which operations can be
+performed on the daemon while it is running.
+</p>
+<p>
+This option is only used during the installation of the daemon.
+</p>
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemonDef.Enabled">
+<short>Is the daemon enabled or not</short>
+<descr>
+<var>Enabled</var> specifies whether a daemon should be installed, run or
+uninstalled. Disabled daemons are not installed, run or uninstalled.
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemonDef.WinBindings">
+<short>Windows-specific bindings (windows only)</short>
+<descr>
+<var>WinBindings</var> is used to group together the windows-specific
+properties of the daemon. This property is totally ignored on other
+platforms.
+</descr>
+<seealso>
+<link id="TWinBindings"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemonDef.OnCreateInstance">
+<short>Event called when a daemon in instantiated</short>
+<descr>
+<var>OnCreateInstance</var> is called whenever an instance of the daemon is
+created. This can be used for instance when a single <var>TDaemon</var>
+class is used to run several services, to correctly initialize the TDaemon.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TDaemonDef.LogStatusReport">
+<short>Log the status report to the system log</short>
+<descr>
+<var>LogStatusReport</var> can be set to <var>True</var> to send the status
+reports also to the system log. This can be used to track the progress of
+the daemon.
+</descr>
+<seealso>
+<link id="TDaemon.ReportStatus"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.TDaemonDefs
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TDaemonDefs">
+<short>Collection of daemon definitions.</short>
+<descr>
+<p>
+<var>TDaemonDefs</var> is the class of the global list of daemon
+definitions. It contains an item for each daemon in the application.
+</p>
+<p>
+Normally it is not necessary to create an instance of <var>TDaemonDefs</var>
+manually. The global <link id="TCustomDaemonMapper"/> instance will create
+a collection and maintain it. 
+</p>
+</descr>
+<seealso>
+<link id="TCustomDaemonMapper"/>
+<link id="TDaemonDef"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TDaemonDefs.Create">
+<short>Create a new instance of a <var>TDaemonDefs</var> collection.</short>
+<descr>
+<p>
+<var>Create</var> creates a new instance of the <var>TDaemonDefs</var>
+collection. It keeps the <var>AOwner</var> parameter for future reference
+and calls the inherited constructor.
+</p>
+<p>
+Normally it is not necessary to create an instance of <var>TDaemonDefs</var>
+manually. The global <link id="TCustomDaemonMapper"/> instance will create
+a collection and maintain it.
+</p>
+</descr>
+<seealso>
+<link id="TDaemonDef"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonDefs.Create.AOwner">
+<short>Collection owner</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonDefs.Create.AClass">
+<short>Item class.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDaemonDefs.IndexOfDaemonDef">
+<short>Return index of daemon definition</short>
+<descr>
+<var>IndexOfDaemonDef</var> searches the collection for a
+<link id="TDaemonDef"/> instance with a name equal to <var>DaemonName</var>,
+and returns it's index. It returns -1 if no definition was found with this
+name. The search is case insensitive.
+</descr>
+<seealso>
+<link id="TDaemonDefs.FindDaemonDef"/>
+<link id="TDaemonDefs.DaemonDefByName"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDaemonDefs.IndexOfDaemonDef.Result">
+<short>Index of found definition, or -1</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonDefs.IndexOfDaemonDef.DaemonName">
+<short>Daemon Name to search for.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDaemonDefs.FindDaemonDef">
+<short>Find and return instance of daemon definition with given name.</short>
+<descr>
+<var>FindDaemonDef</var> searches the list of daemon definitions and returns
+the <link id="TDaemonDef"/> instance whose name matches
+<var>DaemonName</var>. If no definition is found, <var>Nil</var> is
+returned.
+</descr>
+<seealso>
+<link id="TDaemonDefs.IndexOfDaemonDef"/>
+<link id="TDaemonDefs.DaemonDefByName"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDaemonDefs.FindDaemonDef.Result">
+<short>Matching <var>TDaemonDef</var> instance or <var>Nil</var> if none was found.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonDefs.FindDaemonDef.DaemonName">
+<short>Daemon name to search for.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDaemonDefs.DaemonDefByName">
+<short>Find and return instance of daemon definition with given name.</short>
+<descr>
+<p>
+<var>FindDaemonDef</var> searches the list of daemon definitions and returns
+the <link id="TDaemonDef"/> instance whose name matches
+<var>DaemonName</var>. If no definition is found, an <link id="EDaemon"/>
+exception is raised. 
+</p>
+<p>
+The <link id="TDaemonDefs.FindDaemonDef">FindDaemonDef</link> 
+call does not raise an error, but returns <var>Nil</var> instead.
+</p>
+</descr>
+<errors>
+If no definition is found, an <link id="EDaemon"/> exception is raised.
+</errors>
+<seealso>
+<link id="TDaemonDefs.IndexOfDaemonDef"/>
+<link id="TDaemonDefs.FindDaemonDef"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDaemonDefs.DaemonDefByName.Result">
+<short>Matching <var>TDaemonDef</var> instance</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonDefs.DaemonDefByName.DaemonName">
+<short>Daemon name to search for.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDaemonDefs.Daemons">
+<short>Indexed access to <var>TDaemonDef</var> instances</short>
+<descr>
+<var>Daemons</var> is the default property of <var>TDaemonDefs</var>, it
+gives access to the <var>TDaemonDef</var> instances in the collection. 
+</descr>
+<seealso>
+<link id="TDaemonDef"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonDefs.Daemons.Index">
+<short>Zero-based index.</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.TCustomDaemonMapper
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TCustomDaemonMapper">
+<short>Daemon mapper</short>
+<descr>
+<p>
+The <var>TCustomDaemonMapper</var> class is responsible for mapping
+a daemon definition to an actual <var>TDaemon</var> instance. It maintains
+a <link id="TDaemonDefs"/> collection with daemon definitions, which can
+be used to map the definition of a daemon to a <var>TDaemon</var> descendent
+class.
+</p>
+<p>
+An IDE such as Lazarus can design a <var>TCustomDaemonMapper</var> instance
+visually, to help establish the relationship between various <link
+id="TDaemonDef"/> definitions and the actual <link id="TDaemon"/> instances
+that will be used to run the daemons. 
+</p>
+<p>
+The <var>TCustomDaemonMapper</var> class has no support for streaming. The
+<link id="TDaemonMapper"/> class has support for streaming (and hence visual
+designing).
+</p>
+</descr>
+<seealso>
+<link id="TDaemon"/>
+<link id="TDaemonDef"/>
+<link id="TDaemonDefs"/>
+<link id="TDaemonMapper"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCustomDaemonMapper.Create">
+<short>Create a new instance of <var>TCustomDaemonMapper</var></short>
+<descr>
+<var>Create</var> creates a new instance of a
+<var>TCustomDaemonMapper</var>. It creates the <link id="TDaemonDefs"/> collection 
+and then calls the inherited constructor. It should never be necessary to
+create a daemon mapper manually, the application will create a global
+<var>TCustomDaemonMapper</var> instance.
+</descr>
+<seealso>
+<link id="TDaemonDefs"/>
+<link id="TCustomDaemonApplication"/>
+<link id="TCustomDaemonMapper.Destroy"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomDaemonMapper.Create.AOwner">
+<short>Instance owner</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCustomDaemonMapper.Destroy">
+<short>Clean up and destroy a <var>TCustomDaemonMapper</var> instance.</short>
+<descr>
+<var>Destroy</var> frees the 
+<link id="TCustomDaemonMapper.DaemonDefs">DaemonDefs</link>  collection and
+calls the inherited destructor.
+</descr>
+<seealso>
+<link id="TDaemonDefs"/>
+<link id="TCustomDaemonMapper.Create"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCustomDaemonMapper.DaemonDefs">
+<short>Collection of daemons</short>
+<descr>
+<var>DaemonDefs</var> is the application's global collection of daemon
+definitions. This collection will be used to decide at runtime which
+<var>TDaemon</var> class must be created to run or install a daemon.
+</descr>
+<seealso>
+<link id="TCustomDaemonApplication"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCustomDaemonMapper.OnCreate">
+<short>Event called when the daemon mapper is created</short>
+<descr>
+<var>OnCreate</var> is an event that is called when the
+<var>TCustomDaemonMapper</var> instance is created.
+It can for instance be used to dynamically create daemon definitions at
+runtime.
+</descr>
+<seealso>
+<link id="TCustomDaemonMapper.OnDestroy">OnDestroy</link>
+<link id="TCustomDaemonMapper.OnUnInstall">OnUnInstall</link>
+<link id="TCustomDaemonMapper.OnCreate">OnCreate</link>
+<link id="TCustomDaemonMapper.OnDestroy">OnDestroy</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCustomDaemonMapper.OnDestroy">
+<short>Event called when the daemon mapper is freed.</short>
+<descr>
+<var>OnDestroy</var> is called when the global daemon mapper instance is 
+destroyed. it can be used to release up any resources that were allocated
+when the instance was created, in the 
+<link id="TCustomDaemonMapper.OnCreate">OnCreate</link> event.
+</descr>
+<seealso>
+<link id="TCustomDaemonMapper.OnCreate">OnCreate</link>
+<link id="TCustomDaemonMapper.OnInstall">OnInstall</link>
+<link id="TCustomDaemonMapper.OnUnInstall">OnUnInstall</link>
+<link id="TCustomDaemonMapper.OnCreate">OnCreate</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCustomDaemonMapper.OnRun">
+<short>Event called when the daemons are executed.</short>
+<descr>
+<var>OnRun</var> is the event called when the daemon application is executed
+to run the daemons (with command-line parameter '-r'). it is called exactly once.
+</descr>
+<seealso>
+<link id="TCustomDaemonMapper.OnInstall">OnInstall</link>
+<link id="TCustomDaemonMapper.OnUnInstall">OnUnInstall</link>
+<link id="TCustomDaemonMapper.OnCreate">OnCreate</link>
+<link id="TCustomDaemonMapper.OnDestroy">OnDestroy</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCustomDaemonMapper.OnInstall">
+<short>Event called when the daemons are installed</short>
+<descr>
+<var>OnInstall</var> is the event called when the daemon application is executed
+to install the daemons (with command-line parameter '-i' or '/install'). 
+it is called exactly once.
+</descr>
+<seealso>
+<link id="TCustomDaemonMapper.OnRun">OnRun</link>
+<link id="TCustomDaemonMapper.OnUnInstall">OnUnInstall</link>
+<link id="TCustomDaemonMapper.OnCreate">OnCreate</link>
+<link id="TCustomDaemonMapper.OnDestroy">OnDestroy</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCustomDaemonMapper.OnUnInstall">
+<short>Event called when the daemons are uninstalled</short>
+<descr>
+<var>OnUnInstall</var> is the event called when the daemon application is
+executed to uninstall the daemons (with command-line parameter '-u' or '/uninstall').
+it is called exactly once.
+</descr>
+<seealso>
+<link id="TCustomDaemonMapper.OnRun">OnRun</link>
+<link id="TCustomDaemonMapper.OnInstall">OnInstall</link>
+<link id="TCustomDaemonMapper.OnCreate">OnCreate</link>
+<link id="TCustomDaemonMapper.OnDestroy">OnDestroy</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.TDaemonMapper
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TDaemonMapper">
+<short>Daemon mapper for designing in IDE</short>
+<descr>
+<p>
+<var>TDaemonMapper</var> is a direct descendent of <link
+id="TCustomDaemonMapper"/>, but introduces no new functionality. It's sole
+purpose is to make it possible for an IDE to stream the
+<var>TDaemonMapper</var> instance.
+</p>
+<p> 
+For this purpose, it overrides the <var>Create</var> constructor and
+tries to find a resource with the same name as the class name, and tries
+to stream the instance from this resource.
+</p>
+<p>
+If the instance should not be streamed, the 
+<link id="TDaemonMapper.CreateNew">CreateNew</link> constructor can be used
+instead.
+</p>
+</descr>
+<seealso>
+<link id="TDaemonMapper.CreateNew">CreateNew</link> 
+<link id="TDaemonMapper.Create">Create</link> 
+</seealso>
+</element>
+
+<!-- constructor Visibility: default -->
+<element name="TDaemonMapper.Create">
+<short>Create a new <var>TDaemonMapper</var> instance and initializes it
+from streamed resources.</short>
+<descr>
+<p>
+<var>Create</var> initializes a new instance of <var>TDaemonMapper</var> and 
+attempts to read the component from resources compiled in the application.
+</p>
+<p>
+If the instance should not be streamed, the
+<link id="TDaemonMapper.CreateNew">CreateNew</link> constructor can be used
+instead.
+</p>
+</descr>
+<errors>
+If no streaming system is found, or no resource exists for the class, an
+exception is raised.
+</errors>
+<seealso>
+<link id="TDaemonMapper.CreateNew">CreateNew</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonMapper.Create.AOwner">
+<short>Instance owner</short>
+</element>
+
+<!-- constructor Visibility: default -->
+<element name="TDaemonMapper.CreateNew">
+<short>Create a new <var>TDaemonMapper</var> instance without initialization</short>
+<descr>
+<var>CreateNew</var> itializes a new instance of <var>TDaemonMapper</var>.
+In difference with the <var>Create</var> constructor, it does not attempt to
+read the component from a stream.
+</descr>
+<seealso>
+<link id="TDaemonMapper.Create">Create</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonMapper.CreateNew.AOwner">
+<short>Owner of the instance</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonMapper.CreateNew.Dummy">
+<short>Ignored.</short>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TCustomDaemonMapperClass">
+<short>Class of <var>TCustomDaemonMapper</var></short>
+<descr>
+<var>TCustomDaemonMapperClass</var> is the class of <var>TCustomDaemonMapper</var>. 
+It is used in the <link id="RegisterDaemonMapper"/> call.
+</descr>
+<seealso>
+<link id="RegisterDaemonMapper"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.TDaemonThread
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TDaemonThread">
+<short>Thread to run daemons in</short>
+<descr>
+<p>
+<var>TDaemonThread</var> is the thread in which the daemons in the
+application are run. Each daemon is run in it's own thread.
+</p>
+<p>
+It should not be necessary to create these threads manually, the 
+<link id="TDaemonController"/> class will take care of this.
+</p>
+</descr>
+<seealso>
+<link id="TDaemonController"/>
+<link id="TDaemon"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TDaemonThread.Create">
+<short>Create a new thread</short>
+<descr>
+<var>Create</var> creates a new thread instance. It initializes the
+<var>Daemon</var> property with the passed <var>ADaemon</var>. The thread is
+created suspended.
+</descr>
+<seealso>
+<link id="TDaemonThread.Daemon"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonThread.Create.ADaemon">
+<short>Daemon instance which is running in this thread</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TDaemonThread.Execute">
+<short>Run the daemon</short>
+<descr>
+<var>Execute</var> starts executing the daemon and waits till the daemon
+stops. It also listens for control codes for the daemon.
+</descr>
+<seealso>
+<link id="TDaemon.Execute"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TDaemonThread.CheckControlMessage">
+<short>Check if a control message has arrived</short>
+<descr>
+<var>CheckControlMessage</var> checks if a control message has arrived for
+the daemon and executes the appropriate daemon message. If the parameter
+<var>WaitForMessage</var> is <var>True</var>, then the routine waits for
+the message to arrive. If it is <var>False</var> and no message is present,
+it returns at once.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDaemonThread.CheckControlMessage.WaitForMessage">
+<short>If true, routine waits for message to arrive before returning.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDaemonThread.StopDaemon">
+<short>Stops the daemon</short>
+<descr>
+<var>StopDaemon</var> attempts to stop the daemon using its <link
+id="TDaemon.Stop"/> method, and terminates the thread.
+</descr>
+<seealso>
+<link id="TDaemon.Stop"/>
+<link id="TDaemonThread.PauseDaemon"/>
+<link id="TDaemonThread.ShutDownDaemon"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDaemonThread.StopDaemon.Result">
+<short><var>True</var> if the daemon was stopped succesfully.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDaemonThread.PauseDaemon">
+<short>Pause the daemon</short>
+<descr>
+<p>
+<var>PauseDaemon</var> attempts to stop the daemon using its 
+<link id="TDaemon.Pause"/> method, and suspends the thread.
+It returns <var>True</var> if the attempt was succesful.
+</p>
+</descr>
+<seealso>
+<link id="TDaemon.Pause"/>
+<link id="TDaemonThread.StopDaemon"/>
+<link id="TDaemonThread.ContinueDaemon"/>
+<link id="TDaemonThread.ShutDownDaemon"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDaemonThread.PauseDaemon.Result">
+<short><var>True</var> if the daemon was succesfully paused</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDaemonThread.ContinueDaemon">
+<short>Continue the daemon</short>
+<descr>
+<var>ContinueDaemon</var> attempts to stop the daemon using its
+<link id="TDaemon.Continue"/> method. It returns <var>True</var>
+if the attempt was succesful.
+</descr>
+<seealso>
+<link id="TDaemon.Continue"/>
+<link id="TDaemonThread.StopDaemon"/>
+<link id="TDaemonThread.PauseDaemon"/>
+<link id="TDaemonThread.ShutDownDaemon"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDaemonThread.ContinueDaemon.Result">
+<short><var>True</var> if the daemon was succesfully restarted</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDaemonThread.ShutDownDaemon">
+<short>Shut down daemon</short>
+<descr>
+<var>ShutDownDaemon</var> shuts down the daemon. This happens normally only
+when the system is shut down and the daemon didn't respond to the stop
+request. The return result is the result of the <link id="TDaemon.Shutdown"/>
+function. The thread is terminated by this method.
+</descr>
+<seealso>
+<link id="TDaemon.Shutdown"/>
+<link id="TDaemonThread.StopDaemon"/>
+<link id="TDaemonThread.PauseDaemon"/>
+<link id="TDaemonThread.ContinueDaemon"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDaemonThread.ShutDownDaemon.Result">
+<short>The result of <var>TDaemon.Shutdown</var></short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDaemonThread.InterrogateDaemon">
+<short>Report the daemon status</short>
+<descr>
+<var>InterrogateDaemon</var> simply calls <link id="TDaemon.ReportStatus"/>
+for the daemon that is running in this thread. It always returns
+<var>True</var>.
+</descr>
+<seealso>
+<link id="TDaemon.ReportStatus"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDaemonThread.InterrogateDaemon.Result">
+<short>Always <var>True</var>.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDaemonThread.Daemon">
+<short>Daemon instance</short>
+<descr>
+<var>Daemon</var> is the daemon instance which is running in this thread.
+</descr>
+<seealso>
+<link id="TDaemon"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TGuiLoopEvent">
+<short>GUI loop event mechanism</short>
+<descr>
+<var>TGuiLoopEvent</var> is the main GUI loop event procedure prototype.
+It is called by the application instance in case the daemon has a visual
+part, which needs to handle visual events. It is run in the main application
+thread.
+</descr>
+<seealso>
+<link id="TCustomDaemonApplication.GUIMainLoop"/>
+<link id="TCustomDaemonApplication.GUIHandle"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.TCustomDaemonApplication
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TCustomDaemonApplication">
+<short>Custom daemon application class</short>
+<descr>
+<p>
+<var>TCustomDaemonApplication</var> is a <link
+id="#fcl.custapp.TCustomApplication">TCustomApplication</link> descendent
+which is the main application instance for a daemon. It handles the
+command-line and decides what to do when the application is started,
+depending on the command-line options given to the application, by calling
+the various methods. 
+</p>
+<p>
+It creates the necessary <link id="TDaemon"/> instances by checking the
+<link id="TCustomDaemonMapperClass"/> instance that contains the daemon
+maps.
+</p>
+</descr>
+<seealso>
+<link id="#fcl.custapp.TCustomApplication">TCustomApplication</link>
+<link id="TCustomDaemonMapperClass"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomDaemonApplication.ShowException">
+<short>Show an exception</short>
+<descr>
+<var>ShowException</var> is overridden by
+<var>TCustomDaemonApplication</var>, it sends the exception message to the
+system log.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomDaemonApplication.ShowException.E">
+<short>Exception to show.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomDaemonApplication.CreateDaemon">
+<short>Create daemon instance</short>
+<descr>
+<var>CreateDaemon</var> is called whenever a <link id="TCustomDaemon"/> instance
+must be created from a <link id="TDaemonDef"/> daemon definition, passed in
+<var>DaemonDef</var>. It initializes the <var>TCustomDaemon</var> instance,
+and creates a controller instance of type <link id="TDaemonController"/> to
+control the daemon. Finally, it assigns the created daemon to the <link
+id="TDaemonDef.Instance"/> property.
+</descr>
+<errors>
+In case of an error, an exception may be raised.
+</errors>
+<seealso>
+<link id="TDaemonController"/>
+<link id="TCustomDaemon"/>
+<link id="TDaemonDef"/> 
+<link id="TDaemonDef.Instance"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomDaemonApplication.CreateDaemon.Result">
+<short>New <var>TCustomDaemon</var> instance.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomDaemonApplication.CreateDaemon.DaemonDef">
+<short>Daemon definition containing information to create a daemon.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomDaemonApplication.StopDaemons">
+<short>Stop all daemons</short>
+<descr>
+<var>StopDaemons</var> sends the <var>STOP</var> control code to all daemons, 
+or the <var>SHUTDOWN</var> control code in case <var>Force</var> is <var>True</var>.
+</descr>
+<seealso>
+<link id="TDaemonController.Controller"/>
+<link id="TCustomDaemonApplication.UnInstallDaemons"/>
+<link id="TCustomDaemonApplication.RunDaemons"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomDaemonApplication.StopDaemons.Force">
+<short>If <var>True</var>, send the  <var>SHUTDOWN</var> control code</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomDaemonApplication.InstallDaemons">
+<short>Install all daemons.</short>
+<descr>
+<var>InstallDaemons</var> installs all known daemons, i.e. registers them
+with the service manager on Windows. This method is called if the
+application is run with the <var>-i</var> or <var>--install</var> or
+<var>/install</var> command-line option.
+</descr>
+<seealso>
+<link id="TCustomDaemonApplication.UnInstallDaemons"/>
+<link id="TCustomDaemonApplication.RunDaemons"/>
+<link id="TCustomDaemonApplication.StopDaemons"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomDaemonApplication.RunDaemons">
+<short>Run all daemons.</short>
+<descr>
+<var>RunDaemons</var> runs (starts) all known daemons.
+This method is called if the application is run with the <var>-r</var> or
+<var>--run</var> methods.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCustomDaemonApplication.UnInstallDaemons"/>
+<link id="TCustomDaemonApplication.InstallDaemons"/>
+<link id="TCustomDaemonApplication.StopDaemons"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomDaemonApplication.UnInstallDaemons">
+<short>Uninstall all daemons</short>
+<descr>
+<var>UnInstallDaemons</var> uninstalls all known daemons, i.e. deregisters them
+with the service manager on Windows. This method is called if the
+application is run with the <var>-u</var> or <var>--uninstall</var> or
+<var>/uninstall</var> command-line option.
+</descr>
+<seealso>
+<link id="TCustomDaemonApplication.RunDaemons"/>
+<link id="TCustomDaemonApplication.InstallDaemons"/>
+<link id="TCustomDaemonApplication.StopDaemons"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomDaemonApplication.CreateForm">
+<short>Create a component</short>
+<descr>
+<var>CreateForm</var> creates an instance of <var>InstanceClass</var> and
+fills <var>Reference</var> with the class instance pointer. It's main
+purpose is to give an IDE a means of assuring that forms or datamodules
+are created on application startup: the IDE will generate calls for all
+modules that are auto-created.
+</descr>
+<errors>
+An exception may arise if the instance wants to stream itself from
+resources, but no resources are found.
+</errors>
+<seealso>
+<link id="TCustomDaemonApplication.CreateDaemon"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomDaemonApplication.CreateForm.InstanceClass">
+<short>Class pointer of component instance to create</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomDaemonApplication.CreateForm.Reference">
+<short>Variable to store the instance pointer in.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomDaemonApplication.Logger">
+<short>Event logging instance used for logging messages</short>
+<descr>
+<var>Logger</var> contains a reference to the <link
+id="#fcl.eventlog.TEventLog">TEventLog</link> instance that can be 
+used to send messages to the system log.
+</descr>
+<seealso>
+<link id="TCustomDaemon.LogMessage"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomDaemonApplication.GUIMainLoop">
+<short>GUI main loop callback</short>
+<descr>
+<var>GUIMainLoop</var> contains a reference to a method that can be called
+to process a main GUI loop. The procedure should return only when the main 
+GUI has finished and the application should exit. It is called when the
+daemons are running.
+</descr>
+<seealso>
+<link id="TCustomDaemonApplication.GuiHandle"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomDaemonApplication.GuiHandle">
+<short>Handle of GUI loop main application window handle</short>
+<descr>
+<var>GuiHandle</var> is the handle of a GUI window which can be used
+to run a message handling loop on. It is created when no <link
+id="TCustomDaemonApplication.GUIMainLoop">GUIMainLoop</link> procedure
+exists, and the application creates and runs a message loop by itself.
+</descr>
+<seealso>
+<link id="TCustomDaemonApplication.GUIMainLoop">GUIMainLoop</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomDaemonApplication.RunMode">
+<short>Application mode</short>
+<descr>
+<var>RunMode</var> indicates in which mode the application is running
+currently. It is set automatically by examining the command-line, and when
+set, one of 
+<link id="TCustomDaemonApplication.InstallDaemons">InstallDaemons</link>,
+<link id="TCustomDaemonApplication.RunDaemons">RunDaemons</link> or 
+<link id="TCustomDaemonApplication.UnInstallDaemons">UnInstallDaemons</link>
+is called.
+</descr>
+<seealso>
+<link id="TCustomDaemonApplication.InstallDaemons">InstallDaemons</link>
+<link id="TCustomDaemonApplication.RunDaemons">RunDaemons</link>
+<link id="TCustomDaemonApplication.UnInstallDaemons">UnInstallDaemons</link>
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TCustomDaemonApplicationClass">
+<short>Class pointer for <var>TCustomDaemonApplication</var></short>
+<descr>
+</descr>
+<seealso>
+<link id="TCustomDaemonApplication"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.TDaemonApplication
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="TDaemonApplication">
+<short>Default descendent of <var>CustomDaemonApplication</var></short>
+<descr>
+<var>TDaemonApplication</var> is the default <link
+id="TCustomDaemonApplication"/> descendent that is used to run the daemon
+application. It is possible to register an alternative
+<var>TCustomDaemonApplication</var>  class (using <link
+id="RegisterDaemonApplicationClass"/>) to run the application in a
+different manner.
+</descr>
+<seealso>
+<link id="TCustomDaemonApplication"/>
+<link id="RegisterDaemonApplicationClass"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.daemonapp.EDaemon
+  ********************************************************************
+-->
+
+<!-- object Visibility: default -->
+<element name="EDaemon">
+<short>Exception used in all daemon application code</short>
+<descr>
+<var>EDaemon</var> is the exception class used by all code in the
+<file>DaemonApp</file> unit.
+</descr>
+<seealso>
+<link id="DaemonError"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="Application">
+<short>Application instance</short>
+<descr>
+<var>Application</var> is the <link id="TCustomDaemonApplication"/> instance
+used by this application. The instance is created at the first invocation of
+this function, so it is possible to use <link id="RegisterDaemonApplicationClass"/> 
+to register an alternative <var>TCustomDaemonApplication</var> class to run the application.
+</descr>
+<seealso>
+<link id="TCustomDaemonApplication"/>
+<link id="RegisterDaemonApplicationClass"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="Application.Result">
+<short><link id="TCustomDaemonApplication"/> instance used by application</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="RegisterDaemonMapper">
+<short>Register a daemon mapper class</short>
+<descr>
+<var>RegisterDaemonMapper</var> can be used to register an alternative class
+for the global daemonmapper. The daemonmapper will be used only when the
+application is being run, by the <link id="TCustomDaemonApplication"/> code,
+so registering an alternative mapping class should happen in the
+initialization section of the application units.
+</descr>
+<seealso>
+<link id="TCustomDaemonApplication"/>
+<link id="TCustomDaemonMapperClass"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RegisterDaemonMapper.AMapperClass">
+<short>New <var>TCustomDaemonMapperClass</var> class</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="RegisterDaemonClass">
+<short>Register daemon</short>
+<descr>
+<var>RegisterDaemonClass</var> must be called for each <link
+id="TCustomDaemon"/> descendent that is used in the class: the class pointer
+and class name are used by the <link id="TCustomDaemonMapperClass"/> class to
+create a <var>TCustomDaemon</var> instance when a daemon is required.
+</descr>
+<seealso>
+<link id="TCustomDaemonMapperClass"/>
+<link id="TCustomDaemon"/> 
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RegisterDaemonClass.AClass">
+<short><var>TCustomDaemon</var> descendent class to be registered.</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="RegisterDaemonApplicationClass">
+<short>Register alternative <var>TCustomDaemonApplication</var> class.</short>
+<descr>
+<var>RegisterDaemonApplicationClass</var> can be used to register an
+alternative <link id="TCustomDaemonApplication"/> descendent which will
+be used when creating the global <link id="Application"/> instance. Only the
+last registered class pointer will be used.
+</descr>
+<seealso>
+<link id="TCustomDaemonApplication"/>
+<link id="Application"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RegisterDaemonApplicationClass.AClass">
+<short>New class pointer to be used</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="DaemonError">
+<short>Raise an <var>EDaemon</var> exception</short>
+<descr>
+<var>DaemonError</var> raises an <link id="EDaemon"/> exception with
+message <var>Msg</var> or it formats the message using <var>Fmt</var>
+and <var>Args</var>.
+</descr>
+<seealso>
+<link id="EDaemon"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="DaemonError.Msg">
+<short>Message for the exception</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="DaemonError.Fmt">
+<short>Formatting string for exception message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="DaemonError.Args">
+<short>Arguments to format for exception message</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrNoServiceMapper">
+<short>No service mapper was found.</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrOnlyOneMapperAllowed">
+<short>An attempt was made to install a second service mapper</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrNothingToDo">
+<short>No operation can be performed</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrDuplicateName">
+<short>Duplicate service name</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrUnknownDaemonClass">
+<short>Unknown daemon class requested</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrDaemonStartFailed">
+<short>The application failed to start the daemon</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SDaemonStatus">
+<short>Daemon status report log message</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SControlFailed">
+<short>The control code was not handled correctly</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SCustomCode">
+<short>A custom code was received</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrServiceManagerStartFailed">
+<short>Unable to start or contact the service manager</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrNoDaemonForStatus">
+<short>Internal error: no daemon to report status for</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrNoDaemonDefForStatus">
+<short>Internal error: no daemon definition to report status for</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrWindowClass">
+<short>Could not register window class</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrApplicationAlreadyCreated">
+<short>A second application instance is created</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="CurrentStatusNames">
+<short>Names for various service statuses</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="SStatus">
+<short>Status message</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultDaemonOptions">
+<short>Default daemon options</short>
+<descr>
+<var>DefaultDaemonOptions</var> are the default options with which a daemon
+definition (<link id="TDaemonDef"/>) is created.
+</descr>
+<seealso>
+<link id="TDaemonDef"/>
+</seealso>
+</element>
+
+</module> <!-- daemonapp -->
+
+</package>
+</fpdoc-descriptions>
