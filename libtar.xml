@@ -1,0 +1,1095 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    libtar
+  ====================================================================
+-->
+
+<module name="libtar">
+<short>tar archive manipulation classes</short>
+<descr>
+The <file>libtar</file> units provides 2 classes to read and write
+<file>.tar</file> archives: <link id="TTarArchive"/> class can be used
+to read a tar file, and the <link id="TTarWriter"/> class can be used to
+write a tar file. The unit was implemented originally by Stefan Heymann.
+</descr>
+
+<!-- enumeration type Visibility: default -->
+<element name="TTarPermission">
+<short>File permissions</short>
+<descr>
+<var>TTarPermission</var> denotes part of a files permission as it it stored in the .tar
+archive. Each of these enumerated constants correspond with one of the permission bits 
+from a unix file permission.
+</descr>
+<seealso>
+<link id="TTarPermissions"/>
+<link id="TTarMode"/>
+<link id="TTarModes"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TTarPermission.tpReadByOwner">
+<short>Owner can read the file</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TTarPermission.tpWriteByOwner">
+<short>Owner can write the file</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TTarPermission.tpExecuteByOwner">
+<short>Owner can execute the file</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TTarPermission.tpReadByGroup">
+<short>Group can read the file</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TTarPermission.tpWriteByGroup">
+<short>Group can write the file </short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TTarPermission.tpExecuteByGroup">
+<short>Group can execute the file</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TTarPermission.tpReadByOther">
+<short>Other people can read the file.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TTarPermission.tpWriteByOther">
+<short>Other people can write the file</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TTarPermission.tpExecuteByOther">
+<short>Other people can execute the file</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TTarPermissions">
+<short>Complete set of permissions for file</short>
+<descr>
+<var>TTarPermissions</var> describes the complete set of permissions that a
+file has. It is used in the <var>Permissions</var> field of the <link
+id="TTarDirRec"/> record.
+</descr>
+<seealso>
+<link id="TTarDirRec"/>
+<link id="TFileType"/>
+<link id="TTarModes"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TFileType">
+<short>File type</short>
+<descr>
+<var>TFileType</var> describes the file type of a file in the archive.
+It is used in the <var>FileType</var> field of the <link id="TTarDirRec"/> record.
+</descr>
+<seealso>
+<link id="TTarDirRec"/>
+<link id="TTarPermissions"/>
+<link id="TTarModes"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFileType.ftNormal">
+<short>Normal file</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFileType.ftLink">
+<short>Hard link</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFileType.ftSymbolicLink">
+<short>Symbolic link</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFileType.ftCharacter">
+<short>Character device file</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFileType.ftBlock">
+<short>Block device file</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFileType.ftDirectory">
+<short>Directory</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFileType.ftFifo">
+<short>FIFO file</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFileType.ftContiguous">
+<short>Contiguous file</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFileType.ftDumpDir">
+<short>List of files</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFileType.ftMultiVolume">
+<short>Multi-volume file part</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFileType.ftVolumeHeader">
+<short>Volume header, can appear only as first entry in the archive</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TTarMode">
+<short>Tar mode</short>
+<descr>
+<var>TTarMode</var> describes extra file modes. It is used in the
+<var>Mode</var> field of the <link id="TTarDirRec"/> record.
+</descr>
+<seealso>
+<link id="TTarDirRec"/>
+<link id="TTarPermission"/>
+<link id="TTarPermissions"/>
+<link id="TTarModes"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TTarMode.tmSetUid">
+<short>File has SetUID bit set.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TTarMode.tmSetGid">
+<short>File has SetGID bit set</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TTarMode.tmSaveText">
+<short>Bit $200 is set</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TTarModes">
+<short>Full set of modes</short>
+<descr>
+<var>TTarModes</var> denotes the full set of permission bits for the file in
+the field <var>Mode</var> field of the <link id="TTarDirRec"/> record.
+</descr>
+<seealso>
+<link id="TTarDirRec"/>
+</seealso>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TTarDirRec">
+<short>Tar Directory entry</short>
+<descr>
+<var>TTarDirRec</var> describes an entry in the tar archive. It is similar
+to a directory entry as in <link
+id="#rtl.sysutils.tsearchrec">TSearchRec</link>, and is returned by the
+<link id="TTarArchive.FindNext"/> call.
+</descr>
+<seealso>
+<link id="TTarArchive.FindNext"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.Name">
+<short>File name</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.Size">
+<short>File size</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.DateTime">
+<short>File time stamp</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.Permissions">
+<short>File permissions</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.FileType">
+<short>File type</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.LinkName">
+<short>Symbolic link target name</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.UID">
+<short>Owner user ID</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.GID">
+<short>Owner group ID</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.UserName">
+<short>Owner username</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.GroupName">
+<short>Owner group name</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.ChecksumOK">
+<short>Checksum OK ?</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.Mode">
+<short>Extra file mode bits</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.Magic">
+<short>?</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.MajorDevNo">
+<short>Major device number</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.MinorDevNo">
+<short>Minor device number</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTarDirRec.FilePos">
+<short>Start position of file in archive</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.libtar.TTarArchive
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TTarArchive">
+<short>Class to examine and read tar archives</short>
+<descr>
+<var>TTarArchive</var> is the class used to read and examine
+<file>.tar</file> archives. It can be constructed from a stream
+or from a filename. Creating an instance will not perform any
+operation on the stream yet.
+</descr>
+<seealso>
+<link id="TTarWriter"/>
+<link id="TTarArchive.FindNext">FindNext</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TTarArchive.Create">
+<short>Create a new instance of the archive</short>
+<descr>
+<var>Create</var> can be used to create a new instance of
+<var>TTarArchive</var> using either a <var>Stream</var> <link
+id="#rtl.classes.TStream">TStream</link> descendent or using a name of a
+file to open: <var>FileName</var>. In case of the filename, an open mode can
+be specified.
+</descr>
+<errors>
+In case a filename is specified and the file cannot be opened, an exception
+will occur.
+</errors>
+<seealso>
+<link id="TTarArchive.FindNext">FindNext</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarArchive.Create.Stream">
+<short>Stream to read archive from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarArchive.Create.Filename">
+<short>Filename to open and read archive from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarArchive.Create.FileMode">
+<short>Filemode to open file with.</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TTarArchive.Destroy">
+<short>Destroy <var>TTarArchive</var> instance</short>
+<descr>
+<var>Destroy</var> closes the archive stream (if it created a stream) 
+and cleans up the <var>TTarArchive</var> instance.
+</descr>
+<seealso>
+<link id="TTarArchive.Create"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTarArchive.Reset">
+<short>Reset archive</short>
+<descr>
+<var>Reset</var> sets the archive file position on the beginning of the
+archive.
+</descr>
+<seealso>
+<link id="TTarArchive.Create"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TTarArchive.FindNext">
+<short>Find next archive entry</short>
+<descr>
+<var>FindNext</var> positions the file pointer on the next archive entry,
+and returns all information about the entry in <var>DirRec</var>. It returns
+<var>True</var> if the operation was succeful, or <var>False</var> if not
+(for instance, when the end of the archive was reached).
+</descr>
+<errors>
+In case there are no more entries, <var>False</var> is returned.
+</errors>
+<seealso>
+<link id="TTarArchive.ReadFile"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TTarArchive.FindNext.Result">
+<short><var>True</var> if the next entry was found.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarArchive.FindNext.DirRec">
+<short>Information about the archive</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTarArchive.ReadFile">
+<short>Read a file from the archive</short>
+<descr>
+<p>
+<var>ReadFile</var> can be used to read the current file in the archive. It
+can be called after the archive was succesfully positioned on an entry in
+the archive. The file can be read in various ways:
+</p>
+<ul>
+<li>directly in a memory <var>buffer</var>. No checks are performed to see whether 
+the buffer points to enough memory.</li>
+<li>It can be copied to a <var>Stream</var>.</li>
+<li>It can be copied to a file with name <var>FileName</var>.</li>
+<li>The file content can be copied to a string</li>
+</ul>
+</descr>
+<errors>
+An exception may occur if the buffer is not large enough, or when the
+file specified in <var>filename</var> cannot be opened.
+</errors>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarArchive.ReadFile.Buffer">
+<short>Memory buffer to copy file contents to.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarArchive.ReadFile.Stream">
+<short>Stream to copy file contents to.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarArchive.ReadFile.Filename">
+<short>Filename for file in which to write file content.</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TTarArchive.ReadFile.Result">
+<short>File contents as string</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTarArchive.GetFilePos">
+<short>Return current archive position</short>
+<descr>
+<var>GetFilePos</var> returns the position in the tar archive in
+<var>Current</var> and the complete archive size in <var>Size</var>.
+</descr>
+<seealso>
+<link id="TTarArchive.SetFilePos"/>
+<link id="TTarArchive.Reset"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarArchive.GetFilePos.Current">
+<short>Current position in archive</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarArchive.GetFilePos.Size">
+<short>Archive size</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTarArchive.SetFilePos">
+<short>Set position in archive</short>
+<descr>
+<var>SetFilePos</var> can be used to set the absolute position in the tar
+archive. 
+</descr>
+<seealso>
+<link id="TTarArchive.Reset"/>
+<link id="TTarArchive.GetFilePos"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarArchive.SetFilePos.NewPos">
+<short>New position in the archive</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.libtar.TTarWriter
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TTarWriter">
+<short>Class to write tar archives</short>
+<descr>
+<var>TTarWriter</var> can be used to create <file>.tar</file> archives. It can be created
+using a filename, in which case the archive will be written to the filename,
+or it can be created using a stream, in which case the archive will be
+written to the stream - for instance a compression stream.
+</descr>
+<seealso>
+<link id="TTarArchive"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TTarWriter.Create">
+<short>Create a new archive</short>
+<descr>
+<var>Create</var> creates a new <var>TTarWriter</var> instance. This will
+start a new <file>.tar</file> archive. The archive will be written to the
+<var>TargetStream</var> stream or to a file with name
+<var>TargetFileName</var>, which will be opened with filemode
+<var>Mode</var>.
+</descr>
+<errors>
+In case <var>TargetFileName</var> cannot be opened, an exception will be
+raised.
+</errors>
+<seealso>
+<link id="TTarWriter.Destroy"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.Create.TargetStream">
+<short>Stream to write archive to.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.Create.TargetFilename">
+<short>Filename to write archive to.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.Create.Mode">
+<short>Mode to open target file with. File must be writable</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TTarWriter.Destroy">
+<short>Close archive and clean up <var>TTarWriter</var></short>
+<descr>
+<var>Destroy</var> will close the archive (i.e. it writes the end-of-archive
+marker, if it was not yet written), and then frees the <var>TTarWriter</var> instance.
+</descr>
+<seealso>
+<link id="TTarWriter.Finalize"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTarWriter.AddFile">
+<short>Add a file to the archive</short>
+<descr>
+<p>
+<var>AddFile</var> adds a file to the archive: the contents is read from
+<var>FileName</var>. Optionally, an alternative filename can be specified in
+<var>TarFileName</var>. This name should contain only forward slash path
+separators. If it is not specified, the name will be computed from
+<var>FileName</var>.
+</p>
+<p>
+The archive entry is written with the current owner data and permissions.
+</p>
+</descr>
+<errors>
+If <var>FileName</var> cannot be opened, an exception will be raised.
+</errors>
+<seealso>
+<link id="TTarWriter.AddStream"/>
+<link id="TTarWriter.AddString"/>
+<link id="TTarWriter.AddLink"/>
+<link id="TTarWriter.AddSymbolicLink"/>
+<link id="TTarWriter.AddDir"/>
+<link id="TTarWriter.AddVolumeHeader"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddFile.Filename">
+<short>File to add to the archive</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddFile.TarFilename">
+<short>Alternative filename, stored in archive</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTarWriter.AddStream">
+<short>Add stream contents to archive.</short>
+<descr>
+<p>
+<var>AddStream</var> will add the contents of <var>Stream</var> to the
+archive. The Stream will not be reset: only the contents of the stream
+from the current position will be written to the archive. The entry will be
+written with file name <var>TarFileName</var>. This name should contain only
+forward slash path separators. The entry will be written with timestamp
+<var>FileDateGmt</var>.
+</p>
+<p>
+The archive entry is written with the current owner data and permissions.
+</p>
+</descr>
+<seealso>
+<link id="TTarWriter.AddFile"/>
+<link id="TTarWriter.AddString"/>
+<link id="TTarWriter.AddLink"/>
+<link id="TTarWriter.AddSymbolicLink"/>
+<link id="TTarWriter.AddDir"/>
+<link id="TTarWriter.AddVolumeHeader"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddStream.Stream">
+<short>Stream data to be added to archive</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddStream.TarFilename">
+<short>Archive entry name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddStream.FileDateGmt">
+<short>Archive entry timestamp</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTarWriter.AddString">
+<short>Add string as file data</short>
+<descr>
+<p>
+<var>AddString</var> adds the string <var>Contents</var> as the data of an
+entry with file name <var>TarFileName</var>. This name should contain
+only forward slash path separators. The entry will be written with 
+timestamp <var>FileDateGmt</var>.
+</p>
+<p>
+The archive entry is written with the current owner data and permissions.
+</p>
+</descr>
+<seealso>
+<link id="TTarWriter.AddFile"/>
+<link id="TTarWriter.AddStream"/>
+<link id="TTarWriter.AddLink"/>
+<link id="TTarWriter.AddSymbolicLink"/>
+<link id="TTarWriter.AddDir"/>
+<link id="TTarWriter.AddVolumeHeader"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddString.Contents">
+<short>Data for file entry</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddString.TarFilename">
+<short>Name for filename</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddString.FileDateGmt">
+<short>Timestamp for filename.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTarWriter.AddDir">
+<short>Add directory to archive</short>
+<descr>
+<p>
+<var>AddDir</var> adds a directory entry to the archive. The entry is
+written with name <var>DirName</var>, maximum directory size
+<var>MaxDirSize</var> (0 means unlimited) and timestamp <var>DateGmt</var>.
+</p>
+<p>
+Note that this call only adds an entry for a directory to the archive:
+if <var>DirName</var> is an existing directory, it does not write all
+files in the directory to the archive.
+</p>
+<p>
+The directory entry is written with the current owner data and permissions.
+</p>
+</descr>
+<seealso>
+<link id="TTarWriter.AddFile"/>
+<link id="TTarWriter.AddStream"/>
+<link id="TTarWriter.AddLink"/>
+<link id="TTarWriter.AddSymbolicLink"/>
+<link id="TTarWriter.AddString"/>
+<link id="TTarWriter.AddVolumeHeader"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddDir.Dirname">
+<short>Directory name to add</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddDir.DateGmt">
+<short>Directory timestamp</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddDir.MaxDirSize">
+<short>Max directory size</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTarWriter.AddSymbolicLink">
+<short>Add a symbolic link to the archive</short>
+<descr>
+<p>
+<var>AddSymbolicLink</var> adds a symbolic link entry to the archive, with
+name <var>FileName</var>, pointing to <var>LinkName</var>. The entry is
+written with timestamp <var>DateGmt</var>.
+</p>
+<p>
+The link entry is written with the current owner data and permissions.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTarWriter.AddFile"/>
+<link id="TTarWriter.AddStream"/>
+<link id="TTarWriter.AddLink"/>
+<link id="TTarWriter.AddDir"/>
+<link id="TTarWriter.AddString"/>
+<link id="TTarWriter.AddVolumeHeader"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddSymbolicLink.Filename">
+<short>Filename for entry</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddSymbolicLink.Linkname">
+<short>Target of symbolic link</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddSymbolicLink.DateGmt">
+<short>Timestamp of entry</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTarWriter.AddLink">
+<short>Add hard link to archive</short>
+<descr>
+<p>
+<var>AddLink</var> adds a hard link entry to the archive. The entry has name
+<var>FileName</var>, timestamp <var>DateGmt</var> and points to <var>LinkName</var>.
+</p>
+<p>
+The link entry is written with the current owner data and permissions.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTarWriter.AddFile"/>
+<link id="TTarWriter.AddStream"/>
+<link id="TTarWriter.AddSymbolicLink"/>
+<link id="TTarWriter.AddDir"/>
+<link id="TTarWriter.AddString"/>
+<link id="TTarWriter.AddVolumeHeader"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddLink.Filename">
+<short>Entry filename</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddLink.Linkname">
+<short>Target of hard link</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddLink.DateGmt">
+<short>Timestamp of entry</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTarWriter.AddVolumeHeader">
+<short>Add volume header entry</short>
+<descr>
+<p>
+<var>AddVolumeHeader</var> adds a volume header entry to the archive. The
+entry is written with name <var>VolumeID</var> and timestamp
+<var>DateGmt</var>.
+</p>
+<p>
+The volume header entry is written with the current owner data and permissions.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTarWriter.AddFile"/>
+<link id="TTarWriter.AddStream"/>
+<link id="TTarWriter.AddSymbolicLink"/>
+<link id="TTarWriter.AddDir"/>
+<link id="TTarWriter.AddString"/>
+<link id="TTarWriter.AddLink"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddVolumeHeader.VolumeId">
+<short>Volume name to write</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTarWriter.AddVolumeHeader.DateGmt">
+<short>Timestamp of archive entry</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTarWriter.Finalize">
+<short>Finalize the archive</short>
+<descr>
+<p>
+<var>Finalize</var> writes the end-of-archive marker to the archive.
+No more entries can be added after <var>Finalize</var> was called. 
+</p>
+<p>
+If the <var>TTarWriter</var> instance is destroyed, it will automatically
+call <var>finalize</var> if <var>finalize</var> was not yet called.
+</p>
+</descr>
+<seealso>
+<link id="TTarWriter.Destroy"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTarWriter.Permissions">
+<short>Archive entry permissions</short>
+<descr>
+<var>Permissions</var> is used for the permissions field of the archive
+entries.
+</descr>
+<seealso>
+<link id="TTarDirRec"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTarWriter.UID">
+<short>Archive entry user ID</short>
+<descr>
+<var>UID</var> is used for the <var>UID</var> field of the archive
+entries.
+</descr>
+<seealso>
+<link id="TTarDirRec"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTarWriter.GID">
+<short>Archive entry group ID</short>
+<descr>
+<var>GID</var> is used for the <var>GID</var> field of the archive
+entries.
+</descr>
+<seealso>
+<link id="TTarDirRec"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTarWriter.UserName">
+<short>Archive entry user name</short>
+<descr>
+<var>UserName</var> is used for the <var>UserName</var> field of the archive
+entries.
+</descr>
+<seealso>
+<link id="TTarDirRec"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTarWriter.GroupName">
+<short>Archive entry group name</short>
+<descr>
+<var>GroupName</var> is used for the <var>GroupName</var> field of the
+archive entries.
+</descr>
+<seealso>
+<link id="TTarDirRec"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTarWriter.Mode">
+<short>Archive entry mode</short>
+<descr>
+<var>Mode</var> is used for the <var>Mode</var> field of the archive entries.
+</descr>
+<seealso>
+<link id="TTarDirRec"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTarWriter.Magic">
+<short>Archive entry Magic constant</short>
+<descr>
+<var>Magic</var> is used for the <var>Magic</var> field of the archive
+entries.
+</descr>
+<seealso>
+<link id="TTarDirRec"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FILETYPE_NAME">
+<short>Names of filetypes</short>
+<descr>
+<var>FILETYPE_NAME</var> can be used to get a textual description for each
+of the possible entry file types.
+</descr>
+<seealso>
+<link id="TFileType"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="ALL_PERMISSIONS">
+<short>Set with all permissions</short>
+<descr>
+<var>ALL_PERMISSIONS</var> is a set constant containing all possible permissions
+(read/write/execute, for all groups of users) for an archive entry. 
+</descr>
+<seealso>
+<link id="TTarPermissions"/>
+<link id="READ_PERMISSIONS"/>
+<link id="WRITE_PERMISSIONS"/>
+<link id="EXECUTE_PERMISSIONS"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="READ_PERMISSIONS">
+<short>Set with all read permissions</short>
+<descr>
+<var>READ_PERMISSIONS</var> is a set constant containing all possible read
+permissions set for an archive entry.
+</descr>
+<seealso>
+<link id="TTarPermissions"/>
+<link id="ALL_PERMISSIONS"/>
+<link id="WRITE_PERMISSIONS"/>
+<link id="EXECUTE_PERMISSIONS"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="WRITE_PERMISSIONS">
+<short>Set with all write permissions</short>
+<descr>
+<var>WRITE_PERMISSIONS</var> is a set constant containing all possible write
+permissions set for an archive entry.
+</descr>
+<seealso>
+<link id="TTarPermissions"/>
+<link id="ALL_PERMISSIONS"/>
+<link id="READ_PERMISSIONS"/>
+<link id="EXECUTE_PERMISSIONS"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="EXECUTE_PERMISSIONS">
+<short>Set with all execute permissions</short>
+<descr>
+<var>WRITE_PERMISSIONS</var> is a set constant containing all possible
+execute permissions set for an archive entry.
+</descr>
+<seealso>
+<link id="TTarPermissions"/>
+<link id="ALL_PERMISSIONS"/>
+<link id="READ_PERMISSIONS"/>
+<link id="WRITE_PERMISSIONS"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="PermissionString">
+<short>Convert a set of permissions to a string</short>
+<descr>
+<var>PermissionString</var> can be used to convert a set of
+<var>Permissions</var> to a string in the same format as used 
+by the unix 'ls' command.
+</descr>
+<seealso>
+<link id="TTarPermissions"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="PermissionString.Result">
+<short>String representation of <var>Permissions</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="PermissionString.Permissions">
+<short>Set of permissions</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ConvertFilename">
+<short>Convert filename to archive format</short>
+<descr>
+<var>ConvertFileName</var> converts the file name <var>FileName</var> to a
+format allowed by the tar archive. Basically, it converts directory
+specifiers to forward slashes.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ConvertFilename.Result">
+<short>Corrected filename in archive format</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ConvertFilename.Filename">
+<short>Filename to correct</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="FileTimeGMT">
+<short>Extract filetime</short>
+<descr>
+<var>FileTimeGMT</var> returns the timestamp of a filename
+(<var>FileName</var> must exist) or a search rec (<var>TSearchRec</var>) to
+a GMT representation that can be used in a tar entry.
+</descr>
+<seealso>
+<link id="TTarDirRec"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="FileTimeGMT.Result">
+<short>File time in GMT notation</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="FileTimeGMT.FileName">
+<short>Name of file to examine</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="FileTimeGMT.SearchRec">
+<short>Searchrec from which timestamp is taken</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="ClearDirRec">
+<short>Initialize tar archive entry </short>
+<descr>
+<var>ClearDirRec</var> clears the <var>DirRec</var> entry, it basically
+zeroes out all fields.
+</descr>
+<seealso>
+<link id="TTarDirRec"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ClearDirRec.DirRec">
+<short>Record to clear.</short>
+</element>
+
+</module> <!-- libtar -->
+
+</package>
+</fpdoc-descriptions>
