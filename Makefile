@@ -1996,7 +1996,7 @@ RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-res
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream \
 	 base64 gettext ezcgi pooledmm dbugmsg streamex inicol streamcoll cachecls \
 	 eventlog syncobjs custapp blowfish simpleipc inifiles rttiutils uriparser \
-	 daemonapp libtar ascii85
+	 daemonapp libtar ascii85 fptimer
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEDIR)/iostream.pp"
@@ -2029,12 +2029,14 @@ FCLZSTREAM= --descr=zstream.xml --input="$(FCLZLIBDIR)/zstream.pp"
 FCLDAEMONAPP= --descr=daemonapp.xml --input="$(FCLBASEDIR)/daemonapp.pp"
 FCLLIBTAR= --descr=libtar.xml --input="$(FCLBASEDIR)/libtar.pp"
 FCLASCII85= --descr=ascii85.xml --input="$(FCLBASEDIR)/ascii85.pp"
+FCLFPTIMER= --descr=fptimer.xml --input="$(FCLBASEDIR)/fptimer.pp"
 FCLUNITOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLUNITOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
 FCLUNITOPTS+= $(FCLGETTEXT) $(FCLEZCGI) $(FCLPOOLEDMM) $(FCLDBUGMSG) $(FCLSTREAMEX)
 FCLUNITOPTS+= $(FCLINICOL) $(FCLSTREAMCOL) $(FCLCACHECLS) $(FCLEVENTLOG) $(FCLSYNCOBJS)
 FCLUNITOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES) $(FCLRTTIUTILS)
 FCLUNITOPTS+= $(FCLAVLTREE) $(FCLURIPARSER) $(FCLDAEMONAPP) $(FCLLIBTAR) $(FCLASCII85)
+FCLUNITOPTS+= $(FCLFPTIMER)
 RTLOPTS=$(FPDOCOPTS) --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifeq ($(HIDEPROTECTED),YES)
 RTLOPTS+= --hide-protected

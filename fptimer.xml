@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    fpTimer
+  ====================================================================
+-->
+
+<module name="fpTimer">
+<short>Timer class</short>
+<descr>
+<p>
+The <file>fpTimer</file> unit implements a timer class <link id="TFPTimer"/>
+which can be used on all supported platforms. The timer class uses a driver
+class <link id="TFPTimerDriver"/> which does the actual work. 
+</p>
+<p>
+A default timer driver class is implemented on all platforms. It will work
+in GUI and non-gui applications, but only in the application's main thread.
+</p>
+<p>
+An alternative driver class can be used by setting the <link
+id="DefaultTimerDriverClass"/> variable to the class pointer of the driver
+class. The driver class should descend from <link id="TFPTimerDriver"/>.
+</p>
+</descr>
+
+<!-- class Visibility: default -->
+<element name="TFPTimerDriver">
+<short>Abstract driver class</short>
+<descr>
+<p>
+<var>TFPTimerDriver</var> is the abstract timer driver class: it simply
+provides an interface for the <link id="TFPCustomTimer"/> class to use.
+</p>
+<p>
+The <var>fpTimer</var> unit implements a descendent of this class which
+implements the default timer mechanism. 
+</p>
+</descr>
+<seealso>
+<link id="TFPCustomTimer"/>
+<link id="DefaultTimerDriverClass"/>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TFPCustomTimer">
+<short>Custom timer class</short>
+<descr>
+<p>
+<var>TFPCustomTimer</var> is the timer class containing the timer's
+implementation. It relies on an extra driver instance (of type
+<link id="TFPTimerDriver"/>) to do the actual work.
+</p>
+<p>
+<var>TFPCustomTimer</var> publishes no events or properties, so it is
+unsuitable for handling in an IDE. The <link id="TFPTimer"/> descendent
+class publishes all needed events of <var>TFPCustomTimer</var>.
+</p>
+</descr>
+<seealso>
+<link id="TFPTimerDriver"/>
+<link id="TFPTimer"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TFPCustomTimer.Create">
+<short>Create a new timer</short>
+<descr>
+<var>Create</var> instantiates a new <var>TFPCustomTimer</var> instance.
+It creates the timer driver instance from the
+<var>DefaultTimerDriverClass</var> class pointer.
+</descr>
+<seealso>
+<link id="TFPCustomTimer.Destroy"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomTimer.Create.AOwner">
+<short>Owner of the timer instance</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TFPCustomTimer.Destroy">
+<short>Release a timer instance from memory</short>
+<descr>
+<var>Destroy</var> releases the timer driver component from memory, and then
+calls <var>Inherited</var> to clean the <var>TFPCustomTimer</var> instance
+from memory.
+</descr>
+<seealso>
+<link id="TFPCustomTimer.Create"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomTimer.StartTimer">
+<short>Start the timer</short>
+<descr>
+<p>
+<var>StartTimer</var> starts the timer. After a call to
+<var>StartTimer</var>, the timer will start producing 
+timer ticks.
+</p>
+<p>
+The timer stops producing ticks only when the <link
+id="TFPCustomTimer.StopTimer">StopTimer</link> event is called.
+</p>
+</descr>
+<seealso>
+<link id="TFPCustomTimer.StopTimer">StopTimer</link>
+<link id="TFPTimer.Enabled">Enabled</link>
+<link id="TFPTimer.OnTimer">OnTimer</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomTimer.StopTimer">
+<short>Stop the timer</short>
+<descr>
+<p>
+<var>Stoptimer</var> stops a started timer. After a call to
+<var>StopTimer</var>, the timer no longer produces timer ticks.
+</p>
+</descr>
+<seealso>
+<link id="TFPCustomTimer.StartTimer">StartTimer</link>
+<link id="TFPTimer.Enabled">Enabled</link>
+<link id="TFPTimer.OnTimer">OnTimer</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TFPTimer">
+<short>Timer class with published properties</short>
+<descr>
+<p>
+<var>TFPTimer</var> implements no new events or properties, but merely
+publishes events and properties already implemented in <link
+id="TFPCustomTimer"/>: <link id="TFPTimer.Enabled">Enabled</link>,
+<link id="TFPTimer.OnTimer">OnTimer</link> and
+<link id="TFPTimer.Interval">Interval</link>.
+</p>
+<p>
+The <var>TFPTimer</var> class is suitable for use in an IDE.
+</p>
+</descr>
+<seealso>
+<link id="TFPCustomTimer"/>
+<link id="TFPTimer.Enabled">Enabled</link>
+<link id="TFPTimer.OnTimer">OnTimer</link>
+<link id="TFPTimer.Interval">Interval</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPTimer.Enabled">
+<short>Start or stop the timer</short>
+<descr>
+<var>Enabled</var> controls whether the timer is active. Setting
+<var>Enabled</var> to <var>True</var> will start the timer (calling <link
+id="TFPCustomTimer.StartTimer">StartTimer</link>), setting it to <var>False</var>
+will stop the timer (calling <link id="TFPCustomTimer.StopTimer">StopTimer</link>).
+</descr>
+<seealso>
+<link id="TFPCustomTimer.StartTimer">StartTimer</link>
+<link id="TFPCustomTimer.StopTimer">StopTimer</link>
+<link id="TFPTimer.OnTimer">OnTimer</link>
+<link id="TFPTimer.Interval">Interval</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPTimer.Interval">
+<short>Timer tick interval in milliseconds.</short>
+<descr>
+<p>
+<var>Interval</var> specifies the timer interval in milliseconds. Every
+<var>Interval</var> milliseconds, the <link id="TFPTimer.OnTimer">OnTimer</link> 
+event handler will be called.
+</p>
+<p>
+Note that the milliseconds interval is a minimum interval. Under high system
+load, the timer tick may arrive later.
+</p>
+</descr>
+<seealso>
+<link id="TFPTimer.OnTimer">OnTimer</link>
+<link id="TFPTimer.Enabled">Enabled</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPTimer.OnTimer">
+<short>Event called on each timer tick.</short>
+<descr>
+<var>OnTimer</var> is called on each timer tick. The event handler must be
+assigned to a method that will do the actual work that should occur when the
+timer fires.
+</descr>
+<seealso>
+<link id="TFPTimer.Interval">Interval</link>
+<link id="TFPTimer.Enabled">Enabled</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TFPTimerDriver.Create">
+<short>Create new driver instance</short>
+<descr>
+<var>Create</var> should be overridden by descendents of
+<var>TFPTimerDriver</var> to do additional initialization of the timer
+driver. <var>Create</var> just stores (in <link
+id="TFPTimerDriver.Timer">Timer</link>) 
+a reference to the <var>ATimer</var> instance which created the driver
+instance.
+</descr>
+<seealso>
+<link id="TFPTimerDriver.Timer">Timer</link>
+<link id="TFPTimer"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPTimerDriver.Create.ATimer">
+<short>Timer instance that created the driver</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPTimerDriver.StartTimer">
+<short>Start the timer</short>
+<descr>
+<var>StartTimer</var> is called by <link id="TFPCustomTimer.StartTimer"/>.
+It should be overridden by descendents of  <var>TFPTimerDriver</var> to 
+actually start the timer.
+</descr>
+<seealso>
+<link id="TFPCustomTimer.StartTimer"/>
+<link id="TFPTimerDriver.StopTimer"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPTimerDriver.StopTimer">
+<short>Stop the timer</short>
+<descr>
+<var>StopTimer</var> is called by <link id="TFPCustomTimer.StopTimer"/>.
+It should be overridden by descendents of  <var>TFPTimerDriver</var> to
+actually stop the timer.
+</descr>
+<seealso>
+<link id="TFPCustomTimer.StopTimer"/>
+<link id="TFPTimerDriver.StartTimer"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPTimerDriver.Timer">
+<short>Timer tick</short>
+<descr>
+<var>Timer</var> calls the <link id="TFPCustomTimer"/> timer event.
+Descendents of <var>TFPTimerDriver</var> should call <var>Timer</var>
+whenever a timer tick occurs.
+</descr>
+<seealso>
+<link id="TFPTimer.OnTimer"/>
+<link id="TFPTimerDriver.StartTimer"/>
+<link id="TFPTimerDriver.StopTimer"/>
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TFPTimerDriverClass">
+<short>Class of <var>TFPTimerDriver</var></short>
+<descr>
+<var>TFPTimerDriverClass</var> is the class pointer of <link
+id="TFPTimerDriver"/> it exists mainly for the purpose of being
+able to set <link id="DefaultTimerDriverClass"/>, so a custom timer
+driver can be used for the timer instances.
+</descr>
+<seealso>
+<link id="DefaultTimerDriverClass"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultTimerDriverClass">
+<short>Actual timer class to be used</short>
+<descr>
+<p>
+<var>DefaultTimerDriverClass</var> contains the  <link id="TFPTimerDriver"/>
+class pointer that should be used when a new instance of <link
+id="TFPCustomTimer"/> is created. It is by default set to the system timer
+class.
+</p>
+<p>
+Setting this class pointer to another descendent of
+<var>TFPTimerDriver</var> allows to customize the default timer
+implementation used in the entire application.
+</p>
+</descr>
+<seealso>
+<link id="TFPTimerDriver"/>
+<link id="TFPCustomTimer"/>
+</seealso>
+</element>
+
+</module> <!-- fpTimer -->
+
+</package>
+</fpdoc-descriptions>
