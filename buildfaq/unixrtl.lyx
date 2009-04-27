@@ -1,5 +1,5 @@
-#LyX 1.5.5 created this file. For more info see http://www.lyx.org/
-\lyxformat 276
+#LyX 1.6.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
 \begin_document
 \begin_header
 \textclass article
@@ -7,6 +7,7 @@
 \usepackage{a4wide}
 \usepackage{times}
 \end_preamble
+\use_default_options false
 \language english
 \inputencoding auto
 \font_roman default
@@ -17,9 +18,11 @@
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
+
 \graphics default
 \paperfontsize default
 \spacing single
+\use_hyperref false
 \papersize default
 \use_geometry false
 \use_amsmath 1
@@ -60,7 +63,7 @@ Versions
 \end_layout
 
 \begin_layout Standard
-Current version: 1.2
+Current version: 1.3
 \end_layout
 
 \begin_layout Description
@@ -94,6 +97,10 @@ prefix
 1.2 First numbered version.
 \end_layout
 
+\begin_layout Description
+1.3 Minor changes, unixtype, libc wiki link
+\end_layout
+
 \begin_layout Section
 Introduction
 \end_layout
@@ -104,7 +111,7 @@ As a lot of people already noticed, the Unix rtl has been nearly entirely
 \begin_inset Foot
 status collapsed
 
-\begin_layout Standard
+\begin_layout Plain Layout
 These versions are all the same series.
  It was called 1.1.x when pre-beta, 1.9.x when in beta stage, and will be 2.0.x
  when released.
@@ -117,6 +124,16 @@ These versions are all the same series.
  been done I think.
  This document tries to explain some of the design considerations behind
  these changes.
+ Recently, the wiki article 
+\begin_inset CommandInset href
+LatexCommand href
+name "http://wiki.freepascal.org/libc_unit"
+target "http://wiki.freepascal.org/libc_unit"
+
+\end_inset
+
+ was written that shares some of the issues in this doc (e.g.
+ Kylix libc unit issues), and is kept up to date better.
 \end_layout
 
 \begin_layout Section
@@ -699,7 +716,12 @@ There are several reasons for this, but the most important ones are the
  constant small incompabilities in (Linux) glibc, and the large amount of
  glibc versions in circulation.
  (again, mainly for Linux).
- Moving to use libc by default would mean more than one binary distribution
+ This includes distributions that compile libc with special options and
+ then work around this in headers for C users.
+\end_layout
+
+\begin_layout Standard
+Moving to use libc by default would mean more than one binary distribution
  per platform (mainly for Linux, but maybe also for other *nix OSes), without
  much gain.
  (the binaries would become slightly larger even when dynlinked with libc,
@@ -720,7 +742,18 @@ Another reason is that FPC programs have structures for use with certain
  the C function directly in libc.
  A C program that calls the same libc function, always uses the right stat
  because it uses headers supplied with the OS, at least as long as field
- renaming is consistent.
+ renaming is consistent
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+And unfortunately automatic unattended conversion of C headers is not really
+ doable.
+\end_layout
+
+\end_inset
+
+.
  And you'll get a warning if it isn't.
  But FPC always uses the same one in the RTL.
  This can be problematic if there are multiple libc's in circulation that
@@ -747,8 +780,8 @@ porting purposes (to get the compiler working on a platform for the first
 \end_layout
 
 \begin_layout Itemize
-Darwin (Mac OS X), an OS where the syscalls are a bit more in a state of
- flux.
+Darwin (Mac OS X), an OS where the syscalls are said to be a bit more in
+ a state of flux.
 \end_layout
 
 \begin_layout Itemize
@@ -1049,7 +1082,7 @@ confusion
 \begin_inset Foot
 status open
 
-\begin_layout Standard
+\begin_layout Plain Layout
 The pains mostly were the 
 \begin_inset Quotes eld
 \end_inset
@@ -1213,6 +1246,37 @@ client
 This is all done to avoid duplication of functions between system on one
  side and baseunix/unix on the otherside.
  This saves a few tens of kbs.
+ The types (in ptypes.inc/ctypes.inc) are still imported twice, once in the
+ implementation of system, once in the unixtype unit.
+\end_layout
+
+\begin_layout Subsection
+Unixtype
+\end_layout
+
+\begin_layout Standard
+The unit unixtype was introduced pretty late in the rearchitecting proces.
+ Initially baseunix imported ptypes.inc and ctypes, but some platforms needed
+ base unix types below this level (e.g.
+ in header units that were used to implement baseunix).
+ At first these units simply also included ptypes.inc, but this led to type
+ incompability problems once more platforms were implemented
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+The restructure was mostly carried out on FreeBSD, which pretty much only
+ has 32-bit types in the kernel interface.
+ Contrary to linux/x86 that also has 16-bit types
+\end_layout
+
+\end_inset
+
+.
+ The only solution was to move all types to a separate unit.
+ Since we still wanted to export all unix symbols from baseunix, after some
+ heated discussion, all types in ptypes.inc were aliased.
+ (see aliasptp.inc that aliases ptypes.inc and aliasctp.inc that aliases ctypes.inc)
 \end_layout
 
 \begin_layout Section
@@ -1256,6 +1320,7 @@ easy
 
  substitutes for certain constants that ease libc->baseunix porting that
  we don't want to expose in the proper RTL.
+ (these are hardly used in practice)
 \end_layout
 
 \begin_layout Enumerate
@@ -1273,7 +1338,7 @@ Solved problems
 \end_layout
 
 \begin_layout Enumerate
-unit libc is no longer needed for dynamic loading of libraries
+unit libc is no longer needed for dynamic loading of libraries (dynlibs)
 \end_layout
 
 \begin_layout Enumerate
@@ -1286,6 +1351,10 @@ users
 \end_inset
 
  package)
+\end_layout
+
+\begin_layout Enumerate
+unit libc is no longer needed for Iconv calls (v2.2.4 iconvenc)
 \end_layout
 
 \begin_layout Subsection
@@ -1314,7 +1383,7 @@ non fp socket functions.
 \end_layout
 
 \begin_layout Enumerate
-non fp functions in the unix rtl
+Some non fp functions in the unix rtl
 \end_layout
 
 \end_body
