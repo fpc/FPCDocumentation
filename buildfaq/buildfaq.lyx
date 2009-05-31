@@ -22,7 +22,16 @@
 \graphics default
 \paperfontsize default
 \spacing single
-\use_hyperref false
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
 \papersize a4paper
 \use_geometry true
 \use_amsmath 1
@@ -74,7 +83,7 @@ FAQ version 0.07
 \end_layout
 
 \begin_layout Standard
-FPC version 2.2.4/2.3.1x (release/devel) 
+FPC version 2.2.4/2.3.x (release/devel) 
 \end_layout
 
 \begin_layout Standard
@@ -146,6 +155,31 @@ irc.freenode.net channel #fpc, best populated in the late evenings CET.
 Versioning of the faq 
 \end_layout
 
+\begin_layout Standard
+The faq comes in two versions, the PDF at 
+\begin_inset CommandInset href
+LatexCommand href
+name "http://www.stack.nl/marcov/buildfaq.pdf"
+target "http://www.stack.nl/marcov/buildfaq.pdf"
+
+\end_inset
+
+ one and an HTML version at 
+\begin_inset CommandInset href
+LatexCommand href
+name "http://www.stack.nl/marcov/buildfaq"
+target "http://www.stack.nl/marcov/buildfaq "
+
+\end_inset
+
+.
+ The PDF version is the authorative one and more often updated.
+ The HTML version is mainly used to post URLs to specific topics on maillists
+ and IRC.
+ Unfortunately, the HTML export of LyX is not the stablest in the world,
+ so sometimes exporting to html doesn't even succeed
+\end_layout
+
 \begin_layout Itemize
 Versions 0.01 and 0.02 were continuously updated, both exist in multiple versions.
  
@@ -196,10 +230,28 @@ More 1.0.10 and CVS removal
 
 \end_deeper
 \begin_layout Itemize
-Version 0.07 is some maintenance after 2.2.4 release.
+Version 0.07 is some maintenance after 2.2.4 release
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+compiler version updated
+\end_layout
+
+\begin_layout Itemize
+some 2.3.x topics, whichwill be increased in the future.
  
 \end_layout
 
+\begin_layout Itemize
+Lyx 1.6.2 (mostly sorting of all-caps index entries)
+\end_layout
+
+\begin_layout Itemize
+newer buildscripts
+\end_layout
+
+\end_deeper
 \begin_layout Standard
 \begin_inset CommandInset toc
 LatexCommand tableofcontents
@@ -1237,6 +1289,15 @@ Combined with a masterfully created fpc.cfg file one can build very powerful
  
 \end_layout
 
+\begin_layout Subsection
+Other tools
+\end_layout
+
+\begin_layout Standard
+Sometimes there are other platform dependant tools.
+ Most notably the Windows resource compiler windres and dlltool,
+\end_layout
+
 \begin_layout Section
 Obtaining source 
 \end_layout
@@ -1898,6 +1959,10 @@ ppas.sh (or .bat) batchfile that calls the linker with the correct arguments.
  
 \end_layout
 
+\begin_layout Description
+*.lrs Lazarus resources, old style
+\end_layout
+
 \begin_layout Standard
 The extensions on win32 originally endded in 
 \begin_inset Quotes eld
@@ -1932,7 +1997,7 @@ Directory layout
 Directory layout 
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:Directory-layout"
+name "sec:Directory_layout"
 
 \end_inset
 
@@ -3336,7 +3401,7 @@ The -Fu case is pretty much as described in the directory layout paragraphs
  (
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sec:Directory-layout"
+reference "sec:Directory_layout"
 
 \end_inset
 
@@ -3766,8 +3831,17 @@ Using makefiles
 \end_layout
 
 \begin_layout Standard
-When using makefiles, one can set the -FD parameter by passing CROSSBINDIR=<path
-> to make.
+When using makefiles, one can set the -FD parameter by passing CROSSBINDIR
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+crossbindir@CROSSBINDIR
+\end_layout
+
+\end_inset
+
+=<path> to make.
  This ensures that the parameter is passed correctly from makefile to makefile
  (in nested directory hierarchies).
 \end_layout
@@ -3804,10 +3878,10 @@ bla-die-bla-
 \begin_layout Standard
 When doing a cross snapshot (or cycle), setting the make variable BINUTILSPREFIX
 \begin_inset Index
-status collapsed
+status open
 
 \begin_layout Plain Layout
-BINUTILSPREFIX
+binutilsprefix@BINUTILSPREFIX
 \end_layout
 
 \end_inset
@@ -4990,10 +5064,10 @@ FPC=[full/path/to/]<compiler>
 \begin_layout Standard
 Additional compiler options can be added using OPT
 \begin_inset Index
-status collapsed
+status open
 
 \begin_layout Plain Layout
-OPT̄
+opt@OPT̄
 \end_layout
 
 \end_inset
@@ -5112,7 +5186,15 @@ make cycle PP=ppcrel
 \end_layout
 
 \begin_layout LyX-Code
-make cycle PP=/fpc/startcompilers/ppcrel OPT='--gl'
+make cycle PP=/fpc/startcompilers/ppcrel OPT=
+\begin_inset Quotes erd
+\end_inset
+
+--gl
+\begin_inset Quotes erd
+\end_inset
+
+
 \end_layout
 
 \begin_layout LyX-Code
@@ -5817,7 +5899,7 @@ MAKE ABSOLUTELY SURE THAT THE CYGWIN DIRECTORY IS NOT IN THE PATH!!!!!!
  The reason for this is that some mingw utils start using cygwin sh.exe when
  found, and that in turn swaps some utils from the FPC delivered mingw tools
  to cygwin ones.
- 
+  
 \end_layout
 
 \begin_layout Standard
@@ -5825,13 +5907,9 @@ Then, to make and install a snapshot, we update the SVN:
 \end_layout
 
 \begin_layout LyX-Code
-d: 
-\end_layout
-
-\begin_layout LyX-Code
-cd 
+cd /d d:
 \backslash
- 
+
 \end_layout
 
 \begin_layout LyX-Code
@@ -5911,7 +5989,14 @@ Some things to notice:
 MAKE ABSOLUTELY SURE THAT THE CYGWIN DIRECTORY IS NOT IN THE PATH!!!!!!
  
 \series default
-Same for mingw
+Mingw/msys can also give problems, but more rarely (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:(Windows)-building-and"
+
+\end_inset
+
+ )
 \end_layout
 
 \begin_layout Itemize
@@ -5945,13 +6030,13 @@ UPXPROG=echo avoids UPXing of the resulting binaries, so that the FPC binaries
 status open
 
 \begin_layout Plain Layout
-http://wiki.freepascal.org/Size
+http://wiki.freepascal.org/Size_matters
 \begin_inset Flex URL
-status collapsed
+status open
 
 \begin_layout Plain Layout
 
-http://wiki.freepascal.org/Size
+http://wiki.freepascal.org/Size_Matters
 \end_layout
 
 \end_inset
@@ -5977,10 +6062,10 @@ fpc) before exporting.
 \begin_layout Subsection
 The Quick solution: COPYTREE
 \begin_inset Index
-status collapsed
+status open
 
 \begin_layout Plain Layout
-COPYTREĒ
+copytree@COPYTREĒ
 \end_layout
 
 \end_inset
@@ -6025,7 +6110,14 @@ install.exe (Vista)
 
 \end_inset
 
-install.exe
+install.exe 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:VISTA-UAC-INSTALL"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6152,15 +6244,61 @@ fpc)
 \end_layout
 
 \begin_layout LyX-Code
-d: 
+set BASEDRV=d:
 \end_layout
 
 \begin_layout LyX-Code
-cd 
+set SRCDIR=%BASEDRV%
 \backslash
 repo
 \backslash
-fpc 
+fpc
+\end_layout
+
+\begin_layout LyX-Code
+set FPCSTART=c:
+\backslash
+fpc
+\backslash
+2.2.4
+\backslash
+bin
+\backslash
+i386-win32
+\backslash
+ppc386.exe 
+\end_layout
+
+\begin_layout LyX-Code
+set LOGDIR=%BASEDRV%
+\backslash
+repo
+\end_layout
+
+\begin_layout LyX-Code
+set INSTALLDIR=%BASEDRV%
+\backslash
+fpc
+\end_layout
+
+\begin_layout LyX-Code
+set OPTS=-gl
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+rem === invariant part ===
+\end_layout
+
+\begin_layout LyX-Code
+
+\end_layout
+
+\begin_layout LyX-Code
+cd /d %SRCDIR%
 \end_layout
 
 \begin_layout LyX-Code
@@ -6176,21 +6314,21 @@ REM the next on one line
 \end_layout
 
 \begin_layout LyX-Code
-make clean all UPXPROG=echo COPYTREE=echo OPT="-gl" GINSTALL=myinst.exe FPC=c:
+make clean all UPXPROG=echo COPYTREE=echo OPTS=
+\begin_inset Quotes erd
+\end_inset
+
+%OPTS%
+\begin_inset Quotes erd
+\end_inset
+
+ GINSTALL=myinst.exe 
+\end_layout
+
+\begin_layout LyX-Code
+             FPC=%FPCSTART% 1> %LOGDIR%
 \backslash
-fpc
-\backslash
-2.2.4
-\backslash
-bin
-\backslash
-i386-win32
-\backslash
-ppc386.exe > d:
-\backslash
-repo
-\backslash
-buildlog.txt 
+buildlog.txt 2>&1
 \end_layout
 
 \begin_layout LyX-Code
@@ -6198,7 +6336,8 @@ buildlog.txt
 \end_layout
 
 \begin_layout LyX-Code
-REM separate install step for crossversion purposes
+REM separate install step for crossversion purposes (and under Unix sudo),
+ also on one line:
 \end_layout
 
 \begin_layout LyX-Code
@@ -6206,21 +6345,14 @@ REM separate install step for crossversion purposes
 \end_layout
 
 \begin_layout LyX-Code
-make install UPXPROG=echo COPYTREE=echo OPT="-gl" INSTALL_PREFIX=c:
+make install UPXPROG=echo COPYTREE=echo OPT="%OPTS%" INSTALL_PREFIX=%INSTALLDIR%
+ 
+\end_layout
+
+\begin_layout LyX-Code
+             GINSTALL=myinst.exe FPC=%FPCSTART% 1> %LOGDIR%
 \backslash
-fpc GINSTALL=myinst.exe FPC=d:
-\backslash
-repo
-\backslash
-fpc
-\backslash
-compiler
-\backslash
-ppc386.exe > d:
-\backslash
-repo
-\backslash
-installlog.txt 
+installlog.txt  2>&1
 \end_layout
 
 \begin_layout Standard
@@ -6234,6 +6366,10 @@ x86_64-win64
 \end_inset
 
  in the path and ppcx64 instead of ppc386.
+ Note that all variables are in the upper part of the batchfile, this makes
+ it easier to port it to systems and just adapt the paths.
+ Or have a bunch of batchfiles, and prefix them always with the same set
+ of variables.
 \end_layout
 
 \begin_layout Section
@@ -6293,11 +6429,18 @@ At the moment of writing this there was some problem with installing lazarus.
 \end_layout
 
 \begin_layout Section
-Typical Problems
+Typical problems and tips
 \end_layout
 
 \begin_layout Subsection
 cannot find -l<xxxx> 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:cannot-find--l<xxxx>"
+
+\end_inset
+
+ 
 \end_layout
 
 \begin_layout Standard
@@ -6365,27 +6508,167 @@ Your distribution for some reason names it libraries differently.
 \end_layout
 
 \begin_layout Subsection
-With FPC 1.0.10 under FreeBSD anything using OpenGL wants to link -ldl 
-\end_layout
-
-\begin_layout Standard
-The OpenGL distribution of 1.0.10 erroneously forced a link with libdl on
- FreeBSD, this can be problematic when installing lazarus.
- I added the corrected units here: http://www.stack.nl/~marcov/openglfreebsd.tar.gz
- 
-\begin_inset Flex URL
-status collapsed
+CONTNRS or other FCL-BASE units not found 
+\begin_inset Index
+status open
 
 \begin_layout Plain Layout
-
-http://www.stack.nl/~marcov/openglfreebsd.tar.gz
+CONTNRS not found
 \end_layout
 
 \end_inset
 
- .
- Please extract in directory $PREFIX/fpc/1.0.10/units/freebsd.
- (remove the old contents first) 
+
+\end_layout
+
+\begin_layout Standard
+If the compiler can't find contnrs, this points to a problem with the -Fu
+ paths.
+ It probably means -Fu was wrong, but the makefiles managed to auto-add
+ the RTL, and the contnrs (and other FCL-BASE) unit(s) are then the first
+ unit that can't be found.
+\end_layout
+
+\begin_layout Subsection
+Piping stderr and stdout to the same file.
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Piping-stderr"
+
+\end_inset
+
+ 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+Piping stderr
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Piping stderr and stdout of the MAKE process to the same file is useful
+ for debugging the exact sequence on events.
+ This is easily done on Unix using >&.
+ 
+\end_layout
+
+\begin_layout Standard
+Under Windows this is a bit more complex, but can still be done:
+\end_layout
+
+\begin_layout LyX-Code
+make install 1> filename.txt 2>&1
+\end_layout
+
+\begin_layout Standard
+This line pipes the output of install's stdout to filename.txt using 1>,
+ but redirects stderr ( 2>) to stdout (&1) first.
+\end_layout
+
+\begin_layout Subsection
+(Windows) building and install fails with 
+\begin_inset Quotes eld
+\end_inset
+
+invisible
+\begin_inset Quotes erd
+\end_inset
+
+ errors 
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:(Windows)-building-and"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+I suddenly had problems when doing 
+\begin_inset Quotes eld
+\end_inset
+
+make clean all install
+\begin_inset Quotes erd
+\end_inset
+
+ in one go.
+ Further investigation of the output showed 
+\begin_inset Quotes eld
+\end_inset
+
+ignored errors
+\begin_inset Quotes erd
+\end_inset
+
+ in make exit lines:
+\end_layout
+
+\begin_layout LyX-Code
+make: [fpc_clean] Error 1 (ignored)
+\end_layout
+
+\begin_layout Standard
+however this would lead to an all stop after the 
+\emph on
+all
+\emph default
+ part:
+\end_layout
+
+\begin_layout LyX-Code
+make: *** [fpcmade.i386-win32] Error 1
+\end_layout
+
+\begin_layout Standard
+This turned out to be a mingw related problem, a file 
+\begin_inset Quotes eld
+\end_inset
+
+sh.exe
+\begin_inset Quotes erd
+\end_inset
+
+ was left in the project source.
+ Another solution would be to never use these commands in one go, but script
+ them as separate ones.
+ 
+\end_layout
+
+\begin_layout Standard
+I experimented with sh.exe because when using 
+\begin_inset Quotes eld
+\end_inset
+
+make -j 2
+\begin_inset Quotes erd
+\end_inset
+
+ it produces a warning that -j functionality is disabled if sh.exe is not
+ found.
+ I assume the makefile must be adapted to ignore 
+\begin_inset Quotes eld
+\end_inset
+
+ignored errors
+\begin_inset Quotes erd
+\end_inset
+
+ instead of 
+\begin_inset Quotes eld
+\end_inset
+
+all errors
+\begin_inset Quotes erd
+\end_inset
+
+ somewhere.
 \end_layout
 
 \begin_layout Chapter
@@ -7181,6 +7464,10 @@ Recompiling
 
 \begin_layout Standard
 [Unfinished] 
+\end_layout
+
+\begin_layout Subsubsection
+
 \end_layout
 
 \begin_layout Chapter
