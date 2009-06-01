@@ -79,7 +79,7 @@ Foreword to the Development Tutorial
 \end_layout
 
 \begin_layout Standard
-FAQ version 0.07a
+FAQ version 0.07b
 \end_layout
 
 \begin_layout Standard
@@ -253,7 +253,8 @@ newer buildscripts
 
 \end_deeper
 \begin_layout Itemize
-Version 0.07a has only minor typo fixes, and was released the day after 0.07
+Updates 0.07a and b only have minor typo fixes, and was released in the day
+ after the initial 0.07 version
 \end_layout
 
 \begin_layout Standard
@@ -6240,11 +6241,11 @@ fpc)
 \end_layout
 
 \begin_layout LyX-Code
-@echo off 
+@echo on
 \end_layout
 
 \begin_layout LyX-Code
-set BASEDRV=d:
+set BASEDRV=c: 
 \end_layout
 
 \begin_layout LyX-Code
@@ -6252,7 +6253,11 @@ set SRCDIR=%BASEDRV%
 \backslash
 repo
 \backslash
-fpc
+fpc 
+\end_layout
+
+\begin_layout LyX-Code
+set PPCNAME=ppc386 
 \end_layout
 
 \begin_layout LyX-Code
@@ -6266,35 +6271,36 @@ bin
 \backslash
 i386-win32
 \backslash
-ppc386.exe 
+%PPCNAME% 
 \end_layout
 
 \begin_layout LyX-Code
 set LOGDIR=%BASEDRV%
 \backslash
-repo
+repo 
 \end_layout
 
 \begin_layout LyX-Code
 set INSTALLDIR=%BASEDRV%
 \backslash
-fpc
+pp11 
 \end_layout
 
 \begin_layout LyX-Code
-set OPTS=-gl
+REM some random opts.
 \end_layout
 
 \begin_layout LyX-Code
+set OPTS=-gl -dSAX_HTML_DEBUG -dUSE_MINGW_GDB 
+\end_layout
 
+\begin_layout LyX-Code
+set COMMONOPTS=UPXPROG=echo COPYTREE=echo OPT="%OPTS%" GINSTALL=myinst.exe
+ 
 \end_layout
 
 \begin_layout LyX-Code
 rem === invariant part ===
-\end_layout
-
-\begin_layout LyX-Code
-
 \end_layout
 
 \begin_layout LyX-Code
@@ -6306,7 +6312,7 @@ cd /d %SRCDIR%
 \end_layout
 
 \begin_layout LyX-Code
-REM the next on one line
+REM the building
 \end_layout
 
 \begin_layout LyX-Code
@@ -6314,19 +6320,7 @@ REM the next on one line
 \end_layout
 
 \begin_layout LyX-Code
-make clean all UPXPROG=echo COPYTREE=echo OPT=
-\begin_inset Quotes erd
-\end_inset
-
-%OPTS%
-\begin_inset Quotes erd
-\end_inset
-
- GINSTALL=myinst.exe 
-\end_layout
-
-\begin_layout LyX-Code
-             FPC=%FPCSTART% 1> %LOGDIR%
+make clean all %COMMONOPTS% FPC=%FPCSTART% 1> %LOGDIR%
 \backslash
 buildlog.txt 2>&1
 \end_layout
@@ -6336,8 +6330,7 @@ buildlog.txt 2>&1
 \end_layout
 
 \begin_layout LyX-Code
-REM separate install step for crossversion purposes (and under Unix sudo),
- also on one line:
+REM separate install step for crossversion purposes (and under Unix sudo)
 \end_layout
 
 \begin_layout LyX-Code
@@ -6345,19 +6338,16 @@ REM separate install step for crossversion purposes (and under Unix sudo),
 \end_layout
 
 \begin_layout LyX-Code
-make install UPXPROG=echo COPYTREE=echo OPT="%OPTS%" INSTALL_PREFIX=%INSTALLDIR%
- 
-\end_layout
-
-\begin_layout LyX-Code
-             GINSTALL=myinst.exe FPC=%FPCSTART% 1> %LOGDIR%
+make install %COMMONOPTS% INSTALL_PREFIX=%INSTALLDIR% FPC=%SRCDIR%/compiler/%PPC
+NAME% 1> %LOGDIR%
 \backslash
 installlog.txt  2>&1
 \end_layout
 
 \begin_layout Standard
-Actually, I have two such files, another one for 64-bit, which differs only
- in 
+Actually, I have several such files, another one for 64-bit, a more advanced
+ one for crosscompiling to wince etc.
+ The win64 is a copy that differs only in 
 \begin_inset Quotes eld
 \end_inset
 
@@ -6368,8 +6358,14 @@ x86_64-win64
  in the path and ppcx64 instead of ppc386.
  Note that all variables are in the upper part of the batchfile, this makes
  it easier to port it to systems and just adapt the paths.
- Or have a bunch of batchfiles, and prefix them always with the same set
- of variables.
+ Having several computers with slightly different path and drive layouts
+ was the motivation to write them.
+\end_layout
+
+\begin_layout Standard
+Unfortunately, pure batchfile is too limited to invest too much time in
+ it.
+ 
 \end_layout
 
 \begin_layout Section
@@ -7082,7 +7078,7 @@ Making mistakes with renaming is not that bad, there will be chances to
 \end_layout
 
 \begin_layout Section
-Interesting linker options
+Interesting compiler and makefile options
 \end_layout
 
 \begin_layout Subsection
@@ -7151,6 +7147,26 @@ The -Xt parameter tries to link static as much as possible by passing -static
  Compile with -s, edit link.res, and then run ppas.bat or .sh to resume the
  linking process.
  
+\end_layout
+
+\begin_layout Subsection
+CROSSOPT
+\end_layout
+
+\begin_layout Standard
+The Makefile of compiler/ allows to specify compiler options that are only
+ used during the actual crosscompiling state using CROSSOPT= (so not during
+ the initial bootstrap cycle that is not cross-)
+\end_layout
+
+\begin_layout Subsection
+LIBDIR
+\end_layout
+
+\begin_layout Standard
+Allows to specify a dir to be used for linking.
+ Don't know the exact cross-compile consequences, specially if the host
+ OS needs a lib path to cycle (Solaris, OS X)
 \end_layout
 
 \begin_layout Chapter
