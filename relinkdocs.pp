@@ -6,6 +6,10 @@ program relinkdocs;
 
   Requires Sergei's work on dom_html, which means trunk from after (mainly r13357
   but maybe also one of the slightly later commits)
+, and maybe mods to chmlib.
+
+  Rule of thumb: use version 2.3.1 of the same date or newer as the last commit to the relink* files
+  
 
   Doesn't deallocate, but needs <64MB
 
