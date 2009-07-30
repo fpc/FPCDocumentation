@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+#
+# Script to generate CHM docs. 
+# (C) 2009 Marco van de Voort Initial version
+# 
+# Needs more errorchecking.
+
+
+make HTMLFMT=chm html CSSFILE=/fpc/fpc/utils/fpdoc/fpdoc.css 
+
+fpc relinkdocs.pp
+fpc compilelatexchm.pp
+
+./relinkdocs
+mv prog prog-old
+mv ref ref-old
+mv user user-old
+mv prog-old prog
+mv ref-old ref
+mv user-old user
+
+cp prog-old/*.png prog
+cp prog-old/*.kwd prog
+cp prog-old/*.css prog
+cp user-old/*.png user
+cp user-old/*.kwd user
+cp user-old/*.css user
+cp ref-old/*.png ref
+cp ref-old/*.kwd ref
+cp ref-old/*.css ref
+./compilelatexchm prog "Programmer's Guide"
+./compilelatexchm user "User's Guide"
+./compilelatexchm ref "Reference Guide"
+./compilelatexchm fpdoc "FPDoc documentation"
+ 
+ 
