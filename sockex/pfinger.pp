@@ -14,7 +14,7 @@ begin
   Addr.sin_port:=79 shl 8;
   { localhost : 127.0.0.1 in network order }
   Addr.sin_addr.s_addr:=((1 shl 24) or 127);
-  S:=Socket(AF_INET,SOCK_STREAM,0);
+  S:=fpSocket(AF_INET,SOCK_STREAM,0);
   If Not Connect (S,ADDR,SIN,SOUT) Then
     begin
     Writeln ('Couldn''t connect to localhost');
@@ -30,7 +30,7 @@ begin
     readln (Sin,line);
     writeln (line);
     end;
-  Shutdown(s,2);
+  fpShutdown(s,2);
   close (sin);
   close (sout);
 end.

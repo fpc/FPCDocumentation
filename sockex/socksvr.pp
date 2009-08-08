@@ -21,19 +21,17 @@ begin
   halt(100);
 end;
 
-
-
 begin
-  S:=Socket (AF_INET,SOCK_STREAM,0);
+  S:=fpSocket (AF_INET,SOCK_STREAM,0);
   if SocketError<>0 then
    Perror ('Server : Socket : ');
   SAddr.sin_family:=AF_INET;
   { port 50000 in network order }
   SAddr.sin_port:=htons(50000);
   SAddr.sin_addr.s_addr:=0;
-  if not Bind(S,SAddr,sizeof(saddr)) then
+  if fpBind(S,@SAddr,sizeof(saddr))=-1 then
    PError ('Server : Bind : ');
-  if not Listen (S,1) then
+  if fpListen (S,1)=-1 then
    PError ('Server : Listen : ');
   Writeln('Waiting for Connect from Client, run now sock_cli in an other tty');
   if not Accept (S,FromName,Sin,Sout) then

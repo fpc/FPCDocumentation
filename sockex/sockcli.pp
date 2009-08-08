@@ -23,8 +23,8 @@ Var
   i        : integer;
 
 begin
-  S:=Socket (AF_INET,SOCK_STREAM,0);
-  if SocketError<>0 then
+  S:=fpSocket (AF_INET,SOCK_STREAM,0);
+  if s=-1 then
    Perror('Client : Socket : ');
   SAddr.sin_family:=AF_INET;
   { port 50000 in network order }
@@ -37,7 +37,7 @@ begin
   ReWrite(Sout);
   Buffer:='This is a textstring sent by the Client.';
   for i:=1 to 10 do
-   Writeln(Sout,Buffer);
+    Writeln(Sout,Buffer);
   Flush(Sout);
   Readln(SIn,Buffer);
   WriteLn(Buffer);
