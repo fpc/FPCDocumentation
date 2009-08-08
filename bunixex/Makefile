@@ -51,7 +51,7 @@ endif
 
 .PHONY: all tex clean
 
-OBJECTS=ex1 ex16 ex17 ex18 ex19 ex20 ex21 ex23 ex24 ex25 ex26 ex27 ex28 \
+OBJECTS= ex1 ex16 ex17 ex18 ex19 ex20 ex21 ex23 ex24 ex25 ex26 ex27 ex28 \
         ex31 ex32 ex33 ex35 ex36 ex41 ex53 ex54 ex57 ex58 ex59 ex7 ex72 \
         ex73 ex8 
 

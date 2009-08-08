@@ -175,6 +175,19 @@ HEVEAOPTS+=-text
 endif
 endif # USEHEVEA
 
+#######################################################################
+# PlasTeX conversion.
+#######################################################################
+ifdef USEPLASTEX
+# PLASTEX conversion.
+ifndef PLASTEX
+PLASTEX = /usr/bin/plastex
+endif
+#ifeq ($(ASCIIMODE),YES)
+#PLASTEXOPTS+=-text
+#endif
+endif # USEPLASTEX
+
 # tmpdir
 export TMP=/tmp
 #
@@ -251,6 +264,7 @@ help:
         @echo ' hevea         : Make HTML documentation using hevea'
         @echo ' l2h           : Make HTML documentation using latex2html'
         @echo ' 4ht           : Make HTML documentation using tex4ht'
+        @echo ' plastex       : Make HTML documentation using plastex'
         @echo ' pdf           : Make documentation using pdflatex'
         @echo ' txt           : dvi, convert to text using dvi2tty'
         @echo ' htm           : Convert .html to .htm files, zip result'
@@ -648,11 +662,15 @@ else
 ifdef USEHEVEA
 include Makefile.hev
 else
+ifdef USEPLASTEX
+include Makefile.ptx
+else
 ifdef USEL2H
 include Makefile.l2h
 else
 include Makefile.4ht
 endif  # USEL2H
+endif  # USEPLASTEX
 endif  # USEHEVEA
 
 fcl.chk: $(FCLXML)
@@ -684,6 +702,8 @@ l2h:
         $(MAKE) html USEL2H=1
 4ht:
         $(MAKE) html USETEX4HT=1
+plastex:
+        $(MAKE) html USEPLASTEX=1
 
 
 #####################################################################

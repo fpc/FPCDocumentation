@@ -1,0 +1,18 @@
+#
+# Create HTML using plastex tex 2 html conversion
+#
+
+%.chk: %.tex
+	mkdir -p $(basename $<)	
+	cp -f preamble.ptx preamble.inc
+	$(PLASTEX) --disable-images --dir=$(basename $<) $(PLASTEXOPTS) $<
+	touch $(basename $<).chk
+	
+
+user.chk: $(INCLUDES) user.tex messages.inc
+prog.chk: $(INCLUDES) prog.tex
+onechap.chk: $(INCLUDES) onechap.tex
+ref.chk: $(INCLUDES) ref.tex
+rtl.chk: $(INCLUDES) rtl.tex
+fpdoc.chk: $(INCLUDES) fpdoc.tex
+
