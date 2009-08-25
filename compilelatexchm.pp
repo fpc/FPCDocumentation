@@ -31,13 +31,15 @@ const
                         (1,0,2,0);
 				
 var
-    ChSitemap : Array[0..3] of TCHMSiteMapItem =(nil,nil,nil,nil);
-    toc       : TChmSiteMap;
-    curlevel    : integer =-1;
-	prefix : string;
-    prefixpath :string;
-    description:string;
+    ChSitemap  : Array[0..3] of TCHMSiteMapItem =(nil,nil,nil,nil);
+    toc        : TChmSiteMap;
+    curlevel   : integer =-1;
+    prefix     : string;
+    prefixpath : string;
+    kwdfile    : string ='';
+    description: string;
     placeholdervalue : integer =1;
+
 function sectiontype (s:string):integer;
 var i : integer;
 
@@ -200,14 +202,49 @@ begin
   halt;
 end; 
 
+function TOCSort(Item1, Item2: TChmSiteMapItem): Integer;
+begin
+  Result := CompareText(LowerCase(Item1.Text), LowerCase(Item2.Text));
+end;
+
+
+procedure processkwd(x: TCHMProject;kwdfilename:string);
+var t      : TStringList;
+    i      : integer;
+    Index  : TChmSiteMap;
+    Stream : TFileStream;
+    TmpItem: TChmSiteMapItem;
+
+begin
+  if fileexists(kwdfilename) then
+    begin
+      t:=TStringlist.create;
+      t.loadfromfile(kwdfilename);
+      Index := TChmSiteMap.Create(stIndex);
+      Stream := TFilestream.Create(x.indexfilename,fmcreate);
+      for i:=0 to t.count-1 do
+        begin
+          TmpItem := Index.Items.NewItem;
+          TmpItem.Text := t.names[i];
+          tmpitem.local:=prefixpath+t.values[t.names[i]];
+        end; 
+      Index.Items.Sort(TListSortCompare(@TOCSort));
+      Index.SaveToStream(Stream);
+      Index.Free;
+      Stream.Free;
+  end;
+end;
+
 var x : TCHMProject;
     f : TFileStream;
-    
+     
 begin
   if paramcount<2 then
     usage;
   prefix:=paramstr(1);
   description:=paramstr(2);
+  if paramcount>=3 then
+   kwdfile:=paramstr(3);
   if not directoryexists(prefix) then
     usage;
   prefixpath:=includetrailingpathdelimiter(prefix);
@@ -223,6 +260,8 @@ begin
   scandir(prefix,false,x.files);
   flush(output);
   readindex(x.defaultpage,x.TableOfContentsFileName);
+  if kwdfile<>'' then
+     processkwd(x,kwdfile);
 // xml stuff doesn't seme to work ?
   x.savetofile(prefix+'proj.xml');
     
