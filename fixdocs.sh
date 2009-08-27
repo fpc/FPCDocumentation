@@ -12,12 +12,15 @@ fpc relinkdocs.pp
 fpc compilelatexchm.pp
 
 ./relinkdocs
+rm -rf prog-old
+rm -rf ref-old
+rm -rf user-old
 mv prog prog-old
 mv ref ref-old
 mv user user-old
-mv prog-old prog
-mv ref-old ref
-mv user-old user
+mv prog-fixed  prog
+mv ref-fixed ref
+mv user-fixed user
 
 cp prog-old/*.png prog
 cp prog-old/*.kwd prog
