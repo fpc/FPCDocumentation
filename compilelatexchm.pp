@@ -219,6 +219,8 @@ begin
   if fileexists(kwdfilename) then
     begin
       t:=TStringlist.create;
+      t.duplicates:=dupignore;
+      t.sorted:=true;
       t.loadfromfile(kwdfilename);
       Index := TChmSiteMap.Create(stIndex);
       Stream := TFilestream.Create(x.indexfilename,fmcreate);
