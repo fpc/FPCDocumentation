@@ -434,6 +434,7 @@ public
 published
 read
 register
+reintroduce
 safecall
 softfloat
 stdcall
@@ -484,14 +485,15 @@ the compiler, then a warning will be displayed, corresponding to the
 specified hint.
 \begin{description}
 \item[deprecated] The use of this identifier is deprecated, use an
-alternative instead.
+alternative instead.  \keywordlink{deprecated}
 \item[experimental] The use of this identifier is experimental: this can be
 used to flag new features that should be used with caution.
+\keywordlink{experimental}
 \item[platform] This is a platform-dependent identifier: it may not be
-defined on all platforms.
+defined on all platforms. \keywordlink{platform}
 \item[Uninmplemented] This should be used on functions and procedures only.
 It should be used to signal that a particular feature has not yet been
-implemented.
+implemented. \keywordlink{unimplemented}
 \end{description}
 
 The following are examples:
@@ -558,7 +560,7 @@ compatibility mode.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Labels
 \section{Labels}
-\index{Labels}
+\index{Labels} \keywordlink{label}
 A label is a name for a location in the source code to which can be 
 jumped from another location with a \var{Goto} statement. Labels can 
 be digit sequences or identifiers.\keywordlink{label}
@@ -625,13 +627,13 @@ specified codepage.
 % Constants
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Constants}
-\index{Constants}
+\index{Constants} \keywordlink{const}
 Just as in \tp, \fpc supports both normal and typed constants.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ordinary constants
 \section{Ordinary constants}
-\index{Constants!Ordinary}
+\index{Constants!Ordinary} \keywordlink{const}
 Ordinary constants declarations are not different from the \tp or
 Delphi implementation.
 \input{syntax/const.syn}
@@ -724,7 +726,7 @@ in the \file{objpas} unit reference.
 % Types
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Types}
-\index{Types}
+\index{Types} 
 All variables have a type. \fpc supports the same basic types as Turbo
 Pascal, with some extra types from Delphi.
 The programmer can declare his own types, which is in essence defining an identifier
@@ -770,6 +772,15 @@ check error if range checking is enabled.
 \index{Types!Integer}
 A list of pre-defined integer types is presented in \seet{integerstyp}.
 
+\keywordlink{Integer}    \keywordlink{Shortint}
+\keywordlink{SmallInt}   \keywordlink{Longint}
+\keywordlink{Longword}   \keywordlink{Int64}
+\keywordlink{Byte}	 \keywordlink{Word}
+\keywordlink{Cardinal}   \keywordlink{QWord}
+\keywordlink{Boolean}    \keywordlink{ByteBool}
+\keywordlink{WordBool}
+\keywordlink{LongBool}   \keywordlink{Char}
+
 %\index{Keyword!Integer}
 %
 \begin{table}[ht]
@@ -791,6 +802,7 @@ Cardinal \\
 QWord \\
 Boolean \\
 ByteBool \\
+WordBool \\
 LongBool \\
 Char \\ \hline
 \end{tabular}
@@ -1004,6 +1016,7 @@ but it is either Single or Double. Only the IEEE floating point types are
 supported, and these depend on the target processor and emulation options.
 The true \tp compatible types are listed in
 \seet{Reals}.\index{Real}\index{Single}\index{Double}\index{Extended}\index{Comp}\index{Currency}
+\keywordlink{Real}\keywordlink{Single}\keywordlink{Double}\keywordlink{Extended}\keywordlink{Comp}\keywordlink{Currency}
 \begin{FPCltable}{lccr}{Supported Real types}{Reals}
 Type & Range & Significant digits & Size \\ \hline
 Real & platform dependant & ??? & 4 or 8 \\
@@ -1026,7 +1039,7 @@ minimalizes rounding errors.
 \section{Character types}
 \index{Types!Char}
 \subsection{Char}
-\index{Char}
+\index{Char} \keywordlink{char}
 \fpc supports the type \var{Char}. A \var{Char} is exactly 1 byte in
 size, and contains one ASCII character.
 
@@ -1045,7 +1058,7 @@ When the single quote character must be represented, it should be typed
 two times successively, thus \var{''''} represents the single quote character.
 
 \subsection{Strings}
-\index{Types!String}
+\index{Types!String} \keywordlink{String}
 \fpc supports the \var{String} type as it is defined in \tp:
 a sequence of characters with an optional size specification.
 It also supports ansistrings (with unlimited length) as in Delphi.
@@ -1066,7 +1079,7 @@ conversions. Note, however, that the result of an expression that contains
 ansistrings and short strings will always be an ansistring.
 
 \subsection{Short strings}
-\index{Shortstring}
+\index{Shortstring} \keywordlink{ShortString}
 A string declaration declares a short string in the following cases:
 \begin{enumerate}
 \item If the switch is off: \var{\{\$H-\}}, the string declaration
@@ -1112,6 +1125,7 @@ this allows easy switching between the various string types.
 
 \subsection{Ansistrings}
 \index{Ansistring}\index{Types!Ansistring}\index{Types!Reference counted}
+\keywordlink{AnsiString}
 Ansistrings are strings that have no length limit. They are reference
 counted and are guaranteed to be null terminated. Internally, an ansistring is treated as 
 a pointer: the actual content of the string is stored on the heap, as much
@@ -1252,6 +1266,7 @@ string has reference count 1.
 
 \subsection{WideStrings}
 \index{Widestring}\index{Types!Widestring}\index{Types!Reference counted}
+\keywordlink{Widestring}
 Widestrings (used to represent unicode character strings) are implemented in much 
 the same way as ansistrings: reference counted, null-terminated arrays, only they 
 are implemented as arrays of \var{WideChars} instead of regular \var{Chars}.
@@ -1297,7 +1312,7 @@ depends on the settings of the \var{\{\$H\}} switch.
 
 % PChar
 \subsection{PChar - Null terminated strings}
-\index{Types!PChar}\index{Types!Pointer}
+\index{Types!PChar}\index{Types!Pointer} \keywordlink{PChar}
 \fpc supports the Delphi implementation of the \var{PChar} type. \var{PChar}
 is defined as a pointer to a \var{Char} type, but allows additional
 operations.
@@ -1379,6 +1394,7 @@ suitable. That is, the order of the elements will be kept, but the location
 of the elements is not guaranteed, and is partially governed by the \var{\$PACKRECORDS}
 directive (this directive is explained in the \progref).
 
+\keywordlink{packed} \keywordlink{bitpacked}
 However, \fpc allows controlling the layout with the \var{Packed} and
 \var{Bitpacked} keywords. The meaning of these words depends on the context:
 \begin{description}
@@ -1925,6 +1941,7 @@ Type
 Internally, files are represented by the \var{FileRec} record, which is
 declared in the \file{Dos} or \file{SysUtils} units.
 
+\keywordlink{Text}
 A special file type is the \var{Text} file type, represented by the
 \var{TextRec} record. A file of type \var{Text} uses special input-output
 routines. The default \var{Input}, \var{Output} and \var{StdErr} file
@@ -2146,7 +2163,7 @@ calling convention.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Variant types
 \section{Variant types}
-\index{Variant}\index{Types!Variant}
+\index{Variant}\index{Types!Variant} \keywordlink{variant}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Definition
 \subsection{Definition}
@@ -2334,6 +2351,7 @@ The variables must be declared in a variable declaration section of a unit
 or a procedure or function. It looks as follows:\index{Var}
 \input{syntax/vardecl.syn}
 
+\keywordlink{cvar} \keywordlink{public}
 This means that the following are valid variable declarations:
 \begin{verbatim}
 Var
@@ -5034,7 +5052,7 @@ begin
 \end{verbatim}
 Note the double dereferencing in the second assignment.
 \subsection{Procedure statements}
-\index{Statements!Procedure}
+\index{Statements!Procedure} 
 Procedure statements are calls to subroutines. There are
 different possibilities for procedure calls: 
 \begin{itemize}
@@ -5524,6 +5542,7 @@ A procedure declaration defines an identifier and associates it with a
 block of code. The procedure can then be called with a procedure statement.
 \input{syntax/procedur.syn}
 See \sees{Parameters} for the list of parameters.\index{Procedure}
+\keywordlink{procedure}
 A procedure declaration that is followed by a block implements the action of
 the procedure in that block.
 The following is a valid procedure :
@@ -5539,6 +5558,7 @@ Note that it is possible that a procedure calls itself.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Function declaration
 \section{Function declaration}
+\keywordlink{function}
 A function declaration defines an identifier and associates it with a
 block of code. The block of code will return a result.
 The function can then be called inside an expression, or with a procedure
@@ -5978,7 +5998,7 @@ Delphi, but it is not required, unless in Delphi mode.\index{overload}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % forward defined functions
 \section{Forward defined functions}
-\index{Functions!Forward}\index{Forward}
+\index{Functions!Forward}\index{Forward} \keywordlink{forward}
 A function can be declared without having it followed by its implementation,
 by having it followed by the \var{forward} procedure. The effective
 implementation of that function must follow later in the module.
@@ -7145,7 +7165,8 @@ This is especially useful when redeclaring the system unit's identifiers.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Libraries
 \section{Libraries}
-\index{Libraries}\index{library}
+\index{Libraries}\index{library} \keywordlink{library}
+
 \fpc supports making of dynamic libraries (DLLs under Win32 and \ostwo) trough
 the use of the \var{Library} keyword.
 
@@ -7199,6 +7220,7 @@ procedure, to force memory consistency.
 % The raise statement
 \section{The raise statement}
 \index{Raise}\index{Exceptions!Raising}
+\keywordlink{raise} 
 The \var{raise} statement is as follows:
 \input{syntax/raise.syn}
 This statement will raise an exception. If it is specified, the exception
@@ -7243,6 +7265,7 @@ class descends from \var{Exception}.
 % The try...except statement
 \section{The try...except statement}
 \index{except}\index{Exceptions!Catching}
+\keywordlink{try} \keywordlink{except}
 A \var{try...except} exception handling block is of the following form :
 \input{syntax/try.syn}
 If no exception is raised during the execution of the \var{statement list},
@@ -7302,6 +7325,8 @@ occurs.
 % The try...finally statement
 \section{The try...finally statement}
 \index{finally}\index{try}\index{Exceptions!Handling}
+\keywordlink{try} \keywordlink{finally} 
+
 A \var{Try..Finally} statement has the following form:
 \input{syntax/finally.syn}
 If no exception occurs inside the \var{statement List}, then the program
@@ -7353,7 +7378,7 @@ If an exception occurs, and there is no exception handler present which
 handles this exception, then a run-time error 217 will be generated. 
 When using the \file{SysUtils} unit, a default handler is installed which will show the exception object message, and the
 address where the exception occurred, after which the program will exit with
-a \var{Halt} instruction.
+a \var{Halt} instruction. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -7393,9 +7418,9 @@ the message of the Exception object, and exits with a exit code of 217.
 If the exception object is not a descendent object of the \var{Exception}
 object, then the class name is printed instead of the exception message.
 
-It is recommended to use the \var{Exception} object or a descendant class for
-all \var{raise} statements, since then the message field of the exception 
-object can be used.
+It is recommended to use the \var{Exception} object or a descendant class
+for all \var{raise} statements, since then the message
+field of the exception object can be used.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using Assembler
@@ -7409,7 +7434,7 @@ specific assembler syntax and its limitations, see the \progref.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Assembler statements
 \section{Assembler statements }
-\index{Statements!Assembler}
+\index{Statements!Assembler}  \keywordlink{asm}
 The following is an example of assembler inclusion in Pascal code.
 \begin{verbatim}
  ...
@@ -7430,7 +7455,7 @@ and treat them as any other conditionals.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Assembler procedures and functions
 \section{Assembler procedures and functions}
-\index{Functions!Assembler}
+\index{Functions!Assembler}  \keywordlink{assembler}
 Assembler procedures and functions are declared using the
 \var{Assembler} directive.  This permits the code generator to make a number
 of code generation optimizations.
