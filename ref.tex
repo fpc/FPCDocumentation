@@ -1147,6 +1147,7 @@ regular \var{String} keyword and that doesn't contain a length specifier,
 will be regarded as an ansistring as well. If a length specifier is present,
 a short string will be used, regardless of the \var{\{\$H\}} setting.
 
+\keywordlink{nil}
 If the string is empty (\var{''}), then the internal pointer representation
 of the string pointer is \var{Nil}. If the string is not empty, then the 
 pointer points to a structure in heap memory.
@@ -1458,13 +1459,13 @@ the maximum integer size of the system.
 
 %
 \subsection{Arrays}
-\index{Types!Array}\index{Array}
+\index{Types!Array}\index{Array} 
 \fpc supports arrays as in \tp. Multi-dimensional arrays and (bit)packed 
 arrays are also supported, as well as the dynamic arrays of \delphi:
 \input{syntax/typearr.syn}
 %
 \subsubsection{Static arrays}
-\index{Types!Array}\index{Array!Static}\keywordlink{array}
+\index{Types!Array}\index{Array!Static}\keywordlink{array} \keywordlink{of}
 When the range of the array is included in the array definition, it is
 called a static array. Trying to access an element with an index that is
 outside the declared range will generate a run-time error (if range checking
@@ -2353,6 +2354,7 @@ or a procedure or function. It looks as follows:\index{Var}
 
 \keywordlink{cvar} \keywordlink{public}
 This means that the following are valid variable declarations:
+\keywordlink{absolute} \keywordlink{export}
 \begin{verbatim}
 Var
   curterm1 : integer;
@@ -2724,6 +2726,7 @@ In this example, between the \var{begin} and \var{end}, it is as if
 identifiers. More about this in \sees{With}.
 
 \section{Static fields}
+\keywordlink{static}
 When the \var{\{\$STATIC ON\}} directive is active, then an object
 can contain static fields: these fields are global to the object type, and act
 like global variables, but are known only as part of the object. They can be
@@ -2760,7 +2763,8 @@ and not an instance of the object (\var{cl1} or \var{cl2}).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Constructors and destructors
 \section{Constructors and destructors }
-\index{Constructor}\index{Destructor}
+\index{Constructor}\index{Destructor} \keywordlink{constructor}
+\keywordlink{destructor}
 \index{Virtual}
 \label{se:constructdestruct}
 As can be seen in the syntax diagram for an object declaration, \fpc supports
@@ -2957,7 +2961,8 @@ method must be called. Seeing that \var{ParentB} is of type \var{TChild},
 inserted by the compiler at compile time.
 
 The \var{TChild.Doit} is said to {\em override} the
-\var{TParent.Doit}.\index{override}
+\var{TParent.Doit}.\index{override} \index{inherited} \keywordlink{override}
+\keywordlink{inherited}
 It is possible to acces the \var{TParent.Doit} from within the
 var{TChild.Doit}, with the \var{inherited} keyword:
 \begin{verbatim}
@@ -3342,7 +3347,8 @@ Type
 This will compile and run without warnings or errors.\index{Override}
 
 If the virtual method should really be replaced with a method with the 
-same name, then the \var{reintroduce} keyword can be used:\index{reintroduce}
+same name, then the \var{reintroduce} keyword can be used:\index{reintroduce} 
+\keywordlink{reintroduce}
 \begin{verbatim}
 Type 
   ObjParent = Class
@@ -3408,8 +3414,6 @@ Note that class methods can be virtual, and can be overridden.
 Class methods cannot be used as read or write specifiers for a
 property.\index{Property}
 
-
-
 \subsection{Message methods}
 \index{Methods!Message}
 New in classes are \var{message} methods. Pointers to message methods are
@@ -3418,7 +3422,7 @@ they were declared with. They are primarily intended to ease programming of
 callback functions in several \var{GUI} toolkits, such as \var{Win32} or
 \var{GTK}. In difference with Delphi, \fpc also accepts strings as message
 identifiers. Message methods are always virtual.
-\index{Virtual}\index{message}
+\index{Virtual}\index{message} \keywordlink{message}
 
 As can be seen in the class declaration diagram, message methods are 
 declared with a \var{Message} keyword, followed by an integer constant
@@ -4337,7 +4341,7 @@ operator is unary, i.e. it requires only one argument. A unary operator
 occurs always before the operand, as in \var{-X}.
 
 When using multiple operands in an expression, the precedence rules of
-\seet{OperatorPrecedence} are used.\index{Operators}
+\seet{OperatorPrecedence} are used.\index{Operators} 
 \begin{FPCltable}{lll}{Precedence of operators}{OperatorPrecedence}
 Operator & Precedence & Category \\ \hline
 \var{Not, @} & Highest (first) & Unary operators\\
@@ -4715,7 +4719,8 @@ operator is equivalent to the following operation :
 But it executes faster than the right hand side expression.
 %
 \subsection{Logical operators}
-\index{Operators!Logical}
+\index{Operators!Logical} \keywordlink{not} \keywordlink{and}
+\keywordlink{or} \keywordlink{xor} \keywordlink{shl} \keywordlink{shr}
 Logical operators act on the individual bits of ordinal expressions.
 Logical operators require operands that are of an integer type, and produce
 an integer type result. The possible logical operators are listed in
@@ -4808,6 +4813,7 @@ Union, difference, symmetric difference, inclusion and intersection.
 Elements can be aded or removed from the set with the \var{Include} or
 \var{Exclude} operators. The operators needed for this are listed
 in \seet{setoperators}.
+\keywordlink{in}
 \begin{FPCltable}{ll}{Set operators}{setoperators}
 Operator & Action \\ \hline
 \var{+} & Union \\
@@ -4920,6 +4926,7 @@ element of the set which is the right operand, otherwise it returns \var{False}
 Class operators are slightly different from the operators above in the sense
 that they can only be used in class expressions which return a class. There
 are only 2 class operators, as can be seen in \seet{classoperators}.
+\keywordlink{as} \keywordlink{is}
 \begin{FPCltable}{ll}{Class operators}{classoperators}
 Operator & Action \\ \hline
 \var{is} & Checks class type \\
@@ -5122,6 +5129,7 @@ The following sections deal with each of these statements.
 
 \subsection{Compound statements}
 \index{Statements!Compound}
+\keywordlink{begin} \keywordlink{end}
 Compound statements are a group of statements, separated by semicolons,
 that are surrounded by the keywords \var{Begin} and \var{End}. The
 last statement - before the \var{End} keyword - doesn't need to be followed by a semicolon, although it is
@@ -5144,7 +5152,7 @@ have the same type.
 The compiler will evaluate the case expression. If one of the case
 constants' value matches the value of the expression, the statement that follows
 this constant is executed. After that, the program continues after the final
-\var{end}.
+\var{end}. \keywordlink{else} \keywordlink{otherwise}
 
 If none of the case constants match the expression value, the statement
 list after the \var{else} \index{else} or \var{otherwise}\index{otherwise} 
@@ -5266,6 +5274,7 @@ else
 
 \subsection{The \var{For..to/downto..do} statement}
 \index{Statements!For}\index{Statements!Loop}\index{For}
+\keywordlink{for}\keywordlink{do}\keywordlink{downto}
 \fpc supports the \var{For} loop construction. A for loop is used in case
 one wants to calculated something a fixed number of times.
 The prototype syntax is as follows:
@@ -5319,6 +5328,7 @@ after the end of the \var{For} statement.
 
 \subsection{The \var{Repeat..until} statement}
 \index{Statements!Repeat}\index{Statements!Loop}\index{Repeat}
+\keywordlink{repeat} \keywordlink{until}
 The \var{repeat} statement is used to execute a statement until a certain
 condition is reached. The statement will be executed at least once.
 The prototype syntax of the \var{Repeat..until} statement is
@@ -5385,7 +5395,7 @@ If the statement is a compound statement, then  the \var{Break} and
 after the end of the \var{While} statement.
 
 \subsection{The \var{With} statement}
-\label{se:With}\index{With}\index{Statements!With}
+\label{se:With}\index{With}\index{Statements!With} \keywordlink{with}
 The \var{with} statement serves to access the elements of a record
 or object or class, without having to specify the name of the each time.
 The syntax for a \var{with} statement is
@@ -6227,7 +6237,6 @@ available, and can be imported from other programs. For more information
 on this modifier, consult the section on Programming dynamic libraries
 in the \progref.
 
-
 \subsection{inline}\keywordlink{inline}
 \index{inline}\index{Modifiers!inline}
 \label{se:inline}
@@ -6871,7 +6880,7 @@ The structure of a program block is discussed below.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Units
 \section{Units}
-\index{unit}
+\index{unit}\keywordlink{unit}
 A unit contains a set of declarations, procedures and functions that can be
 used by a program or another unit.
 The syntax for a unit is as follows:
@@ -7266,7 +7275,7 @@ class descends from \var{Exception}.
 % The try...except statement
 \section{The try...except statement}
 \index{except}\index{Exceptions!Catching}
-\keywordlink{try} \keywordlink{except}
+\keywordlink{try} \keywordlink{except} \keywordlink{on} \keywordlink{do}
 A \var{try...except} exception handling block is of the following form :
 \input{syntax/try.syn}
 If no exception is raised during the execution of the \var{statement list},
