@@ -210,25 +210,61 @@ end;
 
 procedure processkwd(x: TCHMProject;kwdfilename:string);
 var t      : TStringList;
-    i      : integer;
+    i,j    : integer;
     Index  : TChmSiteMap;
     Stream : TFileStream;
+    ChdItem,
     TmpItem: TChmSiteMapItem;
+    s,s2   : String;
+    f : text;
+    chd : TStringList;
 
 begin
   if fileexists(kwdfilename) then
     begin
       t:=TStringlist.create;
-      t.duplicates:=dupignore;
       t.sorted:=true;
-      t.loadfromfile(kwdfilename);
+      assignfile(f,kwdfilename);
+      reset(f);    
+      while not EOF(F) do
+        begin
+          readln(f,s);
+          i:=pos('=',s);
+          s2:=copy(s,i+1,length(s)-i);
+	  delete(s,i,length(s)-i+1);
+          i:=t.indexof(s);
+          if i<>-1 then
+            begin
+              chd:=TStringList(t.objects[i]);
+              chd.add(s2);
+            end
+          else
+            begin
+              chd:=TStringList.create;
+              chd.sorted:=true;  chd.duplicates:=dupignore;
+              chd.add(s2);
+              t.addobject(s,chd); 
+            end;
+         end;
+     closefile(f);
+
       Index := TChmSiteMap.Create(stIndex);
       Stream := TFilestream.Create(x.indexfilename,fmcreate);
       for i:=0 to t.count-1 do
         begin
           TmpItem := Index.Items.NewItem;
-          TmpItem.Text := t.names[i];
-          tmpitem.local:=prefixpath+t.values[t.names[i]];
+          TmpItem.Text := t[i];
+	  chd:=TStringList(t.objects[i]);  
+          tmpitem.local:=prefixpath+chd[0];
+          if chd.count>1 then
+            begin 
+              for j:=0 to chd.count-1 do
+                begin
+                  chditem:=TmpItem.Children.NewItem;  
+		  chditem.Text:=inttostr(j+1);
+		  chditem.local:=prefixpath+chd[j];
+                end;
+            end;
         end; 
       Index.Items.Sort(TListSortCompare(@TOCSort));
       Index.SaveToStream(Stream);
