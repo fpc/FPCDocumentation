@@ -10,6 +10,7 @@ make HTMLFMT=chm html CSSFILE=/fpc/fpc/utils/fpdoc/fpdoc.css
 
 fpc relinkdocs.pp
 fpc compilelatexchm.pp
+fpc gentoc
 
 ./relinkdocs
 rm -rf prog-old
@@ -36,4 +37,4 @@ cp ref-old/*.css ref
 ./compilelatexchm ref "Reference Guide"  ref/ref.kwd
 ./compilelatexchm fpdoc "FPDoc documentation"
  
- 
+./gentoc . .
