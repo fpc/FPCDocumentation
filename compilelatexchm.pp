@@ -288,6 +288,7 @@ begin
   prefixpath:=includetrailingpathdelimiter(prefix);
    
   x := TCHMProject.create;
+  x.MakeBinaryToc:=True;
   x.MakeSearchable:=true;
   x.OutputFilename:=prefix+'.chm';
   x.Defaultpage:=prefixpath+prefix+'.html';
