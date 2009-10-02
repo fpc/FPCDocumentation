@@ -112,6 +112,10 @@ ifeq (chm,$(HTMLFMT))
   endif
 endif
 
+ifeq (ipf,$(HTMLFMT))
+  HTMLSUFFIX:=.ipf
+#  FPDOCHTMLOPTS+=--auto-toc --auto-index --make-searchable
+endif
 
 
 #######################################################################
@@ -206,6 +210,7 @@ OUT = $(addsuffix .out, $(DOCS))
 HTML = $(DOCS)
 CHM = $(addsuffix .chm, $(DOCS))
 CHK = $(addsuffix .chk, $(DOCS))
+IPF = $(addsuffix .ipf, $(DOCS))
 
 
 #####################################################################
@@ -261,6 +266,7 @@ help:
         @echo ' ps            : Make documentation using latex and dvips.'
         @echo ' html          : Make HTML documentation using default converter.'
         @echo ' chm           : Make Compressed HTML documentation. (only the FCL and RTL)'
+        @echo ' ipf           : Make OS/2 IPF documentation. (only the FCL and RTL)'
         @echo ' hevea         : Make HTML documentation using hevea'
         @echo ' l2h           : Make HTML documentation using latex2html'
         @echo ' 4ht           : Make HTML documentation using tex4ht'
@@ -279,7 +285,7 @@ help:
 
 clean:
         -rm -f preamble.inc date.inc messages.inc rtl.inc
-        -rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref *.kwd *.xct *.chm
+        -rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref *.kwd *.xct *.chm *.ipf
         -rm -rf $(DOCS)
         -rm -f $(CHK) $(TOC) $(LOG) $(DVI) $(PDF) $(AUX) $(OUT) $(PS) $(HTML) *.i* $(LOT) $(TXT)
 # Styles
@@ -545,6 +551,7 @@ updatertlxml: cleanxml
 	$(RTLMAKESKEL) $(RTLEXEINFO) --output=exeinfo.new.xml
 	$(RTLMAKESKEL) $(RTLLINEINFO) --output=lineinfo.new.xml
 	$(RTLMAKESKEL) $(RTLLNFODWRF) --output=lnfodwrf.new.xml
+	$(RTLMAKESKEL) $(RTLCTYPES) --output=ctypes.new.xml
 	./cleanxml $(RTLNEWXML)
 
 updatefclxml: cleanxml
@@ -692,6 +699,9 @@ html: comphelp.inc $(INCLUDES) $(CHK)
 
 chm: 
    $(MAKE) html HTMLFMT=chm
+   
+ipf:
+   $(MAKE) html HTMLFMT=ipf
 
 endif  # INSTALLDEBUG
 #######################################################################
