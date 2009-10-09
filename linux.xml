@@ -1286,6 +1286,77 @@ the error.
 <short>Pages spliced in are a gift</short>
 </element>
 
+<element name="POLLMSG">
+<short>Unused in linux</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="POLLREMOVE">
+<short>Undocumented linux extension of Poll</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="POLLRDHUP">
+<short>Peer Shutdown/closed writing half of connection</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SYNC_FILE_RANGE_WAIT_BEFORE">
+<short>Wait for write-out of previously-submitted specified pages before writing more data.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SYNC_FILE_RANGE_WRITE">
+<short>Initiate  write  of all dirty pages in the specified range.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SYNC_FILE_RANGE_WAIT_AFTER">
+<short>Wait upon write-out of specified pages in the range after performing any write.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="sync_file_range">
+<short>Force committing of data to disk</short>
+<descr>
+<p>
+<var>sync_file_range</var> forces the linux kernel to write any data pages
+of a specified file (file descriptor <var>fd</var>) to disk. The range of
+the file is specified by the offset <var>offset</var> and the number of
+bytes <var>nbytes</var>. <var>Options</var> is an OR-ed combination of
+</p>
+<dl>
+<dt>SYNC_FILE_RANGE_WAIT_BEFORE</dt><dd><printshort id="SYNC_FILE_RANGE_WAIT_BEFORE"/></dd>
+<dt>SYNC_FILE_RANGE_WRITE</dt><dd><printshort id="SYNC_FILE_RANGE_WRITE"/></dd>
+<dt>SYNC_FILE_RANGE_WAIT_AFTER</dt><dd><printshort id="SYNC_FILE_RANGE_WAIT_AFTER"/></dd>
+</dl>
+<p>
+If none is specified, the operation does nothing.
+</p>
+</descr>
+<errors>
+On return -1 is returned and fperrno is set to the actual error code. See
+the linux man page for more on the error codes.
+</errors>
+<seealso>
+<link id="fdatasync"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="fdatasync">
+<short>Synchronize the data in memory with the data on storage device</short>
+<descr>
+<var>fdatasync</var> does the same as <var>fpfsync</var> but does not flush
+the metadata, unless it is vital to the correct reading/writing of the file.
+In practice, this means that unless the file size changed, the file
+metadata will not be synced.
+</descr>
+<seealso>
+<link id="#rtl.unix.fsync"/>
+</seealso>
+</element>
+
 </module> <!-- Linux -->
 </package>
 </fpdoc-descriptions>

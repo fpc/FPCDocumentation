@@ -4499,6 +4499,642 @@ be it <var>Delete</var>, <var>Remove</var> or <var>Clear</var>.
 </seealso>
 </element>
 
+<!-- function Visibility: public -->
+<element name="TFPHashList.GetNextCollision">
+<short>Get next collision number</short>
+<descr>
+<var>GetNextCollision</var> returns the next collision in hash item
+<var>Index</var>. This is the count of items with the same hash.means that the next it
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPHashList.GetNextCollision.Result">
+<short></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPHashList.GetNextCollision.Index">
+<short>Index of hash item</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPHashObjectList.GetNextCollision">
+<short>Get next collision number</short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPHashObjectList.GetNextCollision.Result">
+<short></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPHashObjectList.GetNextCollision.Index">
+<short>Index of hash item</short>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TBucketItem">
+<short>Record used in bucket list.</short>
+<descr>
+<var>TBucketItem</var> is a record used for internal use in <link
+id="TCustomBucketList"/>. It should not be necessary to use it directly.
+</descr>
+<seealso>
+<link id="TCustomBucketList"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TBucketItem.Item">
+<short>Item to associate data with</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TBucketItem.Data">
+<short>Data associated with item</short>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TBucketItemArray">
+<short>Array of <var>TBucketItem</var> records</short>
+<seealso>
+<link id="TBucketItem"/>
+</seealso>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TBucket">
+<short>Bucket record</short>
+<descr>
+<var>TBucket</var> describes 1 bucket in the <link id="TCustomBucketList"/>
+class. It is a container for <link id="TBucketItem"/> records. 
+It should never be used directly.
+</descr>
+<seealso>
+<link id="TBucketItem"/>
+<link id="CustomBucketList"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TBucket.Count">
+<short>Number of items in the bucket</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TBucket.Items">
+<short>Items in this bucket</short>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="PBucket">
+<short>Pointer to <link id="#fcl.contnrs.TBucket">TBucket</link>" type.</short>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TBucketArray">
+<short>Array of <link id="#fcl.contnrs.TBucket">TBucket</link> records.</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TBucketProc">
+<short>Callback for the <link id="#fcl.contnrs.TCustomBucketList.Foreach">ForEach</link> call.</short>
+<descr>
+<p>
+<var>TBucketProc</var> is the prototype for the <link id="#TCustomBucketList.Foreach"/> call.
+It is the plain procedural form. The <var>Continue</var> parameter can be
+set to <var>False</var> to indicate that the <var>Foreach</var> call should
+stop the iteration.
+</p>
+<p>
+For a procedure of object (a method) callback, see the <link id="TBucketProcObject"/> prototype.
+</p>
+</descr>
+<seealso>
+<link id="#TCustomBucketList.Foreach"/> 
+<link id="TBucketProcObject"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBucketProc.AInfo">
+<short>Extra info pointer passed to Foreach call.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBucketProc.AItem">
+<short>Item</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBucketProc.AData">
+<short>Data associated with item</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBucketProc.AContinue">
+<short>Set to false to stop iteration over items.</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TBucketProcObject">
+<short>Callback for the <link id="#fcl.contnrs.TCustomBucketList.Foreach">ForEach</link> call.</short>
+<descr>
+<p>
+<var>TBucketProcObject</var> is the prototype for the <link id="#TCustomBucketList.Foreach"/> call.
+It is the method (procedure of object) form. The <var>Continue</var> parameter can be
+set to <var>False</var> to indicate that the <var>Foreach</var> call should stop the iteration.
+</p>
+<p>
+For a plain procedural callback, see the <link id="TBucketProc"/> prototype.
+</p>
+</descr>
+<seealso>
+<link id="#TCustomBucketList.Foreach"/>
+<link id="TBucketProc"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBucketProcObject.AItem">
+<short>Item</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBucketProcObject.AData">
+<short>Data associated with item</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBucketProcObject.AContinue">
+<short>Set to false to stop iteration over items.</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.contnrs.TCustomBucketList
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TCustomBucketList">
+<short>Custom bucket list class</short>
+<descr>
+<p>
+<var>TCustomBucketList</var> is an associative list using buckets for storage.
+It scales better than a regular <link id="#rtl.classes.tlist">TList</link>
+list class, escpecially when an item must be searched in the list. 
+</p>
+<p>
+Since the list associates a data pointer with each item pointer, it follows
+that each item pointer must be unique, and can be added to the list only
+once.
+</p>
+<p>
+The <var>TCustomBucketList</var> class does not determine the number of
+buckets or the bucket hash mechanism, this must be done by descendent
+classes such as <link id="TBucketList"/>. <var>TCustomBucketList</var> 
+only takes care of storage and retrieval of items in the various buckets.
+</p>
+<p>
+Because <var>TCustomBucketList</var> is an abstract class - it does not determine the number of
+buckets - one should never instantiate an instance of <var>TCustomBucketList</var>, but always 
+use a descendent class such as <link id="TCustomBucketList"/>.
+</p>
+</descr>
+<seealso>
+<link id="TBucketList"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCustomBucketList.Destroy">
+<short>Frees the bucketlist from memory</short>
+<descr>
+<var>Detsroy</var> frees all storage for the buckets from memory. The items
+themselves are not freed from memory.
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomBucketList.Clear">
+<short>Clear the list</short>
+<descr>
+<var>Clear</var> clears the list. The items and their data themselves 
+are not disposed of, this must be done separately. Clear only removes all
+references to the items from the list.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TCustomBucketList.Add"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomBucketList.Add">
+<short>Add an item to the list</short>
+<descr>
+<var>Add</var> adds <var>AItem</var> with it's associated <var>AData</var> 
+to the list and returns <var>AData</var>. 
+</descr>
+<errors>
+If <var>AItem</var> is already in the list, an <var>ElistError</var>
+exception will be raised.
+</errors>
+<seealso>
+<link id="TCustomBucketList.Exists"/>
+<link id="TCustomBucketList.Clear"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomBucketList.Add.Result">
+<short>The result is always <var>AData</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomBucketList.Add.AItem">
+<short>Item to add to the list. Must uniquely identify <var>AData</var>.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomBucketList.Add.AData">
+<short>Data to be associated with <var>AItem</var></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomBucketList.Assign">
+<short>Assign one bucket list to another</short>
+<descr>
+<var>Assign</var> is implemented by <var>TCustomBucketList</var> to copy the
+contents of another bucket list to the bucket list. It clears the contents
+prior to the copy operation.
+</descr>
+<seealso>
+<link id="TCustomBucketList.Add"/>
+<link id="TCustomBucketList.Clear"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomBucketList.Assign.AList">
+<short>Source list to copy items from</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomBucketList.Exists">
+<short>Check if an item exists in the list.</short>
+<descr>
+<p>
+<var>Exists</var> searches the list and returns <var>True</var> if the
+<var>AItem</var> is already present in the list. If the item is not yet in
+the list, <var>False</var> is returne5Ad.
+</p>
+<p>
+If the data pointer associated with <var>AItem</var> is also needed, then it is better to
+use <link id="TCustomBucketList.Find">Find</link>. 
+</p>
+</descr>
+<seealso>
+<link id="TCustomBucketList.Find"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomBucketList.Exists.Result">
+<short><var>True</var> if the item exists in the list, <var>False</var> if not. </short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomBucketList.Exists.AItem">
+<short>Item to search for</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomBucketList.Find">
+<short>Find an item in the list</short>
+<descr>
+<var>Find</var> searches for <var>AItem</var> in the list and returns the
+data pointer associated with it in <var>AData</var> if the item was found.
+In that case the return value is <var>True</var>. If <var>AItem</var> is not
+found in the list, <var>False</var> is returned.
+</descr>
+<seealso>
+<link id="TCustomBucketList.Exists"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomBucketList.Find.Result">
+<short><var>True</var> if the item is present in the list.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomBucketList.Find.AItem">
+<short>Item to search for in the list</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomBucketList.Find.AData">
+<short>On return, contains the data pointer associated with <var>AItem</var>.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomBucketList.ForEach">
+<short>Loop over all items.</short>
+<descr>
+<p>
+<var>Foreach</var> loops over all items in the list and calls
+<var>AProc</var>, passing it in turn each item in the list.
+</p>
+<p>
+<var>AProc</var> exists in 2 variants: one which is a simple procedure, and
+one which is a method. In the case of the simple procedure, the <var>AInfo</var> 
+argument is passed as well in each call to <var>AProc</var>.
+</p>
+<p>
+The loop stops when all items have been processed, or when the <var>AContinue</var> 
+argument of <var>AProc</var> contains <var>False</var> on return.
+</p>
+<p>
+The result of the function is <var>True</var> if all items were processed,
+or <var>False</var> if the loop was interrupted with a <var>AContinue</var>
+return of <var>False</var>.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TCustomBucketList.Data"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomBucketList.ForEach.Result">
+<short><var>True</var> if all items were processed, <var>False</var> if the
+loop was stopped.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomBucketList.ForEach.AProc">
+<short>Callback handler to call for each item in the list.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomBucketList.ForEach.AInfo">
+<short>Extra info to pass to the procedural variant of the method.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomBucketList.Remove">
+<short>Remove an item from the list.</short>
+<descr>
+<var>Remove</var> removes <var>AItem</var> from the list, and returns the
+associated data pointer of the removed item. If the item was not in the
+list, then <var>Nil</var> is returned.
+</descr>
+<seealso>
+<link id ="TCustomBucketList.Find">Find</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomBucketList.Remove.Result">
+<short><var>Data</var> pointer associated with <var>AItem</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomBucketList.Remove.AItem">
+<short>Item to remove from the list.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomBucketList.Data">
+<short>Associative array for data pointers</short>
+<descr>
+<var>Data</var> provides direct access to the <var>Data</var> pointers associated
+with the <var>AItem</var> pointers. If <var>AItem</var> is not in the list
+of pointers, an <var>EListError</var> exception will be raised.
+</descr>
+<seealso>
+<link id="TCustomBucketList.Find"/>
+<link id="TCustomBucketList.Exists"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomBucketList.Data.AItem">
+<short>Item to retrieve data pointer from</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TBucketListSizes">
+<short>Enumerated type to indicate bucket list size</short>
+<descr>
+<var>TBucketListSizes</var> is used to set the bucket list size: It
+specified the number of buckets created by <link id="TBucketList"/>.
+</descr>
+<seealso>
+<link id="TBucketList"/>
+<link id="TBucketList.Create"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TBucketListSizes.bl2">
+<short>List with 2 buckets</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TBucketListSizes.bl4">
+<short>List with 4 buckets</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TBucketListSizes.bl8">
+<short>List with 8 buckets</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TBucketListSizes.bl16">
+<short>List with 16 buckets</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TBucketListSizes.bl32">
+<short>List with 32 buckets</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TBucketListSizes.bl64">
+<short>List with 64 buckets</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TBucketListSizes.bl128">
+<short>List with 128 buckets</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TBucketListSizes.bl256">
+<short>List with 256 buckets</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.contnrs.TBucketList
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TBucketList">
+<short>Default bucket list implementation.</short>
+<descr>
+<p>
+<var>TBucketList</var> is a descendent of <var>TCustomBucketList</var> which
+allows to specify a bucket count which is a multiple of 2, up to 256
+buckets. The size is passed to the constructor and cannot be changed in the
+lifetime of the bucket list instance.
+</p>
+<p>
+The buckets for an item is determined by looking at the last bits
+of the item pointer: For 2 buckets, the last bit is examined, for 4 buckets,
+the last 2 bits are taken and so on. The algorithm takes into account the
+average granularity (4) of heap pointers.
+</p>
+</descr>
+<seealso>
+<link id="TCustomBucketList"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TBucketList.Create">
+<short>Create a new <var>TBucketList</var> instance.</short>
+<descr>
+<var>Create</var> instantiates a new bucketlist instance with a number of
+buckets determined by <var>ABuckets</var>. After creation, the number of
+buckets can no longer be changed.
+</descr>
+<errors>
+If not enough memory is available to create the instance, an exception may
+be raised.
+</errors>
+<seealso>
+<link id="TBucketListSizes"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBucketList.Create.ABuckets">
+<short>Number of buckets to create</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.contnrs.TObjectBucketList
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TObjectBucketList">
+<short>Bucket list using objects instead of pointers.</short>
+<descr>
+<var>TObjectBucketList</var> is a class that redefines the associative
+<var>Data</var> array using <var>TObject</var> instead of <var>Pointer</var>. 
+It also adds some overloaded versions of the <var>Add</var> and
+<var>Remove</var> calls using <var>TObject</var> instead of
+<var>Pointer</var> for the argument and result types.
+</descr>
+<seealso>
+<link id="TObjectBucketList"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectBucketList.Add">
+<short>Add an object to the list</short>
+<descr>
+<var>Add</var> adds <var>AItem</var> to the list and associated <var>AData</var> with it.
+</descr>
+<seealso>
+<link id="TObjectBucketList.Data"/>
+<link id="TObjectBucketList.Remove"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectBucketList.Add.Result">
+<short>The result is always <var>AData</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectBucketList.Add.AItem">
+<short>Item to add to the list</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectBucketList.Add.AData">
+<short>Data associated with <var>AItem</var></short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObjectBucketList.Remove">
+<short>Remove an object from the list</short>
+<descr>
+<var>Remove</var> removes the object <var>AItem</var> from the list.
+It returns the <var>Data</var> object which was associated with the item. If
+<var>AItem</var> was not in the list, then <var>Nil</var> is returned.
+</descr>
+<seealso>
+<link id="TObjectBucketList.Add"/>
+<link id="TObjectBucketList.Data"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TObjectBucketList.Remove.Result">
+<short>Data item associated with <var>AItem</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectBucketList.Remove.AItem">
+<short>Object to remove from the list</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TObjectBucketList.Data">
+<short>Associative array of data items</short>
+<descr>
+<var>Data</var> provides associative access to the data in the list: it
+returns the data object associated with the <var>AItem</var> object. If the
+<var>AItem</var> object is not in the list, an <var>EListError</var>
+exception is raised.
+</descr>
+<seealso>
+<link id="TObjectBucketList.Add"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObjectBucketList.Data.AItem">
+<short>Object item to retrieve associated data object from</short>
+</element>
+
 
 </module> <!-- contnrs -->
 </package>

@@ -13798,6 +13798,266 @@ Nil is returned if no handler is registered for the given type.
 </seealso>
 </element>
 
+<!-- function type Visibility: default -->
+<element name="TCollectionSortCompare">
+<short>Callback to sort collection items</short>
+<descr>
+<p>
+<var>TCollectionSortCompare</var> is the prototype for a callback used in
+the <link id="TCollection.Sort"/> method. The procedure should compare
+<var>Item1</var> and <var>Item2</var> and return an integer:
+</p>
+<dl>
+<dt>Result &lt; 0</dt><dd>if <var>Item1</var> comes before <var>Item2</var></dd>
+<dt>Result = 0</dt><dd>if <var>Item1</var> is at the same level as <var>Item2</var></dd>
+<dt>Result &gt; 0</dt><dd>if <var>Item1</var> comes after <var>Item2</var></dd>
+</dl>
+</descr>
+<seealso>
+<link id="TCollection.Sort"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCollection.Sort">
+<short>Sort the items in the collection</short>
+<descr>
+<p>
+<var>Sort</var> sorts the items in the collection, and uses the <var>Compare</var>
+procedure to compare 2 items in the collection. It is more efficient do use
+this method than to perform the sort manually, because the list items are
+manipulated directly.
+</p>
+<p>
+For more information on how the <var>Compare</var> function should behave,
+see the <link id="TCollectionSortCompare"/> type.
+</p>
+</descr>
+<seealso>
+<link id="TCollectionSortCompare"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStrings.StrictDelimiter">
+<short>Should only the delimiter character be considered a delimiter</short>
+<descr>
+<var>StrictDelimiter</var> can be used to indicate that only the delimiter
+character should be considered a delimiter when setting <link
+id="TStrings.DelimitedText">DelimitedText</link>: under normal circumstances,
+quotes and spaces are considered specially (see the <link id="TStrings.CommaText"/>
+property for more information). When <var>StrictDelimiter</var> is set to
+<var>True</var> then only the <link id="TStrings.Delimiter">Delimiter</link>
+character is considered when splitting the text in items.
+</descr>
+<seealso>
+<link id="TStrings.DelimitedText">DelimitedText</link>
+<link id="TStrings.CommaText">CommaText</link>
+<link id="TStrings.Delimiter">Delimiter</link>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TValueType.vaUString">
+<short>UnicodeString value</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TValueType.vaQWord">
+<short>QWord (64-bit word) value</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAbstractObjectReader.ReadUnicodeString">
+<short>Read a unicode string value</short>
+<descr>
+<p>
+<var>ReadUnicodeString</var> should read a UnicodeString value from the
+stream. (indicated by the <var>vaUString</var> value type).
+</p>
+<p>
+Descendent classes should override this method to actually read a
+UnicodeString value.
+</p>
+</descr>
+<seealso>
+<link id="TBinaryObjectWriter.WriteUnicodeString"/>
+<link id="TAbstractObjectReader.ReadWideString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TBinaryObjectReader.ReadUnicodeString">
+<short>Read a unicode string value</short>
+<descr>
+<var>ReadUnicodeString</var> is overridden by <var>TBinaryObjectReader</var>to 
+read a UnicodeString value from the binary stream.
+</descr>
+<seealso>
+<link id="TAbstractObjectReader.ReadUnicodeString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TReader.ReadUnicodeChar">
+<short>Read unicode character</short>
+<descr>
+<var>ReadUnicodeChar</var> reads a single unicode character from the stream.
+It does this by reading a <var>UnicodeString</var> string from the stream
+and returning the first character.
+</descr>
+<errors>
+If the string has a length different from 1, an <var>EReadError</var>
+exception will occur.
+</errors>
+<seealso>
+<link id="TReader.ReadUnicodeString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TReader.ReadVariant">
+<short>Read a variant from the stream</short>
+<descr>
+<var>ReadVariant</var> reads the next value from the stream and returns it
+as a variant. No variant array can be read from the stream, only single
+values.
+</descr>
+<errors>
+If no variant manager is installed, the function will raise an
+<var>EReadError</var> exception. If the next value is not a simple 
+value, again an  <var>EReadError</var> exception is raised.
+exception is 
+</errors>
+<seealso>
+<link id="TBinaryObjectWriter.WriteVariant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TReader.ReadUnicodeString">
+<short>Read a UnicodeString value from the stream</short>
+<descr>
+<var>ReadUnicodeString</var> reads a <var>UnicodeString</var> string from
+the stream. The stream can contain a string from any type, it will be
+converted to UniCodeString.
+</descr>
+<seealso>
+<link id="TAbstractObjectReader.ReadUnicodeString"/>
+<link id="TWriter.WriteUnicodeString"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractObjectWriter.WriteUInt64">
+<short>Write an unsigned 64-bit integer</short>
+<descr>
+<var>WriteUInt64</var> must be overridden by descendent classes to write
+a 64-bit unsigned <var>Value</var> (valuetype <var>vaQWord</var>) to the stream.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TBinaryObjectWriter.WriteUInt64"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractObjectWriter.WriteVariant">
+<short>Write a variant to the stream</short>
+<descr>
+<var>WriteVariant</var> must be overridden by descendent classes to write a
+simple variant type to the stream. <var>WriteVariant</var> does not write
+arrays types or complex types.
+</descr>
+<seealso>
+<link id="TBinaryObjectWriter.WriteVariant"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractObjectWriter.WriteUnicodeString">
+<short>Write a unicode string to the stream.</short>
+<descr>
+<var>WriteUnicodeString</var> must be overridden by descendent classes to
+write a unicodestring (valuetype <var>vaUString</var>) value to the stream. 
+</descr>
+<seealso>
+<link id="TBinaryObjectWriter.WriteUnicodeString"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBinaryObjectWriter.WriteUInt64">
+<short>Write an unsigned 64-bit integer</short>
+<descr>
+<var>WriteUInt64</var> is overridden by <var>TBinaryObjectWriter</var> to write 
+an unsigned 64-bit integer (QWord) to the stream. It tries to use the smallest 
+possible storage for the value that is passed. 
+(largest valuetype will be <var>vaQWord</var>). 
+</descr>
+<seealso>
+<link id="TAbstractObjectWriter.WriteUInt64"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBinaryObjectWriter.WriteUnicodeString">
+<short>Write a unicode string to the stream.</short>
+<descr>
+<var>WriteUnicodeString</var> is overridden <var>TBinaryObjectWriter</var>
+to write a unicodestring (valuetype <var>vaUString</var>) value to the stream.
+It simply writes the character length and then all widecharacters.
+</descr>
+<seealso>
+<link id="TAbstractObjectWriter.WriteUnicodeString"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBinaryObjectWriter.WriteVariant">
+<short>Write a variant to the stream</short>
+<descr>
+<var>WriteVariant</var> is overridden by <var>TBinaryObjectWriter</var> to write a
+simple variant type to the stream. <var>WriteVariant</var> does not write
+arrays types or complex types. Only null, integer (ordinal) float and string types are
+written.
+</descr>
+<errors>
+If a non-supported type is written, then an <var>EWriteError</var> exception is.
+</errors>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TWriter.WriteUnicodeString">
+<short>Write a unicode string to the stream.</short>
+<descr>
+<var>WriteUnicodeString</var> writes <var>Value</var>, a UnicodeString string to the
+stream.  It simply passes the string on to the <var>WriteUnicodeString</var>
+method of the writer driver class.
+</descr>
+<seealso>
+<link id="TBinaryObjectWriter.WriteUnicodeString"/>
+<link id="TReader.ReadUnicodeString"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TWriter.WriteVariant">
+<short>Write a variant to the stream</short>
+<descr>
+<var>WriteVariant</var> writes <var>Value</var>, a simple variant, o the
+stream.  It simply passes the string on to the <var>WriteVariant</var>
+method of the writer driver class.
+</descr>
+<seealso>
+<link id="TBinaryObjectWriter.WriteVariant"/>
+<link id="TReader.ReadVariant"/>
+
+</seealso>
+</element>
+
 <!-- Template for copy&paste:
 <element name="">
 <short>
