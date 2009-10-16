@@ -1626,59 +1626,112 @@ This can be used to quickly copy the list of pinters to another location.
 -->
 
 <element name="TThreadList">  <!-- Class -->
-<short>Thread-safe list object (not yet implemented).</short>
-<descr>This class is not yet implemented in Free Pascal.</descr>
-<errors></errors>
-<seealso></seealso>
+<short>Thread-safe list object</short>
+<descr>
+TThreadList is a thread-safe <link id="Tlist"/> implementation. 
+Unlike <var>TList</var>, it can be accessed read-write by multiple threads:
+the list implementation will take care of locking the list when adding or
+removing items from the list.
+</descr>
+<seealso>
+<link id="TList"/>
+</seealso>
 </element>
 
 <element name="TThreadList.Create">  <!-- Constructor -->
 <short>Creates a new thread-safe list.</short>
-<descr>This class is not yet implemented in Free Pascal.</descr>
-<errors></errors>
-<seealso></seealso>
+<descr>
+<var>Create</var> instantiates a new <var>TThreadList</var> instance. 
+It initializes a critical section and an internal list object.
+</descr>
+<seealso>
+<link id="TThreadList.Destroy"/>
+</seealso>
 </element>
 
 <element name="TThreadList.Destroy">  <!-- Destructor -->
 <short>Destroys the list instance.</short>
-<descr>This class is not yet implemented in Free Pascal.</descr>
-<errors></errors>
-<seealso></seealso>
+<descr>
+<var>Destroy</var> finalizes the critical section, clears the internal list object and calls
+the inherited destructor.
+</descr>
+<seealso>
+<link id="TThreadList.Create"/>
+</seealso>
 </element>
 
 <element name="TThreadList.Add">  <!-- Procedure -->
 <short>Adds an element to the list.</short>
-<descr>This class is not yet implemented in Free Pascal.</descr>
-<errors></errors>
-<seealso></seealso>
+<descr>
+<var>Add</var> attempts to lock the list and adds the pointer <var>Item</var>
+to the list. After the pointer was added, the list is unlocked again.
+</descr>
+<seealso>
+<link id="TThreadList.LockList">LockList</link>
+<link id="TThreadList.Clear">Clear</link>
+<link id="TThreadList.Remove">Remove</link>
+<link id="TThreadList.UnLockList">UnlockList</link>
+</seealso>
 </element>
 
 <element name="TThreadList.Clear">  <!-- Procedure -->
 <short>Removes all emements from the list.</short>
-<descr>This class is not yet implemented in Free Pascal.</descr>
-<errors></errors>
-<seealso></seealso>
+<descr>
+<var>Clear</var> attempts to lock the list and then clears the list; all
+items are removed from the list. After the list is cleared, it is again 
+unlocked.
+</descr>
+<seealso>
+<link id="TThreadList.LockList">LockList</link>
+<link id="TThreadList.Add">Add</link>
+<link id="TThreadList.Remove">Remove</link>
+<link id="TThreadList.UnLockList">UnlockList</link>
+</seealso>
 </element>
 
 <element name="TThreadList.LockList">  <!-- Function -->
 <short>Locks the list for exclusive access.</short>
-<descr>This class is not yet implemented in Free Pascal.</descr>
-<errors></errors>
-<seealso></seealso>
+<descr>
+<var>LockList</var> locks the list for exclusive access. Locklist uses an
+internal critical section, so all rules for multiple locking of critical
+sections apply to locklist/unlocklist as well.
+</descr>
+<seealso>
+<link id="TThreadList.Clear">Clear</link>
+<link id="TThreadList.Add">Add</link>
+<link id="TThreadList.Remove">Remove</link>
+<link id="TThreadList.UnLockList">UnlockList</link>
+</seealso>
 </element>
 
 <element name="TThreadList.Remove">  <!-- Procedure -->
 <short>Removes an item from the list.</short>
-<descr>This class is not yet implemented in Free Pascal.</descr>
-<errors></errors>
-<seealso></seealso>
+<descr>
+<var>Remove</var> attempts to lock the list and then removes
+<var>Item</var> from the list. After the item is removed, the
+list is again unlocked.
+</descr>
+<seealso>
+<link id="TThreadList.LockList">LockList</link>
+<link id="TThreadList.Add">Add</link>
+<link id="TThreadList.Clear">Clear</link>
+<link id="TThreadList.UnLockList">UnlockList</link>
+</seealso>
 </element>
 
 <element name="TThreadList.UnlockList">  <!-- Procedure -->
 <short>Unlocks the list after it was locked.</short>
-<descr>This class is not yet implemented in Free Pascal.</descr>
-<errors></errors>
-<seealso></seealso>
+<descr>
+<var>UnLockList</var> unlocks the list when it was locked for exclusive access. 
+UnLocklist and LockList use an internal critical section, so all rules for multiple 
+locking/unlocking of critical sections apply.
+</descr>
+<seealso>
+<link id="TThreadList.Clear">Clear</link>
+<link id="TThreadList.Add">Add</link>
+<link id="TThreadList.Remove">Remove</link>
+<link id="TThreadList.LockList">lockList</link>
+</seealso>
 </element>
 
 <!--
