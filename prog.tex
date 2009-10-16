@@ -6451,6 +6451,166 @@ require a lot of code overhead.
 
 \end{itemize}
 
+\section{Whole Program Optimization}
+\label{se:WPO}
+
+\subsection{Overview}
+Traditionally, compilers optimise a program procedure by procedure, or at
+best compilation unit per compilation unit. Whole program optimisation (WPO)
+means that the compiler considers all compilation units that make up a
+program or library and optimises them using the combined knowledge of how
+they are used together in this particular case. 
+
+The way WPO generally works is as follows: 
+\begin{itemize}
+\item The program is compiled normally, with an option to tell the compiler 
+that it should store various bits of information into a feedback file.
+\item The program is recompiled a second time (and optionally all units 
+that it uses) with WPO enabled, providing the feedback file generated in the
+first step as extra input to the compiler.
+\end{itemize}
+This is the scheme followed by \fpc.
+
+The implementation of this scheme is highly compiler dependent. Another
+implementation could be that the compiler generates some kind of intermediary 
+code (e.g., byte code) and the linker performs all wpo along with the translation 
+to the target machine code 
+\section{General principles}
+A few general principles have been followed when designing the FPC
+implementation of WPO: 
+\begin{itemize} 
+\item All information necessary to generate a WPO feedback file for a program is
+always stored in the ppu files. This means that it is possible to use a 
+generic RTL for WPO (or, in general, any compiled unit). It does mean that 
+the RTL itself will then not be optimised, the compiled program code and 
+its units can be correctly optimised because the compiler knows everything 
+it has to know about all RTL units.
+\item The generated WPO feedback file is plain text. The idea is that it should
+be easy to inspect this file by hand, and to add information to it produced
+by external tools if desired (e.g., profile information).
+\item The implementation of the WPO subsystem in the compiler is very modular, 
+so it should be easy to plug in additional WPO information providers, or to
+choose at run time between different information providers for the same kind
+of information. At the same time, the interaction with the rest of the
+compiler is kept to a bare minimum to improve maintainability.
+\item It is possible to generate a WPO feedback file while at the same time using
+another one as input. In some cases, using this second feedback file as
+input during a third compilation can further improve the results. 
+\end{itemize}
+
+\subsection{How to use}
+\subsubsection{Step 1: Generate WPO feedback file}
+The first step in WPO is to compile the program (or library) and all of its 
+units as it would be done normally, but specifying in addition the 2
+following options on the command-line:
+\begin{verbatim}
+ -FW/path/to/feedbackfile.wpo -OW<selected_wpo_options>
+\end{verbatim}
+The first option tells the compiler where the WPO feedback file should be
+written, the second option tells the compiler to switch on WPO
+optimalizations.
+
+The compiler will then, right after the program or library has been linked, 
+collect all necessary information to perform the requested WPO options during 
+a subsequent compilation, and will store this information in the indicated
+file.
+
+\subsubsection{Step 2: Use the generated WPO feedback file}
+To actually apply the WPO options, the program (or library) and all or some 
+of the units that it uses, must be recompiled using the option
+\begin{verbatim}
+-Fw/path/to/feedbackfile.wpo -Ow<selected_wpo_options>
+\end{verbatim}
+(Note the small caps in the \var{w}). This will tell the compiler to use 
+the feedback file generated in the previous step. The compiler will then 
+read the information collected about the program during the previous compiler 
+run, and use it during the current compilation of units and/or program/library. 
+
+Units not recompiled during the second pass will obviously not be optimised,
+but they will still work correctly when used together with the optimised
+units and program/library.
+
+\subsection{Available WPO optimizations}
+The \var{-OW} and \var{-Ow} command-line options require a comma-separated list of
+whole-program-optimization options. These are strings, each string denotes
+an option. The following is a list of available options:
+\begin{description}
+\item[all] This enables all available whole program optimisations.
+
+\item[devirtcalls] Changes virtual method calls into normal (static) method
+calls when the compiler can determine that a virtual method call will always
+go to the same static method. This makes such code both smaller and faster.
+In general, it is mainly an enabling optimisation for other optimisations,
+because it makes the program easier to analyse due to the fact that it reduces
+indirect control flow. 
+
+There are 2 limitations to this option:
+\begin{enumerate}
+\item The current implementation is context-insensitive. This means that the
+compiler only looks at the program as a whole and determines for each class
+type which methods can be devirtualised, rather than that it looks at each
+call statement and the surrounding code to determine whether or not this
+call can be devirtualised; 
+\item The current implementation does not yet devirtualise interface method
+calls. Not when calling them via an interface instance, nor when calling 
+them via a class instance.
+\end{enumerate}
+
+\item[optvmts]
+This optimisation looks at which class types can be instantiated and which
+virtual methods can be called in a program, and based on this information it
+replaces virtual method table (VMT) entries that can never be called with
+references to FPC\_ABSTRACTERROR. This means that such methods, unless they
+are called directly via an inherited call from a child class/object, can be
+removed by the linker. It has little or no effect on speed, but can help
+reducing code size. 
+
+This option has 2 limitations:
+\begin{enumerate}
+\item Methods that are published, or getters/setters of published properties, can
+never be optimised in this way, because they can always be referred to and
+called via the RTTI (which the compiler cannot detect). 
+\item Such optimisations are not yet done for virtual class methods.
+\end{enumerate}
+
+\item[wsymbolliveness]
+This parameter does not perform any optimisation by itself. It simply tells
+the compiler to record which functions/procedures were kept by the linker in
+the final program. During a subsequent wpo pass, the compiler can then
+ignore the removed functions/procedures as far as WPO is concerned (e.g., if
+a particular class type is only constructed in one unused procedure, then
+ignoring this procedure can improve the effectiveness of the previous two
+optimisations). 
+
+Again, there are some limitations:
+\begin{enumerate}
+\item This optimisation requires that the nm utility is installed on the system.
+For Linux binaries, objdump will also work. In the future, this information
+could also be extracted from the internal linker for the platforms that it
+supports. 
+\item Collecting information for this optimisation (using -OWsymbolliveness)
+requires that smart linking is enabled (-XX) and that symbol stripping is
+disabled (-Xs-). When only using such previously collected information,
+these limitations do not apply.
+\end{enumerate}
+\end{description}
+
+\subsection{format of the WPO file}
+This information is mainly interesting if external data must be added to
+the WPO feedback file, e.g. from a profiling tool. For regular use of the
+WPO feature, the following information is not needed and can be ignored.
+
+The file consists of comments and a number of sections. Comments are lines
+that start with a \#. Each section starts with "\% " followed by the name of
+the section (e.g.,\% contextinsensitive\_devirtualization). 
+
+After that, until either the end of the file or until the next line starting 
+with with "\% ", first a human readable description follows of the format of 
+this section (in comments), and then the contents of the section itself. 
+
+There are no rules for how the contents of a section should look, except
+that lines starting with \# are reserved for comments and lines starting with
+\%  are reserved for section markers. 
 
 
 
@@ -8626,5 +8786,6 @@ Solaris-x86 & 4 & ESI, EDI, EBX\\
 Win32 & 4 & ESI, EDI, EBX\\
 \hline
 \end{FPCltable}
+
 
 \end{document}
