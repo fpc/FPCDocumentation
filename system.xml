@@ -14138,6 +14138,83 @@ or library) names.
 </seealso>
 </element>
 
+<element name="WriteStr">
+<short>Write variables to a string</short>
+<descr>
+<p>
+<var>WriteStr</var> behaves like <link id="Write"/>, except that it stores
+its output in the string variable <var>S</var> instead of a file.
+Semantically, the <var>WriteStr</var> call is equivalent to writing the
+arguments to a file using the <var>Write</var> call, and then reading them
+into <var>S</var> using the <var>Read</var> call from the same file:
+</p>
+<code>
+var
+  F : Text;
+begin
+  Rewrite(F);
+  Write(F,Args);
+  Close(F);
+  Reset(F);
+  Read(F,S);
+  Close(F);
+end;  
+</code>
+<p>
+Obviously, the <var>WriteStr</var> call does not use a temporary file.
+</p>
+<p>
+<var>WriteStr</var> is defined in the Extended ISO Pascal reference.
+more information on the allowed arguments and the possible formatting can be
+found in the description of <link id="Write"/>.
+</p>
+</descr>
+<seealso>
+<link id="Write"/>
+<link id="ReadStr"/>
+<link id="Read"/>
+</seealso>
+</element>
+
+<element name="ReadStr">
+<short>Read variables from a string</short>
+<descr>
+<p>
+<var>ReadStr</var> behaves like <link id="Read"/>, except that it reads
+its input from the string variable <var>S</var> instead of a file.
+Semantically, the <var>ReadStr</var> call is equivalent to writing the
+string to a file using the <var>Write</var> call, and then reading them
+into the various arguments <var>Arg</var> using the <var>Read</var> call 
+from the same file:
+</p>
+<code>
+var
+  F : Text;
+begin
+  Rewrite(F);
+  Write(F,S);
+  Close(F);
+  Reset(F);
+  Read(F,Args);
+  Close(F);
+end;  
+</code>
+<p>
+Obviously, the <var>ReadStr</var> call does not use a temporary file.
+</p>
+<p>
+<var>ReadStr</var> is defined in the Extended ISO Pascal reference.
+more information on the allowed arguments and the behaviour of the arguments
+can be found in the description of <link id="Read"/>.
+</p>
+</descr>
+<seealso>
+<link id="Read"/>
+<link id="WriteStr"/>
+<link id="Write"/>
+</seealso>
+</element>
+
 </module>
 </package>
 </fpdoc-descriptions>
