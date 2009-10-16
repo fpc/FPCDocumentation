@@ -8482,7 +8482,7 @@ None.
 
 <!-- enumeration type Visibility: default -->
 <element name="TSignalState">
-<short>State of the signal handler</short>
+<short>State of the signal handler (unix only)</short>
 <descr>
 <var>TSignalState</var> indicates the state of a signal handler in a unix system for a particular signal.
 </descr>
@@ -8498,27 +8498,43 @@ None.
 
 <!-- enumeration value Visibility: default -->
 <element name="TSignalState.ssHooked">
-<short>A signal handler is set for the signal.</short>
+<short>A signal handler is set by the RTL code for the signal.</short>
 </element>
 
 <!-- enumeration value Visibility: default -->
 <element name="TSignalState.ssOverridden">
-<short>A signal handler was set for the signal</short>
+<short>A signal handler was set for the signal by third-party code.</short>
 </element>
 
 <!-- function Visibility: default -->
 <element name="InquireSignal">
-<short>Check whether a signal handler is set</short>
+<short>Check whether a signal handler is set (unix only)</short>
 <descr>
-This function is declared for Kylix compatibility, but is not implemented.
+<p>
+<var>RtlSigNum</var> will check whether the signal <var>RtlSigNum</var> is
+being handled, and by whom. It returns a <var>TSignalState</var> result to
+report the state of the signal, which can be one of the following values:
+</p>
+<dl>
+<dt>ssNotHooked</dt><dd><printshort id="TSignalState.ssNotHooked"/></dd>
+<dt>ssHooked</dt><dd><printshort id="TSignalState.ssHooked"/></dd>
+<dt>ssOverridden</dt><dd><printshort id="TSignalState.ssOverridden"/></dd>
+</dl>
+<p>
+This routine works by resetting the signal handlers, so it is risky to call.
+</p>
 </descr>
 </element>
 
 <!-- procedure Visibility: default -->
 <element name="AbandonSignalHandler">
-<short></short>
+<short>Abandon the signal handler</short>
 <descr>
-This function is declared for Kylix compatibility, but is not implemented.
+<var>AbandonSignalHandler</var> tells the system routines that they should
+not re-install the signal handler for signal <var>RtlSigNum</var> under any 
+circumstances. Normally, signal handlers are re-set when they are called. 
+If <var>AbandonSignalHandler</var> has been called for a signal that is 
+handled by the system code, the signal will not be re-set again.
 </descr>
 </element>
 
@@ -8526,7 +8542,10 @@ This function is declared for Kylix compatibility, but is not implemented.
 <element name="HookSignal">
 <short>Hook a specified signal</short>
 <descr>
-This function is declared for Kylix compatibility, but is not implemented.
+<var>HookSignal</var> installs the RTL default signal handler for signal
+<var>RtlSigNum</var>. It does not check whether the signal is already
+handled, and should therefor only be called if <var>InquireSignal</var>
+returns <var>ssNotHooked</var>.
 </descr>
 </element>
 
@@ -8534,7 +8553,10 @@ This function is declared for Kylix compatibility, but is not implemented.
 <element name="UnhookSignal">
 <short>UnHook a specified signal</short>
 <descr>
-This function is declared for Kylix compatibility, but is not implemented.
+<var>UnHookSignal</var> de-installs the RTL default signal handler for signal
+<var>RtlSigNum</var>. If <var>OnlyIfHooked</var> is <var>True</var> then
+<var>UnhookSignal</var> will first check if the signal was hooked by the RTL
+routines, and has not been overridden since.
 </descr>
 </element>
 
