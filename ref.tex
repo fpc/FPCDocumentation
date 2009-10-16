@@ -3875,6 +3875,8 @@ end;
 \end{verbatim}
 As can be seen, the GUID identifying the interface is optional.
 
+
+
 \section{Interface identification: A GUID}
 An interface can be identified by a GUID. This is a 128-bit number, which is
 represented in a text representation (a string literal):
@@ -4001,6 +4003,36 @@ Corba interfaces are identified by a simple string so they are assignment
 compatible with strings and not with \var{TGUID}. The compiler does not do 
 any automatic reference counting for the CORBA interfaces, so the programmer 
 is responsible for any reference bookkeeping.
+
+\section{Reference counting}
+All COM interfaces use reference counting.  This means that whenever an
+interface is assigned to a variable, it's reference count is updated.
+Whenever the variable goes out of scope, the reference count is
+automatically decreased. When the reference count reaches zero, usually the
+instance of the class that implements the interface, is freed.
+
+Care must be taken with this mechanism. The compiler may or may not create
+temporary variables when evaluating expressions, and assign the interface
+to a temporary variable, and only then assign the temporary variable to 
+the actual result variable. No assumptions should be made about the number
+of temporary variables or the time when they are finalized - this may 
+(and indeed does) differ from the way other compilers (e.g. Delphi) handle
+expressions with interfaces. e.g. a type cast is also an expression:
+\begin{verbatim}
+Var
+  B : AClass;
+
+begin
+  // ...
+  AInterface(B.intf).testproc;
+  // ...
+end;
+\end{verbatim}
+Assume the interface \var{intf} is reference counted. When the compiler 
+evaluates B.Intf, it creates a temporary variable. This variable may be 
+released only when the procedure exits: it is therefor invalid to e.g. 
+free the instance B prior to the exit of the procedure, since when the 
+temporary variable is finalized, it will attempt to free B again.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Generics
