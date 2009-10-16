@@ -838,23 +838,31 @@ has the same effect as \var{\{\$ASMMODE XXX\}}, \sees{AsmReader}
 This switch is deprecated, the \var{\{\$ASMMODE XXX\}} directive should
 be used instead.
 
-\subsection{\var{\protect\$J} or \var{\protect\$WRITABLECONSTS} : Allow typed consts}
-This boolean switch tells the compiler whether or not typed constants are allowed.
-The default is to allow typed constants.
+\subsection{\var{\protect\$J} or \var{\protect\$WRITEABLECONST} : Allow
+assignments to typed consts}
+This boolean switch tells the compiler whether or not assignments to typed 
+constants are allowed. The default is to allow assignments to typed constants.
 
-The following statement will switch off typed constants:
+The following statement will switch off assignments to typed constants:
 \begin{verbatim}
-{$WRITABLECONST OFF}
+{$WRITEABLECONST OFF}
 \end{verbatim}
 After this switch, the following statement will no longer compile:
 \begin{verbatim}
 Const
   MyString : String = 'Some nice string';
+
+begin
+  MyString:='Some Other string';
+end.
 \end{verbatim}
 But an initialized variable will still compile:
 \begin{verbatim}
 Var
   MyString : String = 'Some nice string';
+begin
+  MyString:='Some Other string';
+end.
 \end{verbatim}
 
 
