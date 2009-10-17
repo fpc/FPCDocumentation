@@ -1480,10 +1480,19 @@ On error, -1 is returned.
 <var>Mode</var> can be one of the following constants:
 </p>
 <dl>
-<dt>fmOpenRead</dt><dd> The file is opened for reading.</dd>
-<dt>fmOpenWrite</dt><dd> The file is opened for writing.</dd>
-<dt>fmOpenReadWrite</dt><dd> The file is opened for reading and
-writing.</dd>
+<dt>fmOpenRead</dt><dd><printshort id="fmOpenRead"/></dd>
+<dt>fmOpenWrite</dt><dd><printshort id="fmOpenWrite"/></dd>
+<dt>fmOpenReadWrite</dt><dd><printshort id="fmOpenReadWrite"/></dd>
+</dl>
+<p>
+Under Windows and Unix, the above mode can be or-ed with one of the following sharing/locking flags:
+</p>
+<dl>
+<dt>fmShareCompat</dt><dd><printshort id="fmShareCompat"/></dd>
+<dt>fmShareExclusive</dt><dd><printshort id="fmShareExclusive"/></dd>
+<dt>fmShareDenyWrite</dt><dd><printshort id="fmShareDenyWrite"/></dd>
+<dt>fmShareDenyRead</dt><dd><printshort id="fmShareDenyRead"/></dd>
+<dt>fmShareDenyNone</dt><dd><printshort id="fmShareDenyNone"/></dd>
 </dl>
 <p>
 If the file has been successfully opened, it can be read  from or written to
@@ -1496,13 +1505,36 @@ be created for you. If you want tp create a new file, or overwrite an old
 one, use the <link id="FileCreate"/> function.
 </remark>
 <p>
-For an example, see <link id="FileOpen"/>
+There are some limitations to the sharing modes.
+</p>
+<ol>
+<li>Sharing modes are only available on Unix and Windows platforms.</li>
+<li>Unix only support sharing modes as of 2.4.0.</li>
+<li>fmShareDenyRead only works under Windows at this time, and will always
+ result in an error on unix platforms because its file locking APIs do not
+ support this concept.</li>
+<li> under Solaris, closing a single file handle associated with a file will
+result in all locks on that file (even via other handles) being destroyed 
+due to the behaviour of the underlying API (fcntl). Because of the same reason, on Solaris you cannot use
+<var>fmShareDenyWrite</var> in combination with <var>fmOpenWrite</var>, nor <var>fmShareExclusive</var> 
+in combination with <var>fmOpenRead</var> although both work with fmOpenReadWrite.</li>   
+</ol>
+<p>
+For an example, see <link id="FileCreate"/>
 </p>
 </descr>
 <errors>
 On Error, -1 is returned.
 </errors>
 <seealso>
+<link id="fmOpenRead"/>
+<link id="fmOpenWrite"/>
+<link id="fmOpenReadWrite"/>
+<link id="fmShareDenyWrite"/>
+<link id="fmShareExclusive"/>
+<link id="fmShareDenyRead"/>
+<link id="fmShareDenyNone"/>
+<link id="fmShareCompat"/>
 <link id="FileClose"/>
 <link id="FileWrite"/>
 <link id="FileCreate"/>
@@ -7140,10 +7172,10 @@ file exclusively.
 <element name="fmShareDenyWrite">
 <short>Lock file so other processes can only read.</short>
 <descr>
-<var>fmOpenShareExclusive</var> is used in the <link id="FileOpen"/> call
+<var>fmOpenShareWrite</var> is used in the <link id="FileOpen"/> call
 OR-ed together with one of <link id="fmOpenReadWrite"/>, <link
 id="fmOpenRead"/> or <link id="fmOpenWrite"/>, to open a
-file exclusively.
+file so other processes cannot write to it, they can only read.
 </descr>
 <seealso>
 <link id="FileOpen"/>
@@ -7154,10 +7186,16 @@ file exclusively.
 <element name="fmShareDenyRead">
 <short>Lock file so other processes cannot read.</short>
 <descr>
-<var>fmOpenShareExclusive</var> is used in the <link id="FileOpen"/> call
+<p>
+<var>fmOpenShareRead</var> is used in the <link id="FileOpen"/> call
 OR-ed together with one of <link id="fmOpenReadWrite"/>, <link
 id="fmOpenRead"/> or <link id="fmOpenWrite"/>, to open a
 file so other processes cannot read from it.
+</p>
+<p>
+This constant only works on Windows, because other operating systems do not
+support this constants.
+</p>
 </descr>
 <seealso>
 <link id="FileOpen"/>
