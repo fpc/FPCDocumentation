@@ -646,22 +646,27 @@ specified codepage.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Constants}
 \index{Constants} \keywordlink{const}
-Just as in \tp, \fpc supports both normal and typed constants.
+Just as in \tp, \fpc supports both ordinary and typed constants.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ordinary constants
 \section{Ordinary constants}
 \index{Constants!Ordinary} \keywordlink{const}
-Ordinary constants declarations are not different from the \tp or
-Delphi implementation.
+Ordinary constants declarations are constructed using an identifier name 
+followed by an "=" token  and followed a by an optional expression consisting 
+of legal combinations of numbers, characters, boolean values or enumerated 
+values as appropriate. The following syntax diagram shows how to construct 
+a legal declaration of an ordinary constant.
+
 \input{syntax/const.syn}
 The compiler must be able to evaluate the expression in a constant
 declaration at compile time.  This means that most of the functions
 in the Run-Time library cannot be used in a constant
 declaration.\index{Operators}
 Operators such as \var{+, -, *, /, not, and, or, div, mod, ord, chr,
-sizeof, pi, int, trunc, round, frac, odd} can be used, however. For more 
-information on expressions, see \seec{Expressions}.
+sizeof, pi, int, trunc, round, frac, odd} can be used, however. 
+For more information on expressions, see \seec{Expressions}.
+
 Only constants of the following types can be declared: \var{Ordinal
 types}, \var{Real types}, \var{Char}, and \var{String}.\index{Constants!String}
 The following are all valid constant declarations:
@@ -680,6 +685,9 @@ in a compiler error:
 \begin{verbatim}
   s := 'some other string';
 \end{verbatim}
+For string constants, the type of the string is dependent on some compiler
+switches. If a specific type is desired, a typed constant should be used, 
+as explained in the following section.
 
 Prior to version 1.9, \fpc did not correctly support 64-bit constants. As
 of version 1.9, 64-bits constants can be specified.
@@ -689,36 +697,40 @@ of version 1.9, 64-bits constants can be specified.
 \section{Typed constants}
 \label{se:typedconstants}
 \index{Constants!Typed}\index{Variables!Initialized}
-Typed constants serve to provide a program with initialised variables.
-Contrary to ordinary constants, a value can be assigned to them at 
-run-time. Their definition is quite simple:
+Sometimes it is necessary to specify the type of a constant, for instance
+for constants of complex structures (defined later in the manual).
+Their definition is quite simple.
 
 \input{syntax/tconst.syn}
 
-This is an old concept from Turbo Pascal, which has been replaced with 
-support for initialized variables: For a detailed description, see 
-\sees{initializedvars}.
+Contrary to ordinary constants, a value can be assigned to them at 
+run-time.  This is an old concept from Turbo Pascal, which has been 
+replaced with  support for initialized variables: For a detailed 
+description, see \sees{initializedvars}.
 
-Support for typed constants is controlled by the \var{\{\$J\}} directive: 
-it can be switched off, but is on by default (for Turbo Pascal compatibility).
+Support for assigning values to typed constants is controlled by the 
+\var{\{\$J\}} directive: it can be switched off, but is on by default 
+(for Turbo Pascal compatibility). 
 Initialized variables are always allowed.
 
 \begin{remark}
-It should be stressed that typed constants are initialized at program start.
-This is also true for {\em local} typed constants. Local typed constants are
-also initialized at program start. If their value was changed during previous
-invocations of the function, they will retain their changed value, i.e. they
-are not initialized each time the function is invoked.
+It should be stressed that typed constants are automatically initialized at program start.
+This is also true for {\em local} typed constants and initialized variables. 
+Local typed constants are also initialized at program start. If their value was 
+changed during previous invocations of the function, they will retain their 
+changed value, i.e. they are not initialized each time the function is invoked.
 \end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % resource strings
 \section{Resource strings}
 \label{se:resourcestring}\index{Resourcestring}\index{Const}\index{Const!String}\keywordlink{resourcestring}
-A special kind of constant declaration part is the \var{Resourestring}
-part. This part is like a \var{Const} section, but it only allows
-to declare constant of type string. This part is only available in the
-\var{Delphi} or \var{Objfpc} modes.
+A special kind of constant declaration block is the \var{Resourestring}
+block. Resourcestring declarations are much like constant string
+declarations: resource strings act as constant strings, but they 
+can be localized by means of a set of special routines in the 
+\file{objpas} unit. A resource string declaration block
+is only allowed in the \var{Delphi} or \var{Objfpc} modes.
 
 The following is an example of a resourcestring definition:
 \begin{verbatim}
@@ -728,17 +740,55 @@ Resourcestring
   EditMenu = '&Edit...';
 \end{verbatim}
 All string constants defined in the resourcestring section are stored
-in special tables, allowing to manipulate the values of the strings
-at runtime with some special mechanisms.
+in special tables. The strings in these tables can be manipulated
+at runtime with some special mechanisms in the \file{objpas} unit.
 
-Semantically, the strings are like constants; Values can not be assigned  to
-them, except through the special mechanisms in the objpas unit. However,
-they can be used in assignments or expressions as normal constants.
-The main use of the resourcestring section is to provide an easy means
-of internationalization.
+Semantically, the strings act like ordinary constants; It is not allowed
+to assign values to them. (except through the special mechanisms in the 
+objpas unit). However, they can be used in assignments or expressions as 
+ordinary string constants. The main use of the resourcestring section is 
+to provide an easy means of internationalization.
 
 More on the subject of resourcestrings can be found in the \progref, and
 in the \file{objpas} unit reference.
+
+\begin{remark}
+Note that a resource string which is given as an expression will not change if
+the parts of the expression are changed:
+\begin{verbatim}
+resourcestring
+  Part1 = 'First part of a long string.';
+  Part2 = 'Second part of a long string.';
+  Sentence = Part1+' '+Part2;
+\end{verbatim}
+If the localization routines translate \var{Part1} and \var{Part2}, the
+\var{Sentence} constant will not be translated automatically: it has a
+separate entry in the resource string tables, and must therefor be
+translated separately. The above construct simply says that the 
+initial value of \var{Sentence} equals \var{Part1+' '+Part2}.
+\end{remark}
+
+\begin{remark}
+Likewise, when using resource strings in a constant array, only the initial
+values of the resource strings will be used in the array: when the
+individual constants are translated, the elements in the array will retain
+their original value.
+\begin{verbatim}
+resourcestring
+  Yes = 'Yes.';
+  No = 'No.';
+
+Var
+  YesNo : Array[Boolean] of string = (No,Yes);
+  B : Boolean;
+
+begin
+  Writeln(YesNo[B]);
+end.
+\end{verbatim}
+This will print 'Yes.' or 'No.' depending on the value of B, even if the 
+constants Yes and No have been localized by some localization mechanism.
+\end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Types
@@ -2456,9 +2506,9 @@ Var
   S : String = SDefault;
 \end{verbatim}
 Initialization is often used to initialize arrays and records. For arrays,
-the initial elements must be specified, surrounded by round brackets, and
-separated by commas. The number of elements must be exactly the same as
-the number of elements in the declaration of the type.
+the initialized elements must be specified, surrounded by round brackets, and
+separated by commas. The number of initialized elements must be exactly the 
+same as the number of elements in the declaration of the type.
 As an example:
 \begin{verbatim}
 Var
