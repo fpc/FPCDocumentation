@@ -966,11 +966,12 @@ the current compiler.
 \item[-h] Print a list of all options and exit.
 \olabel{h}
 \item[-?] Same as \var{-h}, waiting after each screenfull for the enter key.
-\item[-i] Print copyright information. You can supply a qualifier, 
+\item[-i] Print copyright and other information. You can supply a qualifier, 
 \olabel{i} as \var{-ixxx} where xxx can be one of the following:
 \begin{description}
 \item[D] : Returns the compiler date.
-\item[V] : Returns the compiler version.
+\item[V] : Returns the short compiler version.
+\item[W] : Return full compiler version.
 \item[SO] : Returns the compiler OS.
 \item[SP] : Returns the compiler processor.
 \item[TO] : Returns the target OS.
@@ -1002,8 +1003,10 @@ You can still pass a configuration file with the \var{@} option.
 \item \var{u} : Show information on units being loaded.
 \item \var{t} : Show names of files being opened.
 \item \var{p} : Show names of procedures and functions being processed.
+\item \var{q} : Show message numbers.
 \item \var{c} : Notify on each conditional being processed.
-\item \var{m} : Show names of macros being defined.
+\item \var{mxxx} : \var{xxx} is a comma-separated list of messages numbers which should not be shown.
+This option can be specified multiple times.
 \item \var{d} : Show additional debugging information.
 \item \var{0} : No messages. This is useful for overriding the default
           setting in the configuration file.
@@ -1013,10 +1016,11 @@ error occurs.
 \item \var{r} : Format errors in RHIDE/GCC compatibility mode.
 \item \var{a} : Show all possible information. (this is the same as specifying all options)
 \item \var{b} : Tells the compiler to write filenames using the full path.
-\item \var{v} : Write copious debugging information to file
+\item \var{v} : Write copious debugging information to file.
 \file{fpcdebug.txt}..
+\item \var{s} : Write timestamps.
 Mainly for the compiler developers.
-\item \var{p} Write parse tree to file tree.log. (Intended for compiler  developers.)
+%\item \var{p} Write parse tree to file tree.log. (Intended for compiler  developers.)
 \end{itemize}
 \end{description}
 %
@@ -1102,6 +1106,10 @@ This option has the same effect as \var{-Fi}.
 %\item [-P] uses pipes instead of files when assembling. This may speed up
 %the compiler on \ostwo and \linux. Only with assemblers (such as \gnu
 %\file{as}) that support piping...
+\item[-FWxxx] store generated Whole Program Optimization information in file
+\file{xxx}.
+\item[-Fwxxx] Read Whole Program Optimization information from file
+\file{xxx}.
 \end{description}
 
 % Options controlling the kind of output.
@@ -1233,14 +1241,22 @@ caution).
 \item[1] Level 1 optimizations (quick optimizations).
 \item[2] Level 2 optimizations (\var{-O1} plus some slower optimizations).
 \item[3] Level 3 optimizations (\var{-O2} plus \var{-Ou}).
-\item[Pn] (Intel only) Specify processor: \var{n} can be one of
+\item[oxxx] Specify  specific optimizations: \var{n} can be one of
 \begin{description}
-\item[1] Optimize for 386/486
-\item[2] Optimize for Pentium/PentiumMMX (tm)
-\item[3] Optimizations for PentiumPro/PII/Cyrix 6x86/K6 (tm)
+\item[REGVAR] Use register variables
+\item[STACKFRAME] Skip stack frames
+\item[LOOPUNROLL] unroll (small) loops
+\item[TAILREC] change tail recursion to non-recursive loop.
 \end{description}
+\item[pxxx] select processor \var{xxx} to optimize for. \var{fpc -i} lists
+all available processor instruction sets.
+\item[Wxxx] Generate Whole-Program-Optimization information for feature \var{xxx}.
+\var{fpc -i} will generate a list of possible values.
+\item[wxxx] Perform  Whole-Program-Optimization information for feature
+\var{xxx}. \var{fpc -i} will generate a list of possible values.
+\item[s] Optimize for size rather than speed.
 \end{description}
-The exact effect of these optimizations can be found in the \progref.
+The exact effect of some of these optimizations can be found in the \progref.
 \item [-oxxx] \olabel{o} Use \var{xxx} as the name of the output
 file (executable). For use only with programs. The output filename can contain a
 path, and if it does, it will override any previous \var{-FE} setting. If
@@ -1280,6 +1296,8 @@ the following:
 \item \textbf{win32} : \windows 32 bit.
 \item \textbf{wince} : \windows for handhelds (ARM processor).
 \end{itemize}
+The available list of targets depends on the actual compiler binary.
+Use \var{fpc -i} to get a list of targets supported by the compiler binary.
 \item [-uxxx] \olabel{u} Undefine the symbol \var{xxx}. This is the opposite
 of the \var{-d} option.
 \item [-Ur] \olabel{Ur} Generate release unit files. These files will not be
