@@ -3594,6 +3594,7 @@ for any procedure or function or destructor as well.
 % Properties
 \section{Properties}
 \index{Properties}\keywordlink{property}
+\subsection{Definition}
 Classes can contain properties as part of their fields list. A property
 acts like a normal field, i.e. its value can be retrieved or set, but it
 allows to redirect the access of the field through functions and
@@ -3670,6 +3671,7 @@ Because of this mechanism, properties cannot be passed as var arguments to a
 function or procedure, since there is no known address of the property (at
 least, not always).\index{Parameters!Var}
 
+\subsection{Indexed properties}
 \index{Properties!Indexed}\keywordlink{index}
 If the property definition contains an index, \index{index} then the read and write
 specifiers must be a function and a procedure. Moreover, these functions
@@ -3725,6 +3727,7 @@ Conversely, when reading the value of \var{X}, the compiler calls
 \var{GetCoord} and passes it index 1.
 Indexes can only be integer values.
 
+\subsection{Array properties}
 Array properties also exist.\index{Properties!Array} These are properties that accept an
 index, just as an array does. Only now the index doesn't have to be an
 ordinal type, but can be any type.
@@ -3772,6 +3775,7 @@ AIntList.StrItems[26] := 'zero';
 \end{verbatim}
 Because the index types are wrong.
 
+\subsection{Default properties}
 Array properties can be declared as \var{default} properties. This means that
 it is not necessary to specify the property name when assigning or reading
 it. In the previous example, if the definition of the items property would
@@ -3791,6 +3795,7 @@ AIntList[26] := 1;
 Only one default property per class is allowed, and descendent classes
 cannot redeclare the default property.
 
+\subsection{Storage information}
 The {\em stored specifier} should be either a boolean constant, a boolean
 field of the class, or a parameterless function which returns a boolean
 result. This specifier has no result on the class behaviour. It is an aid
@@ -3814,6 +3819,88 @@ internally to denote 'nodefault'.
 \item It is not possible to specify a default for array properties.
 \end{enumerate}
 
+\subsection{Overriding properties}
+Properties can be overridden in descendent classes, just like methods. The
+difference is that for properties, the overriding can always be done:
+properties should not be marked 'virtual' so they can be overridden, they
+are always overridable (in this sense, properties are always 'virtual').
+The type of the overridden property does not have to be the same as the
+parents class property type.
+
+Since they can be overridden, the keyword 'inherited' \index{inherited} can
+also be used to refer to the parent definition of the property. For example
+consider the following code:
+\begin{verbatim}
+type
+  TAncestor = class
+  private
+    FP1 : Integer;
+  public
+    property P: integer Read FP1 write FP1;
+  end;
+ 
+  TClassA = class(TAncestor)
+  private
+    procedure SetP(const AValue: char);
+    function getP : Char;
+  public
+    constructor Create;
+    property P: char Read GetP write SetP;
+  end;
+
+procedure TClassA.SetP(const AValue: char);
+
+begin
+  Inherited P:=Ord(AValue);
+end;
+
+procedure TClassA.GetP : char;
+
+begin
+  Result:=Char((Inherited P) and $FF);
+end;
+\end{verbatim}
+TClassA redefines \var{P} as a character property instead of an integer
+property, but uses the parents \var{P} property to store the value.
+
+Care must be taken when using virtual get/set routines for a property:
+setting the inherited propert still observes the normal rules of inheritance
+for methods. Consider the following example:
+\begin{verbatim}
+type
+  TAncestor = class
+  private
+    procedure SetP1(const AValue: integer); virtual;
+  public
+    property P: integer write SetP1;
+  end;
+
+  TClassA = class(TAncestor)
+  private
+    procedure SetP1(const AValue: integer); override;
+    procedure SetP2(const AValue: char);
+  public
+    constructor Create;
+    property P: char write SetP2;
+  end;
+
+constructor TClassA.Create;
+begin
+  inherited P:=3; 
+end;
+\end{verbatim}
+In this case, when setting the inherited property \var{P}, the
+implementation \var{TClassA.SetP1} will be called, because the
+\var{SetP1} method is overridden.
+
+If the parent class implementation of \var{SetP1} must be called,
+then this must be called explicitly:
+\begin{verbatim}
+constructor TClassA.Create;
+begin
+  inherited SetP1(3);
+end;
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interfaces
@@ -6762,7 +6849,7 @@ operator must be overloaded.
 \item[Unary minus] is used to take the negative of the argument following
 it.
 \item[Symmetric Difference] To take the symmetric difference of 2
-structures, the \var{\gt\lt} operator must be overloaded.
+structures, the \var{><} operator must be overloaded.
 \end{description}
 
 The definition of an arithmetic operator takes two parameters, except for
