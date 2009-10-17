@@ -11,5 +11,5 @@ Uses math;
   end;
 
 begin
-  WriteRadDeg (arctan2(1,1));
+  WriteRadDeg (arctan2(2,1));
 end.
