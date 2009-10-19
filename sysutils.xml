@@ -1511,9 +1511,17 @@ There are some limitations to the sharing modes.
 <li>Sharing modes are only available on Unix and Windows platforms.</li>
 <li>Unix only support sharing modes as of 2.4.0.</li>
 <li>fmShareDenyRead only works under Windows at this time, and will always
- result in an error on unix platforms because its file locking APIs do not
+ result in an error on Unix platforms because its file locking APIs do not
  support this concept.</li>
-<li> under Solaris, closing a single file handle associated with a file will
+<li>File locking is advisory on Unix platforms. This means that the locks
+ are only checked when a file is opened using a file locking mode. In other
+ cases, existing locks are simply ignored. In particular, this means that
+ <var>fmShareDenyNone</var> has no effect under Unix, because this can only
+ be implemented as ``use no locking'' on those platforms. As a result, opening
+ a file using this mode will always succeed under Unix as far as the locking
+ is concerned, even if the file has already been opened using
+ <var>fmShareExclusive</var>.
+<li>Under Solaris, closing a single file handle associated with a file will
 result in all locks on that file (even via other handles) being destroyed 
 due to the behaviour of the underlying API (fcntl). Because of the same reason, on Solaris you cannot use
 <var>fmShareDenyWrite</var> in combination with <var>fmOpenWrite</var>, nor <var>fmShareExclusive</var> 
