@@ -14,7 +14,7 @@ Begin
 
   Writeln ('ShortDateFormat ',ShortDateFormat);
   TestStr(DateTimeToStr(Date));
-  TestStr('05/05/1999');
-  TestStr('5/5');
+  TestStr('05'+DateSeparator+'05'+DateSeparator+'1999');
+  TestStr('5'+DateSeparator+'5');
   TestStr('5');
 End.
