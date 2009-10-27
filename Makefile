@@ -266,178 +266,352 @@ override PACKAGE_VERSION=2.2.3
 SEARCHFPCSRCPATH=../fpcsrc ../fpc ..
 FPCSRCDIR:=$(patsubst %/compiler,%,$(firstword $(strip $(wildcard $(addsuffix /compiler,$(SEARCHFPCSRCPATH))))))
 ifeq ($(FULL_TARGET),i386-linux)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-go32v2)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-win32)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-os2)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-freebsd)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-beos)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-haiku)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-netbsd)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-solaris)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-qnx)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-netware)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-openbsd)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-wdosx)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-darwin)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-emx)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-watcom)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-netwlibc)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-wince)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-embedded)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),i386-symbian)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),m68k-linux)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),m68k-freebsd)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),m68k-netbsd)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),m68k-amiga)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),m68k-atari)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),m68k-openbsd)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),m68k-palmos)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),m68k-embedded)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),powerpc-linux)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),powerpc-netbsd)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),powerpc-amiga)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),powerpc-macos)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),powerpc-darwin)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),powerpc-morphos)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),powerpc-embedded)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),sparc-linux)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),sparc-netbsd)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),sparc-solaris)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),sparc-embedded)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),x86_64-linux)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),x86_64-freebsd)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),x86_64-darwin)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),x86_64-win64)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),x86_64-embedded)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),arm-linux)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),arm-palmos)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),arm-darwin)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),arm-wince)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),arm-gba)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),arm-nds)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),arm-embedded)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),arm-symbian)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),powerpc64-linux)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),powerpc64-darwin)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),powerpc64-embedded)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),avr-embedded)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),armeb-linux)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
 endif
 ifeq ($(FULL_TARGET),armeb-embedded)
-override TARGET_PROGRAMS+=cleanxml
+override TARGET_PROGRAMS+=cleanxml relinkdocs
+endif
+ifeq ($(FULL_TARGET),i386-linux)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-go32v2)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-win32)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-os2)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-freebsd)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-beos)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-haiku)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-netbsd)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-solaris)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-qnx)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-netware)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-openbsd)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-wdosx)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-darwin)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-emx)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-watcom)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-netwlibc)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-wince)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-embedded)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),i386-symbian)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),m68k-linux)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),m68k-freebsd)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),m68k-netbsd)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),m68k-amiga)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),m68k-atari)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),m68k-openbsd)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),m68k-palmos)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),m68k-embedded)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),powerpc-linux)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),powerpc-netbsd)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),powerpc-amiga)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),powerpc-macos)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),powerpc-darwin)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),powerpc-morphos)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),powerpc-embedded)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),sparc-linux)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),sparc-netbsd)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),sparc-solaris)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),sparc-embedded)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),x86_64-linux)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),x86_64-freebsd)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),x86_64-darwin)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),x86_64-win64)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),x86_64-embedded)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),arm-linux)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),arm-palmos)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),arm-darwin)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),arm-wince)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),arm-gba)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),arm-nds)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),arm-embedded)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),arm-symbian)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),powerpc64-linux)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),powerpc64-darwin)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),powerpc64-embedded)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),avr-embedded)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),armeb-linux)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
+endif
+ifeq ($(FULL_TARGET),armeb-embedded)
+override TARGET_UNITS+=relinkhtml$(PPUEXT)
 endif
 ifdef REQUIRE_UNITSDIR
 override UNITSDIR+=$(REQUIRE_UNITSDIR)
@@ -1358,6 +1532,15 @@ EXECPPAS:=@$(PPAS)
 endif
 endif
 endif
+.PHONY: fpc_units
+ifneq ($(TARGET_UNITS)$(TARGET_IMPLICITUNITS),)
+override ALLTARGET+=fpc_units
+override UNITPPUFILES=$(addsuffix $(PPUEXT),$(TARGET_UNITS))
+override IMPLICITUNITPPUFILES=$(addsuffix $(PPUEXT),$(TARGET_IMPLICITUNITS))
+override INSTALLPPUFILES+=$(UNITPPUFILES) $(IMPLICITUNITPPUFILES)
+override CLEANPPUFILES+=$(UNITPPUFILES) $(IMPLICITUNITPPUFILES)
+endif
+fpc_units: $(COMPILER_UNITTARGETDIR) $(UNITPPUFILES)
 .PHONY: fpc_exes
 ifndef CROSSINSTALL
 ifneq ($(TARGET_PROGRAMS),)
@@ -2263,11 +2446,11 @@ fcl.chk: $(FCLXML)
 rtl.chk: $(RTLXML)
 	$(FPDOC) $(RTLOPTS) --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS)
 	touch rtl.chk
-user.chk: $(INCLUDES) user.tex messages.inc
-prog.chk: $(INCLUDES) prog.tex
+user.chk: $(INCLUDES) user.tex messages.inc relinkdocs$(EXE)
+prog.chk: $(INCLUDES) prog.tex relinkdocs$(EXE)
 onechap.chk: $(INCLUDES) onechap.tex
-ref.chk: $(INCLUDES) ref.tex
-fpdoc.chk: $(INCLUDES) fpdoc.tex
+ref.chk: $(INCLUDES) ref.tex relinkdocs$(EXE)
+fpdoc.chk: $(INCLUDES) fpdoc.tex relinkdocs$(EXE)
 chart.chk: $(INCLUDES) chart.tex
 html: comphelp.inc $(INCLUDES) $(CHK)
 chm: 

@@ -46,9 +46,20 @@ begin
   ind.writehtmls(writedir);
 end;
 
+Var
+  S : String;
+
 begin
-  fixdir('prog','prog-fixed/','prog');  // input=output overwrites, but should work.
-  fixdir('user','user-fixed/','user');  // input=output overwrites, but should work.
-  fixdir('ref','ref-fixed/','ref');  // input=output overwrites, but should work.
+  If ParamCount=0 then
+    begin
+    fixdir('prog','prog-fixed/','prog');  // input=output overwrites, but should work.
+    fixdir('user','user-fixed/','user');  // input=output overwrites, but should work.
+    fixdir('ref','ref-fixed/','ref');  // input=output overwrites, but should work.
+    end
+  else
+    begin
+    S:=ParamStr(1);
+    fixdir(S,S,S);
+    end;
 end.
 

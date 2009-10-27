@@ -27,7 +27,8 @@ nortl=y
 rule=help
 
 [target]
-programs=cleanxml
+units=relinkhtml$(PPUEXT)
+programs=cleanxml relinkdocs
 
 [prerules]
 SEARCHFPCSRCPATH=../fpcsrc ../fpc ..
@@ -688,11 +689,11 @@ rtl.chk: $(RTLXML)
         $(FPDOC) $(RTLOPTS) --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS)
         touch rtl.chk
 
-user.chk: $(INCLUDES) user.tex messages.inc
-prog.chk: $(INCLUDES) prog.tex
+user.chk: $(INCLUDES) user.tex messages.inc relinkdocs$(EXE)
+prog.chk: $(INCLUDES) prog.tex relinkdocs$(EXE)
 onechap.chk: $(INCLUDES) onechap.tex
-ref.chk: $(INCLUDES) ref.tex
-fpdoc.chk: $(INCLUDES) fpdoc.tex
+ref.chk: $(INCLUDES) ref.tex relinkdocs$(EXE)
+fpdoc.chk: $(INCLUDES) fpdoc.tex relinkdocs$(EXE)
 chart.chk: $(INCLUDES) chart.tex
 
 html: comphelp.inc $(INCLUDES) $(CHK)
