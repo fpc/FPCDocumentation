@@ -13,7 +13,7 @@ program gentoc;
    Die.
 {$endif}
 
-Uses chmreader,chmfilewriter,sysutils,classes,dom_html,xmlwrite,htmwrite,chmbase,chmwriter,chmsitemap;
+Uses cthreads,chmreader,chmfilewriter,sysutils,classes,dom_html,xmlwrite,htmwrite8859,chmbase,chmwriter,chmsitemap;
 
 { Index generation }
 

@@ -10,7 +10,7 @@ interface
 {define debugoutput}
 
 uses typinfo,classes,
-     dom,SAX_Html,dom_html,xmlutils,htmwrite;
+     dom,SAX_Html,dom_html,xmlutils,htmwrite8859;
 
 Type
         TNavButton = (NavNone,NavNext,NavUp,NavTail,NavPrev,NavPrevTail,navfront );

@@ -26,7 +26,7 @@ program relinkdocs;
    Die.
 {$endif}
 
-Uses strutils,typinfo,Sax_HTML,sysutils,classes,dom_html,xmlwrite,htmwrite,relinkhtml;
+Uses cthreads,strutils,typinfo,Sax_HTML,sysutils,classes,dom_html,xmlwrite,htmwrite8859,relinkhtml;
 
 
 procedure fixdir(readdir,writedir,prefix:string);
