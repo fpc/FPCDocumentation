@@ -1,0 +1,75 @@
+
+CHM helpfiles.
+=============
+
+CHM support based on the great work of Andrew is now also available in the 
+textmode IDE.  
+
+
+How to install the CHMs into the IDE.
+-------------------------------------
+
+1. extract the archive somewhere, the archive already has an "help/" path
+    built in. (on windows/dos: c:\fpc, under unix e.g. /usr/share/fpc/help)
+2. add the files to the textmode IDE using the "help->files->new" button.
+	Add toc.chm first, then add the other files in random order.
+3. it is safe to restart the IDE before testing. (in case something goes
+   wrong at least your help config will be saved)
+
+The helpconfiguration is stored, with paths in fp.ini, and might look like
+this:
+
+[Help]
+Files="/fpc/fpcdocs/toc.chm;/fpc/fpcdocs/fcl.chm;/fpc/fpcdocs/ref.chm;/fpc/fpcdocs/rtl.chm;/fpc/fpcdocs/prog.chm;/fpc/fpcdocs/user.chm"
+
+Troubleshooting
+--------------
+
+If you use Windows XPsp2 or later, and an helpfile won't view, go into the
+file explorer, and bring up the properties of the CHM file. Then click
+"unblock" there. Apparantly, in some cases Windows thinks the helpfiles are
+downloaded content, and prevents access.
+
+What is CHM? 
+------------
+
+CHM is an archive format specially made for HTML based help by Microsoft. It
+is also known as HTMLHELP, but note that HTMLHELP2 (and in the future 3) are
+not related.  Besides being an archive format optimized to quickly extract a
+single file, there is also a TOC, an Index and fulltext search dictionaries
+in each CHM. 
+
+The html in a CHM is basically unmodified except for links from one chm file
+to the other, these use a ms-its://file.chm/path/to/htmlfile.html like URL
+syntax.
+
+The format is sometimes related to security problems, but as far as I have
+been able to verify, this is more an Internet Explorer viewer application
+problem, not a problem of the format itself
+
+What OSes support CHM?
+----------------------
+
+Windows versions after windows 98 can open CHMs. Due to new security
+measures in XPsp2 and later, sometimes unlocking the CHMs is necessary (see
+troubleshooting paragraph).
+
+On Linux there are at least for packages to process CHMs:
+
+- the xCHM viewer
+- the KCHMViewer viewer
+- the GNOCHM viewer
+- the chmlib packages (sometimes called extract_chmlib) that allows to unpack
+     chm files.
+
+Older kchmviewers (<=4.0) are known to have a problem with the indexes of
+the larger chm files (rtl.chm, and lcl.chm from Lazarus), and only show the
+first couple of hundred entries.  The author has been notified and can't
+reproduce it with his latest builds anymore.
+
+Older gnochms were extremely slow with larger files, but this seems to have
+been fixed in more recent builds.
+
+xCHM in the recent version seems to work fine and fast.
+
+Of course the lazarus and FPC textmode IDE now also support CHM.
