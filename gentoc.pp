@@ -133,7 +133,7 @@ begin
   for i:=0 to Files.count-1 do
    begin
      ctxt:=TContextClass(files.objects[i]);
-     writeln(f,'<li><a href="ms-its:',files[i],'::',ctxt.defaultpage,'">',ctxt.Description,'</a></li>');
+     writeln(f,'<li><a href="ms-its:',files[i],'::',ctxt.defaultpage,'">&nbsp;',ctxt.Description,'</a></li>');
    end;
   writeln(f,postamble);
   closefile(f);
