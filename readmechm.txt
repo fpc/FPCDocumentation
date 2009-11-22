@@ -3,7 +3,9 @@ CHM helpfiles.
 =============
 
 CHM support based on the great work of Andrew is now also available in the 
-textmode IDE.  
+textmode IDE.  This archive also contains the .xct and .kwd files that are
+needed for crosslinking this archive with other CHM files. These files are
+not required for viewing (but are relatively small)
 
 
 How to install the CHMs into the IDE.
