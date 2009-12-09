@@ -27,7 +27,7 @@ nortl=y
 rule=help
 
 [target]
-units=relinkhtml$(PPUEXT)
+units=relinkhtml
 programs=cleanxml relinkdocs
 
 [prerules]
@@ -193,6 +193,11 @@ endif
 #endif
 endif # USEPLASTEX
 
+#######################################################################
+# Txt output via elinks
+#######################################################################
+#USEELINKS=1
+
 # tmpdir
 export TMP=/tmp
 #
@@ -238,8 +243,12 @@ IPF = $(addsuffix .ipf, $(DOCS))
         -$(MAKEINDEX) $*.idx
         $(LATEX) $*
 
+ifndef USEELINKS
 .dvi.txt:
         $(DVITXT) -o $*.txt  $*.dvi
+else
+include Makefile.txt
+endif
 
 .tex.pdf:
         -rm $*.aux $*.idx  $*.ilg  $*.ind  $*.log  $*.out  $*.toc $*.tmp $*.xref $*.4ht
@@ -250,7 +259,11 @@ IPF = $(addsuffix .ipf, $(DOCS))
         -$(MAKEINDEX) $*.idx
         $(PDFLATEX) $*
 
+ifndef USEELINKS
 $(TXT) : %.txt: %.dvi
+else
+$(TXT) : %.txt: %.tex
+endif
 
 $(DVI) : %.dvi: %.tex
 
@@ -284,7 +297,7 @@ help:
         @echo ' psdist        : ps, and archive result.'
         @echo ' pdfdist       : pdf, and archive result.'
 
-clean:
+clean: fpc_clean
         -rm -f preamble.inc date.inc messages.inc rtl.inc
         -rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref *.kwd *.xct *.chm *.ipf
         -rm -rf $(DOCS)
@@ -292,7 +305,7 @@ clean:
 # Styles
         -rm -f $(notdir $(wildcard styles/*.sty))
 
-distclean: clean cleanexamples
+distclean: fpc_distclean clean cleanexamples
         -rm -f *.tar.gz *.zip
 
 #####################################################################
@@ -366,6 +379,13 @@ else
 # fpc 2.2.0
 GRAPHDIR=$(FPCSRCDIR)/packages/extra/graph
 endif
+
+ifndef NEWDAEMON
+DAEMONDIR=$(FPCSRCDIR)/packages/fcl-base/src
+else
+# fpc 2.5.1
+DAEMONDIR=$(FPCSRCDIR)/packages/fcl-extra/src
+endif
 #
 # Standard Makeskel update options.
 #
@@ -417,7 +437,7 @@ FCLSIMPLEIPC= --descr=simpleipc.xml --input="$(FCLPROCESSDIR)/simpleipc.pp"
 FCLEZCGI= --descr=ezcgi.xml --input="$(FCLWEBDIR)/ezcgi.pp"
 FCLURIPARSER= --descr=uriparser.xml --input="$(FCLBASEDIR)/uriparser.pp"
 FCLZSTREAM= --descr=zstream.xml --input="$(FCLZLIBDIR)/zstream.pp"
-FCLDAEMONAPP= --descr=daemonapp.xml --input="$(FCLBASEDIR)/daemonapp.pp"
+FCLDAEMONAPP= --descr=daemonapp.xml --input="$(DAEMONDIR)/daemonapp.pp"
 FCLLIBTAR= --descr=libtar.xml --input="$(FCLBASEDIR)/libtar.pp"
 FCLASCII85= --descr=ascii85.xml --input="$(FCLBASEDIR)/ascii85.pp"
 FCLFPTIMER= --descr=fptimer.xml --input="$(FCLBASEDIR)/fptimer.pp"
@@ -509,7 +529,7 @@ endif
 
 updatexml: updatefclxml updatertlxml
 
-updatertlxml: cleanxml
+updatertlxml: fpc_all
 	$(RTLMAKESKEL) $(RTLSTRUTILS) --output=strutils.new.xml
 	$(RTLMAKESKEL) $(RTLSYSUTILS) --output=sysutils.new.xml
 	$(RTLMAKESKEL) $(RTLSTRINGS) --output=strings.new.xml
@@ -555,7 +575,7 @@ updatertlxml: cleanxml
 	$(RTLMAKESKEL) $(RTLCTYPES) --output=ctypes.new.xml
 	./cleanxml $(RTLNEWXML)
 
-updatefclxml: cleanxml
+updatefclxml: fpc_all
 	$(FCLMAKESKEL) $(FCLIOSTREAM) --output=iostream.new.xml
 	$(FCLMAKESKEL) $(FCLPIPES) --output=pipes.new.xml
 	$(FCLMAKESKEL) $(FCLSTREAMIO) --output=streamio.new.xml
@@ -642,7 +662,24 @@ rtl.pdf: rtl.tex rtl.inc $(INCLUDES)
 
 dvi : $(DVI)
 
+ifndef USEELINKS
 txt : dvi $(TXT)
+else
+#######################################################################
+# TXT creation
+#######################################################################
+fcl.txt: $(FCLXML)
+        $(FPDOC) $(FCLOPTS) --format=txt --output=fcl.txt
+	unix2dos fcl.txt
+
+rtl.txt: $(RTLXML)
+        $(FPDOC) $(RTLOPTS) --format=txt --output=rtl.txt
+	unix2dos rtl.txt
+
+user.txt: messages.inc
+
+txt : fpc_all comphelp.inc $(INCLUDES) $(TXT)
+endif
 
 ps : dvi $(PS)
 
@@ -689,14 +726,14 @@ rtl.chk: $(RTLXML)
         $(FPDOC) $(RTLOPTS) --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS)
         touch rtl.chk
 
-user.chk: $(INCLUDES) user.tex messages.inc relinkdocs$(EXE)
-prog.chk: $(INCLUDES) prog.tex relinkdocs$(EXE)
+user.chk: $(INCLUDES) user.tex messages.inc
+prog.chk: $(INCLUDES) prog.tex
 onechap.chk: $(INCLUDES) onechap.tex
-ref.chk: $(INCLUDES) ref.tex relinkdocs$(EXE)
-fpdoc.chk: $(INCLUDES) fpdoc.tex relinkdocs$(EXE)
+ref.chk: $(INCLUDES) ref.tex
+fpdoc.chk: $(INCLUDES) fpdoc.tex
 chart.chk: $(INCLUDES) chart.tex
 
-html: comphelp.inc $(INCLUDES) $(CHK)
+html: fpc_all comphelp.inc $(INCLUDES) $(CHK)
 
 chm: 
    $(MAKE) html HTMLFMT=chm
@@ -779,13 +816,13 @@ install:
 #####################################################################
 
 pstar:
-        $(MAKE) zipinstall ZIPTARGET=psinstall UNIXHier=1 USETAR=y FULLZIPNAME=doc-ps
+        $(MAKE) zipinstall ZIPTARGET=psinstall UNIXHier= USETAR=y FULLZIPNAME=doc-ps
 
 pszip:
         $(MAKE) zipinstall ZIPTARGET=psinstall UNIXHier= USEZIP=y FULLZIPNAME=doc-ps
 
 pdftar:
-        $(MAKE) zipinstall ZIPTARGET=pdfinstall UNIXHier=1 USETAR=y FULLZIPNAME=doc-pdf
+        $(MAKE) zipinstall ZIPTARGET=pdfinstall UNIXHier= USETAR=y FULLZIPNAME=doc-pdf
 
 pdfzip:
         $(MAKE) zipinstall ZIPTARGET=pdfinstall UNIXHier= USEZIP=y FULLZIPNAME=doc-pdf
@@ -797,7 +834,7 @@ txtzip:
         $(MAKE) zipinstall ZIPTARGET=txtinstall UNIXHier= USEZIP=y FULLZIPNAME=doc-txt
 
 htmltar:
-        $(MAKE) zipinstall ZIPTARGET=htmlinstall UNIXHier=1 USETAR=y FULLZIPNAME=doc-html
+        $(MAKE) zipinstall ZIPTARGET=htmlinstall UNIXHier= USETAR=y FULLZIPNAME=doc-html
 
 htmlzip:
         $(MAKE) zipinstall ZIPTARGET=htmlinstall UNIXHier= USEZIP=y FULLZIPNAME=doc-html
