@@ -1,0 +1,22 @@
+#
+# Make latex using tex4ht and elinks
+#
+
+HTFONTS=/usr/share/texmf/tex/generic/tex4ht/ht-fonts/
+TXTEXTS=.4ct .aux .dvi .xref .4tc .idx .log .tmp .lg .idv .html .kwd .css
+ELINKS=elinks
+ELINKSOPTS= --dump 1 --dump-charset us-ascii --dump-color-mode 0 \
+            --dump-width 80 --no-numbering -no-references
+	
+%.txt: %.tex
+	rm -f $(addprefix $(basename $<),$(TXTEXTS))
+	cp -f preamble.txt preamble.inc
+	$(LATEX) $<
+	-$(MAKEINDEX) $<.idx
+	$(LATEX) $<
+	-$(MAKEINDEX) $<.idx
+	$(LATEX) $<
+	tex4ht $<  && t4ht -p $< -m644
+	$(ELINKS) $(ELINKSOPTS) $(basename $<).html > $@
+	unix2dos $@
+	rm -f $(addprefix $(basename $<),$(TXTEXTS))
