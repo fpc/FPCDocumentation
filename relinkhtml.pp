@@ -139,8 +139,8 @@ end;
 function reducefilename(name:string):string;
 var i,j : integer;
 begin
-  {i:=1; j:=length(name);
-  while not (name[i] in ['0'..'9']) do inc(i);
+  i:=1; j:=length(name);
+  {while not (name[i] in ['0'..'9']) do inc(i);
  } result:=ChangeFileExt(copy(name,i,j-i+1),'');
   while length(result)<5 do result:='0'+result;
 end;
