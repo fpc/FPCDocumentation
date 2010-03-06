@@ -9463,103 +9463,135 @@ from program code, as it is called automatically whenever a target control needs
 must be overridden in case any specific action must be taken when the action must be updated. The implementation
 in <var>TDatalink</var> checks if the action handles the datasource, and then calls <var>Action.UpdateTarget</var>,
 passing it the datasource. If so, it returns <var>True</var>.
-
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDataLink.ExecuteAction"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default
      Declaration: Result -->
 <element name="TDataLink.UpdateAction.Result">
-<short></short>
+<short><var>True</var> if the action handles the datalink's datasource.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Action: TBasicAction -->
 <element name="TDataLink.UpdateAction.Action">
-<short></short>
+<short>Action to check</short>
 </element>
 
 <!-- property Visibility: public
      Declaration: Active : Boolean -->
 <element name="TDataLink.Active">
-<short></short>
+<short>Is the link active</short>
 <descr>
+<var>Active</var> determines whether the events of the dataset are passed on to the control connected to the actionlink.
+If it is set to <var>False</var>, then no events are passed between control and dataset. It is set to <link id="TDataset.Active"/> 
+whenever the <link id="TDatalink.DataSource">DataSource</link> property is set.
 </descr>
 <seealso>
+<link id="TDatalink.Datasource"/>
+<link id="TDatalink.ReadOnly"/>
+<link id="TDataset.Active"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: ActiveRecord : Integer -->
 <element name="TDataLink.ActiveRecord">
-<short></short>
+<short>Currently active record</short>
 <descr>
+<var>ActiveRecord</var> returns the index of the active record in the dataset's record buffer for this datalink.
 </descr>
 <seealso>
+<link id="TDatalink.BOF"/>
+<link id="TDatalink.EOF"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: BOF : Boolean -->
 <element name="TDataLink.BOF">
-<short></short>
+<short>Is the dataset at the first record</short>
 <descr>
+<var>BOF</var> returns <link id="TDataset.BOF"/> if the dataset is available, <var>True</var> otherwise.
 </descr>
 <seealso>
+<link id="TDatalink.EOF"/>
+<link id="TDataset.BOF"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: BufferCount : Integer -->
 <element name="TDataLink.BufferCount">
-<short></short>
+<short>Set to the number of record buffers this datalink needs.</short>
 <descr>
+<var>BufferCount</var> can be set to the number of buffers that the dataset should manage on behalf of the control 
+connected to this datalink. By default, this is 1. Controls that must display more than 1 buffer (such as grids) 
+can set this to a higher value.
 </descr>
 <seealso>
+<link id="TDataset.ActiveBuffer"/>
+<link id="TDatalink.ActiveRecord"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: DataSet : TDataSet -->
 <element name="TDataLink.DataSet">
-<short></short>
+<short>Dataset this datalink is connected to</short>
 <descr>
+<var>Dataset</var> equals <var>Datasource.Dataset</var> if the datasource is set, or <var>Nil</var> otherwise.
 </descr>
 <seealso>
+<link id="TDatalink.DataSource"/>
+<link id="TDataset"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: DataSource : TDatasource -->
 <element name="TDataLink.DataSource">
-<short></short>
+<short>Datasource this datalink is connected to</short>
 <descr>
+<var>Datasource</var> should be set to a <link id="TDatasource"/>  instance to get access to the dataset it is connected to.
+A datalink never points directly to a <link id="TDataset"/> instance, always to a datasource. When the datasource is enabled 
+or disabled, all <var>TDatalink</var> instances connected  to it are enabld or disabled at once.
 </descr>
 <seealso>
+<link id="TDataset"/>
+<link id="TDatasource"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: DataSourceFixed : Boolean -->
 <element name="TDataLink.DataSourceFixed">
-<short></short>
+<short>Can the datasource be changed</short>
 <descr>
+<var>DatasourceFixed</var> can be set to <var>True</var> to prevent changing of the <link id="TDataLink.Datasource">DataSource</link> property.
+When lengthy operations are in progress, this can be done to prevent user code (e.g. event handlers) from changing the datasource property which 
+might interfere with the operation in progress.
 </descr>
 <seealso>
+<link id="TDataLink.DataSource"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: Editing : Boolean -->
 <element name="TDataLink.Editing">
-<short></short>
+<short>Is the dataset in edit mode</short>
 <descr>
+<var>Editing</var> determines whether the dataset is in one of the edit states (dsEdit,dsInsert). It can be set into this mode by calling the <link id="TDatalink.Edit"/> method.
+Never attempt to set the dataset in editing mode directly. The <var>Edit</var> method will perform the needed checks prior to setting the dataset in edit mode and will return
+<var>True</var> if the dataset was succesfully set in the editing state.
 </descr>
 <seealso>
+<link id="TDatalink.Edit"/>
+<link id="TDataset.Edit"/>
 </seealso>
 </element>
 
@@ -9568,38 +9600,56 @@ passing it the datasource. If so, it returns <var>True</var>.
 <element name="TDataLink.Eof">
 <short></short>
 <descr>
+<var>EOF</var> returns <link id="TDataset.EOF"/> if the dataset is available, <var>True</var> otherwise.
 </descr>
 <seealso>
+<link id="TDatalink.BOF"/>
+<link id="TDataset.EOF"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: ReadOnly : Boolean -->
 <element name="TDataLink.ReadOnly">
-<short></short>
+<short>Is the link readonly</short>
 <descr>
+<var>ReadOnly</var> can be set to <var>True</var> to indicate that the link is read-only, i.e. the connected control will not modify the dataset.
+Methods as <link id="TDatalink.Edit"/> will check this property and fail if the link is read-only. This setting has no effect on the communication 
+of dataset events to the datalink: the <link id="TDatalink.Active"/> property can be used to disable delivey of events to the datalink.
 </descr>
 <seealso>
+<link id="TDatalink.Active"/>
+<link id="TDatalink.edit"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: RecordCount : Integer -->
 <element name="TDataLink.RecordCount">
-<short></short>
+<short>Number of records in the buffer of the dataset</short>
 <descr>
+<var>RecordCount</var> returns the number of records in the dataset's buffer. It is limited by the <link id="TDatalink.BufferCount"/> property: <var>RecordCount</var> i
+s always less than <var>Buffercount</var>.
 </descr>
 <seealso>
+<link id="TDatalink.BufferCount"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: DetailDataSet : TDataSet -->
 <element name="TDetailDataLink.DetailDataSet">
-<short></short>
+<short>Detail dataset in Master-detail relation</short>
 <descr>
+<var>DetailDataset</var> is the detail dataset in a master-detail relationship between 2 datasets.
+<var>DetailDataset</var> is always <var>Nil</var> in <var>TDetailDatalink</var> and is only filled in 
+in descendent classes like <link id="TMasterDatalink"/>. The master dataset is available through the 
+regular <link id="TDataLink.DataSource"/> property.
 </descr>
 <seealso>
+<link id="TDataset"/>
+<link id="TMasterDatalink"/>
+<link id="TDataLink.DataSource"/>
 </seealso>
 </element>
 
@@ -9611,250 +9661,351 @@ passing it the datasource. If so, it returns <var>True</var>.
 
 <!-- class Visibility: default -->
 <element name="TMasterDataLink">
-<short></short>
+<short>Datalink for Master-Detail relationships between datasets.</short>
 <descr>
+<p>
+<var>TMasterDataLink</var> is a <var>TDatalink</var> descendent which handles master-detail relations. 
+It can be used in <link id="TDataset"/> descendents that must have master-detail functionality: 
+the detail dataset creates an instance of <var>TMasterDataLink</var> to point to the master dataset, 
+which is subsequently available through the <link id="TDataLink.Dataset"/> property.
+</p>
+<p>
+The class also provides functionailty for keeping a list of fields that make up the master-detail
+functionality, in the <link id="TMasterDatalink.FieldNames"/> and <link id="TMasterDataLink.Fields"/> properties.
+</p>
+<p>
+This class should never be used in application code.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDataset"/>
+<link id="TDatalink.DataSource"/>
+<link id="TDatalink.DataSet"/>
+<link id="TMasterDatalink.FieldNames"/>
+<link id="TMasterDataLink.Fields"/>
 </seealso>
 </element>
 
 <!-- constructor Visibility: public
      Declaration: constructor Create(ADataSet: TDataSet);  Virtual -->
 <element name="TMasterDataLink.Create">
-<short></short>
+<short>Create a new instance of <var>TMasterDataLink</var></short>
 <descr>
+<var>Create</var> initializes a new instance of <var>TMasterDataLink</var>. The <var>ADataset</var> parameter
+is the detail dataset in the master-detail relation: it is saved in the <link id="TDetailDataLink.DetailDataset">DetailDataset</link>
+property. The master dataset must be set through the <link id="TDatalink.DataSource">DataSource</link> property, and is usually
+set by the applictaion programmer.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDetailDataLink.DetailDataset"/>
+<link id="TDatalink.Datasource"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: ADataSet: TDataSet -->
 <element name="TMasterDataLink.Create.ADataSet">
-<short></short>
+<short>Detail dataset of the master-detail relation.</short>
 </element>
 
 <!-- destructor Visibility: public
      Declaration: destructor Destroy;  Override -->
 <element name="TMasterDataLink.Destroy">
-<short></short>
+<short>Free the datalink instance from memory</short>
 <descr>
+<var>Destroy</var> cleans up the resources used by <var>TMasterDatalink</var> and then calls the inherited destructor.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TMasterDatalink.Create"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: FieldNames : String -->
 <element name="TMasterDataLink.FieldNames">
-<short></short>
+<short>List of fieldnames that make up the master-detail relationship</short>
 <descr>
+<var>FieldNames</var> is a semicolon-separated list of fieldnames in the master dataset (<link id="TDatalink.Dataset"/>) 
+on which the master-detail relationship is based. Setting this property will fill the <link id="TMasterDataLink.Fields"/> 
+property with the field instances of the master dataset. 
 </descr>
 <seealso>
+<link id="TMasterDataLink.Fields"/>
+<link id="TDatalink.Dataset"/>
+<link id="TDataset.GetFieldList"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: Fields : TList -->
 <element name="TMasterDataLink.Fields">
-<short></short>
+<short>List of fields as specified in <var>FieldNames</var></short>
 <descr>
+<var>Fields</var> is filled with the <link id="TField"/> instances from the master dataset (<link id="TDatalink.Dataset"/>) when
+the <link id="TMasterDatalink.FieldNames">FieldNames</link> property is set, and when the master dataset opens.
 </descr>
 <seealso>
+<link id="TField"/>
+<link id="TMasterDatalink.FieldNames"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: OnMasterChange : TNotifyEvent -->
 <element name="TMasterDataLink.OnMasterChange">
-<short></short>
+<short>Called whenever the master dataset data changes</short>
 <descr>
+<var>OnMasterChange</var> is called whenever the field values in the master dataset changes, i.e. when it becomes active,
+or when the current record changes. If the <link id="TMasterDataLink.Fields"/> list is empty, <link id="TMasterDataLink.OnMasterDisable"/> is called instead.
 </descr>
 <seealso>
+<link id="TMasterDataLink.OnMasterDisable"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: OnMasterDisable : TNotifyEvent -->
 <element name="TMasterDataLink.OnMasterDisable">
-<short></short>
+<short>Called whenever the master dataset is disabled</short>
 <descr>
+<var>OnMasterDisable</var> is called whenever the master dataset is disabled, or when it is active and the field list is empty.
 </descr>
 <seealso>
+<link id="TMasterDataLink.OnMasterChange"/>
 </seealso>
 </element>
 
 <!-- procedure type Visibility: default
      Declaration: TDataChangeEvent = procedure(Sender: TObject;Field: TField) of object -->
 <element name="TDataChangeEvent">
-<short></short>
+<short>Event handler prototype when a field's data has changed.</short>
 <descr>
+<var>TDataChangeEvent</var> is the event handler prototype for the <link id="TDatasource.OnDataChange"/> event.
+The sender parameter is the <var>TDatasource</var> instance that triggered the event, and the <var>Field</var> 
+parameter is the field whose data has changed. If the dataset has scrolled, then the <var>Field</var> parameter 
+is <var>Nil</var>.
 </descr>
 <seealso>
+<link id="TDatasource.OnDataChange"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Sender: TObject -->
 <element name="TDataChangeEvent.Sender">
-<short></short>
+<short>Datasource that triggered the event</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Field: TField -->
 <element name="TDataChangeEvent.Field">
-<short></short>
+<short>Field that changed, or <var>Nil</var> if record changed.</short>
 </element>
 
 <!-- constructor Visibility: public
      Declaration: constructor Create(AOwner: TComponent);  Override -->
 <element name="TDataSource.Create">
-<short></short>
+<short>Create a new instance of <var>TDatasource</var></short>
 <descr>
+<var>Create</var> initializes a new instance of <var>TDatasource</var>. 
+It simply allocates some resources and then calls the inherited constructor.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDatasource.Destroy"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: AOwner: TComponent -->
 <element name="TDataSource.Create.AOwner">
-<short></short>
+<short>Owner for the new <var>TDatasource</var> instance.</short>
 </element>
 
 <!-- destructor Visibility: public
      Declaration: destructor Destroy;  Override -->
 <element name="TDataSource.Destroy">
-<short></short>
+<short>Remove a <var>TDatasource</var> instance from memory</short>
 <descr>
+<var>Destroy</var> notifies all <link id="TDataLink"/> instances connected to it that the dataset is no loner available, 
+and then removes itself from the <var>TDatalink</var> instance. It then cleans up all resources and calls the inherited 
+constructor.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDatasource.Create"/>
+<link id="TDatalink"/>
 </seealso>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure Edit -->
 <element name="TDataSource.Edit">
-<short></short>
+<short>Put the dataset in edit mode, if needed</short>
 <descr>
+<var>Edit</var> will check <link id="TDatasource.AutoEdit">AutoEdit</link>: if it is <var>True</var>, then it puts the 
+<link id="TDatasource.Dataset">Dataset</link> it is connected to in edit mode, if it was in browse mode. If <var>AutoEdit</var> 
+is <var>False</var>, then nothing happens.  Application or component code that deals with GUI development should always 
+attempt to set a dataset in edit mode through this method instead of calling <link id="TDataset.Edit"/> directly.
 </descr>
 <errors>
+An <link id="EDatabaseError"/> exception can occur if the dataset is read-only or fails to set itself in edit mode.
+(e.g. unidirectional datasets).
 </errors>
 <seealso>
+<link id="TDatasource.AutoEdit"/>
+<link id="TDataset.Edit"/>
+<link id="TDataset.State"/>
 </seealso>
 </element>
 
 <!-- function Visibility: public
      Declaration: function IsLinkedTo(ADataSet: TDataSet) : Boolean -->
 <element name="TDataSource.IsLinkedTo">
-<short></short>
+<short>Check if a dataset is linked to a certain dataset</short>
 <descr>
+<var>IsLinkedTo</var> checks if it is somehow linked to <var>ADataset</var>: it checks the <link
+id="TDatasource.Dataset">Dataset</link> property, and returns <var>True</var> if it is the same. 
+If not, it continues by checking any detail dataset fields that the dataset posesses (recursively). 
+This function can be used to detect circular links in e.g. master-detail relationships.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDatasource.Dataset"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default
      Declaration: Result -->
 <element name="TDataSource.IsLinkedTo.Result">
-<short></short>
+<short><var>True</var> if the datasource is linked to <var>ADataset</var></short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: ADataSet: TDataSet -->
 <element name="TDataSource.IsLinkedTo.ADataSet">
-<short></short>
+<short>Dataset to check</short>
 </element>
 
 <!-- property Visibility: public
      Declaration: State : TDataSetState -->
 <element name="TDataSource.State">
-<short></short>
+<short>State of the dataset</short>
 <descr>
+<var>State</var> contains the <link id="Tdataset.State">State</link> of the dataset it is connected to, or <var>dsInactive</var> if the dataset property is not set or
+the datasource is not enabled. Components connected to a dataset through a datasource property should always check <var>TDatasource.State</var> instead of checking 
+<link id="TDataset.State"/> directly, to take into account the effect of the <link id="TDatasource.Enabled">Enabled</link> property.
 </descr>
 <seealso>
+<link id="TDataset.State"/>
+<link id="TDatasource.Enabled"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: AutoEdit : Boolean -->
 <element name="TDataSource.AutoEdit">
-<short></short>
+<short>Should the dataset be put in edit mode automatically</short>
 <descr>
+<var>AutoEdit</var> can be set to <var>True</var> to prevent visual controls from putting the dataset in edit mode. Visual controls use the <link id="TDatasource.Edit"/> method to
+attempt to put the dataset in edit mode as soon as the user changes something. If <var>AutoEdit</var> is set to <var>False</var> then the <var>Edit</var> method does nothing.
+The effect is that the user must explicitly set the dataset in edit mode (by clicking some button or some other action) before the fields can be edited.
 </descr>
 <seealso>
+<link id="TDatasource.Edit"/>
+<link id="TDataset.Edit"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: DataSet : TDataSet -->
 <element name="TDataSource.DataSet">
-<short></short>
+<short>Dataset this datasource is connected to</short>
 <descr>
+<var>Dataset</var> must be set by the applictaion programmer to the <link id="TDataset"/> instance for which this datasource is handling events.
+Setting it to <var>Nil</var> will disable all controls that are connected to this datasource instance.  Once it is set and the datasource is enabled, 
+the datasource will start  sending data events to the controls or components connected to it.
 </descr>
 <seealso>
+<link id="TDataset"/>
+<link id="TDatasource.Enabled"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: Enabled : Boolean -->
 <element name="TDataSource.Enabled">
-<short></short>
+<short>Enable or disable sending of events</short>
 <descr>
+<var>Enabled</var> is by default set to <var>True</var>: the datasource instance communicates events from the dataset to components connected to
+the datasource, and vice versa: components can interact with the dataset. If the <var>Enabled</var> property is set to <var>False</var> then no 
+events are communicated to connected components: it is as if the dataset property was set to <var>Nil</var>. Reversely, the components cannot 
+interact with the dataset if the <var>Enabled</var> property is set to <var>False</var>.
 </descr>
 <seealso>
+<link id="TDataset"/>
+<link id="TDatasource.Dataset"/>
+<link id="TDatasource.AutoEdit"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: OnStateChange : TNotifyEvent -->
 <element name="TDataSource.OnStateChange">
-<short></short>
+<short>Called whenever the state of the dataset changes</short>
 <descr>
+<var>OnStateChange</var> is called whenever the <link id="TDataset.State"/> property changes, and the datasource is enabled. It can be used in application code
+to react to state changes: enabling or disabling non-DB-Aware controls, setting empty values etc.
 </descr>
 <seealso>
+<link id="TDatasource.OnUpdateData"/>
+<link id="TDatasource.OnStateChange"/>
+<link id="TDataset.State"/>
+<link id="TDatasource.Enabled"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: OnDataChange : TDataChangeEvent -->
 <element name="TDataSource.OnDataChange">
-<short></short>
+<short>Called whenever data changes in the current record</short>
 <descr>
+<var>OnDatachange</var> is called whenever a field value changes: if the <var>Field</var> parameter is set, a single field value changed. 
+If the <var>Field</var> parameter is <var>Nil</var>, then the whole record changed: when the dataset is opened, 
+when the user scrolls to a new record. This event handler can be set to react to data changes:
+to update the contents of non-DB-aware controls for instance. The event is not called when the datasource is not enabled.
 </descr>
 <seealso>
+<link id="TDatasource.OnUpdateData"/>
+<link id="TDatasource.OnStateChange"/>
+<link id="TDataset.AfterScroll"/>
+<link id="TField.OnChange"/>
+<link id="TDatasource.Enabled"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: OnUpdateData : TNotifyEvent -->
 <element name="TDataSource.OnUpdateData">
-<short></short>
+<short>Called whenever the data in the dataset must be updated</short>
 <descr>
+<var>OnUpdateData</var> is called whenever the dataset needs the latest data from the controls: usually just before a <link id="TDataset.Post"/>
+operation. It can be used to copy data from non-db-aware controls to the dataset just before the dataset is posting the changes to the underlying 
+database.
 </descr>
 <seealso>
+<link id="TDatasource.OnDataChange"/>
+<link id="TDatasource.OnStateChange"/>
+<link id="TDataset.Post"/>
 </seealso>
 </element>
 
 <!-- "class of" type Visibility: default
      Declaration: TDBDatasetClass = Class of TDBDataset -->
 <element name="TDBDatasetClass">
-<short></short>
+<short>Class of <var>TDBDataset</var></short>
 <descr>
+<var>TDBDatasetClass</var> is the class pointer for <link id="TDBDataset"/>
 </descr>
 <seealso>
+<link id="TDBDataset"/>
 </seealso>
 </element>
 
@@ -9866,116 +10017,174 @@ passing it the datasource. If so, it returns <var>True</var>.
 
 <!-- class Visibility: default -->
 <element name="TDBDataset">
-<short></short>
+<short>Dataset connected to a database.</short>
 <descr>
+<p>
+<var>TDBDataset</var> is a <var>TDataset</var> descendent which introduces the concept of a database: a central component (<link id="TDatabase"/>)
+which represents a connection to a database. This central component is exposed in the <link id="TDBDataset.Database"/> property. When the database
+is no longer connected, or is no longer in memory, all <var>TDBDataset</var> instances connected to it are disabled.
+</p>
+<p>
+<var>TDBDataset</var> also introduces the notion of a transaction, exposed in the <link id="TDBDataset.Transaction">Transaction</link> property.
+</p>
+<p>
+<var>TDBDataset</var> is an abstract class, it should never be used directly.
+</p>
+<p>
+Dataset component writers should descend their component from <var>TDBDataset</var> if they wish to introduce a central database connection component.
+The database connection logic will be handled automatically by <var>TDBDataset</var>.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDatabase"/>
+<link id="TTransaction"/>
 </seealso>
 </element>
 
 <!-- destructor Visibility: public
      Declaration: destructor destroy;  Override -->
 <element name="TDBDataset.destroy">
-<short></short>
+<short>Remove the <var>TDBDataset</var> instance from memory.</short>
 <descr>
+<var>Destroy</var> will disconnect the <var>TDBDataset</var> from its 
+<link id="TDBDataset.Database">Database</link> and <link id="TDBDataset.Transaction">Transaction</link>. 
+After this it calls the inherited destructor.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDBDataset.Database"/>
+<link id="TDatabase"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: DataBase : TDataBase -->
 <element name="TDBDataset.DataBase">
-<short></short>
+<short>Database this dataset is connected to</short>
 <descr>
+<p><var>Database</var> should be set to the <link id="TDatabase"/> instance this dataset is connected to. 
+It can only be set when the dataset is closed.
+</p>
+<p>
+Descendent classes should check in the property setter whether the database instance is of the correct class.
+</p>
 </descr>
+<errors>
+If the property is set when the dataset is active, an <link id="EDatabaseError"/> exception will be raised.
+</errors>
 <seealso>
+<link id="TDatabase"/>
+<link id="TDBDataset.Transaction"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: Transaction : TDBTransaction -->
 <element name="TDBDataset.Transaction">
-<short></short>
+<short>Transaction in which this dataset is running.</short>
 <descr>
+<p>
+<var>Transaction</var> points to a <link id="TDBTransaction"/> component that represents the transaction this 
+dataset is active in. This property should only be used for databases that support transactions.
+</p>
+<p>
+The property can only be set when the dataset is disabled.
+</p>
 </descr>
 <seealso>
+<link id="TDBTransaction"/>
+<link id="TDBDataset.Database"/>
 </seealso>
 </element>
 
 <!-- "class of" type Visibility: default
      Declaration: TDBTransactionClass = Class of TDBTransaction -->
 <element name="TDBTransactionClass">
-<short></short>
+<short>Class of <var>TDBTransaction</var></short>
 <descr>
+<var>TDBTransactionClass</var> is the class pointer for the <link id="TDBTransaction"/> class.
 </descr>
 <seealso>
+<link id="TDBTransaction"/>
 </seealso>
 </element>
 
 <!-- constructor Visibility: public
      Declaration: constructor Create(AOwner: TComponent);  Override -->
 <element name="TDBTransaction.Create">
-<short></short>
+<short>Transaction property</short>
 <descr>
+<var>Create</var> initializes a new <var>TDBTransaction</var> instance. It sets up the necessary
+resources, after having called the inherited constructor.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDBTransaction.Destroy"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: AOwner: TComponent -->
 <element name="TDBTransaction.Create.AOwner">
-<short></short>
+<short>Owner for the new <var>TDBTransaction</var> instance.</short>
 </element>
 
 <!-- destructor Visibility: public
      Declaration: destructor destroy;  Override -->
 <element name="TDBTransaction.destroy">
-<short></short>
+<short>Remove a <var>TDBTransaction</var> instance from memory.</short>
 <descr>
+<var>Destroy</var> first disconnects all connected <link id="TDBDataset"/> instances
+and then cleans up the resources allocated in the <link id="TDBTransaction.Create">Create</link> 
+constructor. After that it calls the inherited destructor.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDBTransaction.Create"/>
 </seealso>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure CloseDataSets -->
 <element name="TDBTransaction.CloseDataSets">
-<short></short>
+<short>Close all connected datasets</short>
 <descr>
+<var>CloseDatasets</var> closes all connected datasets (All <link id="TDBDataset"/> instances whose 
+<link id="TDBDataset.Transaction">Transaction</link> property points to this <var>TDBTransaction</var> instance).
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDBDataset"/>
+<link id="TDBDataset.Transaction"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: DataBase : TDataBase -->
 <element name="TDBTransaction.DataBase">
-<short></short>
+<short>Database this transaction is connected to</short>
 <descr>
+<var>Database</var> points to the database that this transaction is part of. This property can be set only when
+the transaction is not active.
 </descr>
+<errors>
+Setting this property to a new value when the transaction is active will result in an <link id="EDatabaseError"/> 
+exception.
+</errors>
 <seealso>
+<link id="TDBTransaction.Active"/>
+<link id="TDatabase"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: Active : Boolean -->
 <element name="TDBTransaction.Active">
-<short></short>
+<short>Is the transaction active or not</short>
 <descr>
+<var>Active</var> is <var>True</var> if a transaction was started using <link id="TDBTransaction.StartTransaction"/>. 
+Reversely, setting <var>Active</var> to <var>True</var> will call <var>StartTransaction</var>, setting it to <var>False</var> 
+will call <link id="TDBTransaction.EndTransaction"/>.
 </descr>
 <seealso>
+<link id="TDBTransaction.StartTransaction"/>
+<link id="TDBTransaction.EndTransaction"/>
 </seealso>
 </element>
 
@@ -9983,29 +10192,33 @@ passing it the datasource. If so, it returns <var>True</var>.
      Declaration: TLoginEvent = procedure(Sender: TObject;Username: String;
                         Password: String) of object -->
 <element name="TLoginEvent">
-<short></short>
+<short>Login event handler</short>
 <descr>
+<var>TLoginEvent</var> is the prototype for a the the <link id="TCustomConnection.OnLogin"/>
+event handler. It gets passed the <var>TCustomConnection</var> instance that is trying to login,
+and the initial username and password.
 </descr>
 <seealso>
+<link id="TCustomConnection.OnLogin"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Sender: TObject -->
 <element name="TLoginEvent.Sender">
-<short></short>
+<short><var>TCustomConnection</var> that is attempting a login</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Username: String -->
 <element name="TLoginEvent.Username">
-<short></short>
+<short>Username used to log in</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Password: String -->
 <element name="TLoginEvent.Password">
-<short></short>
+<short>Password used to log in.</short>
 </element>
 
 <!--
@@ -10016,417 +10229,579 @@ passing it the datasource. If so, it returns <var>True</var>.
 
 <!-- class Visibility: default -->
 <element name="TCustomConnection">
-<short></short>
+<short>Abstract class for connections to a server</short>
 <descr>
+<var>TCustomConnection</var> must be used for all database classes that need a connection to a server.
+The class introduces some methods and classes to activate the connection (<link id="TCustomConnection.Open">Open</link>)
+and to deactivate the connection (<link id="TCustomConnection.Close"/>), plus a property to inspect the state 
+(<link id="TCustomConnection.Connected">Connected</link>) of the connected.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TCustomConnection.Open"/>
+<link id="TCustomConnection.Close"/>
+<link id="TCustomConnection.Connected"/>
 </seealso>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure Close -->
 <element name="TCustomConnection.Close">
-<short></short>
+<short>Close the connection</short>
 <descr>
+<p>
+<var>Close</var> closes the connection with the server if it was connected.  
+Calling this method first triggers the <link id="TCustomConnection.BeforeDisconnect">BeforeDisconnect</link> event.
+If an exception is raised during the execution of that event handler, the disconnect process is aborted. After calling
+this event, the connection is actually closed. After the
+connection was closed, the <link id="TCustomConnection.AfterDisconnect">AfterDisconnect</link> event is triggered.
+</p>
+<p>
+Calling the <var>Close</var> method is equivalent to setting the <link id="TCustomConnection.Connected">Connected</link>
+property to <var>False</var>.
+</p>
 </descr>
 <errors>
+If the connection cannot be broken for some reason, an <link id="EDatabaseError"/> exception will be raised.
 </errors>
 <seealso>
+<link id="TCustomConnection.BeforeDisconnect"/>
+<link id="TCustomConnection.AfterDisconnect"/>
+<link id="TCustomConnection.Open"/>
+<link id="TCustomConnection.Connected"/>
 </seealso>
 </element>
 
 <!-- destructor Visibility: public
      Declaration: destructor Destroy;  Override -->
 <element name="TCustomConnection.Destroy">
-<short></short>
+<short>Remove the <var>TCustomconnection</var> instance from memory</short>
 <descr>
+<var>Destroy</var> closes the connection, and then calls the inherited destructor.
 </descr>
 <errors>
+If an exception is raised during the disconnect process, an exception will be raise, and the instance is not
+removed from memory.
 </errors>
 <seealso>
+<link id="TCustomConnection.Close"/>
 </seealso>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure Open -->
 <element name="TCustomConnection.Open">
-<short></short>
+<short>Makes the connection to the server</short>
 <descr>
+<p>
+<var>Open</var> establishes the connection with the server if it was not yet connected.
+Calling this method first triggers the <link id="TCustomConnection.BeforeConnect">BeforeConnect</link> event.
+If an exception is raised during the execution of that event handler, the connect process is aborted.  
+If <link id="TCustomConnection.LoginPrompt">LoginPrompt</link> is <var>True</var>, the <link id="TCustomConnection.OnLogin">OnLogin</link>  
+event handler is called. Only after this event, the connection is actually established. After the
+connection was established, the <link id="TCustomConnection.AfterConnect">AfterConnect</link> event is triggered.
+</p>
+<p>
+Calling the <var>Open</var> method is equivalent to setting the <link id="TCustomConnection.Connected">Connected</link>
+property to <var>True</var>.
+</p>
 </descr>
 <errors>
+If an exception is raised during the <var>BeforeConnect</var> or <var>OnLogin</var> handlers, the connection is not actually established.
 </errors>
 <seealso>
+<link id="TCustomConnection.BeforeConnect"/>
+<link id="TCustomConnection.LoginPrompt"/>
+<link id="TCustomConnection.OnLogin"/>
+<link id="TCustomConnection.AfterConnect"/>
+<link id="TCustomConnection.Connected"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: DataSetCount : LongInt -->
 <element name="TCustomConnection.DataSetCount">
-<short></short>
+<short>Number of datasets connected to this connection</short>
 <descr>
+<var>DatasetCount</var> is the number of datasets connected to this connection component. 
+The actual datasets are available through the <link id="TCustomConnection.Datasets">Datasets</link>
+array property.
+As implemented in <var>TCustomConnection</var>, this property is always zero. Descendent classes implement
+the actual count.
 </descr>
 <seealso>
+<link id="TDataset"/>
+<link id="TCustomConnection.Datasets"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: DataSets[Index: LongInt]: TDataSet -->
 <element name="TCustomConnection.DataSets">
-<short></short>
+<short>Datasets linked to this connection</short>
 <descr>
+<var>Datasets</var> allows indexed access to the datasets connected to this connection. <var>Index</var> is a zero-based indexed, it's maximum value is <link id="TCustomConnection.DatasetCount">DatasetCount-1</link>.
 </descr>
 <seealso>
+<link id="TCustomConnection.DatasetCount">DatasetCount</link>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Index: LongInt -->
 <element name="TCustomConnection.DataSets.Index">
-<short></short>
+<short>Zero based index, upper bound equals <var>DatasetCount-1</var></short>
 </element>
 
 <!-- property Visibility: published
      Declaration: Connected : Boolean -->
 <element name="TCustomConnection.Connected">
-<short></short>
+<short>Is the connection established or not</short>
 <descr>
+<var>Connected</var> is <var>True</var> if the connection to the server is established, <var>False</var> if it is disconnected. 
+The property can be set to <var>True</var> to establish a connection (equivalent to calling <link id="TCustomConnection.Open"/>, 
+or to <var>False</var> to break it (equivalent to calling <link id="TCustomConnection.Close"/>.
 </descr>
 <seealso>
+<link id="TCustomConnection.Open"/>
+<link id="TCustomConnection.Close"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: LoginPrompt : Boolean -->
 <element name="TCustomConnection.LoginPrompt">
-<short></short>
+<short>Should the <var>OnLogin</var> be triggered</short>
 <descr>
+<var>LoginPrompt</var> can be set to <var>True</var> if the <var>OnLogin</var> handler should be called when the <var>Open</var> 
+method is called. If it is not <var>True</var>, then the event handler is not called.
 </descr>
 <seealso>
+<link id="TCustomConnection.OnLogin"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: AfterConnect : TNotifyEvent -->
 <element name="TCustomConnection.AfterConnect">
-<short></short>
+<short>Event triggered after a connection is made.</short>
 <descr>
+<var>AfterConnect</var> is called after a connection is succesfully established in <link id="TCustomConnection.Open"/>. It can be used to open
+datasets, or indicate a connection status change.
 </descr>
 <seealso>
+<link id="TCustomConnection.Open"/>
+<link id="TCustomConnection.BeforeConnect"/>
+<link id="TCustomConnection.OnLogin"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: AfterDisconnect : TNotifyEvent -->
 <element name="TCustomConnection.AfterDisconnect">
-<short></short>
+<short>Event triggered after a connection is closed</short>
 <descr>
+<var>AfterDisConnect</var> is called after a connection is succesfully closed in <link id="TCustomConnection.Close"/>.
+It can be used for instance to indicate a connection status change.
 </descr>
 <seealso>
+<link id="TCustomConnection.Close"/>
+<link id="TCustomConnection.BeforeDisconnect"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: BeforeConnect : TNotifyEvent -->
 <element name="TCustomConnection.BeforeConnect">
-<short></short>
+<short>Event triggered before a connection is made.</short>
 <descr>
+<var>BeforeConnect</var> is called before a connection is attempted in <link id="TCustomConnection.Open"/>. It can be used to set connection parameters, or to abort the
+establishing of the connection: if an exception is raised during this event, the connection attempt is aborted.
 </descr>
 <seealso>
+<link id="TCustomConnection.Open"/>
+<link id="TCustomConnection.AfterConnect"/>
+<link id="TCustomConnection.OnLogin"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: BeforeDisconnect : TNotifyEvent -->
 <element name="TCustomConnection.BeforeDisconnect">
-<short></short>
+<short>Event triggered before a connection is closed</short>
 <descr>
+<var>BeforeDisConnect</var> is called before a connection is closed in <link id="TCustomConnection.Close"/>.
+It can be used for instance to check for unsaved changes, to save thise changes, or to abort the disconnect
+operation: if an exception is raised during the event handler, the disconnect operation is aborted entirely.
 </descr>
 <seealso>
+<link id="TCustomConnection.Close"/>
+<link id="TCustomConnection.AfterDisconnect"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: OnLogin : TLoginEvent -->
 <element name="TCustomConnection.OnLogin">
-<short></short>
+<short>Event triggered when a login prompt is shown.</short>
 <descr>
+<var>OnLogin</var> is triggered when the connection needs a login prompt during the  call: 
+it is triggered when the <link id="TCustomConnection.LoginPrompt">LoginPrompt</link> property is <var>True</var>, after the 
+<link id="TCustomConnection.BeforeConnect"/> event, but before the connection is actually established.
 </descr>
 <seealso>
+<link id="TCustomConnection.BeforeConnect"/>
+<link id="TCustomConnection.LoginPrompt"/>
+<link id="TCustomConnection.Open"/>
 </seealso>
 </element>
 
 <!-- "class of" type Visibility: default
      Declaration: TDatabaseClass = Class of TDataBase -->
 <element name="TDatabaseClass">
-<short></short>
+<short>Class pointer for <var>TDatabase</var>.</short>
 <descr>
+<var>TDatabaseClass</var> is the class pointer for the <link id="TDatabase"/> class.
 </descr>
 <seealso>
+<link id="TDatabase"/>
 </seealso>
 </element>
 
 <!-- constructor Visibility: public
      Declaration: constructor Create(AOwner: TComponent);  Override -->
 <element name="TDatabase.Create">
-<short></short>
+<short>Initialize a new <var>TDatabase</var> class instance.</short>
 <descr>
+<var>Create</var> initializes a new instance of the <var>TDatabase</var> class. It allocates some resources
+and then calls the inherited constructor.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDBDataset"/>
+<link id="TTransaction"/>
+<link id="TDatabase.Destroy"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: AOwner: TComponent -->
 <element name="TDatabase.Create.AOwner">
-<short></short>
+<short>Owner for the new <var>TDatabase</var> instance.</short>
 </element>
 
 <!-- destructor Visibility: public
      Declaration: destructor Destroy;  Override -->
 <element name="TDatabase.Destroy">
-<short></short>
+<short>Remove a <var>TDatabase</var> instance from memory.</short>
 <descr>
+<var>Destroy</var> starts by disconnecting the database (thus closing all datasets and ending all transactions), 
+then notifies all connected datasets and transactions that it is about to be released.
+After this, it releases all resources used by the <var>TDatabase</var> instance
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDatabase.CloseDatasets"/>
 </seealso>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure CloseDataSets -->
 <element name="TDatabase.CloseDataSets">
-<short></short>
+<short>Close all connected datasets</short>
 <descr>
+<var>CloseDatasets</var> closes all connected datasets. It is called automatically when the connection is closed.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TCustomConnection.Close"/>
+<link id="TDatabase.CloseTransactions"/>
 </seealso>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure CloseTransactions -->
 <element name="TDatabase.CloseTransactions">
-<short></short>
+<short>End all transactions</short>
 <descr>
+<var>CloseTransaction</var> calls <link id="TTransaction.EndTransaction"/> on all connected transactions. 
+It is called automatically when the connection is closed, after all datasets are closed.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TCustomConnection.Close"/>
+<link id="TDatabase.CloseDatasets"/>
 </seealso>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure StartTransaction;  Virtual;  Abstract -->
 <element name="TDatabase.StartTransaction">
-<short></short>
+<short>Start a new transaction.</short>
 <descr>
+<var>StartTransaction</var> must be implemented by descendent classes to start a new transaction.
+This method is provided for Delphi compatibility: new applications shoud use a <link id="TDBTransaction"/> 
+component instead and invoke the <link id="TDBTransaction.StartTRansaction"/> method.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDBTransaction"/>
+<link id="TDBTransaction.StartTRansaction"/>
 </seealso>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure EndTransaction;  Virtual;  Abstract -->
 <element name="TDatabase.EndTransaction">
-<short></short>
+<short>End an active transaction.</short>
 <descr>
+<var>EndTransaction</var> must be implemented by descendent classes to end an active transaction.
+This method is provided for Delphi compatibility: new applications shoud use a <link id="TDBTransaction"/> 
+component instead and invoke the <link id="TDBTransaction.EndTransaction"/> method.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDBTransaction"/>
+<link id="TDBTransaction.EndTransaction"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: TransactionCount : LongInt -->
 <element name="TDatabase.TransactionCount">
-<short></short>
+<short>Number of transaction components connected to this database.</short>
 <descr>
+<var>TransactionCount</var> is the number of transaction components which are connected to this database instance.
+It is the upper bound for the <link id="TDatabase.Transactions"/> array property.
 </descr>
 <seealso>
+<link id="TDatabase.Transactions"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: Transactions[Index: LongInt]: TDBTransaction -->
 <element name="TDatabase.Transactions">
-<short></short>
+<short>Indexed access to all transaction components connected to this database.</short>
 <descr>
+<var>Transactions</var> provides indexed access to the transaction components connected to this database. The 
+<var>Index</var> is zero based: it runs from 0 to <var>TransactionCount-1</var>.
 </descr>
 <seealso>
+<link id="TDatabase.TransactionCount"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Index: LongInt -->
 <element name="TDatabase.Transactions.Index">
-<short></short>
+<short>Zero based array index</short>
 </element>
 
 <!-- property Visibility: public
      Declaration: Directory : String -->
 <element name="TDatabase.Directory">
-<short></short>
+<short>Directory for the database</short>
 <descr>
+<var>Directory</var> is provided for Delphi compatibility: it indicates (for Paradox and dBase based databases)
+the directory where the database files are located. It is not used in the Free Pascal implementation of <link id="TDatabase"/>.
 </descr>
 <seealso>
+<link id="TDatabase.Params"/>
+<link id="TDatabase.IsSQLBased"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: IsSQLBased : Boolean -->
 <element name="TDatabase.IsSQLBased">
-<short></short>
+<short>Is the database SQL based.</short>
 <descr>
+<var>IsSQLbased</var> is a read-only property which indicates whether a property is SQL-Based, i.e. whether
+the database engine accepts SQL commands.
 </descr>
 <seealso>
+<link id="TDatabase.Params"/>
+<link id="TDatabase.Directory"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: Connected : Boolean -->
-<element name="TDatabase.Connected">
-<short></short>
+<element name="TDatabase.Connected" link="TCustomConnection.Connected">
+<short>Is the datbase connected</short>
 <descr>
+<var>Connected</var> is simply promoted to published property from <link id="TCustomConnection.Connected"/>.
 </descr>
 <seealso>
+<link id="TCustomConnection.Connected"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: DatabaseName : String -->
 <element name="TDatabase.DatabaseName">
-<short></short>
+<short>Database name or path</short>
 <descr>
+<var>DatabaseName</var> specifies the path of the database. For directory-based databases this will be the same
+as the <link id="TDatabase.Directory">Directory</link> property. For other databases this will be the name of
+a known pre-configured connection, or the location of the database file.
 </descr>
 <seealso>
+<link id="TDatabase.Directory"/>
+<link id="TDatabase.Params"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: KeepConnection : Boolean -->
 <element name="TDatabase.KeepConnection">
-<short></short>
+<short>Should the connection be kept active</short>
 <descr>
+<var>KeepConnection</var> is provided for Delphi compatibility, and is not used in the Free Pascal implementation
+of <var>TDatabase</var>.
 </descr>
 <seealso>
+<link id="TDatabase.Params"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: Params : TStrings -->
 <element name="TDatabase.Params">
-<short></short>
+<short>Connection parameters</short>
 <descr>
+<var>Params</var> is a catch-all storage mechanism for database connection parameters. It is a list of strings in the form of <var>Name=Value</var> pairs.
+Which name/value pairs are supported depends on the <var>TDatabase</var> descendent, but the <var>user_name</var> and <var>password</var> parameters 
+are commonly used to store the login credentials for the database.
 </descr>
 <seealso>
+<link id="TDatabase.Directory"/>
+<link id="TDatabase.DatabaseName"/>
 </seealso>
 </element>
 
 <!-- alias type Visibility: default
      Declaration: TBlobData = String -->
 <element name="TBlobData">
-<short></short>
+<short>Alias type to store blob data</short>
 <descr>
+<var>TBlobData</var> should never be used directly in application code.
 </descr>
 <seealso>
+<link id="TBlobField"/>
 </seealso>
 </element>
 
 <!-- array type Visibility: default
      Declaration: TParamBinding = Array of Integer -->
 <element name="TParamBinding">
-<short></short>
+<short>Auxiliary type, used when binding parameters.</short>
 <descr>
+<var>TParamBinding</var> is an axuiliary type  used when parsing and binding parameters in SQL statements.
+It should never be used directly in application code.
 </descr>
 <seealso>
+<link id="TParams"/>
+<link id="TParam"/>
 </seealso>
 </element>
 
 <!-- enumeration type Visibility: default
      Declaration: TParamType = (ptUnknown,ptInput,ptOutput,ptInputOutput,ptResult) -->
 <element name="TParamType">
-<short></short>
+<short>Parameter type</short>
 <descr>
+<p>
+<var>TParamType</var> indicates the kind of parameter represented by a <link id="TParam"/> instance.
+it has one of the following values:
+</p>
+<dl>
+<dt>ptUnknown</dt><dd><printshort id="TParamType.ptUnknown"/></dd>
+<dt>ptInput</dt><dd><printshort id="TParamType.ptInput"/></dd>
+<dt>ptOutput</dt><dd><printshort id="TParamType.ptOutput"/></dd>
+<dt>ptInputOutput</dt><dd><printshort id="TParamType.ptInputOutput"/></dd>
+<dt>ptResult</dt><dd><printshort id="TParamType.ptResult"/></dd>
+</dl>
 </descr>
 <seealso>
+<link id="TParam"/>
+<link id="TParam.ParamType"/>
 </seealso>
 </element>
 
 <!-- enumeration value Visibility: default
      Declaration: ptUnknown -->
 <element name="TParamType.ptUnknown">
-<short></short>
+<short>Unknown type</short>
 </element>
 
 <!-- enumeration value Visibility: default
      Declaration: ptInput -->
 <element name="TParamType.ptInput">
-<short></short>
+<short>Input parameter</short>
 </element>
 
 <!-- enumeration value Visibility: default
      Declaration: ptOutput -->
 <element name="TParamType.ptOutput">
-<short></short>
+<short>Output paramete, filled on result</short>
 </element>
 
 <!-- enumeration value Visibility: default
      Declaration: ptInputOutput -->
 <element name="TParamType.ptInputOutput">
-<short></short>
+<short>Input/output parameter</short>
 </element>
 
 <!-- enumeration value Visibility: default
      Declaration: ptResult -->
 <element name="TParamType.ptResult">
-<short></short>
+<short>Result parameter</short>
 </element>
 
 <!-- set type Visibility: default
      Declaration: TParamTypes= Set of (ptUnknown,ptInput,ptOutput,ptInputOutput,ptResult) -->
 <element name="TParamTypes">
-<short></short>
+<short>Set of <var>TParamType</var></short>
 <descr>
+<var>TParamTypes</var> is defined for completeness: a set of <link id="TParamType"/> values.
 </descr>
 <seealso>
+<link id="TParam.ParamType"/>
+<link id="TParamType"/>
 </seealso>
 </element>
 
 <!-- enumeration type Visibility: default
      Declaration: TParamStyle = (psInterbase,psPostgreSQL,psSimulated) -->
 <element name="TParamStyle">
-<short></short>
+<short>Style of parameter</short>
 <descr>
+<p>
+<var>TParamStyle</var> denotes the style in which parameters are specified in a query. 
+It is used in the <link id="TParams.ParseSQl"/> method, and can have the following values:
+</p>
+<dl>
+<dt>psInterbase</dt><dd><printshort id="TParamStyle.psInterbase"/></dd>
+<dt>psPostgreSQL</dt><dd><printshort id="TParamStyle.psPostGreSQL"/></dd>
+<dt>psSimulated</dt><dd><printshort id="TParamStyle.psSimulated"/></dd>
+</dl>
 </descr>
 <seealso>
+<link id="TParams.ParseSQL"/>
 </seealso>
 </element>
 
 <!-- enumeration value Visibility: default
      Declaration: psInterbase -->
 <element name="TParamStyle.psInterbase">
-<short></short>
+<short>Parameters are specified by a ? character</short>
 </element>
 
 <!-- enumeration value Visibility: default
      Declaration: psPostgreSQL -->
 <element name="TParamStyle.psPostgreSQL">
-<short></short>
+<short>Parameters are specified by a $N character.</short>
 </element>
 
 <!-- enumeration value Visibility: default
      Declaration: psSimulated -->
 <element name="TParamStyle.psSimulated">
-<short></short>
+<short>Parameters are specified by a $N character.</short>
 </element>
 
 <!--
@@ -10437,12 +10812,28 @@ passing it the datasource. If so, it returns <var>True</var>.
 
 <!-- class Visibility: default -->
 <element name="TParams">
-<short></short>
+<short>A collection of parameter values for SQL-based datasets</short>
 <descr>
+<p>
+<var>TParams</var> is a collection of <link id="TParam"/> values. It is used to specify parameter values for parametrized SQL statemens,
+but is also used to specify parameter values for stored procedures. Its default property is an array of <link id="TParam"/> values. 
+The class also offers a method to scan a SQL statement for parameter names and replace them with placeholders understood by the 
+SQL engine: <link id="TParams.ParseSQL"/>.
+</p>
+<p>
+<link id="TDataset"/> itself does not use <var>TParams</var>. The class is provided in the <file>DB</file> unit, so all <var>TDataset</var>
+descendents that need some kind of parametrization make use of the same interface. The <link id="TMasterParamsDataLink"/> class can be used 
+to establish a master-detail relationship between a parameter-aware <var>TDataset</var> instance and another dataset; it will automatically
+refresh parameter values when the fields in the master dataset change. To this end, the <link id="TParams.CopyParamValuesFromDataset"/> method 
+exists.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDataset"/>
+<link id="TMasterParamsDataLink"/>
+<link id="TParam"/>
+<link id="TParams.ParseSQL"/>
+<link id="TParams.CopyParamValuesFromDataset"/>
 </seealso>
 </element>
 
@@ -10454,444 +10845,609 @@ passing it the datasource. If so, it returns <var>True</var>.
 
 <!-- class Visibility: default -->
 <element name="TParam">
-<short></short>
+<short>Parameter description class</short>
 <descr>
+<var>TParam</var> is one item in a <link id="TParams"/> collection. It describes the name (<link id="TParam.Name"/>), type 
+(<link id="TParam.Paramtype">ParamType</link>) and value (<link id="TParam.Value"/>) of a parameter in a parametrized query
+or stored procedure. Under normal circumstances, it should never be necessary to create a <var>TParam</var> instance manually; 
+the <link id="TDataset"/> descendent that owns the parameters should have created all necessary <var>TParam</var> instances.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TParams"/>
 </seealso>
 </element>
 
 <!-- constructor Visibility: public
      Declaration: constructor Create(ACollection: TCollection);  Override;  Overload -->
 <element name="TParam.Create">
-<short></short>
+<short>Create a new parameter value</short>
 <descr>
-</descr>
-<errors>
-</errors>
+<var>Create</var> first calls the inherited create, and then initializes the parameter properties. The first form creates
+a default parameter, the second form is a convenience function and initializes a parameter of a certain kind (<var>AParamType</var>), 
+in which case the owning <var>TParams</var> collection must be specified in <var>AParams</var></descr>
 <seealso>
+<link id="TParams"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: ACollection: TCollection -->
 <element name="TParam.Create.ACollection">
-<short></short>
+<short>Collection this parameter is part of</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: AParams: TParams -->
 <element name="TParam.Create.AParams">
-<short></short>
+<short><var>TParams</var> instance this parameter is part of</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: AParamType: TParamType -->
 <element name="TParam.Create.AParamType">
-<short></short>
+<short>Parameter type for the new parameter instance</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure Assign(Source: TPersistent);  Override -->
 <element name="TParam.Assign">
-<short></short>
+<short>Assign one parameter instance to another</short>
 <descr>
+<var>Assign</var> copies the <var>Name</var>, <var>ParamType</var>, <var>Bound</var>, <var>Value</var>, <var>Size</var>
+<var>Precision</var> and <var>NumericScale</var> properties from <var>ASource</var>  if it is of type <var>TParam</var>.
+If <var>Source</var> is of type <link id="TField"/>, then it is passed to <link id="TParam.AssignField"/>. 
+If <var>Source</var> is of type <var>TStrings</var>, then it is assigned to <link id="TParams.AsMemo"/>.
 </descr>
 <errors>
+If <var>Source</var> is not of type <var>TParam</var>, <var>TField</var> or <var>TStrings</var>, an exception will be raised.
 </errors>
 <seealso>
+<link id="TField"/>
+<link id="TParam.Name"/>
+<link id="TParam.Bound"/>
+<link id="TParam.NumericScale"/>
+<link id="TParam.ParamType"/>
+<link id="TParam.value"/>
+<link id="TParam.Size"/>
+<link id="TParam.AssignField"/>
+<link id="Tparam.AsMemo"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Source: TPersistent -->
 <element name="TParam.Assign.Source">
-<short></short>
+<short>Source object to copy value from</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure AssignField(Field: TField) -->
 <element name="TParam.AssignField">
-<short></short>
+<short>Copy value from field instance</short>
 <descr>
+<var>AssignField</var> copies the <var>Field</var>, <link
+id="TField.FieldName">FieldName</link> and <link
+id="TField.Value">Value</link> to
+the parameter instance. The parameter is bound after this operation.
+If <var>Field</var> is <var>Nil</var> then the parameter name and value are cleared.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TParam.assign"/>
+<link id="TParam.AssignToField"/>
+<link id="TParam.AssignFieldValue"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Field: TField -->
 <element name="TParam.AssignField.Field">
-<short></short>
+<short>Field instance to copy field name and value from.</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure AssignToField(Field: TField) -->
 <element name="TParam.AssignToField">
-<short></short>
+<short>Assign parameter value to field</short>
 <descr>
+<var>AssignToField</var> copies the parameter <link id="TParam.Value">value</link> to the <var>field</var> instance.
+If <var>Field</var> is <var>Nil</var>, nothing happens.
 </descr>
 <errors>
+An <link id="EDatabaseError"/> exception is raised if the field has an unsupported field type 
+(for types ftCursor, ftArray, ftDataset,ftReference).
 </errors>
 <seealso>
+<link id="TParam.Assign"/>
+<link id="TParam.AssignField"/>
+<link id="TParam.AssignFromField"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Field: TField -->
 <element name="TParam.AssignToField.Field">
-<short></short>
+<short>Field instance to assign value to.</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure AssignFieldValue(Field: TField;const AValue: Variant) -->
 <element name="TParam.AssignFieldValue">
-<short></short>
+<short>Assign field value to the parameter.</short>
 <descr>
+<var>AssignFieldValue</var> copies only the field type from <var>Field</var> and the value from the <var>AValue</var> parameter.
+It sets the <link id="TParam.Bound"/> bound parameter to <var>True</var>. This method is called from <link id="TParam.AssignField"/>.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TField"/>
+<link id="TParam.AssignField"/>
+<link id="TParam.Bound"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Field: TField -->
 <element name="TParam.AssignFieldValue.Field">
-<short></short>
+<short>Field to copy parameter type from.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: AValue: Variant -->
 <element name="TParam.AssignFieldValue.AValue">
-<short></short>
+<short>Value to assign to parameter.</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure AssignFromField(Field: TField) -->
 <element name="TParam.AssignFromField">
-<short></short>
+<short>Copy field type and value</short>
 <descr>
+<var>AssignFromField</var> copies the field <link id="TField.Value">value</link>  and data type (<link id="TField.DataType"/>)
+to the parameter instance. If <var>Field</var> is <var>Nil</var>, nothing happens.
+This is the reverse operation of <link id="TParam.AssignToField"/>.
 </descr>
 <errors>
+An <link id="EDatabaseError"/> exception is raised if the field has an unsupported field type 
+(for types ftCursor, ftArray, ftDataset,ftReference).
 </errors>
 <seealso>
+<link id="TParam.Assign"/>
+<link id="TParam.AssignField"/>
+<link id="TParam.AssignToField"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Field: TField -->
 <element name="TParam.AssignFromField.Field">
-<short></short>
+<short>Field to copy type and value from.</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure Clear -->
 <element name="TParam.Clear">
-<short></short>
+<short>Clear the parameter value</short>
 <descr>
+<var>Clear</var> clears the parameter value, it is set to <var>UnAssigned</var>. The Datatype, parameter type or name are not touched.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TParam.Value"/>
+<link id="TParam.Name"/>
+<link id="TParam.ParamType"/>
+<link id="TParam.DataType"/>
 </seealso>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure GetData(Buffer: Pointer) -->
 <element name="TParam.GetData">
-<short></short>
+<short>Get the parameter value from a memory buffer</short>
 <descr>
+<var>GetData</var> retrieves the parameter value and stores it in <var>buffer</var>
+It uses the same data layout as <link id="TField"/>, and can be used to copy the parameter value to a record buffer.
 </descr>
 <errors>
+Only basic field types are supported. Using an unsupported field type will result in an <link id="EdatabaseError"/> exception.
 </errors>
 <seealso>
+<link id="TParam.SetData"/>
+<link id="TField"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Buffer: Pointer -->
 <element name="TParam.GetData.Buffer">
-<short></short>
+<short>Buffer to copy parameter value to.</short>
 </element>
 
 <!-- function Visibility: public
      Declaration: function GetDataSize : Integer -->
 <element name="TParam.GetDataSize">
-<short></short>
+<short>Return the size of the data.</short>
 <descr>
+<var>GetDataSize</var> returns the size (in bytes) needed to store the current value of the parameter.
 </descr>
 <errors>
+For an unsupported data type, an <link id="EDatabaseError"/> exception is raised when this function is called.
 </errors>
 <seealso>
+<link id="TParam.GetData"/>
+<link id="TParam.SetData"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default
      Declaration: Result -->
 <element name="TParam.GetDataSize.Result">
-<short></short>
+<short>Size (in bytes) for the current value </short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure LoadFromFile(const FileName: String;BlobType: TBlobType) -->
 <element name="TParam.LoadFromFile">
-<short></short>
+<short>Load a parameter value from file</short>
 <descr>
+<var>LoadFromFile</var> can be used to load a BLOB-type parameter from a file named <var>FileName</var>. 
+The <var>BlobType</var> parameter can be used to set the exact data type of the parameter: it must be one of the BLOB data types.
+This function simply creates a <var>TFileStream</var> instance and passes it to <link id="TParam.LoadFromStream"/>.
 </descr>
 <errors>
+If the specified <var>FileName</var> is not a valid file, or the file is not readable, an exception will occur.
 </errors>
 <seealso>
+<link id="TParam.LoadFromStream"/>
+<link id="TBlobType"/>
+<link id="TParam.SaveToFile"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: FileName: String -->
 <element name="TParam.LoadFromFile.FileName">
-<short></short>
+<short>Name of existing file to load blob data from.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: BlobType: TBlobType -->
 <element name="TParam.LoadFromFile.BlobType">
-<short></short>
+<short>New value for <var>DataType</var></short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure LoadFromStream(Stream: TStream;BlobType: TBlobType) -->
 <element name="TParam.LoadFromStream">
-<short></short>
+<short>Load a parameter value from stream</short>
 <descr>
+<var>LoadFromStream</var> can be used to load a BLOB-type parameter from a stream.
+The <var>BlobType</var> parameter can be used to set the exact data type of the parameter: it must be one of the BLOB data types.
 </descr>
 <errors>
+If the stream does not support taking the <var>Size</var> of the stream, an exception will be raised.
 </errors>
 <seealso>
+<link id="TParam.LoadFromFile"/>
+<link id="TParam.SaveToStream"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Stream: TStream -->
 <element name="TParam.LoadFromStream.Stream">
-<short></short>
+<short>Stream to load BLOB data from.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: BlobType: TBlobType -->
 <element name="TParam.LoadFromStream.BlobType">
-<short></short>
+<short>Data type for the parameter</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure SetBlobData(Buffer: Pointer;ASize: Integer) -->
 <element name="TParam.SetBlobData">
-<short></short>
+<short>Set BLOB data</short>
 <descr>
+<var>SetBlobData</var> reads the value of a BLOB type parameter from a memory buffer:
+ the data is read from the memory buffer <var>Buffer</var> and is assumed to be <var>Size</var> bytes long.
 </descr>
 <errors>
+No checking is performed on the validity of the data buffer. If the data buffer is invalid or the size is wrong, an exception may occur.
 </errors>
 <seealso>
+<link id="TParam.LoadFromStream"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Buffer: Pointer -->
 <element name="TParam.SetBlobData.Buffer">
-<short></short>
+<short>Memory buffer to load data from</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: ASize: Integer -->
 <element name="TParam.SetBlobData.ASize">
-<short></short>
+<short>Size of memory buffer to load data from</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure SetData(Buffer: Pointer) -->
 <element name="TParam.SetData">
-<short></short>
+<short>Set the parameter value from a buffer</short>
 <descr>
+<var>SetData</var> performs the rever operation of <link id="TParam.GetData"/>: it reads the parameter value from the memory
+area pointed to by <var>Buffer</var>. The size of the data read is determined by <link id="TParam.GetDataSize"/> and the 
+type of data by <link id="TParam.DataType"/> : it is the same storage mechanism used by <link id="TField"/>, and so can be used to copy
+the value from a <link id="TDataset"/> record buffer.
 </descr>
 <errors>
+Not all field types are supported. If an unsupported field type is encountered, an <link id="EDatabaseError"/> exception is raised.
 </errors>
 <seealso>
+<link id="TDataset"/>
+<link id="TParam.GetData"/>
+<link id="TParam.DataType"/>
+<link id="TParam.GetDataSize"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Buffer: Pointer -->
 <element name="TParam.SetData.Buffer">
-<short></short>
+<short>Buffer to read data from</short>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsBlob : TBlobData -->
 <element name="TParam.AsBlob">
-<short></short>
+<short>Return parameter value as a blob</short>
 <descr>
+<var>AsBlob</var> returns the parameter value as a blob: currently this is a string. It can be set to set the parameter value.
 </descr>
 <seealso>
+<link id="TParam.AsString"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsBoolean : Boolean -->
 <element name="TParam.AsBoolean">
-<short></short>
+<short>Get/Set parameter value as a boolean value</short>
 <descr>
+<var>AsBoolean</var> will return the parameter value as a boolean value. If it is written, the value is set to the specified value
+and the data type is set to <var>ftBoolean</var>.
 </descr>
 <seealso>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsCurrency : Currency -->
 <element name="TParam.AsCurrency">
-<short></short>
+<short>Get/Set parameter value as a currency value</short>
 <descr>
+<var>AsCurrency</var> will return the parameter value as a currency value. If it is written, the value is set to the specified value
+and the data type is set to <var>ftCurrency</var>.
 </descr>
 <seealso>
+<link id="TParam.AsFloat"/>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsDate : TDateTime -->
 <element name="TParam.AsDate">
-<short></short>
+<short>Get/Set parameter value as a date (TDateTime) value</short>
 <descr>
+<var>AsDate</var> will return the parameter value as a date value. If it is written, the value is set to the specified value
+and the data type is set to <var>ftDate</var>.
 </descr>
 <seealso>
+<link id="TParam.AsDateTime"/>
+<link id="TParam.AsTime"/>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsDateTime : TDateTime -->
 <element name="TParam.AsDateTime">
-<short></short>
+<short>Get/Set parameter value as a date/time (TDateTime) value</short>
 <descr>
+<var>AsDateTime</var> will return the parameter value as a TDateTime value. If it is written, the value is set to the specified value
+and the data type is set to <var>ftDateTime</var>.
 </descr>
 <seealso>
+<link id="TParam.AsDate"/>
+<link id="TParam.asTime"/>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsFloat : Double -->
 <element name="TParam.AsFloat">
-<short></short>
+<short>Get/Set parameter value as a floating-point value</short>
 <descr>
+<var>AsFLoat</var> will return the parameter value as a double floating-point value. If it is written, the value is set to the specified value
+and the data type is set to <var>ftFloat</var>.
 </descr>
 <seealso>
+<link id="TParam.AsCurrency"/>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsInteger : LongInt -->
 <element name="TParam.AsInteger">
-<short></short>
+<short>Get/Set parameter value as an integer (32-bit) value</short>
 <descr>
+<var>AsInteger</var> will return the parameter value as a 32-bit signed integer value. If it is written, the value is set to the specified value
+and the data type is set to <var>ftInteger</var>.
 </descr>
 <seealso>
+<link id="TParam.AsLargeInt"/>
+<link id="TParam.AsSmallInt"/>
+<link id="TParam.AsWord"/>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsLargeInt : LargeInt -->
 <element name="TParam.AsLargeInt">
-<short></short>
+<short>Get/Set parameter value as a 64-bit integer value</short>
 <descr>
+<var>AsLargeInt</var> will return the parameter value as a 64-bit signed integer value. If it is written, the value is set to the specified value
+and the data type is set to <var>ftLargeInt</var>.
 </descr>
 <seealso>
+<link id="TParam.asInteger"/>
+<link id="TParam.asSmallint"/>
+<link id="TParam.AsWord"/>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsMemo : String -->
 <element name="TParam.AsMemo">
-<short></short>
+<short>Get/Set parameter value as a memo (string) value</short>
 <descr>
+<var>AsMemo</var> will return the parameter value as a memo (string) value. If it is written, the value is set to the specified value
+and the data type is set to <var>ftMemo</var>.
 </descr>
 <seealso>
+<link id="TParam.asString"/>
+<link id="TParam.LoadFromStream"/>
+<link id="TParam.SaveToStream"/>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsSmallInt : LongInt -->
 <element name="TParam.AsSmallInt">
-<short></short>
+<short>Get/Set parameter value as a smallint value</short>
 <descr>
+<var>AsSmallint</var> will return the parameter value as a 16-bit signed integer value. If it is written, the value is set to the specified value
+and the data type is set to <var>ftSmallint</var>.
 </descr>
 <seealso>
+<link id="TParam.AsInteger"/>
+<link id="TParam.AsLargeInt"/>
+<link id="TParam.AsWord"/>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsString : String -->
 <element name="TParam.AsString">
-<short></short>
+<short>Get/Set parameter value as a string value</short>
 <descr>
+<var>AsString</var> will return the parameter value as a string value. If it is written, the value is set to the specified value
+and the data type is set to <var>ftString</var>.
 </descr>
 <seealso>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsTime : TDateTime -->
 <element name="TParam.AsTime">
-<short></short>
+<short>Get/Set parameter value as a time (TDateTime) value</short>
 <descr>
+<var>AsTime</var> will return the parameter value as a time (TDateTime) value. If it is written, the value is set to the specified value
+and the data type is set to <var>ftTime</var>.
 </descr>
 <seealso>
+<link id="TParam.AsDate"/>
+<link id="TParam.AsDateTime"/>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsWord : LongInt -->
 <element name="TParam.AsWord">
-<short></short>
+<short>Get/Set parameter value as a word value</short>
 <descr>
+<var>AsWord</var> will return the parameter value as an integer. If it is written, the value is set to the specified value
+and the data type is set to <var>ftWord</var>.
 </descr>
 <seealso>
+<link id="TParam.AsInteger"/>
+<link id="TParam.AsLargeInt"/>
+<link id="TParam.AsSmallint"/>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: Bound : Boolean -->
 <element name="TParam.Bound">
-<short></short>
+<short>Is the parameter value bound (set to fixed value)</short>
 <descr>
+<var>Bound</var> indicates whether a parameter has received a fixed value: setting the parameter value will set <var>Bound</var> to <var>True</var>.
+When creating master-detail relationships, parameters with their <var>Bound</var> property set to <var>True</var> will not receive a value from the 
+master dataset: their value will be kept. Only parameters where <var>Bound</var> is <var>False</var> will receive a new value from the master dataset.
 </descr>
 <seealso>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: Dataset : TDataSet -->
 <element name="TParam.Dataset">
-<short></short>
+<short>Dataset to which this parameter belongs</short>
 <descr>
+<var>Dataset</var> is the dataset that owns the <link id="TParams"/> instance of which this <var>TParam</var> instance is a part.
+It is <var>Nil</var> if the collection is not set, or is not a <var>TParams</var> instance.
 </descr>
 <seealso>
+<link id="TDataset"/>
+<link id="TParams"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: IsNull : Boolean -->
 <element name="TParam.IsNull">
-<short></short>
+<short>Is the parameter empty</short>
 <descr>
+<var>IsNull</var> is <var>True</var> is the value is empty or not set (Null or UnAssigned).
 </descr>
 <seealso>
+<link id="TParam.Clear"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: NativeStr : String -->
 <element name="TParam.NativeStr">
-<short></short>
+<short>No description available</short>
 <descr>
+No description available
 </descr>
 <seealso>
 </seealso>
@@ -10900,423 +11456,577 @@ passing it the datasource. If so, it returns <var>True</var>.
 <!-- property Visibility: public
      Declaration: Text : String -->
 <element name="TParam.Text">
-<short></short>
+<short>Read or write the value of the parameter as a string</short>
 <descr>
+<var>AsText</var> returns the same value as <link id="TParam.AsString"/>, but, when written, does not set the data type: instead, it
+attempts to convert the value to the type specified in <link id="TParam.Datatype"/>.
 </descr>
 <seealso>
+<link id="TParam.AsString"/>
+<link id="TParam.DataType"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: Value : Variant -->
 <element name="TParam.Value">
-<short></short>
+<short>Value as a variant</short>
 <descr>
+<var>Value</var> returns (or sets) the value as a variant value.
 </descr>
 <seealso>
+<link id="TParam.DataType"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: AsWideString : WideString -->
 <element name="TParam.AsWideString">
-<short></short>
+<short>Get/Set the value as a widestring</short>
 <descr>
+<var>AsWideString</var> returns the parameter value as a widestring value. Setting the property will set the value of the parameter 
+and will also set the <link id="TParam.DataType">DataType</link> to <var>ftWideString</var>.
 </descr>
 <seealso>
+<link id="TParam.AsString"/>
+<link id="TParam.Value"/>
+<link id="TParam.DataType"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: DataType : TFieldType -->
 <element name="TParam.DataType">
-<short></short>
+<short>Data type of the parameter</short>
 <descr>
+<var>DataType</var> is the current data type of the parameter value. It is set automatically when one of the various <var>AsXYZ</var> 
+properties is written, or when the value is copied from a field value.
 </descr>
 <seealso>
+<link id="TParam.IsNull"/>
+<link id="TParam.Value"/>
+<link id="TParam.AssignField"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: Name : String -->
 <element name="TParam.Name">
-<short></short>
+<short>Name of the parameter</short>
 <descr>
+<var>Name</var> is the name of the parameter. The name is usually determined automatically from the SQL statement the parameter is
+part of. Each parameter name should appear only once in the collection.
 </descr>
 <seealso>
+<link id="TParam.DataType"/>
+<link id="TParam.Value"/>
+<link id="TParams.ParamByName"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: NumericScale : Integer -->
 <element name="TParam.NumericScale">
-<short></short>
+<short>Numeric scale</short>
 <descr>
+<var>NumericScale</var> can be used to store the numerical scale for BCD values. It is currently unused.
 </descr>
 <seealso>
+<link id="TParam.Precision"/>
+<link id="TParam.Size"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: ParamType : TParamType -->
 <element name="TParam.ParamType">
-<short></short>
+<short>Type of parameter</short>
 <descr>
+<p>
+<var>ParamTyp</var> specifies the type of parameter: is the parameter value written to the database engine, 
+or is it received from the database engine, or both ? It can have the following value:
+</p>
+<dl>
+<dt>ptUnknown</dt><dd><printshort id="TParamType.ptUnknown"/></dd>
+<dt>ptInput</dt><dd><printshort id="TParamType.ptInput"/></dd>
+<dt>ptOutput</dt><dd><printshort id="TParamType.ptOutput"/></dd>
+<dt>ptInputOutput</dt><dd><printshort id="TParamType.ptInputOutput"/></dd>
+<dt>ptResult</dt><dd><printshort id="TParamType.ptResult"/></dd>
+</dl>
+<p>
+The <var>ParamType</var> property is usually set by the database engine that creates the parameter instances.
+</p>
 </descr>
 <seealso>
+<link id="TParam.DataType"/>
+<link id="TParam.DataSize"/>
+<link id="TParam.Name"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: Precision : Integer -->
 <element name="TParam.Precision">
-<short></short>
+<short>Precision of the BCD value</short>
 <descr>
+<var>Precision</var> can be used to store the numerical precision for BCD values. It is currently unused.
 </descr>
 <seealso>
+<link id="TParam.NumericScale"/>
+<link id="TParam.Size"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published
      Declaration: Size : Integer -->
 <element name="TParam.Size">
-<short></short>
+<short>Size of the parameter</short>
 <descr>
+<var>Size</var> is the declared size of the parameter. In the current implementation, this parameter is ignored other
+than copying it from <link id="TField.DataSize"/> in the <link id="TParam.AssignFieldValue"/> method.
+The actual size can be retrieved through the <link id="TParam.Datasize"/> property.
 </descr>
 <seealso>
+<link id="TParam.Datasize"/>
+<link id="TField.DataSize"/>
+<link id="TParam.AssignFieldValue"/>
 </seealso>
 </element>
 
 <!-- constructor Visibility: public
      Declaration: constructor Create(AOwner: TPersistent);  Overload -->
 <element name="TParams.Create">
-<short></short>
+<short>Create a new instance of <var>TParams</var></short>
 <descr>
+<var>Create</var> initializes a new instance of <var>TParams</var>. It calls the inherited constructor with <link id="TParam"/> as the 
+collection's item class, and sets <var>AOwner</var>  as the owner of the collection. Usually, <var>AOwner</var> will be the dataset that
+needs parameters.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="#rtl.classes.collection.create"/>
+<link id="TParam"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: AOwner: TPersistent -->
 <element name="TParams.Create.AOwner">
-<short></short>
+<short>Owner of the collection.</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure AddParam(Value: TParam) -->
 <element name="TParams.AddParam">
-<short></short>
+<short>Add a parameter to the collection</short>
 <descr>
+<var>AddParam</var> adds <var>Value</var> to the collection. 
 </descr>
 <errors>
+No checks are done on the <var>TParam</var> instance. If it is <var>Nil</var>, an exception will be raised.
 </errors>
 <seealso>
+<link id="TParam"/>
+<link id="#rtl.classes.tcollection.add"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Value: TParam -->
 <element name="TParams.AddParam.Value">
-<short></short>
+<short><var>TParam</var> instance to add to the collection.</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure AssignValues(Value: TParams) -->
 <element name="TParams.AssignValues">
-<short></short>
+<short>Copy values from another collection</short>
 <descr>
+<var>AssignValues</var> examines all <link id="TParam"/> instances in <var>Value</var>, and looks in its own items
+for a <var>TParam</var> instance with the same name. If it is found, then the value and type of the parameter are
+ copied (using <link id="TParam.Assign"/>). If it is not found, nothing is done.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TParam"/>
+<link id="TParam.Assign"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Value: TParams -->
 <element name="TParams.AssignValues.Value">
-<short></short>
+<short>Set of parameters to copy values from.</short>
 </element>
 
 <!-- function Visibility: public
      Declaration: function CreateParam(FldType: TFieldType;const ParamName: String;
                     ParamType: TParamType) : TParam -->
 <element name="TParams.CreateParam">
-<short></short>
+<short>Create and add a new parameter to the collection</short>
 <descr>
+<var>CreateParam</var> creates a new <link id="TParam"/> instance with datatype equal to <var>fldType</var>, <var>Name</var>
+equal to <var>ParamName</var> and sets its <var>ParamType</var> property to <var>ParamType</var>. 
+The parameter is then added to the collection.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TParam"/>
+<link id="TParam.Name"/>
+<link id="TParam.Datatype"/>
+<link id="TParam.Paramtype"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default
      Declaration: Result -->
 <element name="TParams.CreateParam.Result">
-<short></short>
+<short>Newly added <var>TParam</var> instance.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: FldType: TFieldType -->
 <element name="TParams.CreateParam.FldType">
-<short></short>
+<short>Value for the <var>DataType</var> property of the new instance.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: ParamName: String -->
 <element name="TParams.CreateParam.ParamName">
-<short></short>
+<short>Value for the <var>Name</var> property of the new instance.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: ParamType: TParamType -->
 <element name="TParams.CreateParam.ParamType">
-<short></short>
+<short>Value for the <var>ParamType</var> property of the new instance.</short>
 </element>
 
 <!-- function Visibility: public
      Declaration: function FindParam(const Value: String) : TParam -->
 <element name="TParams.FindParam">
-<short></short>
+<short>Find a parameter with given name</short>
 <descr>
+<p>
+<var>FindParam</var> searches the collection for the <link id="TParam"/> instance with property <var>Name</var> equal to <var>Value</var>.
+It will return the last instance with the given name, and will only return one instance. If no match is found, <var>Nil</var> is returned.
+</p>
+<remark>
+A <var>TParams</var> collection can have 2 <var>TParam</var> instances with the same name: no checking for duplicates is done.
+</remark>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TParam.Name"/>
+<link id="TParams.ParamByName"/>
+<link id="TParams.GetParamList"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default
      Declaration: Result -->
 <element name="TParams.FindParam.Result">
-<short></short>
+<short><var>TParam</var> instance with <var>Name</var> equal to <var>Value</var> or <var>Nil</var>.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Value: String -->
 <element name="TParams.FindParam.Value">
-<short></short>
+<short>Parameter name to search for.</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure GetParamList(List: TList;const ParamNames: String) -->
 <element name="TParams.GetParamList">
-<short></short>
+<short>Fetch a list of <var>TParam</var> instances</short>
 <descr>
+<var>GetParamList</var> examines the parameter names in the semicolon-separated list <var>ParamNames</var>. 
+It searches each <var>TParam</var> instance from the names in the list and adds it to <var>List</var>.
 </descr>
 <errors>
+If the <var>ParamNames</var> list contains an unknown parameter name, then an exception is raised. 
+Whitespace is not discarded.
 </errors>
 <seealso>
+<link id="TParam"/>
+<link id="TParam.Name"/>
+<link id="TParams.ParamByName"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: List: TList -->
 <element name="TParams.GetParamList.List">
-<short></short>
+<short>List to add <var>TParam</var> instances to.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: ParamNames: String -->
 <element name="TParams.GetParamList.ParamNames">
-<short></short>
+<short>Semicolon-separated list of parameter names.</short>
 </element>
 
 <!-- function Visibility: public
      Declaration: function IsEqual(Value: TParams) : Boolean -->
 <element name="TParams.IsEqual">
-<short></short>
+<short>Is the list of parameters equal</short>
 <descr>
+<var>IsEqual</var> compares the parameter count of <var>Value</var> and if it matches, it compares all <var>TParam</var> items
+of <var>Value</var> with the items it owns. If all items are equal (all properties match), then <var>True</var> is returned.
+The items are compared on index, so the order is important.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TParam"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default
      Declaration: Result -->
 <element name="TParams.IsEqual.Result">
-<short></short>
+<short><var>True</var> if all items in <var>Value</var> match the own items </short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Value: TParams -->
 <element name="TParams.IsEqual.Value">
-<short></short>
+<short>Collection of <var>TParam</var> values.</short>
 </element>
 
 <!-- function Visibility: public
      Declaration: function ParamByName(const Value: String) : TParam -->
 <element name="TParams.ParamByName">
-<short></short>
+<short>Return a parameter by name</short>
 <descr>
+<p>
+<var>ParamByName</var> searches the collection for the <link id="TParam"/> instance with property <var>Name</var> equal to <var>Value</var>.
+It will return the last instance with the given name, and will only return one instance. If no match is found, an exception is raised.
+</p>
+<remark>
+A <var>TParams</var> collection can have 2 <var>TParam</var> instances with the same name: no checking for duplicates is done.
+</remark>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TParam.Name"/>
+<link id="TParams.FindParam"/>
+<link id="TParams.GetParamList"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default
      Declaration: Result -->
 <element name="TParams.ParamByName.Result">
-<short></short>
+<short><var>TParam</var> instance with <var>Name</var> equal to <var>Value</var>.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Value: String -->
 <element name="TParams.ParamByName.Value">
-<short></short>
+<short><var>Name</var> to search for.</short>
 </element>
 
 <!-- function Visibility: public
      Declaration: function ParseSQL(SQL: String;DoCreate: Boolean) : String;  Overload -->
 <element name="TParams.ParseSQL">
-<short></short>
+<short>Parse SQL statement, replacing parameter names with SQL parameter placeholders</short>
 <descr>
+<p>
+<var>ParseSQl</var> parses the <var>SQL</var> statement for parameter names in the form <var>:ParamName</var>. It replaces them with a
+SQL parameter placeholder. If <var>DoCreate</var> is <var>True</var> then a <var>TParam</var> instance is added to the collection with
+the found parameter name.
+</p>
+<p>
+The parameter placeholder is determined by the <var>ParameterStyle</var> property, which can have the following values:
+</p>
+<dl>
+<dt>psInterbase</dt><dd><printshort id="TParamStyle.psInterbase"/></dd>
+<dt>psPostgreSQL</dt><dd><printshort id="TParamStyle.psPostGreSQL"/></dd>
+<dt>psSimulated</dt><dd><printshort id="TParamStyle.psSimulated"/></dd>
+</dl>
+<p>
+<var>psInterbase</var> is the default.
+</p>
+<p>If the <var>EscapeSlash</var> parameter is <var>True</var>, then backslash characters are used to quote the next character in the SQL statement. 
+If it is <var>False</var>, the backslash character is regarded as a normal character.
+</p>
+<p>
+If the <var>EscapeRepeat</var> parameter is <var>True</var> (the default) then embedded quotes in string literals
+are escaped by repeating themselves. If it is <var>false</var> then they should be quoted with backslashes.
+</p>
+<p>
+<var>ParamBinding</var>, if specified, is filled with the indexes of the parameter instances in the parameter collection: for each SQL parameter placeholder,
+the index of the corresponding <var>TParam</var> instance is returned in the array. 
+</p>
+<p>
+<var>ReplaceString</var>, if specified, contains the placeholder used for the parameter names (by default, $). It has effect only when
+<var>ParameterStyle</var> equals <var>psSimulated</var>.
+</p>
+<p>
+The function returns the SQL statement with the parameter names replaced by placeholders.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TParam"/>
+<link id="TParam.Name"/>
+<link id="TParamStyle"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default
      Declaration: Result -->
 <element name="TParams.ParseSQL.Result">
-<short></short>
+<short>SQL statement with parameter names replaced with placeholders</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: SQL: String -->
 <element name="TParams.ParseSQL.SQL">
-<short></short>
+<short>SQL statement to scan for parameter names</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: DoCreate: Boolean -->
 <element name="TParams.ParseSQL.DoCreate">
-<short></short>
+<short>Set to <var>True</var> if <var>TParam</var> instances must be created for the found parameters.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: EscapeSlash: Boolean -->
 <element name="TParams.ParseSQL.EscapeSlash">
-<short></short>
+<short><var>True</var> if the backslash character acts as an escape token.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: EscapeRepeat: Boolean -->
 <element name="TParams.ParseSQL.EscapeRepeat">
-<short></short>
+<short><var>True</var> if quotes are escaped by specifying them two times.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: ParameterStyle: TParamStyle -->
 <element name="TParams.ParseSQL.ParameterStyle">
-<short></short>
+<short>SQL Placeholder style</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: ParamBinding: TParamBinding -->
 <element name="TParams.ParseSQL.ParamBinding">
-<short></short>
+<short>On return, filled with indexes of <var>TParam</var> instances corresponding to the placeholders</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: ReplaceString: String -->
 <element name="TParams.ParseSQL.ReplaceString">
-<short></short>
+<short>Placeholder string.</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure RemoveParam(Value: TParam) -->
 <element name="TParams.RemoveParam">
-<short></short>
+<short>Remove a parameter from the collection</short>
 <descr>
+<var>RemoveParam</var> removes the parameter <var>Value</var> from the collection, but does not free the instance.
 </descr>
 <errors>
+<var>Value</var> must be a valid instance, or an exception will be raised.
 </errors>
 <seealso>
+<link id="TParam"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Value: TParam -->
 <element name="TParams.RemoveParam.Value">
-<short></short>
+<short>Parameter to remove from the collection.</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure CopyParamValuesFromDataset(ADataset: TDataSet;
                                     CopyBound: Boolean) -->
 <element name="TParams.CopyParamValuesFromDataset">
-<short></short>
+<short>Copy parameter values from a the fields in a dataset.</short>
 <descr>
+<var>CopyParamValuesFromDataset</var> assigns values to all parameters in the collection 
+by searching in <var>ADataset</var> for fields with the same name, and assigning the value 
+of the field to the <var>Tparam</var> instances using <link id="TParam.AssignField"/>.
+By default, this operation is only performed on <var>TParam</var> instances with their 
+<link id="TParam.Bound">Bound</link> property set to <var>False</var>. If <var>CopyBound</var> is true,
+then the operation is performed on all <var>TParam</var> instances in the collection.
 </descr>
 <errors>
+If, for some <var>TParam</var> instance, <var>ADataset</var> misses a field with the same name,
+an <var>EDatabaseError</var> exception will be raised.
 </errors>
 <seealso>
+<link id="TParam"/>
+<link id="TParam.Bound"/>
+<link id="TParam.AssignField"/>
+<link id="TDataset"/>
+<link id="TDataset.FieldByName"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: ADataset: TDataSet -->
 <element name="TParams.CopyParamValuesFromDataset.ADataset">
-<short></short>
+<short>Dataset to copy values from</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: CopyBound: Boolean -->
 <element name="TParams.CopyParamValuesFromDataset.CopyBound">
-<short></short>
+<short>Copy value also for bound parameters ?</short>
 </element>
 
 <!-- property Visibility: public
      Declaration: Dataset : TDataSet -->
 <element name="TParams.Dataset">
-<short></short>
+<short>Dataset that owns the <var>TParams</var> instance</short>
 <descr>
+<var>Dataset</var> is the <link id="TDataset"/> instance that was specified when the <var>TParams</var> instance was created.
 </descr>
 <seealso>
+<link id="TParams.Create"/>
+<link id="TDataset"/>
 </seealso>
 </element>
 
 <!-- property Visibility: public
      Declaration: Items[Index: Integer]: TParam; default -->
 <element name="TParams.Items">
-<short></short>
+<short>Indexed access to <var>TParams</var> instances in the collection</short>
 <descr>
+<var>Items</var> is overridden by <var>TParams</var> so it has the proper type (<var>TParam</var>). The <var>Index</var> runs from 0 to <var>Count-1</var>.
 </descr>
 <seealso>
+<link id="TParame"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Index: Integer -->
 <element name="TParams.Items.Index">
-<short></short>
+<short>Zero-based index to the array</short>
 </element>
 
 <!-- property Visibility: public
      Declaration: ParamValues[ParamName: String]: Variant -->
 <element name="TParams.ParamValues">
-<short></short>
+<short>Named access to the parameter values.</short>
 <descr>
+<p>
+<var>ParamValues</var> provides access to the parameter values (<link id="TParam.Value"/>) by name. It is equivalent to
+reading and writing </p>
+<code>
+ParamByName(ParamName).Value
+</code>
 </descr>
 <seealso>
+<link id="TParam.Value"/>
+<link id="TParams.ParamByName"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: ParamName: String -->
 <element name="TParams.ParamValues.ParamName">
-<short></short>
+<short>Parameter name to read/write</short>
 </element>
 
 <!--
@@ -11327,367 +12037,459 @@ passing it the datasource. If so, it returns <var>True</var>.
 
 <!-- class Visibility: default -->
 <element name="TMasterParamsDataLink">
-<short></short>
+<short>Class to establish a master-detail relationship between dataset, based on parameters</short>
 <descr>
+<var>TMasterParamsDataLink</var> is a <link id="TDataLink"/> descendent that can be used to establish 
+a master-detail relationship between 2 <var>TDataset</var> instances where the detail dataset is 
+parametrized using a <var>TParams</var> instance. It takes care of closing and opening the detail
+dataset and copying the parameter values from the master dataset whenever the data in the master 
+dataset changes.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDatalink"/>
+<link id="TDataset"/>
+<link id="TParams"/>
+<link id="TParam"/>
 </seealso>
 </element>
 
 <!-- constructor Visibility: public
      Declaration: constructor Create(ADataSet: TDataSet);  Override -->
 <element name="TMasterParamsDataLink.Create">
-<short></short>
+<short>Initialize a new <var>TMasterParamsDataLink</var> instance</short>
 <descr>
+<var>Create</var> first calls the inherited constructor using <var>ADataset</var>, and then looks for
+a property named <var>Params</var> of type <link id="TParams"/> in the published properties of 
+<var>ADataset</var> and assigns it to the <link id="TMasterParamsDataLink.Params">Params</link> property.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TDataset"/>
+<link id="TParams"/>
+<link id="TMasterParamsDataLink.Params"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: ADataSet: TDataSet -->
 <element name="TMasterParamsDataLink.Create.ADataSet">
-<short></short>
+<short>Detail dataset</short>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure RefreshParamNames;  Virtual -->
 <element name="TMasterParamsDataLink.RefreshParamNames">
-<short></short>
+<short>Refresh the list of parameter names</short>
 <descr>
+<var>RefreshParamNames</var> scans the <link id="TMasterParamsDataLink.Params">Params</link> property and
+sets the <link id="TMasterDataLink.FieldNames">FieldNames</link> property to the list of parameter names.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TMasterParamsDataLink.Params"/>
+<link id="TMasterDataLink.FieldNames"/>
 </seealso>
 </element>
 
 <!-- procedure Visibility: public
      Declaration: procedure CopyParamsFromMaster(CopyBound: Boolean);  Virtual -->
 <element name="TMasterParamsDataLink.CopyParamsFromMaster">
-<short></short>
+<short>Copy parameter values from master dataset.</short>
 <descr>
+<var>CopyParamsFromMaster</var> calls <link id="TParams.CopyParamValuesFromDataset"/>, 
+passing it the master dataset: it provides the parameters of the detail dataset with 
+their new values. If <var>CopyBound</var> is <var>false</var>, then only parameters 
+with their <link id="TParam.Bound">Bound</link> property set to <var>False</var> are copied.
+If it is <var>True</var> then the value is set for all parameters.
 </descr>
 <errors>
+If the master dataset does not have a corresponding field for each parameter, then an exception will be raised.
 </errors>
 <seealso>
+<link id="TParams.CopyParamValuesFromDataset"/>
+<link id="TParam.Bound"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: CopyBound: Boolean -->
 <element name="TMasterParamsDataLink.CopyParamsFromMaster.CopyBound">
-<short></short>
+<short>Should <var>Bound</var> parameters also get a new value ?</short>
 </element>
 
 <!-- property Visibility: public
      Declaration: Params : TParams -->
 <element name="TMasterParamsDataLink.Params">
-<short></short>
+<short>Parameters of detail dataset.</short>
 <descr>
+<var>Params</var> is the <var>TParams</var> instance of the detail dataset. 
+If the detail dataset contains a property named <var>Params</var> of type <var>TParams</var>, 
+then it will be set when the <var>TMasterParamsDataLink</var> instance was created. 
+If the property is not published, or has another name, then the <var>Params</var> property must be set in code.
 </descr>
 <seealso>
+<link id="Tparams"/>
+<link id="TMasterParamsDataLink.Create"/>
 </seealso>
 </element>
 
 <!-- constant Visibility: default
      Declaration: FieldTypetoVariantMap : Array[TFieldType] of Integer = (varError,varOleStr,varSmallint,varInteger,varSmallint,varBoolean,varDouble,varCurrency,varCurrency,varDate,varDate,varDate,varOleStr,varOleStr,varInteger,varOleStr,varOleStr,varOleStr,varOleStr,varOleStr,varOleStr,varOleStr,varError,varOleStr,varOleStr,varError,varError,varError,varError,varError,varOleStr,varOleStr,varVariant,varUnknown,varDispatch,varOleStr,varOleStr,varOleStr,varOleStr,varOleStr ) -->
 <element name="FieldTypetoVariantMap">
-<short></short>
+<short>Map field types on variant types</short>
 <descr>
+<var>FieldTypetoVariantMap</var> contains for each field datatype the variant value type that corresponds to it.
+If a field type cannot be expressed by a variant type, then <var>varError</var> is stored in the variant value.
 </descr>
 <seealso>
+<link id="TFieldType"/>
+<link id="TField.Value"/>
+<link id="TParam.Value"/>
 </seealso>
 </element>
 
 <!-- constant Visibility: default
      Declaration: Fieldtypenames : Array[TFieldType] of String = ('Unknown','String','Smallint','Integer','Word','Boolean','Float','Currency','BCD','Date','Time','DateTime','Bytes','VarBytes','AutoInc','Blob','Memo','Graphic','FmtMemo','ParadoxOle','DBaseOle','TypedBinary','Cursor','FixedChar','WideString','Largeint','ADT','Array','Reference','DataSet','OraBlob','OraClob','Variant','Interface','IDispatch','Guid','TimeStamp','FMTBcd','FixedWideChar','WideMemo' ) -->
 <element name="Fieldtypenames">
-<short></short>
+<short>Human-readable names of field types</short>
 <descr>
+<var>FieldTypeNames</var> contains the names (in english) for the various field data types.
 </descr>
 <seealso>
+<link id="TFieldType"/>
+<link id="TField.DataType"/>
 </seealso>
 </element>
 
 <!-- constant Visibility: default
      Declaration: DefaultFieldClasses : Array[TFieldType] of TFieldClass = (Tfield,TStringField,TSmallIntField,TLongintField,TWordField,TBooleanField,TFloatField,TCurrencyField,TBCDField,TDateField,TTimeField,TDateTimeField,TBytesField,TVarBytesField,TAutoIncField,TBlobField,TMemoField,TGraphicField,TBlobField,TBlobField,TBlobField,TBlobField,nil,TStringField,TWideStringField,TLargeIntField,nil,nil,nil,nil,TBlobField,TMemoField,TVariantField,nil,nil,TGuidField,nil,nil,TWideStringField,TWideMemoField ) -->
 <element name="DefaultFieldClasses">
-<short></short>
+<short>Default field classes to use when creating a new <var>TField</var> instance.</short>
 <descr>
+<var>DefaultFieldClasses</var> contains the <link id="TField"/> descendent class to use when a <var>TDataset</var> 
+instance needs to create fields based on the <link id="TFieldDefs"/> field definitions when opening the dataset.
+The entries can be set to create customized <var>TField</var> descendents for certain field datatypes in all datasets.
 </descr>
 <seealso>
+<link id="TFieldType"/>
+<link id="TField"/>
+<link id="TField.DataType"/>
 </seealso>
 </element>
 
 <!-- constant Visibility: default
      Declaration: dsEditModes = [dsEdit,dsInsert,dsSetKey] -->
 <element name="dsEditModes">
-<short></short>
+<short>Edit modes</short>
 <descr>
+<var>dsEditModes</var> contains the various values of <link id="TDataset.State"/> for which the dataset is in edit mode, 
+i.e. states in which it is possible to set field values for that dataset.
 </descr>
 <seealso>
+<link id="TDatasetState"/>
+<link id="TDataset.State"/>
+<link id="TDataset.Edit"/>
+<link id="TDataset.Insert"/>
 </seealso>
 </element>
 
 <!-- constant Visibility: default
      Declaration: dsWriteModes = [dsEdit,dsInsert,dsSetKey,dsCalcFields,dsFilter,dsNewValue,dsInternalCalc] -->
 <element name="dsWriteModes">
-<short></short>
+<short>Field write modes</short>
 <descr>
+<var>dsWriteModes</var> contains the various values of <link id="TDataset.State"/> for which data can be written to
+the dataset buffer.
 </descr>
 <seealso>
+<link id="TDatasetState"/>
+<link id="TDataset.State"/>
 </seealso>
 </element>
 
 <!-- procedure Visibility: default
      Declaration: procedure DatabaseError(const Msg: String);  Overload -->
 <element name="DatabaseError">
-<short></short>
+<short>Raise an <var>EDatabaseError</var> exception.</short>
 <descr>
+<var>DatabaseError</var> raises an <link id="EDatabaseError"/> exception, passing it <var>Msg</var>. 
+If <var>Comp</var> is specified, the name of the component is prepended to the message.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="DatabaseErrorFmt"/>
+<link id="EDatabaseError"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Msg: String -->
 <element name="DatabaseError.Msg">
-<short></short>
+<short>Message to specify for the exception</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Comp: TComponent -->
 <element name="DatabaseError.Comp">
-<short></short>
+<short>Prepend the name of this Component to the message</short>
 </element>
 
 <!-- procedure Visibility: default
      Declaration: procedure DatabaseErrorFmt(const Fmt: String;Args: Array of const)
                           ;  Overload -->
 <element name="DatabaseErrorFmt">
-<short></short>
+<short>Raise an <var>EDatabaseError</var> exception with a formatted message</short>
 <descr>
+<var>DatabaseErrorFmt</var> raises an <link id="EDatabaseError"/> exception, passing it a 
+message made by calling <link id="rtl.sysutils.format"/> with the <var>fmt</var> and <var>Args</var> arguments.
+If <var>Comp</var> is specified, the name of the component is prepended to the message.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="DatabaseError"/>
+<link id="EDatabaseError"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Fmt: String -->
 <element name="DatabaseErrorFmt.Fmt">
-<short></short>
+<short>Formatting string</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Args: Array of const -->
 <element name="DatabaseErrorFmt.Args">
-<short></short>
+<short>Formatting arguments</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Comp: TComponent -->
 <element name="DatabaseErrorFmt.Comp">
-<short></short>
+<short>Prepend the name of this Component to the message</short>
 </element>
 
 <!-- function Visibility: default
      Declaration: function ExtractFieldName(const Fields: String;var Pos: Integer)
                           : String -->
 <element name="ExtractFieldName">
-<short></short>
+<short>Extract the field name at position </short>
 <descr>
+<var>ExtractFieldName</var> returns the string starting at position <var>Pos</var> till the next semicolon (;) character or the end of the string.
+On return, <var>Pos</var> contains the position of the first character after the semicolon character (or one more than 
+the length of the string).
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="Tfields.GetFieldList"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default
      Declaration: Result -->
 <element name="ExtractFieldName.Result">
-<short></short>
+<short>Name of the field</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Fields: String -->
 <element name="ExtractFieldName.Fields">
-<short></short>
+<short>Semicolon-separated list of field names</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Pos: Integer -->
 <element name="ExtractFieldName.Pos">
-<short></short>
+<short>Position to start copying.</short>
 </element>
 
 <!-- function Visibility: default
      Declaration: function DateTimeRecToDateTime(DT: TFieldType;Data: TDateTimeRec)
                                : TDateTime -->
 <element name="DateTimeRecToDateTime">
-<short></short>
+<short>Convert <var>TDateTimeRec</var> record to a <var>TDateTime</var> value.</short>
 <descr>
+<var>DateTimeRecToDateTime</var> examines <var>Data</var> and <var>Dt</var> and uses <var>dt</var> to convert the timestamp in <var>Data</var> to 
+a <var>TDateTime</var> value.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TFieldType"/>
+<link id="TDateTimeRec"/>
+<link id="DateTimeToDateTimeRec"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default
      Declaration: Result -->
 <element name="DateTimeRecToDateTime.Result">
-<short></short>
+<short><var>TDateTime</var> value corresponding to timestamp in <var>Data</var>.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: DT: TFieldType -->
 <element name="DateTimeRecToDateTime.DT">
-<short></short>
+<short>Datatype of <var>Data</var>.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Data: TDateTimeRec -->
 <element name="DateTimeRecToDateTime.Data">
-<short></short>
+<short>Timestamp specification in <var>TDateTimeRec</var> formar.</short>
 </element>
 
 <!-- function Visibility: default
      Declaration: function DateTimeToDateTimeRec(DT: TFieldType;Data: TDateTime)
                                : TDateTimeRec -->
 <element name="DateTimeToDateTimeRec">
-<short></short>
+<short>Convert <var>TDateTime</var> value to a <var>TDateTimeRec</var> record.</short>
 <descr>
+<var>DateTimeToDateTimeRec</var> examines <var>Data</var> and <var>Dt</var> and uses <var>dt</var> to convert the date/time valuein <var>Data</var> to 
+a <var>TDateTimeRec</var> record.
 </descr>
 <errors>
 </errors>
 <seealso>
+<link id="TFieldType"/>
+<link id="TDateTimeRec"/>
+<link id="DateTimeRecToDateTime"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default
      Declaration: Result -->
 <element name="DateTimeToDateTimeRec.Result">
-<short></short>
+<short><var>TDateTimeRec</var> record corresponding to timestamp in <var>Data</var>.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: DT: TFieldType -->
 <element name="DateTimeToDateTimeRec.DT">
-<short></short>
+<short>Datatype for result</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Data: TDateTime -->
 <element name="DateTimeToDateTimeRec.Data">
-<short></short>
+<short>Timestam specification in <var>TDateTime</var> format.</short>
 </element>
 
 <!-- procedure Visibility: default
      Declaration: procedure DisposeMem(var Buffer;Size: Integer) -->
 <element name="DisposeMem">
-<short></short>
+<short>Dispose of a heap memory block and <var>Nil</var> the pointer (deprecated)</short>
 <descr>
+<var>DisposeMem</var> disposes of the heap memory area pointed to by <var>Buffer</var> (<var>Buffer</var> must be of type <var>Pointer</var>). 
+The <var>Size</var> parameter 
+indicates the size of the memory area (it is, in fact, ignored by the heap manager). The pointer <var>Buffer</var> is set
+to <var>Nil</var>. If <var>Buffer</var> is <var>Nil</var>, then nothing happens. Do not use <var>DisposeMem</var> on objects,
+because their destructor will not be called.
 </descr>
 <errors>
+If <var>Buffer</var> is not pointing to a valid heap memory block, then memory corruption may occur.
 </errors>
 <seealso>
+<link id="#rtl.system.FreeMem"/>
+<link id="#rtl.sysutils.freeandnil"/>
 </seealso>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Buffer -->
 <element name="DisposeMem.Buffer">
-<short></short>
+<short>Pointer to memory area</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Size: Integer -->
 <element name="DisposeMem.Size">
-<short></short>
+<short>Size of the memory block</short>
 </element>
 
 <!-- function Visibility: default
      Declaration: function BuffersEqual(Buf1: Pointer;Buf2: Pointer;Size: Integer)
                       : Boolean -->
 <element name="BuffersEqual">
-<short></short>
+<short>Check whether 2 memory buffers are equal</short>
 <descr>
+<var>BuffersEqual</var> compares the memory areas pointed to by the <var>Buf1</var>
+and <var>Buf2</var> pointers and returns <var>True</var> if the contents are equal. 
+The memory areas are compared for the first <var>Size</var> bytes. If all bytes in 
+the indicated areas are equal, then <var>True</var> is returned, otherwise <var>False</var> is returned.
 </descr>
 <errors>
+If <var>Buf1</var> or <var>Buf2</var> do not point to a valid memory area or <var>Size</var> is too large, 
+then an exception may occur
 </errors>
 <seealso>
+<link id="#rtl.system.Comparemem"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default
      Declaration: Result -->
 <element name="BuffersEqual.Result">
-<short></short>
+<short><var>True</var> if the memory areas have the same content.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Buf1: Pointer -->
 <element name="BuffersEqual.Buf1">
-<short></short>
+<short>Pointer to first memory area.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Buf2: Pointer -->
 <element name="BuffersEqual.Buf2">
-<short></short>
+<short>Pointer to second memory area</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: Size: Integer -->
 <element name="BuffersEqual.Size">
-<short></short>
+<short>Number of bytes to compare.</short>
 </element>
 
 <!-- function Visibility: default
      Declaration: function SkipComments(var p: PChar;EscapeSlash: Boolean;
                      EscapeRepeat: Boolean) : Boolean -->
 <element name="SkipComments">
-<short></short>
+<short>Skip SQL comments</short>
 <descr>
+<p>
+<var>SkipComments</var> examines the null-terminated string in <var>P</var> and skips any SQL comment or string literal 
+found at the start. It returns <var>P</var> the first non-comment or non-string literal position. The <var>EscapeSlash</var> parameter determines whether the 
+backslash character (\) functions as an escape character (i.e. the following character is not considered a delimiter).
+<var>EscapeRepeat</var> must be set to <var>True</var> if the quote character is repeated to indicate itself. 
+</p>
+<p>
+The function returns <var>True</var> if a comment was found and skipped, <var>False</var> otherwise.
+</p>
 </descr>
 <errors>
+No checks are done on the validity of <var>P</var>.
 </errors>
 <seealso>
+<link id="TParams.ParseSQL"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default
      Declaration: Result -->
 <element name="SkipComments.Result">
-<short></short>
+<short><var>True</var> if a comment was skipped.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: p: PChar -->
 <element name="SkipComments.p">
-<short></short>
+<short>Pointer to null-terminated string containing a SQL statement.</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: EscapeSlash: Boolean -->
 <element name="SkipComments.EscapeSlash">
-<short></short>
+<short>Is a backslash an escape character</short>
 </element>
 
 <!-- argument Visibility: default
      Declaration: EscapeRepeat: Boolean -->
 <element name="SkipComments.EscapeRepeat">
-<short></short>
+<short>Are repeated quotes considered a single character</short>
 </element>
 
 </module> <!-- db -->
