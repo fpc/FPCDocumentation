@@ -89,8 +89,10 @@ There is a distinction between local and global directives:
 \item Local directives take effect from the moment they are encountered till
 they are changed by another directive or the same directive with a different
 argument: they can be specified more than once in a source file.
-\item global directives have an effect on all of the compiled code. They
-can, in general, only be specified once per source file.
+\item Global directives have an effect on all of the compiled code. They
+can, in general, only be specified once per source file. It also means that
+their effect ends when the current unit is compiled; the effect does not 
+propagate to another unit.
 \end{itemize}
 
 Some directives can only take a boolean value, a '+' to switch them on,
@@ -2115,6 +2117,9 @@ that you should avoid using {\em absolute} paths, instead use {\em relative}
 paths, as in the example above. Only use this directive if you are certain
 of the places where the files reside. If you are not sure, it is better
 practice to use makefiles and makefile variables.
+
+Note that this switch does not propagate to other units, i.e. it's scope
+is limited to the current unit.
 
 \subsection{\var{\protect\$VERSION} : Specify DLL version.}
 On \windows, this can be used to specify a version number for a library.
