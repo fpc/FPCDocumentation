@@ -1,14 +1,18 @@
 unit relinkhtml;
 // hackety script using DOM_HTML to fix the URLs in FPC doc.
 // Note: needs dom fixes in fcl-xml (2.3.1 of after july 2009)
+//
+// Warning: looking at this code might damage your eyes!
+//
 
 interface
 {$ifdef fpc}
 {$mode delphi}
 {$endif}
 
-{define debugoutput}
-
+{$define debugoutput}
+{define printattr}
+{define printchildren}
 uses typinfo,classes,
      dom,SAX_Html,dom_html,xmlutils,htmwrite8859;
 
@@ -34,7 +38,7 @@ Type
                       procedure scan_nav_table(scanforward:boolean;var navtab:TNavArray);
                       function  walk(prev,up:THtmlDocFile):THtmlDocFile;
                       function  walkback(next:THtmlDocFile):THtmlDocFile;
-                      function  scantablenode(root:tdomnode):TNavButton;
+                      function  scantablenode(root:tdomnode;var resnode:Tdomnode):TNavButton;
                       procedure navcheck;
                       procedure patch;
                      end;
@@ -88,6 +92,22 @@ begin
     n.NodeValue:=value;
   assert(n.NodeValue=value);
 end;
+
+procedure printattributes(node:TDomNode;title:string='');
+var i :integer;
+    Attributes:TDOMNamedNodeMap;
+begin
+  if assigned(node) then
+    begin
+      Attributes:=node.Attributes;
+      write(title,' ');
+      if assigned(attributes) and (attributes.length>0) then
+        for i := 0 to Attributes.Length - 1 do
+          write(Attributes.item[i].nodevalue,' ');
+      writeln;
+    end;
+end;
+
 
 function searchtag(prnt:TDomNode;tag:string):TDomNode;
 // Seach first matching tag in siblings
@@ -152,10 +172,26 @@ begin
  while length(result)<5 do result:='0'+result;
 end;
 
+procedure printchildren(root:tdomnode);
+var
+    node :TDomNode;
+    children:TDOMNodeList;
+    i: integer;
+begin
+   children:=root.ChildNodes;
+   for i:= 0 to children.Length- 1 do
+     begin
+       node:=children.Item[i];
+       write(node.classname,'"',node.NodeName,'" ',node.Nodevalue,' - ' );
+     end;
+   writeln;
+end;
+
 { THtmlDocFile }
 
 constructor THtmlDocFile.create;
 begin
+  fillchar(navtable,sizeof(navtable),#0);
   dom:=THTMLDocument.create;
   children:=TStringList.Create;
   children.Sorted:=true;
@@ -184,6 +220,23 @@ begin
     end;
 end;
 
+procedure examinenode(txt:TDomNode;var title:ansistring);
+var s:ansistring;
+begin
+  while assigned(txt) do
+    begin
+      if txt is TDomText then
+        begin
+          s:=trim(tDomText(txt).nodevalue);
+          s:=ansireplacestr(s,chr(160),' ');
+          title:=trim(title)+' '+s;
+        end
+      else
+        examinenode(txt.firstchild,title);
+      txt:=txt.nextsibling;
+    end;
+end;
+
 procedure try_hx_a(nr:integer);
 // finds some sections with clickable titles
 var
@@ -193,20 +246,20 @@ begin
   node:=searchtag(dom.body,'h'+inttostr(nr));
   if assigned(node) then
     begin
-      span:=searchtag(node,'a');
+      examinenode(node.firstchild,title);
+  (*    span:=searchtag(node,'a');
+//      printchildren(span);
       if assigned(span) then
         begin
-           txt:=span.firstchild;
-           while assigned(txt) do
-             begin
-               if txt is TDomText then
-                   title:=title+trim(tDomText(txt).nodevalue);
-               txt:=txt.nextsibling;
-             end;
+           examinenode(span,title);
+           printchildren(span);
+    //       examinenode(span.firstchild,title);
         end;
-    end;
+*)
+    end; 
 end;
 var node: TDomNode;
+    l,
     i : integer;
 begin
   title:='';
@@ -224,12 +277,32 @@ begin
   if title='' then
    try_hx_a(3);
 
+  if title='' then
+   try_hx_a(4);
+
+  {$ifdef debugtitle}
+  if title='' then
+     writeln('no title:',filename)
+  else
+     writeln('title:',title,' in ',filename);
+  {$endif}
   // strip appendix,chapter from title for easy indexing.
   redtitle:=title;
   if ansiStartsText('Chapter',redtitle) then
-    delete(redtitle,1,8);
+     delete(redtitle,1,8);
   if ansiStartsText('Appendix',redtitle) then
     delete(redtitle,1,9);
+  l:=length(redtitle);
+  redtitle:=trim(redtitle);
+  i:=1;
+  while (i<l) and (redtitle[i] in ['0'..'9','.']) do
+    inc(i); 
+  if i<>l then
+   dec(i);
+  setlength(redtitle,i);
+  {$ifdef debugtitle}
+  writeln('redtitle:"',redtitle,'"');
+  {$endif}
 end;
 
 procedure THtmlDocFile.navcheck;
@@ -241,9 +314,8 @@ begin
   for n := low(n) to high(n) do
     if assigned(navtable[0][n]) and assigned(navtable[1][n]) and (navtable[0][n]<>navtable[1][n]) then
       begin
-
         if isfirst then
-          write(title,'  ');
+          write(':',title,'  ');
         write(getenumname(typeinfo(tnavbutton),ord(n)),' ' );
         isfirst:=false;
       end;
@@ -328,44 +400,52 @@ begin
   scan_nav_table(false,navtable[1]);
 end;
 
-procedure printchildren(root:tdomnode);
-var
-    node :TDomNode;
-    children:TDOMNodeList;
-    i: integer;
-begin
-   children:=root.ChildNodes;
-   for i:= 0 to children.Length- 1 do
-     begin
-       node:=children.Item[i];
-       write('"',children.Item[i].NodeName,'" ',children.Item[i].Nodevalue,' - ' );
-     end;
-   writeln;
-end;
-
-function THtmlDocFile.scantablenode(root: tdomnode):TNavbutton;
+function THtmlDocFile.scantablenode(root: tdomnode;var resnode:Tdomnode):TNavbutton;
 var
     children: TDOMNodeList;
     i       : integer;
     j       : TNavButton;
     node    : TDomNode;
-    s       : string;
+    s       : domstring;
 begin
-  result:=NavNone;
+   result:=NavNone;
    children:=root.ChildNodes;
+   {$ifdef printattributes}
+     writeln('root:', root.nodevalue);
+     printattributes(root,'');
+   {$endif}  
    for i:= 0 to children.Length- 1 do
      begin
       node:=children.Item[i];
       s:=node.nodevalue;
+      if s='' then
+        begin
+          result:=scantablenode(node,resnode);
+          if result<>navnone then 
+           begin
+             exit(result);
+           end;
+        end;
+     {$ifdef printattributes}
+      writeln('navchild:',node.nodename,' ',s,' * ');
+      writeln('attr:');
+      printattributes(node,'');  
+      printchildren(node);
+     {$endif}
       j:=low(NavButtonCaptions);
+     {$R-}
       while (j<=high(NavButtonCaptions)) and (navbuttoncaptions[j]<>s) do inc(j);
       if j<=high(navbuttoncaptions) then
-        exit(j);
+        begin
+          resnode:=node;
+          exit(j);
+        end;
+     {$R+}
      end;
 end;
 
 procedure THtmlDocFile.scan_nav_table(scanforward:boolean;var navtab:TNavArray);
-var divnode,pnode,node :TDomNode;
+var resnode,divnode,pnode,node :TDomNode;
     Attributes:TDOMNamedNodeMap;
     children:TDOMNodeList;
     i : integer;
@@ -377,11 +457,12 @@ begin
      divnode:=searchtagback(dom.body,'div');
   if assigned(divnode) then
     begin
+      //printchildren(divnode);
       pnode:=searchtag(divnode,'p');
       if assigned(pnode) then
         begin
-        {$ifdef debugoutput}
-        write(title,' ');
+        {$ifdef sdebugoutput}
+        writeln(title,' ');
         {$endif}
         children:=pnode.ChildNodes;
          for i:= 0 to children.Length- 1 do
@@ -389,20 +470,25 @@ begin
             node:=children.Item[i];
             if node.NodeName='a' then
               begin
-                 but:=scantablenode(node);
+                 resnode:=nil; 
+                 but:=scantablenode(node,resnode);
                  if but<>navnone then
+                  begin
+                 {$ifdef printchildren}
+                   writeln('found',but,' ',resnode.nodename,' ',resnode.nodevalue);
+                 {$endif}
                    navtab[but]:=node;
+                  end;
               end;
+          {$ifdef printchildren}
+            write('   "',children.Item[i].NodeName,'" ',children.Item[i].Nodevalue,' - ' );
+            writeln;
+          {$endif}
           end;
-           //write('"',children.Item[i].NodeName,'" ',children.Item[i].Nodevalue,' - ' );
-         //writeln;
-
         end;
-      {Attributes:=node.Attributes;
-      write(title,' ');
-      for i := 0 to Attributes.Length - 1 do
-        write(Attributes.item[i].nodevalue,' ');
-      writeln;}
+      {$ifdef printattributes}
+        printattributes(pnode,title);  
+      {$endif}
     end;
 end;
 
@@ -522,11 +608,17 @@ begin
     begin
       repeat
         v:=THtmlDocFile.create;
-        v.read(basedir+d.Name,d.name);
+        v.read(basedir+d.Name,d.name); 
+        {$ifdef debugoutput}
+          Writeln('  ',d.name);
+        {$endif}
         delete(d.Name,1,length(prefix));
         redname:=v.redtitle;                 // redtitle is paragraph title minus appendix/chapter etc.
         if ansiStartsText('ch',d.Name) then
+         begin
+           writeln('chap:',redname);
           chapters.AddObject(padzero(redName),v) // must be sorted from the start, so padded.
+         end
         else
           if ansiStartsText('se',d.Name) then
             sections.AddObject(redName,v)
