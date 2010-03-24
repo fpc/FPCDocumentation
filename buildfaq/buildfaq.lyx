@@ -1,4 +1,4 @@
-#LyX 1.6.2 created this file. For more info see http://www.lyx.org/
+#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
 \lyxformat 345
 \begin_document
 \begin_header
@@ -71,7 +71,7 @@ by Marco van de Voort
 \end_layout
 
 \begin_layout Date
-June 1st 2009
+March 24st 2010
 \end_layout
 
 \begin_layout Section*
@@ -79,16 +79,17 @@ Foreword to the Development Tutorial
 \end_layout
 
 \begin_layout Standard
-FAQ version 0.07b
+FAQ version 0.08
 \end_layout
 
 \begin_layout Standard
-FPC version 2.2.4/2.3.x (release/devel) 
+FPC version 2.4.0/2.5.1 (release/devel) 
 \end_layout
 
 \begin_layout Standard
-Lately, I noticed that there are more people playing with the more advanced
- aspects of the buildprocess of FPC, tracking daily SVN status, trying things
+This FAQ was created in early 2.0 times (2005) when I noticed that more people
+ started playing with the more advanced aspects of the buildprocess of FPC
+ like tracking daily SVN status, crosscompiling and in general trying things
  that used to be only done by a small circle of core developpers and maybe
  a select few on the maillists and in the Lazarus project.
  Things like bootstrapping a new version, release building, crosscompiling,
@@ -255,6 +256,10 @@ newer buildscripts
 \begin_layout Itemize
 Updates 0.07a and b only have minor typo fixes, and was released in the day
  after the initial 0.07 version
+\end_layout
+
+\begin_layout Itemize
+Version 0.08 is a maintenance release after 2.4.0, LyX version 1.6.5
 \end_layout
 
 \begin_layout Standard
@@ -441,13 +446,21 @@ _
 \end_inset
 
  fixes_2_2 branch.
- Currently 2.2.4 is expected to be the last of the 2.2.x branch, because merging
- is getting increasingly laboursome.
+ 2.2.4 is the last of the 2.2.x branch, because merging was getting increasingly
+ laboursome.
  
 \end_layout
 
 \begin_layout Description
-2.3.x The branch for post 2.2 development, will become 2.4.0 in time.
+2.3.x/2.4.x The branch for post 2.4 series.
+ 2.4.0 was released on januari 1st, 2010 and contains improvements in resource
+ handling, dwarf and for newer architectures (specially the 64-bit ones)
+\end_layout
+
+\begin_layout Description
+2.5.1 This is the version in TRUNK, the bleeding edge of development.
+ Some of its features will be merged back to 2.4.x, while others will only
+ reach endusers when 2.5.1 goes golden as 2.6.0 or 3.0.0.
 \end_layout
 
 \begin_layout Standard
@@ -489,7 +502,8 @@ Releases are tagged with a RELEASE_x_y_z for release x.y.z.
 
 \begin_layout Standard
 \begin_inset Graphics
-	filename timeline.png
+	filename timelinenew.png
+	width 20cm
 
 \end_inset
 
@@ -1300,7 +1314,9 @@ Other tools
 
 \begin_layout Standard
 Sometimes there are other platform dependant tools.
- Most notably the Windows resource compiler windres and dlltool,
+ Most notably the Windows resource compiler windres to compiler resourcescripts
+ (*.rc) and dlltool to generate importlibs for FPC generated DLLs so that
+ certain other compilers (MSVC, mingw) can use them.
 \end_layout
 
 \begin_layout Section
@@ -1328,8 +1344,8 @@ status open
 \begin_layout Plain Layout
 
 \backslash
-href{ftp://ftp.freepascal.org/pub/fpc/snapshot/v22/source/fpc.zip}{ftp://ftp.freepas
-cal.org/pub/fpc/snapshot/v22/source/fpc.zip (2.2.x)}
+href{ftp://ftp.freepascal.org/pub/fpc/snapshot/v24/source/fpc.zip}{ftp://ftp.freepas
+cal.org/pub/fpc/snapshot/v24/source/fpc.zip (2.2.x)}
 \end_layout
 
 \end_inset
@@ -1341,8 +1357,8 @@ status open
 \begin_layout Plain Layout
 
 \backslash
-href{ftp://ftp.freepascal.org/pub/fpc/snapshot/v23/source/fpc.zip}{ftp://ftp.freepas
-cal.org/pub/fpc/snapshot/v23/source/fpc.zip (2.3.x development series)}
+href{ftp://ftp.freepascal.org/pub/fpc/snapshot/v25/source/fpc.zip}{ftp://ftp.freepas
+cal.org/pub/fpc/snapshot/v25/source/fpc.zip (2.5.x development series)}
 \end_layout
 
 \end_inset
@@ -1636,11 +1652,11 @@ svn co http://svn.freepascal.org/svn/lazarus/trunk lazarus
 To check out a branch, replace “trunk” in the above lines with the branches/<bra
 nch name>.
  E.g.
- to check out the branch fixes_2_2: 
+ to check out the branch fixes_2_4: 
 \end_layout
 
 \begin_layout LyX-Code
-svn co http://svn.freepascal.org/svn/fpc/branches/fixes_2_2 fpc-2.2.x 
+svn co http://svn.freepascal.org/svn/fpc/branches/fixes_2_4 fpc-2.4.x 
 \end_layout
 
 \begin_layout Standard
@@ -1693,11 +1709,11 @@ _
 
 \end_inset
 
-RELEASE_2_2_4 , and can be checked out like this: 
+RELEASE_2_4_0 , and can be checked out like this: 
 \end_layout
 
 \begin_layout LyX-Code
-svn co http://svn.freepascal.org/svn/fpc/tags/RELEASE_2_2_4 fpc-2.2.4
+svn co http://svn.freepascal.org/svn/fpc/tags/RELEASE_2_4_0 fpc-2.4.0
 \end_layout
 
 \begin_layout Subsection
@@ -1735,7 +1751,7 @@ svn up fpc
 \end_layout
 
 \begin_layout LyX-Code
-svn up fpc-2.2.4
+svn up fpc-2.4.0
 \end_layout
 
 \begin_layout Subsection
@@ -1789,8 +1805,8 @@ Exporting(svn)
 \end_layout
 
 \begin_layout Standard
-Exportingis basically retrieving a local working copy from a checkout.
- Typical reasons to buildin an exportinstead ofa checkout are: 
+Exporting is basically retrieving a local working copy from a checkout.
+ Typical reasons to build in an export instead of a checkout are: 
 \end_layout
 
 \begin_layout Itemize
@@ -1966,6 +1982,10 @@ ppas.sh (or .bat) batchfile that calls the linker with the correct arguments.
 
 \begin_layout Description
 *.lrs Lazarus resources, old style
+\end_layout
+
+\begin_layout Description
+*.rc Resource source file, to be processed by windres to .res
 \end_layout
 
 \begin_layout Standard
@@ -2220,7 +2240,7 @@ FPCFULLVERSION
 \end_inset
 
  is replaced by a compiler version with an extra patchlevel.
- (2.2.x) 
+ (2.4.x) 
 \end_layout
 
 \begin_layout Description
@@ -2315,7 +2335,7 @@ The place where configuration files are searched on unix are: /etc/fpc.cfg,
 \end_layout
 
 \begin_layout Standard
-So let’s take $PREFIX=/usr/local, $VERSION=2.2.4, $FPCCPU=i386, $FPCOS=freebsd
+So let’s take $PREFIX=/usr/local, $VERSION=2.4.0, $FPCCPU=i386, $FPCOS=freebsd
  and $FPCTARGET=i386-freebsd as an example, and see what file goes where:
 \end_layout
 
@@ -2423,7 +2443,7 @@ ppc386
 \begin_layout Plain Layout
 
 \size small
-actually symlinked to /usr/local/lib/fpc/2.2.4/ppc386
+actually symlinked to /usr/local/lib/fpc/2.4.0/ppc386
 \end_layout
 
 \end_inset
@@ -2458,7 +2478,7 @@ ppcppc
 \begin_layout Plain Layout
 
 \size small
-actually symlinked to /usr/local/lib/fpc/2.2.4/ppcppc
+actually symlinked to /usr/local/lib/fpc/2.4.0/ppcppc
 \end_layout
 
 \end_inset
@@ -2482,7 +2502,7 @@ rtl for i386-freebsd
 \begin_layout Plain Layout
 
 \size small
-/usr/local/lib/fpc/2.2.4/units/i386-freebsd/rtl
+/usr/local/lib/fpc/2.4.0/units/i386-freebsd/rtl
 \end_layout
 
 \end_inset
@@ -2515,7 +2535,7 @@ rtl for i386-linux
 \begin_layout Plain Layout
 
 \size small
-/usr/local/lib/fpc/2.2.4/units/i386-linux/rtl 
+/usr/local/lib/fpc/2.4.0/units/i386-linux/rtl 
 \end_layout
 
 \end_inset
@@ -2550,7 +2570,7 @@ rtl for powerpc-netbsd
 \begin_layout Plain Layout
 
 \size small
-/usr/local/lib/fpc/2.2.4/units/powerpc-netbsd/rtl
+/usr/local/lib/fpc/2.4.0/units/powerpc-netbsd/rtl
 \end_layout
 
 \end_inset
@@ -2585,7 +2605,7 @@ rtl for x86_64-win64
 \begin_layout Plain Layout
 
 \size small
-/usr/local/lib/fpc/2.2.4/units/x86_64-win64/rtl
+/usr/local/lib/fpc/2.4.0/units/x86_64-win64/rtl
 \end_layout
 
 \end_inset
@@ -2646,7 +2666,7 @@ pp, but has been changed to c:
 \backslash
 fpc
 \backslash
-2.2.4 since 2.0.
+2.4.0 since 2.0.
  I call this path $INSTALLDIR.
  Usually there aren’t other versions in the same $INSTALLDIR A different
  version means a different $INSTALLDIR, at least in the default situation.
@@ -2691,7 +2711,7 @@ So let’s assume $INSTALLDIR=c:
 \backslash
 fpc
 \backslash
-2.2.4 andthe default $FPCTARGET=win32 
+2.4.0 and the default $FPCTARGET=win32 
 \end_layout
 
 \begin_layout Standard
@@ -2758,7 +2778,7 @@ c:
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 bin
 \backslash
@@ -2799,7 +2819,7 @@ c:
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 bin
 \backslash
@@ -2840,7 +2860,7 @@ c:
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 bin
 \backslash
@@ -2881,7 +2901,7 @@ c:
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 units
 \backslash
@@ -2926,7 +2946,7 @@ c:
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 units
 \backslash
@@ -2971,7 +2991,7 @@ c:
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 units
 \backslash
@@ -3014,7 +3034,7 @@ c:
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 units
 \backslash
@@ -3057,7 +3077,7 @@ c:
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 cross
 \end_layout
@@ -3098,7 +3118,7 @@ c:
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 libs
 \backslash
@@ -3141,7 +3161,7 @@ c:
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 libs
 \backslash
@@ -3531,7 +3551,7 @@ Win32 and Dos installed in c:
 \backslash
 fpc
 \backslash
-2.2.4 
+2.4.0 
 \end_layout
 
 \begin_layout LyX-Code
@@ -3539,7 +3559,7 @@ fpc
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 units
 \backslash
@@ -3561,7 +3581,7 @@ $FPCtarget
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 units
 \backslash
@@ -3589,7 +3609,7 @@ $fpctarget
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 bin
 \backslash
@@ -3776,7 +3796,7 @@ Win32 and Dos: Pretty much the same.
 \backslash
 fpc
 \backslash
-2.2.4 .However the binutils are in d:
+2.4.0 .However the binutils are in d:
 \backslash
 binutils and deeper and named like under *BSD:
 \end_layout
@@ -5381,15 +5401,15 @@ pp
 \begin_layout Standard
 A standard confusing detail when installing a snapshot is that the target
  directory (e.g.
- /usr/local/lib/fpc/2.2.4) depends on the version number.
+ /usr/local/lib/fpc/2.4.0) depends on the version number.
  If you would follow the above sequence, and the generated compiler (say
- version 2.3.1) is not equal to the starting compiler (say version 2.2.4), then
+ version 2.5.1) is not equal to the starting compiler (say version 2.4.0), then
  make install will install into the wrong directory.
  The same goes for windows ( c:
 \backslash
 fpc
 \backslash
-2.2.4 ...
+2.4.0 ...
  ) This can be solved by setting the compiler that is generated in the “make
  all” step as a starting compiler to the “make install” step.
  This will ensure that the “make install” sequence gets the correct versioning
@@ -5888,7 +5908,7 @@ fpc is the directory where I export the SVN repository too.
 \begin_layout Itemize
 d:
 \backslash
-fpcrel is the directory containing FPC 2.2.4 for bootstrapping purposes.
+fpcrel is the directory containing FPC 2.4.0 for bootstrapping purposes.
  
 \end_layout
 
@@ -5969,7 +5989,11 @@ If this is successful we install: (all on one line)
 \begin_layout LyX-Code
 make install OPT='-gl' INSTALL_PREFIX=d:
 \backslash
-pp11 UPXPROG=echo FPC=d:
+pp11 UPXPROG=echo
+\end_layout
+
+\begin_layout LyX-Code
+                       FPC=d:
 \backslash
 fpcrel
 \backslash
@@ -6222,9 +6246,12 @@ myinst.exe
 \end_layout
 
 \begin_layout Standard
-Probably this will fixed in a while by mingw, e.g.
- by adding a manifest.
- (in 2.4.0 or 2.2.6 if 2.4.0 is delayed)
+
+\series bold
+P.s.
+
+\series default
+ This Vista/Windows 7 problem is fixed in 2.4.0 by adding a manifest.
 \end_layout
 
 \begin_layout Subsection
@@ -6265,7 +6292,7 @@ set FPCSTART=c:
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \backslash
 bin
 \backslash
@@ -6331,6 +6358,7 @@ buildlog.txt 2>&1
 
 \begin_layout LyX-Code
 REM separate install step for crossversion purposes (and under Unix sudo)
+ (on one line)
 \end_layout
 
 \begin_layout LyX-Code
@@ -6339,7 +6367,11 @@ REM separate install step for crossversion purposes (and under Unix sudo)
 
 \begin_layout LyX-Code
 make install %COMMONOPTS% INSTALL_PREFIX=%INSTALLDIR% FPC=%SRCDIR%/compiler/%PPC
-NAME% 1> %LOGDIR%
+NAME% 
+\end_layout
+
+\begin_layout LyX-Code
+                               1> %LOGDIR%
 \backslash
 installlog.txt  2>&1
 \end_layout
@@ -6523,6 +6555,7 @@ If the compiler can't find contnrs, this points to a problem with the -Fu
  It probably means -Fu was wrong, but the makefiles managed to auto-add
  the RTL, and the contnrs (and other FCL-BASE) unit(s) are then the first
  unit that can't be found.
+ It can also point to duplicate .ppu files or mixing of FPC versions.
 \end_layout
 
 \begin_layout Subsection
@@ -6675,7 +6708,7 @@ Note:
  Despite the usage of mingw tools, it is not recommended to have the mingw
  directories in the path.
  Some of the mingw tools (most notably make.exe when it detects sh.exe) apparantly
- change behaviour if they detect other ones.
+ change behaviour upon detection .
 \end_layout
 
 \begin_layout Chapter
@@ -6733,7 +6766,11 @@ gmake distclean
 
 \begin_layout LyX-Code
 gmake all install OS_TARGET=win32 CROSSBINDIR=~/cross/bin BINUTILSPREFIX=i686-mi
-ng32- INSTALL_PREFIX=/usr/local 
+ng32-
+\end_layout
+
+\begin_layout LyX-Code
+                                           INSTALL_PREFIX=/usr/local 
 \end_layout
 
 \begin_layout Standard
@@ -6763,7 +6800,11 @@ gmake distclean
 
 \begin_layout LyX-Code
 gmake all install CPU_TARGET=x86_64 OS_TARGET=linux CROSSBINDIR=~/cross/bin
- BINUTILSPREFIX=x86_64-linux- INSTALL_PREFIX=/usr/local 
+ BINUTILSPREFIX=x86_64-linux- 
+\end_layout
+
+\begin_layout LyX-Code
+                                          INSTALL_PREFIX=/usr/local 
 \end_layout
 
 \begin_layout Section
@@ -6833,7 +6874,7 @@ Now we are going to build and install FPC for crosscompiling (assume FPC
 \backslash
 fpc
 \backslash
-2.2.4) 
+2.4.0) 
 \end_layout
 
 \begin_layout LyX-Code
@@ -6842,7 +6883,7 @@ c:
 \backslash
 fpc
 \backslash
-2.2.4
+2.4.0
 \end_layout
 
 \begin_layout Standard
@@ -6877,6 +6918,10 @@ Now we start with the Lazarus building, enter the lazarus directory and
 \end_layout
 
 \begin_layout LyX-Code
+rem on one line:
+\end_layout
+
+\begin_layout LyX-Code
 make OS_TARGET=linux all OPT=
 \begin_inset Quotes erd
 \end_inset
@@ -6885,7 +6930,11 @@ make OS_TARGET=linux all OPT=
 \backslash
 fpc
 \backslash
-linuxlib -Xr/usr/lib -FL/usr/lib/ld-linux.so.2 -XLAc=c,dl,gmodule
+linuxlib -Xr/usr/lib -FL/usr/lib/ld-linux.so.2 
+\end_layout
+
+\begin_layout LyX-Code
+                          -XLAc=c,dl,gmodule
 \begin_inset Quotes erd
 \end_inset
 
@@ -7468,6 +7517,11 @@ The most common causes are:
 \end_layout
 
 \begin_layout Enumerate
+Including the main source trees into your unit searchpath.
+ This is wrong, they should only be in your debugger/codetools sourcepath
+\end_layout
+
+\begin_layout Enumerate
 includefiles and unit names that are not unique.
  
 \end_layout
@@ -7491,10 +7545,6 @@ Recompiling
 
 \begin_layout Standard
 [Unfinished] 
-\end_layout
-
-\begin_layout Subsubsection
-
 \end_layout
 
 \begin_layout Chapter
@@ -9846,6 +9896,21 @@ winNT
 
  The common underpinnings of NT4, windows 2000 (NT5) ,XP (NT5.1) ,2003 (NT5.2),Vis
 ta (NT6), 2008 and 7 (NT7)
+\end_layout
+
+\begin_layout Description
+windres 
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+windres
+\end_layout
+
+\end_inset
+
+ A resourcecompiler used to turn resource scripts into .res files that can
+ be included by the linker.
 \end_layout
 
 \begin_layout Standard
