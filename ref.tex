@@ -1339,10 +1339,10 @@ In this case you should call \var{Uniquestring} to ensure the
 string has reference count 1.
 \end{enumerate}
 
-\subsection{WideStrings}
-\index{Widestring}\index{Types!Widestring}\index{Types!Reference counted}
-\keywordlink{Widestring}
-Widestrings (used to represent unicode character strings) are implemented in much 
+\subsection{UnicodeStrings}
+\index{Unicodestring}\index{Types!Unicodestring}\index{Types!Reference counted}
+\keywordlink{UnicodeString}
+Unicodestrings (used to represent unicode character strings) are implemented in much 
 the same way as ansistrings: reference counted, null-terminated arrays, only they 
 are implemented as arrays of \var{WideChars} instead of regular \var{Chars}.
 A \var{WideChar} is a two-byte character (an element of a DBCS: Double Byte
@@ -1351,16 +1351,32 @@ Character Set). Mostly the same rules apply for \var{WideStrings} as for
 AnsiStrings and vice versa. \index{Ansistring}
 
 Similarly to the typecast\index{Typecast} of an Ansistring to a \var{PChar} null-terminated
-\index{PChar}\index{PWideChar}%
-array of characters, a WideString can be converted to a \var{PWideChar}
-null-terminated array of characters. 
-Note that the \var{PWideChar} array is terminated by 2 null bytes instead of
+\index{PChar}\index{PUnicodeChar} array of characters, a UnicodeString can be converted to a 
+\var{PUnicodeChar} null-terminated array of characters. Note that the
+\var{PUnicodeChar} array is terminated by 2 null bytes instead of
 1, so a typecast to a pchar is not automatic.
 
 The compiler itself provides no support for any conversion from Unicode to
-ansistrings or vice versa. The \file{system} unit has a widestring manager
+ansistrings or vice versa. The \file{system} unit has a unicodestring manager
 record, which can be initialized with some OS-specific unicode handling
 routines. For more information, see the \file{system} unit reference.
+
+\subsection{WideStrings}
+\index{Widestring}\index{Types!Widestring}
+\keywordlink{Widestring}
+Widestrings (used to represent unicode character strings in COM applications)
+are implemented in much the same way as unicodestrings. Unlike the latter,
+they are \em{not} reference counted, and on Windows, they are allocated with a
+special windows function which allows them to be used for OLE automation.
+This means they are implemented as null-terminated arrays of \var{WideChars} 
+instead of regular \var{Chars}. A \var{WideChar} is a two-byte character 
+(an element of a DBCS: Double Byte Character Set). Mostly the same rules 
+apply for \var{WideStrings} as for \var{AnsiStrings}. Similar to
+unicodestrings, the compiler transparantly converts WideStrings 
+to AnsiStrings and vice versa. \index{Ansistring}
+
+For typecasting and conversion, the same rules apply as for the
+unicodestring type.
 
 % Constant strings
 \subsection{Constant strings}
