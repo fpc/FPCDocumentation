@@ -8467,6 +8467,10 @@ For more information about thread programming, see the programmer's guide.
 <element name="TThreadManager.BeginThread">
 <short>Start a new thread.</short>
 </element>
+<!-- variable Visibility: default -->
+<element name="TThreadManager.CloseThread">
+<short>Free up thread resources after a thread was finished.</short>
+</element>
 
 <!-- variable Visibility: default -->
 <element name="TThreadManager.EndThread">
@@ -8697,11 +8701,31 @@ The function returns the thread handle (or ID, on Linux) on success, or 0 if an 
 Note that the thread ID and handle are the same on unix processes, and that
 the thread ID and thread handle are different on windows systems.
 </p>
+<p>
+The thread handle must be used to clean up thread resources after the thread
+has finished. The <link id="CloseThread"/> function must be used for this.
+</p>
 </descr>
 <errors>
 On error, the value "0" is returned.
 </errors>
 <seealso>
+<link id="EndThread"/>
+<link id="CloseThread"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CloseThread">
+<short>Clean up thread resources.</short>
+<descr>
+<var>CloseThread</var> cleans up thread resources after the thread with
+handle <var>threadHandle</var> finished. 
+It must be called for each thread that was started with <link
+id="BeginThread"/>.
+</descr>
+<seealso>
+<link id="BeginThread"/>
 <link id="EndThread"/>
 </seealso>
 </element>
@@ -8719,10 +8743,16 @@ If it is omitted, zero is used.
 <p>
 This function does not return.
 </p>
+<p>
+Note that <var>EndThread</var> does not clean up the thread resources. 
+It only ends the execution of the thread. The thread resources must be freed
+using a call to <link id="CloseThread"/>
+</p>
 </descr>
 <seealso>
 <link id="WaitForThreadTerminate"/>
 <link id="BeginThread"/>
+<link id="CloseThread"/>
 </seealso>
 </element>
 
