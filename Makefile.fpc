@@ -345,10 +345,10 @@ INCLUDES=date.inc syntax.sty
 
 # Where is System.pp located
 SYSTEMUNITDIR=$(OS_SOURCE)
-ifeq ($(findstring bsd,$(OS_SOURCE)),)
+ifneq ($(findstring bsd,$(OS_SOURCE)),)
 override SYSTEMUNITDIR=bsd
 endif
-ifeq ($(findstring darwin,$(OS_SOURCE)),)
+ifneq ($(findstring darwin,$(OS_SOURCE)),)
 override SYSTEMUNITDIR=bsd
 endif
 HOSTOS=$(OS_SOURCE)
@@ -407,9 +407,12 @@ FCLMAKESKEL=$(MAKESKEL) --package=fcl
 RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-results
 
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream \
-         base64 gettext ezcgi pooledmm dbugmsg streamex inicol streamcoll cachecls \
+         base64 gettext pooledmm dbugmsg streamex inicol streamcoll cachecls \
          eventlog syncobjs custapp blowfish simpleipc inifiles rttiutils uriparser \
          daemonapp libtar ascii85 fptimer db
+#ifndef istrunk
+FCLUNITS+= ezcgi
+#endif
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 # Separate arguments for all FCL units.
@@ -437,7 +440,9 @@ FCLPIPES= --descr=pipes.xml --input="$(FCLPROCESSDIR)/pipes.pp"
 FCLDBUGINTF= --descr=dbugintf.xml --input="$(FCLPROCESSDIR)/dbugintf.pp" 
 FCLDBUGMSG= --descr=dbugmsg.xml --input="$(FCLPROCESSDIR)/dbugmsg.pp"
 FCLSIMPLEIPC= --descr=simpleipc.xml --input="$(FCLPROCESSDIR)/simpleipc.pp"
+#ifndef istrunk
 FCLEZCGI= --descr=ezcgi.xml --input="$(FCLWEBDIR)/ezcgi.pp"
+#endif
 FCLURIPARSER= --descr=uriparser.xml --input="$(FCLBASEDIR)/uriparser.pp"
 FCLZSTREAM= --descr=zstream.xml --input="$(FCLZLIBDIR)/zstream.pp"
 FCLDAEMONAPP= --descr=daemonapp.xml --input="$(DAEMONDIR)/daemonapp.pp"
@@ -449,7 +454,11 @@ FCLDB= --descr=db.xml --input="$(FCLDBDIR)/base/db.pas"
 # Now add to the FCL fpdoc opts.
 FCLUNITOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLUNITOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
-FCLUNITOPTS+= $(FCLGETTEXT) $(FCLEZCGI) $(FCLPOOLEDMM) $(FCLDBUGMSG) $(FCLSTREAMEX)
+FCLUNITOPTS+= $(FCLGETTEXT) 
+#ifndef istrunk
+FCLUNITOPTS+= $(FCLEZCGI) 
+#endif
+FCLUNITOPTS+= $(FCLPOOLEDMM) $(FCLDBUGMSG) $(FCLSTREAMEX)
 FCLUNITOPTS+= $(FCLINICOL) $(FCLSTREAMCOL) $(FCLCACHECLS) $(FCLEVENTLOG) $(FCLSYNCOBJS)
 FCLUNITOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES) $(FCLRTTIUTILS)
 FCLUNITOPTS+= $(FCLAVLTREE) $(FCLURIPARSER) $(FCLDAEMONAPP) $(FCLLIBTAR) $(FCLASCII85)
@@ -464,11 +473,11 @@ ifdef CURRENTXMLONLY
 RTLXML=crt.xml
 RTLOPTS+=--descr=dateutils.xml --input="$(FPCSRCDIR)/rtl/unix/crt.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
 else
-RTLUNITS=sysutils strutils dateutils strings mouse keyboard \
+RTLUNITS=system objpas sysutils strutils dateutils strings mouse keyboard \
          crt video dos sockets objects heaptrc mmx ipc printer typinfo \
          ports getopts emu387 dxeload go32 gpm oldlinux baseunix \
          unixtype unix classes unixutil x86 dynlibs linux math matrix \
-         system objpas dateutils rtl wincrt clocale cthreads cmem cwstring \
+         dateutils rtl wincrt clocale cthreads cmem cwstring \
          exeinfo lineinfo lnfodwrf ctypes
 RTLXML=$(addsuffix .xml,$(RTLUNITS))
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
@@ -520,13 +529,14 @@ RTLCTYPES= --descr=ctypes.xml --input="$(FPCSRCDIR)/rtl/inc/ctypes.pp -Fi$(FPCSR
 #
 # Put all together.
 #
+RTLOPTS+= $(RTLSYSTEM) $(RTLOBJPAS) 
 RTLOPTS+= $(RTLSTRUTILS) $(RTLSYSUTILS) $(RTLSTRINGS) $(RTLMOUSE) $(RTLKEYBOARD)
 RTLOPTS+= $(RTLCRT) $(RTLVIDEO) $(RTLDOS) $(RTLSOCKETS) $(RTLOBJECTS)
 RTLOPTS+= $(RTLHEAPTRC) $(RTLMMX) $(RTLIPC) $(RTLPRINTER) $(RTLTYPINFO) 
 RTLOPTS+= $(RTLPORTS) $(RTLGETOPTS) $(RTLEMU387) $(RTLDXELOAD) $(RTLGO32)
 RTLOPTS+= $(RTLGPM) $(RTLGRAPH) $(RTLOLDLINUX) $(RTLUNIXTYPE) $(RTLBASEUNIX)
 RTLOPTS+= $(RTLUNIX) $(RTLCLASSES) $(RTLUNIXUTIL) $(RTLX86) $(RTLDYNLIBS)
-RTLOPTS+= $(RTLLINUX) $(RTLMATH) $(RTLMATRIX) $(RTLSYSTEM) $(RTLOBJPAS)
+RTLOPTS+= $(RTLLINUX) $(RTLMATH) $(RTLMATRIX) 
 RTLOPTS+= $(RTLDATEUTILS) $(RTLWINCRT) $(RTLCLOCALE) $(RTLCTHREADS) $(RTLCMEM)
 RTLOPTS+= $(RTLCWSTRING) $(RTLEXEINFO) $(RTLLINEINFO) $(RTLLNFODWRF) $(RTLCTYPES)
 endif 
@@ -591,7 +601,9 @@ updatefclxml: fpc_all
 	$(FCLMAKESKEL) $(FCLBUFSTREAM) --output=bufstream.new.xml
 	$(FCLMAKESKEL) $(FCLBASE64) --output=base64.new.xml
 	$(FCLMAKESKEL) $(FCLGETTEXT) --output=gettext.new.xml
+#ifndef istrunk
 	$(FCLMAKESKEL) $(FCLEZCGI) --output=ezcgi.new.xml
+#endif
 	$(FCLMAKESKEL) $(FCLPOOLEDMM) --output=pooledmm.new.xml
 	$(FCLMAKESKEL) $(FCLDBUGMSG) --output=dbugmsg.new.xml
 	$(FCLMAKESKEL) $(FCLSTREAMEX) --output=streamex.new.xml
