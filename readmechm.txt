@@ -5,10 +5,17 @@ CHM helpfiles.
 CHM support based on the great work of Andrew is now also available in the 
 textmode IDE.  This archive also contains the .xct and .kwd files that are
 needed for crosslinking this archive with other CHM files. These files are
-not required for viewing (but are relatively small)
+not required for viewing (but are sub promille in size)
 
+How to install the CHMs in Lazarus
+------------------------------------
 
-How to install the CHMs into the IDE.
+Copy the chms to docs/html in the Lazarus directory.
+
+Note that Lazarus does not load ref.* at this moment, so (CHM) help
+on keywords does not work yet.
+
+How to install the CHMs into the textmode IDE.
 -------------------------------------
 
 1. extract the archive somewhere, the archive already has an "help/" path
@@ -31,6 +38,9 @@ If you use Windows XPsp2 or later, and an helpfile won't view, go into the
 file explorer, and bring up the properties of the CHM file. Then click
 "unblock" there. Apparantly, in some cases Windows thinks the helpfiles are
 downloaded content, and prevents access.
+
+To do this programatically, FPC 2.4.3+ has this functionality built into the
+chmls utility (chmls unblock <chmfile>)
 
 What is CHM? 
 ------------
@@ -69,8 +79,10 @@ the larger chm files (rtl.chm, and lcl.chm from Lazarus), and only show the
 first couple of hundred entries.  The author has been notified and can't
 reproduce it with his latest builds anymore.
 
-Older gnochms were extremely slow with larger files, but this seems to have
-been fixed in more recent builds.
+kchmviewer versions (even as new as in Fedora 13) seem to have problems with
+links that don't have a leading / either ( ? )
+
+Gnochm is extremely slow with the larger files.
 
 xCHM in the recent version seems to work fine and fast.
 
