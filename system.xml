@@ -8467,10 +8467,6 @@ For more information about thread programming, see the programmer's guide.
 <element name="TThreadManager.BeginThread">
 <short>Start a new thread.</short>
 </element>
-<!-- variable Visibility: default -->
-<element name="TThreadManager.CloseThread">
-<short>Free up thread resources after a thread was finished.</short>
-</element>
 
 <!-- variable Visibility: default -->
 <element name="TThreadManager.EndThread">
@@ -8701,31 +8697,11 @@ The function returns the thread handle (or ID, on Linux) on success, or 0 if an 
 Note that the thread ID and handle are the same on unix processes, and that
 the thread ID and thread handle are different on windows systems.
 </p>
-<p>
-The thread handle must be used to clean up thread resources after the thread
-has finished. The <link id="CloseThread"/> function must be used for this.
-</p>
 </descr>
 <errors>
 On error, the value "0" is returned.
 </errors>
 <seealso>
-<link id="EndThread"/>
-<link id="CloseThread"/>
-</seealso>
-</element>
-
-<!-- function Visibility: default -->
-<element name="CloseThread">
-<short>Clean up thread resources.</short>
-<descr>
-<var>CloseThread</var> cleans up thread resources after the thread with
-handle <var>threadHandle</var> finished. 
-It must be called for each thread that was started with <link
-id="BeginThread"/>.
-</descr>
-<seealso>
-<link id="BeginThread"/>
 <link id="EndThread"/>
 </seealso>
 </element>
@@ -8743,16 +8719,10 @@ If it is omitted, zero is used.
 <p>
 This function does not return.
 </p>
-<p>
-Note that <var>EndThread</var> does not clean up the thread resources. 
-It only ends the execution of the thread. The thread resources must be freed
-using a call to <link id="CloseThread"/>
-</p>
 </descr>
 <seealso>
 <link id="WaitForThreadTerminate"/>
 <link id="BeginThread"/>
-<link id="CloseThread"/>
 </seealso>
 </element>
 
@@ -14293,6 +14263,782 @@ Obviously, the type of the elements of the arrays <var>A</var> and
 <link id="Pack"/>
 </seealso>
 </element>
+
+<!-- pointer type Visibility: default -->
+<element name="PPPChar">
+<short>Pointer to <var>PPChar</var>.</short>
+<descr>
+<var>PPPChar</var> is a pointer to a <link id="PPChar"/>
+</descr>
+<seealso>
+<link id="PPChar"/>
+</seealso>
+</element>
+
+<!-- "type" alias type Visibility: default -->
+<element name="TDate">
+<short>Alias for <var>TDateTime</var> type.</short>
+<descr>
+<var>TDate</var> is defined for Delphi compatibility. This type is
+deprecated, use <link id="TDateTime"/> instead.
+</descr>
+<seealso>
+<link id="TDateTime"/>
+<link id="TTime"/>
+</seealso>
+</element>
+
+<!-- "type" alias type Visibility: default -->
+<element name="TTime">
+<short>Alias for <var>TDateTime</var> type.</short>
+<descr>
+<var>TTime</var> is defined for Delphi compatibility. This type is
+deprecated, use <link id="TDateTime"/> instead.
+</descr>
+<seealso>
+<link id="TDateTime"/>
+<link id="TDate"/>
+</seealso>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="PPDouble">
+<short>Pointer to <var>PDouble</var> type.</short>
+<descr>
+<var>PPDouble</var> is a pointer to a <link id="PDouble"/> type.
+</descr>
+<seealso>
+<link id="PDouble"/>
+</seealso>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="PPByte">
+<short>Pointer to <var>PByte</var> type.</short>
+<descr>
+<var>PPByte</var> is a pointer to a <link id="PByte"/> type.
+</descr>
+<seealso>
+<link id="PByte"/>
+</seealso>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="PPLongint">
+<short>Pointer to <var>PLongint</var> type.</short>
+<descr>
+<var>PPLongint</var> is a pointer to a <link id="PLongint"/> type.          
+</descr>
+<seealso>
+<link id="PLongint"/>
+</seealso>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="PPPWideChar">
+<short>Pointer to <var>PPWideChar</var> type.</short>
+<descr>
+<var>PPPWideChar</var> is a pointer to a <link id="PPWideChar"/> type.
+</descr>
+<seealso>
+<link id="PPWideChar"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="vmtDispatch">
+<short>Offset to dispatch table</short>
+<descr>
+<var>vmtDispatch</var> is the offset from the VMT start, in bytes to the dispatch table for a
+class.The dispatch table is used when dispatching messages in <link id="TObject.Dispatch"/>
+</descr>
+<seealso>
+<link id="vmtDispatchStr"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="vmtDispatchStr">
+<short>Offset to string dispatch table</short>
+<descr>
+<var>vmtDispatchStr</var> is the offset from the VMT start, in bytes to the dispatch table for a
+class.The dispatch table is used when dispatching messages in <link id="TObject.DispatchStr"/>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="vmtEquals">
+<short>Offset to the <var>Equals</var> method pointer</short>
+<descr>
+<var>vmtEquals</var> contains the offset from the VMT start, of the location
+of the <link id="TObject.Equals"/> method pointer.
+</descr>
+<seealso>
+<link id="vmtGetHashCode"/>
+<link id="vmtToString"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="vmtGetHashCode">
+<short>Offset to the <var>GetHashCode</var> method pointer</short>
+<descr>
+<var>vmtGetHashCode</var> contains the offset from the VMT start, of the location
+of the <link id="TObject.GetHashCode"/> method pointer.
+</descr>
+<seealso>
+<link id="vmtEquals"/>
+<link id="vmtToString"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="vmtToString">
+<short>Offset to the <var>ToString</var> method pointer</short>
+<descr>
+<var>vmtToString</var> contains the offset from the VMT start, of the
+location of the <link id="TObject.ToString"/> method pointer.      
+</descr>
+<seealso>
+<link id="vmtGetHashCode"/>
+<link id="vmtEquals"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TVmt.vDispatch">
+<short><var>Dispatch</var> method pointer</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TVmt.vDispatchStr">
+<short><var>DispatchStr</var> method pointer</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TVmt.vEquals">
+<short><var>Equals</var> method pointer</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TVmt.vGetHashCode">
+<short><var>GetHashCode</var> method pointer</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TVmt.vToString">
+<short><var>ToString</var> method pointer</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObject.UnitName">
+<short>Unit name</short>
+<descr>
+<var>UnitName</var> returns the unit name in which the class was defined.
+The name is obtained from the class definition data the compiler generates
+for each class.
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObject.Equals">
+<short>Check if two objects are equal.</short>
+<descr>
+<p>
+<var>Equals</var> returns <var>True</var> if the object instance
+pointer (<var>Self</var>) equals the instance pointer <var>Obj</var>.
+</p>
+<p>
+Descendent classes can override to check properties etc. in case the
+instance pointers are different.
+</p>
+</descr>
+<seealso>
+<link id="TObject.GetHashCode"/>
+<link id="TObject.ToString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObject.GetHashCode">
+<short>Return a hash code for the object</short>
+<descr>
+<p>
+<var>GetHashCode</var> should return a hash code for the object. By default,
+the numerical (integer) address of <var>Self</var> is returned. 
+</p>
+<p>
+Descendent classes can use this to generate better suitable values to be
+used in a hash table.
+</p>
+</descr>
+<seealso>
+<link id="TObject.ToString"/>
+<link id="TObject.Equals"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TObject.ToString">
+<short>Return a string representation for the object</short>
+<descr>
+<p>
+<var>ToString</var> returns by default the class name of the object.
+It is useful during sending of debug messages.
+</p>
+<p>
+Descendent classes can override this method to give a better description of
+the object than just the class name. 
+</p>
+</descr>
+<seealso>
+<link id="TObject.GetHashCode"/>
+<link id="TObject.Equals"/> 
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.System.IEnumerator
+  ********************************************************************
+-->
+
+<!-- interface Visibility: default -->
+<element name="IEnumerator">
+<short>Enumerator support interface</short>
+<descr>
+<p>
+<var>IEnumerator</var> is the interface needed by the <var>For ... in
+...</var> language construct, when operating on classes. It contains all
+methods that the compiler needs to implement a loop.
+</p>
+<p>
+A <var>for in</var> loop like the following:
+</p>
+<code>
+For O in MyObject do
+  begin
+  // do things
+  end;
+</code>
+<p>
+is treated by the compiler as equivalent to the following code:
+</p>
+<code>
+Var
+  I : IEnumerator;
+  O : TObject;
+    
+begin
+  I:=MyObject.GetEnumerator;
+  While I.MoveNext do
+    begin
+    O:=I.GetCurrent;
+    // Do things
+    end; 
+end.  
+</code>
+<p>
+Any class that implements the <var>IEnumerable</var> interface must be able
+to return an IEnumerator instance for the compiler to use in a
+<var>For in</var> loop.
+</p>
+</descr>
+<seealso>
+<link id="IEnumerable"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IEnumerator.GetCurrent">
+<short>Returns the current element in the iteration cycle</short>
+<descr>
+<p>
+<var>getCurrent</var> should return the object instance representing the current value in the
+<var>for in</var> loop. <var>GetCurrent</var> will always be called
+immediatly after <link id="MoveNext"/> returned <var>True</var>. 
+</p>
+<remark>
+The actual return type of the interface should not necessarily be
+<var>TObject</var>, it can be any type. The compiler will check the 
+actual return type with the type of the loop variable, and they should 
+match.
+</remark>
+</descr>
+<seealso>
+<link id="IEnumerator.MoveNext"/>
+<link id="IEnumerator.Reset"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IEnumerator.MoveNext">
+<short>Move to the next value</short>
+<descr>
+<var>MoveNext</var> should move the current item pointer to the next
+available item. It should return <var>True</var> if an item is available,
+<var>False</var> if no more items are available. The first time it is called
+It will be called at the beginning of the for loop, so it should position
+the enumerator on the first value (if there is one). After
+<var>MoveNext</var> has returned <var>True</var>, <link
+id="IEnumerator.GetCurrent"/> will be called to retrieve the item.
+</descr>
+<seealso>
+<link id="IEnumerator.Reset"/>
+<link id="IEnumerator.GetCurrent"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IEnumerator.Reset">
+<short>Reset the pointer</short>
+<descr>
+<var>Reset</var> can be implemented to put the pointer at the start of the
+list. It is not mandatory to implement this method, the compiler does not
+use it.
+</descr>
+<seealso>
+<link id="IEnumerator.GetCurrent"/>
+<link id="IEnumerator.MoveNext"/>
+</seealso>
+</element>
+
+<!-- property Visibility: default -->
+<element name="IEnumerator.Current">
+<short>Return the current item</short>
+<descr>
+<var>Current</var> simply is the redefinition of  <link id="GetCurrent"/> as
+a property. It is read-only.
+</descr>
+<seealso>
+<link id="GetCurrent"/>
+<link id="IEnumerator.MoveNext"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.System.IEnumerable
+  ********************************************************************
+-->
+
+<!-- interface Visibility: default -->
+<element name="IEnumerable">
+<short>Interface to retrieve an enumerator from a class.</short>
+<descr>
+<var>IEnumerable</var> can be used to get an enumerator from a class.
+If a class implements <var>IEnumerable</var>, it can return an enumerator
+interface <link id="IEnumerator"/>.
+</descr>
+<seealso>
+<link id="IEnumerator"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IEnumerable.GetEnumerator">
+<short>Return an enumerator interface for this class</short>
+<descr>
+<var>GetEnumerator</var> returns a new <link id="IEnumerator"/> interface
+for this class. This is called by the compiler whenever a <var>for in</var>
+loop is encountered in the source code to retrieve the enumerator instance.
+</descr>
+<seealso>
+<link id="IEnumerator"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator or(variant, variant): variant">
+<short>Implement logical/binary <var>or</var> operation on variants</short>
+<descr>
+The implementation of the <var>or</var> operation is delegated to the variant manager
+with operation <var>opor</var>.
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator and(variant, variant): variant"/>
+<link id="operator xor(variant, variant): variant"/>
+<link id="operator not(variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator and(variant, variant): variant">
+<short>Implement logical/binary <var>and</var> operation on variants</short>
+<descr>
+The implementation of the <var>and</var> operation is delegated to the variant manager with operation
+<var>opand</var>.
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator or(variant, variant): variant"/>
+<link id="operator xor(variant, variant): variant"/>
+<link id="operator not(variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator xor(variant, variant): variant">
+<short>Implement logical/binary <var>xor</var> operation on variants</short>
+<descr>
+The implementation of the <var>xor</var> operation is delegated to the variant manager
+with operation <var>opxor</var>.
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator or(variant, variant): variant"/>
+<link id="operator and(variant, variant): variant"/>
+<link id="operator not(variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator not(variant): variant">
+<short>Implement logical/binary <var>not</var> operation on variants</short>
+<descr>
+The implementation of the <var>not</var> operation is delegated to the variant manager
+with operation <var>opnot</var>.
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator and(variant, variant): variant"/>
+<link id="operator or(variant, variant): variant"/>
+<link id="operator xor(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator shl(variant, variant): variant">
+<short>Implement binary <var>shl</var> operation on variants.</short>
+<descr>
+The implementation of the <var>shl</var> operation is delegated to the variant manager
+with operation <var>opshiftleft</var>.
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator shr(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator shr(variant, variant): variant">
+<short>Implement binary <var>shr</var> operation on variants.</short>
+<descr>
+The implementation of the <var>shr</var> operation is delegated to the
+variant manager with operation <var>opshiftright</var>.     
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator shl(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator +(variant, variant): variant">
+<short>Implement addition <var>(+)</var> operation on variants.</short>
+<descr>
+The implementation of the addition <var>+</var> operation is delegated to the
+variant manager with operation <var>opadd</var>.
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator -(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator -(variant, variant): variant">
+<short>Implement subtraction <var>(-)</var> operation on variants.</short>
+<descr>
+The implementation of the subtraction <var>-</var> operation is delegated to the  
+variant manager with operation <var>opSubtract</var>. 
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator -(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator *(variant, variant): variant">
+<short>Implement multiplication <var>(*)</var> operation on variants.</short>
+<descr>
+The implementation of the multiplication <var>*</var> operation is delegated to the  
+variant manager with operation <var>opMultiply</var>. 
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator /(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator /(variant, variant): variant">
+<short>Implement division <var>(/)</var> operation on variants.</short>
+<descr>
+The implementation of the division <var>/</var> operation is delegated to the  
+variant manager with operation <var>opDivide</var>. 
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator *(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator **(variant, variant): variant">
+<short>Implement power <var>(**)</var> operation on variants.</short>
+<descr>
+The implementation of the power <var>**</var> operation is delegated to the  
+variant manager with operation <var>opPower</var>. 
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator *(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator div(variant, variant): variant">
+<short>Implement <var>div</var> (integer division) operation on variants.</short>
+<descr>
+The implementation of the integer division <var>Div</var> operation is delegated to the  
+variant manager with operation <var>opintdivide</var>. 
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator mod(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator mod(variant, variant): variant">
+<short>Implement <var>mod</var> (modulo) operation on variants.</short>
+<descr>
+The implementation of the modulo <var>Mod</var> operation is delegated to the  
+variant manager with operation <var>opModulus</var>. 
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator div(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator -(variant): variant">
+<short>Implement <var>-</var> (unary minus, negation) operation on variants.</short>
+<descr>
+The implementation of the unary minus <var>(-)</var> operation is delegated to the  
+variant manager with operation <var>varNeg</var>. 
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator -(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator =(variant, variant): Boolean">
+<short>Implement <var>=</var> (equality) operation on variants.</short>
+<descr>
+The implementation of the equality <var>(=)</var> operation is delegated to the  
+variant manager with operation <var>opcmpeq</var>. 
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator &lt;(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator &lt;(variant, variant): Boolean">
+<short>Implement <var>&lt;</var> (less than) operation on variants.</short>
+<descr>
+The implementation of the "less than" comparison <var>(&lt;)</var> operation is delegated to the  
+variant manager with operation <var>opcmplt</var>. 
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator &gt;(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator >(variant, variant): Boolean">
+<short>Implement <var>&gt;</var> (greater than) operation on variants.</short>
+<descr>
+The implementation of the "greater than" comparison <var>(&gt;)</var> operation is delegated to the  
+variant manager with operation <var>opcmpgt</var>. 
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator &lt;(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator &gt;=(variant, variant): Boolean">
+<short>Implement <var>&gt;=</var> (greater than or equal) operation on variants.</short>
+<descr>
+The implementation of the "greater than or equal" comparison <var>(&gt;=)</var> operation is delegated to the  
+variant manager with operation <var>opcmpge</var>. 
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator &lt;(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="operator &lt;=(variant, variant): Boolean">
+<short>Implement <var>&lt;=</var> (less than than or equal) operation on variants.</short>
+<descr>
+The implementation of the "less than or equal" comparison
+<var>(&lt;=)</var> operation is delegated to the
+variant manager with operation <var>opcmple</var>. 
+</descr>
+<errors>
+Execution of this operator may result in an exception if no variant manager
+is installed or if the types of the operand are not suitable for the
+operation.
+</errors>
+<seealso>
+<link id="operator &lt;(variant, variant): variant"/>
+</seealso>
+</element>
+
+<!-- function type Visibility: default -->
+<element name="TCriticalSectionHandlerTryEnter">
+<short>Function prototype for <var>TryEnterCriticalsection</var></short>
+<descr>
+<var>TCriticalSectionHandlerTryEnter</var> is the function prototype for the 
+<link id="TryEnterCriticalsection"/> function, in the <link
+id="ThreadManager"/> record's <var>TryEnterCriticalSection</var> field.
+</descr>
+<seealso>
+<link id="TryEnterCriticalsection"/>
+<link id="ThreadManager"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TThreadManager.CloseThread">
+<short>Implements <var>CloseThread</var>.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TThreadManager.TryEnterCriticalSection">
+<short>Implements <var>TryEnterCriticalsection</var>.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CloseThread">
+<short>Close a thread and free up resources used by the thread</short>
+<descr>
+<var>CloseThread</var> must be called on any thread started with <link
+id="BeginThread"/>. It must be called after the thread has ended (either by
+exiting the thread function or after calling <link id="EndThread"/>).
+</descr>
+<errors>
+If no threadmanager is installed, an exception may be raised or runtime
+error 232 may occur if no exceptions are used.
+</errors>
+<seealso>
+<link id="BeginThread"/>
+<link id="EndThread"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TryEnterCriticalsection">
+<short>Try entering a critical section</short>
+<descr>
+<var>TryEnterCriticalsection</var> attempts to enter critical section
+<var>cs</var>. It returns at once. The return value is zero if another
+thread owns the critical section, or nonzero if the current thread already
+owns or succesfully obtained the critical section.
+</descr>
+<seealso>
+If no threadmanager is installed, an exception may be raised or runtime
+error 232 may occur if no exceptions are used.
+</seealso>
+</element>
+
 
 </module>
 </package>
