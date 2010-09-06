@@ -179,6 +179,328 @@ of a shared library in a platform independent way.
 </seealso>
 </element>
 
+<!-- pointer type Visibility: default -->
+<element name="PLibHandler">
+<short>Pointer to a <link id="#rtl.dynlibs.TLibHandler">TLibHandler</link> record.</short>
+<seealso>
+<link id="TLibHandler"/>
+</seealso>
+</element>
+
+<!-- function type Visibility: default -->
+<element name="TLibEventLoading">
+<short>Library loading event handler prototype.</short>
+<descr>
+<var>TLibEventLoading</var> is the prototype for an event handler (callback)
+called when a library is being loaded. The function is passed the
+<var>User</var> parameter passed when calling <link id="InitializeLibrary"/>
+and a pointer to the <var>TLibHandler</var> record used when loading the
+library.
+</descr>
+<seealso>
+<link id="InitializeLibrary"/>
+<link id="TryInitializeLibrary"/>
+<link id="TLibHandler"/>
+<link id="TLibEventUnloading"/>
+<link id="ReleaseLibrary"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TLibEventUnloading">
+<short>Library unloading event handler prototype.</short>
+<descr>
+<var>TLibEventUnloading</var> is the prototype for an event handler (callback)
+called when a library is being unloaded. 
+The function is passed the pointer to the <var>TLibHandler</var> record used when
+unloading the library using <link id="ReleaseLibrary"/>
+</descr>
+<seealso>
+<link id="ReleaseLibrary"/>
+<link id="InitializeLibrary"/>
+<link id="TryInitializeLibrary"/>
+<link id="TLibHandler"/>
+<link id="TLibEventLoading"/>
+</seealso>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="PPLibSymbol">
+<short>Pointer to a <link id="#rtl.dynlibs.PLibSymbol">PLibSymbol</link> type.</short>
+<seealso>
+<link id="PLibSymbol"/>
+<link id="TLibSymbol"/>
+</seealso>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="PLibSymbol">
+<short>Pointer to a <link id="#rtl.dynlibs.TLibSymbol">TLibSymbol</link> type.</short>
+<seealso>
+<link id="PPLibSymbol"/>
+<link id="TLibSymbol"/>
+</seealso>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TLibSymbol">
+<short>Library symbol description</short>
+<descr>
+<var>TLibSymbol</var> describes a symbol address (<var>Name</var>) to be loaded from a
+library, and the location to write the address (usually a procedural type
+variable). The address of the library symbol will be written to the location
+pointed to by <var>pvar</var>. The <var>weak</var> field signals whether the
+<link id="InitializeLibrary"/> should report an error if the symbol is not
+found. Set to <var>True</var> means not to report an error, <var>False</var>
+will cause an error to be reported.
+</descr>
+<seealso>
+<link id="TLibHandler"/>
+<link id="InitializeLibrary"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TLibSymbol.pvar">
+<short>Location where to store the symbol address.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TLibSymbol.name">
+<short>Name of the symbol to be loaded.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TLibSymbol.weak">
+<short><var>False</var> to report an error if the symbol is not found.</short>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TLibHandler">
+<short>Library initialization descriptor</short>
+<descr>
+<var>TLibHandler</var> is used to describe the loading of a library: the
+name of the library, the symbols to be loaded from the library.
+</descr>
+<seealso>
+<link id="InitializeLibrary"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TLibHandler.InterfaceName">
+<short>Name by which the library is known.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TLibHandler.Defaults">
+<short>list of filenames to try and load the library from</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TLibHandler.Filename">
+<short>Filename of the actually (currently) loaded library.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TLibHandler.Handle">
+<short>Low-level library handle</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TLibHandler.Loading">
+<short>Loading event, called after the library was loaded.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TLibHandler.Unloading">
+<short>Unloading event, called before the library will be unloaded</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TLibHandler.SymCount">
+<short>Number of symbols to load from the library</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TLibHandler.Symbols">
+<short>Pointer to an array of symbols to load from the library.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TLibHandler.ErrorMsg">
+<short>Message describing last error during load/unload</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TLibHandler.RefCount">
+<short>Reference count for this library</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="LibraryHandler">
+<short>Initialize a <var>TLibHandler</var> structure</short>
+<descr>
+<var>LibraryHandler</var> initializes a new <var>TLibHandler</var> record: it
+initializes all fields from the parameters that are passed to it, and zeroes
+out the other fields. It returns the initialized record.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TLibHandler"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TryInitializeLibrary">
+<short>Try to load a library and initialize a set of symbols</short>
+<descr>
+<p>
+<var>TryInitializeLibrary</var> will attempt to load the library described
+in <var>Handler</var>, and will attempt to load it from <var>FileName</var>
+or <var>FileNames</var> if an array of names is provided.
+When the library is loaded, the addresses of the symbols defined in
+<var>Handler.Symbols</var> will be loaded and written to the indicated
+location.
+</p>
+<p>
+The function returns the reference count of the library (number of times a
+load was attempted), or -1 on error. An error may occur if the library
+cannot be loaded or when some required symbols could not be found.
+</p>
+</descr>
+<errors>
+On error, -1 is returned. 
+</errors>
+<seealso>
+<link id="InitializeLibrary"/>
+<link id="ReleaseLibrary"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="InitializeLibrary">
+<short>Load a library and initialize a set of symbols</short>
+<descr>
+<p>
+<var>InitializeLibrary</var> will attempt to load the library described
+in <var>Handler</var>, and will attempt to load it from <var>FileName</var>  
+or <var>FileNames</var> if an array of names is provided.   
+When the library is loaded, the addresses of the symbols
+defined in <var>Handler.Symbols</var> will be loaded and written to the indicated
+location.
+</p>
+<p>
+The function returns the reference count of the library (number of times a
+load was attempted), or raises an exception on error. An error may occur if the library
+cannot be loaded or when some required symbols could not be found.
+</p>
+</descr>
+<errors>
+On error, a <var>EInOutError</var> exception is raised.
+</errors>
+<seealso>
+<link id="TryInitializeLibrary"/>
+<link id="ReleaseLibrary"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ReleaseLibrary">
+<short>Unload a library</short>
+<descr>
+<var>ReleaseLibrary</var> will decrease the reference count on
+<var>Handler</var> and if it reaches zero, the library is unloaded.
+</descr>
+<seealso>
+<link id="InitializeLibrary"/>
+<link id="TryInitializeLibrary"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="AppendLibraryError">
+<short>Append an error to the list of library errors.</short>
+<descr>
+<var>AppendLibraryError</var> appends <var>Msg</var> to the
+<var>ErrorMsg</var> field of <var>Handler</var>, with a newline if a message
+was already present.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="GetLastLibraryError"/>
+<link id="RaiseLibraryException"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="GetLastLibraryError">
+<short>Return the library errors</short>
+<descr>
+<var>GetLastLibraryError</var> returns the <var>Handler.ErrorMsg</var>
+field, and empties the field.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="AppendLibraryError"/>
+<link id="RaiseLibraryException"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="RaiseLibraryException">
+<short>Raise an <var>EInOutError</var> exception</short>
+<descr>
+<var>RaiseLibraryException</var> raises an <var>EInOutError</var> exception 
+using the error message found in <var>Handler</var>. If no message is found, 
+a default message is used.
+</descr>
+<seealso>
+<link id="GetLastLibraryError"/>
+<link id="AppendLibraryError"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="LoadLibrarySymbols">
+<short>Load symbol addresses from a library</short>
+<descr>
+<var>LoadLibrarySymbols</var> loads the addresses of <var>Count</var> symbols described in
+<var>Symbols</var>, using the library handle <var>Lib</var>. It returns
+<var>True</var> if all symbols were loaded successfully.
+If a symbol definition cannot be loaded, a pointer to the definition will be stored in
+the location pointed to by <var>ErrorSym</var>, and <var>False</var> will be
+returned.
+</descr>
+<errors>
+On error, <var>False</var> is returned, and <var>ErrorSym</var> will point
+to the missing symbol.
+</errors>
+<seealso>
+<link id="ClearLibrarySymbols"/>
+<link id="TLibSymbol"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="ClearLibrarySymbols">
+<short>Clear all library symbols</short>
+<descr>
+<var>ClearLibrarySymbols</var> clears the addresses of the <var>Count</var>
+symbol definitions pointed to by <var>Symbols</var>.
+</descr>
+<seealso>
+<link id="LoadLibrarySymbols"/>
+<link id="TLibSymbol"/>
+</seealso>
+</element>
+
 </module> <!-- dynlibs -->
 </package>
 </fpdoc-descriptions>
