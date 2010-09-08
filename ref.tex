@@ -5537,10 +5537,10 @@ else
 \end{verbatim}
 
 \subsection{The \var{For..to/downto..do} statement}
-\index{Statements!For}\index{Statements!Loop}\index{For}
+\index{Statements!For}\index{Statements!Loop}\index{For}\index{For!to}\index{For!downto}
 \keywordlink{for}\keywordlink{do}\keywordlink{downto}
 \fpc supports the \var{For} loop construction. A for loop is used in case
-one wants to calculated something a fixed number of times.
+one wants to calculate something a fixed number of times.
 The prototype syntax is as follows:
 \input{syntax/for.syn}
 Here, \var{Statement} can be a compound statement.
@@ -5589,6 +5589,401 @@ because the loop variable \var{I} cannot be assigned to inside the loop.
 If the statement is a compound statement, then the \var{Break} and
 \var{Continue} reserved words can be used to jump to the end or just
 after the end of the \var{For} statement.
+
+\subsection{The \var{For..in..do} statement}
+\index{Statements!For}\index{Statements!Loop}\index{For}\index{For!in}
+\keywordlink{forin}\keywordlink{do}
+As of version 2.4.2, \fpc supports the \var{For..in} loop construction. A
+for..in loop is used in case one wants to calculate something a fixed number of times
+with an enumerable loop variable. The prototype syntax is as follows:
+\input{syntax/forin.syn}
+Here, \var{Statement} can be a compound statement. The enumerable must be an
+expression that consists of a fixed number of elements: the loop variable
+will be made equal to each of the elements in turn and the statement following the
+\var{do} keyword will be executed.
+
+The enumerable expression can be one of 5 cases:
+\begin{enumerate}
+\item An enumeration type identifier. The loop will then be over all
+elements of the enumeration type. The control variable must be of the
+enumeration type.
+\item A set value. The loop will then be over all elements in the set, the
+control variable must be of the base type of the set.
+\item An array value. The loop will be over all elements in the array, and
+the control variable must have the same type as an element in the array.
+As a special case, a string is regarded as an array of characters.
+\item An enumeratable class instance. This is an instance of a class that
+supports the \var{IEnumerator} and \var{IENumerable} interfaces. 
+In this case, the control variable's type must equal the type of the 
+\var{IEnumerator.GetCurrent} return value.
+\item Any type for which an \var{enumerator} operator is defined. The
+\var{enumerator} operator must return a class that implements the
+\var{IEnumerator} interface. The type of the control variable's type 
+must equal the type of the enumerator class \var{GetCurrent} return 
+value type.
+\end{enumerate}
+
+The simplest case of the \var{for..in} loop is using an enumerated type:
+\begin{verbatim}
+Type
+  TWeekDay = (monday, tuesday, wednesday, thursday,
+              friday,saturday,sunday);
+
+Var
+  d : TWeekday;
+
+begin
+  for d in TWeekday do
+    writeln(d);
+end.
+\end{verbatim}
+This will print all week days to the screen.
+
+The above \var{for..in} construct is equivalent to the following
+\var{for..to} construct:
+\begin{verbatim}
+Type
+  TWeekDay = (monday, tuesday, wednesday, thursday,
+              friday,saturday,sunday);
+
+Var
+  d : TWeekday;
+
+begin
+  for d:=Low(TWeekday) to High(TWeekday) do
+    writeln(d);
+end.
+\end{verbatim}
+
+A second case of \var{for..in} loop is when the enumerable expression is a set,
+and then the loop will be executed once for each element in the set:
+\begin{verbatim}
+Type
+  TWeekDay = (monday, tuesday, wednesday, thursday,
+              friday,saturday,sunday);
+                
+Var
+  Week : set of TWeekDay 
+       = [monday, tuesday, wednesday, thursday, friday];
+  d : TWeekday;
+                 
+begin
+  for d in Week do
+    writeln(d);
+end.
+\end{verbatim}
+This will print the names of the week days to the screen. Note that the
+variable \var{d} is of the same type as the base type of the set.
+
+The above \var{for..in} construct is equivalent to the following
+\var{for..to} construct:
+\begin{verbatim}
+Type
+  TWeekDay = (monday, tuesday, wednesday, thursday,
+              friday,saturday,sunday);
+   
+Var
+  Week : set of TWeekDay 
+       = [monday, tuesday, wednesday, thursday, friday];
+
+  d : TWeekday;
+
+begin
+  for d:=Low(TWeekday) to High(TWeekday) do
+    if d in Week then
+      writeln(d);
+end.
+\end{verbatim}
+
+The third possibility for a \var{for..in} loop is when the enumerable expression 
+is an array: 
+\begin{verbatim}
+var
+  a : Array[1..7] of string 
+    = ('monday','tuesday','wednesday','thursday',
+       'friday','saturday','sunday');
+ 
+Var
+  S : String; 
+       
+begin
+  For s in a do
+    Writeln(s);
+end.
+\end{verbatim}
+This will also print all days in the week, and is equivalent to 
+\begin{verbatim}
+var
+  a : Array[1..7] of string
+    = ('monday','tuesday','wednesday','thursday',
+       'friday','saturday','sunday');
+
+Var
+  i : integer;
+
+begin
+  for i:=Low(a) to high(a) do
+    Writeln(a[i]);
+end.
+\end{verbatim}
+A \var{string} type is equivalent to an \var{array of char}, and therefor
+a string can be used in a \var{for..in} loop. The following will
+print all letters in the alphabet, each letter on a line:
+\begin{verbatim}
+Var
+  c : char;
+  
+begin
+ for c in 'abcdefghijklmnopqrstuvwxyz' do
+   writeln(c);
+end.
+\end{verbatim}
+
+The fourth possibility for a \var{for..in} loop is using classes. A class can implement the
+\var{IEnumerable} interface, which is defined as
+follows:
+\begin{verbatim}
+IEnumerable = interface(IInterface)
+  function GetEnumerator: IEnumerator;
+end;
+\end{verbatim}
+The actual return type of the \var{GetEnumerator} must not necessarily be an
+\var{IEnumerator} interface, instead, it can be a class which implements the methods
+of \var{IEnumerator}:
+\begin{verbatim}
+IEnumerator = interface(IInterface)
+  function GetCurrent: TObject;
+  function MoveNext: Boolean;
+  procedure Reset;
+  property Current: TObject read GetCurrent;
+end;
+\end{verbatim}
+The \var{Current} property and the \var{MoveNext} method must be present in
+the class returned by the \var{GetEnumerator} method. The actual type of the
+\var{Current} property need not be a \var{TObject}. When encountering a
+\var{for..in} loop with a class instance as the 'in' operand, the compiler will 
+check each of the following conditions:
+\begin{itemize}
+\item Whether then class in the enumerable expression implements a method
+\var{GetEnumerator}
+\item Whether the result of \var{GetEnumerator} is a class with the
+following method:
+\begin{verbatim}
+Function MoveNext : Boolean
+\end{verbatim}
+\item  Whether the result of \var{GetEnumerator} is a class with the
+following read-only property:
+\begin{verbatim}
+Property Current : AType;
+\end{verbatim}
+The type of the property must match the type of the control variable of the
+\var{for..in} loop.
+\end{itemize}
+Neither the \var{IEnumerator} nor the \var{IEnumerable} interfaces must
+actually be declared by the enumerable class: the compiler will detect
+whether these interfaces are present using the above checks. The interfaces
+are only defined for Delphi compatibility and are not used internally.
+(it would also be impossible to enforce their correctness).
+
+The \file{Classes} unit contains a number of classes that are enumerable:
+\begin{description}
+\item[TFPList] Enumerates all pointers in the list.
+\item[TList] Enumerates all pointers in the list.
+\item[TCollection] Enumerates all items in the collection.
+\item[TStringList] Enumerates all strings in the list.
+\item[TComponent] enumerates all child components owned by the component.
+\end{description}
+Thus, the following code will also print all days in the week:
+\begin{verbatim}
+{$mode objfpc}
+uses classes;
+
+Var
+  Days : TStrings;
+  D : String;
+
+begin
+  Days:=TStringList.Create;
+  try
+    Days.Add('Monday');
+    Days.Add('Tuesday');
+    Days.Add('Wednesday');
+    Days.Add('Thursday');
+    Days.Add('Friday');
+    Days.Add('Saturday');
+    Days.Add('Sunday');
+    For D in Days do
+      Writeln(D);
+  Finally
+    Days.Free;
+  end;
+end.
+\end{verbatim}
+Note that the compiler enforces type safety: Declaring D as an integer will
+result in a compiler error:
+\begin{verbatim}
+testsl.pp(20,9) Error: Incompatible types: got "AnsiString" expected "LongInt"
+\end{verbatim}
+
+The above code is equivalent to the following:
+\begin{verbatim}
+{$mode objfpc}
+uses classes;
+
+Var
+  Days : TStrings;
+  D : String;
+  E : TStringsEnumerator;
+
+begin
+  Days:=TStringList.Create;
+  try
+    Days.Add('Monday');
+    Days.Add('Tuesday');
+    Days.Add('Wednesday');
+    Days.Add('Thursday');
+    Days.Add('Friday');
+    Days.Add('Saturday');
+    Days.Add('Sunday');
+    E:=Days.getEnumerator;
+    try
+      While E.MoveNext do
+        begin
+        D:=E.Current;
+        Writeln(D);
+        end;
+    Finally
+      E.Free;
+    end;
+  Finally
+    Days.Free;
+  end;
+end.
+\end{verbatim}
+Both programs will output the same result.
+
+The fifth and last possibility to use a \var{for..in} loop can be used to 
+enumerate almost any type, using the \var{enumerator} operator. 
+The \var{enumerator} operator must return a class that has the same
+signature as the \var{IEnumerate} approach above. The following code will
+define an enumerator for the \var{Integer} type:
+\begin{verbatim}
+Type
+
+
+TEvenEnumerator = Class
+  FCurrent : Integer;
+  FMax : Integer;
+  Function MoveNext : Boolean;
+  Property Current : Integer Read FCurrent;
+end;
+
+Function TEvenEnumerator.MoveNext : Boolean;
+
+begin
+  FCurrent:=FCurrent+2;
+  Result:=FCurrent<=FMax;
+end;
+
+operator enumerator(i : integer) : TEvenEnumerator;
+
+begin
+  Result:=TEvenEnumerator.Create;
+  Result.FMax:=i;
+end;
+
+var
+  I : Integer;
+  m : Integer = 4;
+
+begin
+  For I in M do
+    Writeln(i);
+end.
+\end{verbatim}
+The loop will print all nonzero even numbers smaller or equal to the
+enumerable. (2 and 4 in the case of the example).
+
+Care must be taken when defining enumerator operators: the compiler will
+find and use the first available enumerator operator for the enumerable
+expression. For classes this also means that the \var{GetEnumerator} method
+is not even considered. The following code will define an enumerator 
+operator which extracts the object from a stringlist:
+\begin{verbatim}
+{$mode objfpc}
+uses classes;
+
+Type
+  TDayObject = Class
+    DayOfWeek : Integer;
+    Constructor Create(ADayOfWeek : Integer);
+  end;
+
+  TObjectEnumerator = Class
+    FList : TStrings;
+    FIndex : Integer;
+    Function GetCurrent : TDayObject;
+    Function MoveNext: boolean;
+    Property Current : TDayObject Read GetCurrent;
+  end;  
+
+Constructor TDayObject.Create(ADayOfWeek : Integer);
+
+begin
+  DayOfWeek:=ADayOfWeek;
+end;
+
+Function TObjectEnumerator.GetCurrent : TDayObject;
+begin
+  Result:=FList.Objects[Findex] as TDayObject;
+end;
+
+Function TObjectEnumerator.MoveNext: boolean;
+
+begin
+  Inc(FIndex);
+  Result:=(FIndex<FList.Count);
+end;
+  
+operator enumerator (s : TStrings) : TObjectEnumerator;
+
+begin
+  Result:=TObjectEnumerator.Create;
+  Result.Flist:=S;
+  Result.FIndex:=-1;
+end;
+
+Var
+  Days : TStrings;
+  D : String;
+  O : TdayObject;
+  
+begin
+  Days:=TStringList.Create;
+  try
+    Days.AddObject('Monday',TDayObject.Create(1));
+    Days.AddObject('Tuesday',TDayObject.Create(2));
+    Days.AddObject('Wednesday',TDayObject.Create(3));
+    Days.AddObject('Thursday',TDayObject.Create(4));
+    Days.AddObject('Friday',TDayObject.Create(5));
+    Days.AddObject('Saturday',TDayObject.Create(6));
+    Days.AddObject('Sunday',TDayObject.Create(7));
+    For O in Days do  
+      Writeln(O.DayOfWeek);
+  Finally
+    Days.Free;
+  end;
+end.  
+\end{verbatim}
+The above code will print the day of the week for each day in the week.
+
+If a class is not enumerable, the compiler will report an error when it is
+encountered in a \var{for...in} loop.
+
+\begin{remark}
+Like the \var{for..to} loop, it is not allowed to change (i.e. assign a value to) the value of a 
+loop control variable inside the loop.
+\end{remark}
 
 \subsection{The \var{Repeat..until} statement}
 \index{Statements!Repeat}\index{Statements!Loop}\index{Repeat}
