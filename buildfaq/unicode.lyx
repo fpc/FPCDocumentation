@@ -1,11 +1,12 @@
-#LyX 1.5.5 created this file. For more info see http://www.lyx.org/
-\lyxformat 276
+#LyX 1.6.6.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
 \begin_document
 \begin_header
 \textclass report
 \begin_preamble
 \usepackage{hyperref}
 \end_preamble
+\use_default_options false
 \language english
 \inputencoding auto
 \font_roman default
@@ -16,9 +17,11 @@
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
+
 \graphics default
 \paperfontsize default
 \spacing single
+\use_hyperref false
 \papersize a4paper
 \use_geometry false
 \use_amsmath 1
@@ -61,7 +64,8 @@ Version: 0.02
 \end_layout
 
 \begin_layout Standard
-\begin_inset LatexCommand tableofcontents
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
 
 \end_inset
 
@@ -121,6 +125,12 @@ economics
 
  paragraph, expanded the hybrid model and mentions Yury's proposal and wiki
  page.
+\end_layout
+
+\begin_layout Itemize
+Fifth version is mostly due to the new requirements now that FPC support
+ compatible to Delphi/Unicode is becoming a possibility (cpnewstr).
+ Some other details (OEMSTRING) were also added.
 \end_layout
 
 \begin_layout Subsection
@@ -202,9 +212,17 @@ Conversions are done over UTF-16, but this might be a Windows implementation
  (IOW on Unix use UTF-8)
 \end_layout
 
+\begin_layout Itemize
+Windows has a separate codepage (OEM) for console.
+ So in fact there are three encodings (OEM, Ansi and UTF16) in a Windows
+ enviroment.
+ There is a separate tag (CP_OEMCP) for the default OEM page.
+ I suggest we predefine OEMSTRING = ansistring(CP_OEMCP);
+\end_layout
+
 \end_deeper
 \begin_layout Standard
-This quick summary has three aspects I don't like for porting to FPC:
+This quick summary has four aspects I don't like for porting to FPC:
 \end_layout
 
 \begin_layout Enumerate
@@ -228,6 +246,15 @@ The fact that conversions between codepages are automated and can fail.
 \begin_layout Enumerate
 UTF-8 and UTF-16 are scattered over two different types.
  This solution is non-orthogonal.
+\end_layout
+
+\begin_layout Enumerate
+The big one, the compatibility break between Delphi2007- and 2009+.
+ FPC can avoid this on a compiler level the same way they fixed the string=short
+string to string=ansistring move, but the library level is more difficult.
+ D2007- expects e.g.
+ Windows API functions to call the -A versions, while 2009+ calls the -W
+ versions
 \end_layout
 
 \begin_layout Standard
@@ -279,6 +306,8 @@ forget the big endian and little endianess
  Only files that share that between different architectures need to insert
  conversions, and this can be better done manually.
  The same goes for arbitrary other sources that might have a different encoding.
+ The difference is also only important on the perimeter of the system (when
+ you load external data), since the system will mostly be in the same endianess
 \end_layout
 
 \begin_layout Standard
@@ -294,10 +323,15 @@ Economics of the encodings
 \end_layout
 
 \begin_layout Standard
-In one of the unicode discussions Daniel posted this link: 
-\begin_inset LatexCommand url
-name " http://unicode.org/notes/tn12/ "
-target " http://unicode.org/notes/tn12/ "
+In one of the unicode discussions Daniel posted this link:  http://unicode.org/no
+tes/tn12/  
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+ http://unicode.org/notes/tn12/ 
+\end_layout
 
 \end_inset
 
@@ -344,10 +378,14 @@ Routines that don't need to process UTF-8 surrogates and encounter mostly
 \end_layout
 
 \begin_layout Standard
-Btw I use 
-\begin_inset LatexCommand url
-name "http://www.unicode.org/roadmaps/bmp/"
-target "http://www.unicode.org/roadmaps/bmp/"
+Btw I use http://www.unicode.org/roadmaps/bmp/ 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://www.unicode.org/roadmaps/bmp/
+\end_layout
 
 \end_inset
 
@@ -356,8 +394,12 @@ target "http://www.unicode.org/roadmaps/bmp/"
 
 \begin_layout Subsection
 Granularity of [] 
-\begin_inset LatexCommand index
-name "par:granularity"
+\begin_inset Index
+status open
+
+\begin_layout Plain Layout
+par:granularity
+\end_layout
 
 \end_inset
 
@@ -376,7 +418,7 @@ One of the benefits of the discussion was that it called some attention
 \begin_layout Standard
 Let's take utf16 for a moment, and assume we have 10 codepoints, and every
  second is a surrogate.
- Then there are two possible meanings:
+ Then there are three possible meanings:
 \end_layout
 
 \begin_layout Subsubsection
@@ -415,6 +457,26 @@ In this meaning the string is (a view on) an array with the ganularity of
 
 \begin_layout Standard
 c:=s[5]; in UTF-16 means s[1]+5*2 =@s[1]+10 (all in bytes)
+\end_layout
+
+\begin_layout Subsubsection
+Meaning III: index means character
+\end_layout
+
+\begin_layout Standard
+This is nasty, even UTF32 has the granularity of a codepoint.
+ However printable characters may be composed out of multiple codepoints.
+ This basically means the end of 
+\begin_inset Quotes eld
+\end_inset
+
+char
+\begin_inset Quotes erd
+\end_inset
+
+ as a separate time.
+ Everything is a variable length string, and basic string operations have
+ to be code on a lower level.
 \end_layout
 
 \begin_layout Subsubsection
@@ -461,7 +523,7 @@ IMHO this opens a can of worms where we don't want to go
 \begin_inset Foot
 status collapsed
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Since we don't have any optimizations that optimize loops in an advance
  way, I don't think it is acceptable to waive this point in the hope that
  future optimizations will solve this.
@@ -519,6 +581,12 @@ Of course this is not perfect (e.g.
  with working code.
 \end_layout
 
+\begin_layout Standard
+To state the obvious: to go there, we would have to forgo using the basic
+ string types in standard routines, and code every reusable string routine
+ on an assembler or pointer level.
+\end_layout
+
 \begin_layout Section
 Requirements
 \end_layout
@@ -551,8 +619,12 @@ Multi platform aspects.
 \end_layout
 
 \begin_layout Itemize
-Respect certain FPC traditions, most notably the need to combine code from
- different origins/styles into one program.
+Respect certain FPC traditions, most notably 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+the need to combine code from different origins/styles into one program.
  (e.g shortstring TP and ansistring Delphi code) code are currently combinable
  in one program, and a single directive controls the meaning of the 
 \begin_inset Quotes eld
@@ -565,8 +637,20 @@ string
  type to make it compatible on a per unit basis with both)
 \end_layout
 
+\begin_layout Itemize
+the fact that the entire RTL is mostly implemented in (FPC's) Pascal.
+\end_layout
+
+\begin_layout Itemize
+FPC being portable means nativeness on every platform.
+ Not carrying conventions from other operating systems to operating systems
+ where they are alien (e.g.
+ POSIX on Windows)
+\end_layout
+
+\end_deeper
 \begin_layout Standard
-Most of the unices use UTF-8, Windows use UTF-16.
+Note: Most of the unices, but not all, use UTF-8, Windows use UTF-16.
 \end_layout
 
 \begin_layout Subsection
@@ -583,7 +667,8 @@ new
 
 \begin_layout Enumerate
 Regardless which choice is made for the default (see
-\begin_inset LatexCommand vref
+\begin_inset CommandInset ref
+LatexCommand vref
 reference "par:granularity"
 
 \end_inset
@@ -743,14 +828,20 @@ Advantages
 Simplicity
 \end_layout
 
+\begin_layout Enumerate
+Carries Delphi compatibility to the extreme, introducing Delphi/Unicode
+ UTF16 assumption on all platforms.
+ Even if UTF16 is not the native unicode encoding.
+\end_layout
+
 \begin_layout Standard
 Disadvantages
 \end_layout
 
 \begin_layout Enumerate
 No way to support UTF-8, this means that all dealing with UTF-8 (the main
- encoding on Unix) must be manual on pchar level or through careful use
- of ansistring workarounds, or face heavy repeated conversion penalties.
+ encoding on Unix) must be manual on p(ansi)char level or through careful
+ use of ansistring workarounds, or face heavy repeated conversion penalties.
  This also means code must be written to pass a readonly unicode string
  to a library on unix, instead of simply passing pwidechar(s).
  It is a windows centric proposition
@@ -979,7 +1070,8 @@ However while I still have serious doubts about performance, that's not
  Since with pretty much any solution you can always isolate the speed dependant
  part, force the encoding to be constant (preferably the system encoding),
  and be done with it.
- Moreover, there is much to
+ Moreover, there is much to say for having only one string type, even if
+ it is polymorphic internally.
 \end_layout
 
 \begin_layout Standard
@@ -1042,7 +1134,7 @@ Now we want these to work call eachother, and neither of these is prepared
  (UTF-8) encoding.
  In turn, the UTF-8 routines might receive occasionally a string that has
  passed the Tiburón code and contains UTF-16 encoding.
- The only solution is to hunt the _entire_ source code for all these points,
+ The only solution is to audit the _entire_ source code for all these points,
  and insert ForceEncodings() statements for all parameters and after assignment
  of a literal.
  Here another potential problem surfaces, an empty string might not be forcable.
@@ -1052,10 +1144,7 @@ Now we want these to work call eachother, and neither of these is prepared
 \begin_layout Standard
 This is an extremely hard sell to Delphi users, and IMHO not necessary anyway.
  Something will have to be done about this.
-\end_layout
-
-\begin_layout Standard
-A solution would be the hybrid proposal, see the separate paragraph further
+ A solution would be the hybrid proposal, see the separate paragraph further
  down.
  It is more or less the declarative behaviour of my proposal combined with
  the implementation of Florian's.
@@ -1321,7 +1410,7 @@ existing code
 \begin_inset Foot
 status collapsed
 
-\begin_layout Standard
+\begin_layout Plain Layout
 Note that existing code is not only code that is 
 \begin_inset Quotes eld
 \end_inset
@@ -1384,7 +1473,8 @@ I think this is butt ugly, and overly complicated, but at least it fixes
 note:
 \series default
  see also the 
-\begin_inset LatexCommand vref
+\begin_inset CommandInset ref
+LatexCommand vref
 reference "sub:Problems-of-hybrid:"
 
 \end_inset
@@ -1393,15 +1483,35 @@ reference "sub:Problems-of-hybrid:"
  There are complications.
 \end_layout
 
+\begin_layout Subsubsection
+The good points
+\end_layout
+
+\begin_layout Standard
+In some ways this proposal was better than the Windows centric Tiburon implement
+ation, in the sense that it unifies UTF8 and UTf16 in one stringtype.
+ Apparantly Codegear even put more stress on cheapness of [] than I did.
+ In theory a stringtype with a granularity field (in the TAnsiRec), could
+ host both UTF8 and UTF16.
+ This might cause Codegear pain when going multiplatform.
+ If they persist in UTF16.
+ Of course we'll never know for sure if this was a lost chance or not.
+\end_layout
+
 \begin_layout Subsection
 Yury's proposal
 \end_layout
 
 \begin_layout Standard
-Yury wrote something up independantly at 
-\begin_inset LatexCommand htmlurl
-name "FPC wiki about FPC Unicode support"
-target "http://wiki.freepascal.org/FPC_Unicode_support"
+Yury wrote something up independantly at FPC wiki about FPC Unicode support
+ 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://wiki.freepascal.org/FPC_Unicode_support
+\end_layout
 
 \end_inset
 
@@ -1577,7 +1687,8 @@ The problems that I can think of, is that there is still a VAR problem,
 
 \begin_layout Subsubsection
 Problems of hybrid: var 
-\begin_inset LatexCommand label
+\begin_inset CommandInset label
+LatexCommand label
 name "sub:Problems-of-hybrid:"
 
 \end_inset
@@ -1585,7 +1696,7 @@ name "sub:Problems-of-hybrid:"
 
 \end_layout
 
-\begin_layout Standard
+\begin_layout Itemize
 VAR remains a problem, but afaik it is fixable.
 \end_layout
 
@@ -1655,6 +1766,24 @@ This means that the compiler should insert a forceencoding after passing
  a string with encoding affinity to a generic VAR parameter.
  I hope that is doable.
  
+\end_layout
+
+\begin_layout Itemize
+As in Florian's original proposal the [] operator gets more expensive in
+ generic routines.
+ In non generic (roughly equivalent to Rawbytestring in Tiburón terms, but
+ then also for UTF16) it is less of a problem, since the typing fixates
+ the granularity? This could offer a nice solution in the sense that high
+ speed routines could be overloaded with typed equivalents for speed, while
+ not so interesting routines could rely on the 
+\begin_inset Quotes eld
+\end_inset
+
+general
+\begin_inset Quotes erd
+\end_inset
+
+ type with runtime granularity.
 \end_layout
 
 \begin_layout LyX-Code
