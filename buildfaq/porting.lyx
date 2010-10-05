@@ -1,4 +1,4 @@
-#LyX 1.6.4 created this file. For more info see http://www.lyx.org/
+#LyX 1.6.6.1 created this file. For more info see http://www.lyx.org/
 \lyxformat 345
 \begin_document
 \begin_header
@@ -65,7 +65,7 @@ Marco van de Voort
 \end_layout
 
 \begin_layout Standard
-Current version: 0.02b
+Current version: 0.03
 \end_layout
 
 \begin_layout Section*
@@ -96,6 +96,10 @@ v0.02b minor updates in September 2009
 \end_layout
 
 \end_deeper
+\begin_layout Description
+v0.03 Additions during summer 2010
+\end_layout
+
 \begin_layout Section
 Introduction
 \end_layout
@@ -1280,8 +1284,8 @@ Windows
 One can also imagine GUI widgetset as an added dimension perpendicular to
  the plane of the above picture.
  This is not just for Linux (X11,GTK,QT,WxWidgets etc), but also for e.g.
- OS X (Carbon, COCOA), .NET (Winforms 1.x, 2.x and WPF), Win32/64 ( win32 native,
- MFC).
+ OS X (Carbon, COCOA), .NET (Winforms 1.x, 2.x and WPF), Win32/64 ( win32 native
+ (GDI), MFC).
 \end_layout
 
 \begin_layout Description
@@ -1661,6 +1665,18 @@ Delegation is starting to work but several often used constructs are not
 Automated modifier is still missing?
 \end_layout
 
+\begin_layout Subsection
+FPC 2.4.x
+\end_layout
+
+\begin_layout Enumerate
+Resources more Delphi like
+\end_layout
+
+\begin_layout Enumerate
+(from 2.4.2) some D2006 features like for..in added
+\end_layout
+
 \begin_layout Section
 Kylix/Libc unit issues
 \end_layout
@@ -1676,7 +1692,7 @@ The problem with Kylix is that it is more designed to make recompiling (Win32)
 \begin_layout Standard
 Unit libc is a direct translation of the libc headers for modern Linux/i386
  installations, and thus a lot of unit libc functionality is Linux only,
- or reveals linux specific undeeded details.
+ or reveals linux specific unneeded details.
  There is no attempt at cleaning up the interface presented to the end user.
  While in theory one could try to emulate certain linux specific calls,
  the libc-interface was considered too inheritly linux specific and unclean
@@ -1767,6 +1783,21 @@ In general try to avoid exploiting special Linux features to emulate windows
  Make sure the functionality is portable first (e.g.
  check the Open Group site) , and if you need it despite portability concerns,
  encapsulate it properly.
+\end_layout
+
+\begin_layout Itemize
+See also 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://wiki.freepascal.org/libc_unit
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -1886,16 +1917,25 @@ Wintypes,
 
 Winprocs These old Delphi 1 units can still be used in Delphi.
  The project file in Delphi aliases these to unit windows.
- However FPC doesn't have this feature, and doesn't have a project system
- like this on the compiler level.
- D1 and win3.x are really too obsolete to create an ugly hack to support
- this construct.
+ However FPC doesn't have this (aliasing) feature, and doesn't have a project
+ system like this on the compiler level.
+ D1 and win3.x are really too obsolete to create an ugly hack to do major
+ development to support this construct.
  The best way is to always use unit Windows as much as possible, unless
  Delphi 1 compability is 
 \emph on
 really
 \emph default
- needed (ICS is one of the few packages that still support D1).
+ needed (ICS is one of the few packages that still support D1), and then
+ better ifdef the non D1 situation to use unit 
+\begin_inset Quotes eld
+\end_inset
+
+windows
+\begin_inset Quotes erd
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -1938,6 +1978,13 @@ headers.pas'; This is a plague when porting for obvious reasons, so better
  paths add an unnecessary complication to deal with.
 \end_layout
 
+\begin_layout Description
+Filenames The best is to keep filenames lowercase.
+ This because on case sensitive filesystems, Free Pascal also checks the
+ all-lowercase name, and you don't need to synchronize casing in all uses
+ clauses to match the filename.
+\end_layout
+
 \begin_layout Subsection
 Be very picky about what to put in the USES statement
 \end_layout
@@ -1953,6 +2000,11 @@ y complicate porting.
  Typically when porting problems of this type arise, the units in questions
  are winapi units, or VCL units like Graphics.
  See also the section about Kylix.
+\end_layout
+
+\begin_layout Standard
+Sometimes it is easier to put a few type aliases in some central unit, then
+ conditionally import a certain unit everywhere.
 \end_layout
 
 \end_body
