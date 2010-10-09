@@ -155,7 +155,7 @@ var chmspath,
     tocpath,
     tmppath    : String;
 begin
- chmspath:='';
+ chmspath:='.';
  tocchmpath:='.'; 
   if paramcount>0 then
     chmspath:=paramstr(1);
