@@ -2273,7 +2273,7 @@ ifdef CURRENTXMLONLY
 RTLXML=crt.xml
 RTLOPTS+=--descr=dateutils.xml --input="$(FPCSRCDIR)/rtl/unix/crt.pp -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
 else
-RTLUNITS=system objpas sysutils strutils dateutils strings mouse keyboard \
+RTLUNITS=system objpas types sysutils strutils dateutils strings mouse keyboard \
 	 crt video dos sockets objects heaptrc mmx ipc printer typinfo \
 	 ports getopts emu387 dxeload go32 gpm oldlinux baseunix \
 	 unixtype unix classes unixutil x86 dynlibs linux math matrix \
@@ -2281,6 +2281,7 @@ RTLUNITS=system objpas sysutils strutils dateutils strings mouse keyboard \
 	 exeinfo lineinfo lnfodwrf ctypes
 RTLXML=$(addsuffix .xml,$(RTLUNITS))
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
+RTLTYPES   = --descr=types.xml  --input="$(FPCSRCDIR)/rtl/objpas/types.pp ${OSDIRINCLUDES}"
 RTLSTRUTILS= --descr=strutils.xml --input="$(FPCSRCDIR)/rtl/objpas/strutils.pp ${OSDIRINCLUDES}"
 RTLSYSUTILS= --descr=sysutils.xml --input="$(FPCSRCDIR)/rtl/unix/sysutils.pp -Fi$(FPCSRCDIR)/rtl/objpas/sysutils -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
 RTLSTRINGS= --descr=strings.xml --input="$(FPCSRCDIR)/rtl/inc/strings.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/inc ${OSDIRINCLUDES}"
@@ -2326,7 +2327,7 @@ RTLEXEINFO= --descr=exeinfo.xml --input="$(FPCSRCDIR)/rtl/inc/exeinfo.pp ${OSDIR
 RTLLINEINFO= --descr=lineinfo.xml --input="$(FPCSRCDIR)/rtl/inc/lineinfo.pp ${OSDIRINCLUDES}"
 RTLLNFODWRF= --descr=lnfodwrf.xml --input="$(FPCSRCDIR)/rtl/inc/lnfodwrf.pp ${OSDIRINCLUDES}"
 RTLCTYPES= --descr=ctypes.xml --input="$(FPCSRCDIR)/rtl/inc/ctypes.pp -Fi$(FPCSRCDIR)/rtl/unix ${OSDIRINCLUDES}"
-RTLOPTS+= $(RTLSYSTEM) $(RTLOBJPAS) 
+RTLOPTS+= $(RTLSYSTEM) $(RTLOBJPAS) $(RTLTYPES) 
 RTLOPTS+= $(RTLSTRUTILS) $(RTLSYSUTILS) $(RTLSTRINGS) $(RTLMOUSE) $(RTLKEYBOARD)
 RTLOPTS+= $(RTLCRT) $(RTLVIDEO) $(RTLDOS) $(RTLSOCKETS) $(RTLOBJECTS)
 RTLOPTS+= $(RTLHEAPTRC) $(RTLMMX) $(RTLIPC) $(RTLPRINTER) $(RTLTYPINFO) 
@@ -2339,6 +2340,7 @@ RTLOPTS+= $(RTLCWSTRING) $(RTLEXEINFO) $(RTLLINEINFO) $(RTLLNFODWRF) $(RTLCTYPES
 endif 
 updatexml: updatefclxml updatertlxml
 updatertlxml: fpc_all
+	$(RTLMAKESKEL) $(RTLTYPES) --output=types.new.xml
 	$(RTLMAKESKEL) $(RTLSTRUTILS) --output=strutils.new.xml
 	$(RTLMAKESKEL) $(RTLSYSUTILS) --output=sysutils.new.xml
 	$(RTLMAKESKEL) $(RTLSTRINGS) --output=strings.new.xml
