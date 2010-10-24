@@ -1,4 +1,3 @@
-
 CHM helpfiles.
 =============
 
@@ -59,14 +58,15 @@ The format is sometimes related to security problems, but as far as I have
 been able to verify, this is more an Internet Explorer viewer application
 problem, not a problem of the format itself
 
-What OSes support CHM?
+What OSes support CHM natively?
 ----------------------
 
 Windows versions after windows 98 can open CHMs. Due to new security
 measures in XPsp2 and later, sometimes unlocking the CHMs is necessary (see
 troubleshooting paragraph).
 
-On Linux there are at least for packages to process CHMs:
+On Linux (and mostly *nix in general) there are at least four packages
+to process CHMs in addition to FPC/Lazarus' own:
 
 - the xCHM viewer
 - the KCHMViewer viewer
@@ -80,10 +80,16 @@ first couple of hundred entries.  The author has been notified and can't
 reproduce it with his latest builds anymore.
 
 kchmviewer versions (even as new as in Fedora 13) seem to have problems with
-links that don't have a leading / either ( ? )
+links that don't have a leading / either ( ? ). I reported it to kchmviewer,
+but the maintainer said it was a problem of QT (and indeed, switching
+khtmlpart resolves it)
 
-Gnochm is extremely slow with the larger files.
+Gnochm is extremely slow with the larger files, and development seems to
+have stalled.
 
-xCHM in the recent version seems to work fine and fast.
+xCHM in the recent version seems to work fine and reasonably fast. (lcl.chm
+in a few secs).  However its TOC system is not a tree, and some versions
+won't load some nodes (same problem as kchmviewer ?). The most recent
+version seems to have fixed it.
 
 Of course the lazarus and FPC textmode IDE now also support CHM.
