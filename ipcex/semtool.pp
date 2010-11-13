@@ -1,15 +1,17 @@
 Program semtool;
 
-{ Program to demonstrat the use of semaphores }
+{ Program to demonstrate the use of semaphores }
 
 Uses ipc,baseunix;
 
 Const MaxSemValue = 5;
 
 Procedure DoError (Const Msg : String);
-
+var
+  error: cint;
 begin
-  Writeln ('Error : ',msg,' Code : ',fpgeterrno);
+  error:=fpgeterrno;
+  Writeln ('Error : ',msg,' Code : ',error);
   Halt(1);
 end;
 
@@ -164,6 +166,7 @@ begin
   Writeln ('                u(nlock) <member>');
   Writeln ('                d(elete)');
   Writeln ('                m(ode) <mode>');
+  Writeln ('                p(rint)');
   halt(1);
 end;
 
