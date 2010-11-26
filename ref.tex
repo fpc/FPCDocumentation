@@ -208,7 +208,7 @@ These character pairs retain their normal meaning in string expressions.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Comments
 \section{Comments}
-\index{Comments}\index{Tokens!Symbols}\keywordlink{Comment}
+\index{Comments}\index{Tokens!Comments}\keywordlink{Comment}
 Comments are pieces of the source code which are completely discarded by the
 compiler. They exist only for the benefit of the programmer, so he can
 explain certain pieces of code. For the compiler, it is as if the comments
@@ -585,7 +585,7 @@ compatibility mode.
 \index{Labels} \keywordlink{label}
 A label is a name for a location in the source code to which can be 
 jumped to from another location with a \var{goto} statement. A Label is a
-standard identifier with the exception that it can start with a digit.
+standard identifier or a digit sequence.
 \keywordlink{label}
 \input{syntax/label.syn}
 \begin{remark}
@@ -594,7 +594,12 @@ labels can be used. By default, \fpc doesn't support \var{label} and
 \var{goto} statements. The \var{\{\$GOTO ON\}} directive can also be used
 to allow use of labels and the goto statement.
 \end{remark}
-
+The following are examples of valid labels:
+\begin{verbatim}
+Label
+  123,
+  abc;
+\end{verbatim}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Character strings
 \section{Character strings}
@@ -673,8 +678,19 @@ Operators such as \var{+, -, *, /, not, and, or, div, mod, ord, chr,
 sizeof, pi, int, trunc, round, frac, odd} can be used, however. 
 For more information on expressions, see \seec{Expressions}.
 
-Only constants of the following types can be declared: \var{Ordinal
-types}, \var{Real types}, \var{Char}, and \var{String}.\index{Constants!String}
+Only constants of the following types can be declared:
+
+\begin{itemize}
+\item Ordinal types
+\item Set types
+\item Pointer types (but the only allowed value is \var{Nil}).
+\item Real types
+\item \var{Char},
+\item \var{String}
+\item Arrays of any of the above types.
+\end{itemize}
+\index{Constants!String}
+
 The following are all valid constant declarations:
 \begin{verbatim}
 Const
@@ -682,8 +698,11 @@ Const
   a = 2;          { Ordinal (Integer) type constant. }
   c = '4';        { Character type constant. }
   s = 'This is a constant string'; {String type constant.}
-  s = chr(32)
+  sc = chr(32)
   ls = SizeOf(Longint);
+  P = Nil;
+  Ss = [1,2];
+  SA : Array[1..2] of string = ('1','2');
 \end{verbatim}
 Assigning a value to an ordinary constant is not permitted.
 Thus, given the previous declaration, the following will result
