@@ -99,6 +99,14 @@ The <var>TBase64EncodingStream</var> stream is a write-only stream.
 Obviously it is also not seekable. It is meant to be included in  
 a chain of streams.
 </p>
+<p>
+By the nature of base64 encoding, when a buffer is written to the stream,
+the output stream does not yet contain all output: input must be a multiple
+of 3. In order to be sure that the output contains all encoded bytes, the
+<link id="TBase64EncodingStream.Flush">Flush</link> method can be used. The
+destructor will automatically call <var>Flush</var>, so all data is written
+to the destination stream when the decodes is destroyed.  
+</p>
 </descr>
 <seealso>
 <link id="TBase64DecodingStream"/>
@@ -126,10 +134,21 @@ data to.
 <element name="TBase64DecodingStream.Create.AMode">
 <short>Encoding mode to be used when encoding</short>
 </element>
+<element name="TBase64EncodingStream.Flush">
+<short>Flush the remaining bytes to the output stream.</short>
+<descr>
+<var>Flush</var> writes the remaining bytes from the internal encoding
+buffer to the output stream and pads the output with "=" signs. It returns
+<var>True</var> if padding was necessary, and <var>False</var> if not.
+</descr>
+<seealso>
+<link id="TBase64EncodingStream.Destroy"/>
+</seealso>
+</element>
 
 <!-- destructor Visibility: public -->
 <element name="TBase64EncodingStream.Destroy">
-<short>Remove a <var>TBase64EncodingStream</var> instannce from memory</short>
+<short>Remove a <var>TBase64EncodingStream</var> instance from memory</short>
 <descr>
 <var>Destroy</var> flushes any remaining output and then removes the
 <var>TBase64EncodingStream</var> instance from memory by calling the
