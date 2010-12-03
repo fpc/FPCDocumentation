@@ -54,7 +54,7 @@ Marco van de Voort
 \end_layout
 
 \begin_layout Standard
-Version: 0.02 
+Version: 0.06 
 \begin_inset Graphics
 	filename unicode_small.jpg
 
@@ -128,9 +128,14 @@ economics
 \end_layout
 
 \begin_layout Itemize
-Fifth version is mostly due to the new requirements now that FPC support
- compatible to Delphi/Unicode is becoming a possibility (cpnewstr).
+Fifth version(sept 2010) is mostly due to the new requirements now that
+ FPC support compatible to Delphi/Unicode is becoming a possibility (cpnewstr).
  Some other details (OEMSTRING) were also added.
+\end_layout
+
+\begin_layout Itemize
+Sixth (0.6) (dec 2010) version adds some minor completion of unfinished sentences
+ and other minor clarifications
 \end_layout
 
 \begin_layout Subsection
@@ -445,6 +450,12 @@ c
  char is @s[1]+5*2 + 2*2=@s[1]+14 (all in bytes)
 \end_layout
 
+\begin_layout Standard
+Writing a character (s[5]:=c) is an even worse problem, since a codepoint
+ written might not have the same size as the codepoint current;y at the
+ at s[5], needing costly (O(n)) insertion routines.
+\end_layout
+
 \begin_layout Subsubsection
 Meaning II: index means granularity of the encoding
 \end_layout
@@ -457,6 +468,11 @@ In this meaning the string is (a view on) an array with the ganularity of
 
 \begin_layout Standard
 c:=s[5]; in UTF-16 means s[1]+5*2 =@s[1]+10 (all in bytes)
+\end_layout
+
+\begin_layout Standard
+Writing a character (s[5]:=c) pretty much remains the same everything has
+ the granularity of the encoding.
 \end_layout
 
 \begin_layout Subsubsection
@@ -474,7 +490,7 @@ char
 \begin_inset Quotes erd
 \end_inset
 
- as a separate time.
+ as a separate type.
  Everything is a variable length string, and basic string operations have
  to be code on a lower level.
 \end_layout
@@ -1093,11 +1109,13 @@ existing code
 \begin_inset Quotes erd
 \end_inset
 
-) 
+).
+ Or, generalized: if you synthesize an application using code from various
+ sources you'll need 
 \end_layout
 
 \begin_layout Standard
-I can illustrate that with two examples or thoughexperiment:
+I can illustrate that with two examples or thought experiments:
 \end_layout
 
 \begin_layout Subsubsection
@@ -1133,7 +1151,7 @@ Now we want these to work call eachother, and neither of these is prepared
  Worse, literals in the Tiburón code will probably be created in the native
  (UTF-8) encoding.
  In turn, the UTF-8 routines might receive occasionally a string that has
- passed the Tiburón code and contains UTF-16 encoding.
+ passed the Tiburón code and contains code that assumes UTF-16 encoding.
  The only solution is to audit the _entire_ source code for all these points,
  and insert ForceEncodings() statements for all parameters and after assignment
  of a literal.
@@ -1289,7 +1307,8 @@ A runtime solution is always slower as a compiletime one.
 
 \begin_layout Standard
 Florian claims to partially earn this back with less conversions in all,
- but I don't buy that.
+ but I don't buy that, except maybe in cases like (mostly GUI) apps with
+ QT on *nix (where widgetset (UTF16) and system encoding (UTF8) are different).
  Simply having an type-alias for whatever encoding is the system encoding
  will achieve the same.
  Moreover, the decision which type to convert lies with the compiler which
@@ -1322,7 +1341,7 @@ utf8routine(s1);
 \end_layout
 
 \begin_layout Standard
-(note that for florian's example, all string types are the same, in his
+(note that for Florian's example, all string types are the same, in his
  case, read the declarations of s1 and s2 as 
 \begin_inset Quotes eld
 \end_inset
@@ -1342,7 +1361,7 @@ Also the
 \begin_inset Quotes eld
 \end_inset
 
-leave out routines
+leaf out routines
 \begin_inset Quotes erd
 \end_inset
 
@@ -1355,6 +1374,11 @@ leave out routines
 
 \begin_layout Subsubsection
 Alternate encodings.
+\end_layout
+
+\begin_layout Standard
+(this paragraph is academic since we need to support other encodings because
+ of Delphi, it was written before this was known though)
 \end_layout
 
 \begin_layout Standard
@@ -1496,6 +1520,15 @@ ation, in the sense that it unifies UTF8 and UTf16 in one stringtype.
  This might cause Codegear pain when going multiplatform.
  If they persist in UTF16.
  Of course we'll never know for sure if this was a lost chance or not.
+ This is likely, since for them multiplatform is mostly only a 
+\begin_inset Quotes eld
+\end_inset
+
+feature
+\begin_inset Quotes erd
+\end_inset
+
+ in addition to the core win32/64 product.
 \end_layout
 
 \begin_layout Subsection
