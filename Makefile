@@ -2213,11 +2213,18 @@ $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT):
 messages.inc: $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT) $(FPCSRCDIR)/compiler/msg/errore.msg
 	$(FPCSRCDIR)/compiler/utils/msg2inc -TE $(FPCSRCDIR)/compiler/msg/errore.msg messages.inc
 comphelp.inc:
+ifneq (,$(findstring win,$(OS_SOURCE)))
+	$(ECHO) % Automatically generated. Do not edit > comphelp.inc
+	$(ECHO) -n \\begin{verbatim} >> comphelp.inc
+	$(FPC) -h >>comphelp.inc
+	$(ECHO) \end{verbatim} >> comphelp.inc
+else
 	$(ECHO) "% Automatically generated. Do not edit" > comphelp.inc
 	$(ECHO) -n '\' >> comphelp.inc
 	$(ECHO) 'begin{verbatim}' >> comphelp.inc
 	$(FPC) -h >>comphelp.inc
 	$(ECHO) '\end{verbatim}' >> comphelp.inc
+endif
 syntax.sty: styles/syntax.sty
 	cp $(wildcard styles/*.sty) .
 INCLUDES=date.inc syntax.sty
