@@ -394,6 +394,107 @@ In case the arguments are different from <var>soCurrent</var> and 0, an
 <short>Origin for seek operation (should be <var>soCurrent</var>).</short>
 </element>
 
+<element name="TASCII85EncoderStream">
+<short>ASCII 85 encoding stream</short>
+<descr>
+<p>
+<var>TASCII85EncoderStream</var> is the counterpart to the <link
+id="TASCII85DecoderStream"/> decoder stream: what
+<var>TASCII85EncoderStream</var> encodes, can be decoded by <link
+id="TASCII85DecoderStream"/>.
+</p>
+<p>
+The encoder stream works using a destination stream: whatever data is
+written to the encoder stream is encoded and written to the destination
+stream. The stream must be passed on in the constructor.
+</p>
+<p>
+Note that all encoded data is only written to the destination stream 
+when the encoder stream is destroyed.
+</p>
+</descr>
+<seealso>
+<link id="TASCII85EncoderStream.create"/>
+<link id="TASCII85DecoderStream"/>
+</seealso>
+</element>
+
+<element name="TASCII85EncoderStream.Create">
+<short>Create a new instance of <var>TASCII85EncoderStream</var></short>
+<descr>
+<var>Create</var> creates a new instance of<var>TASCII85EncoderStream</var>.
+It stores <var>ADest</var> as the destination stream for the encoded data.
+The <var>Width</var> parameter indicates the width of the lines that are
+written by the encoder: after this amount of characters, a linefeed is put in
+the data stream. If <var>ABoundary</var> is <var>True</var> then a boundary
+delineator is written to the stream before and after the data.
+</descr>
+<seealso>
+<link id="TASCII85EncoderStream"/>
+<link id="TASCII85EncoderStream.Width">Width</link>
+<link id="TASCII85EncoderStream.Boundary">Boundary</link>
+</seealso>
+</element>
+
+<element name="TASCII85EncoderStream.Boundary">
+<short>Is a boundary delineator written before and after the data</short>
+<descr>
+<var>Boundary</var> indicates whether the stream will write a boundary
+delineator before and after the encoded data. It is passed to the
+constructor and cannot be changed.
+</descr>
+<seealso>
+<link id="TASCII85EncoderStream.Width">Width</link>
+<link id="TASCII85EncoderStream.Create">Create</link>
+</seealso>
+</element>
+
+<element name="TASCII85EncoderStream.Width">
+<short>Width of the lines written to the data stream</short>
+<descr>
+<var>Width</var> is the width of the lines of encoded data written to the
+stream. After <var>Width</var> lines, a line ending will be written to the
+stream. The value is passed to the constructor and cannot be changed
+afterwards.
+</descr>
+<seealso>
+<link id="TASCII85EncoderStream.Boundary">Boundary</link>
+<link id="TASCII85EncoderStream.Create">Create</link>        
+</seealso>
+</element>
+
+<element name="TASCII85EncoderStream.Write">
+<short>Write data encoded to the destination stream</short>
+<descr>
+<p>
+<var>Write</var> encodes the <var>aCount</var> bytes of data in
+<var>aBuffer</var> and writes the encoded data to the destination stream.
+</p>
+<p>
+Not all data is written immediatly to the destination stream. Only after the
+encoding stream is destroyed will the destination stream contain the full
+data.
+</p>
+</descr>
+<seealso>
+<link id="TASCII85EncoderStream.Destroy"/>
+</seealso>
+</element>
+
+<element name="TASCII85EncoderStream.Destroy">
+<short>Flushed the data to the output stream and cleans up the encoder
+instance.</short>
+<descr>
+<var>Destroy</var> writes the data remaining in the internal buffer to the
+destination stream (possibly followed by a boundary delineator) and then
+destroys the encoder instance.
+</descr>
+<seealso>
+<link id="TASCII85EncoderStream.Write"/>
+<link id="TASCII85EncoderStream.Boundary"/>
+</seealso>
+</element>
+
 </module> <!-- ascii85 -->
 
 </package>
