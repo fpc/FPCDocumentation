@@ -1046,6 +1046,78 @@ and then calls the inherited destroy.
 </seealso>
 </element>
 
+<element name="TBaseAVLTreeNodeManager">
+<short>Base class for a node memory manager</short>
+<descr>
+<p>
+<var>TBaseAVLTreeNodeManager</var> is an abstract class from which a
+descendent can be created that manages creating and disposing of tree 
+nodes (instances of <link id="TAVLTreeNode"/>) for a <link id="TAVLTree"/> tree instance. 
+No instance of this class should be created, it is a purely
+abstract class. The default descendant of this class used by an
+<var>TAVLTree</var> instance is <link id="TAVLTreeNodeMemManager"/>.
+</p>
+<p>
+The <link id="TAVLTree.SetNodeManager"/> method can be used to set the node
+manager that a <var>TAVLTree</var> instance should use.
+</p>
+</descr>
+<seealso>
+<link id="TAVLTreeNodeMemManager"/>
+<link id="TAVLTree.SetNodeManager"/>
+<link id="TAVLTreeNode"/>
+</seealso>
+</element>
+
+<element name="TBaseAVLTreeNodeManager.NewNode">
+<short>Called when the AVL tree needs a new node</short>
+<descr>
+<var>NewNode</var> is called by <link id="TAVLTree"/> when it needs a new
+node in <link id="TAVLTree.Add"/>. It must be implemented by descendants
+to return a new <link id="TAVLTreeNode"/> instance.
+</descr>
+<seealso>
+<link id="TBaseAVLTreeNodeManager.DisposeNode"/>
+<link id="TAVLTree.Add"/>
+<link id="TAVLTreeNode"/>
+</seealso>
+</element>
+
+<element name="TBaseAVLTreeNodeManager.DisposeNode">
+<short>Called when the AVL tree no longer needs node</short>
+<descr>
+<var>DisposeNode</var> is called by <link id="TAVLTree"/> when it no longer
+needs a <link id="TAVLTreeNode"/> instance. The manager may decide to re-use
+the instance for later use instead of destroying it.
+</descr> 
+<seealso>
+<link id="TBaseAVLTreeNodeManager.NewNode"/>
+<link id="TAVLTree.Delete"/>
+<link id="TAVLTreeNode"/> 
+</seealso>
+</element>
+
+<element name="TAVLTree.SetNodeManager">
+<short>Set the node instance manager to use</short>
+<descr>
+<p>
+<var>SetNodeManager</var> sets the node manager instance used by the tree to
+<var>newmgr</var>. It should be called before any nodes are added to the
+tree. The <var>TAVLTree</var> instance will not destroy the nodemanager, 
+thus the same instance of the tree node manager can be used to
+manager the nodes of multiple <var>TAVLTree</var> instances.
+</p>
+<p>
+By default, a single instance of <link id="TAVLTreeNodeMemManager"/> is used to
+manage the nodes of all <var>TAVLTree</var> instances.
+</p>
+</descr>
+<seealso>
+<link id="TBaseAVLTreeNodeManager"/>
+<link id="TAVLTreeNodeMemManager"/>
+</seealso>
+</element>
+
 </module> <!-- AVL_Tree -->
 
 </package>
