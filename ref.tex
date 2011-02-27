@@ -6445,15 +6445,24 @@ modes, \var{out} is a valid identifier.
 In addition to variable parameters and value parameters \fpc also supports
 Constant parameters. A constant parameter can be specified as follows:
 \input{syntax/paramcon.syn}
-A constant argument is passed by reference if its size is larger than a
-pointer. It is passed by value if the size is equal or is less then the 
-size of a native pointer.
-This means that the function or procedure receives a pointer to the passed
-argument, but it cannot be assigned to, this will result in a
-compiler error. Furthermore a \var{const} parameter cannot be passed on to another
-function that requires a variable parameter.
+Specifying a parameter as Constant is giving the compiler a hint that the
+contents of the parameter will not be changed by the called routine. This
+allows the compiler to perform optimizations which it could not do otherwise, 
+and also to perform certain checks on the code inside the routine: namely,
+it can forbid assignments to the parameter. 
+Furthermore a const parameter cannot be passed on to another
+function that requires a variable parameter: the compiler can check this as
+well.
 The main use for this is reducing the stack size, hence improving
 performance, and still retaining the semantics of passing by value...
+
+\begin{remark}
+Contrary to Delphi, no assumptions should be made about how const parameters
+are passed to the underlying routine. In particular, the assumption that
+parameters with large size are passed by reference is not correct. For this
+the \var{constref} parameter type should be used, which is available as of
+version 2.5.1 of the compiler.
+\end{remark}
 
 Constant parameters can also be untyped. See \sees{varparams} for more
 information about untyped parameters.
