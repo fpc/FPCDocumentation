@@ -5,7 +5,7 @@ Program server;
   Server Version, First Run sock_svr to let it create a socket and then
   sock_cli to connect to that socket
 }
-
+{$mode fpc}
 uses Sockets;
 
 Var
@@ -27,14 +27,14 @@ begin
    Perror ('Server : Socket : ');
   SAddr.sin_family:=AF_INET;
   { port 50000 in network order }
-  SAddr.sin_port:=htons(50000);
+  SAddr.sin_port:=htons(5000);
   SAddr.sin_addr.s_addr:=0;
   if fpBind(S,@SAddr,sizeof(saddr))=-1 then
    PError ('Server : Bind : ');
   if fpListen (S,1)=-1 then
    PError ('Server : Listen : ');
   Writeln('Waiting for Connect from Client, run now sock_cli in an other tty');
-  if not Accept (S,FromName,Sin,Sout) then
+  if Accept(S,FromName,Sin,Sout) then
    PError ('Server : Accept : '+fromname);
   Reset(Sin);
   ReWrite(Sout);
