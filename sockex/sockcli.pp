@@ -28,7 +28,7 @@ begin
    Perror('Client : Socket : ');
   SAddr.sin_family:=AF_INET;
   { port 50000 in network order }
-  SAddr.sin_port:=htons(50000);
+  SAddr.sin_port:=htons(5000);
   { localhost : 127.0.0.1 in network order }
   SAddr.sin_addr.s_addr:=HostToNet((127 shl 24) or 1);
   if not Connect (S,SAddr,Sin,Sout) then
