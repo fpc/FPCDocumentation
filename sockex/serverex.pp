@@ -40,7 +40,7 @@ Program Socket_Comms_Test;
 
 {$mode ObjFPC}
 
-Uses Linux, Sockets, Sysutils{, dbu};
+Uses baseunix, unixtype, unix, Sockets, Sysutils;
 
 Const
  NumberofConnections = 5;
@@ -56,7 +56,7 @@ Type ConnectionType = Record
 
 Var
  Connection : Array[1..NumberofConnections] Of ConnectionType;
- FDS        : FDSet;
+ FDS        : TFDSet;
  S          : LongInt;
  PortNumber : Word;
  GreatestHandle : Integer;
@@ -145,7 +145,7 @@ Begin
  Buffer := 'Welcome to Brads Server 1.0'+#10+#13+'You Are Connection '+
            InttoStr(ConnNum)+' Of '+InttoStr(NumberofConnections)+
            ', With '+InttoStr(FreeConnections)+' Connections Free'#13+#10;
- Sent := Send(Handle,Buffer[1],Length(Buffer),0);
+ Sent := fpSend(Handle,@Buffer[1],Length(Buffer),0);
  If Sent <> Length(Buffer) Then
   PDebug('Wanted to Send : ' +InttoStr(Length(Buffer))+' Sent Only : '
           +InttoStr(Sent)+' to Connection : '+InttoStr(ConnNum));
@@ -164,7 +164,7 @@ Begin
   Begin
    ConnectionNumber := GetFreeConnection;
    PDebug('Accepting New Connection Number : '+InttoStr(ConnectionNumber));
-   Handle := Accept(S,FromAddr,FromAddrSize);
+   Handle := fpAccept(S,@FromAddr,@FromAddrSize);
    If Handle < 0 Then PError('Accept Error!!');
    PDebug('Accepted From : '+SockAddrtoString(FromAddr.Addr)+' Port : '
    +Inttostr(Swap(FromAddr.Port)));
@@ -187,13 +187,13 @@ Begin
  SockAddr.Family := AF_INET;
  SockAddr.Port := Swap(PortNumber);
  SockAddr.Addr := 0;
- S := Socket(AF_INET,SOCK_STREAM,0);
+ S := fpSocket(AF_INET,SOCK_STREAM,0);
  If SocketError <> 0 Then PError('Socket Error : ');
  yes := $1010101;  {Copied this from existing code. Value is empiric,
                     but works. (yes=true<>0) }
- SetSocketOptions(s, SOL_SOCKET, SO_REUSEADDR,yes,sizeof(yes));
- If Not Bind(S,SockAddr,SizeOf(SockAddr)) Then PError('Bind Error : ');
- If Not Listen(S,5) Then PError('Listen Error : ');
+ fpSetSockOpt(s, SOL_SOCKET, SO_REUSEADDR,@yes,sizeof(yes));
+ If -1=fpBind(S,@SockAddr,SizeOf(SockAddr)) Then PError('Bind Error : ');
+ If fpListen(S,5)=-1 Then PError('Listen Error : ');
 End;
 
 Procedure LoadConnectedFDS;
@@ -203,7 +203,7 @@ Begin
  For Loop := 1 To NumberOfConnections Do
   If Connection[Loop].Connected Then
    Begin
-    FD_SET(Connection[Loop].Handle,FDS);
+    fpFD_SET(Connection[Loop].Handle,FDS);
     If Connection[Loop].Handle > GreatestHandle Then
      GreatestHandle := Connection[Loop].Handle;
    End;
@@ -216,7 +216,7 @@ Var Buffer : String;
 
 Begin
  Writeln('Service Handle : ',Handle);
- BufferLength := Recv(Handle,Buffer[1],200,0);
+ BufferLength := fpRecv(Handle,@Buffer[1],200,0);
  Setlength(Buffer,BufferLength);
  If SocketError <> 0 Then
   PDebug('Reciceved Socket Error : '
@@ -226,15 +226,15 @@ Begin
   Begin
    PDebug('Socket Handle '+InttoStr(Handle)+' Closed');
    Connection[ConnectionNum].Connected := False;
-   Shutdown(Handle,2);
-   fdClose(Handle);
+   fpShutdown(Handle,2);
+   fpClose(Handle);
   End
 
  Else
   Begin
    PDebug(InttoStr(BufferLength)+' Bytes Recieved');
   {Buffer := Db_Query(Buffer);}
-   Sent := Send(Handle,Buffer[1],Length(Buffer),0);
+   Sent := fpSend(Handle,@Buffer[1],Length(Buffer),0);
    If Sent <> Bufferlength Then
     PDebug('Wanted to Send : '+InttoStr(Length(Buffer))+' Only Sent : '+InttoStr(Sent));
   End;
@@ -247,10 +247,10 @@ Var Loop : Integer;
 Begin
  For Loop := 1 To NumberOfConnections Do
   If Connection[Loop].Connected Then
-   If FD_ISSET(Connection[Loop].Handle,FDS) Then
+   If fpFD_ISSET(Connection[Loop].Handle,FDS)>0 Then
     ServiceHandle(Connection[Loop].Handle,Loop);
 
- If FD_ISSET(S,FDS) Then AcceptNewConnection;
+ If fpFD_ISSET(S,FDS)>0 Then AcceptNewConnection;
 End;
 
 Procedure CloseAllOpen;
@@ -261,7 +261,7 @@ Begin
   Begin
    If Connection[Loop].Connected = True Then
     Begin
-     Shutdown(Connection[Loop].Handle,1);
+     fpShutdown(Connection[Loop].Handle,1);
 { fdClose(Connection[Loop].Handle);}
  {Connection[Loop].Connected := False;}
     End;
@@ -274,15 +274,15 @@ Begin
  PortNumber := 5000;
  SetupSocket;
  Repeat
-  FD_ZERO(FDS);
-  FD_SET(S,FDS); { Socket Looking for new connections }
-  FD_SET(1,FDS); { Terminal }
+  fpFD_ZERO(FDS);
+  fpFD_SET(S,FDS); { Socket Looking for new connections }
+  fpFD_SET(1,FDS); { Terminal }
   GreatestHandle := S;
   LoadConnectedFDS;
-  If Select(GreatestHandle+1,@FDS,Nil,Nil,1000) > 0 Then
+  If fpSelect(GreatestHandle+1,@FDS,Nil,Nil,1000) > 0 Then
    Begin
     ServiceSockets;
-    If FD_ISSET(1,FDS) Then
+    If fpFD_ISSET(1,FDS)>0 Then
      Begin
       PDebug('Reading Console');
       Readln(Command);
