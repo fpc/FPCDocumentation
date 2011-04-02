@@ -3580,6 +3580,10 @@ an algorithm is used which reflects common practice on that system.
 The application name is deduced from the binary name via the <link id="ApplicationName"/>
 call, but can be configured by means of the <link id="OnGetApplicationName"/> callback.
 </p>
+<p>
+If <link id="VendorName"/> is not-empty, then <var>VendorName</var> will also be
+inserted before the application-specific directory.
+</p>
 </descr>
 <errors>
 None.
@@ -3590,6 +3594,7 @@ None.
 <link id="OnGetApplicationName"/>
 <link id="CreateDir"/>
 <link id="SysConfigDir"/>
+<link id="VendorName"/>
 </seealso>
 </element>
 
@@ -3623,6 +3628,10 @@ practice on that system.
 The application name is deduced from the binary name via the <link id="ApplicationName"/>
 call, but can be configured by means of the <link id="OnGetApplicationName"/> callback.
 </p>
+<p>
+If <link id="VendorName"/> is not-empty, then <var>VendorName</var> will 
+be inserted in the path for the config file directory.
+</p>
 </descr>
 <errors>
 None.
@@ -3634,6 +3643,7 @@ None.
 <link id="CreateDir"/>
 <link id="ConfigExtension"/>
 <link id="SysConfigDir"/>
+<link id="VendorName"/>
 </seealso>
 </element>
 
@@ -9375,6 +9385,37 @@ event to the event log.
 <!-- enumeration value Visibility: default -->
 <element name="TEventType.etDebug">
 <short>Debug message.</short>
+</element>
+
+<element name="VendorName">
+<short>Return Application vendor Name</short>
+<descr>
+<var>VendorName</var> returns the application vendor name. In order to set
+the application vendor name, the <link id="OnGetVendorName"/> event must be
+set, and an appropriate return value must be returned. The Vendor name is
+used in <link id="GetAppConfigDir"/> and <link id="GetAppConfigFile"/> to
+determine the configuration directory.
+</descr>
+<seealso>
+<link id="OnGetVendorName"/>
+<link id="GetAppConfigDir"/>
+<link id="GetAppConfigFile"/>
+</seealso>
+</element>
+
+<element name="OnGetVendorName">
+<short>Vendor name callback</short>
+<descr>
+<var>OnGetVendorName</var> must be set in order for <link id="VendorName"/> to return a value.
+It will then be used in <link id="GetAppConfigDir"/> and <link id="GetAppConfigFile"/> to  
+determine the configuration directory.
+Set it to a callback that returns the actual vendor name for the application.
+</descr>
+<seealso>
+<link id="VendorName"/>
+<link id="GetAppConfigDir"/>
+<link id="GetAppConfigFile"/>
+</seealso>
 </element>
 
 </module>
