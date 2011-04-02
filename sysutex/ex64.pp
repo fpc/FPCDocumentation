@@ -12,5 +12,5 @@ end;
 Begin
   Testit(10);
   Testit(100);
-  Testit(1000);
+  TestIt(23);
 End.
