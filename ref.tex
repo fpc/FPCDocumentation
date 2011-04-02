@@ -190,11 +190,11 @@ in a Pascal source file.
 \input{syntax/symbol.syn}
 The following characters have a special meaning:
 \begin{verbatim}
- + - * / = < > [ ] . , ( ) : ^ @ { } $ #
+ + - * / = < > [ ] . , ( ) : ^ @ { } $ # & %
 \end{verbatim}
 and the following character pairs too:
 \begin{verbatim}
-<= >= := += -= *= /= (* *) (. .) //
+<< >> ** <> >< <= >= := += -= *= /= (* *) (. .) //
 \end{verbatim}
 When used in a range specifier, the character pair \var{(.} is equivalent to
 the left square bracket \var{[}. Likewise, the character pair \var{.)} is
@@ -453,9 +453,27 @@ can be redefined in other units. The programmer is however not
 encouraged to do this, as it will cause a lot of confusion.
 \end{remark}
 
+\begin{remark}
+As of version 2.5.1 it is possible to use reserved words as identifiers by escaping them with a
+\& sign. This means that the following is possible
+\begin{verbatim}
+var
+  &var : integer;
+
+begin
+  &var:=1;
+  Writeln(&var);
+end.
+\end{verbatim}
+however, it is not recommended to use this feature in new code, as it makes code less readable.
+It is mainly intended to fix old code when the list of reserved words changes and encompasses a 
+word that was not yet reserved (See also \sees{identifiers}).
+\end{remark}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Identifiers
 \section{Identifiers}
+\label{se:identifiers}
 \index{Identifiers}\index{Tokens!Identifiers}
 Identifiers denote programmer defined names for specific constants, types,
 variables, procedures and functions, units, and programs. All programmer 
