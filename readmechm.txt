@@ -4,12 +4,13 @@ CHM helpfiles.
 CHM support based on the great work of Andrew is now also available in the 
 textmode IDE.  This archive also contains the .xct and .kwd files that are
 needed for crosslinking this archive with other CHM files. These files are
-not required for viewing (but are sub promille in size)
+not required for viewing (but are only about 1% of the total size)
 
 How to install the CHMs in Lazarus
 ------------------------------------
 
-Copy the chms to docs/html in the Lazarus directory.
+- Install the chmhelp package
+- Copy the chms to docs/html in the Lazarus directory.
 
 Note that Lazarus does not load ref.* at this moment, so (CHM) help
 on keywords does not work yet.
