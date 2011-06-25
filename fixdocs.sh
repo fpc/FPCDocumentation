@@ -6,7 +6,7 @@
 # Needs more errorchecking.
 
 
-make HTMLFMT=chm html CSSFILE=/fpc/fpc/utils/fpdoc/fpdoc.css FPDOC=fpdoc
+make HTMLFMT=chm html CSSFILE=/fpc/fpc/utils/fpdoc/fpdoc.css FPDOC=fpdoc |tee buildlog.txt
 
 fpc relinkdocs.pp
 fpc compilelatexchm.pp
