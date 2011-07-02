@@ -6778,10 +6778,16 @@ by itself, if this is necessary.
 <element name="TBinaryObjectReader">  <!-- Class -->
 <short>Driver class descendent which reads component data stored in binary format.</short>
 <descr>
+<p>
 The <var>TBinaryObjectReader</var> class reads component data stored in 
 binary form in a file. For this, it overrides or implements all abstract
 methods from <link id="TAbstractObjectReader"/>. No new functionality is 
 added by this class, it is a driver class for the streaming system.
+</p>
+<p>
+It should never be necessary to create an instance of this class directly.
+Instead, the <link id="TStream.WriteComponent"/> call should be used.
+</p>
 </descr>
 <seealso>
 <link id="TAbstractObjectReader"/>
@@ -6896,11 +6902,22 @@ when a component is read from a stream.</short>
 <element name="TReader">  <!-- Class -->
 <short>Generic reader object which reads component data from any given source.</short>
 <descr>
+<p>
 The <var>TReader</var> class is a reader class that implements generic
 component streaming capabilities, independent of the format of the data in
 the stream. It uses a driver class <link id="TAbstractObjectReader"/> to
 do the actual reading of data. The interface of the <var>TReader</var> class
 should be identical to the interface in Delphi.
+</p>
+<p>
+Note that the <var>TReader</var> design is such that it can read a single
+component from a stream. It will read all children of this component, but
+it is not designed to read multiple components in succession from one stream.
+</p>
+<p>
+It should never be necessary to create an instance of this class directly.
+Instead, the <link id="TStream.ReadComponent"/> call should be used.
+</p>
 </descr>
 <seealso>
 <link id="TFiler"/>
@@ -7585,8 +7602,27 @@ Not yet implemented.
 <element name="TWriter">  <!-- Class -->
 <short>Object to write component data to an arbitrary format.</short>
 <descr>
+<p>
+The <var>TWriter</var> class is a writer class that implements generic
+component streaming capabilities, independent of the format of the data in
+the stream. It uses a driver class <link id="TAbstractObjectWriter"/> to
+do the actual reading of data. The interface of the <var>TWriter</var> class
+should be identical to the interface in Delphi.
+</p>
+<p>
+Note that the <var>TWriter</var> design is such that it will write a single
+component to a stream. It will write all children of this component, but
+it is not designed to write multiple components in succession to one stream.
+</p>
+<p>
+It should never be necessary to create an instance of this class directly.
+Instead, the <link id="TStream.WriteComponent"/> call should be used.
+</p>
 </descr>
 <seealso>
+<link id="TFiler"/>
+<link id="TWriter"/>
+<link id="TAbstractObjectReader"/>
 </seealso>
 </element>
 
