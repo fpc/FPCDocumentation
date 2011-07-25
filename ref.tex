@@ -2812,6 +2812,7 @@ Var PP : Pobj;
 \end{verbatim}
 Similarly, the \var{\{\$PackRecords \}} directive acts on objects as well.
 \end{remark}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Fields
 \section{Fields}
@@ -3213,7 +3214,6 @@ Fields and methods in a \var{public} section behave as though they were part
 of an ordinary \var{record} type.\keywordlink{public}
 \end{description}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Classes
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3277,6 +3277,7 @@ Methods are normal function or procedure declarations.
 As can be seen, the declaration of a class is almost identical to the
 declaration of an object. The real difference between objects and classes
 is in the way they are created (see further in this chapter).
+
 The visibility of the different sections is as follows:\index{Scope}
 \begin{description}
 \item [Private\ ] \index{Private}\index{Visibility!Private} All fields and methods that are in a \var{private} block, can
@@ -4049,6 +4050,11 @@ begin
 end;
 \end{verbatim}
 
+% Nested types
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Nested types and variables}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interfaces
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4612,6 +4618,516 @@ before specializing his class.
 %\end{verbatim}
 %Will not compile, unless the addition of 2 \var{TComplex} types is defined.
 %Luckily, this can be done using operator overloading.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Extended Records
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Extended records}
+\label{ch:ExtendedRecords}
+\index{Extended records}\index{Types!Extended record}
+
+% Definition
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Definition}
+Extended records are in many ways equivalent to objects and to a lesser
+extent to classes: they are records which have methods associated with 
+them, and properties. Like objects, when defined as a variable they are 
+allocated on the stack. They do not need to have a constructor.
+Extended records have limitations over objects and classes in that they 
+do not allow inheritance and polymorphism. It is impossible to create a
+descendant record of a record\footnote{although it can be enhanced using record
+helpers, more about this in the chapter on record helpers.}.
+
+Why then introduce extended records ? They were introduced by Delphi 
+2005 to support one of the features introduced by .NET. Delphi no longer
+supports the old TP style of objects, and so re-introduced the
+features of .NET as extended records. Free Pascal aims to be Delphi 
+compatible, so extended records are allowed in Free Pascal as well, 
+but only in Delphi mode.
+
+If extended records are desired in ObjFPC mode, then a mode switch must be
+used:
+\begin{verbatim}
+{$mode objfpc}
+{$modeswitch advancedrecords}
+\end{verbatim}
+
+Compatibility is not the only reason for introducing extended records. 
+There are some practical reasons for using methods or properties in records: 
+\begin{enumerate}
+\item It is more in line with an object-oriented approach to programming:
+the type also contains any methods that work on it.
+\item In contrast with a procedural approach, putting all operations that
+work on a record in the record itself, allows an IDE to show the available
+methods on the record when it is displaying code completion options.
+\end{enumerate}
+
+Defining an extended record is much as defining an object or class:
+\input{syntax/typeerec.syn}
+Some of the restrictions when compared to classes or objects are 
+obvious from the syntax diagram:
+\begin{itemize}
+\item No inheritance of records.
+\item No published section exists. 
+\item Constructors or destructors cannot be defined.
+\item Methods cannot be virtual or abstract - this is a consequence
+of the fact that there is no inheritance.
+\end{itemize}
+Other than that the definition much resembles that of a class or object.
+
+
+The following are few examples of valid extended record definitions:
+\begin{verbatim}
+TTest1 = record
+  a : integer;
+  function Test(aRecurse: Boolean): Integer;
+end;
+
+TTest2 = record
+private
+  A,b : integer;
+public
+  procedure setA(AValue : integer);
+  property SafeA : Integer Read A Write SetA;
+end;
+
+TTest3 = packed record
+private
+  fA,fb : byte;
+  procedure setA(AValue : Integer);
+  function geta : integer;
+public  
+  property A : Integer Read GetA Write SetA;
+end;
+
+TTest4 = record
+ private
+   a : Integer;
+ protected  
+   function getp : integer; 
+ public
+   b : string;
+   procedure setp (aValue : integer);
+   property p : integer read Getp Write SetP;
+ public  
+ case x : integer of
+   1 : (Q : string);
+   2 : (S : String);
+ end;
+\end{verbatim}
+Note that it is possible to specify a visibility for the members of the
+record. This is particularly useful for example when creating an interface 
+to a C library: the actual fields can be declared hidden, and more 'pascal'
+like properties can be exposed which act as the actual fields. 
+The \var{TTest3} record definition shows that the \var{packed} directive can
+be used in extended records. Extended records have the same memory layout as
+their regular counterparts: the methods and properties are not part of the
+record structure in memory. 
+
+The \var{TTest4} record definition in the above examples shows that the
+extended record still has the ability to define a variant part. As with the
+regular record, the variant part must come last. It cannot contain methods.
+
+\section{Extended record enumerators}
+Extended records can have an enumerator. To this end, a function returning
+an enumerator record must be defined in the extended record:
+\begin{verbatim}
+type
+  TIntArray = array[0..3] of Integer;
+
+  TEnumerator = record
+  private
+    FIndex: Integer;
+    FArray: TIntArray;
+    function GetCurrent: Integer;
+  public
+    function MoveNext: Boolean;
+    property Current: Integer read GetCurrent;
+  end;
+
+  TMyArray = record
+    F: array[0..3] of Integer;
+    function GetEnumerator: TEnumerator;
+  end;
+
+function TEnumerator.MoveNext: Boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < Length(FArray);
+end;
+
+function TEnumerator.GetCurrent: Integer;
+begin
+  Result := FArray[FIndex];
+end;
+
+function TMyArray.GetEnumerator: TEnumerator;
+begin
+  Result.FArray := F;
+  Result.FIndex := -1;
+end;
+\end{verbatim}
+After these definitions, the following code will compile and enumerate all
+elements in F:
+\begin{verbatim}
+var
+  Arr: TMyArray;
+  I: Integer;
+begin
+  for I in Arr do
+    WriteLn(I);
+end.
+\end{verbatim}
+The same effect can be achieved with the enumerator operator:
+\begin{verbatim}
+type
+  TIntArray = array[0..3] of Integer;
+
+  TEnumerator = record
+  private
+    FIndex: Integer;
+    FArray: TIntArray;
+    function GetCurrent: Integer;
+  public
+    function MoveNext: Boolean;
+    property Current: Integer read GetCurrent;
+  end;
+
+  TMyArray = record
+    F: array[0..3] of Integer;
+  end;
+
+function TEnumerator.MoveNext: Boolean;
+begin
+  inc(FIndex);
+  Result := FIndex < Length(FArray);
+end;
+
+function TEnumerator.GetCurrent: Integer;
+begin
+  Result := FArray[FIndex];
+end;
+
+operator Enumerator(const A: TMyArray): TEnumerator;
+begin
+  Result.FArray := A.F;
+  Result.FIndex := -1;
+end;
+\end{verbatim}
+This will allow the code to run as well.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Class helpers
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Class and record helpers}
+\label{ch:ClassHelpers}
+\index{Class helpers}\index{Types!Class helpers}%
+\index{Record helpers}\index{Types!Record helpers}
+
+% Definition
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Definition}
+Class and record helpers can be used to add methods to an existing class or
+record, without making a derivation of the class or re-declaring the record.
+The effect is like inserting a method in the method table of the class.
+If the helper declaration is in the current scope of the code, then the
+methods and properties of the helper can be used as if they were part of the 
+class declaration for the class or record that the helper extends.
+
+The syntax diagram for a class or record helper is presented below.
+\input{syntax/helper.syn}
+The diagram shows that a helper definition looks very much like a regular
+class definition. It simply declares some extra constructors, properties and fields
+for a class: the class or record type for which the helper is an extension is indicated
+after the \var{for} keyword. Since an enumerator for a class is obtained
+through a regular method, class helpers can also be used to override the
+enumerators.
+
+As can be seen from the syntax diagram, it is possible to create descendents of helpers: 
+the helpers can form a hierarchy of their own, allowing to override methods of a
+parent helper. They also have visibility specifiers, just like records and
+classes.
+
+The following is a simple class helper for the \var{TObject} class, which provides
+an alternate version of the standard \var{ToString} method.
+\begin{verbatim}
+TObjectHelper = class helper for TObject
+  function AsString(const aFormat: String): String; 
+end;
+ 
+function TObjectHelper.AsString(const aFormat: String): String;
+begin
+  Result := Format(aFormat, [ToString]);
+end;
+ 
+var
+  o: TObject;
+begin
+  Writeln(o.AsString('The object''s name is %s'));
+end.
+\end{verbatim}
+
+\begin{remark}
+The \var{helper} modifier is only a modifier just after the \var{class} or
+\var{record} keywords. That means that the first member of a class or record
+cannot be named \var{helper}. A member of a class or record can be called
+\var{helper}, it just cannot be the first one.
+\end{remark}
+
+\section{Restrictions on class helpers}
+It is not possible to extend a class with any method or property. There are
+some restrictions on the possibilities:
+\begin{itemize}
+\item Destructors or class destructurs are not allowed.
+\item Class constructors are not allowed. 
+\item Record helpers cannot implement constructors.
+\item Field definitions are not allowed. Neither are class fields.
+\item Properties that refer to a field are not allowed. This is in fact a
+consequence of the previous item.
+\item Abstract methods are not allowed.
+\item Virtual methods of the class cannot be overridden. They can be hidden
+by giving them the same name or they can be overloaded using the
+\var{overload} directive.
+\item Unlike for regular procedures or methods, the \var{overload} specifier must 
+be explicitly used when overloading methods in class helpers.
+\end{itemize}
+The following modifies the previous example by overloading the \var{ToString}
+method:
+\begin{verbatim}
+TObjectHelper = class helper for TObject
+  function ToString(const aFormat: String): String; overload;
+end;
+ 
+function TObjectHelper.ToString(const aFormat: String): String;
+begin
+  Result := Format(aFormat, [ToString]);
+end;
+ 
+var
+  o: TObject;
+begin
+  Writeln(o.ToString('The object''s name is %s'));
+end.
+\end{verbatim}
+
+\section{Restrictions on record helpers}
+Records do not offer the same possibilities as classes do. This reflects on
+the possibilities when creating record helpers. Below the restrictions on
+record helpers are enumerated:
+\begin{itemize}
+\item A record helper cannot be used to extend a class. The following will
+fail:
+\begin{verbatim}
+TTestHelper = record helper for TObject
+end;
+\end{verbatim}
+\item Record helpers cannot implement constructors.
+\item Inside a helper's declaration the methods/fields of the extended record
+can't be accessed in e.g. a property definition. They can be accessed in the 
+implementation, of course. This means that the following will not compile:
+\begin{verbatim}
+TTest = record
+  Test: Integer;
+end;
+
+TTestHelper = record helper for TTest
+  property AccessTest: Integer read Test;
+end;
+\end{verbatim}
+\item Record helpers can only access public fields (in case an extended
+record with vibility specifiers is used).
+\item Inheritance of record helpers is only allowed in ObjFPC mode; In
+Delphi mode, it is not allowed.
+\item Record helpers can only descend from other record helpers, not from
+class helpers.
+\item Unlike class helpers, a descendent record helper must extend the same
+record type.
+\item In Delphi mode, it is not possible to call the extended record's
+method using \var{inherited}. It is possible to do so in ObjFPC mode. The
+following code needs ObjFPC mode to compile:
+\begin{verbatim}
+type
+  TTest = record
+    function Test(aRecurse: Boolean): Integer;
+  end;
+
+  TTestHelper = record helper for TTest
+    function Test(aRecurse: Boolean): Integer;
+  end;
+
+function TTest.Test(aRecurse: Boolean): Integer;
+begin
+  Result := 1;
+end;
+
+function TTestHelper.Test(aRecurse: Boolean): Integer;
+begin
+  if aRecurse then
+    Result := inherited Test(False)
+  else
+    Result := 2;
+end;
+\end{verbatim}
+\end{itemize}
+
+\section{Inheritance}
+As noted in the previous section, it is possible to create descendents of
+helper classes. Since only the last helper class in the current scope can 
+be used, it is necessary to descend a helper class from another one if
+methods of both helpers must be used. More on this in a subsequent section.
+
+A descendent of a class helper can extend a different class than its
+parent. The following is a valid class helper for \var{TMyObject}:
+\begin{verbatim}
+TObjectHelper = class helper for TObject
+  procedure SomeMethod;
+end;
+ 
+TMyObject = class(TObject)
+end;
+ 
+TMyObjectHelper = class helper(TObjectHelper) for TMyObject
+  procedure SomeOtherMethod;
+end;
+\end{verbatim}
+The \var{TMyObjectHelper} extends \var{TObjectHelper}, but does not extend
+the \var{TObject} class, it only extends the \var{TMyObject} class.
+
+Since records know no inheritance, it is obvious that descendants of record
+helpers can only extend the same record.
+
+\begin{remark}
+For maximum delphi compatibility, it is impossible to create descendants of record helpers
+in Delphi mode.
+\end{remark}
+
+\section{Usage}
+Once a helper class is defined, its methods can be used whenever the helper
+class is in scope. This means that if it is defined in a separate unit, then
+this unit should be in the uses clause wherever the methods of the helper
+class are used. 
+
+Consider the following unit:
+\begin{verbatim}
+{$mode objfpc}
+{$h+}
+unit oha;
+
+interface
+
+Type
+  TObjectHelper = class helper for TObject
+    function AsString(const aFormat: String): String;
+  end;
+  
+implementation
+
+uses sysutils;
+   
+function TObjectHelper.AsString(const aFormat: String): String;
+
+begin
+  Result := Format(aFormat, [ToString]);
+end;
+
+end.     
+\end{verbatim}
+Then the following will compile:
+\begin{verbatim}
+Program Example113;
+
+uses oha;
+
+{ Program to demonstrate the class helper scope. }
+
+Var
+  o : TObject;
+
+begin
+  O:=TObject.Create;
+  Writeln(O.AsString('O as a string : %s'));
+end.
+\end{verbatim}
+But, if a second unit (ohb) is created:
+\begin{verbatim}
+{$mode objfpc}
+{$h+}
+unit ohb;
+
+interface
+
+Type
+  TAObjectHelper = class helper for TObject
+    function MemoryLocation: String;
+  end;
+  
+implementation
+
+uses sysutils;
+   
+function TAObjectHelper.MemoryLocation: String;
+
+begin
+  Result := format('%p',[pointer(Self)]);
+end;
+
+end.     
+\end{verbatim}
+And is added after the first unit in the uses clause:
+\begin{verbatim}
+Program Example113;
+
+uses oha,ohb;
+
+{ Program to demonstrate the class helper scope. }
+
+Var
+  o : TObject;
+
+begin
+  O:=TObject.Create;
+  Writeln(O.AsString('O as a string : %s'));
+  Writeln(O.MemoryLocation);
+end.
+\end{verbatim}
+Then the compiler will complain that it does not know the method 'AsString'.
+This is because the compiler stops looking for class helpers as soon as the
+first class helper is encountered. Since the \var{ohb} unit comes last in
+the uses clause, the compiler will only use \var{TAObjectHelper} as the class
+helper.
+
+The solution is to re-implement unit ohb:
+\begin{verbatim}
+{$mode objfpc}
+{$h+}
+unit ohc;
+
+interface
+
+uses oha;
+
+Type
+  TAObjectHelper = class helper(TObjectHelper) for TObject
+    function MemoryLocation: String;
+  end;
+  
+implementation
+
+uses sysutils;
+   
+function TAObjectHelper.MemoryLocation: String;
+
+begin
+  Result := format('%p',[pointer(Self)]);
+end;
+
+end.     
+\end{verbatim}
+And after replacing unit \var{ohb} with \var{ohc}, the example program will
+compile and function as expected.
+
+Note that it is not enough to include a unit with a class helper once in a
+project; The unit must be included whenever the class helper is needed. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Expressions
@@ -6483,6 +6999,41 @@ version 2.5.1 of the compiler.
 
 An exception is the \var{stdcall} calling convention: for compatibility with
 COM standards, large const parameters are passed by reference.
+\end{remark}
+
+\begin{remark}
+Note that specifying \var{const} is a contract between the programmer and the
+compiler. It is the programmer who tells the compiler that the contents of
+the const parameter will not be changed when the routine is executed, it is 
+{\em not} the compiler who tells the programmer that the parameter will not be 
+changed. 
+
+This is particularly important and visible when using refcounted types. 
+For such types, the (invisible) incrementing and decrementing of any reference 
+count is omitted when \var{const} is used. Doing so often allows the compiler 
+to omit invisible try/finally frames for these routines.
+
+As a side effect, the following code will produce not the expected output:
+\begin{verbatim}
+Var
+  S : String = 'Something';
+
+Procedure DoIt(Const T : String);
+
+begin
+  S:='Something else';
+  Writeln(T);
+end;
+
+begin
+  DoIt(S);
+end.
+\end{verbatim}
+Will write 
+\begin{verbatim}
+Something else
+\end{verbatim}
+This behaviour is by design.
 \end{remark}
 
 Constant parameters can also be untyped. See \sees{varparams} for more
