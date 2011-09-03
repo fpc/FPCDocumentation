@@ -2113,17 +2113,12 @@ FPDOCHTMLOPTS=--footer-date='mmm dd yyyy'
 ifeq (chm,$(HTMLFMT))
   HTMLSUFFIX:=.chm
   FPDOCHTMLOPTS+=--auto-toc --auto-index --make-searchable
-  ifdef CSSFILE
-    FPDOCHTMLOPTS+=--css-file=$(CSSFILE)
-  endif
-endif
-ifeq (html,$(HTMLFMT))
-  ifdef CSSFILE
-    FPDOCHTMLOPTS+=--css-file=$(CSSFILE)
-  endif
 endif
 ifeq (ipf,$(HTMLFMT))
   HTMLSUFFIX:=.ipf
+endif
+ifdef CSSFILE
+FPDOCHTMLOPTS+=--css-file=$(CSSFILE)
 endif
 ifndef LATEX
 LATEX = latex
@@ -2570,11 +2565,15 @@ endif  # USEPLASTEX
 endif  # USEHEVEA
 fcl.chk: $(FCLXML)
 	$(FPDOC) $(FCLOPTS) --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS)
+ifndef CSSFILE
 	cp fpdoc.cst fcl/fpdoc.css
+endif
 	touch fcl.chk
 rtl.chk: $(RTLXML)
 	$(FPDOC) $(RTLOPTS) --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS)
+ifndef CSSFILE
 	cp fpdoc.cst rtl/fpdoc.css
+endif
 	touch rtl.chk
 user.chk: $(INCLUDES) user.tex messages.inc
 prog.chk: $(INCLUDES) prog.tex

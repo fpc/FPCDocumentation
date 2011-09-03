@@ -103,25 +103,21 @@ FCLOPTS=$(FPDOCOPTS) --package=fcl --warn-no-node --descr=fcl.xml --content=fcl.
 ifeq ($(HIDEPROTECTED),YES)
 FCLOPTS+= --hide-protected
 endif
+
 FPDOCHTMLOPTS=--footer-date='mmm dd yyyy'
 
 ifeq (chm,$(HTMLFMT))
   HTMLSUFFIX:=.chm
   FPDOCHTMLOPTS+=--auto-toc --auto-index --make-searchable
-  ifdef CSSFILE
-    FPDOCHTMLOPTS+=--css-file=$(CSSFILE)
-  endif
-endif
-
-ifeq (html,$(HTMLFMT))
-  ifdef CSSFILE
-    FPDOCHTMLOPTS+=--css-file=$(CSSFILE)
-  endif
 endif
 
 ifeq (ipf,$(HTMLFMT))
   HTMLSUFFIX:=.ipf
 #  FPDOCHTMLOPTS+=--auto-toc --auto-index --make-searchable
+endif
+
+ifdef CSSFILE
+FPDOCHTMLOPTS+=--css-file=$(CSSFILE)
 endif
 
 
@@ -752,12 +748,16 @@ endif  # USEHEVEA
 
 fcl.chk: $(FCLXML)
         $(FPDOC) $(FCLOPTS) --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS)
+ifndef CSSFILE
         cp fpdoc.cst fcl/fpdoc.css
+endif
         touch fcl.chk
 
 rtl.chk: $(RTLXML)
         $(FPDOC) $(RTLOPTS) --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS)
+ifndef CSSFILE
         cp fpdoc.cst rtl/fpdoc.css
+endif
         touch rtl.chk
 
 user.chk: $(INCLUDES) user.tex messages.inc
