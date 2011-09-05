@@ -2268,10 +2268,7 @@ RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-res
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream \
 	 base64 gettext pooledmm dbugmsg streamex inicol streamcoll cachecls \
 	 eventlog syncobjs custapp blowfish simpleipc inifiles rttiutils uriparser \
-	 daemonapp libtar ascii85 fptimer db avl_tree 
-ifdef FPVECTORIAL
-FCLUNITS+=fpvectorial
-endif
+	 daemonapp libtar ascii85 fptimer db avl_tree fpvectorial
 FCLUNITS+= ezcgi
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
@@ -2317,9 +2314,7 @@ FCLUNITOPTS+= $(FCLINICOL) $(FCLSTREAMCOL) $(FCLCACHECLS) $(FCLEVENTLOG) $(FCLSY
 FCLUNITOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES) $(FCLRTTIUTILS)
 FCLUNITOPTS+= $(FCLAVLTREE) $(FCLURIPARSER) $(FCLDAEMONAPP) $(FCLLIBTAR) $(FCLASCII85)
 FCLUNITOPTS+= $(FCLFPTIMER) $(FCLDB)
-ifdef FPVECTORIAL
 FCLUNITOPTS+= $(FCLFPVECTORIAL)
-endif
 RTLOPTS=$(FPDOCOPTS) --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifeq ($(HIDEPROTECTED),YES)
 RTLOPTS+= --hide-protected
