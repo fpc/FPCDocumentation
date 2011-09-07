@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <fpdoc-descriptions>
 <package name="fcl">
 
@@ -546,7 +546,7 @@ for actually creating 3D documents as fpvectorial is currently a 2D library.
 
 <!-- variable Visibility: public -->
 <element name="TvEntity.Pen">
-<short></short>
+<short>The Pen of the entity</short>
 <descr>The global Pen for the entire entity. In the case of paths, individual
         elements might be able to override this setting.
 </descr>
@@ -556,7 +556,7 @@ for actually creating 3D documents as fpvectorial is currently a 2D library.
 
 <!-- variable Visibility: public -->
 <element name="TvEntity.Brush">
-<short></short>
+<short>The Brush of the entity</short>
 <descr>The global Brush for the entire entity. In the case of paths, individual
         elements might be able to override this setting.
 </descr>
@@ -921,7 +921,7 @@ for actually creating 3D documents as fpvectorial is currently a 2D library.
 
 <!-- class Visibility: default -->
 <element name="TvRasterImage">
-<short></short>
+<short>An entity which contains a raster image</short>
 <descr>Vectorial images can contain raster images inside them and this entity
    represents this.
 
@@ -1033,6 +1033,20 @@ for actually creating 3D documents as fpvectorial is currently a 2D library.
 </seealso>
 </element>
 
+<!-- variable Visibility: public -->
+<element name="TvVectorialDocument.ZoomLevel">
+<short>The zoom level in which the document is currently displayed</short>
+<seealso>
+</seealso>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="TvVectorialDocument.SelectedvElement">
+<short>The currently selected element</short>
+<seealso>
+</seealso>
+</element>
+
 <!-- constructor Visibility: public -->
 <element name="TvVectorialDocument.Create">
 <short>Constructor</short>
@@ -1089,7 +1103,7 @@ for actually creating 3D documents as fpvectorial is currently a 2D library.
 
 <!-- procedure Visibility: public -->
 <element name="TvVectorialDocument.WriteToFile">
-<short></short>
+<short>Writes the document to a file.</short>
 <descr>Writes the document to a file.
 
   If the file doesn't exist, it will be created.
@@ -1115,7 +1129,7 @@ for actually creating 3D documents as fpvectorial is currently a 2D library.
 
 <!-- procedure Visibility: public -->
 <element name="TvVectorialDocument.WriteToStream">
-<short></short>
+<short>Writes the document to a stream</short>
 <descr>Writes the document to a stream
 </descr>
 <errors>
@@ -1261,89 +1275,35 @@ Never use this routine to reading binary formats.
 <short>The file name to be analized</short>
 </element>
 
-<!-- function Visibility: public -->
-<element name="TvVectorialDocument.GetPath">
-<short>Returns a path by it's index</short>
-<descr>Returns a path by it's index. Use it together with GetPathCount to
-iterate through all entities in a document. Paths are also entitites, so one can
-also access paths by using GetEntity. The Index is zero-based
-and goes from zero to GetPathCount() - 1
+<!-- class function Visibility: default -->
+<element name="TvVectorialDocument.GetDetailedFileFormat">
+<short>Returns an extended description of the file format</short>
+<descr>Returns an extended description of the file format</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- class function Visibility: default -->
+<element name="TvVectorialDocument.GuessDocumentSize">
+<short>Tries to guess the size of the document</short>
+<descr>Tries to guess the size of the document. Usefull for formats which don't provide this information.
 </descr>
 <errors>
 </errors>
 <seealso>
-  <link id="GetPathCount"/>
 </seealso>
 </element>
 
-<!-- function result Visibility: default -->
-<element name="TvVectorialDocument.GetPath.Result">
-<short>The obtained path or nil</short>
-</element>
-
-<!-- argument Visibility: default -->
-<element name="TvVectorialDocument.GetPath.ANum">
-<short>The zero-based index to the path</short>
-</element>
-
-<!-- function Visibility: public -->
-<element name="TvVectorialDocument.GetPathCount">
-<short>Returns the number of paths in the document</short>
-<descr>Use this method together with GetPath to
-iterate through all paths in a document.
-</descr>
+<!-- class function Visibility: default -->
+<element name="TvVectorialDocument.GuessGoodZoomLevel">
+<short>Tries to guess the best zoom to display the document</short>
+<descr></descr>
 <errors>
 </errors>
 <seealso>
-  <link id="GetPath"/>
 </seealso>
-</element>
-
-<!-- function result Visibility: default -->
-<element name="TvVectorialDocument.GetPathCount.Result">
-<short>The number of paths in the document</short>
-</element>
-
-<!-- function Visibility: public -->
-<element name="TvVectorialDocument.GetEntity">
-<short>Returns an entity by it's index</short>
-<descr>Returns an entity by it's index. Use it together with GetEntitiesCount to
-iterate through all entities in a document. Paths are also entitites. The Index is zero-based
-and goes from zero to GetEntitiesCount() - 1
-</descr>
-<errors>
-</errors>
-<seealso>
-  <link id="GetEntitiesCount"/>
-</seealso>
-</element>
-
-<!-- function result Visibility: default -->
-<element name="TvVectorialDocument.GetEntity.Result">
-<short>The entity</short>
-</element>
-
-<!-- argument Visibility: default -->
-<element name="TvVectorialDocument.GetEntity.ANum">
-<short>The zero-based index to the entity</short>
-</element>
-
-<!-- function Visibility: public -->
-<element name="TvVectorialDocument.GetEntitiesCount">
-<short>Returns the number of entities in the document</short>
-<descr>Use this method together with GetEntity to
-iterate through all entities in a document.
-</descr>
-<errors>
-</errors>
-<seealso>
-  <link id="GetEntity"/>
-</seealso>
-</element>
-
-<!-- function result Visibility: default -->
-<element name="TvVectorialDocument.GetEntitiesCount.Result">
-<short>The number of entities in the document</short>
 </element>
 
 <!-- procedure Visibility: public -->
@@ -1358,7 +1318,200 @@ iterate through all entities in a document.
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.AddEntity">
+<element name="TvVectorialDocument.GetPage">
+<short>Returns one of the pages of the document</short>
+<descr>Returns a page from the document given a zero-based index to it as input
+</descr>
+<errors>
+</errors>
+<seealso>
+  <link id="GetPageCount"/>
+  <link id="GetCurrentPage"/>
+  <link id="SetCurrentPage"/>
+  <link id="AddPage"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TvVectorialDocument.GetPage.AIndex">
+<short>The zero-based index to the page</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TvVectorialDocument.GetPageCount">
+<short>Returns the number of pages in the document</short>
+<descr>Returns the number of pages in the document
+</descr>
+<errors>
+</errors>
+<seealso>
+  <link id="GetPage"/>
+  <link id="GetCurrentPage"/>
+  <link id="SetCurrentPage"/>
+  <link id="AddPage"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TvVectorialDocument.GetPage.AIndex">
+<short>The zero-based index to the page</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TvVectorialDocument.GetCurrentPage">
+<short>Returns the currently selected page</short>
+<descr>Returns the currently selected page
+</descr>
+<errors>
+</errors>
+<seealso>
+  <link id="GetPage"/>
+  <link id="GetPageCount"/>
+  <link id="SetCurrentPage"/>
+  <link id="AddPage"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TvVectorialDocument.SetCurrentPage">
+<short>Selects a page in the document</short>
+<descr>Selects a page in the document
+</descr>
+<errors>
+</errors>
+<seealso>
+  <link id="GetPage"/>
+  <link id="ReadFromFile"/>
+  <link id="GetCurrentPage"/>
+  <link id="AddPage"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TvVectorialDocument.SetCurrentPage.AIndex">
+<short>The zero-based index to the page</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TvVectorialDocument.AddPage">
+<short>Adds a new page to the document</short>
+<descr>Adds a new page to the the document
+</descr>
+<errors>
+</errors>
+<seealso>
+  <link id="GetPage"/>
+  <link id="ReadFromFile"/>
+  <link id="GetCurrentPage"/>
+  <link id="SetCurrentPage"/>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TvVectorialPage">
+<short>Represents a page from a vectorial document</short>
+<descr>Represents a page from a vectorial document
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="TvVectorialPage.Width">
+<short>The width of the page</short>
+<descr>Measured in milimiters
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="TvVectorialPage.Height">
+<short>The height of the page</short>
+<descr>Measured in milimiters
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TvVectorialPage.Create">
+<short>Constructor</short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TvVectorialPage.Destroy">
+<short>Destructor</short>
+<descr>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TvVectorialPage.GetEntity">
+<short>Returns an entity by it's index</short>
+<descr>Returns an entity by it's index. Use it together with GetEntitiesCount to
+iterate through all entities in a page. Paths are also entitites. The Index is zero-based
+and goes from zero to GetEntitiesCount() - 1
+</descr>
+<errors>
+</errors>
+<seealso>
+  <link id="GetEntitiesCount"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TvVectorialPage.GetEntity.Result">
+<short>The entity</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TvVectorialPage.GetEntity.ANum">
+<short>The zero-based index to the entity</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TvVectorialPage.GetEntitiesCount">
+<short>Returns the number of entities in the page</short>
+<descr>Use this method together with GetEntity to iterate through all entities in a page.
+</descr>
+<errors>
+</errors>
+<seealso>
+  <link id="GetEntity"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TvVectorialPage.GetEntitiesCount.Result">
+<short>The number of entities in the page</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TvVectorialPage.Clear">
+<short>Clears all data in the page</short>
+<descr>Removes all entities, removes all paths and resets all other data.
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TvVectorialPage.AddEntity">
 <short>Adds an entity to the document</short>
 <descr>Adds an entity to the document. It can be any object descending from TvEntity.
 Do not release the object added like this, because a reference to it will be added,
@@ -1372,12 +1525,12 @@ not a copy.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddEntity.AEntity">
+<element name="TvVectorialPage.AddEntity.AEntity">
 <short>The entity to be added</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.AddPathCopyMem">
+<element name="TvVectorialPage.AddPathCopyMem">
 <short>Adds a new path to the document</short>
 <descr>This method will copy the path provided and add this copy to the document.
 Therefore one should take care of releasing a path after adding it to the document
@@ -1391,13 +1544,13 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddPathCopyMem.APath">
-<short></short>
+<element name="TvVectorialPage.AddPathCopyMem.APath">
+<short>The path to be copied and added</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.StartPath">
-<short></short>
+<element name="TvVectorialPage.StartPath">
+<short>Starts writing a Path in multiple steps</short>
 <descr>Starts writing a Path in multiple steps.
   Should be followed by zero or more calls to AddPointToPath
   and by a call to EndPath to effectively add the data.
@@ -1420,17 +1573,17 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.StartPath.AX">
+<element name="TvVectorialPage.StartPath.AX">
 <short>The X coodinate of the begining of the path</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.StartPath.AY">
+<element name="TvVectorialPage.StartPath.AY">
 <short>The Y coodinate of the begining of the path</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.AddMoveToPath">
+<element name="TvVectorialPage.AddMoveToPath">
 <short>Adds a move segment to the current temporary path</short>
 <descr>This is similar to a invisible line segment.
 </descr>
@@ -1441,17 +1594,17 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddMoveToPath.AX">
+<element name="TvVectorialPage.AddMoveToPath.AX">
 <short>The final X coordinate of the MoveTo</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddMoveToPath.AY">
+<element name="TvVectorialPage.AddMoveToPath.AY">
 <short>The final Y coordinate of the MoveTo</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.AddLineToPath">
+<element name="TvVectorialPage.AddLineToPath">
 <short>Adds a line segment to the current temporary path</short>
 <descr>Adds one more point to the end of a Path being
   writing in multiple steps.
@@ -1469,27 +1622,27 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddLineToPath.AX">
+<element name="TvVectorialPage.AddLineToPath.AX">
 <short>The final X coordinate of the line</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddLineToPath.AY">
+<element name="TvVectorialPage.AddLineToPath.AY">
 <short>The final Y coordinate of the line</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddLineToPath.AColor">
+<element name="TvVectorialPage.AddLineToPath.AColor">
 <short>The color of the line</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddLineToPath.AZ">
+<element name="TvVectorialPage.AddLineToPath.AZ">
 <short>The final Z coordinate of the line</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.GetCurrentPathPenPos">
+<element name="TvVectorialPage.GetCurrentPathPenPos">
 <short>Gets the current Pen Pos in the temporary path</short>
 <descr>Gets the current Pen Pos in the temporary path
 </descr>
@@ -1502,17 +1655,17 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.GetCurrentPathPenPos.AX">
+<element name="TvVectorialPage.GetCurrentPathPenPos.AX">
 <short>The X coodinate of the pen position</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.GetCurrentPathPenPos.AY">
+<element name="TvVectorialPage.GetCurrentPathPenPos.AY">
 <short>The Y coodinate of the pen position</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.AddBezierToPath">
+<element name="TvVectorialPage.AddBezierToPath">
 <short>Adds a bezier element to the current temporary path</short>
 <descr>Adds a bezier element to the current temporary path. It starts where the previous element ended
   and it goes throw the control points [AX1, AY1] and [AX2, AY2] and ends
@@ -1527,52 +1680,52 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddBezierToPath.AX1">
+<element name="TvVectorialPage.AddBezierToPath.AX1">
 <short>The X coordinate of the first control point of the Bézier</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddBezierToPath.AY1">
+<element name="TvVectorialPage.AddBezierToPath.AY1">
 <short>The Y coordinate of the first control point of the Bézier</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddBezierToPath.AX2">
+<element name="TvVectorialPage.AddBezierToPath.AX2">
 <short>The X coordinate of the second control point of the Bézier</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddBezierToPath.AY2">
+<element name="TvVectorialPage.AddBezierToPath.AY2">
 <short>The Y coordinate of the second control point of the Bézier</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddBezierToPath.AX3">
+<element name="TvVectorialPage.AddBezierToPath.AX3">
 <short>The X coordinate of the destination point of the Bézier</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddBezierToPath.AY3">
+<element name="TvVectorialPage.AddBezierToPath.AY3">
 <short>The Y coordinate of the destination point of the Bézier</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddBezierToPath.AZ1">
+<element name="TvVectorialPage.AddBezierToPath.AZ1">
 <short>The Z coordinate of the first control point of the Bézier</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddBezierToPath.AZ2">
+<element name="TvVectorialPage.AddBezierToPath.AZ2">
 <short>The Z coordinate of the second control point of the Bézier</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddBezierToPath.AZ3">
+<element name="TvVectorialPage.AddBezierToPath.AZ3">
 <short>The Z coordinate of the destination point of the Bézier</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.SetBrushColor">
+<element name="TvVectorialPage.SetBrushColor">
 <short>Sets the brush color for the current temporary path</short>
 <descr>Sets the brush color for the current temporary path
 </descr>
@@ -1585,12 +1738,12 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.SetBrushColor.AColor">
+<element name="TvVectorialPage.SetBrushColor.AColor">
 <short>The color to be set for the brush</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.SetBrushStyle">
+<element name="TvVectorialPage.SetBrushStyle">
 <short>Sets the brush style for the current temporary path</short>
 <descr>Sets the brush style for the current temporary path
 </descr>
@@ -1603,12 +1756,12 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.SetBrushStyle.AStyle">
+<element name="TvVectorialPage.SetBrushStyle.AStyle">
 <short>The style to be set for the brush</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.SetPenColor">
+<element name="TvVectorialPage.SetPenColor">
 <short>Sets the pen color for the current temporary path</short>
 <descr>Sets the pen color for the current temporary path
 </descr>
@@ -1621,12 +1774,12 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.SetPenColor.AColor">
+<element name="TvVectorialPage.SetPenColor.AColor">
 <short>The color to be set for the Pen</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.SetPenStyle">
+<element name="TvVectorialPage.SetPenStyle">
 <short>Sets the pen style for the current temporary path</short>
 <descr>Sets the pen style for the current temporary path
 </descr>
@@ -1639,12 +1792,12 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.SetPenStyle.AStyle">
+<element name="TvVectorialPage.SetPenStyle.AStyle">
 <short>The style to be set for the pen</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.SetPenWidth">
+<element name="TvVectorialPage.SetPenWidth">
 <short>Sets the pen width for the current temporary path</short>
 <descr>Sets the pen width for the current temporary path
 </descr>
@@ -1657,12 +1810,12 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.SetPenWidth.AWidth">
+<element name="TvVectorialPage.SetPenWidth.AWidth">
 <short>The width to be set for the pen</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.SetClipPath">
+<element name="TvVectorialPage.SetClipPath">
 <short>Defines a clipping path for the current temporary path</short>
 <descr>Defines a clipping path for the current temporary path
 </descr>
@@ -1675,18 +1828,18 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.SetClipPath.AClipPath">
+<element name="TvVectorialPage.SetClipPath.AClipPath">
 <short>The path to be set as clipping path</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.SetClipPath.AClipMode">
+<element name="TvVectorialPage.SetClipPath.AClipMode">
 <short>The clipping mode</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.EndPath">
-<short></short>
+<element name="TvVectorialPage.EndPath">
+<short>Finishes writing a Path</short>
 <descr>Finishes writing a Path, which was created in multiple
   steps using StartPath and AddPointToPath,
   to the document.
@@ -1712,7 +1865,7 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.AddText">
+<element name="TvVectorialPage.AddText">
 <short>Adds a new text element</short>
 <descr>Adds a new text element
 </descr>
@@ -1723,42 +1876,42 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddText.AX">
+<element name="TvVectorialPage.AddText.AX">
 <short>The X coordinate of the bottom-left corner of the text</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddText.AY">
+<element name="TvVectorialPage.AddText.AY">
 <short>The Y coordinate of the bottom-left corner of the text</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddText.AZ">
+<element name="TvVectorialPage.AddText.AZ">
 <short>The Z coordinate of the bottom-left corner of the text</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddText.FontName">
+<element name="TvVectorialPage.AddText.FontName">
 <short>The font name to be used in the text</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddText.FontSize">
+<element name="TvVectorialPage.AddText.FontSize">
 <short>The font size for the text</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddText.AText">
+<element name="TvVectorialPage.AddText.AText">
 <short>The text to be added</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddText.AStr">
+<element name="TvVectorialPage.AddText.AStr">
 <short>The text to be added</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.AddCircle">
+<element name="TvVectorialPage.AddCircle">
 <short>Adds a circle element</short>
 <descr>Adds a circle element
 </descr>
@@ -1769,27 +1922,27 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddCircle.ACenterX">
+<element name="TvVectorialPage.AddCircle.ACenterX">
 <short>The X coordinate of the center of the circle</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddCircle.ACenterY">
+<element name="TvVectorialPage.AddCircle.ACenterY">
 <short>The Y coordinate of the center of the circle</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddCircle.ACenterZ">
+<element name="TvVectorialPage.AddCircle.ACenterZ">
 <short>The Z coordinate of the center of the circle</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddCircle.ARadius">
+<element name="TvVectorialPage.AddCircle.ARadius">
 <short>The radius of the circle in milimiters</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.AddCircularArc">
+<element name="TvVectorialPage.AddCircularArc">
 <short>Adds a circular arc to the drawing</short>
 <descr>This arc is really circular, not elliptical like TCanvas.Arc
 </descr>
@@ -1800,42 +1953,42 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddCircularArc.ACenterX">
+<element name="TvVectorialPage.AddCircularArc.ACenterX">
 <short>The X coordinate of the center of the circular arc</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddCircularArc.ACenterY">
+<element name="TvVectorialPage.AddCircularArc.ACenterY">
 <short>The Y coordinate of the center of the circular arc</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddCircularArc.ACenterZ">
+<element name="TvVectorialPage.AddCircularArc.ACenterZ">
 <short>The Z coordinate of the center of the circular arc</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddCircularArc.ARadius">
+<element name="TvVectorialPage.AddCircularArc.ARadius">
 <short>The radius of the circular arc in milimiters</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddCircularArc.AStartAngle">
+<element name="TvVectorialPage.AddCircularArc.AStartAngle">
 <short>The start angle of the arc in degrees relative to the positive X axis</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddCircularArc.AEndAngle">
+<element name="TvVectorialPage.AddCircularArc.AEndAngle">
 <short>The end angle of the arc in degrees relative to the positive X axis</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddCircularArc.AColor">
+<element name="TvVectorialPage.AddCircularArc.AColor">
 <short>The color of the arc</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.AddEllipse">
+<element name="TvVectorialPage.AddEllipse">
 <short>Adds a new ellipse element</short>
 <descr>Adds a new ellipse element
 </descr>
@@ -1846,37 +1999,37 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddEllipse.CenterX">
+<element name="TvVectorialPage.AddEllipse.CenterX">
 <short>The X coordinate of the center of the ellipse</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddEllipse.CenterY">
+<element name="TvVectorialPage.AddEllipse.CenterY">
 <short>The Y coordinate of the center of the ellipse</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddEllipse.CenterZ">
+<element name="TvVectorialPage.AddEllipse.CenterZ">
 <short>The Z coordinate of the center of the ellipse</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddEllipse.MajorHalfAxis">
+<element name="TvVectorialPage.AddEllipse.MajorHalfAxis">
 <short>The length of the major half axis of the ellipse</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddEllipse.MinorHalfAxis">
+<element name="TvVectorialPage.AddEllipse.MinorHalfAxis">
 <short>The length of the minor half axis of the ellipse</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddEllipse.Angle">
+<element name="TvVectorialPage.AddEllipse.Angle">
 <short>The rotation angle of the ellipse in degrees in relation to the positive X axis</short>
 </element>
 
 <!-- procedure Visibility: public -->
-<element name="TvVectorialDocument.AddAlignedDimension">
+<element name="TvVectorialPage.AddAlignedDimension">
 <short>Adds a new aligned dimension element</short>
 <descr>Adds a new aligned dimension element
 </descr>
@@ -1887,57 +2040,23 @@ with this method. To add a path by reference use AddEntity.
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddAlignedDimension.BaseLeft">
+<element name="TvVectorialPage.AddAlignedDimension.BaseLeft">
 <short>The position of the left base</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddAlignedDimension.BaseRight">
+<element name="TvVectorialPage.AddAlignedDimension.BaseRight">
 <short>The position of the right base</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddAlignedDimension.DimLeft">
+<element name="TvVectorialPage.AddAlignedDimension.DimLeft">
 <short>The position of the left text are</short>
 </element>
 
 <!-- argument Visibility: default -->
-<element name="TvVectorialDocument.AddAlignedDimension.DimRight">
+<element name="TvVectorialPage.AddAlignedDimension.DimRight">
 <short>The position of the right text area</short>
-</element>
-
-<!-- property Visibility: public -->
-<element name="TvVectorialDocument.PathCount">
-<short>Returns the number of paths</short>
-<descr>Returns the number of elements which are paths. A read-only property which
-is the same as GetPathCount
-</descr>
-<seealso>
-  <link id="Paths"/>
-  <link id="GetEntity"/>
-  <link id="GetEntityCount"/>
-  <link id="GetPath"/>
-  <link id="GetPathCount"/>
-</seealso>
-</element>
-
-<!-- property Visibility: public -->
-<element name="TvVectorialDocument.Paths">
-<short>Property to access the list of Paths</short>
-<descr>A read-only property which is the same as GetPath.
-</descr>
-<seealso>
-  <link id="PathCount"/>
-  <link id="GetEntity"/>
-  <link id="GetEntityCount"/>
-  <link id="GetPath"/>
-  <link id="GetPathCount"/>
-</seealso>
-</element>
-
-<!-- argument Visibility: default -->
-<element name="TvVectorialDocument.Paths.Index">
-<short>The zero-based index of the path to be accessed</short>
 </element>
 
 <!-- procedure Visibility: default -->
@@ -2005,6 +2124,14 @@ is the same as GetPathCount
 <!-- argument Visibility: default -->
 <element name="Make2DPoint.AY">
 <short>The Y coordinate of the point</short>
+</element>
+
+<element name="TvCustomVectorialReader">
+<short>Base class for new reader modules</short>
+</element>
+
+<element name="TvCustomVectorialWriter">
+<short>Base class for new writer modules</short>
 </element>
 
 </module> <!-- fpvectorial -->
