@@ -2075,9 +2075,13 @@ ifeq (chm,$(HTMLFMT))
 endif
 ifeq (ipf,$(HTMLFMT))
   HTMLSUFFIX:=.ipf
+  FPDOCHTMLOPTS=
+  CSSFILE=x
 endif
 ifdef CSSFILE
-FPDOCHTMLOPTS+=--css-file=$(CSSFILE)
+ifndef (ipf,$(HTMLFMT)
+ FPDOCHTMLOPTS+=--css-file=$(CSSFILE)
+endif
 endif
 ifndef LATEX
 LATEX = latex
@@ -2177,7 +2181,7 @@ help:
 	@echo ' ps            : Make documentation using latex and dvips.'
 	@echo ' html          : Make HTML documentation using default converter.'
 	@echo ' chm           : Make Compressed HTML documentation. (only the FCL and RTL)'
-	@echo ' ipf           : Make OS/2 IPF documentation. (only the FCL and RTL)'
+	@echo ' ipf           : Make fpGUI or OS/2 IPF documentation. (only the FCL and RTL)'
 	@echo ' hevea         : Make HTML documentation using hevea'
 	@echo ' l2h           : Make HTML documentation using latex2html'
 	@echo ' 4ht           : Make HTML documentation using tex4ht'
