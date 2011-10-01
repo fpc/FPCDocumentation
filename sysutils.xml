@@ -1601,9 +1601,22 @@ On error, -1 is returned.
 <element name="FileSearch">
 <short>Search for a file in a path.</short>
 <descr>
+<p>
 <var>FileSearch</var> looks for the file <var>Name</var> in <var>DirList</var>, where
 dirlist is a list of directories, separated by semicolons or colons.
-It returns the full filename of the first match found.
+It returns the full filename of the first match found. The optional <var>Options</var>
+parameter may be specified to influence the behaviour of the search
+algorithm. It is a set of the following options:
+</p>
+<dl>
+<dt>sfoImplicitCurrentDir</dt><dd><printshort id="TFileSearchoption.sfoImplicitCurrentDir"/></dd>
+<dt>sfoStripQuotes</dt><dd><printshort id="TFileSearchOption.sfoStripQuotes"/></dd>
+</dl>
+<p>
+A deprecated form of the function allowed to specify using the boolean <var>ImplicitCurrentDir</var>
+parameter whether the current directory was searched implicitly or not. By default,
+the current directory is searched.
+</p>
 </descr>
 <errors>
 On error, an empty string is returned.
@@ -3542,12 +3555,25 @@ guarantees are made as to the exact duration of the suspension.
 <element name="ExecuteProcess">
 <short>Execute another process (program).</short>
 <descr>
+<p>
 <var>ExecuteProcess</var> will execute the program in <var>Path</var>,
 passing it the arguments in <var>ComLine</var>. <var>ExecuteProcess</var>
 will then wait for the program to finish, and will return the exit code of
 the executed program. In case <var>ComLine</var> is a single string, it will
 be split out in an array of strings, taking into account common whitespace
 and quote rules.
+</p>
+<p>
+The program specified in <var>Path</var> is not searched in the searchpath 
+specified in the <var>PATH</var> environment variable, so the full path to the 
+executable must be specified in <var>Path</var>, although some operating systems 
+may perform this search anyway (notably, windows)
+</p>
+<p>
+<var>Flags</var> can be used to control the passing of file handles: if
+<var>ExecInheritsHandles</var> is included, the file handles of the current
+process will be passed on to the newly executed process.
+</p>
 </descr>
 <errors>
 In case the program could not be executed or an other error occurs, 
@@ -5694,11 +5720,10 @@ exception, but always call this routine.
 <element name="Beep">
 <short>Sound the system bell.</short>
 <descr>
-<var>Beep</var> sounds the system bell, if one is available.
+<var>Beep</var> sounds the system bell, if one is available. The actual beep
+is produced by the <link id="OnBeep"/> callback. The <var>Sysutils</var>
+unit itself contains no implementation of this call.
 </descr>
-<errors>
-This routine may not be implemented on all platforms.
-</errors>
 </element>
 
 <!-- function Visibility: default -->
@@ -9425,6 +9450,345 @@ Set it to a callback that returns the actual vendor name for the application.
 <link id="VendorName"/>
 <link id="GetAppConfigDir"/>
 <link id="GetAppConfigFile"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="FormatSettings">
+<short>Alias for DefaultFormatSettings</short>
+<descr>
+<p>
+<var>FormatSettings</var> is provided for Delphi compatibility, and refers
+to the <link id="DefaultFormatSettings"/> variable.
+</p>
+</descr>
+<seealso>
+<link id="DefaultFormatSettings"/>
+</seealso>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TEventTypes">
+<short>Set of <var>TEventType</var></short>
+<descr>
+<var>TEventTypes</var> is a set type of <var>TEventType</var>, defined for convenience.
+It is used in the custom application classes for logging purposes.
+</descr>
+<seealso>
+<link id="TEventType"/>
+</seealso>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="Int128Rec">
+<short>Record representing a 128-bit unsigned integer.</short>
+<descr>
+<var>Int128Rec</var> is a record defining a 128-bit integer. It is made up
+of 2 QWords or 4 DWords or 8 words or 16 bytes.
+</descr>
+<seealso>
+<link id="LongRec"/>
+<link id="WordRec"/>
+<link id="OWordRec"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="Int128Rec.Hi">
+<short>High QWord of the <var>128-bit</var> integer</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="Int128Rec.Lo">
+<short>Low QWord of the <var>128-bit</var> integer</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="Int128Rec.DWords">
+<short>The <var>128-bit</var> integer as an array of 4 DWords</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="Int128Rec.Words">
+<short>The <var>128-bit</var> integer as an array of 8 words</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="Int128Rec.Bytes">
+<short>The <var>128-bit</var> integer as an array of 16 bytes</short>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="OWordRec">
+<short>Identical to the <var>Int128Rec</var> record.</short>
+<descr>
+<var>OWordRec</var> is a record defining a 128-bit integer. It is made up
+of 2 QWords or 4 DWords or 8 words or 16 bytes.
+</descr>
+<seealso>
+<link id="LongRec"/>
+<link id="WordRec"/>
+<link id="Int128Rec"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="OWordRec.Hi">
+<short>High QWord of the <var>128-bit</var> integer</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="OWordRec.Lo">
+<short>Low QWord of the <var>128-bit</var> integer</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="OWordRec.DWords">
+<short>The <var>128-bit</var> integer as an array of 4 DWords</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="OWordRec.Words">
+<short>The <var>128-bit</var> integer as an array of 8 words</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="OWordRec.Bytes">
+<short>The <var>128-bit</var> integer as an array of 16 bytes</short>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.ENotImplemented
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="ENotImplemented">
+<short>Exception raised in case of a not implemented feature.</short>
+<descr>
+<var>ENotImplemented</var> can be used to raise an exception when a
+particular call had been defined, but was not implemented.
+</descr>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TBeepHandler">
+<short>Beep handler prototype</short>
+<descr>
+<var>TBeepHandler</var> is the prototype used by the <link id="OnBeep"/>
+handler. This in turn is called by the <link id="Beep"/> call to actually
+implement the beep functionality. The call takes no arguments.
+</descr>
+<seealso>
+<link id="OnBeep"/>
+<link id="Beep"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="OnBeep">
+<short>Event called by <var>Beep</var> to actually implement beep</short>
+<descr>
+<var>OnBeep</var> is calles whenever <var>Beep</var> is called.
+<var>Beep</var> contains no implementation to actually produce a beep,
+since there is no way to implement beep in a meaningful way for all possible
+implementations.
+</descr>
+<seealso>
+<link id="Beep"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IncludeLeadingPathDelimiter">
+<short>Prepend a path delimiter if there is not already one.</short>
+<descr>
+<var>IncludeLeadingPathDelimiter</var> will insert a path delimiter
+(<link id="DirectorySeparator"/>) in the first position of <var>Path</var>, if there is not
+already a directory separator at that position. It will return the resulting
+string. If the path is empty, a <var>DirectorySeparator</var> character is
+returned.
+</descr>
+<seealso>
+<link id="IncludeTrailingPathDelimiter"/>
+<link id="ExcludeLeadingPathDelimiter"/>
+<link id="ExcludeTrailingPathDelimiter"/>
+<link id="ConcatPaths"/>
+</seealso>
+<example file="sysutex/ex94"/>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ExcludeLeadingPathDelimiter">
+<short>Strip the leading path delimiter of a path</short>
+<descr>
+<var>ExcludeLeadingPathDelimiter</var> will remove any path delimiter
+on the first position of <var>Path</var> if there is one. if there is 
+none (or the path is empty), it is left untouched.
+</descr> 
+<seealso>
+<link id="IncludeTrailingPathDelimiter"/>
+<link id="IncludeLeadingPathDelimiter"/>
+<link id="ExcludeTrailingPathDelimiter"/> 
+<link id="ConcatPaths"/>
+</seealso>
+<example file="sysutex/ex95"/>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ConcatPaths">
+<short>Concatenate an array of paths to form a single path</short>
+<descr>
+<var>ConcatPaths</var> will concatenate the different path components in
+<var>Paths</var> to a single path. It will insert directory separators
+between the various components of the path as needed. No directory
+separators will be added to the beginning or the end of the path, and none
+will be taken away.
+</descr>
+<seealso>
+<link id="IncludeTrailingPathDelimiter"/>
+<link id="IncludeLeadingPathDelimiter"/> 
+<link id="ExcludeTrailingPathDelimiter"/>
+<link id="IncludeTrailingPathDelimiter"/>
+</seealso>
+<example file="sysutex/ex96"/>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TFileSearchOption">
+<short>Options for the <var>FileSearch</var> call.</short>
+<descr>
+<var>TFileSearchOption</var> enumerates the options that can be 
+used in the <var>FileSearch</var> call to control the behaviour 
+of the search mechanism
+</descr>
+<seealso>
+<link id="TFileSearchOptions"/>
+<link id="FileSearch"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFileSearchOption.sfoImplicitCurrentDir">
+<short>Always search the current directory first, even if it is not specified.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFileSearchOption.sfoStripQuotes">
+<short>Strip quotes from the components in the search path.</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TFileSearchOptions">
+<short>Set of <var>TFileSearchOption</var></short>
+<descr>
+<var>TFileSearchOptions</var> is a set of <link id="TFileSearchOption"/>
+values, used in the <link id="FileSearch"/> call when searching for files.
+</descr>
+<seealso>
+<link id="TFileSearchOption"/>
+<link id="FileSearch"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TSimpleRWSync
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TSimpleRWSync">
+<short>Read/Write synchronizing object.</short>
+<descr>
+<p>
+<var>TSimpleRWSync</var> implements a simple read/write locking mechanism.
+It controls access to an object: only a single thread is allowed access to
+an object for either read or write operations.
+</p>
+<p>
+Access is controlled through a single critical section. 
+</p>
+</descr>
+<seealso>
+<link id="TMultiReadExclusiveWriteSynchronizer"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TSimpleRWSync.Create">
+<short>Create a new instance of <var>TSimpleRWSync</var></short>
+<descr>
+<var>Create</var> allocates a new instance of <var>TSimpleRWSync</var> and
+initializes the critical section for use in the various methods.
+</descr>
+<seealso>
+<link id="TSimpleRWSync.Destroy"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TSimpleRWSync.Destroy">
+<short>Removes the <var>TSimpleRWSync</var> instance from memory</short>
+<descr>
+<var>Destroy</var> releases the critical section and removes the
+<var>TSimpleRWSync</var> instance from memory. 
+</descr>
+<seealso>
+<link id="TSimpleRWSync.Create"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSimpleRWSync.Beginwrite">
+<short>Acquire a write lock</short>
+<descr>
+<var>Beginwrite</var> waits till all other threads have released their read
+or write locks on the object, and then aquires a write lock on the object.
+</descr>
+<seealso>
+<link id="TSimpleRWSync.BeginRead"/>
+<link id="TSimpleRWSync.EndWrite"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSimpleRWSync.Endwrite">
+<short>Release the write lock</short>
+<descr>
+<var>EndWrite</var> releases the current threads lock on the object,
+allowing other threads to acquire a read or write lock on the object.
+</descr>
+<seealso>
+<link id="TSimpleRWSync.BeginWrite"/>
+<link id="TSimpleRWSync.EndRead"/> 
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSimpleRWSync.Beginread">
+<short>Acquire a read lock</short>
+<descr>
+<var>BeginRead</var> waits till all other threads have released their read
+or write locks on the object, and then aquires a read lock on the object.
+</descr>
+<seealso>
+<link id="TSimpleRWSync.BeginWrite"/>
+<link id="TSimpleRWSync.EndRead"/> 
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSimpleRWSync.Endread">
+<short>Release the read lock</short>
+<descr>
+<var>EndRead</var> releases the current threads read lock on the object,
+allowing other threads to acquire a read or write lock on the object.
+</descr>
+<seealso>
+<link id="TSimpleRWSync.BeginRead"/>
+<link id="TSimpleRWSync.EndWrite"/>   
 </seealso>
 </element>
 
