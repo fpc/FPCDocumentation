@@ -1360,6 +1360,52 @@ metadata will not be synced.
 </seealso>
 </element>
 
+<!-- function Visibility: default -->
+<element name="futex">
+<short>Perform a futex operation</short>
+<descr>
+<p>
+<var>futex</var> performs an operation on a memory futex as described in the
+kernel manual page for futex. The mutex is located at <var>uaddr</var>, the
+operation <var>op</var> is one of the following constants:
+</p>
+<dl>
+<dt>FUTEX_WAIT</dt><dd><printshort id="FUTEX_WAIT"/></dd>
+<dt>FUTEX_WAKE</dt><dd><printshort id="FUTEX_WAIT"/></dd>
+<dt>FUTEX_FD</dt><dd><printshort id="FUTEX_FD"/></dd>  
+<dt>FUTEX_REQUEUE</dt><dd><printshort id="FUTEX_REQUEUE"/></dd>  
+<dt>FUTEX_CMP_REQUEUE</dt><dd><printshort id="FUTEX_CMP_REQUEUE"/></dd>  
+</dl>
+<p>
+The value to check for is indicated in <var>val</var>, and a timeout can be
+specified in <var>timeout</var>. The optional arguments <var>addr2</var> and
+<var>val3</var> are used only with the <var>FUTEX_REQUEUE</var> and
+<var>FUTEX_CMP_REQUEUE</var> operations.
+</p>
+<p>
+In case of an error, -1 is return. All other return values must be
+interpreted according to the operation performed.
+</p>
+<p>
+This call directly interfaces with the Linux kernel, more information can be found
+in the kernel manual pages. 
+</p>
+</descr>
+<errors>
+On error, -1 is returned. Use <link id="fpgeterrno"/> to get the error code.
+</errors>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="sched_yield">
+<short>Yield the processor to another thread.</short>
+<descr>
+<var>sched_yield</var> yields the processor to another thread. The current
+thread is put at the back of its queue. If there is only 1 thread in the
+application, the thread continues to run. The call always returns zero.
+</descr>
+</element>
+
 </module> <!-- Linux -->
 </package>
 </fpdoc-descriptions>
