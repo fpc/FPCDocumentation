@@ -14929,6 +14929,174 @@ correct encoding when reading string values in the text stream.
 <short>Characters are in LFM format: UTF-8 encoded.</short>
 </element>
 
+<!-- "class of" type Visibility: default -->
+<element name="TExceptionClass">
+<short>Class of <link id="#rtl.sysutils.Exception">Exception</link></short>
+<descr>
+<var>TExceptionClass</var> is the class pointer for the <link
+id="#rtl.sysutils.Exception">Exception</link> class, defined in the <link
+id="#rtl.sysutils">SysUtils</link> unit.
+</descr>
+<seealso>
+<link id="#rtl.sysutils.Exception">Exception</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStringList.OwnsObjects">
+<short>Determines whether the stringlist owns it's objects or not.</short>
+<descr>
+<var>OwnsObjects</var> can be set to <var>true</var> to let the stringlist
+instance own the objects in the list: if an element is removed from the
+list, the associated object (if there is any) will be freed as well. The
+same is true if the list is cleared or destroyed.
+</descr>
+<seealso>
+<link id="TStrings.Objects"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.Classes.IVCLComObject
+  ********************************************************************
+-->
+
+<!-- interface Visibility: default -->
+<element name="IVCLComObject">
+<short>Com automation Object interface</short>
+<descr>
+<var>IVCLComObject</var> is used by TComponent to implement the <var>IUnknown</var> 
+interface used by COM automation servers. Partially, it is the translation to pascal 
+of the <var>IDispatch</var> interface definition by Microsoft. If
+<var>TComponent</var> needs to return an <var>IUnknown</var> interface, it
+creates a <var>IVCLComObject</var> interface instead.
+</descr>
+<seealso>
+<link id="TComponent.VCLComObject"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IVCLComObject.GetTypeInfoCount">
+<short>The IDispatch:GetTypeInfoCount call for automation servers</short>
+<descr>
+<var>GetTypeInfoCount</var> must return in <var>Count</var> either 0 or 1 to
+indicate that it provides type information (1) or not (0).
+</descr>
+<errors>
+On error, a nonzero (different from S_OK) return value must be returned.
+</errors>
+<seealso>
+<link id="IVCLComObject.GetTypeInfo"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IVCLComObject.GetTypeInfo">
+<short>The IDispatch:GetTypeInfo call for automation servers</short>
+<descr>
+<var>GetTypeInfo</var> must return the <var>Index</var>-th entry in the type
+information of the component in <var>TypeInfo</var>. The <var>LocaleID</var>
+argument can be used to indicate the locale of the caller, as different type
+information can be returned depending on the locale.
+</descr>
+<errors>
+On error, a nonzero (different from S_OK) return value must be returned.
+</errors>
+<seealso>
+<link id="IVCLComObject.GetTypeInfoCount"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IVCLComObject.GetIDsOfNames">
+<short>The <var>IDispatch:GetIDsOfNames</var> call for automation servers.</short>
+<descr>
+<var>GetIDsOfNames</var> must return in <var>DispIDs</var> the dispatch Ids for the
+<var>NameCount</var> names of the methods listed in <var>Names</var>. The
+<var>LocaleID</var> indicates the locale of the caller.
+</descr>
+<errors>
+On error, a nonzero (different from S_OK) return value must be returned.
+</errors>
+<seealso>
+<link id="IVCLComObject.Invoke"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IVCLComObject.Invoke">
+<short>The <var>IDispatch:Invoke</var>  call for automation servers.</short>
+<descr>
+<p>
+<var>Invoke</var> must invoke the method designated by <var>DispID</var>.
+<var>IID</var> can be ignored. <var>LocaleID</var> is used by the caller to
+indicate the locale it is using. The <var>Flags</var> argument describes the
+context in which <var>Invoke</var> is called: a method, or property
+getter/setter. The <var>Params</var> argument contains the parameters to the
+call. The result should be in <var>VarResult</var>. On error,
+<var>ExcepInfo</var> and <var>ArgError</var> should be filled. 
+</p>
+<p>The function should return 0 (<var>S_OK</var>) if all went well.</p>
+</descr>
+<seealso>
+<link id="IVCLComObject.GetIDsOfNames"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IVCLComObject.SafeCallException">
+<short>This method can be invoked if an exception occurs during <var>Invoke</var></short>
+<descr>
+<var>SafeCallException</var> is called to handle an exception during
+invocation of the <var>Invoke</var> method. The <var>TObject</var>
+implementation of this method returns <var>E_UNEXPECTED</var>.
+</descr>
+<seealso>
+<link id="IVCLComObject.Invoke"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IVCLComObject.FreeOnRelease">
+<short>Is called by TComponent.FreeOnRelease</short>
+<descr>
+<var>FreeOnRelease</var> is called by <link id="TComponent.FreeOnRelease"/>
+for the <var>IVCLComObject</var> interface implemented by
+<var>TComponent</var>.
+</descr>
+<seealso>
+<link id="TComponent.FreeOnRelease"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TComponent.ComObject">
+<short>Interface reference implemented by the component</short>
+<descr>
+<var>ComObject</var> returns the COM interface represented by the component.
+If the component does not represent a COM interface, reading this property
+will raise an <link id="EComponentError"/>.
+</descr>
+<seealso>
+<link id="EComponentError"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="CreateVCLComObjectProc">
+<short>Called to create an instance of <var>IVCLComObject</var></short>
+<descr>
+<var>CreateVCLComObjectProc</var> is called by <var>TComponent</var> if it
+needs to create a <var>IVCLComObject</var> interface for itself (when the
+<var>ComObject</var> property is read). It passes itself as the <var>Component</var> parameter.
+</descr>
+<seealso>
+<link id="IVCLComObject"/>
+</seealso>
+</element>
+
 <!-- Template for copy&paste:
 <element name="">
 <short>
