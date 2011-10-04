@@ -749,7 +749,7 @@ use in an IDE.
 
 <!-- property Visibility: published -->
 <element name="TProcess.ApplicationName">
-<short>Name of the application to start</short>
+<short>Name of the application to start (deprecated)</short>
 <descr>
 <p>
 <var>ApplicationName</var> is an alias for <link id="TProcess.CommandLine"/>. 
@@ -758,19 +758,29 @@ If <var>CommandLine</var> is not set, then <var>ApplicationName</var> will be
 used instead.
 </p>
 <p>
-Note that either <var>CommandLine</var> or <var>ApplicationName</var> must
-be set prior to calling <var>Execute</var>.
+<var>ApplicationName</var> is deprecated. New code should use <link
+id="TProcess.Executable">Executable</link>
+instead, and leave <var>ApplicationName</var> empty.
 </p>
 </descr>
 <seealso>
 <link id="TProcess.CommandLine"/>
+<link id="TProcess.Executable"/>
+<link id="TProcess.Parameters"/>
 </seealso>
 </element>
 
 <!-- property Visibility: published -->
 <element name="TProcess.CommandLine">
-<short>Command-line to execute</short>
+<short>Command-line to execute (deprecated)</short>
 <descr>
+<p>
+<var>CommandLine</var> is deprecated. To avoid problems with command-line
+options with spaces in them and the quoting problems that this entails, 
+it has been superseded by the properties <link id="TProcess.Executable"/> and
+<link id="TProcess.Parameters"/> , which should be used instead of
+<var>CommandLine</var>. New code should leave <var>CommandLine</var> empty.
+</p>
 <p>
 <var>CommandLine</var> is the command-line to be executed: this is the name
 of the program to be executed, followed by any options it should be passed.
@@ -792,6 +802,8 @@ be set prior to calling <var>Execute</var>.
 </descr>
 <seealso>
 <link id="TProcess.ApplicationName"/>
+<link id="TProcess.Executable"/> 
+<link id="TProcess.Parameters"/> 
 </seealso>
 </element>
 
@@ -1305,6 +1317,178 @@ only process-global things should be performed in this event handler.
 <seealso>
 <link id="TProcess.OnForkEvent"/>
 </seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.Executable">
+<short>Executable name. Supersedes <var>CommandLine</var> and <var>ApplicationName</var>.</short>
+<descr>
+<p>
+<var>Executable</var> is the name of the executable to start. It should not
+contain any command-line arguments. If no path is given, it will be searched 
+in the <var>PATH</var> environment variable.
+</p>
+<p>
+The extension must be given, none will be added by the component itself. It
+may be that the OS adds the extension, but this behaviour is not guaranteed.
+</p>
+<p>
+Arguments should be passed in <link id="Parameters"/>.
+</p>
+<p>
+<var>Executable</var> supersedes the <link id="CommandLine"/> and <link id="ApplicationName"/>
+properties, which have been deprecated. However, if either of
+<var>CommandLine</var> or <var>ApplicationName</var> is specified, they will
+be used instead of <var>Executable</var>.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.CommandLine">CommandLine</link>
+<link id="TProcess.ApplicationName">ApplicationName</link>
+<link id="TProcess.Parameters">Parameters</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.Parameters">
+<short>Command-line argumens. Supersedes <var>CommandLine</var>.</short>
+<descr>
+<p>
+<var>Parameters</var> contains the command-line arguments that should be passed
+to the program specified in <link id="TProcess.Executable">Executable</link>.
+</p>
+<p>
+Commandline arguments should be specified one per item in
+<var>Parameters</var>: each item in <var>Parameters</var> will be passed as
+a separate command-line item. It is therefor not necessery to quote whitespace
+in the items. As a consequence, it is not allowed to specify multiple
+command-line parameters in 1 item in the stringlist. If a command needs 2
+options <var>-t</var> and <var>-s</var>, the following is not correct:
+</p>
+<code>
+With Parameters do
+  begin
+  add('-t -s');
+  end;
+</code>
+<p>
+Instead, the code should read:
+</p>
+<code>
+With Parameters do
+  begin
+  add('-t');
+  Add('-s');
+  end;
+</code>
+<p>
+Note that <var>Parameters</var> is ignored if either of
+<var>CommandLine</var> or <var>ApplicationName</var> is specified. It
+can only be used with <var>Executable</var>.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.Executable">Executable</link>
+<link id="TProcess.CommandLine">CommandLine</link>
+<link id="TProcess.ApplicationName">ApplicationName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TProcess.XTermProgram">
+<short>XTerm program to use (unix only)</short>
+<descr>
+<p> <var>XTermProgram</var> can be used to specify the console program to use
+when <var>poConsole</var> is specified in <link id="TProcess.Options"/>.
+</p>
+<p>
+If none is specified, <link id="DetectXTerm"/> is used to detect the
+terminal program to use.
+the list specified in <var>TryTerminals</var> is
+tried. If none is found, then the <var>DESKTOP_SESSION</var> environment
+variable is examined:
+</p>
+<dl>
+<dt>kde</dt><dd>konsole is used if it is found.</dd>
+<dt>gnome</dt><dd>gnome-terminal is used if it is found</dd>
+<dt>windowmaker</dt><dd>aterm or xterm are used if found.</dd>
+</dl>
+<p>
+If after all this, no terminal is found, then a list of default programs is
+tested: 'x-terminal-emulator','xterm','aterm','wterm','rxvt'.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.Options"/>
+<link id="DetectXTerm"/>
+
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TryTerminals">
+<short>A list of terminal programs to use (unix only)</short>
+<descr>
+<var>TryTerminals</var> is used under unix to test for available terminal
+programs in the <link id="DetectXTerm"/> function. 
+If <link id="XTermProgram"/> is empty, each item in this list will be searched 
+in the path, and used as a terminal program if it was found.
+</descr>
+<seealso>
+<link id="XTermProgram"/>
+<link id="DetectXTerm"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="XTermProgram">
+<short>Default XTerm program to use</short>
+<descr>
+<var>XTermProgram</var> is the terminal program that is used. If empty, it
+will be set the first time <link id="DetectXTerm"/> is called.
+</descr>
+<seealso>
+<link id="TryTerminals"/>
+<link id="DetectXTerm"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="DetectXTerm">
+<short>Detect the terminal program.</short>
+<descr>
+<p>
+<var>DetectXTerm</var> checks if <link id="XTermProgram"/> is set. if so, it
+returns that. If <var>XTermProgram</var> is empty, the list specified in
+<link id="TryTerminals"/> is tested for existence. 
+If none is found, then the <var>DESKTOP_SESSION</var> environment variable is examined:
+</p>
+<dl>
+<dt>kde</dt><dd>konsole is used if it is found.</dd>
+<dt>gnome</dt><dd>gnome-terminal is used if it is found</dd>
+<dt>windowmaker</dt><dd>aterm or xterm are used if found.</dd>
+</dl>
+<p>
+If after all this, no terminal is found, then a list of default programs is
+tested: 'x-terminal-emulator','xterm','aterm','wterm','rxvt'.
+</p>
+<p>
+If a terminal program is found, then it is saved in <var>XTermProgram</var>,
+so the next call to <var>DetectXTerm</var> will re-use the value. If the
+search must be performed again, it is sufficient to set
+<var>XTermProgram</var> to the empty string.
+</p>
+</descr>
+<seealso>
+<link id="XTermProgram"/>
+<link id="TryTerminals"/>
+<link id="TProcess.XTermProgram"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="DetectXTerm.Result">
+<short>The terminal program to use, or empty if none was found.</short>
 </element>
 
 </module> <!-- process -->
