@@ -5128,6 +5128,513 @@ Note that it is not enough to include a unit with a class helper once in a
 project; The unit must be included whenever the class helper is needed. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Objective Pascal classes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Objective-Pascal Classes}
+\label{ch:ObjectivePascal}
+\index{Objective-Pascal}\index{Objective-Pascal Classes}
+
+% Introduction
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+The preferred programming language on the Mac OS operating system is
+Objective-C. In order to fully realize the potential offered by system
+interfaces written in that language, a variant of Object Pascal 
+exists in the Free Pascal compiler which tries to offer the same
+functionality as Objective-C. This variant is called Objective-Pascal. 
+
+The compiler has mode switches to enable the use of these Objective-C-related
+constructs. There are 2 kinds of Objective C language features, discerned by
+a version number: Objective-C 1.0 and Objective-C 2.0. 
+
+The Objective-C 1.0 language features can be enabled by adding a modeswitch
+to the source file:
+\begin{verbatim}
+{$modeswitch objectivec1}
+\end{verbatim}
+or by using the \var{-Mobjectivec1} command line switch of the compiler. 
+
+The Objective-C 2.0 language features can be enabled using a similar
+modewitch:
+\begin{verbatim}
+{$modeswitch objectivec2}
+\end{verbatim}
+or the command-line option \var{-Mobjectivec2}.
+
+The Objective-C 2.0 language features are a superset of the Objective-C 1.0
+language features, and there for the latter switch implies automatically the
+former. Programs using Objective-C 2.0 language features will only work on
+Mac OS X 10.5 and later.
+
+The fact that objective-C features are enabled using mode switches rather than 
+actual syntax modes, means they can be used in combination with every general 
+syntax mode (fpc, objfpc, tp, delphi, macpas). Node that a \var{\{\$Mode \}}
+directive switch will reset the mode switches, so the \var{\{\$modeswitch \}}
+statement should be located after it.
+
+% Syntax
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Objective-Pascal class declarations}
+Objective-C or -Pascal classes are declared much as Object Pascal classes are
+declared, but they use the \var{objcclass} keyword:
+\input{syntax/objclass.syn}
+As can be seen, the syntax is rougly equivalent to Object Pascal syntax, with some
+extensions.
+
+In order to use Objective-C classes, an external modifier exists: this
+indicates to the compiler that the class is implemented in an external object
+file or library, and that the definition is meant for import purposes.
+The following is an example of an external Objective-C class definition:
+\begin{verbatim}
+NSView = objcclass external(NSResponder)
+private
+  _subview  : id; 
+public
+  function initWithFrame_(rect : NSRect): id; 
+     message 'initWithFrame:';
+  procedure addSubview_(aview: NSView); 
+     message 'addSubview:';
+  procedure setAutoresizingMask_(mask: NSUInteger); 
+     message 'setAutoresizingMask:';
+  procedure setAutoresizesSubviews_(flag: LongBool); 
+     message 'setAutoresizesSubviews:';
+  procedure drawRect_(dirtyRect: NSRect); 
+     message 'drawRect:';
+end;
+\end{verbatim}
+As can be seen, the class definition is not so different from an Object
+Pascal class definition; Only the message directive is more prominently
+present: each Objective-C or Objective-Pascal method must have a message
+name associated with it. In the above example, no external name was 
+specified for the class definition, meaning that the Pascal identifier is
+used as the name for the Objective-C class. However, since Objective-C is not so
+strict in its naming conventions, sometimes an alias must be created for an
+Objective-C class name that doesn't obey the Pascal identifier rules. 
+
+The following example defines an Objective-C class which is implemented in
+Pascal:
+\begin{verbatim}
+MyView = objcclass(NSView)
+public
+  data : Integer;
+  procedure customMessage_(dirtyRect: NSRect); 
+    message 'customMessage';
+  procedure drawRect_(dirtyRect: NSRect); override;
+end;
+\end{verbatim}
+The absence of the \var{external} keyword tells the compiler that the
+methods must be implemented later in the source file: it will be treated
+much like a regular object pascal class. Note the presence of the
+\var{override} directive: in Objective-C, all methods are virtual. In Object
+Pascal, overriding a virtual method must be done through the \var{override}
+directive. This has been extended to \var{Objective-C} classes: it allows
+the compiler to verify the correctness of the definition.
+
+Unless the class is implementing the method of a protocol (more about this
+in a subsequent section), one of \var{message} or \var{override} is
+expected: all methods are virtual, and either a new method is started (or
+re-introduced), or an existing is overridden. Only in the case of a method
+that is part of a protocol, the method can be defined without \var{method}
+or \var{override}.
+
+
+Note that the Objective-C class declaration may or may not specify a parent class.
+In Object Pascal, omitting a parent class will automatically make the new
+class a descendant of \var{TObject}. In Objective-C, this is not the
+case: the new class will be a new root class. However, Objective-C does have
+a class which fullfills the function of root class: \var{NSObject}, which
+can be considered the equivalent of \var{TObject} in Object Pascal. It has
+other root classes, but in general, Objective-Pascal classes should descend
+from \var{NSObject}. If a new root class is attempted anyway, it must
+implement the \var{NSObjectProtocol} - just as the \var{NSObject} class
+itself does.
+
+Finally, objective-Pascal classes can have properties, but these properties
+are only usable in Pascal code: Objective-C code cannot handle properties.
+
+% Formal declarations
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Formal declaration}
+Object Pascal has the concept of Forward declarations. Objective-C takes
+this concept a bit further: it allows to define a class which is defined in
+another unit. This has been dubbed 'Formal declaration' in Objective-Pascal.
+Looking at the syntax diagram, the following is a valid declaration:
+\begin{verbatim}
+MyExternalClass = objcclass external;
+\end{verbatim}
+This is a formal declaration. It tells the compiler that
+\var{MyExternalClass} is an Objective-C class type, but that there is no 
+declaration of the class members. The type can be used in the remainder of
+the unit, but it's use is restricted to storage allocation (in a field or
+method parameter definition) and assignment. (Much like a pointer).
+
+As soon as the class definition is encountered, the compiler can enforce
+type compatibility.
+
+The following unit uses a formal declaration:
+\begin{verbatim}
+unit ContainerClass;
+ 
+{$mode objfpc}
+{$modeswitch objectivec1}
+ 
+interface
+ 
+type
+  MyItemClass = objcclass external;
+ 
+  MyContainerClass = objcclass
+    private
+     item: MyItemClass;
+    public
+     function getItem: MyItemClass; message 'getItem';
+  end;
+ 
+implementation
+ 
+function MyContainerClass.getItem: MyItemClass;
+begin
+  result:=item; // Assignment is OK.
+end;
+ 
+end.
+\end{verbatim}
+A second unit can contain the actual class declaration:
+\begin{verbatim}
+unit ItemClass;
+ 
+{$mode objfpc}
+{$modeswitch objectivec1}
+ 
+interface
+ 
+type
+  MyItemClass = objcclass(NSObject)
+  private
+    content : longint;
+  public
+    function initWithContent(c: longint): MyItemClass; 
+       message 'initWithContent:';
+     function getContent: longint; 
+       message 'getContent';
+  end;
+ 
+implementation
+ 
+function MyItemClass.initWithContent(c: longint): 
+   MyItemClass;
+begin
+  content:=c;
+  result:=self;
+end;
+ 
+function MyItemClass.getContent: longint;
+begin
+  result:=content;
+end;
+ 
+end.
+\end{verbatim}
+If both units are used in a program, the compiler knows what the class is
+and can verify the correctness of some assignments:
+\begin{verbatim}
+Program test;
+ 
+{$mode objfpc}
+{$modeswitch objectivec1}
+ 
+uses
+  ItemClass, ContainerClass;
+ 
+var
+  c: MyContainerClass;
+  l: longint;
+begin
+  c:=MyContainerClass.alloc.init;
+  l:=c.getItem.getContent;
+end.
+\end{verbatim}
+
+% Objective-C class instantiation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Allocating and de-allocating Instances}
+The syntax diagram of Objective-C classes shows that the notion of
+constructor and destructor is not supported in Objective-C. New instances
+are created in a 2-step process:
+\begin{enumerate}
+\item Call the 'alloc' method (send an 'alloc' message): This is a class method
+of \var{NSObject}, and returns a pointer to memory for the new instance.
+The use of \var{alloc} is a convention in Objective-C.
+\item Send an 'initXXX' message. By convention, all classes have an
+'InitXXX' method which initializes all fields in the instance. This method
+will return the final instance pointer, which may be \var{Nil}.
+\end{enumerate}
+The following code demonstrates this:
+\begin{verbatim}
+var
+  obj: NSObject;
+begin
+  // First allocate the memory.
+  obj:=NSObject.alloc;
+  // Next, initialise.
+  obj:=obj.init;
+  // Always check the result !!
+  if (Obj=Nil) then
+    // Some error;
+\end{verbatim}
+By convention, the \var{initXXX} method will return \var{Nil} if
+initialization of some fields failed, so it is imperative that the result of
+the function is tested.
+
+Similarly, no privileged destructor exists; By convention, the \var{dealloc} method
+fullfills the cleanup of the instances. This method can be overridden to
+perform any cleanup necessary. Like \var{Destroy}, it should never be called directly,
+instead, the \var{release} method should be called instead: All instances in
+Objective-C are reference counted, and \var{release} will only call
+\var{dealloc} if the reference count reaches zero.
+
+% Protocol definitions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Protocol definitions}
+In Objective-C, protocols play the role that interfaces play in Object
+Pascal, but there are some differences:
+\begin{itemize}
+\item Protocol methods can be marked optional, i.e. the class implementing
+the protocol can decide not to implement these methods.
+\item Protocols can inherit from multiple  other protocols.
+\end{itemize}
+
+Objective-C classes can indicate which protocols they implement in the class
+definition, as could be seen in the syntax diagram for Objective-C classes.
+
+The following diagram shows how to declare a protocol. It starts with the
+\var{objcprotocol} keyword:
+\input{syntax/typeprot.syn}
+As in the case of objective-Pascal classes, the \var{external} specifier tells
+the compiler that the declaration is an import of a protocol defined
+elsewhere. For methods, almost the same rules apply as for methods in 
+the Objective-Pascal class declarations. The exception is that message
+specifiers must be present.
+
+The \var{required} and \var{optional} specifiers before a series of 
+method declarations are optional. If none is specified, \var{required} is
+assumed. The following is a definition of a protocol, and 
+\begin{verbatim}
+type
+  MyProtocol = objccprotocol
+    // default is required
+    procedure aRequiredMethod; 
+      message 'aRequiredMethod';
+  optional
+    procedure anOptionalMethodWithPara_(para: longint); 
+      message 'anOptionalMethodWithPara:';
+    procedure anotherOptionalMethod; 
+      message 'anotherOptionalMethod';
+  required
+    function aSecondRequiredMethod: longint; 
+      message 'aSecondRequiredMethod';
+  end;
+ 
+  MyClassImplementingProtocol = objcclass(NSObject,MyProtocol)
+    procedure aRequiredMethod;
+    procedure anOptionalMethodWithPara_(para: longint);
+    function aSecondRequiredMethod: longint;
+  end;
+\end{verbatim}
+Note that in the class declaration, the message specifier was omitted.
+The compiler (and runtime) can deduce it from the protocol definition.
+
+% Categories
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Categories}
+Similar to class helpers in Object Pascal, Objective-C has Categories.
+Categories allow to extend classes without actually creating a descendant of
+these classes. However, Objective-C categories provide more functionality
+than a helper class:
+\begin{enumerate}
+\item In Object Pascal, only 1 helper class can be in scope (the last one).
+In Objective C, multiple categories can be in scope at the same time for 
+a particular class.
+\item In Object Pascal, a helper method cannot override a method present in
+the original class. In Objective-C, a category can also replace existing 
+methods in another class rather than only add new ones. Since all methods 
+are virtual in Objective-C, this also means that this method changes for all classes that inherit from
+the class in which the method was replaced (unless they override it). 
+\item Object Pascal helpers cannot be used to add interfaces to existing
+classes. By contrast, an Objective-C category can also implement protocols.
+\end{enumerate}
+
+The definition of an objective-C class closely resembles a protocol
+definition, and is started with the \var{objccategory} keyword:
+\input{syntax/typecat.syn}
+Note again the possibility of an alias for externally defined categories:
+objective-C 2.0 allows an empty category name. Note that the
+\var{reintroduce} modifier must be used if an existing method needs not to
+be overridden, but replaced. 
+
+When replacing a method, calling 'inherited' will not call the original
+method of the class, but instead will call the parent class' implementation
+of the method. 
+
+The following is an example of a category definition:
+\begin{verbatim}
+MyProtocol = objcprotocol
+  procedure protocolmethod; message 'protocolmethod';
+end;
+ 
+MyCategory = objccategory(NSObject,MyProtocol)
+  function hash: cuint; reintroduce;
+  procedure protocolmethod; // from MyProtocol.
+  class procedure newmethod; message 'newmethod';
+end;
+\end{verbatim}
+Note that this declaration replaces the \var{Hash} method of every class
+that descends from \var{NSObject} (unless it specifically overrides it).
+
+% Name scope
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Name scope and Identifiers}
+In Object Pascal, each identifier must be unique in it's namespace: the unit. 
+In Objective-C, this need not be the case: each type identifier must be
+unique in it's category: classes, protocols, fields or methods.
+This is shown in the definitions of the basic protocol and class of
+Objective-C: Both protocol and class are called \var{NSObject}.
+
+When importing Objective-C classes and protocols, the Objective-Pascal 
+names of these types must conform to the Object Pascal rules, and therefor 
+must have distinct names. Likewise, names that are valid identifiers in
+Objective-C may be reserved words in Object Pascal. They also must be
+renamed when imported.
+
+To make this possible, the \var{External} and 'message' modifiers allow 
+to specify a name: this is the name of the type or method as it exists 
+in Objective-C:
+\begin{verbatim}
+NSObjectProtocol = objcprotocol external name 'NSObject' 
+  function _class: pobjc_class; message name 'class';
+end;
+ 
+NSObject = objcclass external (NSObjectProtocol) 
+  function _class: pobjc_class; 
+  class function classClass: pobjc_class; message 'class';
+end;
+\end{verbatim}
+
+% Selectors
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Selectors}
+A Selector in Objective-C can be seen as an equivalent to a procedural type
+in Object Pascal.
+
+In difference with the procedural type, Objective-C has only 1 selector type:
+\var{SEL}. It is defined in the \var{objc} unit - which is automatically
+included in the uses clause of any unit compiled with the \var{objectivec1}
+modeswitch.
+
+To assign a value to a variable of type \var{SEL}, the \var{objcselector}
+method must be used:
+\begin{verbatim}
+{$modeswitch objectivec1}
+var
+  a: SEL;
+begin
+  a:=objcselector('initiWithWidth:andHeight:');
+  a:=objcselector('myMethod');
+end.
+\end{verbatim}
+The \var{objc} unit contains methods to manipulate and use the selector.
+
+% The ID type
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The \var{id} type}
+The \var{id} type is special in Objective-C/Pascal. It is much like the pointer
+type in Object Pascal, except that it is a real class. It is assignment-compatible
+with instances of every \var{objcclass} and \var{objcprotocol} type, in two
+directions:
+\begin{enumerate}
+\item variables of any \var{objcclass}/\var{objcprotocol} type can be
+assigned to a variable of the type \var{id}.
+\item variables of type \var{id} can be assigned to variables of any particular 
+\var{objcclass}/\var{objcprotocol} type. 
+\end{enumerate}
+No explicit typecast is required for either of these assignments.
+
+Additionally, any Objective-C method declared in an \var{objcclass} or
+\var{objccategory} that is in scope can be called when using an 
+\var{id}-typed variable. 
+
+If, at run time, the actual \var{objcclass} instance stored in the 
+\var{id}-typed variable does not respond to the sent message, the 
+program will terminate with a run time error: much like the dispatch
+mechanism for variants under MS-Windows.
+
+When there are multiple methods with the same Pascal identifier, the
+compiler will use the standard overload resolution logic to pick the most
+appropriate method. In this process, it will behave as if all
+\var{objcclass}/\var{objccategory} methods in scope have been declared as global
+procedures/functions with the \var{overload} specifier. Likewise, the compiler 
+will print an error if it cannot determine which overloaded method to call.
+
+In such cases, a list of all methods that could be used to implement the call
+will be printed as a hint.
+
+To resolve the error, an explicit type cast must be used to tell the compiler
+which objcclass type contains the needed method.
+
+% Enumerating
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Enumeration in Objective-C classes}
+Fast enumeration in Objective-C is a construct which allows to enumerate
+the elements in a Cocoa container class in a generic way. It is implemented
+using a \var{for-in} loop in Objective-C.
+
+This has been translated to Objective Pascal using the existing \var{for-in} 
+loop mechanism. Therefor, the feature behaves identically in both languages.
+Note that it requires the Objective-C 2.0 mode switch to be activated.
+
+The following is an example of the use of for-in:
+\begin{verbatim}
+{$mode delphi}
+{$modeswitch objectivec2}
+ 
+uses
+  CocoaAll;
+ 
+var
+  arr: NSMutableArray;
+  element: NSString;
+  pool: NSAutoreleasePool;
+  i: longint;
+begin
+  pool:=NSAutoreleasePool.alloc.init;
+  arr:=NSMutableArray.arrayWithObjects(
+    NSSTR('One'),
+    NSSTR('Two'),
+    NSSTR('Three'),
+    NSSTR('Four'),
+    NSSTR('Five'),
+    NSSTR('Six'),
+    NSSTR('Seven'),
+    nil);
+ 
+  i:=0;
+  for element in arr do
+    begin
+      inc(i);
+      if i=2 then
+        continue;
+      if i=5 then
+        break;
+      if i in [2,5..10] then
+        halt(1);
+      NSLog(NSSTR('element: %@'),element);
+    end;
+  pool.release;
+end.
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Expressions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Expressions}
