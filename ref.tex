@@ -5138,14 +5138,14 @@ project; The unit must be included whenever the class helper is needed.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Introduction}
-The preferred programming language on the Mac OS operating system is
+The preferred programming language to access Mac OS X system frameworks is
 Objective-C. In order to fully realize the potential offered by system
 interfaces written in that language, a variant of Object Pascal 
-exists in the Free Pascal compiler which tries to offer the same
+exists in the Free Pascal compiler that tries to offer the same
 functionality as Objective-C. This variant is called Objective-Pascal. 
 
 The compiler has mode switches to enable the use of these Objective-C-related
-constructs. There are 2 kinds of Objective C language features, discerned by
+constructs. There are 2 kinds of Objective-C language features, discerned by
 a version number: Objective-C 1.0 and Objective-C 2.0. 
 
 The Objective-C 1.0 language features can be enabled by adding a modeswitch
@@ -5163,7 +5163,7 @@ modewitch:
 or the command-line option \var{-Mobjectivec2}.
 
 The Objective-C 2.0 language features are a superset of the Objective-C 1.0
-language features, and there for the latter switch implies automatically the
+language features, and therefor the latter switch automatically implies the
 former. Programs using Objective-C 2.0 language features will only work on
 Mac OS X 10.5 and later.
 
@@ -5191,15 +5191,15 @@ NSView = objcclass external(NSResponder)
 private
   _subview  : id; 
 public
-  function initWithFrame_(rect : NSRect): id; 
+  function initWithFrame(rect : NSRect): id; 
      message 'initWithFrame:';
-  procedure addSubview_(aview: NSView); 
+  procedure addSubview(aview: NSView); 
      message 'addSubview:';
-  procedure setAutoresizingMask_(mask: NSUInteger); 
+  procedure setAutoresizingMask(mask: NSUInteger); 
      message 'setAutoresizingMask:';
-  procedure setAutoresizesSubviews_(flag: LongBool); 
+  procedure setAutoresizesSubviews(flag: LongBool); 
      message 'setAutoresizesSubviews:';
-  procedure drawRect_(dirtyRect: NSRect); 
+  procedure drawRect(dirtyRect: NSRect); 
      message 'drawRect:';
 end;
 \end{verbatim}
@@ -5218,9 +5218,9 @@ Pascal:
 MyView = objcclass(NSView)
 public
   data : Integer;
-  procedure customMessage_(dirtyRect: NSRect); 
+  procedure customMessage(dirtyRect: NSRect); 
     message 'customMessage';
-  procedure drawRect_(dirtyRect: NSRect); override;
+  procedure drawRect(dirtyRect: NSRect); override;
 end;
 \end{verbatim}
 The absence of the \var{external} keyword tells the compiler that the
@@ -5235,29 +5235,30 @@ Unless the class is implementing the method of a protocol (more about this
 in a subsequent section), one of \var{message} or \var{override} is
 expected: all methods are virtual, and either a new method is started (or
 re-introduced), or an existing is overridden. Only in the case of a method
-that is part of a protocol, the method can be defined without \var{method}
+that is part of a protocol, the method can be defined without \var{message}
 or \var{override}.
 
 
 Note that the Objective-C class declaration may or may not specify a parent class.
-In Object Pascal, omitting a parent class will automatically make the new
-class a descendant of \var{TObject}. In Objective-C, this is not the
-case: the new class will be a new root class. However, Objective-C does have
-a class which fullfills the function of root class: \var{NSObject}, which
-can be considered the equivalent of \var{TObject} in Object Pascal. It has
-other root classes, but in general, Objective-Pascal classes should descend
-from \var{NSObject}. If a new root class is attempted anyway, it must
-implement the \var{NSObjectProtocol} - just as the \var{NSObject} class
-itself does.
+In Object Pascal, omitting a parent class will automatically make the
+new class a descendant of \var{TObject}. In Objective-C, this is not the
+case: the new class will be a new root class. However, Objective-C does
+have a class which fullfills the function of generic root class:
+\var{NSObject}, which can be considered the equivalent of \var{TObject}
+in Object Pascal. It has other root classes, but in general,
+Objective-Pascal classes should descend from \var{NSObject}. If a new
+root class is constructed anyway, it must implement the
+\var{NSObjectProtocol} - just as the \var{NSObject} class itself does.
 
 Finally, objective-Pascal classes can have properties, but these properties
-are only usable in Pascal code: Objective-C code cannot handle properties.
+are only usable in Pascal code: the compiler currently does not export the
+properties in a way that makes them usable from Objective-C.
 
 % Formal declarations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Formal declaration}
 Object Pascal has the concept of Forward declarations. Objective-C takes
-this concept a bit further: it allows to define a class which is defined in
+this concept a bit further: it allows to declare a class which is defined in
 another unit. This has been dubbed 'Formal declaration' in Objective-Pascal.
 Looking at the syntax diagram, the following is a valid declaration:
 \begin{verbatim}
@@ -5266,8 +5267,8 @@ MyExternalClass = objcclass external;
 This is a formal declaration. It tells the compiler that
 \var{MyExternalClass} is an Objective-C class type, but that there is no 
 declaration of the class members. The type can be used in the remainder of
-the unit, but it's use is restricted to storage allocation (in a field or
-method parameter definition) and assignment. (Much like a pointer).
+the unit, but its use is restricted to storage allocation (in a field or
+method parameter definition) and assignment (much like a pointer).
 
 As soon as the class definition is encountered, the compiler can enforce
 type compatibility.
@@ -5366,8 +5367,8 @@ are created in a 2-step process:
 \item Call the 'alloc' method (send an 'alloc' message): This is a class method
 of \var{NSObject}, and returns a pointer to memory for the new instance.
 The use of \var{alloc} is a convention in Objective-C.
-\item Send an 'initXXX' message. By convention, all classes have an
-'InitXXX' method which initializes all fields in the instance. This method
+\item Send an 'initXXX' message. By convention, all classes have one or more
+'InitXXX' methods that initializes all fields in the instance. This method
 will return the final instance pointer, which may be \var{Nil}.
 \end{enumerate}
 The following code demonstrates this:
@@ -5419,7 +5420,7 @@ specifiers must be present.
 
 The \var{required} and \var{optional} specifiers before a series of 
 method declarations are optional. If none is specified, \var{required} is
-assumed. The following is a definition of a protocol, and 
+assumed. The following is a definition of a protocol: 
 \begin{verbatim}
 type
   MyProtocol = objccprotocol
@@ -5427,7 +5428,7 @@ type
     procedure aRequiredMethod; 
       message 'aRequiredMethod';
   optional
-    procedure anOptionalMethodWithPara_(para: longint); 
+    procedure anOptionalMethodWithPara(para: longint); 
       message 'anOptionalMethodWithPara:';
     procedure anotherOptionalMethod; 
       message 'anotherOptionalMethod';
@@ -5438,7 +5439,7 @@ type
  
   MyClassImplementingProtocol = objcclass(NSObject,MyProtocol)
     procedure aRequiredMethod;
-    procedure anOptionalMethodWithPara_(para: longint);
+    procedure anOptionalMethodWithPara(para: longint);
     function aSecondRequiredMethod: longint;
   end;
 \end{verbatim}
@@ -5451,16 +5452,17 @@ The compiler (and runtime) can deduce it from the protocol definition.
 Similar to class helpers in Object Pascal, Objective-C has Categories.
 Categories allow to extend classes without actually creating a descendant of
 these classes. However, Objective-C categories provide more functionality
-than a helper class:
+than a class helper:
 \begin{enumerate}
 \item In Object Pascal, only 1 helper class can be in scope (the last one).
-In Objective C, multiple categories can be in scope at the same time for 
+In Objective-C, multiple categories can be in scope at the same time for 
 a particular class.
-\item In Object Pascal, a helper method cannot override a method present in
-the original class. In Objective-C, a category can also replace existing 
-methods in another class rather than only add new ones. Since all methods 
-are virtual in Objective-C, this also means that this method changes for all classes that inherit from
-the class in which the method was replaced (unless they override it). 
+\item In Object Pascal, a helper method cannot change an existing method
+present in the original class. In Objective-C, a category can also
+replace existing methods in another class rather than only add new ones.
+Since all methods are virtual in Objective-C, this also means that this
+method changes for all classes that inherit from the class in which the
+method was replaced (unless they override it). 
 \item Object Pascal helpers cannot be used to add interfaces to existing
 classes. By contrast, an Objective-C category can also implement protocols.
 \end{enumerate}
@@ -5470,8 +5472,8 @@ definition, and is started with the \var{objccategory} keyword:
 \input{syntax/typecat.syn}
 Note again the possibility of an alias for externally defined categories:
 objective-C 2.0 allows an empty category name. Note that the
-\var{reintroduce} modifier must be used if an existing method needs not to
-be overridden, but replaced. 
+\var{reintroduce} modifier must be used if an existing method is being replaced
+rather than that a new method is being added.
 
 When replacing a method, calling 'inherited' will not call the original
 method of the class, but instead will call the parent class' implementation
@@ -5496,7 +5498,7 @@ that descends from \var{NSObject} (unless it specifically overrides it).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Name scope and Identifiers}
 In Object Pascal, each identifier must be unique in it's namespace: the unit. 
-In Objective-C, this need not be the case: each type identifier must be
+In Objective-C, this need not be the case and each type identifier must be
 unique in it's category: classes, protocols, fields or methods.
 This is shown in the definitions of the basic protocol and class of
 Objective-C: Both protocol and class are called \var{NSObject}.
@@ -5589,7 +5591,7 @@ Fast enumeration in Objective-C is a construct which allows to enumerate
 the elements in a Cocoa container class in a generic way. It is implemented
 using a \var{for-in} loop in Objective-C.
 
-This has been translated to Objective Pascal using the existing \var{for-in} 
+This has been translated to Objective-Pascal using the existing \var{for-in} 
 loop mechanism. Therefor, the feature behaves identically in both languages.
 Note that it requires the Objective-C 2.0 mode switch to be activated.
 
