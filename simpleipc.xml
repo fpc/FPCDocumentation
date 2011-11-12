@@ -11,11 +11,29 @@
 <module name="simpleipc">
 <short>Simple one-way IPC protocol</short>
 <descr>
-<p>The <file>SimpleIPC</file> unit provides classes to implement a simple,
+<p>
+The <file>SimpleIPC</file> unit provides classes to implement a simple,
 one-way IPC mechanism using string messages. It provides a
 <link id="TSimpleIPCServer"/> component for the server, and a <link
 id="TSimpleIPCClient"/> component for the client. The components are
-cross-platform, and should work both on Windows and unix-like systems.</p>
+cross-platform, and should work both on Windows and unix-like systems.
+</p>
+<p>
+The Unix implementation of the SimpleIPC unit uses file-based sockets.
+It will attempt to clean up any registered server socket files that were 
+not removed cleanly.
+</p>
+<p>
+It does this in the unit finalization code. It does not install a signal 
+handler by itself, that is the task of the programmer. But program crashes
+(access violations and such) that are handled by the RTL will be handled
+gracefully.
+</p>
+<p>
+This also means that if the process is killed with the KILL signal, 
+it has no chance of removing the files (KILL signals cannot be caught), 
+in which case socket files may remain in the filesystem.
+</p>
 </descr>
 
 <!-- unresolved type reference Visibility: default -->
