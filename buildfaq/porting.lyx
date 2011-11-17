@@ -76,7 +76,7 @@ Versioning
 A lot has happened since the original version.
  Kylix can be considered dead for all practical purposes nowadays.
  Tiburon will have a gigantic impact on anything that handles string.
- 2.3.x is a bit more Delphi compatible again, specially in the dispatch COM
+ 2.5.x is a bit more Delphi compatible again, specially in the dispatch COM
  and olevariant direction.
  So it was time to update the FAQ, and prepare it for the host of Tiburon
  related issues that are coming.
@@ -110,8 +110,8 @@ There is a lot of (Object) Pascal code available on the web, usually for
  Since Free Pascal supports both these dialects, most code should in theory
  be recompilable with FPC.
  (and to a lesser degree with other compilers with the appropiate Borland
- mode) The main showstopper problems are a too big dependancy on 16-bit
- functionality (TP/BP), or on the Visual part of the VCL (Delphi).
+ mode) The main showstopper problems are a too big dependancy on dos and
+ 16-bit functionality (TP/BP), or on the Visual part of the VCL (Delphi).
  A lot of Delphi code is also too Windows dependant for use on other platforms,
  but this (the Windows dependance) is no real long term problem for FPC/win32.
  There can be a few small problems though because not all Delphi winapi
@@ -1677,6 +1677,31 @@ Resources more Delphi like
 (from 2.4.2) some D2006 features like for..in added
 \end_layout
 
+\begin_layout Enumerate
+Rudimentary TUnicodestring 
+\end_layout
+
+\begin_layout Subsection
+FPC 2.5.x/2.6.x
+\end_layout
+
+\begin_layout Enumerate
+Set packing more delphi like
+\end_layout
+
+\begin_layout Enumerate
+COM handling improved, but e.g.
+ SEH is still lacking
+\end_layout
+
+\begin_layout Subsection
+FPC 2.7.x
+\end_layout
+
+\begin_layout Enumerate
+Unicodestring support up to Delphi 2009+ level?
+\end_layout
+
 \begin_layout Section
 Kylix/Libc unit issues
 \end_layout
@@ -1983,6 +2008,88 @@ Filenames The best is to keep filenames lowercase.
  This because on case sensitive filesystems, Free Pascal also checks the
  all-lowercase name, and you don't need to synchronize casing in all uses
  clauses to match the filename.
+\end_layout
+
+\begin_layout Description
+Set
+\begin_inset space ~
+\end_inset
+
+sizes The size of sets is only delphi compatible in 2.5.1+ 
+\begin_inset Flex URL
+status collapsed
+
+\begin_layout Plain Layout
+
+http://wiki.freepascal.org/User_Changes_Trunk#Sizes_of_sets_in_TP.2FDelphi_mode
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Real48 {$realcompatibility on} doesn't exist and real is always equal to
+ double.
+ Using operator overloading conversions from a real48 record to double exists.
+ 
+\end_layout
+
+\begin_layout Description
+path_of_exe Many operating systems do not allow to retrieve the directory
+ of the exe (e.g.
+ 
+\series bold
+Paramstr(0)
+\series default
+ or application.exename.).
+ Linux emulates it partially (depending on the used filesystem), and OS
+ X only supports it when the application is started using the full path.
+ Even on Windows this is less useful as it used to be.
+ (since if in program files/, Vista/W7 probably won't let you write to it.)
+ What to substitute it with is hard, since the alternatives depend on the
+ nature of application and the chosen operating system's filesystem layout.
+ The operating system's application guidelines might provide a clue.
+ A typical *nix solution is a configuration file, either global (/etc/myapp.conf)
+ or local (~/.myapp.conf), that specifies the location other files and/or
+ directories.
+ A different solution that is sometimes used on *nix is hardcoding a prefix
+ during build time.
+ Keep in mind that in nearly every operating systems nowadays the rules
+ for reading and writing files (UAC!) are different, and always separate
+ readonly paths and files from (read/)write ones.
+\end_layout
+
+\begin_layout Description
+Sleep(0) Using Windows sleep(0) forces a contextswitch, without further
+ delay (giveuptimeslice).
+ Do not assume that all methods of sleeping/delaying do the same.
+\end_layout
+
+\begin_layout Description
+Winsock
+\begin_inset space ~
+\end_inset
+
+Endianess
+\begin_inset space ~
+\end_inset
+
+routines Often Delphi sources use endian conversion (htons etc) from unit
+ winsock.
+ FPC has a completely set of endianess routines in the system unit, no need
+ to drag in some sockets units for that.
+\end_layout
+
+\begin_layout Description
+Unix
+\begin_inset space ~
+\end_inset
+
+typing The API of Unix and unixlikes is different from Windows.
+ The standard for the api (POSIX) is a set of minimal requirements, not
+ a tightly fitting
 \end_layout
 
 \begin_layout Subsection
