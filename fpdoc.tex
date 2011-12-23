@@ -651,6 +651,24 @@ will generate chm documentation in the file \file{docs.chm}.
 This option specifies the name of the package to be used. The package name
 will also be used as a default for the \var{output} option (\seesu{output}).
 
+Note that if a project file is specified with multiple packages, this option
+will be used to select the package for which to produce documentation.
+
+% package
+\subsection{project}
+\label{suse:project}
+\fpdoc can work with a project file. This is an XML file which can contain
+specifies global options, and which contains the definition for one or more
+packages, for which it lists input files and description files etc.
+The project file is described in more detail in \seec{projectfile}.
+
+This option expects an argument, the name of the project file to use.
+
+Example:
+\begin{verbatim}
+fpdoc --project=rtl-project.xml --format=html --package=rtl
+\end{verbatim}
+
 % show-private
 \subsection{show-private}
 \label{suse:showprivate}
@@ -671,6 +689,21 @@ This option only applies to the chm backend of \fpdoc.
 If this option is given, then fpdoc will emit a warning if it cannot find a
 documentation node for some identifier. This can be used to see whether the
 description files are up-to-date, or whether they must be updated.
+
+% package
+\subsection{write-project}
+\label{suse:write-project}
+\fpdoc can create a project file based on all options given on the command
+line. For more information about the project file, \seec{projectfile}.
+
+This option expects an argument, the name of the project file to write.
+
+Example:
+\begin{verbatim}
+fpdoc --write-project=rtl-project.xml --format=html --package=rtl
+--input=file.pp --descr=file.xml
+\end{verbatim}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Makeskel
@@ -849,6 +882,198 @@ documentation files. The output file in this case can be merged with one (or
 more) of the documentation files: it's name should not appear in the list of
 existing documentation files. The \file{makeskel} program will do some
 elementary checks on this.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The description file.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{The project file}
+\label{ch:projectfile}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Introduction
+\section{Introduction}
+When there are a lot of units to document, the command-line can be rather
+long. On some operating systems, this is a problem, as the length of the
+command-line easily exceeds the maximum length of command-line options
+supported by the OS. Also, command-lines are difficult to read and/or 
+parse. fpdoc has always supported reading options from a file, but 
+this is not very structured and difficult to handle in e.g. an IDE. 
+
+Therefor it is possible to write a project file. The project file is
+an XML file that describes an fpdoc project. The XML file contains only 
+a few tag names. 
+
+In general, it looks as follows:
+
+\begin{verbatim}
+<?xml version="1.0" encoding="utf-8"?>
+<docproject>
+  <options>
+    <option name="ostarget" value="Linux"/>
+    <option name="cputarget" value="x86_64"/>
+    <option name="show-private" value="false"/>
+    <option name="stop-on-parser-error" value="false"/>
+  </options>
+  <packages>
+    <package name="rtl" output="rtl" content="rtl.xct">
+      <units>
+        <unit file="../rtl/objpas/objpas.pp" 
+              options="-dHASINTF"/>
+        <unit file="../rtl/objpas/types.pp" 
+              options=""/>
+      </units>
+      <descriptions>
+        <description file="rtl.xml"/>
+        <description file="system.xml"/>
+      </descriptions>
+    </package>
+  </packages>
+</docproject>
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Introduction
+\section{Project file structure}
+
+The top node is always a \tag{docproject} node. This node can contain only
+2 nodes: a \tag{options} node and a \tag{packages} node; All other nodes
+will be ignored.
+
+% Options
+\subsection{The options node}
+\label{project:options}
+The \tag{options} tag that appears below the \tag{docproject} node specifies
+the options for the \fpdoc project. It contains a series of \tag{option} tags. 
+No other nodes should appear under the \tag{options} tag.
+
+Example:
+\begin{verbatim}
+<options>
+  <option name="ostarget" value="Linux"/>
+  <option name="cputarget" value="x86_64"/>
+  <option name="hide-protected" value="true"/>
+</options>
+\end{verbatim}
+
+% Option
+\subsection{The option node}
+\label{project:option}
+Each \tag{option} tag under the \tag{options} tag specifies an option.
+
+Each \tag{option} tag has 2 attributes: \attr{name} and \var{value}. 
+The name correspond to the command-line options that fpdoc supports.
+This attribute is mandatory. The \attr{value} attribute contains the 
+value for the node. It is also mandatory.
+
+For command-line switches, only 2 values are accepted: \var{true} and
+\var{false}.  
+
+Both general options and format-specific options can be specified this way.
+
+Example:
+\begin{verbatim}
+<option name="ostarget" value="Linux"/>
+<option name="cputarget" value="x86_64"/>
+<option name="hide-protected" value="true"/>
+<option name="warn-no-node" value="false"/>
+\end{verbatim}
+
+% Packages
+\subsection{The packages node}
+\label{project:packages}
+The \tag{packages} tag under the \tag{docproject} tag contains a
+\tag{package} tag for each package described by the project file.
+As many packages as needed can be described by the project file.
+All other tags under the packages tag are ignored.
+
+Example:
+\begin{verbatim}
+<packages>
+  <package name="rtl" output="rtl" content="rtl.xct">
+</packages>
+\end{verbatim}
+
+% Package
+\subsection{The package node}
+\label{project:package}
+Each \tag{package} tag under the \tag{packages} tag describes one package.
+It contains at most 2 tags: the \tag{units} tag and the \var{descriptions} tag.
+
+The \tag{package} tag has 3 attributes:
+\begin{description}
+\item[name] This attribute specifies the name of the package. This attribute is mandatory.
+\item[output] This attribute contains the default output name for the package. This attribute is
+optional.
+\item[content] The \attr{content} attribute specifies the name of the content file to write 
+for this package. This attribute is optional. No file will be written if it is omitted.
+\end{description}
+Example:
+\begin{verbatim}
+<package name="rtl" output="rtl" content="rtl.xct">
+\end{verbatim}
+
+% Units
+\subsection{The units node}
+\label{project:units}
+The \var{units} tag below the \tag{package} tag describes the input files for 
+the package. It consists of a series of \var{unit} tags, one tag for each unit.
+
+Example:
+\begin{verbatim}
+<units>
+  <unit file="../rtl/linux/system.pp" options="-dfpdocsystem"/>
+  <unit file="../rtl/objpas/objpas.pp" options="-dHASINTF"/>
+</units>
+\end{verbatim}
+
+% Unit
+\subsection{The unit node}
+\label{project:unit}
+The \var{unit} tag describes one input file for the package. 
+This tag corresponds to the \var{--input} command-line option.
+
+The tag has 2 attributes: 
+\begin{description}
+\item[file] The \attr{file} tag contains the file name. This attribute is
+mandatory.
+\item[options] The \attr{options} attribute is optional, and specifies 
+any options that must be passed on to the parser when parsing the input file.
+\end{description}
+
+Example:
+\begin{verbatim}
+<unit file="cthreads.pp" options="-S2"/>
+\end{verbatim}
+
+% Descriptions
+\subsection{The descriptions node}
+\label{project:descriptions}
+The \tag{descriptions} tag below the \tag{package} tag contains one 
+\tag{description} tag for each description file belonging to the package.
+No other tags should appear below the \tag{descriptions} tag.
+
+Example:
+\begin{verbatim}
+<descriptions>
+  <description file="rtl.xml"/>
+  <description file="system.xml"/>
+</descriptions>
+\end{verbatim}
+
+
+% Description
+\subsection{The description node}
+\label{project:description}
+The \tag{description} tag describes one description file used in the
+documentation for the package. It has one attribute \attr{file}, containing
+the filename of the documentation file. This attribute is mandatory. All
+other attributes are ignored.
+
+Example:
+\begin{verbatim}
+<description file="cthreads.xml"/>
+\end{verbatim}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The description file.
