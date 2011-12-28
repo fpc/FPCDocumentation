@@ -282,7 +282,7 @@ by Florian Klaempfl.
 <element name="SOMAXCONN">
 <short>Maximum queue length specifiable by listen.</short>
 <seealso>
-<link id="listen"/>
+<link id="FPlisten"/>
 </seealso>
 </element>
 
@@ -360,7 +360,7 @@ by Florian Klaempfl.
 <short>General socket adress record</short>
 <descr>
 <var>sockaddr</var> is used to store a general socket addres for the
-<link id="Bind"/>, <link id="Recv"/> and <link id="Send"/> calls.
+<link id="FPBind"/>, <link id="FPRecv"/> and <link id="FPSend"/> calls.
 </descr>
 </element>
 <element name="sockaddr.family">
@@ -392,7 +392,7 @@ by Florian Klaempfl.
 <short>Unix socket address record.</short>
 <descr>
 <var>sockaddr_un</var> is used to store a UNIX socket addres for the
-<link id="Bind"/>, <link id="Recv"/> and <link id="Send"/> calls.
+<link id="FPBind"/>, <link id="FPRecv"/> and <link id="FPSend"/> calls.
 </descr>
 </element>
 <element name="sockaddr_un.sun_family">
@@ -418,7 +418,7 @@ by Florian Klaempfl.
 <short>Internet socket address record</short>
 <descr>
 <var>sockaddr_in</var> is used to store a INET socket addres for the
-<link id="Bind"/>, <link id="Recv"/> and <link id="Send"/> calls.
+<link id="FPBind"/>, <link id="FPRecv"/> and <link id="FPSend"/> calls.
 </descr>
 </element>
 
@@ -465,7 +465,7 @@ by Florian Klaempfl.
 </element>
 
 <element name="TSockArray">
-<short>Type returned by the <link id="SocketPair"/> call.</short>
+<short>Type returned by the <link id="FPSocketPair"/> call.</short>
 </element>
 
 <element name="AF_IMPLINK">
@@ -1230,7 +1230,7 @@ Record used to describe a general IPV6 address.
 
 <!-- array type Visibility: default -->
 <element name="TSockPairArray">
-<short>Array of sockets, used in <link id="SocketPair"/> call.</short>
+<short>Array of sockets, used in <link id="FPSocketPair"/> call.</short>
 </element>
 
 <!-- variable Visibility: default -->
@@ -1241,9 +1241,6 @@ Record used to describe a general IPV6 address.
 operation. It can be examined to return the last socket error. 
 </descr>
 </element>
-
-
-
 
 <!-- function Visibility: default -->
 <element name="CloseSocket">
@@ -1256,7 +1253,7 @@ was closed succesfully, -1 if it failed.
 On error, -1 is returned.
 </errors>
 <seealso>
-<link id="Socket"/>
+<link id="FPSocket"/>
 </seealso>
 </element>
 
@@ -1279,26 +1276,6 @@ On error, -1 is returned.
 </seealso>
 </element>
 
-
-<!-- function Visibility: default -->
-<element name="SendTo">
-<short>Send data through an unconnected socket to an address (deprecated).</short>
-<descr>
-<var>SendTo</var> sends data from buffer <var>Buf</var> with length
-<var>Buflen</var> through socket <var>Sock</var> with options
-<var>Flags</var>. The data is sent to address <var>Addr</var>, which has
-length <var>AddrLen</var>
-</descr>
-<errors>
-On error, -1 is returned.
-</errors>
-<seealso>
-<link id="Socket"/>
-<link id="Send"/>
-<link id="RecvFrom"/>
-</seealso>
-</element>
-
 <element name="fprecvfrom">
 <short>Receive data from an unconnected socket</short>
 <descr>
@@ -1316,27 +1293,6 @@ On error, -1 is returned.
 <seealso>
 <link id="fpSocket"/>
 <link id="fprecv"/>
-</seealso>
-</element>
-
-<!-- function Visibility: default -->
-<element name="RecvFrom">
-<short>Receive data from an unconnected socket (deprecated)</short>
-<descr>
-<var>RecvFrom</var> receives data in buffer <var>Buf</var> with maximum
-length <var>BufLen</var> from socket <var>Sock</var>. 
-Receipt is controlled by options in <var>Flags</var>. <var>Addr</var> will
-be filled with the address from the sender, and will have length
-The function returns the number of bytes received, or -1 on error.
-<var>AddrLen</var>.
-</descr>
-<errors>
-On error, -1 is returned.
-</errors>
-<seealso>
-<link id="Socket"/>
-<link id="recv"/>
-<link id="Send"/>
 </seealso>
 </element>
 
@@ -1364,11 +1320,11 @@ On error, <var>-1</var> is returned, and errors are reported in
 <var>SocketError</var>, and include the following:
 </p>
 <dl>
-<dt>SYS_EBADF</dt><dd>The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTSOCK</dt><dd>The descriptor is not a socket.</dd>
+<dt><link id="ESockEBADF"/></dt><dd>The socket descriptor is invalid.</dd>
+<dt><link id="ESockENOTSOCK"/></dt><dd>The descriptor is not a socket.</dd>
 <dt>SYS_EOPNOTSUPP</dt><dd>The socket type doesn't support the <var>Listen</var> operation.</dd>
-<dt>SYS_EFAULT</dt><dd><var>Addr</var> points outside your address space.</dd>
-<dt>SYS_EWOULDBLOCK</dt><dd>The requested operation would block the process.</dd>
+<dt><link id="ESockEFAULT"/></dt><dd><var>Addr</var> points outside your address space.</dd>
+<dt><link id="ESockEWOULDBLOCK"/></dt><dd>The requested operation would block the process.</dd>
 </dl>
 </errors>
 <seealso>
@@ -1408,17 +1364,18 @@ On error, <var>-1</var> is returned, and errors are reported in
 <var>SocketError</var>, and include the following:
 </p>
 <dl>
-<dt>SYS_EBADF</dt><dd>The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTSOCK</dt><dd>The descriptor is not a socket.</dd>
+<dt><link id="ESockEBADF"/></dt><dd>The socket descriptor is invalid.</dd>
+<dt><link id="ESockENOTSOCK"/></dt><dd>The descriptor is not a socket.</dd>
 <dt>SYS_EOPNOTSUPP</dt><dd>The socket type doesn't support the <var>Listen</var> operation.</dd>
-<dt>SYS_EFAULT</dt><dd><var>Addr</var> points outside your address space.</dd>
-<dt>SYS_EWOULDBLOCK</dt><dd>The requested operation would block the process.</dd>
+<dt><link id="ESockEFAULT"/></dt><dd><var>Addr</var> points outside your address space.</dd>
+<dt><link id="ESockEWOULDBLOCK"/></dt><dd>The requested operation would block the process.</dd>
 </dl>
 </errors>
 <seealso>
-<link id="Listen"/>
+<link id="FPListen"/>
 <link id="Connect"/>
-<link id="Bind"/>
+<link id="FPConnect"/>
+<link id="FPBind"/>
 </seealso>
 <example file="sockex/socksvr"/>
 </element>
@@ -1439,50 +1396,16 @@ not.
 Errors are returned in <var>SocketError</var> and include the following:
 </p>
 <dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_EINVAL</dt><dd> The socket is already bound to an address,</dd>
-<dt>SYS_EACCESS</dt><dd> Address is protected and you don't have permission to open it.</dd>
+<dt><link id="ESockEBADF"/></dt><dd> The socket descriptor is invalid.</dd>
+<dt><link id="ESockEINVAL"/></dt><dd> The socket is already bound to an address,</dd>
+<dt><link id="ESockEACCESS"/></dt><dd> Address is protected and you don't have permission to open it.</dd>
 </dl>
 <p>
-More arrors can be found in the Unix man pages.
+More errors can be found in the Unix man pages.
 </p>
 </errors>
 <seealso>
-<link id="Socket"/>
-</seealso>
-</element>
-
-<element name="Bind">
-<short>Bind a socket to an address (deprecated).</short>
-<descr>
-<p>
-<var>Bind</var> binds the socket <var>Sock</var> to address <var>Addr</var>. <var>Addr</var>
-has length <var>Addrlen</var>.
-The function returns <var>True</var> if the call was succesful, <var>False</var> if
-not.
-</p>
-<p>
-The form of the <var>Bind</var> command with the <link id="TUnixSockAddr"/>
-is equivalent to subsequently calling <link id="Str2UnixSockAddr"/> and the 
-regular <var>Bind</var> function.
-The function returns <var>True</var> if successfull, <var>False</var> otherwise.
-</p>
-</descr>
-<errors>
-<p>
-Errors are returned in <var>SocketError</var> and include the following:
-</p>
-<dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_EINVAL</dt><dd> The socket is already bound to an address,</dd>
-<dt>SYS_EACCESS</dt><dd> Address is protected and you don't have permission to open it.</dd>
-</dl>
-<p>
-More arrors can be found in the Unix man pages.
-</p>
-</errors>
-<seealso>
-<link id="Socket"/>
+<link id="FPSocket"/>
 </seealso>
 </element>
 
@@ -1540,9 +1463,10 @@ On error, <var>-1</var> is returned and errors are reported in
 <var>SocketError</var>.
 </errors>
 <seealso>
-<link id="Listen"/>
-<link id="Bind"/>
+<link id="FPListen"/>
+<link id="FPBind"/>
 <link id="Accept"/>
+<link id="FPAccept"/>
 </seealso>
 <example file="sockex/sockcli"/>
 <example file="sockex/pfinger"/>
@@ -1550,7 +1474,6 @@ On error, <var>-1</var> is returned and errors are reported in
 
 <!-- function Visibility: default -->
 <element name="fpgetpeername">
-<short>Alias for the <link id="GetPeerName"/> call</short>
 <short>Return the name (address) of the connected peer.</short>
 <descr>
 <p>
@@ -1570,50 +1493,16 @@ name, and <var>Name</var> will be set to the length of <var>Name</var>.
 Errors are reported in <var>SocketError</var>, and include the following:
 </p>
 <dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOBUFS</dt><dd> The system doesn't have enough buffers to perform the operation.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-<dt>SYS_EFAULT</dt><dd> <var>Addr</var> points outside your address space.</dd>
-<dt>SYS_ENOTCONN</dt><dd> The socket isn't connected.</dd>
+<dt><link id="ESockEBADF"/></dt><dd> The socket descriptor is invalid.</dd>
+<dt><link id="ESockENOBUFS"/></dt><dd> The system doesn't have enough buffers to perform the operation.</dd>
+<dt><link id="ESockENOTSOCK"/></dt><dd> The descriptor is not a socket.</dd>
+<dt><link id="ESockEFAULT"/></dt><dd> <var>Addr</var> points outside your address space.</dd>
+<dt><link id="ESockENOTCONN"/></dt><dd> The socket isn't connected.</dd>
 </dl>
 </errors>
 <seealso>
 <link id="fpConnect"/>
 <link id="fpSocket"/>
-</seealso>
-</element>
-
-
-<element name="GetPeerName">
-<short>Return the name (address) of the connected peer (deprecated).</short>
-<descr>
-<p>
-<var>GetPeerName</var> returns the name of the entity connected to the 
-specified socket <var>Sock</var>. The Socket must be connected for this call to
-work. 
-</p>
-<p>
-<var>Addr</var> should point to enough space to store the name, the
-amount of space pointed to should be set in <var>Addrlen</var>. 
-When the function returns succesfully, <var>Addr</var> will be filled with the 
-name, and <var>Addrlen</var> will be set to the length of <var>Addr</var>.
-</p>
-</descr>
-<errors>
-<p>
-Errors are reported in <var>SocketError</var>, and include the following:
-</p>
-<dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOBUFS</dt><dd> The system doesn't have enough buffers to perform the operation.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-<dt>SYS_EFAULT</dt><dd> <var>Addr</var> points outside your address space.</dd>
-<dt>SYS_ENOTCONN</dt><dd> The socket isn't connected.</dd>
-</dl>
-</errors>
-<seealso>
-<link id="Connect"/>
-<link id="Socket"/>
 </seealso>
 </element>
 
@@ -1632,39 +1521,14 @@ name, and <var>Namelen</var> will be set to the length of <var>Name</var>.
 Errors are reported in <var>SocketError</var>, and include the following:
 </p>
 <dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOBUFS</dt><dd> The system doesn't have enough buffers to perform the operation.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-<dt>SYS_EFAULT</dt><dd> <var>Addr</var> points outside your address space.</dd>
+<dt><link id="ESockEBADF"/></dt><dd> The socket descriptor is invalid.</dd>
+<dt><link id="ESockENOBUFS"/></dt><dd> The system doesn't have enough buffers to perform the operation.</dd>
+<dt><link id="ESockENOTSOCK"/></dt><dd> The descriptor is not a socket.</dd>
+<dt><link id="ESockEFAULT"/></dt><dd> <var>Addr</var> points outside your address space.</dd>
 </dl>
 </errors>
 <seealso>
 <link id="fpBind"/>
-</seealso>
-</element>
-
-<element name="GetSocketName">
-<short>Return name of socket (deprecated).</short>
-<descr>
-<var>GetSocketName</var> returns the current name of the specified socket
-<var>Sock</var>. <var>Addr</var> should point to enough space to store the name, the
-amount of space pointed to should be set in <var>Addrlen</var>. 
-When the function returns succesfully, <var>Addr</var> will be filled with the 
-name, and <var>Addrlen</var> will be set to the length of <var>Addr</var>.
-</descr>
-<errors>
-<p>
-Errors are reported in <var>SocketError</var>, and include the following:
-</p>
-<dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOBUFS</dt><dd> The system doesn't have enough buffers to perform the operation.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-<dt>SYS_EFAULT</dt><dd> <var>Addr</var> points outside your address space.</dd>
-</dl>
-</errors>
-<seealso>
-<link id="Bind"/>
 </seealso>
 </element>
 
@@ -1697,46 +1561,13 @@ On success, 0 is returned. On Error, -1 is returned.
 Errors are reported in <var>SocketError</var>, and include the following:
 </p>
 <dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-<dt>SYS_EFAULT</dt><dd> <var>OptVal</var> points outside your address space.</dd>
+<dt><link id="ESockEBADF"/></dt><dd> The socket descriptor is invalid.</dd>
+<dt><link id="ESockENOTSOCK"/></dt><dd> The descriptor is not a socket.</dd>
+<dt><link id="ESockEFAULT"/></dt><dd> <var>OptVal</var> points outside your address space.</dd>
 </dl>
 </errors>
 <seealso>
 <link id="fpSetSockOpt"/>
-</seealso>
-</element>
-
-
-<element name="GetSocketOptions">
-<short>Get current socket options (deprecated).</short>
-<descr>
-<p>
-<var>GetSocketOptions</var> gets the connection options for socket <var>Sock</var>.
-The socket may be obtained from different levels, indicated by <var>Level</var>,
-which can be one of the following:
-</p>
-<dl>
-<dt>SOL_SOCKET</dt><dd> From the socket itself. </dd>
-<dt>XXX</dt><dd> set <var>Level</var> to <var>XXX</var>, the protocol number of the protocol
-which should interprete the option. </dd>
-</dl>
-<p>
-For more information on this call, refer to the unix manual page \seem{getsockopt}{2}.
-</p>
-</descr>
-<errors>
-<p>
-Errors are reported in <var>SocketError</var>, and include the following:
-</p>
-<dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-<dt>SYS_EFAULT</dt><dd> <var>OptVal</var> points outside your address space.</dd>
-</dl>
-</errors>
-<seealso>
-<link id="SetSocketOptions"/>
 </seealso>
 </element>
 
@@ -1759,8 +1590,8 @@ if an error occurred.
 Errors are reported in <var>SocketError</var>, and include the following:
 </p>
 <dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
+<dt><link id="ESockEBADF"/></dt><dd> The socket descriptor is invalid.</dd>
+<dt><link id="ESockENOTSOCK"/></dt><dd> The descriptor is not a socket.</dd>
 <dt>SYS_EOPNOTSUPP</dt><dd> The socket type doesn't support the <var>Listen</var> operation.</dd>
 </dl>
 </errors>
@@ -1768,37 +1599,6 @@ Errors are reported in <var>SocketError</var>, and include the following:
 <link id="fpSocket"/>
 <link id="fpBind"/>
 <link id="fpConnect"/>
-</seealso>
-</element>
-
-
-<element name="Listen">
-<short>Listen for connections on socket (deprecated).</short>
-<descr>
-<p>
-<var>Listen</var> listens for up to <var>MaxConnect</var> connections from socket
-<var>Sock</var>. The socket <var>Sock</var> must be of type <var>SOCK_STREAM</var> or
-<var>Sock_SEQPACKET</var>.
-</p>
-<p>
-The function returns <var>True</var> if a connection was accepted, <var>False</var> 
-if an error occurred.
-</p>
-</descr>
-<errors>
-<p>
-Errors are reported in <var>SocketError</var>, and include the following:
-</p>
-<dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-<dt>SYS_EOPNOTSUPP</dt><dd> The socket type doesn't support the <var>Listen</var> operation.</dd>
-</dl>
-</errors>
-<seealso>
-<link id="Socket"/>
-<link id="Bind"/>
-<link id="Connect"/>
 </seealso>
 </element>
 
@@ -1825,54 +1625,17 @@ The functions returns the number of bytes actually read from the socket, or
 Errors are reported in <var>SocketError</var>, and include the following:
 </p>
 <dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTCONN</dt><dd> The socket isn't connected.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-<dt>SYS_EFAULT</dt><dd> The address is outside your address space.</dd>
-<dt>SYS_EMSGSIZE</dt><dd> The message cannot be sent atomically.</dd>
-<dt>SYS_EWOULDBLOCK</dt><dd> The requested operation would block the process.</dd>
-<dt>SYS_ENOBUFS</dt><dd> The system doesn't have enough free buffers available.</dd>
+<dt><link id="ESockEBADF"/></dt><dd> The socket descriptor is invalid.</dd>
+<dt><link id="ESockENOTCONN"/></dt><dd> The socket isn't connected.</dd>
+<dt><link id="ESockENOTSOCK"/></dt><dd> The descriptor is not a socket.</dd>
+<dt><link id="ESockEFAULT"/></dt><dd> The address is outside your address space.</dd>
+<dt><link id="ESockEMSGSIZE"/></dt><dd> The message cannot be sent atomically.</dd>
+<dt><link id="ESockEWOULDBLOCK"/></dt><dd> The requested operation would block the process.</dd>
+<dt><link id="ESockENOBUFS"/></dt><dd> The system doesn't have enough free buffers available.</dd>
 </dl>
 </errors>
 <seealso>
-<link id="Send"/>
-</seealso>
-</element>
-
-<element name="Recv">
-<short>Receive data on socket (deprecated)</short>
-<descr>
-<p>
-<var>Recv</var> reads at most <var>Addrlen</var> bytes from socket <var>Sock</var> into
-address <var>Addr</var>. The socket must be in a connected state.
-<var>Flags</var> can be one of the following:
-</p>
-<dl>
-<dt>1</dt><dd>Process out-of band data.</dd>
-<dt>4</dt><dd>Bypass routing, use a direct interface.</dd>
-<dt>??</dt><dd> Wait for full request or report an error.</dd>
-</dl>
-<p>
-The functions returns the number of bytes actually read from the socket, or
--1 if a detectable error occurred.
-</p>
-</descr>
-<errors>
-<p>
-Errors are reported in <var>SocketError</var>, and include the following:
-</p>
-<dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTCONN</dt><dd> The socket isn't connected.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-<dt>SYS_EFAULT</dt><dd> The address is outside your address space.</dd>
-<dt>SYS_EMSGSIZE</dt><dd> The message cannot be sent atomically.</dd>
-<dt>SYS_EWOULDBLOCK</dt><dd> The requested operation would block the process.</dd>
-<dt>SYS_ENOBUFS</dt><dd> The system doesn't have enough free buffers available.</dd>
-</dl>
-</errors>
-<seealso>
-<link id="Send"/>
+<link id="FPSend"/>
 </seealso>
 </element>
 
@@ -1902,52 +1665,16 @@ error occurred.
 Errors are reported in <var>SocketError</var>, and include the following:
 </p>
 <dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-<dt>SYS_EFAULT</dt><dd> The address is outside your address space.</dd>
-<dt>SYS_EMSGSIZE</dt><dd> The message cannot be sent atomically.</dd>
-<dt>SYS_EWOULDBLOCK</dt><dd> The requested operation would block the process.</dd>
-<dt>SYS_ENOBUFS</dt><dd> The system doesn't have enough free buffers available.</dd>
+<dt><link id="ESockEBADF"/></dt><dd> The socket descriptor is invalid.</dd>
+<dt><link id="ESockENOTSOCK"/></dt><dd> The descriptor is not a socket.</dd>
+<dt><link id="ESockEFAULT"/></dt><dd> The address is outside your address space.</dd>
+<dt><link id="ESockEMSGSIZE"/></dt><dd> The message cannot be sent atomically.</dd>
+<dt><link id="ESockEWOULDBLOCK"/></dt><dd> The requested operation would block the process.</dd>
+<dt><link id="ESockENOBUFS"/></dt><dd> The system doesn't have enough free buffers available.</dd>
 </dl>
 </errors>
 <seealso>
 <link id="fpRecv"/>
-</seealso>
-</element>
-
-
-<element name="Send">
-<short>Send data through socket (deprecated)</short>
-<descr>
-<p>
-<var>Send</var> sends <var>AddrLen</var> bytes starting from address <var>Addr</var>
-to socket <var>Sock</var>. <var>Sock</var> must be in a connected state.
-The function returns the number of bytes sent, or -1 if a detectable 
-error occurred.
-</p>
-<p>
-<var>Flags</var> can be one of the following:
-</p>
-<dl>
-<dt>1</dt><dd>Process out-of band data.</dd>
-<dt>4</dt><dd>Bypass routing, use a direct interface.</dd>
-</dl>
-</descr>
-<errors>
-<p>
-Errors are reported in <var>SocketError</var>, and include the following:
-</p>
-<dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-<dt>SYS_EFAULT</dt><dd> The address is outside your address space.</dd>
-<dt>SYS_EMSGSIZE</dt><dd> The message cannot be sent atomically.</dd>
-<dt>SYS_EWOULDBLOCK</dt><dd> The requested operation would block the process.</dd>
-<dt>SYS_ENOBUFS</dt><dd> The system doesn't have enough free buffers available.</dd>
-</dl>
-</errors>
-<seealso>
-<link id="Recv"/>
 </seealso>
 </element>
 
@@ -1979,46 +1706,13 @@ For more information on this call, refer to the unix manual page
 Errors are reported in <var>SocketError</var>, and include the following:
 </p>
 <dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-<dt>SYS_EFAULT</dt><dd> <var>OptVal</var> points outside your address space.</dd>
+<dt><link id="ESockEBADF"/></dt><dd> The socket descriptor is invalid.</dd>
+<dt><link id="ESockENOTSOCK"/></dt><dd> The descriptor is not a socket.</dd>
+<dt><link id="ESockEFAULT"/></dt><dd> <var>OptVal</var> points outside your address space.</dd>
 </dl>
 </errors>
 <seealso>
 <link id="fpGetSockOpt"/>
-</seealso>
-</element>
-
-<element name="SetSocketOptions">
-<short>Set socket options (deprecated).</short>
-<descr>
-<p>
-<var>SetSocketOptions</var> sets the connection options for socket <var>Sock</var>.
-The socket may be manipulated at different levels, indicated by <var>Level</var>,
-which can be one of the following:
-</p>
-<dl>
-<dt>SOL_SOCKET</dt><dd> To manipulate the socket itself. </dd>
-<dt>XXX</dt><dd> set <var>Level</var> to <var>XXX</var>, the protocol number of the protocol
-which should interprete the option. </dd>
-</dl>
-<p>
-For more information on this call, refer to the unix manual page
-<file>setsockopt</file>
-</p>
-</descr>
-<errors>
-<p>
-Errors are reported in <var>SocketError</var>, and include the following:
-</p>
-<dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-<dt>SYS_EFAULT</dt><dd> <var>OptVal</var> points outside your address space.</dd>
-</dl>
-</errors>
-<seealso>
-<link id="GetSocketOptions"/>
 </seealso>
 </element>
 
@@ -2045,48 +1739,14 @@ On succes, the function returns 0, on error -1 is returned.
 <var>SocketError</var> is used to report errors, and includes the following:
 </p>
 <dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTCONN</dt><dd> The socket isn't connected.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
+<dt><link id="ESockEBADF"/></dt><dd> The socket descriptor is invalid.</dd>
+<dt><link id="ESockENOTCONN"/></dt><dd> The socket isn't connected.</dd>
+<dt><link id="ESockENOTSOCK"/></dt><dd> The descriptor is not a socket.</dd>
 </dl>
 </errors>
 <seealso>
 <link id="fpSocket"/>
 <link id="fpConnect"/>
-</seealso>
-</element>
-
-
-<element name="Shutdown">
-<short>Close one end of full duplex connection (deprecated).</short>
-<descr>
-<p>
-<var>fpShutDown</var> closes one end of a full duplex socket connection, described
-by <var>Sock</var>. The parameter <var>How</var> determines how the connection 
-will be shut down, and can be one of the following:
-</p>
-<dl>
-<dt>0</dt><dd>Further receives are disallowed.</dd>
-<dt>1</dt><dd>Further sends are disallowed.</dd>
-<dt>2</dt><dd>Sending nor receiving are allowed.</dd>
-</dl>
-<p>
-On succes, the function returns 0, on error -1 is returned.
-</p>
-</descr>
-<errors>
-<p>
-<var>SocketError</var> is used to report errors, and includes the following:
-</p>
-<dl>
-<dt>SYS_EBADF</dt><dd> The socket descriptor is invalid.</dd>
-<dt>SYS_ENOTCONN</dt><dd> The socket isn't connected.</dd>
-<dt>SYS_ENOTSOCK</dt><dd> The descriptor is not a socket.</dd>
-</dl>
-</errors>
-<seealso>
-<link id="Socket"/>
-<link id="Connect"/>
 </seealso>
 </element>
 
@@ -2101,7 +1761,7 @@ descriptors of type <var>File</var>, one for reading from the socket
 None.
 </errors>
 <seealso>
-<link id="Socket"/>
+<link id="FPSocket"/>
 <link id="Sock2Text"/>
 </seealso>
 </element>
@@ -2117,7 +1777,7 @@ descriptors of type <var>Text</var>, one for reading from the socket
 None.
 </errors>
 <seealso>
-<link id="Socket"/>
+<link id="FPSocket"/>
 <link id="Sock2File"/>
 </seealso>
 </element>
@@ -2142,53 +1802,18 @@ for an example, see <link id="Accept"/>.
 Errors are returned in <var>SocketError</var>, and include the follwing:
 </p>
 <dl>
-<dt>SYS_EPROTONOSUPPORT</dt><dd> The protocol type or the specified protocol is not
+<dt><link id="ESockEPROTONOSUPPORT"/></dt><dd> The protocol type or the specified protocol is not
 supported within this domain.</dd>
-<dt>SYS_EMFILE</dt><dd>The per-process descriptor table is full.</dd>
+<dt><link id="ESockEMFILE"/></dt><dd>The per-process descriptor table is full.</dd>
 <dt>SYS_ENFILE</dt><dd>The system file table is full.</dd>
-<dt>SYS_EACCESS</dt><dd> Permission to create a socket of the specified type 
+<dt><link id="ESockEACCESS"/></dt><dd> Permission to create a socket of the specified type 
 and/or protocol is denied.</dd>
-<dt>SYS_ENOBUFS</dt><dd>Insufficient buffer space is available. The socket
+<dt><link id="ESockENOBUFS"/></dt><dd>Insufficient buffer space is available. The socket
 cannot be created until sufficient resources are freed.</dd>
 </dl>
 </errors>
 <seealso>
-<link id="SocketPair"/>, \seem{socket}{2}
-</seealso>
-</element>
-
-<element name="Socket">
-<short>Create new socket (deprecated)</short>
-<descr>
-<p>
-<var>Socket</var> creates a new socket in domain <var>Domain</var>, from type
-<var>SocketType</var> using protocol <var>Protocol</var>.
-The Domain, Socket type and Protocol can be specified using predefined
-constants (see the section on constants for available constants)
-If succesfull, the function returns a socket descriptor, which can be passed
-to a subsequent <link id="Bind"/> call. If unsuccesfull, the function returns -1.
-</p>
-<p>
-for an example, see <link id="Accept"/>.
-</p>
-</descr>
-<errors>
-<p>
-Errors are returned in <var>SocketError</var>, and include the follwing:
-</p>
-<dl>
-<dt>SYS_EPROTONOSUPPORT</dt><dd> The protocol type or the specified protocol is not
-supported within this domain.</dd>
-<dt>SYS_EMFILE</dt><dd>The per-process descriptor table is full.</dd>
-<dt>SYS_ENFILE</dt><dd>The system file table is full.</dd>
-<dt>SYS_EACCESS</dt><dd> Permission to create a socket of the specified type 
-and/or protocol is denied.</dd>
-<dt>SYS_ENOBUFS</dt><dd>Insufficient buffer space is available. The socket
-cannot be created until sufficient resources are freed.</dd>
-</dl>
-</errors>
-<seealso>
-<link id="SocketPair"/>, \seem{socket}{2}
+<link id="FPSocketPair"/>
 </seealso>
 </element>
 
@@ -2202,23 +1827,7 @@ The pair is returned in <var>sv</var>, and they are indistinguishable.
 The function returns -1 upon error and 0 upon success.
 </descr>
 <errors>
-Errors are reported in <var>SocketError</var>, and are the same as in <link id="Socket"/>
-</errors>
-<seealso>
-<link id="Str2UnixSockAddr"/>
-</seealso>
-</element>
-
-<element name="SocketPair">
-<short>Create socket pair (deprecated).</short>
-<descr>
-<var>SocketPair</var> creates 2 sockets in domain <var>Domain</var>, from type
-<var>SocketType</var> and using protocol <var>Protocol</var>.
-The pair is returned in <var>Pair</var>, and they are indistinguishable.
-The function returns -1 upon error and 0 upon success.
-</descr>
-<errors>
-Errors are reported in <var>SocketError</var>, and are the same as in <link id="Socket"/>
+Errors are reported in <var>SocketError</var>, and are the same as in <link id="FPSocket"/>
 </errors>
 <seealso>
 <link id="Str2UnixSockAddr"/>
@@ -2235,8 +1844,8 @@ Errors are reported in <var>SocketError</var>, and are the same as in <link id="
 None.
 </errors>
 <seealso>
-<link id="Socket"/>
-<link id="Bind"/>
+<link id="FPSocket"/>
+<link id="FPBind"/>
 </seealso>
 </element>
 
