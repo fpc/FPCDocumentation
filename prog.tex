@@ -1028,8 +1028,7 @@ as the \var{\$PACKENUM} directive (see \sees{Packenum}).
 \subsection{\var{\protect \$MINFPCONSTPREC} : Specify floating point constant precision}
 \label{se:Minfpconstprec}
 
-This switch is the equivalent of the \var{-CF} command line switch. It
-sets the minimal precision of floating point constants. 
+This switch is the equivalent of the \var{-CF} command line switch. Normally, the compiler will set the precision of a floating point constant to the minimally required precision to represent it exactly. This switch can be used to ensure that the compiler never lowers the precision belowed the specified value.
 Supported values are 32, 64 and \var{DEFAULT}. 
 80 is not supported for implementation reasons.
 
@@ -1040,9 +1039,9 @@ declaration is stored:
 \begin{verbatim}
 {$MINFPCONSTPREC 64}
 Const
-  MyFloat = 1.23;
+  MyFloat = 0.5;
 \end{verbatim}
-Will use 64 bits precision to store the constant.
+The type of the above constant will be \var{double} even though it can be represented exactly using \var{single}.
 
 Note that a value of 80 (Extended precision) is not supported.
 
