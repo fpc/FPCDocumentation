@@ -762,9 +762,50 @@ tells the compiler to read further statements from the file \var{filename}.
 The statements read there will be inserted as if they occurred in the
 current file.
 
-The compiler will append the \file{.pp} extension to the file if no
-extension is given. Do not put the filename between quotes, as
-they will be regarded as part of the file's name.
+If the file with the given filename exists, it will be included.
+If no extension is given, the compiler will append the \file{.pp} 
+extension to the file and try with that filename. No other extensions are
+tried. 
+
+The filename can be placed between single quotes, they will not be 
+regarded as part of the file's name. Indeed, if the filename contains 
+a space, then it must be surrounded by single quotes: 
+
+\begin{verbatim}
+{$I 'my file name'}
+\end{verbatim}
+will try to include the file \file{my file name} or \file{my file name.pp}.
+
+\begin{verbatim}
+{$I my file name}
+\end{verbatim}
+will try to include the file \file{my} or \file{my.pp}.
+
+If the filename is an asterisk (*) then the compiler will use the unit or
+program name as filename and try to include that. The following code
+
+\begin{verbatim}
+unit testi;
+
+interface
+
+{$I *}
+
+implementation
+
+end.
+\end{verbatim}
+will include the file \file{testi} or \file{testi.pp} if they exist.
+\begin{verbatim}
+Type
+  A = Integer;
+\end{verbatim}
+Care should be taken with this mechanism, because the unit name should
+already match the unit filename, meaning most likely the unit will include
+itself recursively.
+
+
+
 
 Include files can be nested, but not infinitely deep. The number of files is
 restricted to the number of file descriptors available to the \fpc compiler.
