@@ -383,6 +383,13 @@ filenames found in it will be added to the list of files to be scanned for
 descriptions.
 
 %footer
+\subsection{emit-notes}
+\label{suse:emit-notes}
+This option tells the documentation engine to include notes in the text.
+By default, notes are not included in the text as they serve as working 
+notes for the documenter.
+
+%footer
 \subsection{footer}
 \label{suse:footer}
 This option tells the HTML engine to include the file indicated by this
@@ -1763,6 +1770,59 @@ The classes unit contains basic class definitions for the FCL.
 \end{verbatim}
 
 See also: \seetag{package}, \seetag{descr}, \seetag{element}
+% Tag notes
+\subsection{\tag{notes} : Documentation notes (annotations).}
+\label{tag:notes}
+The \tag{notes} tag indicates that a particular documentation topic contains annotations. 
+It consists of one or more \tag{note} tags, no other tags are allowed
+They serve as annotations to the documentation, usually for the benefit of the documentation writer.
+
+As such, notes are by default not included in the final documentation, but they can be added to 
+them with the --emit-notes command-line option.
+
+Notes can appear below the \tag{module}, \tag{topic} and \tag{element} tags.
+
+For an explanation of what can appear inside the note tag itself, see \seetag{note}.
+
+Example:
+\begin{verbatim}
+<module name="classes">
+<descr>
+The classes unit contains basic class definitions for the FCL.
+</descr>
+<notes>
+<note>MVC. This unit needs more documenting</note>
+<note>FK The new class MyVeryOmportantClass needs documenting</note>
+<notes>
+</module>
+\end{verbatim}
+
+See also: \seetag{note}, \seetag{module}, \seetag{topic} and \seetag{element}.
+
+% Tag notes
+\subsection{\tag{note} : Notes/Annotation entry.}
+\label{tag:notes}
+The \tag{note} tag contains the text of one note. It must appear below a tag \tag{notes} 
+collection of annotations. The notes will be typeset as a unordered list below the documentation. 
+(usually the \var{descr} node).
+
+This means there is a limitation to the markup that a note can contain:
+It can just contain plain text with some markup, similar to what is allowed in \tag{li} tags.
+No tables, lists or other structures are supported inside.
+Example:
+\begin{verbatim}
+<element name="TDuplicates">
+<short>How to handle duplicates in a list</short>
+<descr>
+Some text
+</descr>
+<notes>
+<note>Be more explicit. Maybe refer to <link id="TStringList"/></note>
+<notes>
+</module>
+\end{verbatim}
+
+See also: \seetag{notes}, \seetag{li}
 
 % Tag ol
 \subsection{\tag{ol} : Numbered list.}
