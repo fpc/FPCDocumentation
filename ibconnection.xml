@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fpdoc-descriptions>
+  <package name="fcl">
+    <!--
+  ====================================================================
+    IBConnection
+  ====================================================================
+-->
+    <module name="IBConnection">
+      <!-- constant Visibility: default -->
+      <element name="DEFDIALECT">
+        <short>Default Interbase/Firebird dialect</short>
+        <descr>Default dialect that will be used when connecting to databases. See <link id="Dialect"/> for more details on dialects.
+</descr>
+        <seealso>
+          <link id="TIBConnection.Dialect"/>
+        </seealso>
+      </element>
+      <!--
+  ********************************************************************
+    #fcl.IBConnection.EIBDatabaseError
+  ********************************************************************
+-->
+      <!-- class Visibility: default -->
+      <element name="EIBDatabaseError">
+        <short>Firebird/Interbase database error</short>
+        <descr>Firebird/Interbase database error, a descendant of <link id="EDatabaseError"/>.
+</descr>
+        <errors/>
+        <seealso>
+          <link id="TSQLConnection.EDatabaseError"/>
+        </seealso>
+      </element>
+      <!-- variable Visibility: public -->
+      <element name="EIBDatabaseError.GDSErrorCode">
+        <short>Firebird/Interbase GDS error code.</short>
+        <descr>Firebird/Interbase-specific error code, the GDS error code. From a Firebird perspective:
+Firebird throws 2 error codes for an exception.  The high-level one is the SQLCODE, which is a negative 3-digit code.  The lower-level one is the ISC code 
+(or GDSCODE) which has 9 digits. Related ISC error types are grouped under the same SQLCODE. In some cases, each successive gdscode error gives you further information about the error condition.
+Note: SQLCODE is a deprecated SQL standard; its successor is SQLSTATE.
+</descr>
+        <seealso/>
+      </element>
+      <!--
+  ********************************************************************
+    #fcl.IBConnection.TIBCursor
+  ********************************************************************
+-->
+      <!-- class Visibility: default -->
+      <element name="TIBCursor">
+        <short>Firebird/Interbase cursor</short>
+        <descr>A cursor that keeps track of where you are in a Firebird/Interbase dataset. It is a descendent of 
+<link id="TSQLCursor"/>.</descr>
+        <seealso>
+          <link id="TSQLCursor"/>
+          <link id="TIBConnection"/>
+        </seealso>
+      </element>
+      <!--
+  ********************************************************************
+    #fcl.IBConnection.TIBTrans
+  ********************************************************************
+-->
+      <!-- class Visibility: default -->
+      <element name="TIBTrans">
+        <short>Firebird/Interbase transaction</short>
+        <descr>Firebird/Interbase database transaction object. Descendant of 
+<link id="TSQLHandle"/>.</descr>
+        <seealso>
+          <link id="TSQLHandle"/>
+          <link id="TIBConnection"/>
+        </seealso>
+      </element>
+      <!--
+  ********************************************************************
+    #fcl.IBConnection.TIBConnection
+  ********************************************************************
+-->
+      <!-- class Visibility: default -->
+      <element name="TIBConnection">
+        <short>
+          <var>TIBConnection</var>: Firebird/Interbase specific <link id="TSQLConnection"/>
+        </short>
+        <descr>
+          <p>
+            <var>TIBConnection</var> is a descendant of 
+            <link id="TSQLConnection"/> and represents a connection to a Firebird/Interbase server.</p>
+          <p>It is designed to work with Interbase 6, Firebird 1 and newer database servers.</p>
+          <p>
+            <var>TIBConnection</var> by default requires the Firebird/Interbase client library (e.g. gds32.dll, libfbclient.so, fbclient.dll,fbembed.dll) and its dependencies to be installed on the system. The bitness between library and your application must match: e.g. use 32 bit fbclient when developing a 32 bit application on 64 bit Linux.</p>
+          <p>On Windows, in accordance with the regular Windows way of loading DLLs, the library can also be in the executable directory. In fact, this directory is searched first, and might be a good option for distributing software to end users as it eliminates problems with incompatible DLL versions.</p>
+          <p>
+<var>TIBConnection</var> is based on FPC Interbase/Firebird code (ibase60.inc) that tries to load the client library. If you want to use Firebird embedded, make sure the embedded library is searched/loaded first. There are several ways to do this:
+</p>
+            <ul>
+              <li>Include <var>ibase60</var> in your uses clause, set <var>UseEmbeddedFirebird</var> to true</li>
+              <li>On Windows, with FPC newer than 2.5.1, put fbembed.dll in your application directory</li>
+              <li>On Windows, put the fbembed.dll in your application directory and rename it to fbclient.dll</li>
+            </ul>
+            <p>
+Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. See 
+            <url href="http://mantis.freepascal.org/view.php?id=17664">FPC bug 17664</url> for more details.</p>
+          <p>An indication of which DLLs need to be installed on Windows (Firebird 2.5, differs between
+            versions:</p>
+<ul>
+              <li>fbclient.dll (or fbembed.dll)</li>
+              <li>firebird.msg</li>
+              <li>ib_util.dll</li>
+              <li>icudt30.dll</li>
+              <li>icuin30.dll</li>
+              <li>icuuc30.dll</li>
+              <li>msvcp80.dll</li>
+              <li>msvcr80.dll</li>
+            </ul>
+          <p>Please see your database documentation for details.</p>
+        </descr>
+        <seealso>
+          <link id="TSQLConnection"/>
+        </seealso>
+      </element>
+      <!-- constructor Visibility: public -->
+      <element name="TIBConnection.Create">
+        <short>Creates a <var>TIBConnection</var> object</short>
+        <descr/>
+        <errors/>
+        <seealso/>
+      </element>
+      <!-- argument Visibility: default -->
+      <element name="TIBConnection.Create.AOwner">
+        <short>Owner of the connection; use nil when not using a widgetset.</short>
+      </element>
+      <!-- procedure Visibility: public -->
+      <element name="TIBConnection.CreateDB">
+        <short>Creates a database on disk</short>
+        <descr>
+          <p>Instructs the Interbase or Firebird database server to create a new database.</p>
+          <p>If set, the <link id="Params"/> (specifically, <var>PAGE_SIZE</var>) and <link id="CharSet"/> properties influence the database creation.</p>
+          <p>If creating a database using a client/server environment, the <var>TIBConnection</var> code will connect to the database server before trying to create the database. Therefore make sure the connection properties are already correctly set, e.g. <link id="TSQLConnection.HostName"/>, <link id="TSQLConnection.UserName"/>, <link id="TSQLConnection.Password"/>.</p>
+          <p>If creating a database using Firebird embedded, make sure the embedded library is loaded, the <link id="HostName"/> property is empty, and set the <link id="TSQLConnection.UserName"/> to e.g. 'SYSDBA'. See <printshort id="TIBConnection"/> for details on loading the embedded database library.</p>
+        </descr>
+        <seealso>
+          <link id="Params"/>
+          <link id="DropDB"/>
+          <link id="TIBConnection"/>
+        </seealso>
+      </element>
+      <!-- procedure Visibility: public -->
+      <element name="TIBConnection.DropDB">
+        <short>Deletes a database from disk</short>
+        <descr>
+          <p>
+            <var>DropDB</var> instructs the Interbase/Firebird database server to delete the database that is specified in the  
+            <link id="TIBConnection"/>.</p>
+          <p>In a client/server environment, the <var>TIBConnection</var> code will connect to the database server before telling it to drop the database. Therefore make sure the connection properties are already correctly set, e.g. <link id="HostName"/>, <link id="UserName"/>, <link id="Password"/>.</p>
+          <p>When using Firebird embedded, make sure the embedded connection library is loaded, the <link id="HostName"/> property is empty, and set the <link id="UserName"/> to e.g. 'SYSDBA'. See <printshort id="TIBConnection"/> for more details on loading the embedded library.</p>
+        </descr>
+        <seealso>
+          <link id="CreateDB"/>
+          <link id="HostName"/>
+          <link id="UserName"/>
+          <link id="Password"/>
+        </seealso>
+      </element>
+      <!-- property Visibility: public -->
+      <element name="TIBConnection.BlobSegmentSize">
+        <short>Write this amount of bytes per BLOB segment</short>
+        <descr>
+          <p>
+            <b>Deprecated</b> since FPC 2.7.1 revision 19659</p>
+          <p>When sending BLOBs to the database, the code writes them in segments.</p>
+          <p>Before FPC 2.7.1 revision 19659, these segments were 80 bytes and could be changed using <var>BlobSegmentSize</var>. Please set BlobSegmentSize to 65535 for better write performance.</p>
+          <p>In newer FPC versions, the BlobSegmentSize property is ignored and segments of 65535 bytes are always used.</p>
+        </descr>
+      </element>
+      <!-- function Visibility: public -->
+      <element name="TIBConnection.GetDBDialect">
+        <short>Retrieves database dialect</short>
+        <descr>
+          <p>Gets the Interbase/Firebird database dialect. You should take account of dialect when sending queries to the database.</p>
+          <p>Note: the dialect for new Interbase/Firebird databases is 3; dialects 1 and 2 are only used in legacy environments. See your database documentation for more details.</p>
+        </descr>
+        <seealso>
+          <link id="Dialect"/>
+        </seealso>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TIBConnection.GetDBDialect.Result">
+        <short>The dialect as a number</short>
+      </element>
+      <!-- property Visibility: published -->
+      <!-- Reinier Olislagers: this is inherited from SQLDB, but need to add Firebird-specific info, e.g. regarding port, embedded use -->
+      <element name="TIBConnection.HostName">
+        <short>Name of the server to connect to</short>
+        <descr>
+          <p>
+            <var>HostName</var> specifies the server to connect to.</p>
+          <p>In a client/server environment, this is the hostname or IP address of the Interbase/Firebird server. If the server uses some TCP/IP port other than the default 3050, add a slash (/) and the port number after the server name.</p>
+          <p>Documentation for Firebird 2.0 and up indicates that on Windows, you can also connect to a server on local machine using the local transport protocol, in which case  <var>HostName</var> must be empty.</p>
+          <p>If using an embedded Firebird database, the name must be empty. Please see <printshort id="TIBConnection"/> for details on loading the right library</p>
+          <p>Examples:</p>
+            <code>MyConnection.HostName:='firebird.example.com'; //Connect via TCP/IP using hostname</code>
+            <code>MyConnection.HostName:='127.0.0.1/3000'; //Connect to port 3000 on localhost via TCP/IP</code>
+            <code>MyConnection.HostName:=''; //Connect to embedded server or perhaps using local transport protocol on Windows</code>
+          <p>Please see your database documentation for details.</p>
+        </descr>
+        <seealso>
+          <link id="TIBConnection"/>
+        </seealso>
+      </element>
+      <!-- property Visibility: published -->
+      <element name="TIBConnection.DatabaseName">
+        <short>Name of the database to connect to</short>
+        <descr>
+          <p>Name of the Interbase/Firebird database to connect to.</p>
+          <p>This can be either the path to the database or an alias name. Please see your database documentation for details.</p>
+          <p>In a client/server environment, the name indicates the location of the database on the server's filesystem, so if you have a Linux Firebird server, you might have something like /var/lib/firebird/2.5/data/employee.fdb</p>
+          <p>If using an embedded Firebird database, the name is a relative path relative to the fbembed library.</p>
+        </descr>
+      </element>
+      <!-- property Visibility: published -->
+      <element name="TIBConnection.Dialect">
+        <short>Database dialect</short>
+        <descr><p>Firebird/Interbase servers since Interbase 6 have a dialect setting for backwards compatibility. It can be 1, 2 or 3, the default is
+        3.</p>
+<p>Note: the dialect for new Interbase/Firebird databases is 3; dialects 1 and 2 are only used in legacy environments. In practice, you can ignore this setting for newly created databases.</p>
+        </descr>
+      </element>
+      <!-- property Visibility: published -->
+      <element name="TIBConnection.KeepConnection">
+        <short>Keep open connection after first query</short>
+        <descr>Determines whether to keep the connection open once it is established and the first query has been executed.
+</descr>
+        <seealso/>
+      </element>
+      <!-- property Visibility: published -->
+      <element name="TIBConnection.LoginPrompt">
+        <short>Switch for showing custom login prompt</short>
+        <descr>If true, the <link id="OnLogin"/> event will fire, allowing you to handle supplying of credentials yourself.
+</descr>
+        <seealso>
+          <link id="OnLogin"/>
+        </seealso>
+      </element>
+      <!-- property Visibility: published -->
+      <element name="TIBConnection.Params">
+        <short>Firebird/Interbase specific parameters</short>
+        <descr>
+<p>        <var>Params</var> is a 
+          <link id="TStringList"/> of name=value combinations that set database-specific
+          parameters.</p>
+          <p>The following parameter is supported:</p>
+          <ul>
+            <li>
+              <var>PAGE_SIZE</var>: size of database pages (an integer), e.g. 16384.</li>
+          </ul>
+          <p>See your database documentation for more details.</p>
+        </descr>
+        <seealso>
+          <link id="TSQLConnection.Params"/>
+        </seealso>
+      </element>
+      <!-- property Visibility: published -->
+      <element name="TIBConnection.OnLogin">
+        <short>Event triggered when a login prompt needs to be shown.</short>
+        <descr>OnLogin is triggered when the connection needs a login prompt when connecting: it is triggered when the <link id="LoginPrompt"/> property is True, after the 
+<link id="BeforeConnect"/> event, but before the connection is actually established. 
+</descr>
+        <seealso>
+          <link id="BeforeConnect"/>
+          <link id="LoginPrompt"/>
+          <link id="Open"/>
+          <link id="TSQLConnection.OnLogin"/>
+          <!-- actually child of TCustomConnection.Login -->
+        </seealso>
+      </element>
+      <!--
+  ********************************************************************
+    #fcl.IBConnection.TIBConnectionDef
+  ********************************************************************
+-->
+      <!-- class Visibility: default -->
+      <element name="TIBConnectionDef">
+        <short>Describes   <link id="TIBConnection"/> class</short>
+        <descr>Child of <link id="SQLConnectionDef"/>; used to register an Interbase/Firebird connection, so that it is available in "connection factory" scenarios where database drivers/connections are loaded at runtime and it is unknown at compile time whether the required database libraries are present on the end user's system.</descr>
+        <seealso>
+          <link id="SQLConnectionDef"/>
+        </seealso>
+      </element>
+      <!-- function Visibility: default -->
+      <element name="TIBConnectionDef.TypeName">
+        <short>Firebird/Interbase child of  <link id="SQLConnectionDef.TypeName"/>
+        </short>
+        <seealso>
+          <link id="SQLConnectionDef.TypeName"/>
+          <link id="TIBConnection"/>
+        </seealso>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TIBConnectionDef.TypeName.Result">
+        <short>Descriptive name</short>
+      </element>
+      <!-- function Visibility: default -->
+      <element name="TIBConnectionDef.ConnectionClass">
+        <short>Firebird/Interbase child of    <link id="SQLConnectionDef.ConnectionClass"/>
+        </short>
+        <seealso>
+          <link id="SQLConnectionDef.ConnectionClass"/>
+          <link id="TIBConnection"/>
+        </seealso>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TIBConnectionDef.ConnectionClass.Result">
+        <short>Class of connection</short>
+      </element>
+      <!-- function Visibility: default -->
+      <element name="TIBConnectionDef.Description">
+        <short>Description for the Firebird/Interbase child of    <link id="SQLConnectionDef.ConnectionClass"/>
+        </short>
+        <descr>The description identifies this 
+<var>ConnectionDef</var> object as a Firebird/Interbase connection.</descr>
+        <seealso>
+          <link id="SQLConnectionDef.Description"/>
+          <link id="TIBConnection"/>
+        </seealso>
+      </element>
+      <!-- function result Visibility: default -->
+      <element name="TIBConnectionDef.Description.Result">
+        <short>Description</short>
+      </element>
+    </module>
+    <!-- IBConnection -->
+  </package>
+</fpdoc-descriptions>
