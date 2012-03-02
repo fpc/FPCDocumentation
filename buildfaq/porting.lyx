@@ -1,5 +1,5 @@
-#LyX 1.6.6.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 345
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
 \begin_document
 \begin_header
 \textclass article
@@ -9,18 +9,26 @@
 \usepackage{hyperref}
 \end_preamble
 \use_default_options false
+\maintain_unincluded_children false
 \language english
+\language_package default
 \inputencoding auto
+\fontencoding global
 \font_roman default
 \font_sans default
 \font_typewriter default
 \font_default_family default
+\use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
 
 \graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
 \paperfontsize default
 \spacing single
 \use_hyperref false
@@ -28,9 +36,18 @@
 \use_geometry true
 \use_amsmath 1
 \use_esint 0
+\use_mhchem 1
+\use_mathdots 1
 \cite_engine basic
 \use_bibtopic false
+\use_indices false
 \paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
 \leftmargin 1.5cm
 \topmargin 1cm
 \rightmargin 1.5cm
@@ -39,15 +56,16 @@
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
-\defskip medskip
+\paragraph_indentation default
 \quotes_language english
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
 \tracking_changes false
 \output_changes false
-\author "" 
-\author "" 
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
 \end_header
 
 \begin_body
@@ -65,7 +83,7 @@ Marco van de Voort
 \end_layout
 
 \begin_layout Standard
-Current version: 0.03
+Current version: 0.04
 \end_layout
 
 \begin_layout Section*
@@ -73,13 +91,35 @@ Versioning
 \end_layout
 
 \begin_layout Standard
+I've had comments on my (continued) use of the name 
+\begin_inset Quotes eld
+\end_inset
+
+Borland
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Let me take this oppurtunity to explain that when I say 
+\begin_inset Quotes eld
+\end_inset
+
+Borlanbd
+\begin_inset Quotes erd
+\end_inset
+
+ I mean Borland/Inprise/Devco/Codegear/Embarcadero, since I (still) use
+ products that were release under all these names.
+\end_layout
+
+\begin_layout Standard
 A lot has happened since the original version.
- Kylix can be considered dead for all practical purposes nowadays.
+ Kylix can be considered dead for all practical purposes nowadays, but with
+ XE2 Borland ventures again into multi-platform land.
  Tiburon will have a gigantic impact on anything that handles string.
- 2.5.x is a bit more Delphi compatible again, specially in the dispatch COM
- and olevariant direction.
- So it was time to update the FAQ, and prepare it for the host of Tiburon
- related issues that are coming.
+ The new 2.6.x series is much more Delphi compatible, and the 2.7.x series (trunk)
+ is absorbing Unicode Delphi features.
+ 
 \end_layout
 
 \begin_layout Description
@@ -100,6 +140,10 @@ v0.02b minor updates in September 2009
 v0.03 Additions during summer 2010
 \end_layout
 
+\begin_layout Description
+v0.04 Small updates february 2012
+\end_layout
+
 \begin_layout Section
 Introduction
 \end_layout
@@ -108,10 +152,10 @@ Introduction
 There is a lot of (Object) Pascal code available on the web, usually for
  Turbo Pascal and Delphi.
  Since Free Pascal supports both these dialects, most code should in theory
- be recompilable with FPC.
- (and to a lesser degree with other compilers with the appropiate Borland
- mode) The main showstopper problems are a too big dependancy on dos and
- 16-bit functionality (TP/BP), or on the Visual part of the VCL (Delphi).
+ be recompilable with FPC (and to a lesser degree with other compilers with
+ the appropiate Borland mode).
+ The main showstopper problems are a too big dependancy on dos and 16-bit
+ functionality (TP/BP), or on the Visual part of the VCL (Delphi ).
  A lot of Delphi code is also too Windows dependant for use on other platforms,
  but this (the Windows dependance) is no real long term problem for FPC/win32.
  There can be a few small problems though because not all Delphi winapi
@@ -135,8 +179,8 @@ In early 2000, I started to test FPC with Delphi code, mostly to test the
  new Delphi compability mode of FPC.
  Quite soon, it turned out that the Delphi compability of the 1.0.x compiler
  series was too limited, so I switched to the development series (1.1.x/1.9.x,
- which will become 2.0.x in the future).
- Since then I have kept on getting Delphi packages to work with FPC, to
+ which would become 2.0.x in the future).
+ Since then I have kept on testing Delphi packages to work with FPC, to
  test new features, libraries etc.
  The packages that were regularly tested for FPC compability are:
 \end_layout
@@ -172,6 +216,18 @@ Jedi SDL headers (Works pretty well)
 
 \begin_layout Enumerate
 Jedi Math
+\end_layout
+
+\begin_layout Enumerate
+(2010+) ZEOS7
+\end_layout
+
+\begin_layout Enumerate
+(2007+) Indy10
+\end_layout
+
+\begin_layout Enumerate
+dcpcrypt
 \end_layout
 
 \begin_layout Standard
@@ -1715,9 +1771,9 @@ The problem with Kylix is that it is more designed to make recompiling (Win32)
 \end_layout
 
 \begin_layout Standard
-Unit libc is a direct translation of the libc headers for modern Linux/i386
- installations, and thus a lot of unit libc functionality is Linux only,
- or reveals linux specific unneeded details.
+Unit libc is a direct translation of the libc headers for (meanwhile ancient)
+ Linux/i386 installations, and thus a lot of unit libc functionality is
+ Linux only, or reveals linux specific unneeded details.
  There is no attempt at cleaning up the interface presented to the end user.
  While in theory one could try to emulate certain linux specific calls,
  the libc-interface was considered too inheritly linux specific and unclean
@@ -1725,7 +1781,18 @@ Unit libc is a direct translation of the libc headers for modern Linux/i386
 \emph on
 legacy
 \emph default
- unit on Linux/i386.
+ unit on Linux/i386
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Some of the more used features (like stat64) were i386 only, so e.g.
+ 64-bit Linux code would break anyway.
+\end_layout
+
+\end_inset
+
+.
  This was partially also to avoid the libc unit becoming Kylix uncompatible
  in many very small ways.
  Alternatively the old FPC Unix rtl was modernized into something better
@@ -2090,6 +2157,32 @@ Unix
 typing The API of Unix and unixlikes is different from Windows.
  The standard for the api (POSIX) is a set of minimal requirements, not
  a tightly fitting
+\end_layout
+
+\begin_layout Description
+Handle
+\begin_inset space ~
+\end_inset
+
+types Windows uses an unified handle type, everything is THandle, and specific
+ handle types like 
+\begin_inset Quotes eld
+\end_inset
+
+HModule
+\begin_inset Quotes erd
+\end_inset
+
+ are aliases for THandle.
+ However, other platforms typically don't follow this design, and most handle-ty
+pes are for one specific purpose only.
+ Avoid using Windows handle types in generic code (another bad habit encouraged
+ by Kylix), because it introduces hidden assumptions.
+ Define proper aliases for it in some abstracting unit and use those.
+ Failing to do so can lead to hard to trace bugs, specially on 64-bit non
+ windows, where some handles might scale with pointer size, and some not.
+ As a bonus, you need to import unit windows much less often, which further
+ saves on ifdefs
 \end_layout
 
 \begin_layout Subsection
