@@ -104,21 +104,24 @@ Borland
 \begin_inset Quotes eld
 \end_inset
 
-Borlanbd
+Borland
 \begin_inset Quotes erd
 \end_inset
 
  I mean Borland/Inprise/Devco/Codegear/Embarcadero, since I (still) use
- products that were release under all these names.
+ products that were released under all these names.
 \end_layout
 
 \begin_layout Standard
 A lot has happened since the original version.
  Kylix can be considered dead for all practical purposes nowadays, but with
  XE2 Borland ventures again into multi-platform land.
- Tiburon will have a gigantic impact on anything that handles string.
+ Delphi/Unicode will have a gigantic impact on anything that handles strings.
  The new 2.6.x series is much more Delphi compatible, and the 2.7.x series (trunk)
  is absorbing Unicode Delphi features.
+ Lazarus has greatly progressed in the VCL compatibility.
+ So it was time to update the FAQ, and prepare it for the host of Delphi/Unicode
+ related issues that are coming.
  
 \end_layout
 
@@ -133,6 +136,10 @@ v0.02 Updated in 2008
 \begin_deeper
 \begin_layout Description
 v0.02b minor updates in September 2009
+\end_layout
+
+\begin_layout Description
+v0.02c minor updates November 2009
 \end_layout
 
 \end_deeper
@@ -219,6 +226,11 @@ Jedi Math
 \end_layout
 
 \begin_layout Enumerate
+Bloodshed Dev Pascal and the components that come with it (Toolbar, lazarus
+ compatibility testing)
+\end_layout
+
+\begin_layout Enumerate
 (2010+) ZEOS7
 \end_layout
 
@@ -294,6 +306,10 @@ a control
 A generic preprocessor design.
 \end_layout
 
+\begin_layout Subsection
+Introduction and definition of the problem.
+\end_layout
+
 \begin_layout Standard
 As said in the previous paragraph, one of the primary problems of existing
  Delphi packages
@@ -308,11 +324,21 @@ Some of the above mentioned packages already changed their ways, when they
 \end_inset
 
  is that there usually is no system with respect to preprocessor defines.
+ Quite often reverse engineering Delphi version defines is harder than the
+ actual porting itself, specially since recently FPC/Lazarus are more compatible
+ to recent Delphi versions than older Delphi versions themselves.
 \end_layout
 
 \begin_layout Standard
 Nearly each unit has some preprocessor defines and compiler switches in
  the first few lines of the unit.
+ Adding FPC often requires some generally minor changes, but because it
+ changes the versioning matrix, it often totally breaks down the limited
+ ad-hoc versioning system that is already exists
+\end_layout
+
+\begin_layout Standard
+.
  FPC needs a few modifications here to put the FPC compiler in Delphi mode
  ( {$mode Delphi} ), if it is to compile delphi code without additional
  commandline arguments.
@@ -350,6 +376,7 @@ that since the first version of this faq several Jedi projects have adapted
  Examining e.g.
  the Jedi JCL source is a good way to get an idea how to implement this
  in practice.
+ Unfortunately, they have not kept up with this after Kylix' demise.
 \end_layout
 
 \begin_layout Subsection
@@ -1155,6 +1182,188 @@ Combining these two could be a step forward (use FPC macros , but expand
  them by external preprocessor for non FPC compilers).
  Since FPC runs on the most targets by far, this means the preprocessor
  only has to run on linux/i386 and win32.
+\end_layout
+
+\begin_layout Section
+Common problem spots wrt Delphi (and FPC) versioning
+\end_layout
+
+\begin_layout Standard
+This chapter is more or less a list of issues that I encountered.
+ The descriptions are a work-in-progress, see them as a hint to keep an
+ eye on this, but don't take them as gospel.
+\end_layout
+
+\begin_layout Subsubsection
+Loading
+\begin_inset space ~
+\end_inset
+
+Resources 
+\end_layout
+
+\begin_layout Standard
+D4 introduced resourcestrings, but some packages still use gettext for their
+ localisation.
+ createresfmt vs createfmt, loadresstring etc.
+\end_layout
+
+\begin_layout Standard
+FPC has some mutations here too, that are also FPC version dependant (FPC
+ 2.4 improves on resourcehandling, how much is not yet clear) Having a bit
+ of abstraction around loading resourcestrings can be beneficial.
+\end_layout
+
+\begin_layout Subsubsection
+Unit consts
+\end_layout
+
+\begin_layout Standard
+Later Delphi versions introduce this unit for resourcestrings.
+ Free Pascal follows the idea, but not the implementation, due to its (portabili
+ty related) layering of the RTL and FCL.
+ It has a 
+\begin_inset Quotes eld
+\end_inset
+
+consts
+\begin_inset Quotes erd
+\end_inset
+
+ unit for the system unit (sysconst) and one for the rest of the RTL (rtlconsts).
+ Note that sysconst misses a 
+\begin_inset Quotes eld
+\end_inset
+
+s
+\begin_inset Quotes erd
+\end_inset
+
+, while rtlconsts does have a trailing s.
+\end_layout
+
+\begin_layout Subsubsection
+Unit variants,dateutils,strutils
+\end_layout
+
+\begin_layout Standard
+D6+ and FPC 2+ have unit variants.
+ Some routines might have moved, and FPC sometimes has additional overloaded
+ routines in these units that might result in confusing error messages if
+ the original code relied on conversions.
+\end_layout
+
+\begin_layout Subsubsection
+return value of getparentform
+\end_layout
+
+\begin_layout Standard
+Lazarus is closer to D3 here, that returns a TCustomForm, while more recent
+ versions seem to return tform ?
+\end_layout
+
+\begin_layout Subsubsection
+*win32* identifiers (raiselastwin32 etc)
+\end_layout
+
+\begin_layout Standard
+With the introduction of Kylix in D6+, many identifiers with 
+\begin_inset Quotes eld
+\end_inset
+
+win32
+\begin_inset Quotes erd
+\end_inset
+
+ in it were substituted/overloaded with identifiers with 
+\begin_inset Quotes eld
+\end_inset
+
+win32
+\begin_inset Quotes erd
+\end_inset
+
+ in them.
+\end_layout
+
+\begin_layout Standard
+Lazarus/FPC in general directly implemented the D6 compatibility, and some
+ of the legacy 
+\begin_inset Quotes eld
+\end_inset
+
+win32
+\begin_inset Quotes erd
+\end_inset
+
+ identifiers were not implemented.
+ This also goes for resourcestring names of RTL errors in unit consts.
+\end_layout
+
+\begin_layout Subsubsection
+MDI
+\end_layout
+
+\begin_layout Standard
+MDI has been deprecated by Microsoft, and this has pushed back MDI as legacy
+ on the Lazarus agenda.
+ Currently it is afaik not implemented.
+ I use 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+supports_MDI
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+ for this
+\end_layout
+
+\begin_layout Subsubsection
+Win32 specific TControl properties (parent) ctl3d, OEMConvert
+\end_layout
+
+\begin_layout Standard
+A lot of these properties are just hacks to allow access to 
+\begin_inset Quotes eld
+\end_inset
+
+newer
+\begin_inset Quotes erd
+\end_inset
+
+ win32 properties in subsequent Delphi versions.
+ Quite often they are reexported when people directly from TCustom* controls,
+ rather than actively used.
+ I suggest using 
+\series bold
+have_property_xxx 
+\series default
+ifdefs around them.
+\end_layout
+
+\begin_layout Standard
+Be warned.
+ Some properties not listed here might be accepted, but do nothing!
+\end_layout
+
+\begin_layout Description
+OEMConvert Lazarus is probably moving directly towards Tiburon unicode like
+ support, so this will probably never supported.
+ This goes for many 2k/XP far-Asian functionality too.
+\end_layout
+
+\begin_layout Description
+Ctl3d,Parentctl3d XP (win98?) like 3D button effect.
+ Unportable and thus not supported.
+\end_layout
+
+\begin_layout Description
+IMEMode,IMENAME Afaik these are already D3 only?
 \end_layout
 
 \begin_layout Section
