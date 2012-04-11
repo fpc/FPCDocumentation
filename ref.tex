@@ -4115,8 +4115,6 @@ end;
 \end{verbatim}
 As can be seen, the GUID identifying the interface is optional.
 
-
-
 \section{Interface identification: A GUID}
 An interface can be identified by a GUID. This is a 128-bit number, which is
 represented in a text representation (a string literal):
@@ -4143,6 +4141,14 @@ TGuid = packed record
            D3 : word;
            D4 : array[0..7] of byte;
           );
+      3 : ( { uuid fields according to RFC4122 }
+           time_low : dword;
+           time_mid : word; 
+           time_hi_and_version : word;
+           clock_seq_hi_and_reserved : byte;
+           clock_seq_low : byte; 
+           node : array[0..5] of byte; 
+           );
 end;
 \end{verbatim}
 A constant of type TGUID can be specified using a string literal:
@@ -9129,7 +9135,8 @@ A \var{Try..Finally} statement has the following form:
 \input{syntax/finally.syn}
 If no exception occurs inside the \var{statement List}, then the program
 runs as if the \var{Try}, \var{Finally} and \var{End} keywords were not
-present.
+present, unless an \var{exit} command is given: an exit command first 
+executes all statements in the finally blocks before actually exiting.
 
 If, however, an exception occurs, the program flow is immediatly
 transferred from the point where the excepion was raised to the first
