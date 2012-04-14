@@ -79,29 +79,38 @@ Note: SQLCODE is a deprecated SQL standard; its successor is SQLSTATE.
       <!-- class Visibility: default -->
       <element name="TIBConnection">
         <short>
-          <var>TIBConnection</var>: Firebird/Interbase specific <link id="TSQLConnection"/>
+          <var>TIBConnection</var>: Firebird/Interbase specific   
+          
+          
+          <link id="TSQLConnection"/>
         </short>
         <descr>
           <p>
             <var>TIBConnection</var> is a descendant of 
+            
+            
             <link id="TSQLConnection"/> and represents a connection to a Firebird/Interbase server.</p>
           <p>It is designed to work with Interbase 6, Firebird 1 and newer database servers.</p>
           <p>
             <var>TIBConnection</var> by default requires the Firebird/Interbase client library (e.g. gds32.dll, libfbclient.so, fbclient.dll,fbembed.dll) and its dependencies to be installed on the system. The bitness between library and your application must match: e.g. use 32 bit fbclient when developing a 32 bit application on 64 bit Linux.</p>
           <p>On Windows, in accordance with the regular Windows way of loading DLLs, the library can also be in the executable directory. In fact, this directory is searched first, and might be a good option for distributing software to end users as it eliminates problems with incompatible DLL versions.</p>
           <p>
-<var>TIBConnection</var> is based on FPC Interbase/Firebird code (ibase60.inc) that tries to load the client library. If you want to use Firebird embedded, make sure the embedded library is searched/loaded first. There are several ways to do this:
+            <var>TIBConnection</var> is based on FPC Interbase/Firebird code (ibase60.inc) that tries to load the client library. If you want to use Firebird embedded, make sure the embedded library is searched/loaded first. There are several ways to do this:
 </p>
             <ul>
               <li>Include <var>ibase60</var> in your uses clause, set <var>UseEmbeddedFirebird</var> to true</li>
               <li>On Windows, with FPC newer than 2.5.1, put fbembed.dll in your application directory</li>
               <li>On Windows, put the fbembed.dll in your application directory and rename it to fbclient.dll</li>
             </ul>
-            <p>
+<p>
 Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. See 
+  
+            
+            
             <url href="http://mantis.freepascal.org/view.php?id=17664">FPC bug 17664</url> for more details.</p>
           <p>An indication of which DLLs need to be installed on Windows (Firebird 2.5, differs between
-            versions:</p>
+          versions:
+</p>
 <ul>
               <li>fbclient.dll (or fbembed.dll)</li>
               <li>firebird.msg</li>
@@ -150,6 +159,8 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
         <descr>
           <p>
             <var>DropDB</var> instructs the Interbase/Firebird database server to delete the database that is specified in the  
+            
+            
             <link id="TIBConnection"/>.</p>
           <p>In a client/server environment, the <var>TIBConnection</var> code will connect to the database server before telling it to drop the database. Therefore make sure the connection properties are already correctly set, e.g. <link id="HostName"/>, <link id="UserName"/>, <link id="Password"/>.</p>
           <p>When using Firebird embedded, make sure the embedded connection library is loaded, the <link id="HostName"/> property is empty, and set the <link id="UserName"/> to e.g. 'SYSDBA'. See <printshort id="TIBConnection"/> for more details on loading the embedded library.</p>
@@ -198,9 +209,15 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
           <p>Documentation for Firebird 2.0 and up indicates that on Windows, you can also connect to a server on local machine using the local transport protocol, in which case  <var>HostName</var> must be empty.</p>
           <p>If using an embedded Firebird database, the name must be empty. Please see <printshort id="TIBConnection"/> for details on loading the right library</p>
           <p>Examples:</p>
+          <p>
             <code>MyConnection.HostName:='firebird.example.com'; //Connect via TCP/IP using hostname</code>
+          </p>
+          <p>
             <code>MyConnection.HostName:='127.0.0.1/3000'; //Connect to port 3000 on localhost via TCP/IP</code>
+          </p>
+          <p>
             <code>MyConnection.HostName:=''; //Connect to embedded server or perhaps using local transport protocol on Windows</code>
+          </p>
           <p>Please see your database documentation for details.</p>
         </descr>
         <seealso>
@@ -220,7 +237,8 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
       <!-- property Visibility: published -->
       <element name="TIBConnection.Dialect">
         <short>Database dialect</short>
-        <descr><p>Firebird/Interbase servers since Interbase 6 have a dialect setting for backwards compatibility. It can be 1, 2 or 3, the default is
+        <descr>
+        <p>Firebird/Interbase servers since Interbase 6 have a dialect setting for backwards compatibility. It can be 1, 2 or 3, the default is
         3.</p>
 <p>Note: the dialect for new Interbase/Firebird databases is 3; dialects 1 and 2 are only used in legacy environments. In practice, you can ignore this setting for newly created databases.</p>
         </descr>
@@ -245,9 +263,18 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
       <element name="TIBConnection.Params">
         <short>Firebird/Interbase specific parameters</short>
         <descr>
-<p>        <var>Params</var> is a 
-          <link id="TStringList"/> of name=value combinations that set database-specific
-          parameters.</p>
+          <p>
+          <var>Params</var> is a 
+
+          
+          
+          <link id="TStringList"/> of name=value combinations that set database-specific parameters.
+
+
+          
+          
+          
+</p>
           <p>The following parameter is supported:</p>
           <ul>
             <li>
