@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fpdoc-descriptions>
+  <package name="fcl-db">
+    <!--
+  ====================================================================
+    mssqlconn
+  ====================================================================
+-->
+    <module name="mssqlconn">
+      <short>Microsoft SQL Server and Sybase ASE database connectors</short>
+      <descr>Connector to Microsoft SQL Server databases. Needs FreeTDS dblib library.
+</descr>
+      <!--
+  ********************************************************************
+    #fcl-db.mssqlconn.TMSSQLConnection
+  ********************************************************************
+-->
+      <!-- class Visibility: default -->
+      <element name="TMSSQLConnection">
+        <short>Microsoft SQL Server database connector</short>
+        <descr>
+          <p>Connector to Microsoft SQL Server databases.</p>
+          <p>Requirements:</p>
+          <p>MS SQL Server Client Library is required (ntwdblib.dll)</p>
+          <p>- or -</p>
+          <p>FreeTDS (dblib.dll)</p>
+          <p>Older FreeTDS libraries may require freetds.conf: (http://www.freetds.org/userguide/freetdsconf.htm)</p>
+          <p>[global]</p>
+          <p>tds version = 7.1</p>
+          <p>client charset = UTF-8</p>
+          <p>port = 1433 or instance = ...  (optional)</p>
+          <p>dump file = freetds.log        (optional)</p>
+          <p>text size = 2147483647         (optional)</p>
+          <p>Known problems:</p>
+          <p>- CHAR/VARCHAR data truncated to column length when encoding to UTF-8 (use NCHAR/NVARCHAR instead or CAST char/varchar to nchar/nvarchar)</p>
+          <p>- Multiple result sets (MARS) are not supported (for example when SP returns more than 1 result set only 1st is processed)</p>
+          <p>- DB-Library error 10038 "Results Pending": set TSQLQuery.PacketRecords=-1 to fetch all pending rows</p>
+          <p>- BLOB data (IMAGE/TEXT columns) larger than 16MB are truncated to 16MB: (set TMSSQLConnection.Params: 'TEXTSIZE=2147483647' or execute 'SET TEXTSIZE 2147483647')</p>
+        </descr>
+        <errors/>
+        <seealso/>
+      </element>
+      <!-- property Visibility: published -->
+      <element name="TMSSQLConnection.Password">
+        <descr>
+          <var>TMSSQLConnection</var> specific: if you don't enter a UserName and Password, the connector will try to use Trusted Authentication/SSPI (on Windows only).</descr>
+      </element>
+      <!-- property Visibility: published -->
+      <element name="TMSSQLConnection.UserName">
+        <descr>
+          <var>TMSSQLConnection</var> specific: if you don't enter a UserName and Password, the connector will try to use Trusted Authentication/SSPI (on Windows only).</descr>
+      </element>
+      <!-- property Visibility: published -->
+      <element name="TMSSQLConnection.CharSet">
+        <descr>
+          <p>Character Set - if you use Microsoft DB-Lib and set to 'UTF-8' then char/varchar fields will be UTF8Encoded/Decoded.</p>
+          <p>If you use FreeTDS DB-Lib, then you must compile with iconv support (requires libiconv2.dll) or cast char/varchar to nchar/nvarchar in SELECTs.</p>
+        </descr>
+      </element>
+      <!-- property Visibility: published -->
+      <element name="TMSSQLConnection.HostName">
+        <short>Host and optionally port or instance</short>
+        <descr>
+          <p>
+            <var>TMSSQLConnection</var> specific: you can specify an instance or a port after the host name itself.</p>
+          <p>Instance should be specified with a backslash e.g.: 127.0.0.0.1\SQLEXPRESS. Port should be specified with a colon, e.g. BIGBADSERVER:1433</p>
+          <p>See <url href="http://www.freetds.org/userguide/portoverride.htm"/>
+          </p>
+        </descr>
+      </element>
+      <!-- property Visibility: published -->
+      <element name="TMSSQLConnection.DatabaseName">
+        <descr>
+          <var>TMSSQLConnection</var> specific: the 
+          <var>master</var> database should always exist on a server.</descr>
+      </element>
+      <!-- property Visibility: published -->
+      <element name="TMSSQLConnection.Params">
+        <descr>
+          <p>
+            <var>TMSSQLConnection</var> specific:</p>
+          <p>set "AutoCommit=true" if you don't want to explicitly commit/rollback transactions</p>
+          <p>set "TextSize=16777216 - to set maximum size of blob/text/image data returned. Otherwise, these large fields may be cut off when retrieving/setting data.</p>
+        </descr>
+      </element>
+      <!--
+  ********************************************************************
+    #fcl-db.mssqlconn.TSybaseConnection
+  ********************************************************************
+-->
+      <!-- class Visibility: default -->
+      <element name="TSybaseConnection">
+        <short>Sybase ASE database connector</short>
+        <descr>
+          <p>Connector to Sybase Adaptive Server Enterprise (ASE) database servers.</p>
+          <p>Requirements:</p>
+          <p>FreeTDS (dblib.dll)</p>
+          <p>Older FreeTDS libraries may require freetds.conf: (http://www.freetds.org/userguide/freetdsconf.htm)</p>
+          <p>[global]</p>
+          <p>tds version = 7.1</p>
+          <p>client charset = UTF-8</p>
+          <p>port = 5000  (optional)</p>
+          <p>dump file = freetds.log        (optional)</p>
+          <p>text size = 2147483647         (optional)</p>
+        </descr>
+      </element>
+      <!-- property Visibility: published -->
+      <element name="TSybaseConnection.HostName">
+        <short>Host and optionally port</short>
+        <descr>
+          <p>
+            <var>TSybaseConnection</var> specific: you can specify a port after the host name itself.</p>
+          <p>Port should be specified with a colon, e.g. BIGBADSERVER:5000</p>
+          <p>See <url href="http://www.freetds.org/userguide/portoverride.htm"/>
+          </p>
+        </descr>
+      </element>
+      <!--
+  ********************************************************************
+    #fcl-db.mssqlconn.EMSSQLDatabaseError
+  ********************************************************************
+-->
+      <!-- class Visibility: default -->
+      <element name="EMSSQLDatabaseError">
+        <short>Sybase/MS SQL Server specific error</short>
+        <descr/>
+        <errors/>
+        <seealso/>
+      </element>
+      <!-- variable Visibility: public -->
+      <element name="EMSSQLDatabaseError.DBErrorCode">
+        <short>Sybase/MS SQL Server error code</short>
+        <descr>Error code as generated by the database server.
+</descr>
+        <seealso/>
+      </element>
+    </module>
+    <!-- mssqlconn -->
+  </package>
+  <!-- fcl-db -->
+</fpdoc-descriptions>
