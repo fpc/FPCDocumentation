@@ -232,6 +232,7 @@ Functions for file manipulation.
 <tr><td><link id="DiskFree"/></td><td>Free space on disk</td></tr>
 <tr><td><link id="DiskSize"/></td><td>Total size of disk</td></tr>
 <tr><td><link id="ExpandFileName"/></td><td>Create full file name</td></tr>
+<tr><td><link id="ExpandFileNameCase"/></td><td>Create full file name case insensitively</td></tr>
 <tr><td><link id="ExpandUNCFileName"/></td><td>Create full UNC file name</td></tr>
 <tr><td><link id="ExtractFileDir"/></td><td>Extract drive and directory part of filename</td></tr>
 <tr><td><link id="ExtractFileDrive"/></td><td>Extract drive part of filename</td></tr>
@@ -1144,6 +1145,41 @@ system first.
 None.
 </errors>
 <seealso>
+<link id="ExpandFileNameCase"/>
+<link id="ExtractFileName"/>
+<link id="ExtractFilePath"/>
+<link id="ExtractFileDir"/>,
+<link id="ExtractFileDrive"/>
+<link id="ExtractFileExt"/>
+<link id="ExtractRelativePath"/>
+</seealso>
+<example file="sysutex/ex33"/>
+</element>
+
+<element name="ExpandFileNameCase">
+<short>Expand a filename entered as case insensitive to the full path as stored on the disk.</short>
+<descr>
+<p>
+On case insensitive platforms, <var>ExpandFileNameCase</var> behaves similarly
+to <link id="ExpandFileName"/> except for the fact that it returns the final part of the path with
+the same case of letters as found on the disk (if it exists - otherwise the case equals
+the one provided on input). On case sensitive platforms it also checks whether one or more full
+paths exist on disk which would correspond to the provided input if treated case insensitively
+and returns the first such match found and information whether the match is unique or not.
+</p>
+<p>
+Note that the behaviour is basically undefined if the input includes wildcards characters.
+Normally, wildcards in the last part of path provided on input are resolved to the first
+corresponding item found on the disk, but it is better not to rely on that and use other more
+suitable functions if working with wildcards like <link id="FindFirst"/>/<link
+id="FindNext"/>.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="ExpandFileName"/>
 <link id="ExtractFileName"/>
 <link id="ExtractFilePath"/>
 <link id="ExtractFileDir"/>,
@@ -1158,12 +1194,13 @@ None.
 <short>Expand a relative filename to an absolute UNC filename.</short>
 <descr>
 <var>ExpandUNCFileName</var> runs <link id="ExpandFileName"/> on <var>FileName</var>
-and then attempts to replace the driveletter by the name of a shared disk.
+and then attempts to replace the drive letter by the name of a shared disk.
 </descr>
 <errors>
 None.
 </errors>
 <seealso>
+<link id="ExpandFileName"/>
 <link id="ExtractFileName"/>
 <link id="ExtractFilePath"/>
 <link id="ExtractFileDir"/>,
