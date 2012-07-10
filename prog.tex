@@ -4477,39 +4477,26 @@ var Z1,Z2 : longint;cvar;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Compiling libraries
-%\subsection {Compiling libraries}
+\subsection {Compiling libraries}
+To create shared libraries one should use the \var{library} keyword in the
+main compilation file (the project file). 
+For more information on creating shared libraries, \seec{libraries}.
 
-%Once you have your (adapted) code, with exported and other functions,
-%you can compile your unit, and tell the compiler to make it into a library.
-%The compiler will simply compile your unit, and perform the necessary steps
-%to transform it into a \var{static} or \var{shared} (\var{dynamic}) library.
-%
-%You can do this as follows, for a dynamic library:
-%\begin{verbatim}
-%ppc386 -CD myunit
-%\end{verbatim}
-%On \unix systems, such as \linux, this will leave you with a file \file{libmyunit.so}. On \windows
-%and \ostwo, this will leave you with \file{myunit.dll}. An easier way to
-%create shared libraries is to use the \var{library} keyword. For more
-%information on creating shared libraries, \seec{libraries}.
-%
-%If you want a static library, you can do
-%\begin{verbatim}
-%ppc386 -CS myunit
-%\end{verbatim}
-%This will leave you with \file{libmyunit.a} and a file \file{myunit.ppu}.
-%The \file{myunit.ppu} is the unit file needed by the \fpc compiler.
-%
-%The resulting files are then libraries. To make static libraries, you need
-%the \file{ranlib} or \var{ar} program on your system. It is standard on most
-%\unix systems, and is provided with the \file{gcc} compiler under \dos.
-%For the dos distribution, a copy of ar is included in the file
-%\file{gnuutils.zip}.
-%
-%{\em Remark:} This command doesn't include anything but the current unit in
-%the library. Other units are left out, so if you use code from other units,
-%you must deploy them together with your library.
-
+The .o object files that the compiler writes when it compiles a unit, 
+are regular object files as they are produced by a C compiler. 
+They can be combined using the \var{ar} and \var{ranlib} tools into 
+a static library. However, for various reasons, this is a bad idea.
+\begin{itemize}
+\item The code will be full of references to compiler internal routines in
+the RTL. These routines are not present in a C library.
+\item The initialization sections will not be called by a C program.
+\item The thread vars will not be allocated (or initialized).
+\item Resource strings will not be initialized.
+\item Each library thus made will attempt to initialize the RTL. 
+\end{itemize}
+To remedy these (and other) problems requires intimate knowledge of the
+inner workings of the compiler and RTL, and it is therefor a bad idea to
+attempt the use of static libraries with Free Pascal.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % unit searching
