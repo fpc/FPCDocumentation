@@ -843,14 +843,16 @@ Here \var{XXX} can be one of the following:
 \item[FPCTARGETOS] Inserts the target OS name.
 \item[FPCVERSION] Current compiler version number.
 \item[FILE] Filename in which the directive is found.
-\item[LINE] Linenumer on which the directive is found.
+\item[LINE] Line number on which the directive is found.
+\item[LINENUM] Line number on which the directive is found. In this case,
+the result is an integer, not a string.
 \item[TIME] Current time.
 \end{description}
 If \var{XXX} is none of the above, then it is assumed to be the name of
 an environment variable. Its value will be fetched from the environment,
 if it exists, otherwise an empty string is inserted.
 As a result, this will generate a macro with the value of the \var{XXX}
-specifier, as if it were a string.
+specifier, as if it were a string (or, in the case of LINENUM, an integer).  
 
 For example, the following program
 \begin{verbatim}
@@ -4460,38 +4462,38 @@ var Z1,Z2 : longint;cvar;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Compiling libraries
-\subsection {Compiling libraries}
+%\subsection {Compiling libraries}
 
-Once you have your (adapted) code, with exported and other functions,
-you can compile your unit, and tell the compiler to make it into a library.
-The compiler will simply compile your unit, and perform the necessary steps
-to transform it into a \var{static} or \var{shared} (\var{dynamic}) library.
-
-You can do this as follows, for a dynamic library:
-\begin{verbatim}
-ppc386 -CD myunit
-\end{verbatim}
-On \unix systems, such as \linux, this will leave you with a file \file{libmyunit.so}. On \windows
-and \ostwo, this will leave you with \file{myunit.dll}. An easier way to
-create shared libraries is to use the \var{library} keyword. For more
-information on creating shared libraries, \seec{libraries}.
-
-If you want a static library, you can do
-\begin{verbatim}
-ppc386 -CS myunit
-\end{verbatim}
-This will leave you with \file{libmyunit.a} and a file \file{myunit.ppu}.
-The \file{myunit.ppu} is the unit file needed by the \fpc compiler.
-
-The resulting files are then libraries. To make static libraries, you need
-the \file{ranlib} or \var{ar} program on your system. It is standard on most
-\unix systems, and is provided with the \file{gcc} compiler under \dos.
-For the dos distribution, a copy of ar is included in the file
-\file{gnuutils.zip}.
-
-{\em Remark:} This command doesn't include anything but the current unit in
-the library. Other units are left out, so if you use code from other units,
-you must deploy them together with your library.
+%Once you have your (adapted) code, with exported and other functions,
+%you can compile your unit, and tell the compiler to make it into a library.
+%The compiler will simply compile your unit, and perform the necessary steps
+%to transform it into a \var{static} or \var{shared} (\var{dynamic}) library.
+%
+%You can do this as follows, for a dynamic library:
+%\begin{verbatim}
+%ppc386 -CD myunit
+%\end{verbatim}
+%On \unix systems, such as \linux, this will leave you with a file \file{libmyunit.so}. On \windows
+%and \ostwo, this will leave you with \file{myunit.dll}. An easier way to
+%create shared libraries is to use the \var{library} keyword. For more
+%information on creating shared libraries, \seec{libraries}.
+%
+%If you want a static library, you can do
+%\begin{verbatim}
+%ppc386 -CS myunit
+%\end{verbatim}
+%This will leave you with \file{libmyunit.a} and a file \file{myunit.ppu}.
+%The \file{myunit.ppu} is the unit file needed by the \fpc compiler.
+%
+%The resulting files are then libraries. To make static libraries, you need
+%the \file{ranlib} or \var{ar} program on your system. It is standard on most
+%\unix systems, and is provided with the \file{gcc} compiler under \dos.
+%For the dos distribution, a copy of ar is included in the file
+%\file{gnuutils.zip}.
+%
+%{\em Remark:} This command doesn't include anything but the current unit in
+%the library. Other units are left out, so if you use code from other units,
+%you must deploy them together with your library.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
