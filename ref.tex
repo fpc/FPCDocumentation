@@ -8675,6 +8675,54 @@ end;
 Note that the order of the real and complex type in the two comparisions
 is reversed.
 
+\section{In operator}
+As of version 2.6 of Free pascal, the \var{In} operator can be overloaded as well.
+The first argument of the in operator must be the operand on the left of the
+\var{in} keyword.
+The following overloads the in operator for records:
+\begin{verbatim}
+
+{$mode objfpc}{$H+}
+
+type
+  TMyRec = record A: Integer end;
+
+operator in (const A: Integer; const B: TMyRec): boolean;
+begin
+  Result := A = B.A;
+end;
+
+var
+  R: TMyRec;
+begin
+  R.A := 10;
+  Writeln(1 in R); // false
+  Writeln(10 in R); // true
+end.
+\end{verbatim}
+The \var{in} operator can also be overloaded for other types than ordinal
+types, as in the following example:
+\begin{verbatim}
+{$mode objfpc}{$H+}
+
+type
+  TMyRec = record A: Integer end;
+
+operator in (const A: TMyRec; const B: TMyRec): boolean;
+begin
+  Result := A.A = B.A;
+end;
+
+var 
+  S,R: TMyRec;
+begin
+  R.A := 10;
+  S.A:=1;
+  Writeln(S in R); // false
+  Writeln(R in R); // true
+end.
+\end{verbatim}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Programs, Units, Blocks
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
