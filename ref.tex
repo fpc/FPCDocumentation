@@ -2281,6 +2281,104 @@ Because the \var{TOneArgCcall} type is a procedure that uses the cdecl
 calling convention.
 \end{remark}
 
+In case the \var{is nested} modified is added, then the procedural variable
+can be used with nested procedures. This requires that the sources be
+compiled in macpas or ISO mode, or that the \var{nestedprocvars} modeswitch
+be activated:
+\begin{verbatim}
+{$modeswitch nestedprocvars}
+program tmaclocalprocparam3;
+
+type
+  tnestedprocvar = procedure is nested;
+
+var
+  tempp: tnestedprocvar;
+
+procedure p1( pp: tnestedprocvar);
+begin
+  tempp:=pp;
+  tempp
+end;
+
+procedure p2( pp: tnestedprocvar);
+var
+  localpp: tnestedprocvar;
+begin
+  localpp:=pp;
+  p1( localpp)
+end;
+
+procedure n;
+begin
+  writeln( 'calling through n')
+end;
+
+procedure q;
+
+var qi: longint;
+
+  procedure r;
+  begin
+    if qi = 1 then
+      writeln( 'success for r')
+    else
+      begin
+      writeln( 'fail');
+      halt( 1)
+    end
+  end;
+
+begin
+  qi:= 1;
+  p1( @r);
+  p2( @r);
+  p1( @n);
+  p2( @n);
+end;
+
+begin
+  q;
+end.
+\end{verbatim}
+
+In case one wishes to assign methods of a class to a variable of procedural
+type, the procedural type must be declared with the \var{of object}
+modifier.
+
+The two following examples are valid type declarations for method
+procedural variables (also known as event handlers because of their use in GUI design):
+\begin{verbatim}
+Type TOneArg = Procedure (Var X : integer) of object;
+     TNoArg = Function : Real; of object;
+var 
+  oproc : TOneArg;
+  ofunc : TNoArg;
+\end{verbatim}
+A method of the correct signature can be assigned to these functions. When
+called, \var{Self} will be pointing to the instance of the object that was
+used to assign the method procedure.
+
+The following object methods can be assigned to \var{oproc} and \var{ofunc}:
+\begin{verbatim}
+Type
+  TMyObject = Class(TObject)
+    Procedure DoX (Var X : integer);
+    Function DoY: Real; 
+  end;
+
+Var
+  M : TMyObject;
+
+begin
+  oproc:=@M.DoX;
+  ofunc:=@M.DOY;
+end;
+\end{verbatim}
+When calling \var{oproc} and \var{ofunc}, \var{Self} will equal \var{M}.
+
+This mechanism is sometimes called \var{Delegation}.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Variant types
 \section{Variant types}
