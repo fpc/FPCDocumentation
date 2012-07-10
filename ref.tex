@@ -8376,9 +8376,9 @@ some unexpected results. This will be indicated.
 \index{operators}
 To define the action of an operator is much like defining a function:
 \input{syntax/operator.syn}
-The parameter list for a comparision operator or an arithmetic operator
+The parameter list for a comparison operator or an arithmetic operator
 must always contain 2 parameters, with the exception of the unary minus,
-where only 1 parameters is needed. The result type of the comparision
+where only 1 parameters is needed. The result type of the comparison
 operator must be \var{Boolean}.
 
 \begin{remark}
@@ -8610,15 +8610,16 @@ is not always commutative. E.g. the multiplication of a \var{(n,m)} with a
 mutiplication of a \var{(m,n)} with a \var{(n,m)} matrix is a \var{(m,m)}
 matrix, which needn't be the same in all cases.
 
-\section{Comparision operator}
+\section{Comparison operator}
 \index{Operators!Comparison}
-The comparision operator can be overloaded to compare two different types
+The comparison operator can be overloaded to compare two different types
 or to compare two equal types that are not basic types. The result type of
-a comparision operator is always a boolean.
+a comparison operator is always a boolean.
 
-The comparision operators that can be overloaded are:
+The comparison operators that can be overloaded are:
 \begin{description}
 \item[equal to] (=) To determine if two variables are equal.
+\item[unequal to] ($<>$) To determine if two variables are different.
 \item[less than] ($<$) To determine if one variable is less than another.
 \item[greater than] ($>$) To determine if one variable is greater than another.
 \item[greater than or equal to] ($>=$) To determine if one variable is greater than
@@ -8626,17 +8627,19 @@ or equal to another.
 \item[less than or equal to] ($<=$) To determine if one variable is greater
 than or equal to another.
 \end{description}
-There is no separate operator for {\em unequal to} ($<>$). To evaluate a
-statement that contains the {\em unequal to} operator, the compiler uses the
-{\em equal to} operator (=), and negates the result.
 
+If there is no separate operator for {\em unequal to} ($<>$), then, to evaluate a
+statement that contains the {\em unequal to} operator, the compiler uses the
+{\em equal to} operator (=), and negates the result. The opposite is not
+true: if no "equal to" but an "unequal to" operator exists, the compiler
+will not use it to evaluate an expression containing the equal (=) operator. 
 
 As an example, the following operator allows to compare two complex
 numbers:
 \begin{verbatim}
 operator = (z1, z2 : complex) b : boolean;
 \end{verbatim}
-the above definition allows comparisions of the following form:
+the above definition allows comparisons of the following form:
 \begin{verbatim}
 Var
   C1,C2 : Complex;
@@ -8647,10 +8650,10 @@ begin
 end;
 \end{verbatim}
 
-The comparision operator definition needs 2 parameters, with the types that
+The comparison operator definition needs 2 parameters, with the types that
 the operator is meant to compare. Here also, the compiler doesn't apply
 commutativity: if the two types are different, then it is necessary to
-define 2 comparision operators.
+define 2 comparison operators.
 
 In the case of complex numbers, it is, for instance necessary to define
 2 comparsions: one with the complex type first, and one with the real type
@@ -8661,7 +8664,7 @@ Given the definitions
 operator = (z1 : complex;r : real) b : boolean;
 operator = (r : real; z1 : complex) b : boolean;
 \end{verbatim}
-the following two comparisions are possible:
+the following two comparisons are possible:
 \begin{verbatim}
 Var
   R,S : Real;
@@ -8672,7 +8675,7 @@ begin
    Writeln ('Ok');
 end;
 \end{verbatim}
-Note that the order of the real and complex type in the two comparisions
+Note that the order of the real and complex type in the two comparisons
 is reversed.
 
 \section{In operator}
