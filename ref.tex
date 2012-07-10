@@ -9144,8 +9144,8 @@ The \var{raise} statement is as follows:
 \input{syntax/raise.syn}
 This statement will raise an exception. If it is specified, the exception
 instance must be an initialized instance of any class, which is the raise
-type. The exception address is optional. If it is not specified, the compiler
-will provide the address by itself. If the exception instance is omitted, 
+type. The exception address and frame are optional. If they are not specified, 
+the compilerwill provide the address by itself. If the exception instance is omitted, 
 then the current exception is re-raised. This construct can only be used 
 in an exception handling block (see further).
 
@@ -9179,6 +9179,39 @@ be of any type, and need not be a descendent of the \var{Exception} class.
 Of course, most code depends on the unwritten agreement that an exception
 class descends from \var{Exception}.
 \end{remark}
+
+The following code shows how to omit an error reporting routine from the
+stack shown in the exception handler:
+\begin{verbatim}
+{$mode objfpc}
+uses sysutils;
+
+procedure error(Const msg : string);
+
+begin
+  raise exception.create(Msg) at 
+    get_caller_addr(get_frame),
+    get_caller_frame(get_frame);
+end;
+
+procedure test2;
+
+begin
+  error('Error');
+end;
+
+begin
+  test2;
+end.
+\end{verbatim}
+The program, when run, will show a backtrace as follows:
+\begin{verbatim}
+An unhandled exception occurred at $00000000004002D3 :
+Exception : Error
+  $00000000004002D3 line 15 of testme.pp
+  $00000000004002E6 line 19 of testme.pp
+\end{verbatim}
+Line 15 is in procedure \var{Test2}, not in \var{Error}, which actually raised the exception.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The try...except statement
