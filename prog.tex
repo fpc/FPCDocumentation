@@ -362,7 +362,6 @@ end;
 \end{verbatim}
 
 \subsection{\var{\protect\$DEFINE} or \var{\protect\$DEFINEC} : Define a symbol}
-
 The directive
 \begin{verbatim}
 {$DEFINE name}
@@ -459,9 +458,16 @@ The compiler will continue to compile, but no code will be emitted.
 
 The \var{\$ERRORC} variant is supplied for Mac Pascal compatibility.
 
+\subsection{\var{\protect\$ENDREGION}: End of a collapsible region}
+This directive is parsed for Delphi compatibility but otherwise ignored. 
+In Delphi, it marks the end of a collapsible region in the IDE.
+
 \subsection{\var{\protect\$EXTENDEDSYM}: Ignored}
 This directive is parsed for Delphi compatibility but otherwise ignored. A
 warning will be displayed when this directive is encountered.
+
+\subsection{\var{\protect\$EXTERNALSYM}: Ignored}
+This directive is parsed for Delphi compatibility but otherwise ignored. 
 
 \subsection{\var{\protect\$F} : Far or near functions}
 This directive is recognized for compatibility with Turbo Pascal. Under the
@@ -755,6 +761,15 @@ See the \var{IOResult} function explanation in \refref for a
 detailed description of the possible errors that can occur when using
 input/output checking.
 
+\subsection{\var{\protect\$IEEEERRORS} : Enable IEEE error checking for constants }
+This boolean directive switches IEEE (floating point) error checking for constants on
+or off. It is the local equivalent of the global \var{-C3} command-line switch.
+
+The following turns on IEEE (floating point) error checking for constants:
+\begin{verbatim}
+{$IEEEERRORS ON}
+\end{verbatim}
+
 \subsection{\var{\protect\$I} or \var{\protect\$INCLUDE} : Include file }
 
 The \var{\{\$I filename\}} or \var{\{\$INCLUDE filename\}} directive
@@ -944,6 +959,10 @@ command line option. More than one of these options can be used, and
 they will be passed to the linker, in the order that they were specified on
 the command line, just before the names of the object files that must be
 linked.
+
+\subsection{\var{\protect\$LIBEXPORT} : Ignored}
+This directive is recognized for Darwin pascal compilers, but is otherwise
+ignored.
 
 \subsection{\var{\protect\$LINKFRAMEWORK} : Link to a framework}
 The \var{\{\$LINKFRAMEWORK name\}} will link to a framework named
@@ -1397,6 +1416,11 @@ when the call is compiled in \var{\{\$R+\}} mode.
 In Delphi, range checking is only switchable on a procedure level. In Free
 Pascal, the \var{\{\$R \}} directive can be used on an expression-level.
 
+\subsection{\var{\protect\$REGION} : Mark start of collapsible region}
+The \var{\$REGION} directive is recognised for Delphi compatibility only.
+In Delphi it serves to mark the beginning of a collapsible region in the
+IDE.
+
 \subsection{\var{\protect\$R} or \var{\protect\$RESOURCE} : Include resource}
 This directive includes a resource in the binary. The argument to this directive is the resource
 file to include in the binary:
@@ -1421,6 +1445,56 @@ This works only on the intel compiler, and MMX support must be on
 (\var{\{\$MMX +\}}) for this to have any effect. See the section on
 saturation support (\sees{SaturationSupport}) for more information
 on the effect of this directive.
+
+\subsection{\var{\protect\$SAFEFPUEXCEPTIONS} Wait when storing FPU values on Intel x86}
+This boolean directives controls how the compiler generates code to store
+FPU values. If set to ON, the compiler inserts a \var{FWAIT} opcode after
+the store of a floating point value, so any errors are reported at once.
+This slows down code, but makes sure that the errors are reported on the
+location where the instruction was executed.
+
+\subsection{\var{\protect\$SCOPEDENUMS} Control use of scoped enumeration types}
+The boolean \var{\$SCOPEDENUMS} directive controls how enumeration type values 
+are inserted in the symbol tables. In its default state (OFF) the
+enumeration values are inserted directly in the symbol table of the current
+scope. If the directive is set to \var{ON} then the values are inserted
+inside a scope with the name of the enumeration type.
+
+Practically this means that the following is the default behaviour:
+\begin{verbatim}
+{$SCOPEDENUMS OFF}
+Type
+  TMyEnum = (one,two,three);
+
+Var
+  A : TMyEnum;
+
+begin
+  A:=one;
+end.
+\end{verbatim}
+The value \var{one} can be referenced directly. The following will give an
+error:
+\begin{verbatim}
+begin
+  A:=TMyEnum.one;
+end.
+\end{verbatim}
+However, if the \var{SCOPEDENUMS} directive is set to \var{ON}, then the
+assignment must be made as follows:
+\begin{verbatim}
+{$SCOPEDENUMS ON}
+Type
+  TMyEnum = (one,two,three);
+
+Var
+  A : TMyEnum;
+
+begin
+  A:=TMyEnum.one;
+end.
+\end{verbatim}
+i.e. the value must be prefixed with the type name.
 
 \subsection{\var{\protect\$SETC} : Define and assign a value to a symbol}
 
@@ -1468,6 +1542,11 @@ will display an error message when the compiler encounters it.
 The compiler will immediatly stop the compilation process.
 
 It has the same effect as the \var{\{\$FATAL\}} directive.
+
+\subsection{\var{\protect\$STRINGCHECKS} : Ignored}
+This directive is recognized for Delphi compatibility, but is currently
+ignored. In Delphi, it controls the generation of code that checks the
+sanity of string variables and arguments.
 
 \subsection{\var{\protect\$T} or \var{\protect\$TYPEDADDRESS} : Typed address operator (@)}
 
@@ -1580,6 +1659,43 @@ before waiting for a keypress.
 This may interfere with automatic compilation processes. 
 It should be used only for compiler debugging purposes.
 \end{remark}
+
+\subsection{\var{\protect\$WARN} : Control emission of warnings}
+This directive allows to selectively turn on or off the emission of
+warnings. It takes the following form
+\begin{verbatim}
+{$WARN IDENTIFIER ON}
+{$WARN IDENTIFIER OFF}
+{$WARN IDENTIFIER +}
+{$WARN IDENTIFIER -}
+{$WARN IDENTIFIER ERROR}
+\end{verbatim}
+\var{ON} or \var{+} turns on emission of the warning. The \var{OFF} or
+\var{-} values suppress the warning.
+
+The \var{IDENTIFIER} is the name of a warning message. The following names
+are recognized:
+\begin{description}
+\item[CONSTRUCTING\_ABSTRACT] Constructing an instance of a class with abstract methods.
+\item[IMPLICIT\_VARIANTS] Implicit use of the \var{variants} unit.
+\item[NO\_RETVAL] Function result is not set.
+\item[SYMBOL\_DEPRECATED] Deprecated symbol.
+\item[SYMBOL\_EXPERIMENTAL] Experimental symbol
+\item[SYMBOL\_LIBRARY] Not used.
+\item[SYMBOL\_PLATFORM] Platform-dependent symbol. 
+\item[SYMBOL\_UNIMPLEMENTED] Unimplemented symbol.
+\item[UNIT\_DEPRECATED]  Deprecated unit.
+\item[UNIT\_EXPERIMENTAL] Experimental unit.
+\item[UNIT\_LIBRARY] 
+\item[UNIT\_PLATFORM] Platform dependent unit.
+\item[UNIT\_UNIMPLEMENTED] Unimplemented unit.
+\item[ZERO\_NIL\_COMPAT] Converting 0 to NIL
+\item[IMPLICIT\_STRING\_CAST] Implicit string type conversion
+\item[IMPLICIT\_STRING\_CAST\_LOSS] Implicit string typecast with potential data loss from "\$1" to "\$2"
+\item[EXPLICIT\_STRING\_CAST] Explicit string type conversion
+\item[EXPLICIT\_STRING\_CAST\_LOSS] Explicit string typecast with potential data loss from "\$1" to "\$2"
+\item[CVT\_NARROWING\_STRING\_LOST] Unicode constant cast with potential data loss
+\end{description}
 
 \subsection{\var{\protect\$WARNING} : Generate warning message}
 
@@ -1778,10 +1894,29 @@ For unix targets, floating point emulation (if required) is handled
 by the operating system, and by default it is off.
 \end{remark}
 
+\subsection{\var{\protect\$FRAMEWORKPATH} : Specify framework path.}
+This option serves to specify the framework search path on Darwin, 
+where the compiler looks for framework files. Used as
+\begin{verbatim}  
+{$FRAMEWORKPATH XXX}
+\end{verbatim}
+it will add \var{XXX} to the framework path. The value \var{XXX} can contain
+one or more paths, separated by semi-colons or colons.
+
 \subsection{\var{\protect\$G} : Generate 80286 code}
 
 This option is recognised for Turbo Pascal compatibility, but is ignored,
 since the compiler works only on 32-bit and 64-bit processors.
+
+\subsection{\var{\protect\$IMAGEBASE} : Specify DLL image base location.}
+This option can be used to set the base location for a DLL on windows-based
+systems. The directive needs a memory location as an option (use \$ to
+specify a hexadecimal value). It is the equivalent of the \var{-WB} command-line option.
+
+The following sets the base location to \var{0x00400000}
+\begin{verbatim}
+{$IMAGEBASE $00400000}
+\end{verbatim}
 
 \subsection{\var{\protect\$INCLUDEPATH} : Specify include path.}
 
@@ -1810,21 +1945,6 @@ places of the files may not be the same as on your machine; moreover, the
 directory structure may be different. In general it would be fair to say
 that you should avoid using {\em absolute} paths. Instead, one should use 
 {\em relative} paths only, as in the example above. 
-
-\subsection{\var{\protect\$INTERFACES} : Default interface type}
-This interface selects the style of interface that the compiler will use:
-\begin{verbatim}
-{$INTERFACES COM}
-\end{verbatim}
-selects COM compatible interfaces (descendent from \var{IUnknown} and
-reference counted), while
-\begin{verbatim}
-{$INTERFACES CORBA}
-\end{verbatim}
-selects CORBA compatible interfaces (no parent interface, and not reference
-counted).
-
-This switch is equivalent to the \var{-SI} command line option.
 
 \subsection{\var{\protect\$L} or \var{\protect\$LOCALSYMBOLS} : Local symbol information}
 
@@ -1857,6 +1977,17 @@ directory structure may be different. In general it would be fair to say
 that you should avoid using this directive. If you are not sure, it is better
 practice to use makefiles and makefile variables.
 
+\subsection{\var{\protect\$MAXSTACKSIZE} : Set maximum stack size}
+The \var{\{\$MINSTACKSIZE\}} sets the maximum stack size for an executable
+on Windows-based systems. It needs an argument, the size (in bytes) of the
+stack. The maximum value is \var{\$7FFFFFFF}, the minimum value is 2048 or the
+value of \var{\$MINSTACKSIZE} if it was specified.
+
+The following example sets the maximum stack size to\var{\$FFFFFF} bytes:
+\begin{verbatim}
+{$MINSTACKSIZE $FFFFFF}
+\end{verbatim}
+
 \subsection{\var{\protect\$M} or \var{\protect\$MEMORY} : Memory sizes}
 
 This switch can be used to set the heap and stacksize. Its format is as
@@ -1876,6 +2007,16 @@ limits on stack size using the OS'es \var{ulimit} system calls.
 
 The two numbers can be set on the command line using the \var{-Ch}
 and \var{-Cs} switches.
+
+\subsection{\var{\protect\$MINSTACKSIZE} : Set minimum stack size}
+The \var{\{\$MINSTACKSIZE\}} sets the minimum stack size for an executable
+on Windows-based systems. It needs an argument, the size (in bytes) of the
+stack. This must be a number larger than 1024.
+
+The following example sets the minimum stack size to 2048 bytes:
+\begin{verbatim}
+{$MINSTACKSIZE 2048}
+\end{verbatim}
 
 \subsection{\var{\protect\$MODE} : Set compiler compatibility mode}
 
