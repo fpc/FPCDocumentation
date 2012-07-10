@@ -6314,6 +6314,71 @@ begin
 end;
 \end{verbatim}
 
+The \var{as} and \var{is} operators also work on COM interfaces. They can be
+used to check whether an interface also implements another interface as in
+the following example:
+\begin{verbatim}
+{$mode objfpc}
+
+uses
+  SysUtils;
+
+type
+  IMyInterface1 = interface
+    ['{DD70E7BB-51E8-45C3-8CE8-5F5188E19255}']
+    procedure Bar;
+  end;
+
+  IMyInterface2 = interface
+    ['{7E5B86C4-4BC5-40E6-A0DF-D27DBF77BCA0}']
+    procedure Foo;
+  end;
+
+  TMyObject = class(TInterfacedObject, IMyInterface1, IMyInterface2)
+    procedure Bar;
+    procedure Foo;
+  end;
+
+procedure TMyObject.Bar;
+begin
+
+end;
+
+procedure TMyObject.Foo;
+begin
+
+end;
+
+var
+  i: IMyInterface1;
+begin
+  i := TMyObject.Create;
+  i.Bar;
+  Writeln(BoolToStr(i is IMyInterface2, True)); // prints true
+  Writeln(BoolToStr(i is IDispatch, True)); // prints false
+  (i as IMyInterface2).Foo;
+end.
+\end{verbatim}
+
+Additionally, the \var{is} operator can be used to check if a class
+implements an interface, and the var{as} operator can be used to typecast an
+interface back to the class:
+\begin{verbatim}
+{$mode objfpc}
+var
+  i: IMyInterface;
+begin
+  i := TMyObject.Create;
+  Writeln(BoolToStr(i is TMyObject,True)); // prints true
+  Writeln(BoolToStr(i is TObject,True)); // prints true
+  Writeln(BoolToStr(i is TAggregatedObject,True)); // prints false
+  (i as TMyObject).Foo;
+end.
+\end{verbatim}
+Although the interfaces must be COM interfaces, the typecast back to a 
+class will only work if the interface comes from an Object Pascal class. 
+It will not work on interfaces obtained from the system by COM.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Statements
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
