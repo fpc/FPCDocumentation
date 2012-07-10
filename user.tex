@@ -281,11 +281,11 @@ your path variable to contain the \verb|C:\PP\BIN| directory.
 Usually this is done in the \file{AUTOEXEC.BAT} file.
 It should look something like this :
 \begin{verbatim}
-  SET PATH=%PATH%;C:\PP\2.2\BIN\i386-DOS
+  SET PATH=%PATH%;C:\PP\2.6\BIN\i386-DOS
 \end{verbatim}
 for \dos or 
 \begin{verbatim}
-  SET PATH=%PATH%;C:\PP\2.2\BIN\i386-OS2
+  SET PATH=%PATH%;C:\PP\2.6\BIN\i386-OS2
 \end{verbatim}
 for \ostwo.
 (Again, assuming that you installed in the default location).
@@ -551,7 +551,8 @@ The compiler adds several paths to the unit search path:
 \begin{enumerate}
 \item The contents of the environment variable \var{XXUNITS}, where \var{XX}
 must be replaced with one of the supported targets: \var{GO32V2},
-\var{LINUX},\var{WIN32}, \var{OS2}, \var{BEOS}, \var{FREEBSD}, \var{NETBSD}.
+\var{LINUX},\var{WIN32}, \var{OS2}, \var{BEOS}, \var{FREEBSD}, \var{SUNOS},
+\var{DARWIN} (the actual list depends on the available targets).
 \item The standard unit directory. This directory is determined
 from the \var{FPCDIR} environment variable. If this variable is not set,
 then it is defaulted to the following:
@@ -566,11 +567,11 @@ whichever is found first.
 \item On other OSes: the compiler binary directory, with '../' appended
 to it, if it exists. For instance, on Windows, this would mean
 \begin{verbatim}
-C:\FPC\2.2\units\i386-win32
+C:\FPC\2.6\units\i386-win32
 \end{verbatim}
 This is assuming the compiler was installed in the directory
 \begin{verbatim}
-C:\FPC\2.2
+C:\FPC\2.6
 \end{verbatim}
 \end{itemize}
 After this directory is determined , the following paths are added to the
@@ -582,11 +583,11 @@ search path:
 Here target must be replaced by the name of the target you are compiling
 for: this is a combination of CPU and OS, so for instance
 \begin{verbatim}
-/usr/local/lib/fpc/2.2/units/i386-linux/
+/usr/local/lib/fpc/2.6/units/i386-linux/
 \end{verbatim}
 or, when cross-compiling
 \begin{verbatim}
-/usr/local/lib/fpc/2.2/units/i386-win32/
+/usr/local/lib/fpc/2.6/units/i386-win32/
 \end{verbatim}
 \end{enumerate}
 
@@ -1517,12 +1518,12 @@ encountered, after which normal processing is resumed.
 
 Example :
 \begin{verbatim}
-#IFDEF VER2_2_0
--Fu/usr/lib/fpc/2.2.0/linuxunits
+#IFDEF VER2_6_0
+-Fu/usr/lib/fpc/2.6.0/linuxunits
 #ENDIF
 \end{verbatim}
-In the above example, \file{/usr/lib/fpc/2.2.0/linuxunits} will be added to
-the path if you're compiling with version 2.2.0 of the compiler.
+In the above example, \file{/usr/lib/fpc/2.6.0/linuxunits} will be added to
+the path if you're compiling with version 2.6.0 of the compiler.
 
 \subsection{\#IFNDEF}
 Syntax:
@@ -1537,12 +1538,12 @@ encountered, after which normal processing is resumed.
 
 Example :
 \begin{verbatim}
-#IFNDEF VER2_2_0
--Fu/usr/lib/fpc/2.2.0/linuxunits
+#IFNDEF VER2_6_0
+-Fu/usr/lib/fpc/2.6.0/linuxunits
 #ENDIF
 \end{verbatim}
-In the above example, \file{/usr/lib/fpc/2.2.0/linuxunits} will be added to
-the path if you're NOT compiling with version 2.2.0 of the compiler.
+In the above example, \file{/usr/lib/fpc/2.6.0/linuxunits} will be added to
+the path if you're NOT compiling with version 2.6.0 of the compiler.
 
 \subsection{\#ELSE}
 Syntax:
@@ -1559,15 +1560,15 @@ encountered, after which normal processing is resumed.
 
 Example :
 \begin{verbatim}
-#IFDEF VER2_2_2
--Fu/usr/lib/fpc/2.2.2/linuxunits
+#IFDEF VER2_6_2
+-Fu/usr/lib/fpc/2.6.2/linuxunits
 #ELSE
--Fu/usr/lib/fpc/2.2.0/linuxunits
+-Fu/usr/lib/fpc/2.6.0/linuxunits
 #ENDIF
 \end{verbatim}
-In the above example, \file{/usr/lib/fpc/2.2.2/linuxunits} will be added to
-the path if you're compiling with version 2.2.2 of the compiler,
-otherwise \file{/usr/lib/fpc/2.2.0/linuxunits} will be added to the path.
+In the above example, \file{/usr/lib/fpc/2.6.2/linuxunits} will be added to
+the path if you're compiling with version 2.6.2 of the compiler,
+otherwise \file{/usr/lib/fpc/2.6.0/linuxunits} will be added to the path.
 
 \subsection{\#ENDIF}
 Syntax:
@@ -1670,9 +1671,9 @@ prepended, as follows:
 \end{verbatim}
 This is equivalent to
 \begin{verbatim}
--Fu/usr/lib/fpc/2.2.2/rtl/linux
+-Fu/usr/lib/fpc/2.6.2/rtl/linux
 \end{verbatim}
-if the compiler version is \var{2.2.2} and the target OS is \linux{}.
+if the compiler version is \var{2.6.2} and the target OS is \linux{}.
 
 These replacements are valid on the command line and also in the
 configuration file.
@@ -3993,10 +3994,10 @@ after a major version change. The branches are located in
 http://svn.freepascal.org/svn/fpc/branches/fpc_X_Y
 \end{verbatim}
 Where X and Y make up the major release number of Free Pascal. 
-For instance, the fixes used to make the 2.2.x versions of Free Pascal are
+For instance, the fixes used to make the 2.6.x versions of Free Pascal are
 available in
 \begin{verbatim}
-http://svn.freepascal.org/svn/fpc/branches/fixes_2_2
+http://svn.freepascal.org/svn/fpc/branches/fixes_2_6
 \end{verbatim}
 
 The Subversion archive is mirrored on the server
