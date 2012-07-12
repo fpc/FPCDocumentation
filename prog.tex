@@ -2267,6 +2267,19 @@ Interface
 
 This directive is equivalent to the \var{-CX} command line switch.
 
+\subsection{\var{\protect\$SYSCALLS} : Select system calling convention on Amiga/MorphOS}
+This directive sets the system calling convention to use on a MorphOS or
+Amiga system. The directive needs an argument, which should be one of the
+following:
+\begin{description}
+\item[LEGACY]
+\item[SYSV]
+\item[SYSVBASE]
+\item[BASESYSV]
+\item[R12BASE]
+\end{description}
+The directive will generate a warning if used on another system.
+
 \subsection{\var{\protect\$THREADNAME} : Set thread name in Netware}
 This directive can be set to specify the thread name when compiling for
 Netware. 
@@ -2300,6 +2313,30 @@ practice to use makefiles and makefile variables.
 
 Note that this switch does not propagate to other units, i.e. it's scope
 is limited to the current unit.
+
+\subsection{\var{\protect\$VARPROPSETTER} : Enable use of var/out/const
+parameters for property setters.}
+This boolean directive is meant to import COM interfaces. Sometimes COM
+interfaces have property setters which accept arguments that are not by
+value, but by reference. These setters are normally forbidden. This flag
+enables the use of property setters with \var{var}, \var{const}, \var{out}
+arguments. By default it is OFF. The effect is on interface declarations,
+but also on class definitions.
+
+The following example only compiles in the ON state:
+\begin{verbatim}
+{$VARPROPSETTER ON}
+Type
+  TMyInterface = Interface
+    Procedure SetP(Var AValue : Integer);
+    Function GetP : Integer;
+    Property MyP : Integer Read GetP Write SetP;
+  end;
+\end{verbatim}
+In the \var{OFF} state, the following error will be generated:
+\begin{verbatim}
+testvp.pp(7,48) Error: Illegal symbol for property access
+\end{verbatim}
 
 \subsection{\var{\protect\$VERSION} : Specify DLL version.}
 On \windows, this can be used to specify a version number for a library.
