@@ -5,8 +5,8 @@
 # 
 # Needs more errorchecking.
 
-
-make HTMLFMT=chm html CSSFILE=/fpc/fpc/utils/fpdoc/fpdoc.css FPDOC=fpdoc |tee buildlog.txt
+export FPCSRCDIR=/fpc/fpc
+make HTMLFMT=chm html CSSFILE=$FPCSRCDIR/utils/fpdoc/fpdoc.css FPDOC=fpdoc FPCSRCDIR=$FPCSRCDIR |tee buildlog.txt
 
 fpc relinkdocs.pp
 fpc compilelatexchm.pp

@@ -26,7 +26,7 @@ program relinkdocs;
    Die.
 {$endif}
 
-Uses {$ifdef unix}cthreads,{$endif}strutils,typinfo,Sax_HTML,sysutils,classes,dom_html,xmlwrite,htmwrite8859,relinkhtml;
+Uses {$ifdef unix}cwstring,cthreads,{$endif}strutils,typinfo,Sax_HTML,sysutils,classes,dom_html,xmlwrite,htmwrite8859,relinkhtml;
 
 
 procedure fixdir(readdir,writedir,prefix:string);

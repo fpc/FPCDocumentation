@@ -20,7 +20,7 @@ program compilelatexchm;
    Die.
 {$endif}
 
-Uses cthreads,chmfilewriter,Sax_HTML,dom,sysutils,classes,dom_html,xmlwrite,htmwrite8859,chmbase,chmwriter,chmsitemap;
+Uses cwstring,cthreads,chmfilewriter,Sax_HTML,dom,sysutils,classes,dom_html,xmlwrite,htmwrite8859,chmbase,chmwriter,chmsitemap;
 
 { Index generation }
 
