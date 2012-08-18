@@ -80,22 +80,24 @@ begin
 end;
 
 const   
-    KnownNames : array [0..6] of string = ('ref',
+    KnownNames : array [0..7] of string = ('ref',
 					   'prog',
 					   'user',
 					   'rtl',
 					   'fcl',
 					   'lcl',
-					   'fpdoc'
+					   'fpdoc',
+					   'lazutils'
 				          );
-    Descriptions  : array [0..6] of string = (
+    Descriptions  : array [0..7] of string = (
                  'Language reference Manual contents',
                  'Programmer''s guide contents',
                  'User''s guide contents',
                  'Run-Time Library (RTL) Manual contents',
                  'Free Component Library (FCL) Manual contents',
 		 'Lazarus Component Library (LCL) Manual contents',
-		 'FPDoc Documentation tool contents');
+		 'FPDoc Documentation tool contents',
+		 'Lazarus unils library (LazUtils) Manual contents');
     Preamble  = '<html><head></head><body><h1> Free Pascal/Lazarus documentation overview</h1><ol>';
     postamble=  '</ol></body></html>';
 
