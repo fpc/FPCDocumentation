@@ -7992,9 +7992,15 @@ unidirectional datasets), in which case <var>RecNo</var> should not be used to n
 <element name="TDataSet.Last">
 <short>Navigate forward to the last record</short>
 <descr>
-<var>Last</var> puts the cursor at the last record in the dataset, fetching more records from the underlying database if needed.
-After a call to <var>Last</var>, the <link id="TDataset.EOF"/> property will be <var>True</var>. Calling this method will 
+<p>
+<var>Last</var> puts the cursor at the last record in the dataset, fetching more records from the underlying database if needed. 
+It is equivalent to moving to the last record and calling <link id="TDataset.Next">.
+After a call to <var>Last</var>, the <link id="TDataset.EOF"/> property will be <var>True</var>.
+</p>
+<p>
+Calling this method will 
 trigger the <link id="TDataset.BeforeScroll"/> and <link id="TDataset.AfterScroll"/> events.
+</p>
 </descr>
 <seealso>
 <link id="TDataset.First"/>
@@ -8530,13 +8536,15 @@ This can be the case for instance when opening a DBF file at runtime which has m
 The <var>EOF</var> property will be set to <var>True</var> in the following cases:
 </p>
 <ol>
-<li>The <link id="TDataset.Last"/> method is called.</li>
-<li>The record is on the last record, and the <link id="TDataset.Next"/> method is called.</li>
-<li>The dataset is empty when opened</li>
+<li>The cursor is on the last record, and the <link id="TDataset.Next"/> method is called.</li>
+<li>The <link id="TDataset.Last"/> method is called (which is equivalent to moving to the last record and calling <link id="TDataset.Next">).</li>
+<li>The dataset is empty when opened.</li>
 </ol>
 <p>
-In all other cases, <var>EOF</var> is <var>False</var>. Note that when the cursor is on the last-but-one record, and <var>Next</var> is called, <var>EOF</var> will not yet
-be <var>True</var>. It is only when the cursor is on the last record and <var>Next</var> is called, that <var>EOF</var> will become <var>True</var>. 
+In all other cases, <var>EOF</var> is <var>False</var>. Note: when the cursor is on the last-but-one record, and <var>Next</var> is called (moving the cursor to the last record), <var>EOF</var> will not yet 
+be <var>True</var>. Only if both the cursor is on the last record <b>and</b> <var>Next</var> is called, will <var>EOF</var> become <var>True</var>.
+</p>
+</> 
 This means that the following loop will stop after the last record was visited:
 </p>
 <code>
