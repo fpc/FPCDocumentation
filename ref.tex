@@ -4322,6 +4322,120 @@ This declaration tells the compiler that the \var{MyFunc} method of
 the \var{IMyInterface} interface is implemented in the \var{MyOtherFunction}
 method of the \var{TMyClass} class.
 
+\section{Interface delegation}
+Sometimes, the methods of an interface are implemented by a helper (or
+delegate) obect, or the class instance has obtained an interface ponter for
+this interface and that should be used. This can be for instance when an
+interface must be added to a series of totally unrelated classes: the needed
+interface functionality is added to a separate class, and each of these
+classes uses an instance of the helper class to implement the functionality.
+
+In such a case, it is possible to instruct the compiler that the interface 
+is not implemented by the object itself, but actually resides in a helper 
+class or interface. This can be done with the \var{implements} property modifier.
+
+If the class has a pointer to the desired interface, the following will
+instruct the compiler that when the \var{IMyInterface} interface is
+requested, it should use the reference in the field:
+\begin{verbatim}
+type
+  IMyInterface = interface
+    procedure P1;
+  end;
+ 
+  TMyClass = class(TInterfacedObject, IMyInterface)
+  private
+    FMyInterface: IMyInterface; // interface type
+  public
+    property MyInterface: IMyInterface 
+       read FMyInterface implements IMyInterface;
+  end;
+\end{verbatim}
+The interface should not necessarily be in a field, any read identifier can
+be used. 
+
+If the interface is implemented by a delegate object, (a helper object that
+actually implements the interface) then it can be used as well with the
+\var{implements} keyword:
+\begin{verbatim}
+{$interfaces corba}
+type
+  IMyInterface = interface
+    procedure P1;
+  end;
+
+  // NOTE: Interface must be specified here
+  TDelegateClass = class(TObject, IMyInterface)
+  private
+    procedure P1;
+  end;
+ 
+  TMyClass = class(TInterfacedObject, IMyInterface)
+  private
+    FMyInterface: TDelegateClass; // class type
+    property MyInterface: TDelegateClass 
+      read FMyInterface implements IMyInterface;
+  end;
+\end{verbatim}
+Note that in difference with Delphi, the delegate class must explicitly
+specify the interface: the compiler will not search for the methods in the
+delegate class, it will simply check if the delegate class implements the
+specified interface.
+
+It is not possible to mix method resolution and interface delegation. 
+That means, it is not possible to implement part of an interface through
+method resolution and implement part of the interface through delegation. 
+The following attempts to implement \var{IMyInterface} partly through method
+resolution (P1), and partly through delegation. The compiler will not accept
+the following code:
+\begin{verbatim}
+{$interfaces corba}
+type
+  IMyInterface = interface
+    procedure P1;
+    procedure P2;
+  end;
+
+
+  TMyClass = class(TInterfacedObject, IMyInterface)
+    FI : IMyInterface; 
+  protected
+    procedure IMyInterface.P1 = MyP1;
+    procedure MyP1;
+    property MyInterface: IMyInterface  read FI implements IMyInterface;
+  end;
+\end{verbatim}
+The compiler will throw an error:
+\begin{verbatim}
+Error: Interface "IMyInterface" can't be delegated by "TMyClass", 
+it already has method resolutions
+\end{verbatim}
+
+However, it is possible to implement one interface through method
+resolution, and another through delegation:
+\begin{verbatim}
+{$interfaces corba}
+type
+  IMyInterface = interface
+    procedure P1;
+  end;
+
+  IMyInterface2 = interface
+    procedure P2;
+  end;
+
+  TMyClass = class(TInterfacedObject, 
+                   IMyInterface, IMyInterface2)
+    FI2 : IMyInterface2;
+  protected
+    procedure IMyInterface.P1 = MyP1;
+    procedure MyP1;
+  public 
+    property MyInterface: IMyInterface2
+       read FI2 implements IMyInterface2;
+  end;
+\end{verbatim}
+
 \section{Interfaces and COM}
 \index{COM}\index{Interfaces!COM}
 When using interfaces on Windows which should be available to the COM
