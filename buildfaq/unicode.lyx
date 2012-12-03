@@ -1,5 +1,5 @@
-#LyX 1.6.6.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 345
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
 \begin_document
 \begin_header
 \textclass report
@@ -7,18 +7,26 @@
 \usepackage{hyperref}
 \end_preamble
 \use_default_options false
+\maintain_unincluded_children false
 \language english
+\language_package default
 \inputencoding auto
+\fontencoding global
 \font_roman default
 \font_sans default
 \font_typewriter default
 \font_default_family default
+\use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
 
 \graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
 \paperfontsize default
 \spacing single
 \use_hyperref false
@@ -26,9 +34,18 @@
 \use_geometry false
 \use_amsmath 1
 \use_esint 1
+\use_mhchem 1
+\use_mathdots 1
 \cite_engine basic
 \use_bibtopic false
+\use_indices false
 \paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation skip
@@ -39,8 +56,9 @@
 \paperpagestyle default
 \tracking_changes false
 \output_changes false
-\author "" 
-\author "" 
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
 \end_header
 
 \begin_body
@@ -54,7 +72,7 @@ Marco van de Voort
 \end_layout
 
 \begin_layout Standard
-Version: 0.06 
+Version: 0.07 
 \begin_inset Graphics
 	filename unicode_small.jpg
 
@@ -138,6 +156,31 @@ Sixth (0.6) (dec 2010) version adds some minor completion of unfinished sentence
  and other minor clarifications
 \end_layout
 
+\begin_layout Itemize
+Seventh (0.7) (nov 2011) adds some new insights of the last year.
+ Specially the 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+default string
+\series default
+
+\begin_inset Quotes erd
+\end_inset
+
+ (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:The-base-string"
+
+\end_inset
+
+) discussion raged on the maillists, since it is the main issue left to
+ discuss, now that the base support has been merged back to trunk.
+\end_layout
+
 \begin_layout Subsection
 Tiburón
 \end_layout
@@ -145,7 +188,7 @@ Tiburón
 \begin_layout Standard
 Tiburón is the codename for what is supposed to be the next version of Delphi
  ( version 2008?), and is supposed to have unicode.
- While we currently do not follow Delphi compatability slavishly, it should
+ While we currently do not follow Delphi compatibility slavishly, it should
  only be broken if there are good reasons.
  A main reason for this is to not make life too hard on Delphi open source
  projects that also want to support FPC/Lazarus.
@@ -190,18 +233,6 @@ UTF-8 is codepage 65001 (ident CP_UTF8)
 \end_layout
 
 \begin_layout Itemize
-codepage $FFFF is used for an 
-\begin_inset Quotes eld
-\end_inset
-
-Rawbyte
-\begin_inset Quotes erd
-\end_inset
-
- ansistring that is never converted, it's binary copied into the target.
-\end_layout
-
-\begin_layout Itemize
 probably value codepage $0 is used for the old ansistring.
  The conversions to and from this type (which codepage?) are not clear.
 \end_layout
@@ -225,6 +256,14 @@ Windows has a separate codepage (OEM) for console.
  I suggest we predefine OEMSTRING = ansistring(CP_OEMCP);
 \end_layout
 
+\begin_layout Standard
+Standard these two types share the same record (tansirec).
+ There is a kind of open array type called RawByteString that accepts both
+ types of strings.
+ This is mainly used to simplify RTL helpers, it is too limited for application
+ development.
+\end_layout
+
 \end_deeper
 \begin_layout Standard
 This quick summary has four aspects I don't like for porting to FPC:
@@ -236,7 +275,7 @@ The use of windows specific codepage enumeration values in language syntax.
  is livable.
  In my opinion it is the VCLs job to encapsulate the winapi gore, and if
  it can't be avoided, at least encourage a clean use.
- Daniel notes that there are not much platform independant choices to begin
+ Daniel notes that there are not much platform independent choices to begin
  with.
 \end_layout
 
@@ -246,6 +285,8 @@ The fact that conversions between codepages are automated and can fail.
  This means that if you use codepage strings, you must be very careful with
  your codepaths, so that you can be pretty sure that there aren't alternate
  paths that mutilate data.
+ This probably means that Codegear (not surprisingly) assumes that the bulk
+ of all code is unicode or will be upgraded to it.
 \end_layout
 
 \begin_layout Enumerate
@@ -265,19 +306,24 @@ string to string=ansistring move, but the library level is more difficult.
 \begin_layout Standard
 They probably had the same as we problem for multiple-encodings types (see
  
-\begin_inset Quotes eld
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "par:granularity"
+
 \end_inset
 
-Granularity of []
-\begin_inset Quotes erd
-\end_inset
-
-) , but chose to keep this compiletime by dividing the types according to
- 1 or 2 byte granularity.
+ ) , but chose to keep this compiletime by dividing the types according
+ to 1 or 2 byte granularity.
  Maybe this also has some advantages in the compiler (being able to treat
  tunicodestring and twidestring the same here and there).
  And they don't support UTF-32, probably because windows doesn't (or it
  isn't used)
+\end_layout
+
+\begin_layout Standard
+One of the problems of a fully polymorphic (both 1 and 2-byte) string type
+ is that it is incompatible with either Delphi/ansi or Delphi/unicode code,
+ since such code will assume either 1 or 2-byte granularity.
 \end_layout
 
 \begin_layout Standard
@@ -308,8 +354,8 @@ forget the big endian and little endianess
 \series default
 .
  This kind of cross-platform compability is fairly rarely a problem.
- Only files that share that between different architectures need to insert
- conversions, and this can be better done manually.
+ Only with wire-protocols and files that are shared between different architectu
+res need to insert conversions, and this can be better done manually.
  The same goes for arbitrary other sources that might have a different encoding.
  The difference is also only important on the perimeter of the system (when
  you load external data), since the system will mostly be in the same endianess
@@ -399,11 +445,18 @@ http://www.unicode.org/roadmaps/bmp/
 
 \begin_layout Subsection
 Granularity of [] 
-\begin_inset Index
-status open
+\begin_inset CommandInset label
+LatexCommand label
+name "par:granularity"
+
+\end_inset
+
+
+\begin_inset Index idx
+status collapsed
 
 \begin_layout Plain Layout
-par:granularity
+granularity
 \end_layout
 
 \end_inset
@@ -619,17 +672,28 @@ Ease of use
 \end_layout
 
 \begin_layout Itemize
-Reasonable to good performance
+Reasonable to good performance should be possible without having to convert
+ whole codebases to the pointer level.
 \end_layout
 
 \begin_layout Itemize
-Compatible with normal ansistring handling as much as reasonably possible.
+Compatibility
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+with Delphi/ansi
 \end_layout
 
 \begin_layout Itemize
-Compatible with Tiburón
+with Tiburón (Delphi/Unicode)
 \end_layout
 
+\begin_layout Itemize
+with existing FPC code.
+\end_layout
+
+\end_deeper
 \begin_layout Itemize
 Multi platform aspects.
 \end_layout
@@ -669,6 +733,81 @@ FPC being portable means nativeness on every platform.
 Note: Most of the unices, but not all, use UTF-8, Windows use UTF-16.
 \end_layout
 
+\begin_layout Standard
+Since there have been debates about what compatibility means, my definition
+ of compatibility is:
+\end_layout
+
+\begin_layout Itemize
+Compatibility mostly means that I must set some directives and update the
+ uses clause on a per module (unit) basis, based on the sourcecodes origin
+ (e.g.
+ FPC mode X, or Delphi/ansi, or Delphi/unicode)
+\end_layout
+
+\begin_layout Itemize
+In very extreme circumstances global replace is acceptable too, but only
+ if it is totally automatable.
+\end_layout
+
+\begin_layout Standard
+These reasons are founded on practical experience with 3rd party Delphi
+ code, as well as with my own codebases.
+ It is about as far as they will go.
+ First and for all, 
+\series bold
+total code audits should be avoided at near all costs.
+\end_layout
+
+\begin_layout Standard
+Here I define a global code audit as a search in all code for an occurance
+ of code that could potentially break(behaviour that will be broken by the
+ new implementation).
+ Porters might not have written or understand the code they are porting,
+ and codebases can be big.
+\end_layout
+
+\begin_layout Standard
+Keep in mind that 
+\begin_inset Quotes eld
+\end_inset
+
+almost compatible
+\begin_inset Quotes erd
+\end_inset
+
+ in practice means 
+\begin_inset Quotes eld
+\end_inset
+
+not compatible
+\begin_inset Quotes erd
+\end_inset
+
+.
+ I make an exception for the uses clause, because Delphi has there internal
+ broken compatibility in the past.
+\end_layout
+
+\begin_layout Subsection
+Problems with the requirements
+\end_layout
+
+\begin_layout Standard
+The above requirements are conflicting.
+ The two big problems are:
+\end_layout
+
+\begin_layout Itemize
+Delphi 2009+ breaks compatibility on this level with versions before it.
+ Supporting Delphi before and after 2009 is therefore not trivial.
+\end_layout
+
+\begin_layout Itemize
+Delphi 2009+ chose a certain encoding to be the center of the universe,
+ while it is mostly only a Windows convention.
+\end_layout
+
 \begin_layout Subsection
 Required 
 \begin_inset Quotes eld
@@ -678,7 +817,7 @@ new
 \begin_inset Quotes erd
 \end_inset
 
- functions.
+ primitives in the RTL
 \end_layout
 
 \begin_layout Enumerate
@@ -691,6 +830,7 @@ reference "par:granularity"
 
 ), Length(s) should be available in both meanings: length in codepoints
  and in granularity length.
+ Probably length in codepoints (Delphi compat)
 \end_layout
 
 \begin_layout Enumerate
@@ -749,7 +889,7 @@ procedure xxx; (arguments);stdcall; external 'kernel32.dll' name 'xxxA';
 \end_layout
 
 \begin_layout Standard
-The actual problem is that these calls don't exist (or work) on windows
+The actual problem is that these (W) calls don't exist (or work) on windows
  9x.
  There are several solutions for this problem:
 \end_layout
@@ -806,13 +946,154 @@ winnt
 \end_layout
 
 \begin_layout Standard
+Some people keep banging on about using UTF8 on Windows, but afaik only
+ some console functions take utf8.
+ The rest is all default codepage (some ansi codepage like windows-1250)
+ for the -A APIs, and UTF16 for the -W.
+\end_layout
 
-\series bold
-NOTE:
-\series default
- I haven't seen any clear evidence yet to which set of API functions UTF_8
- needs to be pasted (NT Only).
- If any.
+\begin_layout Subsection
+The base string type problem
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:The-base-string"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now that the base language support of Delphi/Unicode has been merged into
+ trunk, the logical question is how to roll it out throughout the rest of
+ the codebase, what functionality of the past is deprecated, and what is
+ kept.
+\end_layout
+
+\begin_layout Standard
+The first big problem is how to handle the 
+\emph on
+string 
+\emph default
+type.
+ In FPC, string is considered to be a type alias to the core 
+\emph on
+string
+\emph default
+ type to be used.
+ In the past it has been either 
+\emph on
+shortstring
+\emph default
+ or 
+\emph on
+ansistring
+\emph default
+, but with Delphi/unicode, 
+\emph on
+unicodestring
+\emph default
+ has to be added.
+ 
+\end_layout
+
+\begin_layout Standard
+Currently, using the {$H+/-} parameter and $mode settings that preset {$H},
+ 
+\emph on
+string 
+\emph default
+can already be aliased to 
+\emph on
+shortstring 
+\emph default
+and 
+\emph on
+ansistring
+\emph default
+ for resp Turbo Pascal and Delphi like modes.
+ At the time that ansistring was added, the following modifications were
+ needed:
+\end_layout
+
+\begin_layout Enumerate
+The length needed to be set with setlength(s,newlength); instead of s[0]:=newlen
+gth
+\end_layout
+
+\begin_layout Enumerate
+Access to chars >length was disallowed, as ansistring only allocated as
+ many bytes as needed.
+\end_layout
+
+\begin_layout Enumerate
+Of course various library procedure routines needed to be overloaded, to
+ avoid excessive conversions.
+ But this was pretty much only unit 
+\begin_inset Quotes eld
+\end_inset
+
+system
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+However the situation back then is different from now for several reasons:
+\end_layout
+
+\begin_layout Enumerate
+With the short->ansistring conversion, old TP units for the better part
+ remained shortstring.
+ Delphi related and new libraries were set up using ansistring.
+\end_layout
+
+\begin_layout Enumerate
+The codebases outside of the RTL were relatively small.
+\end_layout
+
+\begin_layout Enumerate
+The amount of OOP code was relative small.
+ Lazarus didn't exist, and when it emerged it was nearly directly Delphi
+ dialect only.
+\end_layout
+
+\begin_layout Standard
+Contrary to then, this time not all old code is deprecated, and there is
+ no new start with a near blank slate.
+ Some operating systems are 1-byte (UTF8) oriented, some are 2-byte oriented,
+ and this difference might last forever.
+ The differences between the various 1-byte encodings can be massaged away
+ by having some variable that defines the default (1-byte) encoding, and
+ setting that depending on runtime library detection or compiler commandline
+ parameters.
+\end_layout
+
+\begin_layout Standard
+New this time also is the large amount of OOP code which has virtual methods
+ with 
+\begin_inset Quotes eld
+\end_inset
+
+string
+\begin_inset Quotes erd
+\end_inset
+
+ arguments.
+ One can't override a virtual method defined with string=ansistring by a
+ method that is string=unicodestring (and even if it could, one would have
+ to be terribly careful to avoid extreme amounts of conversion.
+ 
+\end_layout
+
+\begin_layout Subsection
+Delphi/Unicode lacking variable encoding - Databases
+\end_layout
+
+\begin_layout Standard
+Embarcadero clearly decided all 
 \end_layout
 
 \begin_layout Section
@@ -1149,7 +1430,7 @@ native
 Now we want these to work call eachother, and neither of these is prepared
  for the polymorphic type to contain the wrong encoding.
  Worse, literals in the Tiburón code will probably be created in the native
- (UTF-8) encoding.
+ (UTF-16) encoding.
  In turn, the UTF-8 routines might receive occasionally a string that has
  passed the Tiburón code and contains code that assumes UTF-16 encoding.
  The only solution is to audit the _entire_ source code for all these points,
@@ -1579,6 +1860,7 @@ This is just a short thought experiment, this part hasn't been discussed
 s.
  If that gives enough leeway to define types, Florian's proposal morphs
  into this hybrid model.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -1805,10 +2087,11 @@ This means that the compiler should insert a forceencoding after passing
 As in Florian's original proposal the [] operator gets more expensive in
  generic routines.
  In non generic (roughly equivalent to Rawbytestring in Tiburón terms, but
- then also for UTF16) it is less of a problem, since the typing fixates
- the granularity? This could offer a nice solution in the sense that high
- speed routines could be overloaded with typed equivalents for speed, while
- not so interesting routines could rely on the 
+ then completely implemented, not as just an open array solution for deep
+ RTL routines) it is less of a problem, since the typing fixates the granularity
+? This could offer a nice solution in the sense that high speed routines
+ could be overloaded with typed equivalents for speed, while not so interesting
+ routines could rely on the 
 \begin_inset Quotes eld
 \end_inset
 

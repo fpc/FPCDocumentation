@@ -2385,13 +2385,23 @@ HModule
  are aliases for THandle.
  However, other platforms typically don't follow this design, and most handle-ty
 pes are for one specific purpose only.
- Avoid using Windows handle types in generic code (another bad habit encouraged
- by Kylix), because it introduces hidden assumptions.
+ Avoid using Windows (T)handle types in generic code (another bad habit
+ encouraged by Kylix, where it was managable since it only supported one
+ 
+\begin_inset Quotes eld
+\end_inset
+
+other
+\begin_inset Quotes erd
+\end_inset
+
+ OS on the same architecture), because it introduces hidden assumptions.
  Define proper aliases for it in some abstracting unit and use those.
  Failing to do so can lead to hard to trace bugs, specially on 64-bit non
  windows, where some handles might scale with pointer size, and some not.
  As a bonus, you need to import unit windows much less often, which further
- saves on ifdefs
+ saves on ifdefs.
+ 
 \end_layout
 
 \begin_layout Subsection
