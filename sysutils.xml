@@ -1943,8 +1943,15 @@ None.
 <descr>
 <var>RenameFile</var> renames a file from <var>OldName</var> to <var>NewName</var>. The
 function returns <var>True</var> if successful, <var>False</var> otherwise.
+For safety, the new name must be a full path specification, including the directory,
+otherwise it will be assumed to be a filename relative to the current working
+directory.
 
-<em> Remark:</em> you cannot rename across disks or partitions.
+<em> Remark:</em> The implementation of <var>RenameFile</var> relies on the
+undelying OS's support for renaming/moving a file. Whether or not a file can
+be renamed accros disks or partitions depends entirely on the OS. On
+unix-like OS-es, the rename function will fail when used accross partitions.
+On Windows, it will work.
 </descr>
 <errors>
 On Error, <var>False</var> is returned.
