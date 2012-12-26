@@ -8757,8 +8757,12 @@ del *.o
 \end{verbatim}
 After this, the compiler can be compiled with the following command line:
 \begin{verbatim}
-ppc386 -Tlinux  -Fu../rtl/units/i386-linux -di386 -dGDB pp.pas
+ppc386 -Tlinux  -Fusystems -Fii386/ -Fui386 \
+   -Fu../rtl/units/i386-linux -di386 -dGDB pp.pas
 \end{verbatim}
+All the options must be given on a single line, the backslash is needed if
+you want to specify the options on multiple lines.
+
 So, the minimum options are:
 \begin{enumerate}
 \item The target OS. Can be skipped when compiling for the same target as
@@ -8771,10 +8775,12 @@ appropriate operating system subdirectory of the RTL).
 \item \var{-dGDB}. Required.
 \item \var{-Sg} is needed, some parts of the compiler use \var{goto}
 statements (to be specific: the scanner).
+\item A directory with some units and include files for the processor you're compiling for.
+\item A directory with the system definitions.
 \end{enumerate}
 So the absolute minimal command line is
 \begin{verbatim}
-ppc386 -di386 -dGDB -Sg pp.pas
+ppc386 -Fusystems -Fii386 -Fui386 -di386 -dGDB -Sg pp.pas
 \end{verbatim}
 
 Some other command line options can be used, but the above are the
