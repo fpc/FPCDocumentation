@@ -4760,33 +4760,52 @@ exception is raised.
 <descr>
 <p>
 <var>Seek</var> sets the position of the stream to <var>Offset</var> bytes
-from <var>Origin</var>. <var>Origin</var> can have one of the following
-values:
+from <var>Origin</var>. There is a 32-bit variant of this function and a
+64-bit variant. The difference can be made by choosing the correct
+<var>Offset</var> parameter: the integer-typed parameter selects the 32-bit
+variant, the parameter of type <link id="TSeekOrigin"/> selects the 64-bit
+variant of the function.
+</p>
+<p>
+The <var>Origin</var> parameter for the 32-bit version can have one of the following values:
 </p>
 <table>
 <tr><td>Constant</td><td>Meaning</td></tr>
-<tr><td>soFromBeginning</td><td>Set the position relative to the start of
-the stream.</td></tr>
-<tr><td>soFromCurrent</td><td>Set the position relative to the current
-position in the stream.</td></tr>
-<tr><td>soFromEnd</td><td>Set the position relative to the end of the
-stream.</td></tr>
+<tr><td>soFromBeginning</td><td>Set the position relative to the start of the stream.</td></tr>
+<tr><td>soFromCurrent</td><td>Set the position relative to the current position in the stream.</td></tr>
+<tr><td>soFromEnd</td><td>Set the position relative to the end of the stream.</td></tr>
 </table>
 <p>
-<var>Offset</var> should be negative when the origin is <var>SoFromEnd</var>. 
-It should be positive for <var>soFromBeginning</var> and can have both signs
-for <var>soFromCurrent</var>
+These values are defined in the <link id="SysUtils"/> unit.
+</p>
+<p>
+The <var>Origin</var> parameter for the 64-bit version has one of the following values:
+</p>
+<table>
+<tr><td>Value</td><td>Meaning</td></tr>
+<tr><td>soBeginning</td><td><printshort id="TSeekOrigin.soBeginning"/></td></tr>
+<tr><td>soCurrent</td><td><printshort id="TSeekOrigin.soCurrent"/></td></tr>
+<tr><td>soEnd</td><td><printshort id="TSeekOrigin.soEnd"/></td></tr>
+</table>
+<p>
+<var>Offset</var> should be negative when the origin is <var>SoFromEnd</var> (<var>soEnd</var>). 
+It should be positive for <var>soFromBeginning</var> and can have both signs for <var>soFromCurrent</var>
 </p>
 <p>
 This is an abstract method, which must be overridden by descendent classes.
 They may choose not to implement this method for all values of
 <var>Origin</var> and <var>Offset</var>. 
 </p>
+<remark>
+Internally, all calls are re-routed to the 64-bit version of the call.
+When creating a descendent of <var>TStream</var>, the 64-bit version of the call should
+be overridden.
+</remark>
 </descr>
 <errors>
 An exception may be raised if this method is called with an invalid pair of
 <var>Offset</var>,<var>Origin</var> values. e.g. a negative
-<var>offset</var> for <var>soFromBeginning</var>.
+<var>offset</var> for <var>soFromBeginning</var> (or <var>soBeginning</var>).
 </errors>
 <seealso>
 <link id="TStream.Position"/>
