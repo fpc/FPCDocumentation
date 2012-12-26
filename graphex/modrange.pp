@@ -13,8 +13,8 @@ const
 
 procedure WriteRes(const depth : integer);
 var
-	tw, th : integer;
-	v, text : String;
+  tw, th : integer;
+  v, text : String;
 begin
   text := 'Current resolution is '; str(getmaxx+1, v);
   text := text + v + 'x'; str(getmaxy+1, v);
