@@ -3914,10 +3914,8 @@ storing them in a free register. Not all registers are used, because
 some registers have a special meaning, but this depends on the CPU.
 
 Function results are returned in the accumulator (first register), 
-if they fit in the register. Methods calls (from either objects or 
+if they fit in the register. Method calls (from either objects or 
 clases) have an additional invisible parameter which is \var{self}. 
-This parameter is the leftmost parameter within a method call 
-(it is therefore the last parameter passed to the method).
 
 When the procedure or function exits, it clears the stack.
 
@@ -3927,30 +3925,33 @@ The first column lists the modifier you specify for a procedure declaration.
 The second one lists the order the paramaters are pushed on the stack.
 The third column specifies who is responsible for cleaning the stack:
 the caller or the called function. The alignment column indicates the
-alignment of the parameters sent to the stack area. Finally, the fifth
-column indicates if any registers are saved in the entry code of the
-subroutine.
+alignment of the parameters sent to the stack area. 
+
+Subroutines will modify a number of registers (the volatile registers). 
+The list of registers that are modified is highly dependent on the 
+processor, calling convention and ABI of the target platform. 
 
 \begin{FPCltable}{lllll}{Calling mechanisms in \fpc}{CallingTable}\hline
-Modifier & Pushing order & Stack cleaned by & alignment & registers saved \\
+Modifier & Pushing order & Stack cleaned by & alignment \\
 \hline
-<none>  & Left-to-right & Function & default & None\\
-register & Left-to-right & Function & default & None \\ 
-cdecl   & Right-to-left & Caller   & GCC alignment & GCC registers\\
-interrupt & Right-to-left & Function & default & all registers\\
-pascal  & Left-to-right & Function & default & None\\
-safecall & Right-to-left & Function & default & GCC registers\\
-stdcall & Right-to-left & Function & GCC alignment & GCC registers \\
-oldfpccall & Right-to-left & Callee  & default & None \\
+<none>  & Left-to-right & Callee & default \\
+register & Left-to-right & Callee & default  \\ 
+cdecl   & Right-to-left & Caller   & GCC alignment\\
+interrupt & Right-to-left & Callee & default \\
+pascal  & Left-to-right & Callee & default \\
+safecall & Right-to-left & Callee & default \\
+stdcall & Right-to-left & Callee & GCC alignment \\
+oldfpccall & Right-to-left & Callee  & default \\
 \hline
 \end{FPCltable}
 Note that the \var{oldfpccall} calling convention equals the default
 calling convention on processors other than 32-bit Intel 386 or higher.
 
+More about this can be found in \seec{Linking} on linking. 
+Information on GCC registers saved, GCC stack alignment and general 
+stack alignment on an operating system basis is beyond the scope of this
+manual.
 
-More about this can be found in \seec{Linking} on linking. Information
-on GCC registers saved, GCC stack alignment and general stack alignment
-on an operating system basis can be found in Appendix \ref{ch:AppH}. 
 As of version 2.0 (actually, in 1.9.x somewhere) , the \var{register} 
 modifier is the default calling convention, prior to that, it was the 
 \var{oldfpccall} convention.
@@ -4159,8 +4160,7 @@ stack pointer by a certain minimum amount. This behavior varies
 from one operating system to another. For example, passing a
 byte as a value parameter to a routine could either decrement the
 stack pointer by 1, 2, 4 or even 8 bytes depending on the target
-operating system and processor. The minimal default stack pointer decrement
-value is given in Appendix \ref{ch:AppH}.
+operating system and processor. 
 
 For example, on \freebsd, all parameters passed to a routine guarantee
 a minimal stack decrease of four bytes per parameter, even if the
@@ -8933,106 +8933,6 @@ Mac OS X & BSD, DARWIN, UNIX \\ \hline
 The \unix define was added starting from \fpc version 1.0.5. The BSD
 operating systems no longer define LINUX starting with version 1.0.7.
 \end{remark}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Appendix H : Stack configuration
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\chapter{Stack configuration}
-\label{ch:AppH}
-
-This gives some important information on stack settings under
-the different operating systems. It might be important when
-porting applications to other operating systems.
-
-\section{DOS}
-
-Under the DOS targets, the default stack is set to 256 kB.
-This can be modified with the GO32V2 target using a special
-DJGPP utility \file{stubedit}. It is to note that the stack
-size may be enlarged with the compiler switch (\var{-Cs}).
-If the size specified with \var{-Cs} is \emph{greater} 
-than the default stack size, it will be used instead, 
-otherwise the default stack size is used.
-
-\section{Linux}
-
-Under \linux, stack size is only limited by the available memory of
-the system.
-
-\section{Netbsd}
-
-Under \netbsd, stack size is only limited by the available memory of
-the system.
-
-\section{Freebsd}
-
-Under \freebsd, stack size is only limited by the available memory of
-the system.
-
-\section{BeOS}
-
-Under \beos, stack size is fixed at 256Kb. It currently
-cannot be changed, it is recommended to turn on stack
-checking when compiling for this target platform.
-
-\section{Windows}
-
-Under \windows, stack size is only limited by the available memory of
-the system.
-
-\section{OS/2}
-
-Under \ostwo, stack size is specified at a default
-value of 8 Mbytes. This currently cannot be changed
-directly.
-
-\section{Amiga}
-
-Under AmigaOS, stack size is determined by the user, which sets this
-value using the stack program. Typical sizes range from 4 kB to 40 kB.
-The stack size currently cannot be changed, it is recommended to turn
-on stack checking when compiling for this target platform.
-
-\section{Atari}
-
-Under Atari TOS, stack size is currently limited to 8 kB.
-The stack size currently cannot be changed, it is recommended to turn
-on stack checking when compiling for this target platform.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Appendix I : Operating system specific behavior
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\chapter{Operating system specific behavior}
-\label{ch:AppI}
-
-This appendix describes some special behaviors which vary
-from operating system to operating system. This is described
-in \seet{OSBehave}. The GCC saved registers indicates what
-registers are saved when certain declaration modifiers are used.
-
-
-\begin{FPCltable}{lcr}{Operating system specific behavior}{OSBehave}
-Operating systems & Min. param. stack align  & GCC saved registers\\
-\hline
-Amiga & 2 & D2..D7,A2..A5\\
-Atari & 2 & D2..D7,A2..A5\\
-BeOS-x86 & 4 & ESI, EDI, EBX\\
-DOS & 2 & ESI, EDI, EBX\\
-FreeBSD & 4 & ESI, EDI, EBX\\
-linux-m68k & & D2..D7,A2..A5\\
-linux-x86 & 4 & ESI, EDI, EBX\\
-MacOS-68k & & D2..D7,A2..A5\\
-NetBSD-x86 & & ESI, EDI, EBX\\
-NetBSD-m68k & & D2..D7,A2..A5\\
-OS/2 & 4 & ESI, EDI, EBX\\
-PalmOS & 2 & D2..D7,A2..A5\\
-QNX-x86 & & ESI, EDI, EBX\\
-Solaris-x86 & 4 & ESI, EDI, EBX\\
-Win32 & 4 & ESI, EDI, EBX\\
-\hline
-\end{FPCltable}
 
 
 \end{document}
