@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fpdoc-descriptions>
+  <package name="fcl">
+    <module name="zipper">
+      <short>Unit implementing zip/unzip compression/decompression functionality</short>
+      <descr>
+        <file>zipper</file> implements zip compression/decompression compatible with the popular .ZIP format. The zip file format is documented at 
+        
+        <url href="http://www.pkware.com/documents/casestudies/APPNOTE.TXT">http://www.pkware.com/documents/casestudies/APPNOTE.TXT</url>. The Pascal conversion of the standard zlib library was implemented by Jacques Nomssi Nzali. It is used in the FCL to implement the 
+        
+        <link name="TCompressionStream"/> class.
+</descr>
+      <element name="END_OF_CENTRAL_DIR_SIGNATURE">
+        <short>Marker specifying end of directory within zip file</short>
+      </element>
+      <element name="LOCAL_FILE_HEADER_SIGNATURE">
+        <short>Marker specifying a file entry within the zip file</short>
+        <descr>Denotes beginning of a file header within the zip file. A file header follows this marker, followed by the file data proper.</descr>
+      </element>
+      <element name="CENTRAL_FILE_HEADER_SIGNATURE">
+        <short>Marker specifying a file entry within the zip directory</short>
+        <descr>Denotes beginning of a file entry inside the zip directory. A file header follows this marker.
+</descr>
+      </element>
+      <element name="Local_File_Header_Type">
+        <short>Record structure containing local file header</short>
+      </element>
+      <element name="Local_File_Header_Type.Signature">
+        <short>Signature for local file header within zip file</short>
+      </element>
+      <element name="Local_File_Header_Type.Extract_Version_Reqd">
+        <short>Minimum zip version needed to extract</short>
+      </element>
+      <element name="Local_File_Header_Type.Bit_Flag">
+        <short>General purpose bit flag</short>
+        <seealso>Please see zip format documentation for details.
+</seealso>
+      </element>
+      <element name="Local_File_Header_Type.Compress_Method">
+        <short>Compression method</short>
+      </element>
+      <element name="Local_File_Header_Type.Last_Mod_Time">
+        <short>Last modification date of file</short>
+      </element>
+      <element name="Local_File_Header_Type.Last_Mod_Date">
+        <short>Last modification date of file</short>
+      </element>
+      <element name="Local_File_Header_Type.Crc32">
+        <short>CRC 32</short>
+        <descr>CRC 32 value for a file, presumably containing the CRC 32 checksum of file data.
+</descr>
+      </element>
+      <element name="Local_File_Header_Type.Compressed_Size">
+        <short>Size in bytes of compressed file</short>
+      </element>
+      <element name="Local_File_Header_Type.Uncompressed_Size">
+        <short>Size in bytes of decompressed file</short>
+      </element>
+      <element name="Local_File_Header_Type.Filename_Length">
+        <short>File name length</short>
+      </element>
+      <element name="Local_File_Header_Type.Extra_Field_Length">
+        <short>Extra field length</short>
+        <descr>Length of extra field in local file header. An extra field contains program-specific information and should be ignored if the extra field is not supported.
+</descr>
+      </element>
+      <element name="Central_File_Header_Type">
+        <short>Record structure containing central file header</short>
+        <descr>This record contains the structure for a file header within the central directory.
+</descr>
+      </element>
+      <element name="Central_File_Header_Type.Signature">
+        <short>Central file header signature</short>
+      </element>
+      <element name="Central_File_Header_Type.MadeBy_Version">
+        <short>Zip version that compressed the file</short>
+      </element>
+      <element name="Central_File_Header_Type.Extract_Version_Reqd">
+        <short>Zip version needed to extract file</short>
+      </element>
+      <element name="Central_File_Header_Type.Bit_Flag">
+        <short>Central file general purpose bit flag</short>
+        <descr>General purpose flag for a file entry in the central directory.
+</descr>
+      </element>
+      <element name="Central_File_Header_Type.Compress_Method">
+        <short>Compression method</short>
+        <descr>Method used to compress the file
+</descr>
+      </element>
+      <element name="Central_File_Header_Type.Last_Mod_Time">
+        <short>File last modification time</short>
+      </element>
+      <element name="Central_File_Header_Type.Last_Mod_Date">
+        <short>File last modification date</short>
+      </element>
+      <element name="Central_File_Header_Type.Crc32">
+        <short>CRC-32 checksum</short>
+      </element>
+      <element name="Central_File_Header_Type.Compressed_Size">
+        <short>Compressed size of file</short>
+      </element>
+      <element name="Central_File_Header_Type.Uncompressed_Size">
+        <short>Uncompressed size of file</short>
+      </element>
+      <element name="Central_File_Header_Type.Filename_Length">
+        <short>Length of file name</short>
+      </element>
+      <element name="Central_File_Header_Type.Extra_Field_Length">
+        <short>Extra field length</short>
+        <descr>Length of extra field (or 0 if none). An extra field contains program-specific information and should be ignored if the extra field is not supported.
+</descr>
+      </element>
+      <element name="Central_File_Header_Type.File_Comment_Length">
+        <short>File comment length</short>
+        <descr>Length of file comment (or 0 if none).
+</descr>
+      </element>
+      <element name="Central_File_Header_Type.Starting_Disk_Num">
+        <short>Starting disk number</short>
+      </element>
+      <element name="Central_File_Header_Type.Internal_Attributes">
+        <short>Internal file attributes</short>
+      </element>
+      <element name="Central_File_Header_Type.External_Attributes">
+        <short>External file attributes</short>
+      </element>
+      <element name="Central_File_Header_Type.Local_Header_Offset">
+        <short>Relative offset of local header</short>
+      </element>
+      <element name="End_of_Central_Dir_Type">
+        <short>Record storing end of central directory information</short>
+        <descr>The end of central directory is placed at the end of the zip file. Note that the end of central directory record is distinct from the Zip64 end of central directory record and zip64 end of central directory locator, which precede the end of central directory, if implemented.</descr>
+      </element>
+      <element name="End_of_Central_Dir_Type.Signature">
+        <short>End of central directory signature</short>
+      </element>
+      <element name="End_of_Central_Dir_Type.Disk_Number">
+        <short>Number of this disk</short>
+      </element>
+      <element name="End_of_Central_Dir_Type.Central_Dir_Start_Disk">
+        <short>Number of the disk with the start of the central directory</short>
+      </element>
+      <element name="End_of_Central_Dir_Type.Entries_This_Disk">
+        <short>Total number of entries in the central directory in this disk</short>
+      </element>
+      <element name="End_of_Central_Dir_Type.Total_Entries">
+        <short>Total number of entries in the central directory</short>
+      </element>
+      <element name="End_of_Central_Dir_Type.Central_Dir_Size">
+        <short>Size of the central directory</short>
+      </element>
+      <element name="End_of_Central_Dir_Type.Start_Disk_Offset">
+        <short>Offset of the start of the central directory against the starting disk number</short>
+      </element>
+      <element name="End_of_Central_Dir_Type.ZipFile_Comment_Length">
+        <short>Length of the zip comment field</short>
+        <descr>Denotes the length of the comment for the entire zip file (or 0 if no comment)
+</descr>
+      </element>
+      <element name="Crc_32_Tab">
+        <short>Table used in calculating CRC-32</short>
+        <descr>Table used in determining CRC-32 values. There are various CRC-32 algorithms in use; please refer to the ZIP file format specifications for details.
+</descr>
+      </element>
+      <element name="TProgressEvent">
+        <short>Event procedure for capturing compression/decompression progress</short>
+      </element>
+      <element name="TProgressEvent.Sender">
+        <short>Object that sends the event</short>
+      </element>
+      <element name="TProgressEvent.Pct">
+        <short>Percentage completed</short>
+      </element>
+      <element name="TOnEndOfFileEvent">
+        <short>Event procedure for an end of file (de)compression event</short>
+      </element>
+      <element name="TOnEndOfFileEvent.Sender">
+        <short>Object that sends the event</short>
+      </element>
+      <element name="TOnEndOfFileEvent.Ratio">
+        <short>Ratio of total operation (compression/decompression) that is completed</short>
+      </element>
+      <element name="TOnStartFileEvent">
+        <short>Event procedure for a start of file (de)compression event</short>
+      </element>
+      <element name="TOnStartFileEvent.Sender">
+        <short>Object that sends the event</short>
+      </element>
+      <element name="TOnStartFileEvent.AFileName">
+        <short>File name of file to be processed</short>
+      </element>
+      <element name="TCompressor">
+        <short>Compressor object</short>
+        <descr>This object compresses a stream into a compressed zip stream.</descr>
+      </element>
+      <element name="TCompressor.FInFile">
+        <short>Input/source stream for compression</short>
+      </element>
+      <element name="TCompressor.FOutFile">
+        <short>Output stream with compressed data</short>
+      </element>
+      <element name="TCompressor.FCrc32Val">
+        <short>CRC calculation variable</short>
+      </element>
+      <element name="TCompressor.FBufferSize">
+        <short>Size of buffer used for compression</short>
+      </element>
+      <element name="TCompressor.FOnPercent">
+        <short>Percentage of operation completed</short>
+      </element>
+      <element name="TCompressor.FOnProgress">
+        <short>Progress event procedure</short>
+      </element>
+      <element name="TCompressor.UpdC32">
+        <short>Updates running CRC32 value</short>
+      </element>
+      <element name="TCompressor.Create">
+        <short>Creates a <link name="TCompressor"/> object</short>
+      </element>
+      <element name="TCompressor.Create.AInFile">
+        <short>Input file that will be compressed</short>
+      </element>
+      <element name="TCompressor.Create.AOutFile">
+        <short>File for writing compressed output</short>
+      </element>
+      <element name="TCompressor.Create.ABufSize">
+        <short>Buffer size used when compressing</short>
+      </element>
+      <element name="TCompressor.Compress">
+        <short>Compresses input stream to output stream</short>
+      </element>
+      <element name="TCompressor.ZipID">
+        <short>Identifier for type of compression</short>
+      </element>
+      <element name="TCompressor.ZipID.Result">
+        <short>Identifier for type of compression</short>
+      </element>
+      <element name="TCompressor.BufferSize">
+        <short>Size of buffer used for compression</short>
+      </element>
+      <element name="TCompressor.OnPercent">
+        <short>Reference to OnPercent event handler</short>
+      </element>
+      <element name="TCompressor.OnProgress">
+        <short>Reference to OnProgress event handler</short>
+      </element>
+      <element name="TCompressor.Crc32Val">
+        <short>Running CRC32 value</short>
+        <descr>Running CRC32 value used when writing zip header
+</descr>
+      </element>
+      <element name="TDeCompressor">
+        <short>Decompressor object</short>
+        <descr>This object decompresses a compressed zip stream.</descr>
+      </element>
+      <element name="TDeCompressor.FInFile">
+        <short>Input stream with compressed data</short>
+      </element>
+      <element name="TDeCompressor.FOutFile">
+        <short>Output stream with decompressed data</short>
+      </element>
+      <element name="TDeCompressor.FCrc32Val">
+        <short>Running CRC32 value</short>
+        <descr>CRC32 value; used for checking zip file integrity
+</descr>
+      </element>
+      <element name="TDeCompressor.FBufferSize">
+        <short>Buffer size</short>
+      </element>
+      <element name="TDeCompressor.FOnPercent">
+        <short>Percentage of operation completed</short>
+      </element>
+      <element name="TDeCompressor.FOnProgress">
+        <short>Reference to OnProgress event handler</short>
+      </element>
+      <element name="TDeCompressor.UpdC32">
+        <short>Updates running CRC32 value</short>
+      </element>
+      <element name="TDeCompressor.Create">
+        <short>Creates decompressor object</short>
+      </element>
+      <element name="TDeCompressor.Create.AInFile">
+        <short>Input stream with compressed data</short>
+      </element>
+      <element name="TDeCompressor.Create.AOutFile">
+        <short>Output stream with uncompressed data</short>
+      </element>
+      <element name="TDeCompressor.Create.ABufSize">
+        <short>Size of buffer used in decompression</short>
+      </element>
+      <element name="TDeCompressor.DeCompress">
+        <short>Decompress zip stream</short>
+      </element>
+      <element name="TDeCompressor.ZipID">
+        <short>Identifier for type of compression</short>
+      </element>
+      <element name="TDeCompressor.ZipID.Result">
+        <short>Identifier for type of compression</short>
+      </element>
+      <element name="TDeCompressor.BufferSize">
+        <short>Size of buffer used in decompression</short>
+      </element>
+      <element name="TDeCompressor.OnPercent">
+        <short>Percentage of decompression completion</short>
+      </element>
+      <element name="TDeCompressor.OnProgress">
+        <short>Event handler for OnProgress procedure</short>
+      </element>
+      <element name="TDeCompressor.Crc32Val">
+        <short>Running CRC32 value used for verifying zip file integrity</short>
+      </element>
+      <element name="TShrinker">
+        <short>Child of <link id="TCompressor">TCompressor</link> that implements the Shrink compression method</short>
+      </element>
+      <element name="TDeflater">
+        <short>Child of <link id="TCompressor">TCompressor</link> that implements the Deflate compression method</short>
+      </element>
+      <element name="TInflater">
+        <short>Child of <link id="TDeCompressor">TDeCompressor</link> that implements the Inflate decompression method</short>
+      </element>
+      <element name="TZipFileEntry.OS">
+        <short>Indication of operating system/filesystem</short>
+        <descr>Currently either OS_UNIX (if UNIX is defined) or OS_FAT.</descr>
+      </element>
+      <element name="TZipFileEntries">
+        <short>Files in the zip archive</short>
+      </element>
+      <element name="TZipFileEntries.AddFileEntry">
+        <short>Adds file to zip directory</short>
+        <descr>Adds a file to the list of files that will be written out in the zip file.</descr>
+      </element>
+      <element name="TZipFileEntries.AddFileEntry.AStream">
+        <short>Adds a zip file entry from a stream</short>
+      </element>
+      <element name="TZipFileEntries.Entries">
+        <short>Entries (files) in the zip archive</short>
+      </element>
+      <element name="TZipper.ZipAllFiles">
+        <short>Zips all files in object and writes zip to disk</short>
+        <descr>
+          <p>This procedure zips up all files in the <link id="TZipper"/> object and writes the resulting zip file to disk.</p>
+          <p>An example of using this procedure:</p>
+          <code>uses
+  Zipper;
+var
+  Zipper: TZipper;
+begin
+  try
+    Zipper := TZipper.Create;
+    Zipper.FileName := ParamStr(1); //Use the first parameter on the command line as zip file name
+    for I := 2 to ParamCount do //Use the other arguments on the command line as files to be zipped
+      Zipper.Entries.AddFileEntry(ParamStr(I), ParamStr(I));
+    Zipper.ZipAllFiles;
+  finally
+    Zipper.Free;
+  end;
+end.
+</code>
+        </descr>
+      </element>
+      <element name="TUnZipper.UnZipAllFiles">
+        <short>Unzips all files in a zip file, writing them to disk</short>
+        <descr>
+          <p>This procedure unzips all files in a <link name="TZipper"/> object and writes the unzipped files to disk.</p>
+          <p>The example below unzips the files into "C:\windows\temp":</p>
+          <code>uses
+  Zipper;
+var
+  UnZipper: TUnZipper;
+begin
+  UnZipper := TUnZipper.Create;
+  try    
+    UnZipper.FileName := ZipFilePath;
+    UnZipper.OutputPath := 'C:\Windows\Temp';
+    UnZipper.UnZipAllFiles;
+  finally
+    UnZipper.Free;
+  end;
+end.
+</code>
+        </descr>
+      </element>
+      <element name="TUnZipper.UnZipFiles">
+        <short>Unzips specified files</short>
+      </element>
+      <element name="TUnZipper.UnZipFiles.AFileName">
+        <short>Name of zip file to unzip</short>
+      </element>
+      <element name="TUnZipper.UnZipFiles.FileList">
+        <short>Stringlist containing list of one or multiple files to be unzipped</short>
+      </element>
+      <element name="TUnZipper.UnZipAllFiles.AFileName">
+        <short>Name of zip file to unzip</short>
+      </element>
+      <element name="TUnZipper.Clear">
+        <short>Removes all entries and files from object</short>
+      </element>
+      <element name="TUnZipper.Examine">
+        <short>Opens zip file and reads the directory entries (list of zipped files)</short>
+      </element>
+      <element name="TUnZipper.OnStartFile">
+        <short>Callback procedure that will be called before unzipping a file</short>
+      </element>
+      <element name="TUnZipper.OnEndFile">
+        <short>Callback procedure that will be called after unzipping a file</short>
+      </element>
+      <element name="TUnZipper.FileName">
+        <short>Zip file to be unzipped/processed</short>
+      </element>
+      <element name="TUnZipper.OutputPath">
+        <short>Path where archive files will be unzipped</short>
+      </element>
+      <element name="TUnZipper.Files">
+        <short>Files in zip file (deprecated)</short>
+        <descr>List of files that should be compressed in the zip file. Note: deprecated. Use Entries.AddFileEntry(FileName) or Entries.AddFileEntries(List) instead. </descr>
+      </element>
+      <element name="EZipError">
+        <short>Exception specific to the zipper unit</short>
+      </element>
+    </module>
+  </package>
+</fpdoc-descriptions>

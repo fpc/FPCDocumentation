@@ -2292,7 +2292,7 @@ RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-res
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream \
 	 base64 gettext pooledmm dbugmsg streamex inicol streamcoll cachecls \
 	 eventlog syncobjs custapp blowfish simpleipc inifiles rttiutils uriparser \
-	 daemonapp libtar ascii85 fptimer db avl_tree ibconnection mssqlconn
+	 daemonapp libtar ascii85 fptimer db avl_tree ibconnection mssqlconn zipper
 FCLUNITS+= ezcgi
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
@@ -2330,6 +2330,7 @@ FCLFPTIMER= --descr=fptimer.xml --input="$(FCLBASEDIR)/fptimer.pp"
 FCLDB= --descr=db.xml --input="$(FCLDBDIR)/base/db.pas"
 FCLIBCONNECTION=  --descr=ibconnection.xml --input="$(FCLDBDIR)/sqldb/interbase/ibconnection.pp"
 FCLMSSQLCONN=  --descr=mssqlconn.xml --input="$(FCLDBDIR)/sqldb/mssql/mssqlconn.pp"
+FCLZIPPER=  --descr=zipper.xml --input="$(FCLZLIBDIR)/zipper.pp"
 FCLUNITOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLUNITOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
 FCLUNITOPTS+= $(FCLGETTEXT) 
@@ -2338,7 +2339,7 @@ FCLUNITOPTS+= $(FCLPOOLEDMM) $(FCLDBUGMSG) $(FCLSTREAMEX)
 FCLUNITOPTS+= $(FCLINICOL) $(FCLSTREAMCOL) $(FCLCACHECLS) $(FCLEVENTLOG) $(FCLSYNCOBJS)
 FCLUNITOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES) $(FCLRTTIUTILS)
 FCLUNITOPTS+= $(FCLAVLTREE) $(FCLURIPARSER) $(FCLDAEMONAPP) $(FCLLIBTAR) $(FCLASCII85)
-FCLUNITOPTS+= $(FCLFPTIMER) $(FCLDB)
+FCLUNITOPTS+= $(FCLFPTIMER) $(FCLDB) $(FCLZIPPER)
 FCLUNITOPTS+= $(FCLIBCONNECTION) $(FCLMSSQLCONN)
 RTLOPTS=$(FPDOCOPTS) --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifeq ($(HIDEPROTECTED),YES)
