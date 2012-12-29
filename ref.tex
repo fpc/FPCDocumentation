@@ -1148,7 +1148,7 @@ minimalizes rounding errors.
 % Character types
 \section{Character types}
 \index{Types!Char}
-\subsection{Char}
+\subsection{Char or AnsiChar}
 \index{Char} \keywordlink{char}
 \fpc supports the type \var{Char}. A \var{Char} is exactly 1 byte in
 size, and contains one ASCII character.
@@ -1168,6 +1168,41 @@ should assume only letters.
 
 When the single quote character must be represented, it should be typed
 two times successively, thus \var{''''} represents the single quote character.
+
+To distinguish \var{Char} from \var{WideChar}, the system unit also defines
+the \var{AnsiChar} type, which is the same as the char type. In future
+versions of FPC, the \var{Char} type may become an alias for either \var{WideChar} 
+or \var{AnsiChar}.
+
+\subsection{WideChar}
+\index{WideChar} \keywordlink{widechar}
+\fpc supports the type \var{WideChar}. A \var{Char} is exactly 2 bytes in
+size, and contains one UNICODE character in UTF-16 encoding.
+
+A unicode character can be specified by its character value 
+(an UTF-16 code), by preceding the ordinal value with the number symbol (\#). 
+
+A normal ansi (1-byte) character literal can also be used for a widechar,
+the compiler will automatically convert it to a 2-byte UTF-16 character.
+
+The following defines some greek characters (phi, omega):
+\begin{verbatim}
+Const
+  C3 : widechar = #$03A8;
+  C4 : widechar = #$03A9;
+\end{verbatim}
+The same can be accomplished by typecasting a word to widechar:
+\begin{verbatim}
+Const
+  C3 : widechar = widechar($03A8);
+  C4 : widechar = widechar($03A9);
+\end{verbatim}
+
+\subsection{Other character types}
+\fpc defines some other character types in the system unit such as
+\var{UCS2Char}, \var{UCS4Char}, \var{UniCodeChar}. 
+However, no special support for these character types exists, they have been
+defined for Delphi compatibility only.
 
 \subsection{Strings}
 \index{Types!String} \keywordlink{String}
@@ -1399,6 +1434,13 @@ ansistrings or vice versa. The \file{system} unit has a unicodestring manager
 record, which can be initialized with some OS-specific unicode handling
 routines. For more information, see the \file{system} unit reference.
 
+A unicode string literal can be constructed in a similar manner as a widechar:
+\begin{verbatim}
+Const
+  ws2: unicodestring = 'phi omega : '#$03A8' '#$03A9;
+\end{verbatim}
+
+
 \subsection{WideStrings}
 \index{Widestring}\index{Types!Widestring}
 \keywordlink{Widestring}
@@ -1407,10 +1449,9 @@ are implemented in much the same way as unicodestrings. Unlike the latter,
 they are \emph{not} reference counted, and on Windows, they are allocated with a
 special windows function which allows them to be used for OLE automation.
 This means they are implemented as null-terminated arrays of \var{WideChars} 
-instead of regular \var{Chars}. A \var{WideChar} is a two-byte character 
-(an element of a DBCS: Double Byte Character Set). Mostly the same rules 
-apply for \var{WideStrings} as for \var{AnsiStrings}. Similar to
-unicodestrings, the compiler transparantly converts WideStrings 
+instead of regular \var{Chars}. 
+Mostly the same rules apply for \var{WideStrings} as for \var{AnsiStrings}. 
+Similar to unicodestrings, the compiler transparantly converts WideStrings 
 to AnsiStrings and vice versa. \index{Ansistring}
 
 For typecasting and conversion, the same rules apply as for the
@@ -1502,6 +1543,25 @@ Operation & Result \\ \hline
 \hline
 \end{FPCltable}
 
+% String sizes
+\subsection{String sizes}
+The memory occupied by a string depends on the string type. Some string
+types allocate the string data in memory on the heap, others have the string
+data on the stack. Table \seet{StringSizes} summarizes the memory usage of
+the various string types for the various string types. In the table,
+\var{Headersize} depends on the version of \fpc, but is 16 bytes as
+of \fpc 2.7.1. \var{L} is the actual length of the string.
+
+
+\begin{FPCltable}{lll}{String memory sizes}{StringSizes}
+String type & Stack size & heap size \\ \hline
+Shortstring & Declared length + 2 & 0 \\
+Ansistring  & Pointer size & L + 1 + HeaderSize  \\
+Widestring  & Pointer size & 2*L + 1 + HeaderSize (0 on Windows)\\
+UnicodeString  & Pointer size & 2*L + 1 + HeaderSize \\
+Pchar & Pointer size & L+1 \\
+\hline
+\end{FPCltable}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Structured Types
 \section{Structured Types}
