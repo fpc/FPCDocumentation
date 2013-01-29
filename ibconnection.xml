@@ -11,11 +11,11 @@
       <!-- constant Visibility: default -->
       <element name="DEFDIALECT">
         <short>Default Interbase/Firebird dialect</short>
-        <descr>Default dialect that will be used when connecting to databases. See <link id="Dialect"/> for more details on dialects.
-</descr>
-        <seealso>
+        <descr>Default dialect that will be used when connecting to databases. See <link id="TIBConnection.Dialect"/> for more details on dialects.
+        </descr>
+          <seealso>
           <link id="TIBConnection.Dialect"/>
-        </seealso>
+          </seealso>
       </element>
       <!--
   ********************************************************************
@@ -25,11 +25,11 @@
       <!-- class Visibility: default -->
       <element name="EIBDatabaseError">
         <short>Firebird/Interbase database error</short>
-        <descr>Firebird/Interbase database error, a descendant of <link id="EDatabaseError"/>.
+        <descr>Firebird/Interbase database error, a descendant of <link id="db.EDatabaseError"/>.
 </descr>
         <errors/>
         <seealso>
-          <link id="TSQLConnection.EDatabaseError"/>
+          <link id="db.EDatabaseError"/>
         </seealso>
       </element>
       <!-- variable Visibility: public -->
@@ -144,13 +144,15 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
         <short>Creates a database on disk</short>
         <descr>
           <p>Instructs the Interbase or Firebird database server to create a new database.</p>
-          <p>If set, the <link id="Params"/> (specifically, <var>PAGE_SIZE</var>) and <link id="CharSet"/> properties influence the database creation.</p>
+          <p>If set, the <link id="TSQLConnection.Params"/> (specifically, <var>PAGE_SIZE</var>) and <link
+          id="TSQLConnection.CharSet"/> properties influence the database creation.</p>
           <p>If creating a database using a client/server environment, the <var>TIBConnection</var> code will connect to the database server before trying to create the database. Therefore make sure the connection properties are already correctly set, e.g. <link id="TSQLConnection.HostName"/>, <link id="TSQLConnection.UserName"/>, <link id="TSQLConnection.Password"/>.</p>
-          <p>If creating a database using Firebird embedded, make sure the embedded library is loaded, the <link id="HostName"/> property is empty, and set the <link id="TSQLConnection.UserName"/> to e.g. 'SYSDBA'. See <printshort id="TIBConnection"/> for details on loading the embedded database library.</p>
+          <p>If creating a database using Firebird embedded, make sure the embedded library is loaded, the <link
+          id="TSQLConnection.HostName"/> property is empty, and set the <link id="TSQLConnection.UserName"/> to e.g. 'SYSDBA'. See <printshort id="TIBConnection"/> for details on loading the embedded database library.</p>
         </descr>
         <seealso>
-          <link id="Params"/>
-          <link id="DropDB"/>
+          <link id="TSQLConnection.Params"/>
+          <link id="TSQLConnection.DropDB"/>
           <link id="TIBConnection"/>
         </seealso>
       </element>
@@ -163,14 +165,20 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
             
             
             <link id="TIBConnection"/>.</p>
-          <p>In a client/server environment, the <var>TIBConnection</var> code will connect to the database server before telling it to drop the database. Therefore make sure the connection properties are already correctly set, e.g. <link id="HostName"/>, <link id="UserName"/>, <link id="Password"/>.</p>
-          <p>When using Firebird embedded, make sure the embedded connection library is loaded, the <link id="HostName"/> property is empty, and set the <link id="UserName"/> to e.g. 'SYSDBA'. See <printshort id="TIBConnection"/> for more details on loading the embedded library.</p>
+            <p>In a client/server environment, the <var>TIBConnection</var> code will connect to the database server before telling it to drop the database. 
+            Therefore make sure the connection properties are already correctly set, e.g. <link
+            id="TSQLConnection.HostName"/>, <link
+            id="TSQLConnection.UserName"/>, <link
+            id="TSQLConnection.Password"/>.</p>
+          <p>When using Firebird embedded, make sure the embedded connection library is loaded, the <link
+          id="TSQLConnection.HostName"/> property is empty, and set the <link
+          id="TSQLConnection.UserName"/> to e.g. 'SYSDBA'. See <printshort id="TIBConnection"/> for more details on loading the embedded library.</p>
         </descr>
         <seealso>
-          <link id="CreateDB"/>
-          <link id="HostName"/>
-          <link id="UserName"/>
-          <link id="Password"/>
+          <link id="TSQLConnection.CreateDB"/>
+          <link id="TSQLConnection.HostName"/>
+          <link id="TSQLConnection.UserName"/>
+          <link id="TSQLConnection.Password"/>
         </seealso>
       </element>
       <!-- property Visibility: public -->
@@ -192,7 +200,7 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
           <p>Note: the dialect for new Interbase/Firebird databases is 3; dialects 1 and 2 are only used in legacy environments. See your database documentation for more details.</p>
         </descr>
         <seealso>
-          <link id="Dialect"/>
+          <link id="TIBConnection.Dialect"/>
         </seealso>
       </element>
       <!-- function result Visibility: default -->
@@ -254,10 +262,10 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
       <!-- property Visibility: published -->
       <element name="TIBConnection.LoginPrompt">
         <short>Switch for showing custom login prompt</short>
-        <descr>If true, the <link id="OnLogin"/> event will fire, allowing you to handle supplying of credentials yourself.
+        <descr>If true, the <link id="TSQLConnection.OnLogin">OnLogin</link> event will fire, allowing you to handle supplying of credentials yourself.
 </descr>
         <seealso>
-          <link id="OnLogin"/>
+          <link id="TSQLConnection.OnLogin"/>
         </seealso>
       </element>
       <!-- property Visibility: published -->
@@ -266,15 +274,7 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
         <descr>
           <p>
           <var>Params</var> is a 
-
-          
-          
-          <link id="TStringList"/> of name=value combinations that set database-specific parameters.
-
-
-          
-          
-          
+          <link id="#rtl.classes.TStringList"/> of name=value combinations that set database-specific parameters.
 </p>
           <p>The following parameter is supported:</p>
           <ul>
@@ -284,19 +284,20 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
           <p>See your database documentation for more details.</p>
         </descr>
         <seealso>
-          <link id="TSQLConnection.Params"/>
+          <link id="#fcl.sqldb.TSQLConnection.Params"/>
         </seealso>
       </element>
       <!-- property Visibility: published -->
       <element name="TIBConnection.OnLogin">
         <short>Event triggered when a login prompt needs to be shown.</short>
-        <descr>OnLogin is triggered when the connection needs a login prompt when connecting: it is triggered when the <link id="LoginPrompt"/> property is True, after the 
-<link id="BeforeConnect"/> event, but before the connection is actually established. 
+        <descr>OnLogin is triggered when the connection needs a login prompt when connecting: it is triggered when the <link
+        id="TSQLConnection.LoginPrompt">LoginPrompt</link> property is True, after the 
+<link id="#fcl.db.TCustomConnection.BeforeConnect">BeforeConnect</link> event, but before the connection is actually established. 
 </descr>
         <seealso>
-          <link id="BeforeConnect"/>
-          <link id="LoginPrompt"/>
-          <link id="Open"/>
+          <link id="#fcl.db.TCustomConnection.BeforeConnect"/>
+          <link id="TSQLConnection.LoginPrompt"/>
+          <link id="#fcl.db.TCustomConnection.Open"/>
           <link id="TSQLConnection.OnLogin"/>
           <!-- actually child of TCustomConnection.Login -->
         </seealso>
@@ -309,17 +310,18 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
       <!-- class Visibility: default -->
       <element name="TIBConnectionDef">
         <short>Describes   <link id="TIBConnection"/> class</short>
-        <descr>Child of <link id="SQLConnectionDef"/>; used to register an Interbase/Firebird connection, so that it is available in "connection factory" scenarios where database drivers/connections are loaded at runtime and it is unknown at compile time whether the required database libraries are present on the end user's system.</descr>
+        <descr>Child of <link
+        id="sqldb.TConnectionDef">TConnectionDef</link> used to register an Interbase/Firebird connection, so that it is available in "connection factory" scenarios where database drivers/connections are loaded at runtime and it is unknown at compile time whether the required database libraries are present on the end user's system.</descr>
         <seealso>
-          <link id="SQLConnectionDef"/>
+          <link id="TConnectionDef"/>
         </seealso>
       </element>
       <!-- function Visibility: default -->
       <element name="TIBConnectionDef.TypeName">
-        <short>Firebird/Interbase child of  <link id="SQLConnectionDef.TypeName"/>
+        <short>Firebird/Interbase child of  <link id="TConnectionDef.TypeName"/>
         </short>
         <seealso>
-          <link id="SQLConnectionDef.TypeName"/>
+          <link id="TConnectionDef.TypeName"/>
           <link id="TIBConnection"/>
         </seealso>
       </element>
@@ -329,10 +331,11 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
       </element>
       <!-- function Visibility: default -->
       <element name="TIBConnectionDef.ConnectionClass">
-        <short>Firebird/Interbase child of    <link id="SQLConnectionDef.ConnectionClass"/>
+        <short>Firebird/Interbase child of <link
+        id="#fcl.sqldb.TConnectionDef.ConnectionClass">ConnectionClass</link>
         </short>
         <seealso>
-          <link id="SQLConnectionDef.ConnectionClass"/>
+          <link id="TConnectionDef.ConnectionClass"/>
           <link id="TIBConnection"/>
         </seealso>
       </element>
@@ -342,12 +345,13 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
       </element>
       <!-- function Visibility: default -->
       <element name="TIBConnectionDef.Description">
-        <short>Description for the Firebird/Interbase child of    <link id="SQLConnectionDef.ConnectionClass"/>
+        <short>Description for the Firebird/Interbase child of    <link
+        id="#fcl.sqldb.TConnectionDef.ConnectionClass"/>
         </short>
         <descr>The description identifies this 
 <var>ConnectionDef</var> object as a Firebird/Interbase connection.</descr>
         <seealso>
-          <link id="SQLConnectionDef.Description"/>
+          <link id="#fcl.sqldb.TConnectionDef.Description"/>
           <link id="TIBConnection"/>
         </seealso>
       </element>
