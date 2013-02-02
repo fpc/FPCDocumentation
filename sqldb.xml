@@ -13,7 +13,7 @@ them.
 </short>
 <descr>
 <p>
-The SQLDB unit defines three main classes to handle data in SQL based
+The SQLDB unit defines four main classes to handle data in SQL based
 databases.
 </p>
 <ol>
@@ -31,10 +31,15 @@ database connection. For databases that do not support this functionality
 natively, it is simulated by maintaining multiple connections to the
 database.
 </li>
+<li>
+<link id="TSQLScript"/> can be used when many SQL commands must be executed
+on a database, for example when creating a database.
+</li>
 </ol>
 <p>
 There is also a unified way to retrieve schema information, and a
-registration for connector types.
+registration for connector types. More information on how to use these
+components can be found in <link id="UsingSQLDB"/>.
 </p>
 </descr>
 
@@ -297,6 +302,185 @@ specified parameters.
 <link id="TSQLConnector"/>
 </seealso>
 </topic>
+
+<topic name="UsingSQLDB">
+<short>Using SQLDB to access databases</short>
+<descr>
+<p>
+SQLDB can be used to connect to any SQL capable database. It allows to
+execute SQL statements on any supported database type in a uniform way, 
+and allows to fetch and manipulate result sets (such as returned by a SELECT
+statement) using a standard <link id="#fcl.db.TDataset">TDataset</link>
+interface. SQLDB takes care that updates to the database are posted
+automatically to the database, in a cached manner.
+</p>
+<p>
+When using SQLDB, 3 components are always needed:
+</p>
+<ol>
+<li>
+A <link id="TSQLConnection"/> descendent. This represents the
+connection to the database: the location of the database, and the username
+and password to authenticate the connection must be specified here.
+For each supported database type (Firebird, PostgreSQL, MySQL) there 
+is a separate connection component. They all descend from <var>TSQLConnection</var>.
+</li>
+<li>
+A <link id="TSQLTransaction"/> component. SQLDB allows you to have
+multiple active but independent transactions in your application.
+(useful for instance in middle-tier applications). If the native database
+client library does not support this directly, it is emulated using multiple
+connections to the database.
+</li>
+<li>
+A <link id="TSQLQuery"/> component. This encapsulates an SQL statement.
+Any kind of SQL statement can be executed. The <var>TSQLQuery</var>
+component is a <var>TDataset</var> descendent: If the statement returns a result
+set, then it can be manipulated using the usual <var>TDataset</var>
+mechanisms.
+</li>
+</ol>
+<p>
+The 3 components must be linked together: the connection must point to a
+default transaction (it is used to execute certain queries for metadata), 
+the transaction component must point to a connection component. The
+TSQLQuery component must point to both a transaction and a database.
+</p>
+<p>
+So in order to view the contents of a table, typically the procedure goes like this:
+</p>
+<code>
+{$mode objfpc}{$h+}
+uses sqldb, ibconnection;
+
+Var
+  C : TSQLConnection;
+  T : TSQLTransaction;
+  Q : TSQLQuery;
+  
+begin
+  // Create a connection.
+  C:=TIBConnection.Create(Nil);
+  try
+    // Set credentials.
+    C.UserName:='MyUSER';
+    C.Password:='Secret';
+    C.DatabaseName:='/home/firebird/events.fb';
+    // Create a transaction.
+    T:=TSQLTransaction.Create(C);
+    // Point to the database instance
+    T.Database:=C;
+    // Now we can open the database.
+    C.Connected:=True;
+    // Create a query to return data
+    Q:=TSQLQuery.Create(C);
+    // Point to database and transaction.
+    Q.Database:=C;
+    Q.Transaction:=T;
+    // Set the SQL select statement
+    Q.SQL.Text:='SELECT * FROM USERS';
+    // And now use the standard TDataset methods.
+    Q.Open;
+    While not Q.EOF do
+      begin
+      Writeln(Q.FieldByName('U_NAME').AsString);
+      Q.Next
+      end;
+    Q.Close;  
+  finally
+    C.Free;
+  end;
+end.  
+</code>
+<p>
+The above code is quite simple. The connection type is
+<var>TIBConnection</var>, which is used for Firebird/Interbase databases.
+To connect to another database (for instance PostgreSQL), the exact same 
+code could be used, but instead of a <var>TIBConnection</var>, a
+<var>TPQConnection</var> component must be used:
+</p>
+<code>
+{$mode objfpc}{$h+}
+uses sqldb, pqconnection;
+
+Var
+  C : TSQLConnection;
+  T : TSQLTransaction;
+  Q : TSQLQuery;
+       
+begin
+  // Create a connection.
+  C:=TPQConnection.Create(Nil);
+</code>
+<p>
+The rest of the code remains identical.
+</p>
+<p>
+The above code used an SQL SELECT statement and the <var>Open</var> method to fetch data from the database.
+Almost the same method applies when trying to execute other kinds of queries, such as DDL queries:
+</p>
+<code>
+{$mode objfpc}{$h+}
+uses sqldb, ibconnection;
+
+Var
+  C : TSQLConnection;
+  T : TSQLTransaction;
+  Q : TSQLQuery;
+  
+begin
+  C:=TIBConnection.Create(Nil);
+  try
+    C.UserName:='MyUSER';
+    C.Password:='Secret';
+    C.DatabaseName:='/home/firebird/events.fb';
+    T:=TSQLTransaction.Create(C);
+    T.Database:=C;
+    C.Connected:=True;
+    Q:=TSQLQuery.Create(C);
+    Q.Database:=C;
+    Q.Transaction:=T;
+    // Set the SQL statement. SQL is a tstrings instance.
+    With Q.SQL do
+      begin
+      Add('CREATE TABLE USERS ( ');
+      Add(' U_NAME VARCHAR(50), ');
+      Add(' U_PASSWORD VARCHAR(50) ');
+      Add(' ) ');
+      end;
+    // And now execute the query using ExecSQL 
+    // There is no result, so Open cannot be used.
+    Q.ExecSQL;
+    // Commit the transaction.
+    T.Commit;   
+  finally
+    C.Free;
+  end;
+end.  
+</code>
+<p>
+As can be seen from the above example, the setup is the same as in the case
+of fetching data. Note that <link id="TSQLQuery"/> can only execute 1 SQL statement
+during ExecSQL.
+If many SQL statements must be executed, <link id="TSQLScript"/> must be used.
+</p>
+<p>
+There is much more to <var>TSQLQuery</var> than explained here: it can use
+parameters (see <link id="UsingParams"/>) and it can automatically update
+the data that you edit in it (see <link id="UpdateSQLs"/>).
+</p>
+</descr>
+<seealso>
+<link id="TSQLConnection"/>
+<link id="TSQLTransaction"/>
+<link id="TSQLQuery"/>
+<link id="TSQLConnector"/> 
+<link id="TSQLScript"/>
+<link id="UsingParams"/>
+<link id="UpdateSQLs"/>
+</seealso>
+</topic>
+
 
 <!-- enumeration type Visibility: default -->
 <element name="TSchemaType">
