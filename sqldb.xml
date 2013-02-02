@@ -246,9 +246,54 @@ Retrieves packages for databases that support them. (currently not implemented).
 <topic name="UniversalConnectors">
 <short>Using the universal TSQLConnector type</short>
 <descr>
-
+<p>
+The normal procedure when using SQLDB is to use one of the <link id="TSQLConnection"/>
+descendent components. When the database backend changes, another descendent
+of <var>TSQLConnection</var> must be used. When using a lot of different
+connection types and components, this may be confusing and a lot of work.
+</p>
+<p>
+There is a universal connector component <link id="TSQLConnector"/> which can 
+connect to any database supported by SQLDB: it works as a proxy. Behind the
+scenes it uses a normal <var>TSQLConnection</var> descendent to do the real
+work. All this happens transparantly to the user code, the universal
+connector acts and works like any normal connection component.
+</p>
+<p>
+The type of database can be set in its <link id="TSQLConnector.ConnectorType">ConnectorType</link> property. 
+By setting the <var>ConnectorType</var> property, the connector knows which
+<var>TSQLConnection</var> descendent must be created.
+</p>
+<p>
+Each <var>TSQLConnection</var> descendent registers itself with a unique
+name in the initialization section of the unit implementing it: this is the
+name that should be specified in the <var>ConnectorType</var> of the
+universal connection. 
+The list of available connections can be retrieved with the <link id="GetConnectionList"/>
+call.
+</p>
+<p>
+From this mechanism it follows that before a particular connection type can be used, 
+its definition must be present in the list of connector types. This means
+that the unit of the connection type (<var>ibconnection</var>,
+<var>pqconnection</var> etc.) must be included in the <var>uses</var> clause
+of the program file: if it is not included, the connection type will not be
+registered, and it will not be available for use in the universal
+connector.
+</p>
+<p>
+The universal connector only exposes the properties common to all connection
+types (the ones in <var>TSQLConnection</var>). It does not expose properties 
+for all the properties available in specific <var>TSQLConnection</var> descendents. 
+This means that if connection-specific options must be used, they must be included in
+the <link id="TSQLConnection.Params">Params</link> property of the universal 
+connector in the form <var>Name=Value</var>. When the actual connection instance 
+is created, the connection-specific properties will be set from the
+specified parameters.
+</p>
 </descr>
 <seealso>
+<link id="TSQLConnection"/>
 <link id="TSQLConnector"/>
 </seealso>
 </topic>
