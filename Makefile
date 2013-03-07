@@ -1945,6 +1945,8 @@ FPDOCHTMLOPTS=--footer-date="mmm dd yyyy"
 ifeq (chm,$(HTMLFMT))
   HTMLSUFFIX:=.chm
   FPDOCHTMLOPTS+=--auto-toc --auto-index --make-searchable
+  RTLCHMOPTS="--chm-title=(RTL) Runtime Library"
+  FCLCHMOPTS="--chm-title=(FCL) Free Component Library"
 endif
 ifeq (ipf,$(HTMLFMT))
   HTMLSUFFIX:=.ipf
@@ -2408,13 +2410,13 @@ endif  # USEL2H
 endif  # USEPLASTEX
 endif  # USEHEVEA
 fcl.chk: $(FCLXML)
-	$(FPDOC) $(FCLOPTS) --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS)
+	$(FPDOC) $(FCLOPTS) --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst fcl/fpdoc.css
 endif
 	touch fcl.chk
 rtl.chk: $(RTLXML)
-	$(FPDOC) $(RTLOPTS) --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS)
+	$(FPDOC) $(RTLOPTS) --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst rtl/fpdoc.css
 endif
