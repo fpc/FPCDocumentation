@@ -5023,10 +5023,11 @@ be stored in the data section of the final executable.
 If an object doesn't have virtual methods, no pointer to a VMT is inserted.
 
 The memory allocated looks as in \seet{ObjMem}.
-\begin{FPCltable}{ll}{Object memory layout (32-bit model)}{ObjMem} \hline
-Offset & What \\ \hline
-+0 & Pointer to VMT (optional). \\
-+4 & Data. All fields in the order they've been declared. \\
+\begin{FPCltable}{rrl}{Object memory layout (32/64-bit model)}{ObjMem} \hline
+Offset & & What \\
+32-bit & 64-bit &  \\ \hline
++0 & +0 & Pointer to VMT (optional). \\
++4 & +8 & Data. All fields in the order they've been declared. \\
 \dots & \\
 \hline
 \end{FPCltable}
@@ -5037,13 +5038,14 @@ VMT (\var{Nil} if there is no ancestor), and then the pointers to all virtual
 methods. The VMT layout is illustrated in \seet{ObjVMTMem}. The VMT is
 constructed by the compiler.
 
-\begin{FPCltable}{ll}{Object Virtual Method Table memory layout (32-bit model)}{ObjVMTMem} \hline
-Offset & What \\ \hline
-+0 & Size of object type data \\
-+4 & Minus the size of object type data. Enables determining of valid VMT
+\begin{FPCltable}{rrl}{Object Virtual Method Table memory layout (32/64-bit model)}{ObjVMTMem} \hline
+Offset & & What \\
+32-bit & 64-bit &  \\ \hline
++0 & +0 & Size of object type data \\
++4 & +8 & Minus the size of object type data. Enables determining of valid VMT
 pointers. \\
-+8 & Pointer to ancestor VMT, \var{Nil} if no ancestor available.\\
-+12 & Pointers to the virtual methods. \\
++8 & +16 & Pointer to ancestor VMT, \var{Nil} if no ancestor available.\\
++12 & +24 & Pointers to the virtual methods. \\
 \dots & \\
 \hline
 \end{FPCltable}
@@ -5060,10 +5062,11 @@ Contrary to objects, all data fields of a class are always stored
 in heap memory.
 
 The memory allocated looks as in \seet{ClassMem}.
-\begin{FPCltable}{ll}{Class memory layout (32-bit model)}{ClassMem} \hline
-Offset & What \\ \hline
-+0 & Pointer to VMT. \\
-+4 & Data. All fields in the order they've been declared. \\
+\begin{FPCltable}{rrl}{Class memory layout (32/64-bit model)}{ClassMem} \hline
+Offset & & What \\  
+32-bit & 64-bit & \\ \hline 
++0 & +0 & Pointer to VMT. \\
++4 & +8 & Data. All fields in the order they've been declared. \\
 \dots & \\
 \hline
 \end{FPCltable}
@@ -5072,33 +5075,41 @@ The Virtual Method Table (VMT) of each class consists of several fields,
 which are used for runtime type information. The VMT layout is illustrated
 in \seet{ClassVMTMem}. The VMT is constructed by the compiler.
 
-\begin{FPCltable}{ll}{Class Virtual Method Table memory layout (32-bit model)}{ClassVMTMem} \hline
-Offset & What \\ \hline
-+0 & Size of object type data \\
-+4 & Minus the size of object type data. Enables determining of valid VMT
+\begin{FPCltable}{rrl}{Class Virtual Method Table memory layout (32/64-bit model)}{ClassVMTMem} \hline
+Offset & & What \\
+32-bit & 64-bit &  \\ \hline
++0 & +0 & Size of object type data \\
++4 & +8 & Minus the size of object type data. Enables determining of valid VMT
 pointers. \\
-+8 & Pointer to ancestor VMT, \var{Nil} if no ancestor available.\\
-+12 & Pointer to the class name (stored as a \var{shortstring}). \\
-+16 & Pointer to the dynamic method table (using \var{message} with integers).\\
-+20 & Pointer to the method definition table. \\
-+24 & Pointer to the field definition table. \\
-+28 & Pointer to type information table. \\
-+32 & Pointer to instance initialization table. \\
-+36 & Reserved.\\
-+40 & Pointer to the interface table. \\
-+44 & Pointer to the dynamic method table (using \var{message} with strings).\\
-+48 & Pointer to the \var{Destroy} destructor. \\
-+52 & Pointer to the \var{NewInstance} method. \\
-+56 & Pointer to the \var{FreeInstance} method. \\
-+60 & Pointer to the \var{SafeCallException} method. \\
-+64 & Pointer to the \var{DefaultHandler} method. \\
-+68 & Pointer to the \var{AfterConstruction} method. \\
-+72 & Pointer to the \var{BeforeDestruction} method. \\
-+76 & Pointer to the \var{DefaultHandlerStr} method. \\
-+80 & Pointers to other virtual methods. \\
++8 & +16 & Pointer to ancestor VMT, \var{Nil} if no ancestor available.\\
++12 & +24 & Pointer to the class name (stored as a \var{shortstring}). \\
++16 & +32 & Pointer to the dynamic method table (using \var{message} with integers).\\
++20 & +40 & Pointer to the method definition table. \\
++24 & +48 & Pointer to the field definition table. \\
++28 & +56 & Pointer to type information table. \\
++32 & +64 & Pointer to instance initialization table. \\
++36 & +72 & Pointer to the auto table.\\
++40 & +80 & Pointer to the interface table. \\
++44 & +88 & Pointer to the dynamic method table (using \var{message} with strings).\\
++48 & +96 & Pointer to the \var{Destroy} destructor. \\
++52 & +104 & Pointer to the \var{NewInstance} method. \\
++56 & +112 & Pointer to the \var{FreeInstance} method. \\
++60 & +120 & Pointer to the \var{SafeCallException} method. \\
++64 & +128 & Pointer to the \var{DefaultHandler} method. \\
++68 & +136 & Pointer to the \var{AfterConstruction} method. \\
++72 & +144 & Pointer to the \var{BeforeDestruction} method. \\
++76 & +152 & Pointer to the \var{DefaultHandlerStr} method. \\
++80 & +160 & Pointer to the \var{Dispatch} method. \\
++84 & +168 & Pointer to the \var{DispatchStr} method. \\
++88 & +176 & Pointer to the \var{Equals} method. \\
++92 & +184 & Pointer to the \var{GetHashCode} method. \\
++96 & +192 & Pointer to the \var{ToString} method. \\
++100 & +200 & Pointers to other virtual methods. \\
 \dots & \\
 \hline
 \end{FPCltable}
+
+See the file rtl/inc/objpash.inc for the most current VMT information.
 
 \subsection{File types}
 
