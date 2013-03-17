@@ -5891,7 +5891,7 @@ than a class helper:
 In Objective-C, multiple categories can be in scope at the same time for 
 a particular class.
 \item In Object Pascal, a helper method cannot change an existing method
-present in the original class. In Objective-C, a category can also
+present in the original class (but it can hide a method). In Objective-C, a category can also
 replace existing methods in another class rather than only add new ones.
 Since all methods are virtual in Objective-C, this also means that this
 method changes for all classes that inherit from the class in which the
@@ -6920,6 +6920,10 @@ statement.
 \item To be able to use the \var{Goto} statement, the \var{-Sg} compiler
 switch must be used, or \var{\{\$GOTO ON\}} must be used.
 \end{enumerate}
+\begin{remark}
+In iso or macpas mode, or with the modeswitch "nonlocalgoto", the compier
+will also allow non-local gotos.
+\end{remark}
 \var{Goto} statements are considered bad practice and should be avoided as
 much as possible. It is always possible to replace a \var{goto} statement by a
 construction that doesn't need a \var{goto}, although this construction may
@@ -6967,9 +6971,9 @@ in cases where Pascal syntax expects 1 statement, such as in
 \input{syntax/case.syn}
 The constants appearing in the various case parts must be known at
 compile-time, and can be of the following types : enumeration types,
-Ordinal types (except boolean), and chars. The case expression must be also of
-this type, or a compiler error will occur. All case constants must
-have the same type.
+Ordinal types (except boolean), and chars or string types. 
+The case expression must be also of this type, or a compiler error 
+will occur. All case constants must have the same type.
 
 The compiler will evaluate the case expression. If one of the case
 constants' value matches the value of the expression, the statement that follows
@@ -7026,6 +7030,31 @@ Case Number of
 else
  WriteLn ('HUGE number');
 end;
+\end{verbatim}
+\fpc allows the use of strings as case labels, and in that case the case
+variable must also be a string. When using string types, the case variable 
+and the various labels are compared in a case-sensitive way. 
+\begin{verbatim}
+Case lowercase(OS) of
+ 'windows',
+ 'dos'   : WriteLn ('Microsoft playtform);
+ 'macos',
+ 'darwin' : Writeln('Apple platform');
+ 'linux',
+ 'freebsd',
+ 'netbsd' : Writeln('Community platform');
+else
+  WriteLn ('Other platform');
+end;
+\end{verbatim}
+The case with strings is equivalent to a series of \var{if then else}
+statements, no optimizations are performed.
+
+However, ranges are allowed, and are the equivalent of an 
+\begin{verbatim}
+if (value>=beginrange) and (value<=endrange) then
+  begin
+  end;
 \end{verbatim}
 
 \subsection{The \var{If..then..else} statement}
