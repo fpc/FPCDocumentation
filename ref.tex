@@ -4754,6 +4754,137 @@ compiler will generate an error if a forward declaration of a class is
 later defined as a generic specialization.
 \end{remark}
 
+\section{A word about type compatibility}
+Whenever a generic class is specialized, this results in a new, distinct type.
+These types are assignment compatible.
+
+Take the following generic definition:
+\begin{verbatim}
+unit ua;
+
+interface
+
+type 
+  Generic TMyClass<T> = Class(TObject)
+    Procedure DoSomething(A : T; B : INteger);
+  end;
+      
+Implementation
+
+Procedure TMyClass.DoSomething(A : T; B : Integer);
+          
+begin
+  // Some code.
+end;
+              
+end.
+\end{verbatim}
+And the following specializations:
+\begin{verbatim}
+unit ub;
+
+interface
+
+uses ua;
+
+Type
+  TB = Specialize TMyClass<string>;
+
+implementation
+
+end.
+\end{verbatim}
+the following specializations is identical, but appears in a different unit:
+\begin{verbatim}
+unit uc;
+
+interface
+
+uses ua;
+
+Type
+  TB = Specialize TMyClass<string>;
+
+implementation
+
+end.
+\end{verbatim}
+The following will then compile:
+\begin{verbatim}
+unit ud;
+
+interface
+
+uses ua,ub,uc;
+
+Var
+  B : ub.TB;
+  C : uc.TB;
+  
+implementation
+
+begin
+  B:=C;
+end.
+\end{verbatim}
+The types ub.TB and  uc.TB are assignment compatible.
+It does not matter that the types are defined in different units. They could
+be defined in the same unit as well:
+\begin{verbatim}
+unit ue;
+
+interface
+
+uses ua;
+
+Type
+  TB = Specialize TMyClass<string>;
+  TC = Specialize TMyClass<string>;
+
+
+Var
+  B : TB;
+  C : TC;
+  
+implementation
+
+begin
+  B:=C;
+end.
+\end{verbatim}
+Each specialization of a generic class with the same types as parameters is a new,
+distinct type, but these types are assignment compatible.
+
+If the specialization is with a different type as parameters, the types are
+still distinct, but no longer assignment compatible. i.e. the following will
+not compile:
+\begin{verbatim}
+unit uf;
+
+interface
+
+uses ua;
+
+Type
+  TB = Specialize TMyClass<string>;
+  TC = Specialize TMyClass<integer>;
+
+
+Var
+  B : TB;
+  C : TC;
+  
+implementation
+
+begin
+  B:=C;
+end.   
+\end{verbatim}
+When compiling, an error will result:
+\begin{verbatim}
+Error: Incompatible types: got "TMyClass$1$crc31B95292" 
+expected "TMyClass$1$crc1ED6E3D5"
+\end{verbatim}
 \section{A word about scope}
 It should be stressed that all identifiers other than the template placeholders
 should be known when the generic class is declared. This works in 2 ways.
