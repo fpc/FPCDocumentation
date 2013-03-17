@@ -5067,9 +5067,9 @@ descendant record of a record\footnote{although it can be enhanced using record
 helpers, more about this in the chapter on record helpers.}.
 
 Why then introduce extended records ? They were introduced by Delphi 
-2005 to support one of the features introduced by .NET. Delphi no longer
-supports the old TP style of objects, and so re-introduced the
-features of .NET as extended records. Free Pascal aims to be Delphi 
+2005 to support one of the features introduced by .NET. Delphi deprecated
+the old TP style of objects, and re-introduced the features of .NET as 
+extended records. Free Pascal aims to be Delphi 
 compatible, so extended records are allowed in Free Pascal as well, 
 but only in Delphi mode.
 
@@ -5098,6 +5098,7 @@ obvious from the syntax diagram:
 \item No inheritance of records.
 \item No published section exists. 
 \item Constructors or destructors cannot be defined.
+\item Class methods (if one can name them so) require the \var{static} keyword.
 \item Methods cannot be virtual or abstract - this is a consequence
 of the fact that there is no inheritance.
 \end{itemize}
@@ -8997,9 +8998,108 @@ It is possible to avoid this particular problem by specifying
 \begin{verbatim}
   r1:=system.exp(r2);
 \end{verbatim}
-An experimental solution for this problem exists in the compiler, but is
-not enabled by default. Maybe someday it will be.
 \end{remark}
+
+When doing an explicit typecast, the compiler will attempt an implicit conversion
+if an assignment operator is present. That means that
+\begin{verbatim}
+Var
+  R1 : T1;
+  R2 : T2;
+
+begin
+  R2:=T2(R1); 
+\end{verbatim}
+Will be handled by an operator
+\begin{verbatim}
+Operator := (aRight: T1) Res: T2;
+\begin{verbatim}
+However,  an \var{Explicit} operator can be defined, and then it will be
+used instead when the compiler encounters a typecast.
+
+The reverse is not true: In a regular assignment, the compiler will not
+consider explicit assignment operators.
+
+Given the following definitions:
+\begin{verbatim}
+uses
+  sysutils;
+
+type
+  TTest1 = record
+    f: LongInt;
+  end;
+  TTest2 = record
+    f: String;
+  end;
+  TTest3 = record
+    f: Boolean;
+  end;
+\end{verbatim}
+It is possible to create assignment operators:
+\begin{verbatim}
+operator := (aRight: TTest1) Res: TTest2;
+begin
+  Writeln('Implicit TTest1 => TTest2');
+  Res.f := IntToStr(aRight.f);
+end;
+
+operator := (aRight: TTest1) Res: TTest3;
+begin
+  Writeln('Implicit TTest1 => TTest3');
+  Res.f := aRight.f <> 0;
+end;
+\end{verbatim}
+But one can also define typecasting operators:
+\begin{verbatim}
+operator Explicit(aRight: TTest2) Res: TTest1;
+begin
+  Writeln('Explicit TTest2 => TTest1');
+  Res.f := StrToIntDef(aRight.f, 0);
+end;
+
+operator Explicit(aRight: TTest1) Res: TTest3;
+begin
+  Writeln('Explicit TTest1 => TTest3');
+  Res.f := aRight.f <> 0;
+end;
+\end{verbatim}
+Thus, the following code
+\begin{verbatim}
+var
+  t1: TTest1;
+  t2: TTest2;
+  t3: TTest3;
+begin
+  t1.f := 42;
+  // Implicit
+  t2 := t1; 
+  // theoretically explicit, but implicit op will be used, 
+  // because no explicit operator is defined
+  t2 := TTest2(t1); 
+  // the following would not compile, 
+  // no assignment operator defined (explicit one won't be used here)
+  //t1 := t2; 
+  // Explicit
+  t1 := TTest1(t2); 
+  // first explicit (TTest2 => TTest1) then implicit (TTest1 => TTest3)
+  t3 := TTest1(t2); 
+  // Implicit
+  t3 := t1; 
+  // explicit
+  t3 := TTest3(t1); 
+end.
+\end{verbatim}
+will produce the following output:
+\begin{verbatim}
+Implicit TTest1 => TTest2
+Implicit TTest1 => TTest2
+Explicit TTest2 => TTest1
+Explicit TTest2 => TTest1
+Implicit TTest1 => TTest3
+Implicit TTest1 => TTest3
+Explicit TTest1 => TTest3
+\end{verbatim}
 
 \section{Arithmetic operators}
 \index{Operators!Arithmetic}\index{Operators!Binary}
