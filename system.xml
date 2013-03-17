@@ -3030,16 +3030,21 @@ undefined.
 <element name="Write">
 <short>Write variable to a text file</short>
 <descr>
+<p>
 <var>Write</var> writes the contents of the variables <var>V1</var>, <var>V2</var> etc. to
 the file <var>F</var>. <var>F</var> can be a typed file, or a <var>Text</var> file.
 If <var>F</var> is a typed file, then the variables <var>V1</var>, <var>V2</var> etc. must
 be of the same type as the type in the declaration of <var>F</var>. Untyped files
 are not allowed.
+</p>
+<p>
 If the parameter <var>F</var> is omitted, standard output is assumed.
 If <var>F</var> is of type <var>Text</var>, then the necessary conversions are done
 such that the output of the variables is in human-readable format.
 This conversion is done for all numerical types. Strings are printed exactly
 as they are in memory, as well as <var>PChar</var> types.
+</p>
+<p>
 The format of the numerical conversions can be influenced through
 the following modifiers:
 <var> OutputVariable : NumChars [: Decimals ]  </var>
@@ -3054,6 +3059,14 @@ If no formatting is specified, then the number is written using its natural
 length, with nothing in front of it if it's positive, and a minus sign if
 it's negative.
 Real numbers are, by default, written in scientific notation.
+</p>
+<remark>
+When writing string variables, no codepage conversions are done. 
+The string is copied as-is to the file descriptor. 
+In particular, for console output, it is the programmer's responsibility 
+to make sure that the codepage of the string matches the codepage of the
+console.
+</remark>
 </descr>
 <errors>
 If an error occurs, a run-time error is generated. This behavior can be
@@ -3080,6 +3093,13 @@ is emitted, resulting in a new line in the file <var>F</var>.
 <remark>
 Under linux and unix, the Carriage Return character is omitted, as
 customary in Unix environments.
+</remark>
+<remark>
+When writing string variables, no codepage conversions are done. 
+The string is copied as-is to the file descriptor. 
+In particular, for console output, it is the programmer's responsibility 
+to make sure that the codepage of the string matches the codepage of the
+console.
 </remark>
 </descr>
 <errors>
