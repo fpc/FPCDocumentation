@@ -5266,7 +5266,7 @@ class declaration for the class or record that the helper extends.
 The syntax diagram for a class or record helper is presented below.
 \input{syntax/helper.syn}
 The diagram shows that a helper definition looks very much like a regular
-class definition. It simply declares some extra constructors, properties and fields
+class definition. It simply declares some extra constructors, methods, properties and fields
 for a class: the class or record type for which the helper is an extension is indicated
 after the \var{for} keyword. Since an enumerator for a class is obtained
 through a regular method, class helpers can also be used to override the
@@ -5276,6 +5276,10 @@ As can be seen from the syntax diagram, it is possible to create descendents of 
 the helpers can form a hierarchy of their own, allowing to override methods of a
 parent helper. They also have visibility specifiers, just like records and
 classes.
+
+As in an instance of the class, the \var{Self} identifier in a method of a
+class helper refers to the class instance (not the helper instance). For a
+record, it refers to the record.
 
 The following is a simple class helper for the \var{TObject} class, which provides
 an alternate version of the standard \var{ToString} method.
@@ -5300,7 +5304,8 @@ end.
 The \var{helper} modifier is only a modifier just after the \var{class} or
 \var{record} keywords. That means that the first member of a class or record
 cannot be named \var{helper}. A member of a class or record can be called
-\var{helper}, it just cannot be the first one.
+\var{helper}, it just cannot be the first one, unless it is escaped with a
+\var{\&}, as for all identifiers that match a keyword.
 \end{remark}
 
 \section{Restrictions on class helpers}
@@ -5309,7 +5314,8 @@ some restrictions on the possibilities:
 \begin{itemize}
 \item Destructors or class destructors are not allowed.
 \item Class constructors are not allowed. 
-\item Record helpers cannot implement constructors.
+%\item Record helpers cannot implement constructors.
+\item Class helpers cannot descend from record helpers, and cannot extend record types.
 \item Field definitions are not allowed. Neither are class fields.
 \item Properties that refer to a field are not allowed. This is in fact a
 consequence of the previous item.
@@ -5318,7 +5324,9 @@ consequence of the previous item.
 by giving them the same name or they can be overloaded using the
 \var{overload} directive.
 \item Unlike for regular procedures or methods, the \var{overload} specifier must 
-be explicitly used when overloading methods in class helpers.
+be explicitly used when overloading methods from a class in a class helper. 
+If overload is not used, the extended type's method is hidden by the helper method
+(as for regular classes).
 \end{itemize}
 The following modifies the previous example by overloading the \var{ToString}
 method:
