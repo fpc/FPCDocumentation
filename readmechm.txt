@@ -53,7 +53,7 @@ in each CHM.
 
 The html in a CHM is basically unmodified except for links from one chm file
 to the other, these use a ms-its://file.chm/path/to/htmlfile.html like URL
-syntax.
+syntax. Some extra tables with references might be generated.
 
 The format is sometimes related to security problems, but as far as I have
 been able to verify, this is more an Internet Explorer viewer application
