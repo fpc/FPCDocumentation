@@ -1,5 +1,5 @@
-#LyX 1.6.6.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 345
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
 \begin_document
 \begin_header
 \textclass article
@@ -8,18 +8,26 @@
 \usepackage{times}
 \end_preamble
 \use_default_options false
+\maintain_unincluded_children false
 \language english
+\language_package default
 \inputencoding auto
+\fontencoding global
 \font_roman default
 \font_sans default
 \font_typewriter default
 \font_default_family default
+\use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100
 \font_tt_scale 100
 
 \graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
 \paperfontsize default
 \spacing single
 \use_hyperref false
@@ -27,9 +35,18 @@
 \use_geometry false
 \use_amsmath 1
 \use_esint 0
+\use_mhchem 1
+\use_mathdots 1
 \cite_engine basic
 \use_bibtopic false
+\use_indices false
 \paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
 \leftmargin 1.5cm
 \topmargin 1cm
 \rightmargin 1.5cm
@@ -37,15 +54,16 @@
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
-\defskip medskip
+\paragraph_indentation default
 \quotes_language english
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
 \tracking_changes false
 \output_changes false
-\author "" 
-\author "" 
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
 \end_header
 
 \begin_body
@@ -63,7 +81,7 @@ Versions
 \end_layout
 
 \begin_layout Standard
-Current version: 1.3
+Current version: 1.4a, just after the 2.6.2 release
 \end_layout
 
 \begin_layout Description
@@ -105,13 +123,21 @@ prefix
 1.4 more minor changes and updates.
 \end_layout
 
+\begin_layout Description
+1.4a minor fixes to layout, unixutil paragraph
+\end_layout
+
+\begin_layout Description
+1.4b mostly spelling fixes done while committing 1.4a changes.
+\end_layout
+
 \begin_layout Section
 Introduction
 \end_layout
 
 \begin_layout Standard
-As a lot of people already noticed, the Unix rtl has been nearly entirely
- changed in the 1.1.x/1.9.x/2.0.x branch
+This is a document where I wrote down some of the reasons for the restructiring
+ of the Unix rtl in the 1.1.x/1.9.x/2.0.x branch
 \begin_inset Foot
 status collapsed
 
@@ -123,12 +149,20 @@ These versions are all the same series.
 
 \end_inset
 
- .
- There are still more things to change, but the basic restructuring has
- been done I think.
- This document tries to explain some of the design considerations behind
+.
+ This document was mostly written in retrospect while this branch was maturing,
+ and end-users needed to be prepared for the 1.0->2.0 changes, so it is not
+ really a design document written before the deed.
+\end_layout
+
+\begin_layout Standard
+The restructure was never truly finished, and even now (while preparing
+ for 2.8.0), there are still more things to change, of course the main restructuri
+ng has been done, but because some details still have to be done, this document
+ is still relevant I think.
+ The document also tries to explain some of the design considerations behind
  these changes.
- Recently, the wiki article 
+ Recently, a wiki article 
 \begin_inset CommandInset href
 LatexCommand href
 name "http://wiki.freepascal.org/libc_unit"
@@ -146,8 +180,8 @@ History
 
 \begin_layout Standard
 The Unix rtl started life as the Linux rtl.
- I don't have the exact date, but the design of the linux unit of the 0.9(9).x
- and 1.0.x series dates back to 1996, and was made by Michael van Canneyt
+ I don't have the exact date, but the design of the Linux unit of the 0.9(9).x
+ and 1.0.x series dates back to 1995-1996, and was made by Michael van Canneyt
  based on the kernels of that era.
  (1.1.x, pre-glibc).
  This rtl was maintained and slightly expanded during the 1996-2000 period,
@@ -160,12 +194,15 @@ Just before the 1.0 release Marco van de Voort started tinkering with FreeBSD,
  However FPC was already too deep into the codefreeze that was needed to
  stabilize the upcoming 1.0 release to allow a junior member to fully redesign
  the Unix rtl.
- 
+ FreeBSD had started working when the first betas of 1.0.x were out, and it
+ was mostly a patched Linux RTL.
+ (so it couldn't be committed)
 \end_layout
 
 \begin_layout Standard
-That's why 1.0 was released without formal FreeBSD support, and a 1.0 FreeBSD
- beta release was delivered a few weeks after the formal release.
+That's why 1.0 was released without formal FreeBSD support, and after cleanup
+ and integration, a 1.0 FreeBSD beta release was delivered a few weeks after
+ the formal release.
  The minimal modifications for FreeBSD were merged into the CVS system before
  the 1.0.2 release, and the FreeBSD platform was reasonably established and
  regarded stable with the release of FPC 1.0.4.
@@ -179,7 +216,7 @@ In hindsight however not forcing more fundamental changes at the 1.0.2 release
  unit should have been renamed to Unix.
  Also the syscall interface should have been changed.
  However besides the conservatism that resulted from the code freeze, I
- had some dobuts about the feasability of the BSD ports then, and didn't
+ had some doubts about the feasibility of the BSD ports then, and didn't
  push it hard enough.
  
 \end_layout
@@ -191,9 +228,9 @@ During the 1.0.x lifetime, I regretted this deeply, specially after 1.0.6 when
  The things that could be solved with a simple IFDEF when the FreeBSD port
  was done, turned out to be annoying and complicated with multiple ports,
  and likely to introduce bugs.
- Small fixes done to the linux rtl by others constantly broke the BSD ports.
+ Small fixes done to the Linux RTL by others constantly broke the BSD ports.
  The 1.1 branch was made already a year before 1.0.
- Bugfixes and restructures were only partially ported to the 1.1.x branch,
+ Bug fixes and restructures were only partially ported to the 1.1.x branch,
  and the OpenBSD/NetBSD/Solaris/QNX/BeOS ports were never ported to 1.1.x.
  
 \end_layout
@@ -215,7 +252,7 @@ Well, there are a lot of reasons actually.
 \end_layout
 
 \begin_layout Enumerate
-The linux unit was originally targeted at linux only, 1.x kernels even.
+The Linux unit was originally targeted at Linux only, 1.x kernels even.
  Some details 
 \begin_inset Quotes eld
 \end_inset
@@ -235,15 +272,15 @@ Quite a lot of different groups of functions with different portability
 \end_layout
 
 \begin_layout Enumerate
-The linux unit doesn't have any form of (Unix) typing.
- Parameters types are translated to TP integer or longint, using the size
- in bytes they had in linux 1.0.x This creates portability problems to other
- Unices, linux on other architectures, and makes it harder to fix the unit
- for newer linux versions.
+The Linux unit doesn't have any form of (Unix) typing.
+ Parameters types are translated to Turbo Pascal's integer or longint, using
+ the size in bytes they had in Linux 1.0.x This creates portability problems
+ to other Unices, Linux on other architectures, and makes it harder to fix
+ the unit for newer Linux versions.
 \end_layout
 
 \begin_layout Enumerate
-The errorhandling of the linux unit is an own invention, and not compatible
+The error handling of the Linux unit is an own invention, and not compatible
  with libc, without any major benefits.
  This complicates the situation when the base library bases on libc.
 \end_layout
@@ -264,10 +301,10 @@ Linux
 \end_layout
 
 \begin_layout Enumerate
-Syscalls that are both used in unit linux and system were duplicated.
+Syscalls that are both used in unit Linux and system were duplicated.
  Some other units also include these.
- This adds a small overhead only (typically a few hunderds till several
- kb) under linux, but can dramatically increase if wrappers become complex.
+ This adds a small overhead only (typically a few hundreds till several
+ KB) under Linux, but can dramatically increase if wrappers become complex.
  See also next point.
 \end_layout
 
@@ -279,16 +316,16 @@ The then-current readdir situation on Linux was bad.
  getdirentries).
  Linux implements this too, since the old libc->glibc change, but FPC hadn't
  caught up yet.
- The *BSD ports did this from the start, but it is handcoded, and not a
- translated libc version, which might cause problems with unusual filesystemdriv
-ers.
+ The *BSD ports did this from the start, but it is hand coded, and not a
+ translated libc version, which might cause problems with unusual filesystem
+ drivers.
  (due to AMD64/Linux rtl work, I believe this has been remedied by Peter)
 \end_layout
 
 \begin_layout Enumerate
-(see also 6) The structure of the includefiles was quite linux centric,
+(see also 6) The structure of the include files was quite Linux centric,
  and not very flexible.
- System and linux/unix unit are too rigidly entangled.
+ System and Linux/UNIX unit are too rigidly entangled.
 \end_layout
 
 \begin_layout Enumerate
@@ -301,7 +338,7 @@ Functions weren't named consistently.
 \end_layout
 
 \begin_layout Enumerate
-(minor) The parameter passing of the syscall interface was system dependant.
+(minor) The parameter passing of the syscall interface was system dependent.
  (Linux: record, BSD: pseudo procedural), this is bad because the syscall
  interface was exported too.
 \end_layout
@@ -309,7 +346,7 @@ Functions weren't named consistently.
 \begin_layout Standard
 These reasons are made worse because 2.0 was supposed to support several
  architectures, and probably more OSes.
- During the 1.0 lifetime, the linux unit was ported to *BSD and BeOS, and
+ During the 1.0 lifetime, the Linux unit was ported to *BSD and BeOS, and
  that already stretched the design to its limits.
  2.0 was expected to grow beyond 20 OS-architecture combinations, so that
  made it much worse.
@@ -327,12 +364,12 @@ good
 
 \begin_layout Standard
 These reasons except number two could be fixed by some major, but doable
- refactoring of unit linux, and renaming it to unix (as was done originally).
+ refactoring of unit Linux, and renaming it to UNIX (as was done originally).
  However reason two couldn't be fixed this way.
 \end_layout
 
 \begin_layout Standard
-Since full compability would be broken by all those other changes anyway,
+Since full compatibility would be broken by all those other changes anyway,
  it was decided to do a full redesign, and start from the bottom up, and
  take care of all these issues, with special attention to ease of maintenance,
  portability (read: separating portable from unportable code).
@@ -361,13 +398,13 @@ incomplete
 \end_layout
 
 \begin_layout Standard
-An important sideeffect is that future source will show more clearly in
- the USES clause what unix functionality is actually used.
+An important side effect is that future source will show more clearly in
+ the USES clause what UNIX functionality is actually used.
  Use Termio or Syscall is more clear than 
 \begin_inset Quotes eld
 \end_inset
 
-linux
+Linux
 \begin_inset Quotes erd
 \end_inset
 
@@ -375,7 +412,7 @@ linux
  People often think that a single unit is easier than many, but this isn't
  the case anymore if it stuffed from top till bottom with IFDEFs, and a
  short description of what function is implemented on what platform is longer
- than the sourcecode itself.
+ than the source code itself.
 \end_layout
 
 \begin_layout Section
@@ -387,13 +424,13 @@ Introduce Unix typing, so dev_t, off_t etc.
 \end_layout
 
 \begin_layout Enumerate
-Fix the errorhandling to be compatible with normal Unix (posix) errno.
+Fix the error handling to be compatible with normal Unix (POSIX) errno.
  
 \series bold
 \emph on
 (
 \emph default
-Threadsafe)
+Thread safe)
 \end_layout
 
 \begin_layout Enumerate
@@ -404,7 +441,7 @@ At least keep a possible implementation on top of libc in mind while designing
 
 \begin_layout Enumerate
 No more duplication of code.
- Currently code is duplicated between system and the unix/linux unit.
+ Currently code is duplicated between system and the UNIX/Linux unit.
 \end_layout
 
 \begin_layout Enumerate
@@ -733,7 +770,8 @@ There are several reasons for this, but the most important ones were the
  (again, mainly for Linux).
  This includes distributions that compile libc with special options (often
  legacy free), and then work around this in headers for C users.
- We even have seen distributions package essentially beta versions.
+ We even have seen distributions package versions that were officially (accordin
+g to the glibc site) beta versions.
 \end_layout
 
 \begin_layout Standard
@@ -745,6 +783,8 @@ Moving to use libc by default would mean more than one binary distribution
  This is probably due to larger libc stubs and relocation data, if PIC is
  used when linking to libc, the difference might be larger even).
  Statically linked to libc the binaries are huge.
+ This is mostly because the glibc team probably doesn't prepare for this
+ eventuality.
 \end_layout
 
 \begin_layout Standard
@@ -778,8 +818,8 @@ And unfortunately automatic unattended conversion of C headers is not really
  The kernel doesn't have this, since incompatible versions of the call always
  get a different syscall number.
  Sometimes this is possible for libc too (e.g.
- by always using stat32 or so), but the libc situation is generally a bit
- more difficult.
+ by always using stat32 or so, or ELF symbol versioning), but the libc situation
+ is generally a bit more difficult.
  In the stat example, some distributions didn't support stat32 (to force
  quicker migration to 64-bit fs).
  And then there are the other unixes to consider.
@@ -839,6 +879,7 @@ A solution would be a GUI installer (e.g.
  However such an app is a lot of work, and keeps always a bit of a DIY shine.
  The FreeBSD ports system is also a natural fit, if somebody with enough
  knowledge of it would step up.
+ But all these require a magnitude more of maintenance.
 \end_layout
 
 \begin_layout Subsubsection
@@ -878,6 +919,8 @@ oldlinux
 \end_inset
 
  isn't touched, and always uses syscalls.
+ Since 2.6.0, after 9 years of compatibility-only existence, it is no longer available
+ precompiled in the default distribution.
 \end_layout
 
 \begin_layout Subsubsection
@@ -918,6 +961,7 @@ C is an ancient language which is pretty much frozen due to the enormous
  the function that returns the pointer to errno directly.
  This situation is far from ideal, but the problem is made worse by Unix
  API designers who simply aren't aware of the existance of other languages.
+ (or even C compilers other than the default installed one)
 \end_layout
 
 \begin_layout Standard
@@ -1099,15 +1143,15 @@ fp
 
  was decided I don't know.
  Probably during the BBQ at Rosa and Joerg's place in France, where Carl,
- Michael and I had a fairly heated discussion about the Unix RTL changed,
- or the correspondance to work out the details afterwards.
+ Michael and I had a fairly heated discussion about the Unix RTL changes,
+ or the correspondence to work out the details afterwards.
  It could have been somebody else on IRC even who suggested it.
- (Florian, Peter or Jonas being the main possibilities)
+ (Florian, Peter or Jonas being the main candidates)
 \end_layout
 
 \begin_layout Standard
-However in retrospect I still stand by the need to add an prefix, and a
- short prefix is fine.
+However even in retrospect I still stand by the need to add an prefix, and
+ a short prefix is fine.
  People often bang on about the 
 \begin_inset Quotes eld
 \end_inset
@@ -1116,7 +1160,7 @@ confusion
 \begin_inset Quotes erd
 \end_inset
 
- it will cause, but that would have been much worse IMHO, when one had to
+ it will cause, but it would have been much worse IMHO, when one had to
  explain the non prefixed case: the exceptions, the name clashes with the
  libc and linux and other platform specific units.
  Yes, the transition
@@ -1165,6 +1209,7 @@ The following picture tries to explain some of the unit dependancies in
 \begin_layout Standard
 \begin_inset Graphics
 	filename deeperrtl.png
+	width 15cm
 
 \end_inset
 
@@ -1404,6 +1449,11 @@ unit libc is no longer needed for Iconv calls (v2.2.4 iconvenc)
 the resolver functions of libc are available in unit cnetdb as of 2.4.4
 \end_layout
 
+\begin_layout Enumerate
+A deprecated warning has been added to unit libc in v2.6.2 to avoid design-in
+ in new programs.
+\end_layout
+
 \begin_layout Subsection
 Deprecating transitional functionality
 \end_layout
@@ -1431,6 +1481,23 @@ non fp socket functions.
 
 \begin_layout Enumerate
 Some non fp functions in the unix rtl
+\end_layout
+
+\begin_layout Enumerate
+Unixutil and the functions in it are now in limbo for 3 major versions.
+ See next paragraph
+\end_layout
+
+\begin_layout Subsubsection
+unixutil
+\end_layout
+
+\begin_layout Standard
+The remaining routines in this are reusable, and thus should move to something
+ portable.
+ On the other hand this is not possible because non-portable Unix unit depends
+ on them (see RTL dependency graph) A good solution still has to be found
+ for this issue.
 \end_layout
 
 \end_body
