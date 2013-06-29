@@ -9904,9 +9904,9 @@ As an example consider the following routine:
 Procedure Doit (Name : string);
 Var F : Text;
 begin
+  Assign (F,Name);
+  Rewrite (name);
   Try
-    Assign (F,Name);
-    Rewrite (name);
     ... File handling ...
   Finally
     Close(F);
@@ -9919,6 +9919,28 @@ was raised, and the \var{Close} statement.
 If no exception occurred, all file operations will be executed, and the file
 will be closed at the end.
 
+Note that an \var{Exit} statement enclosed by a \var{try .. finally} block,
+will still execute the finally block. Reusing the previous example:
+\begin{verbatim}
+Procedure Doit (Name : string);
+Var 
+  F : Text;
+  B : Boolean;
+begin
+  B:=False;
+  Assign (F,Name);
+  Rewrite (name);
+  Try
+    // ... File handling ...
+    if B then 
+      exit; // Stop processing prematurely
+    // More file handling
+  Finally
+    Close(F);
+  end;
+\end{verbatim}
+The file will still be closed, even if the processing ends prematurely using
+the \var{Exit} statement.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Exception handling nesting
