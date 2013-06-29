@@ -1039,11 +1039,20 @@ set <var>S</var>, the compiler will generate an error.
 <element name="Exit">
 <short>Exit current subroutine.</short>
 <descr>
+<p>
 <var>Exit</var> exits the current subroutine, and returns control to the calling
 routine. If invoked in the main program routine, exit stops the program.
 The optional argument <var>X</var> allows to specify a return value, in the case
 <var>Exit</var> is invoked in a function. The function result will then be
 equal to <var>X</var>.
+</p>
+<p>
+In Object Pascal or Delphi modes, if the <var>Exit</var> statement is
+surrounded by one or more <var>Try .. Finally</var> constructs, the
+ <var>Finally</var> blocks are
+executed, which means that if the finally blocks are used to free resources,
+then these resources will also be freed when <var>Exit</var> is called.
+</p>
 </descr>
 <errors>
 None.
@@ -1053,7 +1062,6 @@ None.
 </seealso>
 <example file="refex/ex21"/>
 </element>
-
 
 
 <element name="Exp">
@@ -10509,11 +10517,11 @@ address where the error occurred.
 
 
 <element name="UTF8Decode">
-<short>Convert an UTF-8 encoded unicode string to a widestring</short>
+<short>Convert an UTF-8 encoded ansistring to a unicodestring</short>
 <descr>
 <p>
-<var>UTF8Decode</var> converts the UTF-8 
-encoded unicode string <var>S</var> to a widestring and returns the resulting string. It calls the
+<var>UTF8Decode</var> converts the UTF-8 encoded ansistring <var>S</var> to 
+a unicodestring and returns the resulting string. It calls the
 low-level <link id="Utf8ToUnicode"/> function to do the actual work.
 </p>
 <p>
@@ -10530,7 +10538,7 @@ For this function to work, a widestring manager must be installed.
 
 
 <element name="UTF8Encode">
-<short>Convert a widestring to an UTF-8 encoded unicode string</short>
+<short>Convert a widestring or unicodestring to an UTF-8 encoded ansistring</short>
 <descr>
 <p>
 <var>UTF8Encode</var> converts an ansistring or widestring <var>S</var> to the equivalent UTF-8 encoded unicode string and returns this resulting string. It calls the
