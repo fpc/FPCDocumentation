@@ -8294,8 +8294,9 @@ descendent, and call it's execute method.
 </element>
 
 <element name="TThread.Execute">  <!-- Procedure -->
-<short>Execute method. Should be overridden in a descendent thread.</short>
+<short>Execute method. Must be overridden in a descendent thread.</short>
 <descr>
+
 </descr>
 <seealso>
 </seealso>
@@ -12037,12 +12038,38 @@ created.
 <element name="CheckSynchronize">
 <short>Check whether there are any synchronize calls in the synchronize queue.</short>
 <descr>
+<p>
 <var>CheckSynchronize</var> should be called regularly by the main application
 thread to handle any <link id="TThread.Synchronize"/> calls that may be waiting for
-execution by the main thread.
+execution by the main thread. If any such calls are waiting for execution by
+the main thread, they are executed at once, in the order that they were
+scheduled.
+</p>
+<p>
+The function returns <var>True</var> if any <var>Synchronize</var> method was executed.
+</p>
+<p>
+<var>TimeOut</var> is the maximum amount of time (in milliseconds) that the
+<var>CheckSynchronize</var> routine will wait for synchronisation requests
+to appear in the queue.
+</p>
+<p>
+Calling this routine more often will ensure that synchronize requests are
+handled faster.
+</p>
+<p>
+This routine may not be called from any thread other than the main thread,
+as it will execute the waiting requests.
+</p>
+<p>
+Threads may call the <link id="WakeMainThread"/> to signal the main thread
+that the synchronisation queue contains items, and thus speed up the
+execution of the synchronize calls. 
+</p>
 </descr>
 <seealso>
 <link id="TThread.Synchronize"/>
+<link id="WakeMainThread"/>
 </seealso>
 </element>
 
@@ -12050,11 +12077,24 @@ execution by the main thread.
 <element name="WakeMainThread">
 <short>Handler which is called if a thread wants to synchronize with the main application thread.</short>
 <descr>
-<var>WakeMainThread</var> is called by the <link id="TThread.Synchronize"/> call.
-It should alert the main program thread that a thread is waiting for
-synchronization. The call is executed by the thread, and should therefore
+<p>
+<var>WakeMainThread</var> is a handler, which, when set, is called by the <link id="TThread.Synchronize"/>
+routine to signal the main thread that a synchronization routine is waiting
+in the queue. 
+</p>
+<p>
+This handler is by default empty. An actual implementation depends on the
+main program logic (usually an event loop) and must be provided by the event loop
+logic: the event loop will normally call <link id="CheckSynchronize"/> at
+regular intervals. The <var>WakeMainThread</var> can make sure this happens
+as soon as possible.
+</p>
+<p>
+While this handle should alert the main program thread that a thread is waiting for
+synchronization, the call is executed by the thread, and should therefore
 NOT synchronize the thread, but should somehow signal the main thread that a
 thread is waiting for synchronization. For example, by sending a message.
+</p>
 </descr>
 <seealso>
 <link id="CheckSynchronize"/>
