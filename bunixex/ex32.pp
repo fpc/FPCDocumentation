@@ -1,4 +1,4 @@
-program Example31;
+program Example32;
 
 { Program to demonstrate the FpDup2 function. }
 
