@@ -1406,6 +1406,419 @@ application, the thread continues to run. The call always returns zero.
 </descr>
 </element>
 
+<!-- constant Visibility: default -->
+<element name="IN_CLOEXEC">
+<short>Inotify close on exec flag.</short>
+<descr>
+<var>IN_CLOEXEC</var> can be set to indicate that the inotify file handle
+must be closed on exec.
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_NONBLOCK">
+<short>Do not block on read</short>
+<descr>
+<var>IN_NONBLOCK</var> can be set to indicate that the inotify file handle
+should not block read operations.
+</descr>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="inotify_event">
+<short>INotify event structure</short>
+<descr>
+<p>
+<var>inotify_event</var> is the structure used to report changes in a directory.
+When reading a inotify file descriptor, one or more <var>inotify_event</var>
+records can be read from the file descriptor.
+</p>
+</descr>
+<seealso>
+<link id="baseunix.fpread"/>
+<link id="sysutils.FileRead"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="inotify_event.wd">
+<short>Watch descriptor (as returned by <var>inotify_add_watch</var>)</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="inotify_event.mask">
+<short>Event mask</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="inotify_event.cookie">
+<short>Cookie, used to pair move events</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="inotify_event.len">
+<short>Length of name</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="inotify_event.name">
+<short>Filename for which a change is reported</short>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="Pinotify_event">
+<short>Pointer to <link id="#rtl.linux.inotify_event">inotify_event</link> structure.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_ACCESS">
+<short>Data was read from file.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_MODIFY">
+<short>Data was written to file.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_ATTRIB">
+<short>File attributes changed.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_CLOSE_WRITE">
+<short>File opened for write was closed</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_CLOSE_NOWRITE">
+<short>File opened for read was closed</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_OPEN">
+<short>File was opened</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_MOVED_FROM">
+<short>File was moved away from watched directory</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_MOVED_TO">
+<short>File was moved into watched directory</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_CLOSE">
+<short>File was closed (read or write)</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_MOVE">
+<short>File was moved (in or out of directory)</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_CREATE">
+<short>A file was created in the directory.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_DELETE">
+<short>A file was deleted from the directory.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_DELETE_SELF">
+<short>Directory or file under observation was deleted.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_MOVE_SELF">
+<short>Directory or file under observation was moved.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_UNMOUNT">
+<short>File system on which file resides was unmounted. Only reported.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_Q_OVERFLOW">
+<short>Queue overflowed. Only reported.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_IGNORED">
+<short>Watch was ignored (removed). Only reported.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_ONLYDIR">
+<short>Only watch filename if it is a directory.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_DONT_FOLLOW">
+<short>Do not follow symlinks</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_MASK_ADD">
+<short>Add events to existing watch (OR-ing the sets) if one exists.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_ISDIR">
+<short>Event subject is a directory (reported only)</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_ONESHOT">
+<short>Only report one event, then remove the watch.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="IN_ALL_EVENTS">
+<short>All possible events OR-ed together.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="inotify_init">
+<short>Initialize a new inotify file descriptor</short>
+<descr>
+<var>inotify_init</var> initializes a new <var>INotify</var> file descriptor.
+No options can be specified. On return, the file descriptor is returned.
+</descr>
+<errors>
+On Error, -1 is returned. <var>fpgeterrno</var> can be used to get more
+detailed error information
+</errors>
+<seealso>
+<link id="inotify_init1"/>
+<link id="inotify_add_watch"/>
+<link id="inotify_rm_watch"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="inotify_init1">
+<short>Initialize a new inotify file descriptor with extra options.</short>
+<descr>
+<p>
+<var>inotify_init1</var> initializes a new <var>INotify</var> file
+descriptor.
+The following options can be OR-ed and passed in flags:
+</p>
+<dl>
+<dt>IN_NONBLOCK</dt><dd><printshort id="IN_NONBLOCK"/></dd>
+<dt>IN_CLOEXEC</dt><dd><printshort id="IN_CLOEXEC"/></dd>
+</dl>
+</descr>
+<errors>
+On Error, -1 is returned. <var>fpgeterrno</var> can be used to get more
+detailed error information.
+</errors>
+<seealso>
+<link id="inotify_init"/>
+<link id="inotify_add_watch"/>
+<link id="inotify_rm_watch"/> 
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="inotify_add_watch">
+<short>Add a watch to a notify file descriptor</short>
+<descr>
+<p>
+<var>inotify_add_watch</var> can be used to add a watch to an initialized
+inotify file descriptor (<var>fd</var>). The file or directory to watch can
+be specified in the <var>name</var> parameter, and the events that must be
+reported can be specified in <var>mask</var>. The following flags can be
+specified:
+</p>
+<dl>
+<dt><var>IN_ACCESS</var></dt><dd>Data was read from file.</dd>
+<dt><var>IN_MODIFY</var></dt><dd>Data was written to file.</dd>
+<dt><var>IN_ATTRIB</var></dt><dd>File attributes changed.</dd>
+<dt><var>IN_CLOSE_WRITE</var></dt><dd>File opened for write was closed</dd>
+<dt><var>IN_CLOSE_NOWRITE</var></dt><dd>File opened for read was closed</dd>
+<dt><var>IN_CLOSE</var></dt><dd>File was closed (read or write)</dd>
+<dt><var>IN_OPEN</var></dt><dd>File was opened</dd>
+<dt><var>IN_MOVED_FROM</var></dt><dd>File was moved away from watched directory</dd>
+<dt><var>IN_MOVED_TO</var></dt><dd>File was moved into watched directory</dd>
+<dt><var>IN_MOVE</var></dt><dd>File was moved (in or out of directory)</dd>
+<dt><var>IN_CREATE</var></dt><dd>A file was created in the directory.</dd>
+<dt><var>IN_DELETE</var></dt><dd>A file was deleted from the directory.</dd>
+<dt><var>IN_DELETE_SELF</var></dt><dd>Directory or file under observation was deleted.</dd>
+<dt><var>IN_MOVE_SELF</var></dt><dd>Directory or file under observation was moved.</dd>
+<dt><var>IN_ALL_EVENTS</var></dt><dd>All possible events OR-ed together.</dd>
+</dl>
+<p>
+These events can be OR-ed with some flags, controlling the behaviour of the watch:
+</p>
+<dl>
+<dt><var>IN_ONLYDIR</var></dt><dd>Only watch filename if it is a directory.</dd>
+<dt><var>IN_ISDIR</var></dt><dd>Event occurred against directory.</dd>
+<dt><var>IN_DONT_FOLLOW</var></dt><dd>Do not follow symlinks</dd>
+<dt><var>IN_MASK_ADD</var></dt><dd>Add events to existing watch (OR-ing the sets) if one exists.</dd>
+<dt><var>IN_ONESHOT</var></dt><dd>Only report one event, then remove the watch.</dd>
+</dl>
+<p>
+On return, the function returns a watch descriptor, which will be reported in
+the <link id="inotify_event"/> structure's <var>wd</var>.
+</p>
+</descr>
+<errors>
+On Error, -1 is returned. <var>fpgeterrno</var> can be used to get more
+detailed error information.
+</errors>
+<seealso>
+<link id="inotify_init"/>
+<link id="inotify_init1"/>
+<link id="inotify_rm_watch"/> 
+<link id="inotify_event"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="inotify_rm_watch">
+<short>Remove watch from Inotify file descriptor.</short>
+<descr>
+<var>inotify_rm_watch</var> removes watch descriptor <var>wd</var>  from
+inotify descriptor <var>fd</var>. On success, 0 is returned.
+</descr>
+<errors>
+On Error, -1 is returned. <var>fpgeterrno</var> can be used to get more
+detailed error information.
+</errors>
+<seealso>
+<link id="inotify_init"/>
+<link id="inotify_init1"/> 
+<link id="inotify_add_watch"/>
+<link id="inotify_event"/>    
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="CLOCK_REALTIME">
+<short>System wide real-time clock. Can only be set by root.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="CLOCK_MONOTONIC">
+<short>Monotonic system time since some undetermined start point. Can change if time is set.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="CLOCK_PROCESS_CPUTIME_ID">
+<short>Processs-specific high-resolution timer from the CPU.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="CLOCK_THREAD_CPUTIME_ID">
+<short>Thread-specific high-resolution timer from the CPU.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="CLOCK_MONOTONIC_RAW">
+<short>Like <var>CLOCK_MONOTONIC</var>, not subject to NTP adjustments</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="CLOCK_REALTIME_COARSE">
+<short>Less precise (but faster) version of <var>CLOCK_REALTIME</var></short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="CLOCK_MONOTONIC_COARSE">
+<short>Less precise (but faster) version of <var>CLOCK_MONOTONIC</var></short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="CLOCK_SGI_CYCLE">
+<short>High resolution timer </short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="MAX_CLOCKS">
+<short>Maximum number of clocks in the system</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="CLOCKS_MASK">
+<short>Mask for supported clocks</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="CLOCKS_MONO">
+<short>Monotonic clocks mask</short>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="clockid_t">
+<short>Clock id type</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="clock_getres">
+<short>Get clock resolution</short>
+<descr>
+<var>clock_getres</var> returns the resolution of the clock specified in
+<var>clk_id</var> in the <var>res</var> structure. It can be <var>Nil</var>.
+if the clock exists and the resolution can be retrieved, <var>0</var> is
+returned.
+</descr>
+<errors>
+On Error, -1 is returned. <var>fpgeterrno</var> can be used to get more
+detailed error information.
+</errors>
+<seealso>
+<link id="clock_gettime"/>
+<link id="clock_settime"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="clock_gettime">
+<short>Get the time of a clock</short>
+<descr>
+<var>clock_gettime</var> returns the current time of the clock specified in
+<var>clk_id</var> in the <var>tp</var> structure. If the clock exists and 
+the time can be retrieved, <var>0</var> is returned.
+</descr>
+<errors>
+On Error, -1 is returned. <var>fpgeterrno</var> can be used to get more
+detailed error information.
+</errors>
+<seealso>
+<link id="clock_getres"/>
+<link id="clock_settime"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="clock_settime">
+<short>Set the time of a clock</short>
+<descr>
+<var>clock_settime</var> sets the current time of the clock specified in
+<var>clk_id</var>. The time is specified in the <var>tp</var> structure. If the clock exists and 
+the time can be retrieved, <var>0</var> is returned. The resolution is
+truncated to the resolution supported by the specified clock. Note that not
+all clocks can be set.
+</descr>
+<errors>
+On Error, -1 is returned. <var>fpgeterrno</var> can be used to get more
+detailed error information.
+</errors>
+<seealso>
+<link id="clock_getres"/>
+<link id="clock_gettime"/>
+</seealso>
+</element>
+
 </module> <!-- Linux -->
 </package>
 </fpdoc-descriptions>
