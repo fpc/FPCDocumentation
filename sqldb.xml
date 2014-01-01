@@ -3416,6 +3416,474 @@ the various <link id="TSQLConnection"/> descendents.
 </seealso>
 </element>
 
+<!-- enumeration value Visibility: default -->
+<element name="TSchemaType.stSchemata">
+<short>List of schemas in database(s)</short>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TSQLStatementInfo">
+<short>Record to describe a SQL statement</short>
+<descr>
+<p>
+<var>TSQLStatementInfo</var> is a record used to describe an SQL statement.
+It is used internally by the <link id="TSQLStatement"/> and <link
+id="TSQLQuery"/> objects to analyse SQL statements.
+</p>
+<p>
+It is used to be able to modify the SQL statement (for additional filtering)
+or to determine the table to update when applying dataset updates to the
+database.
+</p>
+</descr>
+<seealso>
+<link id="TSQLStatement"/>
+<link id="TSQLQuery"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TSQLStatementInfo.StatementType">
+<short>Type of SQL statement</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TSQLStatementInfo.TableName">
+<short>Tablename to be used in updates</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TSQLStatementInfo.Updateable">
+<short>Updateable SQL result set ?</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TSQLStatementInfo.WhereStartPos">
+<short>Where clause start position</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TSQLStatementInfo.WhereStopPos">
+<short>Where clause end position</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.sqldb.TCustomSQLStatement
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TCustomSQLStatement">
+<short>Object to execute SQL statements without result set.</short>
+<descr>
+<p>
+<var>TCustomSQLStatement</var> is a light-weight object that can be used to
+execute SQL statements on a database. It does not support result sets, and
+has none of the methods that a <link id="TDataset"/> component has. It can
+be used to execute SQL statements on a database that update data, execute
+stored procedures and DDL statements etc. 
+</p>
+<p>
+The <var>TCustomSQLStatement</var> is equivalent to <link id="TSQLQuery"/>
+in that it supports transactions (in the <link
+id="TSQLConnection.Transaction">Transaction</link> property)
+and parameters (in the <link id="TSQLConnection.Params">Params</link> property) and as such is a more
+versatile tool than executing queries using <link id="TSQLConnection.ExecuteDirect"/>.
+</p>
+<p>
+To use a <var>TCustomSQLStatement</var> is simple and similar to the use of
+<link id="TSQLQuery"/>: set the <link
+id="TSQLStatement.Database">Database</link> property to an existing connection component, and set the
+<link id="TSQLStatement.Transaction">Transaction</link> property. After setting the <link
+id="TSQLStatement.SQL">SQL</link>
+property and filling <link id="TSQLStatement.Params">Params</link>, the SQL statement can be executed
+with the <link id="Execute"/> method.
+</p>
+<p>
+<var>TCustomSQLStatement</var> is a parent class. Many of the properties are
+only made public (or published) in the <link id="TSQLStatement"/> class, which 
+should be instantiated instead of the <var>TCustomSQLStatement</var> class.
+</p>
+</descr>
+<seealso>
+<link id="TSQLStatement"/>
+<link id="TDataset"/>
+<link id="TSQLQuery"/>
+<link id="TSQLStatement.Transaction"/>
+<link id="TSQLStatement.Params"/>
+<link id="Execute"/>
+<link id="TSQLStatement.Database"/>
+<link id="TSQLConnection.ExecuteDirect"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSQLConnection.GetSchemaNames">
+<short>Get database schema names</short>
+<descr>
+<var>GetSchemaNames</var> returns a list of schemas defined in the database.
+</descr>
+<seealso>
+<link id="TSQLConnection.GetTableNames"/>
+<link id="TSQLConnection.GetProcedureNames"/>
+<link id="TSQLConnection.GetFieldNames"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TSQLConnection.GetSchemaNames.List">
+<short>On return, filled with schema names, one per line</short>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCustomSQLStatement.Create">
+<short>Create a new instance of <var>TCustomSQLStatement</var></short>
+<descr>
+<var>Create</var> initializes a new instance of
+<var>TCustomSQLStatement</var> and sets the <link
+id="TSQLStatement.SQL">SQL</link>
+<link id="TSQLStatement.Params">Params</link>, <link
+id="TSQLStatement.ParamCheck">ParamCheck</link> and 
+<link id="TSQLStatement.ParseSQL">ParseSQL</link> to
+their initial values.
+</descr>
+<seealso>
+<link id="TSQLStatement.SQL"/>
+<link id="TSQLStatement.Params"/>
+<link id="TSQLStatement.ParamCheck"/> 
+<link id="TSQLStatement.ParseSQL"/> 
+<link id="Destroy"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomSQLStatement.Create.AOwner">
+<short>Owner of the new <var>TCustomSQLStatement</var> instance.</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCustomSQLStatement.Destroy">
+<short>Destroy a <var>TCustomSQLStatement</var> instance.</short>
+<descr>
+<var>Destroy</var> disconnects the <var>TCustomSQLStatement</var> instance
+from the transaction and database, and then frees the memory taken by the
+instance and its properties.
+</descr>
+<seealso>
+<link id="TSQLStatement.Database"/>
+<link id="TSQLStatement.Transaction"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomSQLStatement.Prepare">
+<short>Prepare the statement for execution</short>
+<descr>
+<var>Prepare</var> prepares the SQL statement for execution. It is called
+automatically if <link id="Execute"/> is called and the statement was not yet
+prepared. Depending on the database engine, it will also allocate the necessary 
+resources on the database server.
+</descr>
+<errors>
+An exception is raised if there is no <link id="TSQLStatement.SQL">SQL</link> statement set or the
+<link id="TSQLStatement.Database">Database</link> or <link id="TSQLStatement.Transaction">Transaction</link> properties are empty.
+</errors>
+<seealso>
+<link id="TSQLStatement.SQL"/>
+<link id="TSQLStatement.Database"/>
+<link id="TSQLStatement.Transaction"/>
+<link id="Execute"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomSQLStatement.Execute">
+<short>Execute the SQL statement.</short>
+<descr>
+<var>Execute</var> executes the <link id="SQL"/> statement on the database.
+If necessary, it will first open the connection and start a transaction,
+followed by a call to <var>Prepare</var>.
+</descr>
+<errors>
+<p>
+An exception is raised if there is no <link id="TSQLStatement.SQL">SQL</link> statement set or the
+<link id="TSQLStatement.Database">Database</link> or <link id="TSQLStatement.Transaction">Transaction</link> properties are empty.
+</p>
+<p>
+If an error occurs at the database level (the SQL failed to execute
+properly) then an exception is raised as well.
+</p>
+</errors>
+<seealso>
+<link id="TSQLStatement.SQL"/>
+<link id="TSQLStatement.Database"/> 
+<link id="TSQLStatement.Transaction"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomSQLStatement.Unprepare">
+<short>Unprepare a previously prepared statement</short>
+<descr>
+<var>Unprepare</var> unprepares a prepared SQL statement. It is called
+automatically when the SQL statement is changed. Depending on the database
+engine, it will also de-allocate any allocated resources on the database server.
+if the statement is not in a prepared state, nothing happens.
+</descr>
+<errors>
+If an error occurs at the database level (the unprepare operation failed to execute
+properly) then an exception is raised.
+</errors>
+<seealso>
+<link id="TSQLStatement.SQL"/>
+<link id="TSQLStatement.Database"/>
+<link id="TSQLStatement.Transaction"/>
+<link id="Prepare"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomSQLStatement.ParamByName">
+<short>Find a parameter by name</short>
+<descr>
+<var>ParamByName</var> finds the parameter <var>AParamName</var> in the
+<link id="TSQLStatement.Params">Params</link> property.
+</descr>
+<errors>
+If no parameter with the given name is found, an exception is raised.
+</errors>
+<seealso>
+<link id="TSQLStatement.Params"/>
+<link id="TParams.ParamByname"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCustomSQLStatement.ParamByName.Result">
+<short>The parameter with name <var>AParamName</var></short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomSQLStatement.ParamByName.AParamName">
+<short>Parameter to search for.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomSQLStatement.RowsAffected">
+<short>Number of rows affected by the SQL statement.</short>
+<descr>
+<var>RowsAffected</var> is set to the number of affected rows after <link id="Execute"/> was called.
+Not all databases may support this.
+</descr>
+<seealso>
+<link id="Execute"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCustomSQLStatement.RowsAffected.Result">
+<short>The number of affected rows by the last executed SQL command.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomSQLStatement.Prepared">
+<short>Is the statement prepared or not</short>
+<descr>
+<var>Prepared</var> equals <var>True</var> if <link id="Prepare"/> was
+called (implicitly or explictly), it returns <var>False</var> if not. 
+It can be set to <var>True</var> or <var>False</var> to call <link
+id="Prepare"/> or <link id="UnPrepare"/>, respectively.
+</descr>
+<seealso>
+<link id="Prepare"/>
+<link id="UnPrepare"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.sqldb.TSQLStatement
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TSQLStatement">
+<short>Class to execute non-select SQL statements.</short>
+<descr>
+<var>TSQLStatement</var> is a descendent of <link id="TCustomSQLStatement"/>
+which simply publishes the protected properties of that component.
+</descr>
+<seealso>
+<link id="TCustomSQLStatement"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSQLStatement.Database">
+<short>Database instance to execute statement on.</short>
+<descr>
+<var>Database</var> must be set to an instance of a <link id="TSQLConnection"/>
+descendent. It must be set, together with <link id="Transaction"/> in order to be able to call <link
+id="TCustomSQLStatement.Prepare">Prepare</link> or <link
+id="TCustomSQLStatement.Execute">Execute</link>.
+</descr>
+<seealso>
+<link id="Transaction"/> 
+<link id="TCustomSQLStatement.Prepare">Prepare</link>
+<link id="TCustomSQLStatement.Execute">Execute</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSQLStatement.DataSource">
+<short>Datasource to copy parameter values from</short>
+<descr>
+<var>Datasource</var> can be set to a <link id="#fcl.db.TDatasource"/> instance. 
+When <link id="TCustomSQLStatement.Execute">Execute</link> is called, any
+unbound parameters remain empty, but if <var>DataSource</var> is set, the
+value of these parameters will be searched in the fields of the associated
+dataset. If a field with a name equal to the parameter is found, the value
+of that field is copied to the parameter. No such field exists, an exception
+is raised.
+</descr>
+<seealso>
+<link id="#fcl.db.TDatasource"/>
+<link id="TCustomSQLStatement.Execute">Execute</link>
+<link id="#fcl.db.TParam.Bound"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSQLStatement.ParamCheck">
+<short>Should SQL be checked for parameters</short>
+<descr>
+<p>
+<var>ParamCheck</var> must be set to <var>False</var> to disable the
+parameter check. The default value <var>True</var> indicates that the SQL
+statement should be checked for parameter names (in the form
+<var>:ParamName</var>), and corresponding <link
+id="#fcl.db.TParam">TParam</link> instances should be added to the <link
+id="Params">Params</link> property.
+</p>
+<p> 
+When executing some DDL statements, e.g. a "create procedure" SQL 
+statement can contain parameters. These parameters should not be converted
+to <var>TParam</var> instances.
+</p>
+</descr>
+<seealso>
+<link id="#fcl.db.TParam">TParam</link>
+<link id="Params"/>
+<link id="TSQLQuery.ParamCheck"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSQLStatement.Params">
+<short>List of parameters.</short>
+<descr>
+<var>Params</var> contains an item for each of the parameters in the <link id="SQL"/>
+statement (in the form <var>:ParamName</var>). The collection is filled
+automatically if the <link id="ParamCheck"/> property is <var>True</var>.
+</descr>
+<seealso>
+<link id="SQL"/>
+<link id="ParamCheck"/>
+<link id="ParseSQL"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSQLStatement.ParseSQL">
+<short>Parse the SQL statement</short>
+<descr>
+<var>ParseSQL</var> can be set to <var>False</var> to disable parsing of the
+<link id="SQL"/> property when it is set. The default behaviour
+(<var>ParseSQL=True</var>) is to parse the statement
+and detect what kind of SQL statement it is.
+</descr>
+<seealso>
+<link id="SQL"/>
+<link id="ParamCheck"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSQLStatement.SQL">
+<short>The SQL statement to execute</short>
+<descr>
+<p>
+<var>SQL</var> must be set to the SQL statement to execute. It must not be a
+statement that returns a result set. This is the statement that will be
+passed on to the database engine when <link id="TCustomSQLStatement.Prepare">Prepare</link> is called.
+</p>
+<p>
+If <link id="ParamCheck"/> equals <var>True</var> (the default), the SQL statement can contain 
+parameter names where literal values can occur, in the form <var>:ParamName</var>. 
+Keywords or table names cannot be specified as parameters.
+If the underlying database engine supports it, the parameter support of 
+the database will be used to transfer the values from the <link id="Params"/> collection. If not, it will be emulated.
+The <var>Params</var> collection is automatically populated when the SQL statement is set.
+</p>
+<p>
+Some databases support executing multiple SQL statements in 1 call.
+Therefor, no attempt is done to ensure that <var>SQL</var> contains a single
+SQL statement. However, error reporting and the <link
+id="TCustomSQLStatement.RowsAffected">RowsAffected</link> function may be
+wrong in such a case.
+</p>
+</descr>
+<seealso>
+<link id="ParseSQL"/>
+<link id="CheckParams"/>
+<link id="Params"/>
+<link id="TCustomSQLStatement.Prepare">Prepare</link>
+<link id="TCustomSQLStatement.RowsAffected">RowsAffected</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSQLStatement.Transaction">
+<short>The transaction in which the SQL statement should be executed.</short>
+<descr>
+<var>Transaction</var> should be set to a transaction connected to the
+instance of the database set in the <link id="Database"/> property. This
+must be set before <link id="TCustomSQLStatement.Prepare">Prepare</link> is
+called.
+</descr>
+<seealso>
+<link id="Database"/>
+<link id="TCustomSQLStatement.Prepare">Prepare</link>
+<link id="TSQLTransaction"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSQLQuery.ParamCheck">
+<short>Should the SQL statement be checked for parameters</short>
+<descr>
+<p>
+<var>ParamCheck</var> must be set to <var>False</var> to disable the
+parameter check. The default value <var>True</var> indicates that the SQL
+statement should be checked for parameter names (in the form
+<var>:ParamName</var>), and corresponding <link
+id="#fcl.db.TParam">TParam</link> instances should be added to the <link
+id="Params">Params</link> property.
+</p>
+<p> 
+When executing some DDL statements, e.g. a "create procedure" SQL 
+statement can contain parameters. These parameters should not be converted
+to <var>TParam</var> instances.
+</p>
+</descr>
+<seealso>
+<link id="#fcl.db.TParam">TParam</link>
+<link id="Params"/>
+<link id="TSQLStatement.ParamCheck"/>
+</seealso>
+</element>
+
 </module>
     <!-- sqldb -->
   </package>
