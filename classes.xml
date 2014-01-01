@@ -2233,9 +2233,19 @@ This information can be used to stream all properties of classes.
 It also introduces functionality to assign the contents of 2 classes to 
 each other.
 </p>
+<p>
+<var>TPersistent</var> implements the <link id="IFPObserved"/> interface for the benefit
+of descendent classes, but does not call <link id="IFPObserved.FPONotifyObservers"/>.
+Descendents such as <link id="TStrings"/> and <link id="TCollection"/> and
+<link id="TCollectionItem"/> do use it.
+</p>
 </descr>
 <seealso>
 <link id="TComponent"/>
+<link id="IFPObserved"/>
+<link id="TStrings"/> 
+<link id="TCollection"/>
+<link id="TCollectionItem"/>
 </seealso>
 </element>
 
@@ -3123,9 +3133,15 @@ because <var>TStrings</var> is an abstract class which does not implement
 all methods; <var>TStrings</var> also doesn't store any strings, this is the
 functionality introduced in descendents such as <link id="TStringList"/>.
 </p>
+<p>
+<var>TStrings</var> implements the <link id="IFPObserved"/> interface: when
+the stringlist is changed, a <var>ooChanged</var> notification is sent to
+all observers.
+</p>
 </descr>
 <seealso>
 <link id="TStringList"/>
+<link id="IFPObserved"/>
 </seealso>
 </element>
 
@@ -3548,9 +3564,15 @@ will be called even if an exception occurs.
 <p>
 For more information, see <link id="TStrings.BeginUpdate"/>.
 </p>
+<p>
+<var>TStrings</var> implements the <link id="IFPObserved"/> interface: when
+<var>EndUpdate</var> is called, a <var>ooChanged</var> notification is sent to
+all observers.
+</p>
 </descr>
 <seealso>
 <link id="TStrings.BeginUpdate"/>
+<link id="IFPObserved"/>
 </seealso>
 </element>
 
@@ -15167,6 +15189,442 @@ needs to create a <var>IVCLComObject</var> interface for itself (when the
 <seealso>
 <link id="IVCLComObject"/>
 </seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SGUIDObserved">
+<short>Observed interface GUID as a string</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SGUIDObserver">
+<short>Observer interface GUID as a string</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TFPObservedOperation">
+<short>Operation which is reported to an observer</short>
+<descr>
+<var>TFPObservedOperation</var> enumerates the possible operations that can be reported to an observer.
+Which of these operations is reported depends on the implementation of the observed object.
+</descr>
+<seealso>
+<link id="IFPObserved"/>
+<link id="IFPObserver"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFPObservedOperation.ooChange">
+<short>The observed object has changed.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFPObservedOperation.ooFree">
+<short>The observed object is being freed.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFPObservedOperation.ooAddItem">
+<short>An item is added to the observed object (generally a list).</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFPObservedOperation.ooDeleteItem">
+<short>An item is deleted from the observed object (generally a list).</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFPObservedOperation.ooCustom">
+<short>Custom event.</short>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.Classes.IFPObserved
+  ********************************************************************
+-->
+
+<!-- interface Visibility: default -->
+<element name="IFPObserved">
+<short>Interface implemented by an object that can be observed.</short>
+<descr>
+<p>
+<var>IFPObserved</var> is an interface which can be implemented in objects that must be observable. 
+Objects that wish to observe the object can register themselves with the
+<link id="FPOAttachObserver"/> call, and must be detached using the <link
+id="FPODetachObserver"/> call.
+</p>
+<p>
+This interface is not reference counted, so care must be taken that the
+<var>ooFree</var> message is sent with <link id="FPONotifyObservers"/> 
+when the object is freed.
+</p>
+</descr>
+<seealso>
+<link id="FPONotifyObservers"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IFPObserved.FPOAttachObserver">
+<short>Attach a new observer to the object</short>
+<descr>
+<p>
+<var>FPOAttachObserver</var> must be called with an object instance <var>AObserver</var> that implements
+the <link id="IFPObserver"/> interface. The <link id="IFPObserver.FPOObservedChanged">FPOObservedChanged</link> 
+method of the interface will be called whenever <link id="FPONotifyObservers"/>
+is used to notify observers of a change. Objects implementing this interface
+should check that <var>AObserver</var> actually implements the <link id="IFPObserver"/> interface.
+</p>
+<p>
+Do not make assumptions on how the interface behaves if <var>FPOAttachObserver</var>
+is called more than once with the same interface. It may add the object
+to the list of observers unconditionally (in which case it will be notified twice) or it
+may check that it is not yet in the list.
+</p>
+</descr>
+<errors>
+If <var>AObserver</var> does not implement the <link id="IFPObserver"/>
+interface, an <link id="EObserver"/> exception must be raised. 
+No other errors should be raised, other than a possible out of memory error.
+</errors>
+<seealso>
+<link id="IFPObserver"/>
+<link id="IFPObserver.FPOObservedChanged">FPOObservedChanged</link>
+<link id="FPONotifyObservers"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IFPObserved.FPODetachObserver">
+<short>Remove an observer from the list of observers.</short>
+<descr>
+<p>
+<var>FPODetachObserver</var> removes the <var>AObserver</var> object from the list of
+observers. If it was not in the list, then this is silently accepted.
+Once removed, it will no longer receive notifications when <link
+id="IFPObserver.FPOObservedChanged">FPOObservedChanged</link> is called.
+</p>  
+<p>
+If the object was added more than once using <link id="FPOAttachObserver"/>, 
+then it depends on the implementor of the interface whether or <var>FPODetachObserver</var> must be called an equal
+number of times.
+</p>
+</descr>
+<seealso>
+<link id="IFPObserver"/>
+<link id="IFPObserver.FPOObservedChanged">FPOObservedChanged</link>
+<link id="FPONotifyObservers"/>
+<link id="FPOAttachObserver"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IFPObserved.FPONotifyObservers">
+<short>Notify all observers</short>
+<descr>
+<var>FPONotifyObservers</var> notifies all observers of the object that a
+change has occurred. It calls <link id="IFPObserver.FPOObservedChanged">FPOObservedChanged</link>
+on the <link id="IFPObserver"/> interface of all attached objects, and
+passes on <var>ASender</var> (normally this is <var>Self</var>),
+<var>AOperation</var> and <var>Data</var>. What <var>Data</var> is, depends on the
+implementor of the interface.
+</descr>
+<seealso>
+<link id="IFPObserver"/>
+<link id="IFPObserver.FPOObservedChanged">FPOObservedChanged</link>
+<link id="FPODetachObserver"/>
+<link id="FPOAttachObserver"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.Classes.IFPObserver
+  ********************************************************************
+-->
+
+<!-- interface Visibility: default -->
+<element name="IFPObserver">
+<short>Interface for an object to observe other objects.</short>
+<descr>
+<var>IFPObserver</var> is the interface an object must implement if it
+wishes to receive change notifications from another object. The presence of
+this interface will be checked when the object registers itself using
+<link id="IFPObserver.FPOAttachObserver"/>. The change notifications arrive
+because the <link id="FPOObservedChanged"/> method is called by the observed
+object.
+</descr>
+<seealso>
+<link id="IFPObserved"/>
+<link id="IFPObserved.FPOAttachObserver">FPOAttachObserver</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IFPObserver.FPOObservedChanged">
+<short>Entry point for change notifications</short>
+<descr>
+<var>FPOObservedChanged</var> is the method that is called by an observed
+object (<link id="IFPObserved"/>) when it calls <link id="IFPObserved.FPONotifyObservers">FPONotifyObservers</link>
+The <var>Sender</var> is the object under observation, the
+<var>Operation</var> and <var>Data</var> are the parameters used in the call
+to <var>FPONotifyObservers</var>. 
+</descr>
+<seealso>
+<link id="IFPObserved"/>
+<link id="IFPObserved.FPONotifyObservers">FPONotifyObservers</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.Classes.EObserver
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="EObserver">
+<short>Error raised when an observer error occurs</short>
+<descr>
+<var>EObserver</var> is an error that is raised when an object is registered
+as an observer, and it does not implement the <link id="IFPObserver"/>
+interface.
+</descr>
+<seealso>
+<link id="IFPObserver"/>
+<link id="IFPObserved.FPOAttachObserver"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: public -->
+<element name="TFPList.TDirection">
+<short>Search direction for IndexOfItem</short>
+<descr>
+<var>TFPList.TDirection</var> is used to indicate where the <link id="TFPList.IndexOfItem"/>
+search algorithm starts it search: at the beginning of the list or at the
+end of the list.
+</descr>
+<seealso>
+<link id="TFPList.IndexOfItem"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFPList.TDirection.FromBeginning">
+<short>Start search at the beginning</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFPList.TDirection.FromEnd">
+<short>Start search at the end.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPList.IndexOfItem">
+<short>Search an item in the list</short>
+<descr>
+<p>
+<var>IndexOfItem</var> has the same function as the <link id="IndexOf"/>
+function: it searches for <var>Item</var> in the list, and returns the index
+of the first found matching pointer. If none is found, -1 is returned. 
+</p>
+<p>In difference with the <var>IndexOf</var> function, it accepts a parameter
+<var>Direction</var> indicating the search direction: from the beginning of
+the list till the end of the list, or from the end of the list till the
+beginning. The <var>IndexOf</var> function starts at the beginning of the
+list. The search direction is only important if the item can appear multiple
+times in the list.
+</p>
+</descr>
+<seealso>
+<link id="TFPList.TDirection"/>
+<link id="TFPList.IndexOf"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TList.FPOAttachObserver">
+<short>Add an observer to the list of observers</short>
+<descr>
+<var>FPOAttachObserver</var> is part of the implementation of the <link id="IFPObserved"/> interface in <var>Tlist</var>.
+It adds a new observer to the list of observers. Calling this multiple times will add the observed object multiple times 
+to the list.
+</descr>
+<errors>
+An <var>EObserver</var> exception may be raised if <var>AObject</var> does not implement the
+<link id="IFPObserver"/> interface.
+</errors>
+<seealso>
+<link id="IFPObserver"/>
+<link id="IFPObserved.FPOAttachObserver"/>
+<link id="IFPObserved"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TList.FPODetachObserver">
+<short>Remove an observer from the list of observers</short>
+<descr>
+<var>FPODetachObserver</var> is part of the implementation of the <link id="IFPObserved"/> interface in <var>Tlist</var>.
+It removes the first found instance of the observer from the list of observers.
+</descr>
+<seealso>
+<link id="IFPObserved"/>
+<link id="IFPObserved.FPODetachObserver"/>
+<link id="IFPObserver"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TList.FPONotifyObservers">
+<short>Notify observers of changes in the list</short>
+<descr>
+<p>
+<var>FPONotifyObservers</var> is called to notify observers of changes in the list.
+The following notifications are sent:
+</p>
+<dl>
+<dt>ooAddItem</dt><dd>when a pointer is added. <var>Data</var> is the pointer that is added.</dd>
+<dt>ooDeleteItem</dt><dd>when a pointer is deleted or extracted. <var>Data</var> is the pointer that is deleted or extracted.</dd>
+<dt>ooChange</dt><dd>called when 2 pointers are exchanged.</dd>
+<dt>ooFree</dt><dd>Called when the list is freed.</dd>
+</dl>
+</descr>
+<seealso>
+<link id="FPODetachObserver"/>
+<link id="FPOAttachObserver"/>
+<link id="Add"/>
+<link id="Exchange"/>
+<link id="Delete"/>
+<link id="Extract"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TPersistent.FPOAttachObserver">
+<short>Add an observer to the list of observers.</short>
+<descr>
+<var>FPOAttachObserver</var> is part of the implementation of the <link id="IFPObserved"/> interface in <var>TPersistent</var>.
+It adds a new observer to the list of observers. Calling this multiple times will add the observed object multiple times 
+to the list.
+</descr>
+<errors>
+An <var>EObserver</var> exception may be raised if <var>AObject</var> does not implement the <link id="IFPObserver"/> interface.
+</errors>
+<seealso>
+<link id="IFPObserver"/>
+<link id="IFPObserved.FPOAttachObserver"/>
+<link id="IFPObserved"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TPersistent.FPODetachObserver">
+<short>Remove an observer from the list of observers</short>
+<descr>
+<var>FPODetachObserver</var> is part of the implementation of the <link id="IFPObserved"/> interface in <var>TPersistent</var>.
+It removes the first found instance of the observer from the list of observers.
+</descr>
+<seealso>
+<link id="IFPObserved"/>
+<link id="IFPObserved.FPODetachObserver"/>
+<link id="IFPObserver"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TPersistent.FPONotifyObservers">
+<short>Notify observers of changes.</short>
+<descr>
+<p>
+<var>FPONotifyObservers</var> can be called to notify observers of changes
+in the object. This method simply passes on the parameters that it receives 
+to all attached <link id="IFPObserver"/> interfaces.
+</p>
+<p>
+<var>TPersistent</var> does not call <var>FPONotifyObservers</var>. 
+It is implemented for the benefit of descendant classes.
+</p>
+</descr>
+<seealso>
+<link id="IFPObserved"/>
+<link id="IFPObserved.FPONotifyObservers"/>
+<link id="IFPObserver"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStrings.AddText">
+<short>Add text to the string list.</short>
+<descr>
+<var>AddText</var> adds <var>S</var> to the strings. It is identical in
+function to setting <link id="Text"/> but does not clear the list of
+strings first: <var>S</var> is split into lines, and each line is added to
+the list.
+</descr>
+<seealso>
+<link id="TString.Text"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.Classes.TBytesStream
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TBytesStream">
+<short>Stream of bytes</short>
+<descr>
+<var>TBytesStream</var> is a stream that uses an array of byte (<link id="TBytes"/>) to keep the stream data.
+it overrides the <link id="TMemoryStream"/> memory allocation routine to use
+the array of bytes. The array of bytes is exposed through the <link id="Bytes"/> property.
+</descr>
+<seealso>
+<link id="TBytes"/>
+<link id="TMemoryStream"/>
+<link id="Bytes"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TBytesStream.Create">
+<short>Create a new instance of the stream, initializing it with an array of bytes</short>
+<descr>
+<var>Create</var> creates a new instance and initializes the memory with the data in <var>ABytes</var>.
+</descr>
+<seealso>
+<link id="TBytes"/> 
+<link id="TMemoryStream"/>
+<link id="Bytes"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBytesStream.Bytes">
+<short>The stream data as an array of bytes.</short>
+<descr>
+<var>Bytes</var> provides byte-sized access to the array of bytes that represent the stream data.
+As a pointer value, it equals <link id="TCustomMemoryStream.Memory"/>,
+meaning that <var>Memory</var> points to the first byte in the array.
+</descr>
+<seealso>
+<link id="TBytes"/>
+<link id="TMemoryStream"/>
+<link id="TCustomMemoryStream.Memory"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBinaryObjectWriter.WriteStr">
+<short>Write a string to the binary stream</short>
+<descr>
+<var>WriteStr</var> writes a string value to the binary stream. It is
+exposed so it can be used in <var>DefineProperties</var>.
+</descr>
 </element>
 
 <!-- Template for copy&paste:
