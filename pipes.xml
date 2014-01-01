@@ -307,10 +307,18 @@ On error, <var>False</var> is returned.
 <element name="CreatePipeStreams">
 <short>Create a pair of pipe stream.</short>
 <descr>
+<p>
 <var>CreatePipeStreams</var> creates a set of pipe file
 descriptors with <link id="CreatePipeHandles"/>, and if
 that call is succesfull, a pair of streams is created: 
 <var>InPipe</var> and <var>OutPipe</var>.
+</p>
+<p>
+On some systems (notably: windows) the size of the buffer to be used for
+communication between 2 ends of the buffer can be specified in 
+the <link id="APipeBufferSize"/> parameter. This parameter is ignored on
+systems that do not support setting the buffer size.
+</p>
 </descr>
 <errors>
 If no pipe handles could be created, an <link id="EPipeCreation"/> exception
@@ -351,6 +359,41 @@ is raised.
 <!-- unresolved type reference Visibility: default -->
 <element name="Classes">
 <short>Stream definitions</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TInputPipeStream.Destroy">
+<short>Destroy this instance of the input pipe stream</short>
+<descr>
+<var>Destroy</var> overrides the destructor to close the pipe handle, prior
+to calling the inherited destructor.
+</descr>
+<errors>
+None
+</errors>
+<seealso>
+<link id="TInputPipeStream.Create"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TOutputPipeStream.Destroy">
+<short>Destroy this instance of the output pipe stream</short>
+<descr>
+<var>Destroy</var> overrides the destructor to close the pipe handle, prior
+to calling the inherited destructor.
+</descr>
+<errors>
+None
+</errors>
+<seealso>
+<link id="TOutputPipeStream.Create"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CreatePipeHandles.APipeBufferSize">
+<short>Buffer size to be used for the pipe</short>
 </element>
 
 </module> <!-- Pipes -->
