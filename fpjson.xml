@@ -1,0 +1,2935 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    fpjson
+  ====================================================================
+-->
+
+<module name="fpjson">
+<short>JSON support for Free Pascal</short>
+<descr>
+<p>
+The JSON unit implements JSON support for Free Pascal. It contains the data
+structures (<link id="TJSONData"/> and descendent objects) to treat JSON data 
+and output JSON as a string <link id="TJSONData.AsJSON"/>. The generated JSON 
+can be formatted in several ways <link id="TJSONData.FormatJSON"/>.
+</p>
+<p>
+Using the JSON data structures is simple. Instantiate an appropriate descendent
+of <var>TJSONData</var>, set the data and call <var>AsJSON</var>. The
+following JSON data types are supported:
+</p>
+<dl>
+<dt>Numbers</dt><dd> in one of <link id="TJSONIntegerNumber"/>, <link
+id="TJSONFloatNumber"/> or <link id="TJSONInt64Number"/>, depending on the
+type of the number.</dd>
+<dt>Strings</dt><dd> in <link id="TJSONString"/>.</dd>
+<dt>Boolean</dt><dd> in <link id="TJSONBoolean"/>.</dd>
+<dt>null</dt><dd> is supported using <link id="TJSONNull"/></dd>
+<dt>Array</dt><dd> is supported using <link id="TJSONArray"/></dd>
+<dt>Object</dt><dd> is supported using <link id="TJSONObject"/></dd>
+</dl>
+<p>
+The constructors of these objects allow to set the value, making them very
+easy to use. The memory management is automatic in the sense that arrays and
+objects own their values, and when the array or object is freed, all data in
+it is freed as well.
+</p>
+<p>Typical use would be:</p>
+<code>
+Var
+  O : TJSONObject;
+  
+begin
+  O:=TJSONObject.Create(['Age',44,
+                         'Firstname','Michael',
+                         'Lastname','Van Canneyt']);
+  Writeln(O.AsJSON);
+  Write('Welcome ',O.Strings['Firstname'],', ');
+  Writeln(O.Get('Lastname','')); // empty default.
+  Writeln(', your current age is ',O.Integers('Age']);
+  O.Free;                       
+end;  
+</code>
+<p>
+The <var>TJSONArray</var> and <var>TJSONObject</var> classes offer methods
+to examine, get and set the various members and search through the various members.
+</p>
+<p>
+Currently the JSON support only allows the use of UTF-8 data.
+</p>
+<p>
+Parsing incoming JSON and constructing the JSON data structures is not implemented in
+the <var>fpJSON</var> unit. For this, the <link id="jsonscanner"/> unit must
+be included in the program unit clause. This sets several callback hooks and then the 
+<link id="GetJSON"/> function can then be used to transform a string or stream to JSON 
+data structures.
+</p>
+</descr>
+
+<!-- enumeration type Visibility: default -->
+<element name="TJSONtype">
+<short>Possible types of JSON data</short>
+<descr>
+<var>TJSONtype</var> determines the type of JSON data a particular object contains.
+The class function <link id="TJSONData.JSONType"/> returns this type, and
+indicates what kind of data that particular descendent contains. The values
+correspond to the original data types in the JSON specification. The
+<var>TJSONData</var> object itself returns the unknown value.
+</descr>
+<seealso>
+<link id="TJSONData.JSONType"/>
+<link id="TJSONData"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONtype.jtUnknown">
+<short>Unknown JSON data type</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONtype.jtNumber">
+<short>Numerical type. This can be integer (32/64 bit) or float.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONtype.jtString">
+<short>String data type.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONtype.jtBoolean">
+<short>Boolean data</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONtype.jtNull">
+<short>Null data</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONtype.jtArray">
+<short>Array data (integer index,elements can be any type)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONtype.jtObject">
+<short>Object data (named index, elements can be any type)</short>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TJSONFloat">
+<short>Float type used in JSON unit</short>
+<descr>
+<var>TJSONFloat</var> is the floating point type used in the JSON support.
+It is currently a double, but this can be changed easily.
+</descr>
+<seealso>
+<link id="TJSONFloatNumber"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TJSONStringType">
+<short>String type used in JSON unit</short>
+<descr>
+<var>TJSONFloat</var> is the string point type used in the JSON support.
+It is currently an ansistring, but this can be changed easily. Unicode
+characters can be encoded with UTF-8.
+</descr>
+<seealso>
+<link id="TJSONString"/>
+<link id="TJSONData.AsString"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TJSONCharType">
+<short>Character type used in parsing</short>
+<descr>
+<var>TJSONCharType</var> is the type of a single character in a <link
+id="TJSONStringType"/> string. It is used by the parser.
+</descr>
+<seealso>
+<link id="TJSONStringType"/>
+</seealso>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="PJSONCharType">
+<short>Pointer to <var>TJSONCharType</var>, used in parsing</short>
+<descr>
+<var>PJSONCharType</var> is a pointer to a <link id="TJSONCharType"/>
+character. It is used while parsing JSON.
+</descr>
+<seealso>
+<link id="TJSONStringType"/>
+<link id="TJSONCharType"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TFormatOption">
+<short>Formatting options for <var>FormatJSON</var></short>
+<descr>
+<var>TFormatOption</var> enumerates the various formatting options that can be used in
+the <link id="TJSONData.FormatJSON"/> function.
+</descr>
+<seealso>
+<link id="TJSONData.FormatJSON"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFormatOption.foSingleLineArray">
+<short>Keep all array elements on a lingle line.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFormatOption.foSingleLineObject">
+<short>Keep all object elements on a single line.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFormatOption.foDoNotQuoteMembers">
+<short>Do not use quote characters around object member names.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFormatOption.foUseTabchar">
+<short>Use the tabulator character for indents</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TFormatOptions">
+<short>Set of <var>TFormatOption</var> options.</short>
+<descr>
+<var>TFormatOptions</var> is the set definition used to specify options in
+<link id="TJSONData.FormatJSON"/>.
+</descr>
+<seealso>
+<link id="TJSONData.FormatJSON"/>
+<link id="TFormatOption"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="DefaultIndentSize">
+<short>Default indent size for formatted JSON</short>
+<descr>
+<var>DefaultIndentSize</var> is the default indent size used in formatted JSON.
+</descr>
+<seealso>
+<link id="TJSONData.FormatJSON"/>
+<link id="TFormatOptions"/>
+<link id="DefaultFormat"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="DefaultFormat">
+<short>Default formatting options</short>
+<descr>
+<var>DefaultFormat</var> contains the default formatting options used in formatted JSON.
+</descr>
+<seealso>
+<link id="TJSONData.FormatJSON"/>
+<link id="TFormatOptions"/>
+<link id="AsJSONFormat"/>
+<link id="DefaultIndentSize"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="AsJSONFormat">
+<short>Formatting options to reproduce JSON</short>
+<descr>
+<var>AsJSONFormat</var> contains the options that make <link
+id="TJSONData.FormatJSON"/> behave like <link id="TJSONData.AsJSON"/>
+</descr>
+<seealso>
+<link id="TJSONData.FormatJSON"/>
+<link id="TFormatOptions"/>
+<link id="DefaultFormat"/>
+<link id="DefaultIndentSize"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.fpjson.TJSONData
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TJSONData">
+<short>Base (abstract) object for all JSON based data types</short>
+<descr>
+<p>
+<var>TJSONData</var> is an abstract class which introduces all properties
+and methods needed to work with JSON-based data. It should never be
+instantiated. Based on the type of data that must be represented one of the
+following descendents must be instantiated instead.
+</p>
+<dl>
+<dt>Numbers</dt><dd> must be represented using one of <link id="TJSONIntegerNumber"/>, <link
+id="TJSONFloatNumber"/> or <link id="TJSONInt64Number"/>, depending on the
+type of the number.</dd>
+<dt>Strings</dt><dd> can be represented with <link id="TJSONString"/>.</dd>
+<dt>Boolean</dt><dd> can be represented withn <link id="TJSONBoolean"/>.</dd>
+<dt>null</dt><dd> is supported using <link id="TJSONNull"/></dd>
+<dt>Array</dt><dd> data can be represented using <link id="TJSONArray"/></dd>
+<dt>Object</dt><dd> data can be supported using <link id="TJSONObject"/></dd>
+</dl>
+</descr>
+<p>
+To handle arbitrary data, a variable of type <var>TJSONData</var> can be
+declared, and it can be used to handle any of the above. The <link id="AsJSON"/>
+property can be read to get a JSON representation of the data.
+</p>
+<seealso>
+<link id="TJSONIntegerNumber"/>
+<link id="TJSONString"/>
+<link id="TJSONBoolean"/>
+<link id="TJSONNull"/>
+<link id="TJSONArray"/>
+<link id="TJSONObject"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TJSONData.Create">
+<short>Create a new instance of TJSONData.</short>
+<descr>
+<var>Create</var> instantiates a new <var>TJSONData</var> object. It should
+never be called directly, instead one of the descendents should be
+instantiated.
+</descr>
+<seealso>
+<link id="TJSONIntegerNumber.Create"/>
+<link id="TJSONString.Create"/>
+<link id="TJSONBoolean.Create"/>
+<link id="TJSONNull.Create"/>
+<link id="TJSONArray.Create"/> 
+<link id="TJSONObject.Create"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TJSONData.JSONType">
+<short>The native JSON data type represented by this object</short>
+<descr>
+<var>JSONType</var> indicates the JSON data type that this object will be
+written as, or the JSON data type that instantiated this object. 
+In <var>TJSONData</var>, this function returns <var>jtUnknown</var>. 
+Descendents override this method to return the correct data type.
+</descr>
+<seealso>
+<link id="TJSONtype"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONData.JSONType.Result">
+<short>The native JSON data type</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONData.Clear">
+<short>Clear the raw value of this data object</short>
+<descr>
+<var>Clear</var> is implemented by the descendents of <var>TJSONData</var>
+to clear the data. An array will be emptied, an object will remove all
+properties, numbers are set to zero, strings set to the empty string, etc.
+</descr>
+<seealso>
+<link id="Create"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONData.Clone">
+<short>Duplicate the value of the JSON data</short>
+<descr>
+<p>
+<var>Clone</var> returns a new instance of the <var>TJSONData</var>
+descendent that has the same value as the instance, i.e. the
+<var>AsJSON</var> property of the instance and its clone is the same.
+</p>
+<p>
+Note that the clone must be freed by the caller. Freeing a JSON object will not
+free its clones.
+</p>
+</descr>
+<errors>
+Normally, no JSON-specific errors should occur, but an <link
+id="#rtl.systutils.EOutOfMemory">EOutOfMemory</link> exception can be raised.
+</errors>
+<seealso>
+<link id="Clear"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONData.Clone.Result">
+<short>A new instance with the same JSON representation</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONData.FormatJSON">
+<short>Return a formatted JSON representation of the data.</short>
+<descr>
+<p>
+<var>FormatJSON</var> returns a formatted JSON representation of the data.
+For simple JSON values, this is the same representation as the <link
+id="AsJSON"/> property, but for complex values (<link id="TJSONArray"/> and
+<link id="TJSONObject"/>) the JSON is formatted differently.
+</p>
+<p>
+There are some optional parameters to control the formatting.
+<var>Options</var> controls the use of whitespace and newlines.
+<var>IndentSize</var> controls the amount of indent applied when starting a
+new line.
+</p>
+<p>
+The implementation is not optimized for speed.
+</p>
+</descr>
+<seealso>
+<link id="AsJSON"/>
+<link id="TFormatOptions"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONData.FormatJSON.Result">
+<short>The JSON representation of the instance.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONData.FormatJSON.Options">
+<short>Formatting options to apply</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONData.FormatJSON.Indentsize">
+<short>Amount of indent to use when starting new lines.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONData.Count">
+<short>Number of sub-items for this data element</short>
+<descr>
+<var>Count</var> is the amount of members of this data element. For simple
+values (null, boolean, number and string) this is zero. For complex
+structures, this is the amount of elements in the array or the number of
+properties of the object
+</descr>
+<seealso>
+<link id="Items"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONData.Items">
+<short>Indexed access to sub-items</short>
+<descr>
+<var>Items</var> allows indexed access to the sub-items of this data. The
+<var>Index</var> is 0-based, and runs from 0 to <var>Count-1</var>. For
+simple data types, this function always returns <var>Nil</var>, the complex
+data type descendents (<link id="TJSONArray"/> and <link id="TJSONObject"/>)
+override this method to return the <var>Index</var>-th element in the list.
+</descr>
+<seealso>
+<link id="Count"/>
+<link id="TJSONArray"/>
+<link id="TJSONObject"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONData.Items.Index">
+<short>The index in the array</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONData.Value">
+<short>The value of this data object as a variant.</short>
+<descr>
+<p>
+<var>Value</var> returns the value of the data object as a variant when
+read, and converts the variant value to the native JSON type of the object.
+It does not change the native JSON type (<link id="JSONType"/>), so the variant 
+value must be convertable to the native JSON type.
+</p>
+<p>
+For complex types, reading or writing this property will raise an <var>EConvertError</var> exception.
+</p>
+</descr>
+<seealso>
+<link id="JSONType"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONData.AsString">
+<short>Access the raw JSON value as a string</short>
+<descr>
+<p>
+<var>AsString</var> allows access to the raw value as a string. When
+reading, it converts the native value of the data to a string. When writing,
+it attempts to transform the string to a native value. If this conversion fails, an
+<var>EConvertError</var> exception is raised.
+</p>
+<p>
+For <link id="TJSONString"/> this will return the native value.
+</p>
+<p>
+For complex values, reading or writing this property will result in an
+<var>EConvertError</var> exception.
+</p>
+</descr>
+<seealso>
+<link id="AsInteger"/>
+<link id="Value"/>
+<link id="AsInt64"/>
+<link id="AsFloat"/>
+<link id="AsBoolean"/>
+<link id="IsNull"/>
+<link id="AsJSON"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONData.AsFloat">
+<short>Access the raw JSON value as a float</short>
+<descr>
+<p>
+<var>AsFloat</var> allows access to the raw value as a floating-point value. When
+reading, it converts the native value of the data to a floating-point. When writing,
+it attempts to transform the floating-point value to a native value. If this
+conversion fails, an <var>EConvertError</var> exception is raised.
+</p>
+<p>
+For <link id="TJSONFloatNumber"/> this will return the native value.
+</p>
+<p> 
+For complex values, reading or writing this property will always result in an
+<var>EConvertError</var> exception.
+</p>
+</descr>
+<seealso>
+<link id="AsInteger"/>
+<link id="Value"/>
+<link id="AsInt64"/>
+<link id="AsString"/>
+<link id="AsBoolean"/>
+<link id="IsNull"/>   
+<link id="AsJSON"/>   
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONData.AsInteger">
+<short>Access the raw JSON value as an 32-bit integer</short>
+<descr>
+<p>
+<var>AsInteger</var> allows access to the raw value as a 32-bit integer value.
+When reading, it attempts to convert the native value of the data to a 32-bit integer
+value.  When writing, it attempts to transform the 32-bit integer value to 
+a native value. If either conversion fails, an <var>EConvertError</var> exception is raised.
+</p>
+<p>
+For <link id="TJSONIntegerNumber"/> this will return the native value.
+</p>
+<p> 
+For complex values, reading or writing this property will always result in an
+<var>EConvertError</var> exception.
+</p>
+</descr>
+<seealso>
+<link id="AsFloat"/>
+<link id="Value"/>
+<link id="AsInt64"/>
+<link id="AsString"/>
+<link id="AsBoolean"/>
+<link id="IsNull"/>   
+<link id="AsJSON"/>   
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONData.AsInt64">
+<short>Access the raw JSON value as an 64-bit integer</short>
+<descr>
+<p>
+<var>AsInt64</var> allows access to the raw value as a 64-bit integer value.
+When reading, it attempts to convert the native value of the data to a
+64-bit integer value.  When writing, it attempts to transform the 64-bit 
+integer value to a native value. 
+If either conversion fails, an <var>EConvertError</var> exception is raised.           
+</p>
+<p>
+For <link id="TJSONInt64Number"/> this will return the native value.
+</p>
+<p> 
+For complex values, reading or writing this property will always result in an
+<var>EConvertError</var> exception.
+</p>
+</descr>
+<seealso>
+<link id="AsFloat"/>
+<link id="Value"/>
+<link id="AsInteger"/>
+<link id="AsString"/>
+<link id="AsBoolean"/>
+<link id="IsNull"/>   
+<link id="AsJSON"/>   
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONData.AsBoolean">
+<short>Access the raw JSON value as a boolean</short>
+<descr>
+<p>
+<var>AsBoolean</var> allows access to the raw value as a boolean value.
+When reading, it attempts to convert the native value of the data to a
+boolean value.  When writing, it attempts to transform the boolean value to a native value.
+For numbers this means that nonzero numbers result in <var>True</var>, a zero resutls
+in <var>False</var>. 
+If either conversion fails, an <var>EConvertError</var> exception is raised.
+</p>
+<p>
+For <link id="TJSONBoolean"/> this will return the native value.
+</p>
+<p> 
+For complex values, reading or writing this property will always result in
+an <var>EConvertError</var> exception.
+</p>
+</descr>
+<seealso>
+<link id="AsFloat"/>
+<link id="Value"/>
+<link id="AsInt64"/>
+<link id="AsString"/>
+<link id="AsInteger"/>
+<link id="IsNull"/>   
+<link id="AsJSON"/>   
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONData.IsNull">
+<short>Is the data a null value ?</short>
+<descr>
+<var>IsNull</var> is <var>True</var> only for <var>JSONType=jtNull</var>,
+i.e. for a <link id="TJSONNull"/> instance.
+In all other cases, it is <var>False</var>. This value cannot be set.
+</descr>
+<seealso>
+<link id="TJSONType"/>
+<link id="JSONType"/>
+<link id="TJSONNull"/>
+<link id="AsFloat"/>
+<link id="Value"/>
+<link id="AsInt64"/>
+<link id="AsString"/>
+<link id="AsInteger"/>
+<link id="AsBoolean"/>   
+<link id="AsJSON"/>   
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONData.AsJSON">
+<short>Return a JSON representation of the value</short>
+<descr>
+<var>AsJSON</var> returns a JSON representation of the value of the data.
+For simple values, this is just a textual representation of the object.
+For objects and arrays, this is an actual JSON Object or array.
+</descr>
+<seealso>
+<link id="AsFloat"/>
+<link id="Value"/>
+<link id="AsInt64"/>
+<link id="AsString"/>
+<link id="AsInteger"/>
+<link id="AsBoolean"/>   
+<link id="AsJSON"/>   
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TJSONDataClass">
+<short>Class of <var>TJSONData</var></short>
+<descr>
+<var>TJSONDataClass</var> is used in the <link id="CreateJSON"/>,
+<link id="SetJSONInstanceType"/> and <link id="GetJSONInstanceType"/>  functions
+to set the actual classes used when creating JSON data.
+</descr>
+<seealso>
+<link id="CreateJSON"/>
+<link id="SetJSONInstanceType"/>
+<link id="GetJSONInstanceType"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TJSONNumberType">
+<short>Enumerate the different kind of numerical types </short>
+<descr>
+<var>TJSONNumberType</var> is used to enumerate the different kind of
+numerical types: JSON only has a single 'number' format. Depending on how
+the value was parsed, FPC tries to create a value that is as close to the
+original value as possible: this can be one of integer, int64 or
+TJSONFloatType (normally a double). The number types have a common ancestor,
+and they are distinguished by their <link id="TJSONNumber.NumberType"/> value.
+</descr>
+<seealso>
+<link id="TJSONNumber.NumberType"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONNumberType.ntFloat">
+<short>Floating point value</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONNumberType.ntInteger">
+<short>32-bit Integer value</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONNumberType.ntInt64">
+<short>64-bit integer value</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.fpjson.TJSONNumber
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TJSONNumber">
+<short>Common ancestor for the numerical value JSON classes.</short>
+<descr>
+<var>TJSONNumber</var> is an abstract class which serves as the ancestor for
+the 3 numerical classes. It should never be instantiated directly. Instead,
+depending on the kind of data, one of <link id="TJSONIntegerNumber"/>,
+<link id="TJSONInt64Number"/> or <link id="TJSONFloatNumber"/> should be
+instantiated.
+</descr>
+<seealso>
+<link id="TJSONIntegerNumber"/>
+<link id="TJSONInt64Number"/>
+<link id="TJSONFloatNumber"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TJSONNumber.JSONType">
+<short>native JSON data type</short>
+<descr>
+<var>JSONType</var> is overridden by <var>TJSONNumber</var> to return <var>jtNumber</var>.
+</descr>
+<seealso>
+<link id="TJSONData.JSONType"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONNumber.JSONType.Result">
+<short>Always <var>jtNumber</var></short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TJSONNumber.NumberType">
+<short>Kind of numerical data managed by this class.</short>
+<descr>
+<var>NumberType</var> is overridden by <var>TJSONNumber</var> descendents to
+return the kind of numerical data that can be managed by the class.
+</descr>
+<seealso>
+<link id="TJSONIntegerNumber"/>
+<link id="TJSONInt64Number"/>
+<link id="TJSONFloatNumber"/>
+<link id="JSONType"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONNumber.NumberType.Result">
+<short>the kind of numerical data managed by this class.</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.fpjson.TJSONFloatNumber
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TJSONFloatNumber">
+<short>Class to represent floating-point JSON data.</short>
+<descr>
+<var>TJSONFloatNumber</var> must be used whenever floating point data must
+be represented. It can handle <link id="TJSONFloatType"/> data (normally a
+double). For integer data, <link id="TJSONIntegerNumber"/> or <link
+id="TJSONInt64Number"/> are better suited.
+</descr>
+<seealso>
+<link id="TJSONIntegerNumber"/>
+<link id="TJSONInt64Number"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TJSONFloatNumber.Create">
+<short>Create a new floating-point value</short>
+<descr>
+<var>Create</var> instantiates a new JSON floating point value, and
+initializes it with <var>AValue</var>.
+</descr>
+<seealso>
+<link id="TJSONIntegerNumber.Create"/>
+<link id="TJSONInt64Number.Create"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONFloatNumber.Create.AValue">
+<short>Initial floating point value</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TJSONFloatNumber.NumberType">
+<short>Kind of numerical data managed by this class.</short>
+<descr>
+<var>NumberType</var> is overridden by <var>TJSONFloatNumber</var> to return
+<var>ntFloat</var>.
+</descr>
+<seealso>
+<link id="TJSONNumberType"/>
+<link id="TJSONData.JSONtype"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONFloatNumber.NumberType.Result">
+<short>Always <var>ntFloat</var></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONFloatNumber.Clear">
+<short>Clear value</short>
+<descr>
+<var>Clear</var> is overridden by <var>TJSONFloatNumber</var> to set the
+value to 0.0
+</descr>
+<seealso>
+<link id="TJSONData.Clear"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONFloatNumber.Clone">
+<short>Clone floating point value</short>
+<descr>
+<var>Clone</var> overrides <link id="TJSONData.Clone"/> and  creates an instance of the same class with the same
+floating-point value.
+</descr>
+<seealso>
+<link id="TJSONData.Clone"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONFloatNumber.Clone.Result">
+<short>New instance of <var>TJSONFloatNumber</var> with the same value</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.fpjson.TJSONIntegerNumber
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TJSONIntegerNumber">
+<short>Class to represent 32-bit integer JSON data.</short>
+<descr> 
+<var>TJSONIntegerNumber</var> must be used whenever 32-bit integer data must
+be represented. For 64-bit integer data, <link id="TJSONInt64Number"/> must be used.
+</descr>  
+<seealso>
+<link id="TJSONFloatNumber"/>
+<link id="TJSONInt64Number"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TJSONIntegerNumber.Create">
+<short>Create a new instance of 32-bit integer JSON data</short>
+<descr>
+<var>Create</var> instantiates a new 32-bit integer JSON data and initializes the
+value with <var>AValue</var>.
+</descr>
+<seealso>
+<link id="TJSONFloatNumber.Create"/>
+<link id="TJSONInt64Number.Create"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONIntegerNumber.Create.AValue">
+<short>Initial value for the integer data</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TJSONIntegerNumber.NumberType">
+<short>Kind of numerical data managed by this class.</short>
+<descr>
+<var>NumberType</var> is overridden by <var>TJSONIntegerNumber</var> to return
+<var>ntInteger</var>.
+</descr>
+<seealso>
+<link id="TJSONNumberType"/>
+<link id="TJSONData.JSONtype"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONIntegerNumber.NumberType.Result">
+<short>Always <var>ntInteger</var></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIntegerNumber.Clear">
+<short>Clear value</short>
+<descr>
+<var>Clear</var> is overridden by <var>TJSONIntegerNumber</var> to set the
+value to 0.
+</descr>
+<seealso>
+<link id="TJSONData.Clear"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONIntegerNumber.Clone">
+<short>Clone 32-bit integer value</short>
+<descr>
+<var>Clone</var> overrides <link id="TJSONData.Clone"/> and creates an instance of the same class with the same
+32-bit integer value.
+</descr>
+<seealso>
+<link id="TJSONData.Clone"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONIntegerNumber.Clone.Result">
+<short>New instance of <var>TJSONIntegerNumber</var> with the same integer value</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.fpjson.TJSONInt64Number
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TJSONInt64Number">
+<short>Class to represent 64-bit integer JSON data.</short>
+<descr> 
+<var>TJSONInt64Number</var> must be used whenever 64-bit integer data must
+be represented. For 32-bit integer data, <link id="TJSONIntegerNumber"/> must
+be used.
+</descr>  
+<seealso>
+<link id="TJSONFloatNumber"/>
+<link id="TJSONIntegerNumber"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TJSONInt64Number.Create">
+<short>Create a new instance of 64-bit integer JSON data</short>
+<descr>   
+<var>Create</var> instantiates a new 64-bit integer JSON data and
+initializes the value with <var>AValue</var>.
+</descr>
+<seealso>
+<link id="TJSONIntegerNumber.Create"/>
+<link id="TJSONFloatNumber.Create"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONInt64Number.Create.AValue">
+<short>Initial 64-bit integer value</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TJSONInt64Number.NumberType">
+<short>Kind of numerical data managed by this class.</short>
+<descr>
+<var>NumberType</var> is overridden by <var>TJSONInt64Number</var> to return
+<var>ntInt64</var>.
+</descr>
+<seealso>
+<link id="TJSONNumberType"/>
+<link id="TJSONData.JSONtype"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONInt64Number.NumberType.Result">
+<short>Always <var>ntInt64</var></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONInt64Number.Clear">
+<short>Clear value</short>  
+<descr>   
+<var>Clear</var> is overridden by <var>TJSONInt64Number</var> to set the value to 0.
+</descr>
+<seealso>
+<link id="TJSONData.Clear"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONInt64Number.Clone">
+<short>Clone 64-bit integer value</short>
+<descr>
+<var>Clone</var> overrides <link id="TJSONData.Clone"/> and creates an instance of the same class with the same
+64-bit integer value.
+</descr>
+<seealso>
+<link id="TJSONData.Clone"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONInt64Number.Clone.Result">
+<short>New instance of <var>TJSONIntegerNumber</var> with the same int64 value</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.fpjson.TJSONString
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TJSONString">
+<short>Class to represent string JSON data.</short>
+<descr>  
+<var>TJSONString</var> must be used whenever string data must be represented. 
+Currently the implementation uses an ansi string to hold the data. 
+This means that to correctly hold unicode data, a UTF-8 encoding must be used.
+</descr>  
+<seealso>
+<link id="TJSONFloatNumber"/>
+<link id="TJSONIntegerNumber"/>
+<link id="TJSONInt64Number"/>
+<link id="TJSONBoolean"/>
+<link id="TJSONNull"/>
+<link id="TJSONArray"/>
+<link id="TJSONObject"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TJSONString.Create">
+<short>Create a new instance of string JSON data</short>
+<descr>
+<var>Create</var> instantiates a new string JSON data and initializes the value with <var>AValue</var>.
+Currently the implementation uses an ansi string to hold the data. 
+This means that to correctly hold unicode data, a UTF-8 encoding must be used.
+</descr>
+<seealso>
+<link id="TJSONIntegerNumber.Create"/>
+<link id="TJSONFloatNumber.Create"/>
+<link id="TJSONInt64Number.Create"/>
+<link id="TJSONBoolean.Create"/>
+<link id="TJSONNull.Create"/>
+<link id="TJSONArray.Create"/>
+<link id="TJSONObject.Create"/>   
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONString.Create.AValue">
+<short>Initial string value.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TJSONString.JSONType">
+<short>native JSON data type</short>
+<descr>
+<var>JSONType</var> is overridden by <var>TJSONString</var> to return <var>jtString</var>.
+</descr>
+<seealso>
+<link id="TJSONData.JSONType"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONString.JSONType.Result">
+<short>Always <var>jtString</var></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONString.Clear">
+<short>Clear value</short>
+<descr>
+<var>Clear</var> is overridden by <var>TJSONString</var> to set the
+value to the empty string ''.
+</descr>
+<seealso>
+<link id="TJSONData.Clear"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONString.Clone">
+<short>Clone string value</short>
+<descr>
+<var>Clone</var> overrides <link id="TJSONData.Clone"/> and creates an instance of the same class with the same
+string value.
+</descr>
+<seealso> 
+<link id="TJSONData.Clone"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONString.Clone.Result">
+<short>New instance of <var>TJSONString</var> with the same string value</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.fpjson.TJSONBoolean
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TJSONBoolean">
+<short>Class to represent boolean JSON data.</short>
+<descr>  
+<var>TJSONBoolean</var> must be used whenever boolean data must be
+represented. It has limited functionality to convert the value from or to integer or
+floating point data.
+</descr>  
+<seealso> 
+<link id="TJSONFloatNumber"/>
+<link id="TJSONIntegerNumber"/>
+<link id="TJSONInt64Number"/>  
+<link id="TJSONBoolean"/>
+<link id="TJSONNull"/>   
+<link id="TJSONArray"/>  
+<link id="TJSONObject"/> 
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TJSONBoolean.Create">
+<short>Create a new instance of boolean JSON data</short>
+<descr>
+<var>Create</var> instantiates a new boolean JSON data and initializes the
+value with <var>AValue</var>.
+</descr> 
+<seealso>
+<link id="TJSONIntegerNumber.Create"/>
+<link id="TJSONFloatNumber.Create"/>
+<link id="TJSONInt64Number.Create"/>
+<link id="TJSONString.Create"/>
+<link id="TJSONNull.Create"/>
+<link id="TJSONArray.Create"/>
+<link id="TJSONObject.Create"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONBoolean.Create.AValue">
+<short>Initial boolean value</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TJSONBoolean.JSONType">
+<short>native JSON data type</short>
+<descr>
+<var>JSONType</var> is overridden by <var>TJSONString</var> to return <var>jtBoolean</var>.
+</descr>
+<seealso>
+<link id="TJSONData.JSONType"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONBoolean.JSONType.Result">
+<short>Always <var>jtBoolean</var></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONBoolean.Clear">
+<short>Clear data</short>
+<descr>
+<var>Clear</var> is overridden by <var>TJSONBoolean</var> to set the
+value to <var>False</var>.
+</descr>
+<seealso>
+<link id="TJSONData.Clear"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONBoolean.Clone">
+<short>Clone boolean value</short>
+<descr>
+<var>Clone</var> overrides <link id="TJSONData.Clone"/> and creates an instance of the same class with the same
+boolean value.
+</descr>
+<seealso> 
+<link id="TJSONData.Clone"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONBoolean.Clone.Result">
+<short>New instance of <var>TJSONBoolean</var> with the same boolean value</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.fpjson.TJSONNull
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TJSONNull">
+<short>Class to represent boolean JSON data.</short>
+<descr>  
+<var>TJSONNull</var> must be used whenever a <var>null</var> value must be
+represented.
+</descr> 
+<seealso>
+<link id="TJSONFloatNumber"/>
+<link id="TJSONIntegerNumber"/>
+<link id="TJSONInt64Number"/>  
+<link id="TJSONBoolean"/>
+<link id="TJSONString"/>   
+<link id="TJSONArray"/>  
+<link id="TJSONObject"/> 
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TJSONNull.JSONType">
+<short>native JSON data type</short>
+<descr>
+<var>JSONType</var> is overridden by <var>TJSONNull</var> to return <var>jtNull</var>.
+</descr>
+<seealso>
+<link id="TJSONData.JSONType"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONNull.JSONType.Result">
+<short>Always <var>jtNull</var></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONNull.Clear">
+<short>Clear data</short>
+<descr>
+<var>Clear</var> does nothing.
+</descr>
+<seealso>
+<link id="TJSONData.Clear"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONNull.Clone">
+<short>Clone boolean value</short>
+<descr>
+<var>Clone</var> overrides <link id="TJSONData.Clone"/> and creates an instance of the same class.
+</descr>
+<seealso> 
+<link id="TJSONData.Clone"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONNull.Clone.Result">
+<short>New instance of <var>TJSONNull</var></short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TJSONArrayIterator">
+<short>Iterator callback for <var>TJSONArray.Iterate</var></short>
+<descr>
+<var>TJSONArrayIterator</var> is the procedural callback used by <link
+id="TJSONArray.Iterate"/> to iterate over the values. <var>Item</var> is the
+current item in the iteration. <var>Data</var> is the data passed on when
+calling <var>Iterate</var>. The <var>Continue</var> parameter can be set to
+<var>false</var> to stop the iteration loop.
+</descr>
+<seealso>
+<link id="TJSONArray.Iterate"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONArrayIterator.Item">
+<short>Current item</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONArrayIterator.Data">
+<short>extra data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONArrayIterator.Continue">
+<short>Continue iterating or not ?</short>
+</element>
+
+
+<!--
+  ********************************************************************
+    #fcl.fpjson.TJSONArray
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TJSONArray">
+<short>Class to represent array data</short>
+<descr>
+<p>
+<var>TJSONArray</var> is the class that must be used to represent array
+data. In difference with pascal arrays, the array elements can be of any
+valid JSON data type. It is similar to a <link
+id="#fcl.contnrs.TObjectList">TObjectList</link> in that the memory
+management is automatic: the array grows and shrinks to accomodate the
+number of element in it. The elements in the array are owned by the array,
+so they should not be freed. 
+</p>
+<p>
+The array can be created empty or can be created with a series of values
+that will be converted to JSON objects and added to the initial JSON array.
+</p>
+<p>
+The items in the array are available as raw JSON objects in the <link
+id="TJSONData.Items"/> property. The data can also be accessed (read-write) 
+as native Pascal types through the <link id="Integers"/>, <link id="Floats"/>, 
+<link id="Booleans"/> etc. array properties.  The actual JSON types are available
+in the <link id="Types"/> array.
+</p>
+<p>Elements can be added to the array using the various forms of the
+<link id="Add"/> and <link id="Insert"/> methods. Elements can be deleted
+with the <link id="Delete"/> method.
+</p>
+</descr>
+<seealso>
+<link id="Types"/>
+<link id="Integers"/>
+<link id="Floats"/>
+<link id="TJSONData.Items"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TJSONArray.Create">
+<short>Create a new instance of JSON array data.</short>
+<descr>
+<p>
+<var>Create</var> creates a new JSON array instance, and initializes the
+data with <var>Elements</var>. The elements are converted to various <link
+id="TJSONData"/> instances, instances of <var>TJSONData</var> are 
+inserted in the array as-is. 
+</p>
+<p>
+The data type of the inserted objects is determined from the type of data
+passed to it, with a natural mapping. A <var>Nil</var> pointer will be 
+inserted as a <var>TJSONNull</var> value.
+</p>
+</descr>
+<errors>
+If an invalid class or not recognized data type (pointer) is inserted in the 
+elements array, an <var>EConvertError</var> exception will be raised.
+</errors>
+<seealso>
+<link id="GetJSONInstanceType"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Create.Elements">
+<short>Data to add to the array.</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TJSONArray.Destroy">
+<short>Free the JSON array</short>
+<descr>
+<var>Destroy</var> will delete all elements in the array and clean up the
+<link id="TJSONArray"/> instance.
+</descr>
+<seealso>
+<link id="TJSONArray.Clear"/>
+<link id="TJSONArray.Create"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TJSONArray.JSONType">
+<short>native JSON data type</short>
+<descr>
+<var>JSONType</var> is overridden by <var>TJSONArray</var> to return
+<var>jtArray</var>.
+</descr>
+<seealso>
+<link id="TJSONData.JSONType"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONArray.JSONType.Result">
+<short>Alway <var>jtArray</var></short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONArray.Clone">
+<short>Clone the JSON array</short>
+<descr>
+<var>Clone</var> creates a new <var>TJSONArray</var>, clones all elements in
+the array and adds them to the newly created array in the same order as they
+are in the array.
+</descr>
+<seealso>
+<link id="TJSONData.Clone"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONArray.Clone.Result">
+<short>Cloned TJSONArray instance.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONArray.Iterate">
+<short>Iterate over all elements in the array</short>
+<descr>
+<var>Iterate</var> iterates over all elements in the array, passing them one
+by one to the <var>Iterator</var> callback, together with the <var>Data</var> parameter.
+The iteration stops when all elements have been passed or when the iterator
+callback returned <var>False</var> in the <var>Continue</var> parameter.
+</descr>
+<seealso>
+<link id="TJSONArrayIterator"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Iterate.Iterator">
+<short>Iterator callback, called for each element in the array.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Iterate.Data">
+<short>Data item passed to the iterator with each call.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONArray.IndexOf">
+<short>Return index of JSONData instance in array</short>
+<descr>
+<var>IndexOf</var> compares all elements in the array with <var>Obj</var>
+and returns the index of the element instance that equals <var>Obj</var>. 
+The actual instances are compared, not the JSON value. If none of the
+elements match, the function returns -1.
+</descr>
+<seealso>
+<link id="Clear"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONArray.IndexOf.Result">
+<short>Index of <var>Obj</var> in the array, or -1.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.IndexOf.obj">
+<short>Object instance to search for.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONArray.Clear">
+<short>Clear the array</short>
+<descr>
+<var>Clear</var> clears the array and frees all elements in it. After the
+call to clear, <link id="TJSONData.Count">Count</link> returns 0.
+</descr>
+<seealso>
+<link id="Delete"/>
+<link id="Extract"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONArray.Add">
+<short>Add a JSON value to the array</short>
+<descr>
+<p>
+<var>Add</var> adds the value passed on to the array. If it is a plain
+pascal value, it is converted to an appropriate <link id="TJSONData"/>
+instance. If a <var>TJSONData</var> instance is passed, it is simply added
+to the array. Note that the instance will be owned by the array, and
+destroyed when the array is cleared (this is in particular true is an JSON
+array or object).
+</p>
+<p>
+The function returns the <var>TJSONData</var> instance that was added to
+the array.
+</p>
+</descr>
+<seealso>
+<link id="Delete"/>
+<link id="Extract"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONArray.Add.Result">
+<short>TJSONData instance that was added.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Add.Item">
+<short>TJSONData instance to add to array.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Add.I">
+<short>Integer value to add to array</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Add.S">
+<short>String value to add to array</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Add.F">
+<short>Floating point value to add to array</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Add.B">
+<short>Boolean value to array</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Add.AnArray">
+<short>JSON Array to add to array.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Add.AnObject">
+<short>JSON Object to add to array.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONArray.Delete">
+<short>Delete an element from the list by index</short>
+<descr>
+<var>Delete</var> deletes the element with given <var>Index</var> from the
+list. The <link id="TJSONData"/> element is freed.
+</descr>
+<errors>
+If an invalid index is passed, an exception is raised.
+</errors>
+<seealso>
+<link id="Clear"/>
+<link id="Add"/>
+<link id="Extract"/>
+<link id="Exchange"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Delete.Index">
+<short>Index of the element to delete.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONArray.Exchange">
+<short>Exchange 2 elements in the list</short>
+<descr>
+<var>Exchange</var> exchanges 2 elements at locations <var>Index1</var> and
+<var>Index2</var> in the list. This is more efficient than manually
+extracting and adding the elements to the list.
+</descr>
+<errors>
+If an invalid index (for either element) is passed, an exception is raised.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Exchange.Index1">
+<short>Index of the first element</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Exchange.Index2">
+<short>Index of the second element.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONArray.Extract">
+<short>Extract an element from the array</short>
+<descr>
+<var>Extract</var> removes the element at position <var>Index</var> or the
+indicated element from the list, just as <link id="Delete"/> does. In difference 
+with <var>Delete</var>, it does not free the object instance. Instead, 
+it returns the extracted element.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="Delete"/>
+<link id="Clear"/>
+<link id="Insert"/>
+<link id="Add"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONArray.Extract.Result">
+<short>Extracted element</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Extract.Item">
+<short>Item to extract from the array</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Extract.Index">
+<short>Index of item to extract from the array</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONArray.Insert">
+<short>Insert an element in the array.</short>
+<descr>
+<p>
+<var>Insert</var> adds a value or element to the array at position
+<var>Index</var>. Elements with index equal to or larger than
+<var>Index</var> are shifted. Like <link id="Add"/>, it converts plain
+pascal values to JSON values.
+</p>
+<p>Note that when inserting a <link
+id="TJSONData"/> instance to the array, it is owned by the array.
+<var>Index</var> must be a value between 0 and <var>Count-1</var>. 
+</p>
+</descr>
+<errors>
+If an invalid index is specified, an exception is raised.
+</errors>
+<seealso>
+<link id="Add"/>
+<link id="Delete"/>
+<link id="Extract"/>
+<link id="Clear"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Insert.Index">
+<short>Position at which to insert the new value</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Insert.Item">
+<short>JSON Data object to insert.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Insert.I">
+<short>Integer value to insert</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Insert.S">
+<short>String value to insert</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Insert.F">
+<short>Floating point value to insert</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Insert.B">
+<short>Boolean value to insert</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Insert.AnArray">
+<short>JSON array to insert.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Insert.AnObject">
+<short>JSON Object to insert</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONArray.Move">
+<short>Move a value from one location to another</short>
+<descr>
+<var>Move</var> moves the element at index <var>CurIndex</var> to the
+position <var>NewIndex</var>. It will shift the elements in between as
+needed. This operation is more efficient than extracting and inserting the
+element manually.
+</descr>
+<seealso>
+<link id="Exchange"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Move.CurIndex">
+<short>Current index of the element</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Move.NewIndex">
+<short>Final index of the element.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONArray.Remove">
+<short>Remove an element from the list</short>
+<descr>
+<var>Remove</var> removes <var>item</var> from the array, if it is in the
+array. The object pointer is checked for presence in the array, not the JSON values.
+Note that the element is freed if it was in the array and is removed.
+</descr>
+<seealso>
+<link id="Delete"/>
+<link id="Extract"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Remove.Item">
+<short>Item to remove from the array</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONArray.Items">
+<short>Indexed access to the values in the array</short>
+<descr>
+<var>Items</var> is introduced in <link id="TJSONData.Items"/>.
+<var>TJSONArray</var> simply declares it as the default property.
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONArray.Types">
+<short>JSON types of elements in the array</short>
+<descr>
+<p>
+<var>Types</var> gives direct access to the <link id="TJSONData.JSONType"/>
+result of the elements in the array. Accessing it is equivalent to accessing
+</p>
+<code>
+Items[Index].JSONType
+</code>
+</descr>
+<seealso>
+<link id="TJSONData.JSONType"/>
+<link id="TJSONData.Items"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Types.Index">
+<short>Index of element whose type must be read</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONArray.Nulls">
+<short>Check which elements are null</short>
+<descr>
+<p>
+<var>Nulls</var> gives direct access to the <link id="TJSONData.IsNull"/>
+property when reading. It is then equivalent to accessing
+</p>
+<code>
+Items[Index].IsNull
+</code>
+</descr>
+<seealso>
+<link id="TJSONData.JSONType"/>
+<link id="TJSONData.Items"/>   
+<link id="TJSONData.IsNull"/>
+<link id="TJSONArray.Types"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Nulls.Index">
+<short>Element to check for <var>null</var> value</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONArray.Integers">
+<short>Get or set elements as integer values</short>
+<descr>
+<p>
+<var>Integers</var> gives direct access to the <link id="TJSONData.AsInteger"/>
+property when reading. Reading it is the equivalent to accessing
+</p>
+<code>
+Items[Index].AsInteger
+</code>
+<p>
+When writing, it will check if an integer JSON value is located at the given
+location, and replace it with the new value. If a non-integer JSON value is
+there, it is replaced with the written integer value.
+</p>
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="TJSONData.IsNull"/>
+<link id="TJSONArray.Types"/>
+<link id="TJSONArray.Int64s"/>
+<link id="TJSONArray.Floats"/>
+<link id="TJSONArray.Strings"/>
+<link id="TJSONArray.Booleans"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Integers.Index">
+<short>Index of element to read or write</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONArray.Int64s">
+<short>Get or set elements as Int64 values</short>
+<descr>
+<p>
+<var>Int64s</var> gives direct access to the <link id="TJSONData.AsInt64"/>
+property when reading. Reading it is the equivalent to accessing
+</p>
+<code>
+Items[Index].AsInt64
+</code>
+<p>
+When writing, it will check if an 64-bit integer JSON value is located at the given
+location, and replace it with the new value. If a non-64-bit-integer JSON value is 
+there, it is replaced with the written int64 value.
+</p>
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="TJSONData.IsNull"/>
+<link id="TJSONArray.Types"/>
+<link id="TJSONArray.Integers"/>
+<link id="TJSONArray.Floats"/>
+<link id="TJSONArray.Strings"/>
+<link id="TJSONArray.Booleans"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Int64s.Index">
+<short>Index of element to read/write</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONArray.Strings">
+<short>Get or set elements as string values</short>
+<descr>
+<p>
+<var>Strings</var> gives direct access to the <link id="TJSONData.AsString"/>
+property when reading. Reading it is the equivalent to accessing
+</p>
+<code>
+Items[Index].AsString
+</code>
+<p>
+When writing, it will check if a string JSON value is located at the given
+location, and replace it with the new value. If a non-string value is 
+there, it is replaced with the written string value.
+</p>
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="TJSONData.IsNull"/>
+<link id="TJSONArray.Types"/>
+<link id="TJSONArray.Integers"/>
+<link id="TJSONArray.Floats"/>  
+<link id="TJSONArray.Int64s"/> 
+<link id="TJSONArray.Booleans"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Strings.Index">
+<short>Index of element to read/write</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONArray.Floats">
+<short>Get or set elements as floating-point numerical values</short>
+<descr>
+<p>
+<var>Floats</var> gives direct access to the <link id="TJSONData.AsFloat"/>
+property when reading. Reading it is the equivalent to accessing
+</p>
+<code>
+Items[Index].AsFloat
+</code>
+<p>
+When writing, it will check if a floating point numerical JSON value is located at the given
+location, and replace it with the new value. If a non-floating point
+numerical value is there, it is replaced with the written floating point value.
+</p>
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="TJSONData.IsNull"/>
+<link id="TJSONArray.Types"/>
+<link id="TJSONArray.Integers"/>
+<link id="TJSONArray.Strings"/>  
+<link id="TJSONArray.Int64s"/>  
+<link id="TJSONArray.Booleans"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Floats.Index">
+<short>Index of element to read/write</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONArray.Booleans">
+<short>Get or set elements as boolean values</short>
+<descr>
+<p>
+<var>Floats</var> gives direct access to the <link id="TJSONData.AsBoolean"/>
+property when reading. Reading it is the equivalent to accessing
+</p>
+<code>
+Items[Index].AsBoolean
+</code>
+<p>
+When writing, it will check if a boolean JSON value is located at the given
+location, and replace it with the new value. If a non-boolean value is there, 
+it is replaced with the written boolean value.
+</p>
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="TJSONData.IsNull"/>
+<link id="TJSONArray.Types"/>
+<link id="TJSONArray.Integers"/>
+<link id="TJSONArray.Strings"/> 
+<link id="TJSONArray.Int64s"/>  
+<link id="TJSONArray.Floats"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Booleans.Index">
+<short>Index of element to read/write</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONArray.Arrays">
+<short>Get or set elements as JSON array values</short>
+<descr>
+<p>
+<var>Arrays</var> gives direct access to JSON Array values
+when reading. Reading it is the equivalent to accessing
+</p>
+<code>
+Items[Index] As TJSONArray
+</code>
+<p>
+When writing, it will replace any previous value at that location with the
+witten value. Note that the old value is freed, and the new value is owned
+by the array.
+</p>
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="TJSONData.IsNull"/>
+<link id="TJSONArray.Types"/>
+<link id="TJSONArray.Integers"/>
+<link id="TJSONArray.Strings"/> 
+<link id="TJSONArray.Int64s"/>  
+<link id="TJSONArray.Floats"/>
+<link id="TJSONArray.Objects"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Arrays.Index">
+<short>Index of element to read/write</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONArray.Objects">
+<short>Get or set elements as JSON object values</short>
+<descr>
+<p>
+<var>Objects</var> gives direct access to JSON object values
+when reading. Reading it is the equivalent to accessing
+</p>
+<code>
+Items[Index] As TJSONObject
+</code>
+<p>
+When writing, it will replace any previous value at that location with the
+witten value. Note that the old value is freed, and the new value is owned
+by the array.
+</p>
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="TJSONData.IsNull"/>
+<link id="TJSONArray.Types"/>
+<link id="TJSONArray.Integers"/>
+<link id="TJSONArray.Strings"/> 
+<link id="TJSONArray.Int64s"/>  
+<link id="TJSONArray.Floats"/>  
+<link id="TJSONArray.Arrays"/> 
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.Objects.Index">
+<short>Index of element to read/write</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TJSONObjectIterator">
+<short>Iterator callback for <var>TJSONObject.Iterate</var></short>
+<descr>
+<var>TJSONObjectIterator</var> is the procedural callback used by 
+<link id="TJSONObject.Iterate"/> to iterate over the values. <var>Item</var> is the
+current item in the iteration, and <var>AName</var> it's name. 
+<var>Data</var> is the data passed on when  calling <var>Iterate</var>. 
+The <var>Continue</var> parameter can be set to
+<var>false</var> to stop the iteration loop.
+</descr> 
+<seealso>
+<link id="TJSONObject.Iterate"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONObjectIterator.AName">
+<short>Name (key) of the current item in the object</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONObjectIterator.Item">
+<short>Current item</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONObjectIterator.Data">
+<short>Data passed on to Iterate call</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONObjectIterator.Continue">
+<short>Set to false to stop the iteration</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.fpjson.TJSONObject
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TJSONObject">
+<short>Class to represent a JSON object literal</short>
+<descr>
+<p>
+<var>TJSONObject</var> is the class that must be used to represent a JSON
+object literal. It can be compared to a dictionary class or a list class in
+which the list index is a string value, or indeed a proper class with an
+arbitrary number of properties. The elements can be of any valid JSON data type. 
+The memory management is automatic: the object grows and shrinks to accomodate the
+number of elements (properties) in it. The elements in the array are owned by the
+object, so they should not be freed. 
+</p>
+<p> 
+The object can be created empty or can be created with a series of named values
+that will be converted to JSON objects and added to the initial JSON array.
+</p>
+<p> 
+The items in the object are available with a numerical index as raw JSON objects in the <link
+id="TJSONData.Items"/> and with their names in the  <link id="Elements"/> property. 
+The data can also be accessed (read-write) as native Pascal types through the <link id="Integers"/>, <link
+id="Floats"/>, <link id="Booleans"/> etc. array properties, using their name
+as a key. The actual JSON types are available in the <link id="Types"/> array. 
+</p>
+<p>Elements can be added to the array using the various forms of the
+<link id="Add"/> method. Elements can be deleted with the <link id="Delete"/> method.
+</p>
+</descr>
+<seealso>
+<link id="Types"/>
+<link id="Integers"/>
+<link id="Floats"/>  
+<link id="TJSONData.Items"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TJSONObject.Create">
+<short>Create a new instance of JSON object data.</short>
+<descr>
+<p>
+<var>Create</var> creates a new JSON object instance, and initializes the
+data with <var>Elements</var>. Elements is an array containing an even
+number of items, alternating a name and a value. The names must be strings,
+and the values are converted to various <link id="TJSONData"/> instances. 
+If a value is an instance of <var>TJSONData</var>, it is added to the object
+array as-is. 
+</p>
+<p>
+The data type of the inserted objects is determined from the type of data
+passed to it, with a natural mapping. A <var>Nil</var> pointer will be 
+inserted as a <var>TJSONNull</var> value. The following gives an example:
+</p>
+<code>
+Var
+  O : TJSONObject;
+    
+begin
+  O:=TJSONObject.Create(['Age',44,
+                        'Firstname','Michael',
+                        'Lastname','Van Canneyt']);
+                                                        
+</code>
+</descr>
+<errors>
+<p>
+An <var>EConvertError</var> exception is raised in one of the following cases:
+</p>
+<ol>
+<li>If an odd number of arguments is passed</li>
+<li>an item where a name is expected does not contain a string</li>
+<li>A value contains an invalid class</li>
+<li>A value of a not recognized data type (pointer) is inserted in the 
+elements</li>
+</ol>
+</errors>
+<seealso>
+<link id="Add"/>
+<link id="GetJSONInstanceType"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Create.Elements">
+<short>Names and corresponding values to be added to the object</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TJSONObject.Destroy">
+<short>Free the JSON object</short>
+<descr>
+<var>Destroy</var> will delete all elements in the array and clean up the
+<link id="TJSONObject"/> instance.
+</descr>
+<seealso>
+<link id="TJSONObject.Clear"/>
+<link id="TJSONObject.Create"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TJSONObject.JSONType">
+<short>native JSON data type</short>
+<descr>
+<var>JSONType</var> is overridden by <var>TJSONObject</var> to return
+<var>jtObject</var>.
+</descr>
+<seealso>
+<link id="TJSONData.JSONType"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONObject.JSONType.Result">
+<short>Always <var>jtObject</var></short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONObject.Clone">
+<short>Clone the JSON object</short>
+<descr>
+<var>Clone</var> creates a new <var>TJSONObject</var>, clones all elements in
+the array and adds them to the newly created array with the same names as they
+were in the array.
+</descr>
+<seealso>
+<link id="TJSONData.Clone"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONObject.Clone.Result">
+<short>Cloned TJSONObject instance.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONObject.Iterate">
+<short>Iterate over all elements in the object</short>
+<descr>
+<var>Iterate</var> iterates over all elements in the object, passing them one
+by one with name and value to the <var>Iterator</var> callback, together with the
+<var>Data</var> parameter.
+The iteration stops when all elements have been passed or when the iterator
+callback returned <var>False</var> in the <var>Continue</var> parameter.
+</descr>
+<seealso>
+<link id="TJSONObjectIterator"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Iterate.Iterator">
+<short>Iterator callback, called for each element in the array.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Iterate.Data">
+<short>Data item passed to the iterator with each call.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONObject.IndexOf">
+<short>Return index of JSONData instance in object</short>
+<descr>
+<var>IndexOf</var> compares all elements in the object with <var>Obj</var>
+and returns the index (in the <link id="TJSONData.Items"/> property) 
+of the element instance that equals <var>Obj</var>.  
+The actual instances are compared, not the JSON value. If none of the
+elements match, the function returns -1.
+</descr>
+<seealso>
+<link id="Clear"/>
+<link id="IndexOfName"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONObject.IndexOf.Result">
+<short>Index of <var>Obj</var> in the array, or -1.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.IndexOf.Item">
+<short>Object instance to search for.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONObject.IndexOfName">
+<short>Return index of name in item list</short>
+<descr>
+<p>
+<var>IndexOfName</var> compares the names of all elements in the object with
+<var>AName</var> and returns the index (in the <link id="TJSONData.Items"/> property)
+of the element instance whose name matched <var>AName</var>.
+If none of the element's names match, the function returns -1.
+</p>
+<p>
+Since JSON is a case-sensitive specification, the names are searched
+case-sensitively by default. This can be changed by setting the optional
+<var>CaseInsensitive</var> parameter to <var>True</var>
+</p>
+</descr>
+<seealso>
+<link id="IndexOf"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONObject.IndexOfName.Result">
+<short>Index of <var>AName</var> in the array, or -1.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.IndexOfName.AName">
+<short>Name to search for.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.IndexOfName.CaseInsensitive">
+<short>Search case-insensitively or not ?</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONObject.Find">
+<short>Find an element by name.</short>
+<descr>
+<p>
+<var>Find</var> compares the names of all elements in the object with
+<var>AName</var> and returns the matching element.
+If none of the element's names match, the function returns <var>Nil</var>
+</p>
+<p>
+Since JSON is a case-sensitive specification, the names are searched
+case-sensitively.
+</p>
+<p>
+If <var>AType</var> is specified then the element's type must also match the
+specified type.
+</p>
+</descr>
+<seealso>
+<link id="IndexOf"/>
+<link id="IndexOfName"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONObject.Find.Result">
+<short>Data element corresponding to <var>AName</var></short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Find.AName">
+<short>Name to search for.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Find.AType">
+<short>Type to match.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONObject.Get">
+<short>Retrieve a value by name</short>
+<descr>
+<p>
+<var>Get</var> can be used to retrieve a value by name. If an element with
+name equal to <var>AName</var> exists, and its type corresponds to the type
+of the <var>ADefault</var>, then the value is returned. If no element
+element with the correct type exists, the <var>ADefault</var> value is
+returned.
+</p>
+<p>
+If no default is specified, the value is returned as a variant type,
+or Null if no value was found.
+</p>
+<p>
+The other value retrieval properties such as <link id="Integers"/>
+<link id="Int64s"/>, <link id="Booleans"/>, <link id="Strings"/>, 
+<link id="Floats"/>, <link id="Arrays"/>, <link id="Objects"/>
+will raise an exception if the name is not found. The <var>Get</var>
+function does not raise an exception.
+</p>
+</descr>
+<seealso>
+<link id="Integers"/>
+<link id="Int64s"/>
+<link id="Booleans"/>
+<link id="Strings"/>
+<link id="Floats"/>
+<link id="Arrays"/>
+<link id="Objects"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONObject.Get.Result">
+<short>The requested value</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Get.AName">
+<short>Name of the value to retrieve</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Get.ADefault">
+<short>Default value to return if no value is found or it has the wrong type.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONObject.Clear">
+<short>Clear the object</short>
+<descr>
+<var>Clear</var> clears the object and frees all elements in it. After the
+call to <var>Clear</var>, <link id="TJSONData.Count">Count</link> returns 0.
+</descr>
+<seealso>
+<link id="Delete"/>
+<link id="Extract"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONObject.Add">
+<short>Add a name, value to the object</short>
+<descr>
+<p>
+<var>Add</var> adds the value <var>AValue</var> with name <var>AName</var>
+to the object. If the value is not a <link id="TJSONData"/> descendent, then
+it is converted to a <var>TJSONData</var> value, and it returns the
+<var>TJSONData</var> descendent that was created to add the value.
+</p>
+<p>
+The properties <link id="Integers"/>, <link id="Int64s"/>, <link id="Booleans"/>
+<link id="Strings"/>, <link id="Floats"/>, <link id="Arrays"/> and <link id="Objects"/>
+will not raise an exception if an existing name is used, they will overwrite
+any existing value.
+</p>
+</descr>
+<errors>
+If a value with the same name already exists, an exception is raised.
+</errors>
+<seealso>
+<link id="Integers"/>
+<link id="Int64s"/>
+<link id="Booleans"/>
+<link id="Strings"/>
+<link id="Floats"/>
+<link id="Arrays"/>
+<link id="Objects"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONObject.Add.Result">
+<short>The resulting TJSONData descendent</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Add.AName">
+<short>Name to add the value with.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Add.AValue">
+<short>Value to add to the object.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONObject.Delete">
+<short>Delete an element from the list by index</short>
+<descr>
+<var>Delete</var> deletes the element with given <var>Index</var> or
+<var>AName</var> from the list. The <link id="TJSONData"/> element is freed.
+If a non-existing name is specified, no value is deleted.
+</descr>
+<errors>
+If an invalid index is passed, an exception is raised.
+</errors>
+<seealso>
+<link id="Clear"/>
+<link id="Add"/>
+<link id="Extract"/>
+<link id="Exchange"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Delete.Index">
+<short>Index of element in <var>Items</var> to delete.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Delete.AName">
+<short>Name of element to delete</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONObject.Remove">
+<short>Remove item by instance</short>
+<descr>
+<var>Remove</var> will locate the value <var>Item</var> in the list of
+values, and removes it if it exists. The item is freed.
+</descr>
+<seealso>
+<link id="Delete"/>
+<link id="Extract"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Remove.Item">
+<short>Item to remove.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONObject.Extract">
+<short>Extract an element from the object</short>
+<descr>
+<var>Extract</var> removes the element at position <var>Index</var> or with the
+<var>AName</var> from the list, just as <link id="Delete"/> does. In difference 
+with <var>Delete</var>, it does not free the object instance. Instead,  
+it returns the extracted element. The result is <var>Nil</var> if a
+non-existing name is specified.
+</descr>
+<seealso>
+<link id="Delete"/>
+<link id="Clear"/>
+<link id="Insert"/>
+<link id="Add"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONObject.Extract.Result">
+<short>Element to extract from the object</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Extract.Index">
+<short>Index of element to extract</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Extract.AName">
+<short>Name of element to extract</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONObject.Names">
+<short>Indexed access to the names of elements.</short>
+<descr>
+<var>Names</var> allows to retrieve the names of the elements in the object.
+The index is zero-based, running from 0 to <var>Count-1</var>.
+</descr>
+<seealso>
+<link id="Types"/>
+<link id="Elements"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Names.Index">
+<short>Index of name to retrieve.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONObject.Elements">
+<short>Name-based access to JSON values in the object.</short>
+<descr>
+<var>Elements</var> allows to retrieve the JSON values of the elements in the
+object by name. If a non-existent name is specified, an <link id="EJSON"/>
+exception is raised.
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="Names"/>
+<link id="Types"/>
+<link id="Integers"/>
+<link id="Int64s"/>
+<link id="Booleans"/>
+<link id="Strings"/>
+<link id="Floats"/>
+<link id="Arrays"/>
+<link id="Objects"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Elements.AName">
+<short>Name of value to retrieve.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONObject.Types">
+<short>Types of values in the object.</short>
+<descr>
+<var>Types</var> allows to retrieve the JSON types of the elements in
+the object by name. If a non-existent name is specified, an <link id="EJSON"/>   
+exception is raised.
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="Names"/>   
+<link id="Elements"/>   
+<link id="Integers"/>
+<link id="Int64s"/>  
+<link id="Booleans"/>
+<link id="Strings"/> 
+<link id="Floats"/>  
+<link id="Arrays"/> 
+<link id="Nulls"/>
+<link id="Objects"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Types.AName">
+<short>Name of value to retrieve.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONObject.Nulls">
+<short>Named access to <var>null</var> values</short>
+<descr>
+<var>Nulls</var> allows to retrieve or set the NULL values in
+the object by name. If a non-existent name is specified, an <link
+id="EJSON"/> exception is raised when reading. When writing, any existing
+value is replaced by a <var>null</var> value. 
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="Names"/>
+<link id="Elements"/>
+<link id="Integers"/>
+<link id="Int64s"/>  
+<link id="Booleans"/>
+<link id="Strings"/> 
+<link id="Floats"/>
+<link id="Arrays"/>
+<link id="Types"/>  
+<link id="Objects"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Nulls.AName">
+<short>Name of null value to retrieve</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONObject.Floats">
+<short>Named access to float values</short>
+<descr>
+<var>Floats</var> allows to retrieve or set the float values in
+the object by name. If a non-existent name is specified, an <link
+id="EJSON"/> exception is raised when reading. When writing, any existing
+value is replaced by the specified floating-point value.
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="Names"/>
+<link id="Elements"/>
+<link id="Integers"/>
+<link id="Int64s"/>  
+<link id="Booleans"/>
+<link id="Strings"/> 
+<link id="Nulls"/>  
+<link id="Arrays"/>  
+<link id="Types"/>   
+<link id="Objects"/> 
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Floats.AName">
+<short>Name of float value</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONObject.Integers">
+<short>Named access to integer values</short>
+<descr>
+<var>Integers</var> allows to retrieve or set the integer values in
+the object by name. If a non-existent name is specified, an <link
+id="EJSON"/> exception is raised when reading. When writing, any existing
+value is replaced by the specified integer value.
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="Names"/>
+<link id="Elements"/>
+<link id="Floats"/>
+<link id="Int64s"/>  
+<link id="Booleans"/>
+<link id="Strings"/> 
+<link id="Nulls"/>   
+<link id="Arrays"/>  
+<link id="Types"/>   
+<link id="Objects"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Integers.AName">
+<short>Name of integer value</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONObject.Int64s">
+<short>Named access to int64 values</short>
+<descr>
+<var>Int64s</var> allows to retrieve or set the int64 values in
+the object by name. If a non-existent name is specified, an <link  
+id="EJSON"/> exception is raised when reading. When writing, any existing
+value is replaced by the specified int64 value.
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="Names"/>
+<link id="Elements"/>
+<link id="Floats"/>  
+<link id="Integers"/>  
+<link id="Booleans"/>
+<link id="Strings"/> 
+<link id="Nulls"/>   
+<link id="Arrays"/>  
+<link id="Types"/>   
+<link id="Objects"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Int64s.AName">
+<short>Name of int64 value</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONObject.Strings">
+<short>Named access to string values</short>
+<descr>
+<var>Strings</var> allows to retrieve or set the string values in
+the object by name. If a non-existent name is specified, an <link  
+id="EJSON"/> exception is raised when reading. When writing, any existing
+value is replaced by the specified string value.
+</descr> 
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="Names"/>   
+<link id="Elements"/>
+<link id="Floats"/>  
+<link id="Integers"/>
+<link id="Booleans"/>
+<link id="Int64s"/>
+<link id="Nulls"/> 
+<link id="Arrays"/> 
+<link id="Types"/>  
+<link id="Objects"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Strings.AName">
+<short>Name of string value</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONObject.Booleans">
+<short>Named access to boolean values</short>
+<descr>
+<var>Booleans</var> allows to retrieve or set the boolean values in
+the object by name. If a non-existent name is specified, an <link
+id="EJSON"/> exception is raised when reading. When writing, any existing
+value is replaced by the specified boolean value.
+</descr> 
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="Names"/>   
+<link id="Elements"/>
+<link id="Floats"/>  
+<link id="Integers"/>
+<link id="Strings"/>
+<link id="Int64s"/>  
+<link id="Nulls"/>   
+<link id="Arrays"/>  
+<link id="Types"/>   
+<link id="Objects"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Booleans.AName">
+<short>Name of boolean value</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONObject.Arrays">
+<short>Named access to JSON array values</short>
+<descr>
+<var>Arrays</var> allows to retrieve or set the JSON array values in
+the object by name. If a non-existent name is specified, an <link  
+id="EJSON"/> exception is raised when reading. When writing, any existing
+value is replaced by the specified JSON array.
+</descr> 
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="Names"/>   
+<link id="Elements"/>
+<link id="Floats"/>  
+<link id="Integers"/>
+<link id="Strings"/> 
+<link id="Int64s"/>  
+<link id="Nulls"/>   
+<link id="Booleans"/>  
+<link id="Types"/>   
+<link id="Objects"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Arrays.AName">
+<short>Name of JSON array value</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONObject.Objects">
+<short>Named access to JSON object values</short>
+<descr>
+<var>Objects</var> allows to retrieve or set the JSON object values in
+the object by name. If a non-existent name is specified, an <link   
+id="EJSON"/> exception is raised when reading. When writing, any existing
+value is replaced by the specified JSON object.
+</descr> 
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="Names"/>   
+<link id="Elements"/>
+<link id="Floats"/>  
+<link id="Integers"/>
+<link id="Strings"/> 
+<link id="Int64s"/>  
+<link id="Nulls"/>   
+<link id="Booleans"/>
+<link id="Types"/>   
+<link id="Arrays"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.Objects.AName">
+<short>Name of JSON object value</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.fpjson.EJSON
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="EJSON">
+<short>JSON exception</short>
+<descr>
+<var>EJSON</var> is the exception raised by the JSON implementation to
+report JSON error.
+</descr>
+</element>
+
+<!-- function Visibility: default -->
+<element name="StringToJSONString">
+<short>Convert a string to a JSON-escaped string</short>
+<descr>
+<p>
+<var>StringToJSONString</var> examines the string <var>S</var> and replaces
+any special characters by an escaped string, as in the JSON specification.
+The following characters are escaped:
+</p>
+<pre>
+\ / "  #8 #9 #10 #12 #13.
+</pre>
+</descr>
+<seealso>
+<link id="JSONStringToString"/>
+<link id="JSONTypeName"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="StringToJSONString.Result">
+<short>properly escaped JSON string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="StringToJSONString.S">
+<short>String to convert to JSON string.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="JSONStringToString">
+<short>Convert a JSON-escaped string to a string</short>
+<descr>
+<p>
+<var>JSONStringToString</var> examines the string <var>S</var> and replaces
+any special characters by an escaped string, as in the JSON specification.
+The following escaped characters are recognized:
+</p> 
+<pre>
+\\ \" \/ \b \t \n \f \r \u000X
+</pre>   
+</descr>
+<seealso>
+<link id="StringToJSONString"/>
+<link id="JSONTypeName"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="JSONStringToString.Result">
+<short>Pascal string with escaped characters replaced</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="JSONStringToString.S">
+<short>JSON-escaped string to convert.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="JSONTypeName">
+<short>Convert a JSON type to a string</short>
+<descr>
+<var>JSONTypeName</var> converts the <var>JSONType</var> to a string that
+describes the type of JSON value.
+</descr>
+<seealso>
+<link id="StringToJSONString"/>
+<link id="JSONStringToString"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="JSONTypeName.Result">
+<short>Name of JSON type</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="JSONTypeName.JSONType">
+<short>JSON type to convert to a string</short>
+</element>
+
+</module> <!-- fpjson -->
+
+</package>
+</fpdoc-descriptions>
