@@ -10276,6 +10276,10 @@ connection was closed, the <link id="TCustomConnection.AfterDisconnect">AfterDis
 Calling the <var>Close</var> method is equivalent to setting the <link id="TCustomConnection.Connected">Connected</link>
 property to <var>False</var>.
 </p>
+<p>
+If <var>ForceClose</var> is <var>True</var> then the descendent should ignore errors from the underlying
+connection, allowing all datasets to be closed properly.
+</p>
 </descr>
 <errors>
 If the connection cannot be broken for some reason, an <link id="EDatabaseError"/> exception will be raised.
@@ -12688,6 +12692,785 @@ only after <var>MoveNext</var> returned <var>True</var>.
 </seealso>
 </element>
 
+<!-- property Visibility: public -->
+<element name="EUpdateError.OriginalException">
+<short>Originally raised exception</short>
+<descr>
+<var>OriginalException</var> is the originally raised exception that is
+transformed to an <var>EUpdateError</var> exception.
+</descr>
+<seealso>
+<link id="DB.EDatabaseError"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TField.AsBytes">
+<short>Retrieve the contents of the field as an array of bytes</short>
+<descr>
+<var>AsBytes</var> returns the contents of the field as an array of bytes.
+For blob data this is the actual blob content.
+</descr>
+<seealso>
+<link id="TBlobField"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TStringField.SetFieldType.AValue">
+<short>Value to set the field type to.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TWideStringField.SetFieldType.AValue">
+<short>Value to set the field type to.</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.db.TFMTBCDField
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TFMTBCDField">
+<short>Fixed precision floating point data field </short>
+<descr>
+<var>TFMTBCDField</var> is the field created when a data type of
+<var>ftFMTBCD</var> is encountered. It represents usually a fixed-precision
+floating point data type (BCD : Binary Coded Decimal data) such as the
+<var>DECIMAL</var> or <var>NUMERIC</var> field types in an SQL database.
+</descr>
+<seealso>
+<link id="TFloatField"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TFMTBCDField.Create">
+<short>Create a new instance of the <var>TFMTBCDField</var> class.</short>
+<descr>
+<var>Create</var> initializes a new instance of the <var>TFMTBCDField</var>
+class: it sets the <link id="MinValue"/>, <link id="MaxValue"/>, <link
+id="TField.Size">Size</link> (15) and <link id="Precision"/> (2) fields to their
+default values.
+</descr>
+<seealso>
+<link id="MinValue"/>
+<link id="MaxValue"/> 
+<link id="TField.Size">Size</link>
+<link id="Precision"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFMTBCDField.Create.AOwner">
+<short>Owner of the field, usually the dataset.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFMTBCDField.CheckRange">
+<short>Check value if it is in the range defined by MinValue and MaxValue</short>
+<descr>
+<var>CheckRange</var> checks whether <var>AValue</var> is between <link
+id="MinValue"/> and <link id="MaxValue"/> if they are both nonzero. 
+If either of them is zero, then <var>True</var> is returned. The
+<var>MinValue</var> and <var>MaxValue</var> values themselves are also valid values.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="MinValue"/>
+<link id="MaxValue"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TFMTBCDField.CheckRange.Result">
+<short><var>True</var> if <var>AValue</var> is in the range [<var>MinValue</var>,<var>MaxValue</var>]</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFMTBCDField.CheckRange.AValue">
+<short>Value to check</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFMTBCDField.Value">
+<short>The value of the field as a BCD value</short>
+<descr>
+<var>Value</var> is the value of the field as a BCD (Binary Coded Decimal) value.
+</descr>
+<seealso>
+<link id="TField.AsFloat"/>
+<link id="TField.AsCurrency"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFMTBCDField.Precision">
+<short>Total number of digits in the BCD data</short>
+<descr>
+<var>Precision</var> is the total number of digits in the BCD data. 
+The maximum precision is 32.
+</descr>
+<seealso>
+<link id="TField.AsFloat"/>
+<link id="TField.AsCurrency"/>
+<link id="Size"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFMTBCDField.Currency">
+<short>Does the field contain currency data ?</short>
+<descr>
+<var>Currency</var> determines how the textual representation of the data is
+formatted. It has no influence on the actual data itself. If <var>True</var> 
+it is represented as a currency (monetary value). 
+If <link id="TField.DisplayFormat">DisplayFormat</link> or 
+<link id="TField.EditFormat">EditFormat</link> are set, these values are used
+instead to format the value.
+</descr>
+<seealso>
+<link id="TField.DisplayFormat"/>
+<link id="TField.EditFormat"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFMTBCDField.MaxValue">
+<short>Maximum value for the field</short>
+<descr>
+<var>MaxValue</var> can be set to a nonzero value to indicate the maximum
+value the field may contain. It must be set together with <link
+id="MinValue"/> or it will not have any effect.
+</descr>
+<seealso>
+<link id="TFMTBCDField.CheckRange"/>
+<link id="MinValue"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFMTBCDField.MinValue">
+<short>Minimum value for the field</short>
+<descr>
+<var>MinValue</var> can be set to a nonzero value to indicate the maximum
+value the field may contain. It must be set together with <link id="MaxValue"/> 
+or it will not have any effect.
+</descr>
+<seealso>
+<link id="TFMTBCDField.CheckRange"/>
+<link id="MaxValue"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFMTBCDField.Size">
+<short>Number of digits after the decimal point</short>
+<descr>
+<var>Size</var> is the maximum number of digits allowed after the decimal point.
+Together with the <link id="Precision"/> property it determines the maximum
+allowed range of values for the field. This range can be restricted using
+the <link id="MinValue"/> and <link id="MaxValue"/> properties.
+</descr>
+<seealso>
+<link id="MinValue"/>
+<link id="MaxValue"/>
+<link id="Precision"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFieldsEnumerator.Create.AFields">
+<short>TFields instance for which the enumerator is created</short>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TFieldsEnumerator.MoveNext.Result">
+<short>True if there is a next value, false otherwise.</short>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TFields.GetEnumerator.Result">
+<short><var>TFieldsEnumerator</var> instance used in enumerator.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TParam.AsFMTBCD">
+<short>Parameter value as a BCD value</short>
+<descr>
+<var>AsFMTBCD</var> can be used to get or set the parameter's value as a BCD
+typed value.
+</descr>
+<seealso>
+<link id="AsFloat"/>
+<link id="AsCurrency"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TRecordBufferBaseType">
+<short>Opaque base type for <var>TRecordBuffer</var></short>
+<descr>
+<var>TRecordBufferBaseType</var> should not be used directly. It just serves
+as an (opaque) base type to <link id="TRecordBuffer"/>
+</descr>
+<seealso>
+<link id="TRecordBuffer"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TRecordBuffer">
+<short>Pointer type for record data buffer</short>
+<descr>
+<var>TRecordBuffer</var> is the type used by <link id="TDataset"/> to point to a
+record's data buffer. It is used in several internal <var>TDataset</var> routines.
+</descr>
+<seealso>
+<link id="TDataset"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TPSCommandType">
+<short>Type of SQL command</short>
+<descr>
+<var>TPSCommandType</var> is used in the <link id="IProviderSupport.PSGetCommandType"/>
+call to determine the type of SQL command that the provider is exposing. 
+It is meaningless for datasets that are not SQL based.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TPSCommandType.ctUnknown">
+<short>Unknown SQL type or not SQL based</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TPSCommandType.ctQuery">
+<short>General SQL statement</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TPSCommandType.ctTable">
+<short>Table contents (select * from table)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TPSCommandType.ctStoredProc">
+<short>Stored procedure statement</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TPSCommandType.ctSelect">
+<short>SQL SELECT Statement</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TPSCommandType.ctInsert">
+<short>SQL INSERT Statement</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TPSCommandType.ctUpdate">
+<short>SQL UPDATE statement</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TPSCommandType.ctDelete">
+<short>SQL DELETE Statement</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TPSCommandType.ctDDL">
+<short>SQL DDL statement</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.db.IProviderSupport
+  ********************************************************************
+-->
+
+<!-- interface Visibility: default -->
+<element name="IProviderSupport">
+<short>Interface for Provider support</short>
+<descr>
+<var>IProviderSupport</var> is an interface used by Delphi's TProvider (datasnap) technology. 
+It is currently not used in Free Pascal, but is provided for Delphi
+compatibility. The <link id="TDataset"/> class implements all the methods of
+this interface for the benefit of descendent classes, but does not publish
+the interface in it's declaration.
+</descr>
+<seealso>
+<link id="TDataset"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IProviderSupport.PSEndTransaction">
+<short>End an active transaction</short>
+<descr>
+<var>PSEndTransaction</var> ends an active transaction if an transaction is
+active. (<link id="PSInTransaction"/> returns <var>True</var>). If
+<var>ACommit</var> is <var>True</var> then the transaction is committed,
+else it is rollbacked.
+</descr>
+<seealso>
+<link id="PSInTransaction"/>
+<link id="PSStartTransaction"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IProviderSupport.PSEndTransaction.ACommit">
+<short>Should the transaction be committed or rollbacked?</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IProviderSupport.PSExecute">
+<short>Execute the current command-text.</short>
+<descr>
+<var>PSExecute</var> executes the current SQL statement: the command as it is returned by <link id="PSGetCommandText"/>.
+</descr>
+<seealso>
+<link id="PSGetCommandText"/>
+<link id="PSExecuteStatement"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSExecuteStatement">
+<short>Execute a SQL statement.</short>
+<descr>
+<p>
+<var>PSExecuteStatement</var> will execute the <var>ASQL</var> SQL statement in the current transaction.
+The SQL statement can have parameters embedded in it (in the form <var>:ParamName</var>), values for these 
+parameters will be taken from <var>AParams</var>. If the SQL statement returns a result-set, then the
+result set can be returned in <var>ResultSet</var>. The function returns
+<var>True</var> if the statement was executed succefully.
+</p>
+<p>
+<var>PSExecuteStatement</var> does not modify the content of
+<var>CommandText</var>: <link id="PSGetCommandText"/> returns the same value
+before and after a call to <var>PSExecuteStatement</var>.
+</p>
+</descr>
+<seealso>
+<link id="PSGetCommandText"/>
+<link id="PSSetCommandText"/>
+<link id="PSExecuteStatement"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSExecuteStatement.Result">
+<short>True if the statement ASQL was executed succesfully.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IProviderSupport.PSExecuteStatement.ASQL">
+<short>SQL statement to execute (may contain parameters)</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IProviderSupport.PSExecuteStatement.AParams">
+<short>Parameter values to substitute when executing ASQL</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IProviderSupport.PSExecuteStatement.ResultSet">
+<short>Pointer to resultset (if any)</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IProviderSupport.PSGetAttributes">
+<short>Get a list of attributes (metadata)</short>
+<descr>
+<var>PSGetAttributes</var> returns a set of <var>name=value</var> pairs which is
+included in the data packet sent to a client. 
+</descr>
+<seealso>
+<link id="PSGetCommandText"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IProviderSupport.PSGetAttributes.List">
+<short>List of attributes</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSGetCommandText">
+<short>Return the SQL command executed for getting data.</short>
+<descr>
+<var>PSGetCommandText</var> returns the SQL command that is executed when the <link id="PSExecute"/>
+function is called (for a TSQLQuery this would be the SQL property) or when
+the dataset is opened.
+</descr>
+<seealso>
+<link id="PSExecute"/>
+<link id="PSSetCommandText"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSGetCommandText.Result">
+<short>SQL statement</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSGetCommandType">
+<short>Return SQL command type</short>
+<descr>
+<var>PSGetCommandType</var> should return the kind of SQL statement that is
+executed by the command (as returned by <link id="PSGetCommandText"/>). The
+list of possible command types is enumerated in <link id="TPSCommandType"/>.
+</descr>
+<seealso>
+<link id="PSGetCommandText"/>
+<link id="TPSCommandType"/>
+<link id="PSExecute"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSGetCommandType.Result">
+<short>The kind of SQL command.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSGetDefaultOrder">
+<short>Default order index definition</short>
+<descr>
+<var>PSGetDefaultOrder</var> should return the index definition from the
+list of indexes (as returned by <link id="PSGetIndexDefs"/>) that represents
+the default sort order.
+</descr>
+<seealso>
+<link id="PSGetIndexDefs"/>
+<link id="PSGetKeyFields"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSGetDefaultOrder.Result">
+<short>Index definition for default order</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSGetIndexDefs">
+<short>Return a list of index definitions</short>
+<descr>
+<var>PSGetIndexDefs</var> should return a list of index definitions, limited
+to the types of indexes in <var>IndexTypes</var>.
+</descr>
+<seealso>
+<link id="PSGetDefaultOrder"/>
+<link id="PSGetKeyFields"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSGetIndexDefs.Result">
+<short>The collection of index definitions.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IProviderSupport.PSGetIndexDefs.IndexTypes">
+<short>Types of indexes that should be included in the result.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSGetKeyFields">
+<short>Return a list of key fields in the dataset</short>
+<descr>
+<var>PSGetKeyFields</var> returns a semicolon-separated list of fieldnames that make up the
+unique key for a record. Normally, these are the names of the fields that
+have <var>pfInKey</var> in their <link id="TField.ProviderOptions">ProviderOptions</link>
+property.
+</descr>
+<seealso>
+<link id="PSGetIndexDefs"/>
+<link id="PSGetDefaultOrder"/>
+<link id="TField.ProviderOptions"/>
+<link id="TProviderFlags"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSGetKeyFields.Result">
+<short>Semicolon separated list of fieldnames which form the unique key for a record.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSGetParams">
+<short>Get the parameters in the commandtext</short>
+<descr>
+<var>PSGetParams</var> returns the list of parameters in the command-text
+(as returned by <link id="PSGetCommandText"/>). This is usually the
+<var>Params</var> property of a <link id="TDataset"/> descendant.
+</descr>
+<seealso>
+<link id="PSGetCommandText"/>
+<link id="PSSetParams"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSGetParams.Result">
+<short>The list of parameters in the SQL statement</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSGetQuoteChar">
+<short>Quote character for quoted strings</short>
+<descr>
+<var>PSGetQuoteChar</var> returns the quote character needed to enclose
+string literals in an SQL statement for the underlying database.
+</descr>
+<seealso>
+<link id="PSGetTableName"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSGetQuoteChar.Result">
+<short>The actual quote character</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSGetTableName">
+<short>Name of database table which must be updated</short>
+<descr>
+<var>PSGetTableName</var> returns the name of the table for which update SQL statements must be constructed. 
+The provider can create and execute SQL statements to update the underlying database
+by itself. For this, it uses <var>PSGetTableName</var> as the name of the table to update.
+</descr>
+<seealso>
+<link id="PSGetQuoteChar"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSGetTableName.Result">
+<short>Name of database table to update</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSGetUpdateException">
+<short>Transform exception to <var>UpdateError</var></short>
+<descr>
+<var>PSGetUpdateException</var> is called to transform and chain exceptions
+that occur during an ApplyUpdates operation. The exception <var>E</var> must
+be transformed to an <link id="EUpdateError"/> exception.  The previous
+<var>EUpdateError</var> exception in the update batch is passed in
+<var>Prev</var>.
+</descr>
+<seealso>
+<link id="EUpdateError"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSGetUpdateException.Result">
+<short>The new <var>EUpdateError</var>exception </short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IProviderSupport.PSGetUpdateException.E">
+<short>The originally raised excepion</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IProviderSupport.PSGetUpdateException.Prev">
+<short>The previous exception in the applyupdates batch (can be nil).</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSInTransaction">
+<short>Is the dataset in an active transaction.</short>
+<descr>
+<var>PSInTransaction</var> returns <var>True</var> if the dataset is in an
+active transaction or <var>False</var> if  no transaction is active.
+</descr>
+<seealso>
+<link id="PSEndTransaction"/>
+<link id="PSStartTransaction"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSInTransaction.Result">
+<short><var>True</var> if a transaction is currently active</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSIsSQLBased">
+<short>Is the dataset SQL based</short>
+<descr>
+<var>PSIsSQLBased</var> returns <var>True</var> if the dataset is SQL based
+or not. Note that this is different from <link id="PSIsSQLSupported"/> which
+indicates whether SQL statements can be executed using <link id="PSExecuteCommand"/>
+</descr>
+<seealso>
+<link id="PSIsSQLSupported"/>
+<link id="PSExecuteCommand"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSIsSQLBased.Result">
+<short>True if the dataset is based on an SQL statement</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSIsSQLSupported">
+<short>Can the dataset support SQL statements</short>
+<descr>
+<var>PSIsSQLSupported</var> returns <var>True</var> if <link
+id="PSExecuteCommand"/> can be used to execute SQL statements on the
+underlying database.
+</descr>
+<seealso>
+<link id="PSExecuteCommand"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSIsSQLSupported.Result">
+<short>Can SQL statements be executed or not</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IProviderSupport.PSReset">
+<short>Position the dataset on the first record</short>
+<descr>
+<var>PSReset</var> repositions the dataset on the first record. For
+bi-directional datasets, this usually means that first is called, but for
+unidirectional datasets this may result in re-fetching the data from the
+underlying database.
+</descr>
+<seealso>
+<link id="TDataset.First"/>
+<link id="TDataset.Open"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IProviderSupport.PSSetCommandText">
+<short>Set the command-text of the dataset</short>
+<descr>
+<var>PSSetCommandText</var> sets the commandtext (SQL) statement that is executed by 
+<var>PSExecute</var> or that is used to open the dataset.
+</descr>
+<seealso>
+<link id="PSExecute"/>
+<link id="PSGetCommandText"/>
+<link id="PSSetParams"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IProviderSupport.PSSetCommandText.CommandText">
+<short>New SQL command to be used</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IProviderSupport.PSSetParams">
+<short>Set the parameters for the command text</short>
+<descr>
+<var>PSSetParams</var> sets the values of the parameters that should be used
+when executing the commandtext SQL statement.
+</descr>
+<seealso>
+<link id="PSSetCommandText"/>
+<link id="PSGetParams"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IProviderSupport.PSSetParams.AParams">
+<short>Value for the parameters</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IProviderSupport.PSStartTransaction">
+<short>Start a new transaction</short>
+<descr>
+<var>PSStartTransaction</var> is used by the provider to start a new transaction.
+It will only be called if no transaction was active yet (i.e. <link
+id="PSIntransaction"/> returned <var>False</var>).
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="PSEndTransaction"/>
+<link id="PSIntransaction"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IProviderSupport.PSUpdateRecord">
+<short>Update a record</short>
+<descr>
+<p>
+<var>PSUpdateRecord</var> is called before attempting to update the records
+through generated SQL statements. The update to be performed is passed in
+<var>UpdateKind</var> parameter. The <var>Delta</var> Dataset's current
+record contains all data for the record that must be updated.
+</p>
+<p>
+The function returns <var>True</var> if the update was succesfully applied,
+<var>False</var> if not. In that case the provider will attempt to update
+the record using SQL statements if the dataset allows it.
+</p>
+</descr>
+<seealso>
+<link id="PSIsSQLSupported"/>
+<link id="PSExecuteCommand"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IProviderSupport.PSUpdateRecord.Result">
+<short><var>True</var> if the record was succesfully updated.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IProviderSupport.PSUpdateRecord.UpdateKind">
+<short>Type of update to perform.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IProviderSupport.PSUpdateRecord.Delta">
+<short>Data for the record that must be updated.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDataSet.BlockReadSize">
+<short>Number of records to read</short>
+<descr>
+<var>BlockReadSize</var> can be set to a positive number to prevent the
+dataset from sending notifications to DB-Aware controls while scrolling
+through the data. Setting it to zero will re-enable sending of
+notifications, as will putting the dataset in another state (edit etc.).
+</descr>
+<seealso>
+<link id="EnableControls"/>
+<link id="DisableControls"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomConnection.Close.ForceClose">
+<short>Ignore errors when closing the connection.</short>
+</element>
 
 </module> <!-- db -->
 
