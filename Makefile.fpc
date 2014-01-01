@@ -15,7 +15,7 @@
 
 [package]
 name=fpdocs
-version=2.6.3
+version=2.6.2
 
 [require]
 nortl=y
@@ -397,6 +397,8 @@ FCLDBDIR=$(FPCSRCDIR)/packages/fcl-db/src
 
 FCLZLIBDIR=$(FPCSRCDIR)/packages/paszlib/src
 
+FCLJSONDIR=$(FPCSRCDIR)/packages/fcl-json/src
+
 ifndef OLDGRAPH
 GRAPHDIR=$(FPCSRCDIR)/packages/graph/src
 else
@@ -473,6 +475,7 @@ FCLSQLDB= --descr=sqldb.xml --input="$(FCLDBDIR)/sqldb/sqldb.pp"
 FCLIBCONNECTION=  --descr=ibconnection.xml --input="$(FCLDBDIR)/sqldb/interbase/ibconnection.pp"
 FCLMSSQLCONN=  --descr=mssqlconn.xml --input="$(FCLDBDIR)/sqldb/mssql/mssqlconn.pp"
 FCLZIPPER=  --descr=zipper.xml --input="$(FCLZLIBDIR)/zipper.pp"
+FCLJSON= --descr=fpjson.xml --input="$(FCLJSONDIR)/fpjson.pp"
 
 # Now add to the FCL fpdoc opts.
 FCLUNITOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
@@ -485,7 +488,7 @@ FCLUNITOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES) $(FCLR
 FCLUNITOPTS+= $(FCLAVLTREE) $(FCLURIPARSER) $(FCLDAEMONAPP) $(FCLLIBTAR) $(FCLASCII85)
 FCLUNITOPTS+= $(FCLFPTIMER) $(FCLDB) $(FCLZIPPER)
 #FCLUNITOPTS+= $(FCLFPVECTORIAL) 
-FCLUNITOPTS+= $(FCLSQLDB) $(FCLIBCONNECTION) $(FCLMSSQLCONN)
+FCLUNITOPTS+= $(FCLSQLDB) $(FCLIBCONNECTION) $(FCLMSSQLCONN) $(FCLJSON)
 
 
 RTLOPTS=$(FPDOCOPTS) --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
@@ -642,9 +645,10 @@ updatefclxml: fpc_all
 	$(FCLMAKESKEL) $(FCLINIFILES) --output=inifiles.new.xml
 	$(FCLMAKESKEL) $(FCLRTTIUTILS) --output=rttiutils.new.xml
         $(FCLMAKESKEL) $(FCLAVLTREE) --output=avl_tree.new.xml
-        $(FCLMAKESKEL) $(FCLSQLDB) --output=db.new.xml
+        $(FCLMAKESKEL) $(FCLDB) --output=db.new.xml
         $(FCLMAKESKEL) $(FCLSQLDB) --output=sqldb.new.xml
-	$(FCLMAKESKEL) $(FCLZIPPER) --output=zipper.nex.xml
+	$(FCLMAKESKEL) $(FCLZIPPER) --output=zipper.new.xml
+	$(FCLMAKESKEL) $(FCLJSON) --output=fpjson.new.xml
 	./cleanxml $(FCLNEWXML)
 
 rtl.inc: $(RTLXML)
