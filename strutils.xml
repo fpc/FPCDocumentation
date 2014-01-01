@@ -3742,12 +3742,17 @@ Number up to 1 million can be represented this way.</descr>
 <element name="RomanToInt">
 <short>Convert a string with a Roman number to it's decimal value.</short>
 <descr>
-<var>RomanToInt</var>
- returns the decimal equivalent of the Roman numerals in the string <var>S</var>.
-Invalid characters are dropped from <var>S</var>. A negative numeral is supported as well.</descr>
-<errors>None.</errors>
+<var>RomanToInt</var> returns the decimal equivalent of the Roman numerals in the string <var>S</var>.
+Invalid characters are dropped from <var>S</var>. A negative numeral is supported as well.
+The level of error checking is determined by the <var>strictness</var> parameter.
+</descr>
+<errors>
+On error, a <link id="sysutils.EConvertError">EConvertError</link> exception is raised.</errors>
 <seealso>
+<link id="TRomanConversionStrictness"/>
 <link id="IntToRoman"/>
+<link id="TryIntToRoman"/>
+<link id="IntToRomanDef"/>
 <link id="Hex2Dec"/>
 <link id="Numb2Dec"/>
 </seealso>
@@ -4091,6 +4096,120 @@ raised.
 <link id="#rtl.sysutils.TReplaceFlags">TReplaceFlags</link>
 </seealso>
 </element>
+
+<!-- function Visibility: default -->
+<element name="ReplaceStr">
+<short>Replace strings case-sensitively</short>
+<descr>
+<var>ReplaceStr</var> is a utility function that scans <var>AText</var> and 
+replaces all occurrences of <var>AFromText</var> with <var>AToText</var> and
+returns the resulting string.
+It simply calls <link id="#rtl.sysutils.StringReplace">StringReplace</link>
+with the appropriate options.
+</descr>
+<seealso>
+<link id="#rtl.sysutils.StringReplace">StringReplace</link>
+<link id="ReplaceText"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ReplaceText">
+<short>Replace strings case-insensitively</short>
+<descr>
+<var>ReplaceText</var> is a utility function that scans <var>AText</var> and 
+replaces all occurrences of <var>AFromText</var> (case insensitive) with
+<var>AToText</var>and returns the resulting string.
+It simply calls <link id="#rtl.sysutils.StringReplace">StringReplace</link>  
+with the appropriate options. 
+</descr>  
+<seealso> 
+<link id="#rtl.sysutils.StringReplace">StringReplace</link>
+<link id="ReplaceText"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TRomanConversionStrictness">
+<short>How to treat invalid roman numerals in <var>TryRomanToInt</var>.</short>
+<descr>
+<p>
+<var>TRomanConversionStrictness</var> is an enumerated type that can be used
+to decide how to react to invalid roman numerals.
+</p>
+<dl>
+<dt>rcsStrict</dt>
+<dd>Strict adherance to roman numerals. 
+Up to 3 consecutive identical letters. No negative numbers. Ordering must be correct.
+</dd>
+<dt>rcsRelaxed</dt>
+<dd>Same as <var>rcsStrict</var> but allow more than 3 consecutive identical letters.</dd>
+<dt>rcsDontCare</dt>
+<dd>Do not check validity at all</dd>
+</dl>
+</descr>
+<seealso>
+<link id="TryRomanToInt"/>
+<link id="RomanToInt"/>
+<link id="RomanToIntDef"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRomanConversionStrictness.rcsStrict">
+<short>Only accept correct roman numerals.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRomanConversionStrictness.rcsRelaxed">
+<short>Like <var>rcsStrict</var> but allow more than 3 consecutive identical
+letters.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRomanConversionStrictness.rcsDontCare">
+<short>Do not check correctness</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SInvalidRomanNumeral">
+<short>Error string shown in exception raised when invalid roman numeral is encountered</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TryRomanToInt">
+<short>Try to convert a roman numeral to an integer value.</short>
+<descr>
+<var>TryRomanToInt</var> will try to convert the roman numeral in <var>S</var> to
+an integer and returns the integer value in <var>N</var>. The strictness of
+the conversion algorithm is determined by <var>Strictness</var>. If the
+conversion succeeds, then <var>True</var> is returned, or else <var>False</var>.
+</descr>
+<seealso>
+<link id="TRomanConversionStrictness"/>
+<link id="RomanToIntDef"/>
+<link id="RomanToInt"/>
+<link id="IntToRoman"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="RomanToIntDef">
+<short>Convert a roman numeral to an integer value</short>
+<descr>
+<var>RomanToInt</var> converts the roman numeral in <var>S</var> to
+an integer and returns the integer value. The strictness of
+the conversion algorithm is determined by <var>Strictness</var>. 
+If the conversion fails, <var>ADefault</var> is returned.
+</descr>
+<seealso>
+<link id="TRomanConversionStrictness"/>
+<link id="TryRomanToInt"/>
+<link id="RomanToInt"/>
+<link id="IntToRoman"/>
+</seealso>
+</element>
+
 </module>
 <!-- strutils -->
 </package>
