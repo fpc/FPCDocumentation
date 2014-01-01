@@ -1146,16 +1146,20 @@ Here \var{xxx} is one of the following :
 \begin{description}
 \item[default] Use the built-in default.
 \item[as] Assemble using \gnu as.
+\item[gas] Assemble using \gnu gas.
+\item[gas-darwin] Assemble using \gnu gas for darwin Mach-O64.
 \item[nasmcoff] Coff (Go32v2) file using Nasm.
 \item[nasmelf] Elf32 (\linux) file using Nasm.
 \item[nasmwin32] \windows 32-bit file using Nasm.
 \item[nasmwdosx] \windows 32-bit/DOSX file using Nasm.
-\item[nasmobj] Object file using Nasm.
+\item[nasmobj] Object file using Nasm.darwin Mach-O64 using GNU GAS 
+\item[macho]    Mach-O (Darwin, Intel 32 bit) using internal writer.
 \item[masm] Object file using Masm (Microsoft).
 \item[tasm] Object file using Tasm (Borland).
 \item[elf] Elf32 (\linux) using internal writer.
 \item[coff] Coff object file (Go32v2) using the internal binary object writer.
 \item[pecoff] PECoff object file (Win32) using the internal binary object writer.
+\item[wasm] Object file using wasm (Watcom).
 \end{description}
 \item[-B] \olabel{B} Re-compile all used units, even
 if the unit sources didn't change since the last compilation.
@@ -1164,6 +1168,7 @@ be used by an Integrated Development Environment (IDE) to provide information
 on classes, objects, procedures, types  and variables in a unit.
 \item[-bl] \olabel{bl} The same as \var{-b} but also generates
 information about local variables, types and procedures.
+\item[-C3] Turn on (or off) IEEE error checking for constants.
 \item[-Caxxx] Set the ABI (Application Binary Interface) to \file{xxx}. 
 The \var{-i} option gives the possible values  for \file{xxx}.
 \item[-Cb] Generate big-endian code.
@@ -1171,11 +1176,12 @@ The \var{-i} option gives the possible values  for \file{xxx}.
 \item [-CD] Create a dynamic library. This is used to transform units into
 dynamically linkable libraries on \linux.
 \item[-Ce] Emulate floating point operations.
-\item[-Cfxxx] Set the used floating point processor to \file{xxx}.
+\item[-Cfxxx] Set the used floating point processor to \file{xxx}. \var{fpc -i} lists all possible values.
 \item[-CFNN] Set the minimal floating point precision to \var{NN}. Possible
 values are 32 and 64.
 \item[-Cg] Enable generation of PIC code. This should only be necessary when
-generating libraries on \linux or other Unices.
+generating libraries on \linux or other Unices. 
+
 \item [-Chxxx] \olabel {Ch} Reserves \var{xxx} bytes heap. \var{xxx} should
 be between 1024 and 67107840.
 \item [-Ci] \olabel{Ci} Generate Input/Output checking code. In case some
@@ -1207,6 +1213,7 @@ to conditionally compile parts of your code.
 \item [-Dd] Set the description of the executable/library (\windows).
 \item [-Dv] Set the version of the executable/library (\windows).
 \item [-E] \olabel{E} Same as \var{-Cn}.
+\item [-fPIC] same as \var{-Cg}.
 \item [-g] \olabel{g} Generate debugging information for debugging with
 \file{gdb}.
 \item [-gc] Generate checks for pointers. This must be used with the
@@ -1220,8 +1227,9 @@ about heap usage after the program exits)
 name/line number information if the program exits due to an error.)
 \item[-goXXX] set debug information options. One of the options is
 \var{dwarfsets}: It enables dwarf set debug information (this does not work
-with \var{gdb} versions prior to 6.5.
-\item [-gp] Preserve case in stabs symbol names. Default is to uppercase all
+with \var{gdb} versions prior to 6.5.  \var{stabsabsincludes} tells the compiler to store absolute/full include file paths in stabs.
+\var{dwarfmethodclassprefix} tells the compiler to prefix method names in DWARF with class name.
+item [-gp] Preserve case in stabs symbol names. Default is to uppercase all
 names.
 \item [-gs] Write stabs debug information.
 \item [-gt] Trash local variables. This writes a random value to local
@@ -1231,7 +1239,12 @@ variables.
 \item [-gw] Emit dwarf debugging info (version 2).
 \item [-gw2] Emit dwarf debugging info (version 2).
 \item [-gw3] Emit dwarf debugging info (version 3).
-\item[-kxxx] Pass \var{xxx} to the linker. 
+\item [-gw4] Emit dwarf debugging info (version 4, experimental).
+\item[-kxxx] Pass \var{xxx} to the linker.  
+\item[-Nxxx] Do node tree optimizations. Here xxx is one of
+\begin{description}
+\item[u] Unroll loops   
+\end{description}
 \item[-Oxxx] \olabel{O} Optimize the compiler's output; \var{xxx} can have one
 of the following values :
 \begin{description}
@@ -1239,8 +1252,8 @@ of the following values :
 determines what should be aligned; \var{VALUE} specifies the alignment
 boundary. See the Programmer's Guide for a description of the possible
 values.
-\item[g] Optimize for size, try to generate smaller code.
-\item[G] Optimize for time, try to generate faster code (default).
+%\item[s] Optimize for size, try to generate smaller code.
+%\item[G] Optimize for time, try to generate faster code (default).
 %\item[r] Keep certain variables in registers (experimental, use with caution).
 %\item[u] Uncertain optimizations
 \item[1] Level 1 optimizations (quick optimizations).
@@ -1253,6 +1266,10 @@ values.
 \item[LOOPUNROLL] unroll (small) loops
 \item[TAILREC] change tail recursion to non-recursive loop.
 \item[UNCERTAIN] Uncertain optimizations (use with care).
+\item[CSE] Common subexpression elimination.
+\item[ORDERFIELDS] Reorder fields if this results in better alignment.
+\item[FASTMATH] Fast math operations
+\item[REMOVEEMPTYPROCS] remove calls to empty procedures.
 \end{description}
 \item[pxxx] select processor \var{xxx} to optimize for. \var{fpc -i} lists
 all available processor instruction sets.
@@ -1300,6 +1317,7 @@ the following:
 \item \textbf{watcom} : Watcom compatible DOS extender
 \item \textbf{wdosx} : WDOSX extender.
 \item \textbf{win32} : \windows 32 bit.
+\item \textbf{win64} : \windows 64 bit.
 \item \textbf{wince} : \windows for handhelds (ARM processor).
 \end{itemize}
 The available list of targets depends on the actual compiler binary.
@@ -1313,14 +1331,20 @@ mode units.
 \item[-W] Set some \windows or \ostwo attributes of the generated binary. It
 can be one or more of the following
 \begin{description}
+\item[A] Specify native type application (Windows)
+\item[b] Create a bundle instead of a library (Darwin)
+\item[B] Create arelocatable image (Windows)
 \item[Bhhh] Set preferred base address to hhh (a hexadecimal address)
 \item[C] Generate a console application (+) or a gui application (-).
 \item[D] Force use of Def file for exports.
+\item[e] Use external resources (Darwin)
 \item[F] Generate a FS application (+) or a console application (-).
 \item[G] Generate a GUI application (+) or a console application (-).
+\item[Mnnn] Minimum Mac OS X deployment version: nnn equals 10.4, 10.5.1, ... (Darwin)
 \item[N] Do not generate a relocation section.
 \item[R] Generate a relocation section.
 \item[T] Generate a TOOL application (+) or a console application (-).
+\item[X] Enable use of an executable stack (Linux)
 \end{description}
 \item [-Xx] \olabel{X} Specify executable options. This tells the compiler what
 kind of executable should be generated. The parameter \var{x}
@@ -1395,10 +1419,16 @@ variables.
 \item[OUT] Allow use of the \var{out} parameter type.
 \item[DEFAULTPARAMETERS] Allow use of default parameter values.
 \item[HINTDIRECTIVE] Support the hint directives (\var{deprecated}, \var{platform} etc.)
-\item[DUPLICATELOCALS] ?
+\item[DUPLICATELOCALS] Allow method arguments with the same name as properties in classes.
 \item[PROPERTIES] Allow use of global properties.
 \item[ALLOWINLINE] Allow inline procedures.
 \item[EXCEPTIONS] Allow the use of exceptions.
+\item[OBJECTIVEC1] Allow the use of objective C version 1.
+\item[OBJECTIVEC2] Allow the use of objective C version 2.
+\item[NESTEDPROCVARS] Allow assigning local procedures to procedural variables.
+\item[NONLOCALGOTO] Allow a GOTO statement to jump outside the local scope (as ISO Pascal).
+\item[ADVANCEDRECORDS] Allow the use of advanced records (records with methods/properties)
+\item[ISOUNARYMINUS] Treat unary minus like in ISO Pascal: same precedence level as binary minus/plus.
 \end{description}
 The keyword can be followed by a plus or minus sign to enable or disable the
 feature.
