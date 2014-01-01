@@ -1497,6 +1497,148 @@ search must be performed again, it is sufficient to set
 <short>The terminal program to use, or empty if none was found.</short>
 </element>
 
+<!-- property Visibility: published -->
+<element name="TProcess.PipeBufferSize">
+<short>Buffer size to be used when using pipes</short>
+<descr>
+<var>PipeBufferSize</var> indicates the buffer size used when creating pipes
+(when <var>soUsePipes</var> is specified in <var>Options</var>). This option
+is not respected on all platforms (currently only Windows uses this).
+</descr>
+<seealso>
+<link id="#fcl.pipes.CreatePipeHandles"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="CommandToList">
+<short>Convert a command-line to a list of command options</short>
+<descr>
+<var>CommandToList</var> splits the string <var>S</var> in command-line arguments that are
+returned, one per item, in the <var>List</var> stringlist. 
+Command-line arguments are separated by whitespace (space, tab, CR and LF characters). 
+If an argument needs to contain a space character, it can be surrounded in quote characters 
+(single or double quotes). 
+</descr>
+<errors>
+There is currently no way to specify a quote character inside a quoted argument.
+</errors>
+<seealso>
+<link id="TProcess.CommandLine"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CommandToList.S">
+<short>String to split up</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CommandToList.List">
+<short>List of command-line arguments, one per item</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="RunCommandIndir">
+<short>Run a command in a specific directory.</short>
+<descr>
+<p>
+<var>RunCommandInDir</var> will execute binary <var>exename</var> with
+command-line options <var>commands</var>, setting <var>curdir</var> as the
+current working directory for the command.
+The output of the command is captured, and returned in the string <var>OutputString</var>.
+The function waits for the command to finish, and returns <var>True</var> if the command
+was started succesfully, <var>False</var> otherwise.
+</p>
+<p>
+If a <var>ExitStatus</var> parameter is specified the exit status of the command is
+returned in this parameter.
+</p>
+<p>
+The version using <var>cmdline</var> attempts to split the command line in a
+binary and separate command-line arguments. This version of the function is deprecated.
+</p>
+</descr>
+<errors>
+On error, <var>False</var> is returned.
+</errors>
+<seealso>
+<link id="TProcess"/>
+<link id="RunCommand"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="RunCommandIndir.Result">
+<short>True if the command was started succesfully.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RunCommandIndir.curdir">
+<short>Current working directory for the command.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RunCommandIndir.exename">
+<short>Executable to start.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RunCommandIndir.commands">
+<short>Command-line arguments for the executable.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RunCommandIndir.outputstring">
+<short>String to return the commands output.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RunCommandIndir.exitstatus">
+<short>On exit, contains the exit status of the process</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RunCommandInDir.cmdline">
+<short>Filename of binary to start plus command-line arguments separated by whitespace</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="RunCommand">
+<short>Execute a command in the current working directory</short>
+<descr>
+<var>RunCommand</var> runs <link id="RunCommandInDir"/> with an empty current working directory.
+</descr>
+<seealso>
+<link id="RunCommandInDir"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="RunCommand.Result">
+<short>True if the function executed succesfully</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RunCommand.exename">
+<short>Binary to start.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RunCommand.commands">
+<short>Command-line arguments</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RunCommand.outputstring">
+<short>String containing the output of the process. </short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RunCommand.cmdline">
+<short>Filename of ninary to start and command-line arguments, separated by whitespace.</short>
+</element>
+
 </module> <!-- process -->
 </package>
 </fpdoc-descriptions>
