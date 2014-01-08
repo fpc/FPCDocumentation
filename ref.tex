@@ -704,7 +704,9 @@ specified codepage.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Constants}
 \index{Constants} \keywordlink{const}
-Just as in \tp, \fpc supports both ordinary and typed constants.
+Just as in \tp, \fpc supports both ordinary and typed constants. They are
+declared in a constant declaration block in a unit, program or class, function or
+procedure declaration (\sees{blocks}).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Ordinary constants
@@ -865,20 +867,17 @@ constants Yes and No have been localized by some localization mechanism.
 \chapter{Types}
 \index{Types} 
 All variables have a type. \fpc supports the same basic types as \tp, with
- some extra types from \delphi.
+some extra types from \delphi as well as some of its own.
+
 The programmer can declare his own types, which is in essence defining an identifier
 that can be used to denote this custom type when declaring variables further
-in the source code.\index{Type}\keywordlink{type}
+in the source code.\index{Type}\keywordlink{type}. Declaring a type happens
+in a \var{Type} block (\sees{blocks}), which is a collection of type declarations, separated
+by semicolons:
 \input{syntax/typedecl.syn}
-There are 7 major type classes :
+There are 8 major kinds of types :
 \input{syntax/type.syn}
-The last case, \textsf{type identifier}, is just a means to give another
-name to a type. This presents a way to make types platform independent, by
-only using these types, and then defining these types for each platform
-individually. Any programmer who then uses these custom types doesn't have to worry
-about the underlying type size: it is opaque to him. It also allows to use shortcut names 
-for fully qualified type names. e.g. define \var{system.longint} as
-\var{Olongint} and then redefine \var{longint}.
+Each of these cases will be examined separately.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Base types
@@ -2623,6 +2622,79 @@ stored in the variant \var{W}, and execute the call if the needed dispatch
 information is found.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Type aliases
+\section{Type aliases}
+Type aliases are a way to give another name to a type, but can also be used
+to create real new types. Which of the 2 depends on the way the type alias
+is defined:
+\input{syntax/typealias.syn}
+The first case is just a means to give another name to a type:
+\begin{verbatim}
+Type
+  MyInteger = Integer;
+\end{verbatim}
+This creates a new name to refer to the \var{Integer} type, but does not create an
+actual new type. That is, 2 variables:
+\begin{verbatim}
+Var
+  A : MyInteger;
+  B : Integer;
+\end{verbatim}
+Will actually have the same type from the point of view of the compiler
+(namely: \var{Integer}).
+
+The above presents a way to make types platform independent, by only using the
+alias types, and then defining these types for each platform individually. 
+Any programmer who then uses these custom types doesn't have to worry
+about the underlying type size: it is opaque to him. It also allows to use shortcut names 
+for fully qualified type names. e.g. define \var{system.longint} as
+\var{Olongint} and then redefine \var{longint}.
+
+The alias is frequently seen to re-expose a type:
+\begin{verbatim}
+Unit A;
+
+Interface
+
+Uses B;
+
+Type
+  MyType = B.MyType;
+\end{verbatim}
+This construction is often seen after some refactoring, when moving some
+declarations from unit \var{A} to unit \var{B}, to preserve backwards compatibility 
+of the interface of unit \var{A}.
+
+The second case is slightly more subtle:
+\begin{verbatim}
+Type
+  MyInteger = Type Integer;
+\end{verbatim}
+This not only creates a new name to refer to the \var{Integer} type, but
+actually creates a new type. That is, 2 variables:
+\begin{verbatim}
+Var
+  A : MyInteger;
+  B :  Integer;
+\end{verbatim}
+Will not have the same type from the point of view of the compiler. However,
+these 2 types will be assignment compatible. That means that an assignment
+\begin{verbatim}
+  A:=B;
+\end{verbatim}
+will work.
+
+The difference can be seen when examining type information:
+\begin{verbatim}
+If TypeInfo(MyInteger)<>TypeInfo(Integer) then
+  Writeln('MyInteger and Integer are different types');
+\end{verbatim}
+The compiler function \var{TypeInfo} returns a pointer to the type
+information in the binary. Since the 2 types \var{MyInteger} and
+\var{Integer} are different, they will generate different type 
+information blocks, and the pointers will differ.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Variables
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Variables}
@@ -2655,8 +2727,8 @@ instance, a loop variable) which is not declared first, is an error which
 will be reported by the compiler. 
 
 \section{Declaration}
-The variables must be declared in a variable declaration section of a unit
-or a procedure or function. It looks as follows:\index{Var}
+The variables must be declared in a variable declaration block of a unit
+or a procedure or function (\sees{blocks}). It looks as follows:\index{Var}
 \input{syntax/vardecl.syn}
 
 \keywordlink{cvar} \keywordlink{public}
@@ -9612,6 +9684,7 @@ only in implementation sections.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Blocks
 \section{Blocks}
+\label{se:blocks}
 \index{block}
 Units and programs are made of blocks. A block is made of declarations of
 labels, constants, types, variables and functions or procedures. Blocks can
