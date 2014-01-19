@@ -64,9 +64,40 @@ Currently the JSON support only allows the use of UTF-8 data.
 <p>
 Parsing incoming JSON and constructing the JSON data structures is not implemented in
 the <var>fpJSON</var> unit. For this, the <link id="jsonscanner"/> unit must
-be included in the program unit clause. This sets several callback hooks and then the 
-<link id="GetJSON"/> function can then be used to transform a string or stream to JSON 
-data structures.
+be included in the program unit clause. This sets several callback hooks
+(using <link id="SetJSONParserHandler"/> and then the <link id="GetJSON"/> 
+function can then be used to transform a string or stream to JSON data
+structures:
+</p>
+<code>
+uses fpjson, jsonparser;
+
+Var   
+  D,E : TJSONData;
+      
+begin 
+  D:=GetJSON('{ "Children" : ['+
+             '  { "Age" : 23, '+
+             '    "Names" : { "LastName" : "Rodriquez",'+
+             '                "FirstName" : "Roberto" }},'+
+             '  { "Age" : 20,'+
+             '    "Names" : { "LastName" : "Rodriquez",'+
+             '                "FirstName" : "Maria" }}'+
+             '  ]}');
+  E:=D.FindPath('Children[1].Names.FirstName');
+  Writeln(E.AsJSON);   
+end.  
+</code>
+<p>will print "Maria".</p>
+<p>
+The FPJSON code does not use hardcoded class names when creating the JSON: 
+it uses the various <link id="CreateJSON"/> functions to create the data. 
+These functions use a registry of classes, so it is possible to create 
+descendents of the classes in the <var>fpjson</var> unit and have these 
+used for construction of JSON Data structures. The 
+<link id="GetJSONInstanceType"/> and 
+<link id="SetJSONInstanceType"/> functions can be used to get or set the classes that must be used.
+the default parser used by <link id="GetJSON"/> will also use these functions.
 </p>
 </descr>
 
@@ -2927,6 +2958,821 @@ describes the type of JSON value.
 <!-- argument Visibility: default -->
 <element name="JSONTypeName.JSONType">
 <short>JSON type to convert to a string</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TJSONInstanceType">
+<short>Type of instance to create</short>
+<descr>
+<var>TJSONInstanceType</var> is used by the parser to determine what kind of
+<link id="TJSONData"/> descendent to create for a particular data item. It
+is a more fine-grained division than <link id="TJSONType"/>
+</descr>
+<seealso>
+<link id="TJSONData"/>
+<link id="TJSONType"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONInstanceType.jitUnknown">
+<short>Unknown</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONInstanceType.jitNumberInteger">
+<short>32-bit signed integer number value</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONInstanceType.jitNumberInt64">
+<short>64-bit signed integer number value</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONInstanceType.jitNumberFloat">
+<short>Floating point real number value</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONInstanceType.jitString">
+<short>String value</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONInstanceType.jitBoolean">
+<short>Boolean value</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONInstanceType.jitNull">
+<short>Null value</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONInstanceType.jitArray">
+<short>Array value</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONInstanceType.jitObject">
+<short>Object value</short>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TJSONEnum">
+<short>JSON enumerator loop variable type</short>
+<descr>
+<var>TJSONEnum</var> is the loop variable type to use when implementing a JSON enumerator
+(<var>for in</var>).
+It contains 3 elements which are available in the loop: key, keynum
+(numerical key) and the actual value (TJSONData).
+</descr>
+<seealso>
+<link id="TBaseJSONEnumerator"/>
+<link id="TJSONData.GetEnumerator"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TJSONEnum.Key">
+<short>String Key value</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TJSONEnum.KeyNum">
+<short>Numerical key value</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TJSONEnum.Value">
+<short>Actual value</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.fpjson.TBaseJSONEnumerator
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TBaseJSONEnumerator">
+<short>JSON enumerator</short>
+<descr>
+<p>
+<var>TBaseJSONEnumerator</var> is the base type for the JSON enumerators. 
+It should not be used directly, instead use the enumerator support of Object
+pascal to loop over values in JSON data.
+</p>
+<p>
+The value of the <var>TBaseJSONEnumerator</var> enumerator is a record that
+describes the key and value of a JSON value. The key can be string-based
+(for records) or numerical (for arrays).
+</p>
+</descr>
+<seealso>
+<link id="TJSONEnum"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TBaseJSONEnumerator.GetCurrent">
+<short>Return the current value of the enumerator</short>
+<descr>
+<var>GetCurrent</var> returns the current value of the enumerator. This is a
+<link id="TJSONEnum"/> value.
+</descr>
+<seealso>
+<link id="TJSONEnum"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TBaseJSONEnumerator.GetCurrent.Result">
+<short>Current <var>TJSONEnum</var> value</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TBaseJSONEnumerator.MoveNext">
+<short>Move to next value in array/object</short>
+<descr>
+<var>MoveNext</var> attempts to move to the next value. This will return
+<var>True</var> if the move was succesful, or <var>False</var> if not. 
+When <var>True</var> is returned, then 
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TJSONEnum"/>
+<link id="TJSONData"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TBaseJSONEnumerator.MoveNext.Result">
+<short>True if the move was succesful</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBaseJSONEnumerator.Current">
+<short>Return the current value of the enumerator</short>
+<descr>
+<var>Current</var> returns the current enumerator value of type <link
+id="TJSONEnum"/>. It is only valid after <link id="MoveNext"/> returned
+<var>True</var>.
+</descr>
+<seealso>
+<link id="TJSONEnum"/>
+<link id="TJSONData"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONData.GetEnumerator">
+<short>Return an enumerator for the data</short>
+<descr>
+<var>GetEnumerator</var> returns an enumerator for the JSON data. For simple
+types, the enumerator will just contain the current value. For arrays and
+objects, the enumerator will loop over the values in the array. The return
+value is not a <link id="TJSONData"/> type, but a <link id="TJSONEnum"/>
+structure, which contains the value, and for structured types, the key
+(numerical or string).
+</descr>
+<seealso>
+<link id="TJSONEnum"/>
+<link id="TJSONArray"/>
+<link id="TJSONObject"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONData.GetEnumerator.Result">
+<short>The new enumerator</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONData.FindPath">
+<short>Find data by name</short>
+<descr>
+<p>
+<var>FindPath</var> finds a value based on its path. If none is found, <var>Nil</var> is returned.
+The path elements are separated by dots and square brackets, as in object
+member notation or array notation. The path is case sensitive.
+</p>
+<ul>
+<li>For simple values, the path must be empty.</li>
+<li>For <link id="TJSONObject">objects</link>, a member can be specified using its name,
+and the object value itself can be retrieved with the empty path. </li>
+<li>For <link id="TJSONObject">Arrays</link>, the elements can be 
+found based on an array index. The array value itself can be retrieved with
+the empty path.</li>
+</ul>
+<p>
+The following code will return the value itself, i.e. <var>E</var> will contain the same
+element as D:
+</p>
+<code>
+Var
+  D,E : TJSONData;
+  
+begin
+  D:=TJSONIntegerNumber.Create(123);
+  E:=D.FindPath('');
+end.  
+</code>
+<p>
+The following code will not return anything:
+</p>
+<code>
+Var   
+  D,E : TJSONData;
+    
+begin
+  D:=TJSONIntegerNumber.Create(123);
+  E:=D.FindPath('a');
+end.  
+</code>
+<p>
+The following code will return the third element from the array:
+</p>
+<code>
+Var   
+  D,E : TJSONData;
+      
+begin
+  D:=TJSONArray.Create([1,2,3,4,5]);
+  E:=D.FindPath('[2]');
+  Writeln(E.AsJSON);
+end.  
+</code>
+<p>The output of this program is 3.</p>
+<p>The following code returns the element <var>Age</var> from the object:</p>
+<code>
+Var   
+  D,E : TJSONData;
+  
+begin
+  D:=TJSONObject.Create(['Age',23, 
+                         'Lastame','Rodriguez',
+                         'FirstName','Roberto']);
+  E:=D.FindPath('Age');
+  Writeln(E.AsJSON);   
+end.
+</code>
+<p>The code will print 23.</p>
+<p>Obviously, this can be combined:</p>
+<code>
+Var   
+  D,E : TJSONData;
+        
+begin 
+  D:=TJSONObject.Create(['Age',23,
+                         'Names', TJSONObject.Create([
+                             'LastName','Rodriguez',
+                             'FirstName','Roberto'])]);
+  E:=D.FindPath('Names.LastName');
+  Writeln(E.AsJSON);   
+end.
+</code>
+<p>And mixed:</p>
+<code>
+var   
+  D,E : TJSONData;
+        
+begin 
+  D:=TJSONObject.Create(['Children',
+       TJSONArray.Create([
+         TJSONObject.Create(['Age',23,
+                             'Names', TJSONObject.Create([
+                               'LastName','Rodriguez',
+                               'FirstName','Roberto'])
+         ]),
+         TJSONObject.Create(['Age',20,
+                             'Names', TJSONObject.Create([
+                                   'LastName','Rodriguez',
+                                   'FirstName','Maria'])
+        ])
+      ]) 
+     ]);
+  E:=D.FindPath('Children[1].Names.FirstName');
+  Writeln(E.AsJSON);
+end.  
+</code>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TJSONArray"/>
+<link id="TJSONObject"/>
+<link id="GetPath"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONData.FindPath.Result">
+<short>The found data element, or nil</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONData.FindPath.APath">
+<short>Path to search for</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONData.GetPath">
+<short>Get data by name</short>
+<descr>
+<var>GetPath</var> is identical to <link id="FindPath"/> but raises an
+exception if no element was found. The exception message contains the piece
+of path that was not found.
+</descr>
+<errors>
+An <link id="EJSON"/> exception is raised if the path does not exist.
+</errors>
+<seealso>
+<link id="FindPath"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONData.GetPath.Result">
+<short>The found data element</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONData.GetPath.APath">
+<short>The path of the data element to retrieve.</short>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TJSONFloatNumberClass">
+<short>Class of <var>TJSONFloatNumber</var></short>
+<descr>
+<var>TJSONFloatNumberClass</var> is the class type of <link id="TJSONFloatNumber"/>. 
+It is used in the factory methods.
+</descr>
+<seealso>
+<link id="TJSONFloatNumber"/>
+<link id="SetJSONInstanceType"/>
+<link id="GetJSONInstanceType"/>
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TJSONIntegerNumberClass">
+<short>Class of <var>TJSONIntegerNumber</var></short>
+<descr>
+<var>TJSONIntegerNumberClass</var> is the class type of <link
+id="TJSONIntegerNumber"/>. It is used in the factory methods.
+</descr>
+<seealso>
+<link id="TJSONIntegerNumber"/>
+<link id="SetJSONInstanceType"/>
+<link id="GetJSONInstanceType"/>
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TJSONInt64NumberClass">
+<short>Class of <var>TJSONInt64Number</var></short>
+<descr>
+<var>TJSONInt64NumberClass</var> is the class type of <link
+id="TJSONInt64Number"/>. It is used in the factory methods.
+</descr>
+<seealso>
+<link id="TJSONInt64Number"/>
+<link id="SetJSONInstanceType"/>
+<link id="GetJSONInstanceType"/>
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TJSONStringClass">
+<short>Class of <var>TJSONString</var></short>
+<descr>
+<var>TJSONStringClass</var> is the class type of <link
+id="TJSONString"/>. It is used in the factory methods.
+</descr>
+<seealso>
+<link id="TJSONString"/>
+<link id="SetJSONInstanceType"/>
+<link id="GetJSONInstanceType"/>
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TJSONBooleanClass">
+<short>Class of <var>TJSONBoolean</var></short>
+<descr>
+<var>TJSONBooleanClass</var> is the class type of <link
+id="TJSONBoolean"/>. It is used in the factory methods.
+</descr>
+<seealso>
+<link id="TJSONBoolean"/>
+<link id="SetJSONInstanceType"/>
+<link id="GetJSONInstanceType"/>
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TJSONNullClass">
+<short>Class of <var>TJSONNull</var></short>
+<descr>
+<var>TJSONNullClass</var> is the class type of <link
+id="TJSONNull"/>. It is used in the factory methods.
+</descr>
+<seealso>
+<link id="TJSONNull"/>
+<link id="SetJSONInstanceType"/>
+<link id="GetJSONInstanceType"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONArray.GetEnumerator">
+<short>Get an array enumerator</short>
+<descr>
+<var>GetEnumerator</var> is overridden in <var>TJSONarray</var> so it returns an array
+enumerator. The array enumerator  will return all the elements in the array,
+and stores their index in the <var>KeyNum</var> member of <link id="TJSONEnum"/>.
+</descr>
+<seealso>
+<link id="TJSONEnum"/>
+<link id="TJSONData.GetEnumerator"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONArray.GetEnumerator.Result">
+<short>The array enumerator</short>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TJSONArray">
+<short>Class of <var>TJSONArray</var></short>
+<descr>
+<var>TJSONArrayClass</var> is the class type of <link
+id="TJSONArray"/>. It is used in the factory methods.
+</descr> 
+<seealso>
+<link id="TJSONArray"/>
+<link id="SetJSONInstanceType"/>
+<link id="GetJSONInstanceType"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONObject.GetEnumerator">
+<short>Get an object enumerator</short>
+<descr>
+<var>GetEnumerator</var> is overridden in <var>TJSONObject</var> so it returns an
+object enumerator. The array enumerator  will return all the elements in the array,
+and stores their name in the <var>Key</var> and index in the <var>KeyNum</var>
+members of <link id="TJSONEnum"/>.
+</descr>
+<seealso>
+<link id="TJSONEnum"/> 
+<link id="TJSONData.GetEnumerator"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONObject.GetEnumerator.Result">
+<short>The object enumerator</short>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TJSONObject">
+<short>Class of <var>TJSONObject</var></short>
+<descr>  
+<var>TJSONObjectClass</var> is the class type of <link
+id="TJSONObject"/>. It is used in the factory methods.
+</descr> 
+<seealso>
+<link id="TJSONObject"/>
+<link id="SetJSONInstanceType"/>
+<link id="GetJSONInstanceType"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TJSONParserHandler">
+<short>Callback to to parse JSON into <var>JSONData</var></short>
+<descr>
+<p>
+<var>TJSONParserHandler</var> is a callback prototype used by the <link id="GetJSON"/>
+function to do the actual parsing. It has 2 arguments: <var>AStream</var>,
+which is the stream containing the JSON that must be parsed, and
+<var>AUseUTF8</var>, which indicates whether the (ansi) strings contain UTF-8.
+</p>
+<p>
+The result should be returned in <var>Data</var>.
+</p>
+<p>
+The parser is expected to use the JSON class types registered using the <link
+id="SetJSONInstanceType"/> method, the actual types can be retrieved with
+<link id="GetJSONInstanceType"/>
+</p>
+</descr>
+<seealso>
+<link id="GetJSON"/>
+<link id="SetJSONInstanceType"/>
+<link id="GetJSONInstanceType"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONParserHandler.AStream">
+<short>Stream to parse.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONParserHandler.AUseUTF8">
+<short>Use UTF-8 in returned ansistrings</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONParserHandler.Data">
+<short>Resulting JSON data.</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="SetJSONInstanceType">
+<short>JSON factory: Set the JSONData class types to use </short>
+<descr>
+<p>
+<var>SetJSONInstanceType</var> can be used to register descendents of the
+<link id="TJSONData"/> class, one for each possible kind of data. The class
+type used to instantiate data of type <var>AType</var> is passed in
+<var>AClass</var>. 
+</p>
+<p>
+The JSON parser will use the registered types to instantiate JSON Data
+instanced: when the parser encounters a value of type <var>AType</var>, 
+it will instantiate a class of type <var>AClass</var>.
+By default, the classes in the <var>fpJSON</var> unit are used.
+</p>
+<p>
+The <link id="CreateJSON"/> functions also use the types registered here to
+instantiate their data.
+</p>
+</descr>
+<errors>
+If <var>AClass</var> is not suitable to contain data of type
+<var>AType</var>, an exception is raised.
+</errors>
+<seealso>
+<link id="GetJSONInstanceType"/>
+<link id="CreateJSON"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SetJSONInstanceType.AType">
+<short>Type of data to register a class for</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SetJSONInstanceType.AClass">
+<short>Class to use when a data item of type <var>AType</var> is encountered.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="GetJSONInstanceType">
+<short>JSON factory: Get the JSONData class types to use </short>
+<descr>
+<p>
+<var>GetJSONInstanceType</var> can be used to retrieve the registered 
+descendents of the <link id="TJSONData"/> class, one for each possible 
+kind of data. The result is the class type used to instantiate data of 
+type <var>AType</var>.
+</p>
+<p>
+The JSON parser and the <link id="CreateJSON"/> function will use the 
+registered types to instantiate JSON Data. When the parser encounters a value of type <var>AType</var>,
+it will instantiate a class of the type returned by this function.
+By default, the classes in the <var>fpJSON</var> unit are returned.
+</p>
+</descr>
+<seealso>
+<link id="CreateJSON"/> 
+<link id="TJSONData"/>
+<link id="GetJSON"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="GetJSONInstanceType.Result">
+<short>The class to instantiate for data of type <var>AType</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetJSONInstanceType.AType">
+<short>Data type for which to return the class.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CreateJSON">
+<short>Create a JSON data item</short>
+<descr>
+<p>
+<var>CreateJSON</var> will create a JSON Data item depending on the type of
+data passed to it, and will use the classes returned by <link id="GetJSONInstanceType"/> 
+to do so. The classes to be used can be set using the <link id="SetJSONInstanceType"/>.
+</p>
+<p>
+The JSON parser uses these functions to create instances of <link id="TJSONData"/>.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="GetJSONInstanceType"/>
+<link id="SetJSONInstanceType"/>
+<link id="GetJSON"/>
+<link id="CreateJSONArray"/>
+<link id="CreateJSONObject"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="CreateJSON.Result">
+<short>The <var>TJSONData</var> descendant representing the value in <var>Data</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CreateJSON.Data">
+<short>The data to create as a JSON data item.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CreateJSONArray">
+<short>Create a JSON array</short>
+<descr>
+<var>CreateJSONArray</var> retrieves the class registered to represent JSON
+array data, and  creates an instance of this class, passing <var>Data</var> to the constructor.
+For the <var>Data</var> array the same type conversion rules as for the constructor apply.
+</descr>
+<errors>
+if one of the elements in <var>Data</var> cannot be converted to a JSON structure, an exception will be raised.
+</errors>
+<seealso>
+<link id="GetJSONInstanceType"/>
+<link id="SetJSONInstanceType"/>
+<link id="GetJSON"/>
+<link id="CreateJSON"/>
+<link id="TJSONArray"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="CreateJSONArray.Result">
+<short>The <var>TJSONArray</var> instance representing <var>Data</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CreateJSONArray.Data">
+<short>Data to include in the array.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CreateJSONObject">
+<short>Create a JSON object</short>
+<descr>
+<var>CreateJSONObject</var> retrieves the class registered to represent JSON
+object data, and
+creates an instance of this class, passing <var>Data</var> to the constructor.
+For the <var>Data</var> array the same type conversion rules as for the
+<link id="TJSONObject.Create"/> constructor apply.
+</descr>
+<errors>
+if one of the elements in <var>Data</var> cannot be converted to a JSON
+structure, an exception will be raised.
+</errors> 
+<seealso>
+<link id="GetJSONInstanceType"/>
+<link id="SetJSONInstanceType"/> 
+<link id="GetJSON"/>  
+<link id="CreateJSON"/>
+<link id="TJSONObject"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="CreateJSONObject.Result">
+<short>The <var>TJSONObject</var> instance representing <var>Data</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CreateJSONObject.Data">
+<short>Data as (name, value) pairs to create a JSON object from</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="GetJSON">
+<short>Convert JSON string to JSON data structure</short>
+<descr>
+<p>
+<var>GetJSON</var> will read the <var>JSON</var> argument (a string or
+stream that contains a valid JSON data representation) and converts it to
+native JSON objects. The stream must be positioned on the start of the JSON.
+</p>
+<p>
+The <var>fpJSON</var> unit does not contain a JSON parser. 
+The <var>jsonparser</var> unit does contain a JSON parser, 
+and must be included once in the project to be able to parse JSON. The
+<var>jsonparser</var> unit uses the <link id="SetJSONParserHandler"/> call
+to set a callback that is used by <var>GetJSON</var> to parse the data.
+</p>
+<p>
+If <var>UseUTF8</var> is set to true, then unicode characters will be
+encoded as UTF-8. Otherwise, they are converted to the nearest matching ansi
+character.
+</p>
+</descr>
+<errors>
+An exception will be raised if the JSON data stream does not contain valid
+JSON data.
+</errors>
+<seealso>
+<link id="GetJSONParserHandler"/>
+<link id="SetJSONParserHandler"/> 
+<link id="TJSONData"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="GetJSON.Result">
+<short>The <var>TJSONData</var> data (tree) represented by JSON</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetJSON.JSON">
+<short>The JSON to parse.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetJSON.UseUTF8">
+<short>Convert unicode characters to UTF-8</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="SetJSONParserHandler">
+<short>Set the JSON parser handler</short>
+<descr>
+<p>
+<var>SetJSONParserHandler</var> can be used to set the JSON parser handler
+callback. The <var>fpJSON</var> unit does not contain a JSON parser in
+itself: it contains simply the data structure and the ability to write JSON. 
+The parsing must be done using a separate unit, and is invoked through a
+callback. <var>SetJSONParserHandler</var> must be used to set this callback.
+</p>
+<p>
+The <var>jsonparser</var> unit does contain a JSON parser, and must be included 
+once in the project to be able to parse JSON. The <var>jsonparser</var> unit 
+uses the <var>SetJSONParserHandler</var> call to set the callback that is used 
+by <var>GetJSON</var> to parse the data. This is done once at the
+initialization of that unit, so it is sufficient to include the unit in the
+uses clause of the program.
+</p>
+</descr>
+<seealso>
+<link id="GetJSONParserHandler"/>
+<link id="TJSONParserHandler"/>
+<link id="GetJSON"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SetJSONParserHandler.AHandler">
+<short>The new value for the handler</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="GetJSONParserHandler">
+<short>Get the current JSON parser handler</short>
+<descr>
+<p>
+<var>GetJSONParserHandler</var> can be used to get the current value of the 
+JSON parser handler callback. 
+</p>
+<p>
+The <var>fpJSON</var> unit does not contain a JSON parser in itself: it contains 
+simply the data structure and the ability to write JSON. The parsing must be done 
+using a separate unit.
+</p>
+</descr>
+<seealso>
+<link id="GetJSONParserHandler"/>
+<link id="TJSONParserHandler"/>
+<link id="GetJSON"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="GetJSONParserHandler.Result">
+<short>The current parser callback value</short>
 </element>
 
 </module> <!-- fpjson -->
