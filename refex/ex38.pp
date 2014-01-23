@@ -4,10 +4,12 @@ Program Example38;
 
 Var L : Longint;
     W : Word;
-
+    B : Byte;
 begin
   L:=(1 Shl 16) + (1 Shl 4);  { $10010 }
   Writeln (Lo(L));            { Prints 16 }
   W:=(1 Shl 8) + (1 Shl 4);   { $110   }
   Writeln (Lo(W));            { Prints 16 }
+  B:=$EF;
+  Writeln (Lo(B));            { Prints 15 }
 end.
