@@ -1360,7 +1360,7 @@ settings can be stored on the stack.
 The settings can be restored from the stack using the \var{\$POP} directive
 (see \sees{Pop}).
 
-Note that global settings (search paths etc.) are not saved by this 
+Note that global [settings (search paths etc.) are not saved by this 
 directive.
 
 The settings stack is preserved accross units, i.e. when the compiler starts
@@ -1891,6 +1891,16 @@ real types are mapped to the single IEEE floating point type.
 For unix targets, floating point emulation (if required) is handled
 by the operating system, and by default it is off.
 \end{remark}
+\subsection{\var{\protect\$EXTENSION} : Extension of generated binary.}
+This directive can appear in a program or library source file: it sets the
+extension for the generated binary/library. The initial dot (sometimes
+associated with the extension) may not be present.
+
+Example:
+\begin{verbatim}
+{$EXTENSTION 'cgi'}
+\end{verbatim}
+will set the extension to 'cgi'.
 
 \subsection{\var{\protect\$FRAMEWORKPATH} : Specify framework path.}
 This option serves to specify the framework search path on Darwin, 
@@ -1900,6 +1910,7 @@ where the compiler looks for framework files. Used as
 \end{verbatim}
 it will add \var{XXX} to the framework path. The value \var{XXX} can contain
 one or more paths, separated by semi-colons or colons.
+
 
 \subsection{\var{\protect\$G} : Generate 80286 code}
 
@@ -1950,6 +1961,24 @@ This switch (not to be confused with the local \var{\{\$L file\}} file linking
 directive) is recognised for Turbo Pascal compatibility, but is ignored.
 Generation of symbol information is controlled by the \var{\$D} switch.
 
+\subsection{\var{\protect\$LIBPREFIX} : Specify library filename prefix.}
+The LIBPREFIX directive has a similar function as the \var{\{\$EXTENSION \}} and
+\var{\{\$LIBSUFFIX \}} compiler directives: It sets the prefix of the library. 
+This is by default 'lib' on unices, and empty on windows. The name is simply
+prepended to the filename.
+
+Example:
+\begin{verbatim}
+library tl;
+{$LIBPREFIX 'library'}
+
+begin
+end.
+\end{verbatim}
+will result in a filename \file{librarytl.so} on linux, or
+\file{librarytl.dll} on windows.
+
+
 \subsection{\var{\protect\$LIBRARYPATH} : Specify library path.}
 
 This option serves to specify the library path, where the linker looks for
@@ -1974,6 +2003,23 @@ places of the libraries may not be the same as on your machine; moreover, the
 directory structure may be different. In general it would be fair to say
 that you should avoid using this directive. If you are not sure, it is better
 practice to use makefiles and makefile variables.
+
+\subsection{\var{\protect\$LIBSUFFIX} : Set the library suffix}
+The LIBSUFFIX directive has a similar function as the \var{\{\$EXTENSION \}} and
+\var{\{\$LIBPREFIX \}} compiler directives. directive: it sets the suffix of the 
+library. This is usually used for version numbers: it is simply added to the 
+outputfilename, before the extension.
+
+Example:
+\begin{verbatim}
+library tl;
+{$LIBSUFFIX '-1.2.3'}
+
+begin
+end.
+\end{verbatim}
+will result in a filename \file{libtl-1.2.3.so} on linux, or
+\file{libtl-1.2.3.dll} on windows.
 
 \subsection{\var{\protect\$MAXSTACKSIZE} : Set maximum stack size}
 The \var{\{\$MINSTACKSIZE\}} sets the maximum stack size for an executable
