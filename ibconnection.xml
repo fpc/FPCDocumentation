@@ -123,6 +123,16 @@ Pre 2.5.1 versions of FPC did not try to load the fbembed library by default. Se
               <li>msvcr80.dll</li>
             </ul>
           <p>Please see your database documentation for details.</p>
+          <p>
+          The <var>TIBConnection</var> component does not reliably detect
+          computed fields as such. This means that automatically generated update sql
+          statements will attempt to update these fields, resulting in SQL
+          errors. These errors can be avoided by removing the
+          <var>pfInUpdate</var> flag from the provideroptions from a field, once it has been created:
+          </p>
+          <code>
+          MyQuery.FieldByName('full_name').ProviderFlags:=[];
+          </code>
         </descr>
         <seealso>
           <link id="TSQLConnection"/>
