@@ -1511,8 +1511,9 @@ file: Specifying \file{@foo} on the command line will open file \file{foo},
 and read further options from there. When the compiler has finished reading
 this file, it continues to process the command line.
 
-The configuration file allows a type of preprocessing. It understands the
-following directives, which you should place starting on the first column of a line:
+\subsection{Conditional processing of the config file}
+In addition to placeholder substitution, the configuration file allows a type of preprocessing.
+It understands the following directives, which you should place starting on the first column of a line:
 \begin{description}
 \item [\#IFDEF]
 \item [\#IFNDEF]
@@ -1531,8 +1532,10 @@ intel 80x86 compatible linux platform, both \var{cpu86} and \var{linux} will be
 defined while interpreting the configuration file. For the possible default 
 defines when compiling, consult Appendix G of the \progref.
 
-
 What follows is a description of the different directives.
+
+
+
 
 \subsection{\#IFDEF}
 Syntax:
@@ -1682,9 +1685,25 @@ always exists, i.e. lines following \var{\#SECTION COMMON} are always read.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Variable subsitution in paths
 \section{Variable substitution in paths}
-To avoid having to edit your configuration files too often,
-the compiler allows you to specify the following variables in
-the paths that you feed to the compiler:
+To avoid having to edit your configuration files too often, the compiler allows 
+you to insert some variables in the paths that you specify for the compiler.
+They are specified as follows:
+\begin{verbatim}
+$VARNAME
+\end{verbatim}
+The above will be replaced with the value of the variable \var{VARNAME}. 
+
+Normally, only a set of compiler-defined variable names are recognized. 
+In addition to these compiler-defined variable names, the following 
+notation can be used 
+\begin{verbatim}
+$ENVVAR$
+\end{verbatim}
+to substiture the value of an environment variable. The compiler will fetch
+the value of \var{ENVVAR} from the environment, and replace the
+\var{\$ENVVAR\$} with this value.
+
+The compiler defines the following variable names:
 \begin{description}
 \item[FPCFULLVERSION] is replaced by the compiler's version string.
 \item[FPCVERSION] is replaced by the compiler's version string.
@@ -1693,7 +1712,28 @@ the paths that you feed to the compiler:
 \item[FPCCPU] is replaced by the compiler's target CPU.
 \item[FPCOS] is replaced by the compiler's target OS.
 \end{description}
-To have these variables subsituted, just insert them with a \var{\$}
+Additionally, under windows the following special variables are recognized:
+\begin{description}
+\item[LOCAL\_APPDATA]  Usually the directory "Local settings/Application Data" under the user's home directory.
+\item[APPDATA] Usually the directory "Application Data" under the user's home directory.
+\item[COMMON\_APPDATA] Usually the directory "Application Data" under the 'All users' directory.
+\item[PERSONAL] Usually the "My documents" directory of the user. 
+\item[PROGRAM\_FILES] Usually "program files" directory on the system drive
+\item[PROGRAM\_FILES\_COMMON] Usually the "Common files" directory under the program files directory.
+\item[PROFILE] The user's home directory.
+\end{description}
+The values of these can vary based on the installation, they are fetched from the operating system.
+
+If none of the pre-defines variable names were matched, and the template name ends on \$, 
+then the environment variable with the same name is used:
+\begin{verbatim}
+-Fu$HOME$/FPC/currentversion/
+\end{verbatim}
+This will refer to the directory \file{FPC/currentversion} under the user's home
+directory on Unix (HOME is the environment variable that contains the
+location of the user's directory).
+
+So, have one of the above variables subsituted, just insert them with a \var{\$}
 prepended, as follows:
 \begin{verbatim}
 -Fu/usr/lib/fpc/$FPCVERSION/rtl/$FPCOS
@@ -1707,7 +1747,7 @@ if the compiler version is \var{2.6.2} and the target OS is \linux{}.
 These replacements are valid on the command line and also in the
 configuration file.
 
-On the linux command line, you must be careful to escape the \var{\$} since
+On the \linux{} command line, you must be careful to escape the \var{\$} since
 otherwise the shell will attempt to expand the variable for you, which may have
 undesired effects.
 
