@@ -1202,7 +1202,7 @@ or \var{AnsiChar}.
 
 \subsection{WideChar}
 \index{WideChar} \keywordlink{widechar}
-\fpc supports the type \var{WideChar}. A \var{Char} is exactly 2 bytes in
+\fpc supports the type \var{WideChar}. A \var{WideChar} is exactly 2 bytes in
 size, and contains one UNICODE character in UTF-16 encoding.
 
 A unicode character can be specified by its character value 
@@ -2693,6 +2693,22 @@ The compiler function \var{TypeInfo} returns a pointer to the type
 information in the binary. Since the 2 types \var{MyInteger} and
 \var{Integer} are different, they will generate different type 
 information blocks, and the pointers will differ.
+
+There are 3 consequences of having different types:
+\begin{enumerate}
+\item That they have different typeinfo, hence different RTTI (Run-Time Type Information).
+\item They can be used in function overloads, that is
+\begin{verbatim}
+Procedure MyProc(A : MyInteger); overload;
+Procedure MyProc(A : Integer); overload;
+\end{verbatim}
+will work. This will not work with a simple type alias.
+\item They can be used in operator overloads, that is
+\begin{verbatim}
+Operator +(A,B : MyInteger) : MyInteger; 
+\end{verbatim}
+will work too.
+\end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Variables
