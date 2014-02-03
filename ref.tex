@@ -3743,6 +3743,60 @@ instance data, use the \var{TObject.InstanceSize} method.
 \end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Class destruction
+\section{Class destruction}
+\index{Destructor}\keywordlink{Destructor}
+Class instances must be destroyed using the destructor. In difference with
+the constructor, there is no choice in destructors: the destructor {\em must} 
+have the name \var{Destroy}, it {\em must}  override the \var{Destroy} destructor 
+declared in \var{TObject}, cannot have arguments, and the inherited destructor 
+must always be called.
+
+To avoid calling a destructor on a \var{Nil} instance, it is best to call
+the \var{Free} method of \var{TObject}. This method will check if \var{Self} is not \var{Nil}, 
+and if so, then it calls \var{Destroy}. If \var{Self} equals \var{Nil}, it
+will just exit.
+
+Destroying an instance does not free a reference to an instance:
+\begin{verbatim}
+Var
+  A : TComponent;
+
+begin
+  A:=TComponent.Create;
+  A.Name:='MyComponent';
+  A.Free;
+  Writeln('A is still assigned: ',Assigned(A));
+end.
+\end{verbatim}
+After the call to \var{Free}, the variable A will not be \var{Nil}, the
+output of this program will be:
+\begin{verbatim}
+A is still assigned: TRUE
+\end{verbatim}
+To make sure that the variable \var{A} is cleared after the destructor was called,
+the function \var{FreeAndNil} from the \file{SysUtils} unit can be used. It
+will call \var{Free} and will then write \var{Nil} in the object pointer (\var{A}
+in the above example):
+\begin{verbatim}
+Var
+  A : TComponent;
+
+begin
+  A:=TComponent.Create; 
+  A.Name:='MyComponent';
+  FreeAndNil(A);
+  Writeln('A is still assigned: ',Assigned(A));
+end.
+\end{verbatim}
+After the call to \var{FreeAndNil}, the variable \var{A} will contain \var{Nil}, the
+output of this program will be:
+\begin{verbatim}
+A is still assigned: FALSE
+\end{verbatim}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Methods
 \section{Methods}
 \index{Methods}
@@ -3830,6 +3884,7 @@ methods behave the same as virtual methods. Unlike in Delphi, in FPC the
 implementation of dynamic methods is equal to the implementation of virtual
 methods.
 \end{remark}
+
 \subsection{Class methods}
 \index{Class}\index{Methods!Class}
 Class methods are identified by the keyword \var{Class} in front of the
@@ -3872,8 +3927,183 @@ property or method will result in a compiler error.
 
 Note that class methods can be virtual, and can be overridden.
 
-Class methods cannot be used as read or write specifiers for a
-property.\index{Property}
+Class methods can be used as read or write specifiers for a regular property, 
+but naturally, this property will have the same value for all instances of the
+class, since there is no instance available in the class method.\index{Property}
+
+\subsection{Class constructors and destructors}
+A class constructor or destructor can also be created. They serve to instantiate some class variables or class properties which must be initialized before a class can be used.
+These constructors are called automatically at program startup: The constructor is called before the initialization section of the unit it is declared in, the destructor is 
+called after the finalisation section of the unit it is declared in. 
+
+There are some caveats when using class destructors/constructors:
+\begin{itemize}
+\item The constructor must be called \var{Create} and can have no parameters.
+\item The destructor must be called \var{Destroy} and can have no parameters.
+\item Neither constructor nor destructor can be virtual.
+\item The class constructor/destructor is called irrespective of the use of the class: even if a class is never used, the constructor and destructor are called anyway.
+\end{itemize}
+ 
+The following program:
+
+\begin{verbatim}
+{$mode objfpc}
+{$h+}
+
+Type
+  TA = Class(TObject)
+  Private
+    Function GetA : Integer;
+    Procedure SetA(AValue : integer);
+
+  public
+    Class Constructor create;
+    Class Destructor destroy;
+    Property A : Integer Read GetA Write SetA;
+  end;
+
+{Class} Function TA.GetA : Integer;
+
+begin
+  Result:=-1;
+end;
+
+{Class} Procedure TA.SetA(AValue : integer);
+
+begin
+  // 
+end;
+
+Class Constructor TA.Create;
+
+begin
+  Writeln('Class constructor TA');
+end;
+
+Class Destructor TA.Destroy;
+
+begin
+  Writeln('Class destructor TA');
+
+end;
+
+Var
+  A : TA;
+
+begin
+end.
+\end{verbatim}
+Will, when run, output the following:
+\begin{verbatim}
+Class constructor TA
+Class destructor TA
+\end{verbatim}
+
+
+\subsection{Static class methods}
+\index{Methods!Static}\index{Static class methods}
+FPC knows static class methods in classes: these are class methods that have the
+\var{Static} keyword at the end. These methods behave completely like regular 
+procedures or functions. This means that:
+\begin{itemize}
+\item They do not have a \var{Self} parameter. As a result, they cannot access properties or fields or regular methods.
+\item They cannot be virtual.
+\item They can be assigned to regular procedural variables.
+\end{itemize}
+Their use is mainly to include the method in the namespace of the class as
+opposed to having the procedure in the namespace of the unit. 
+Note that they do have access to all class variables, types etc, meaning something like this is possible:
+\begin{verbatim}
+ {$mode objfpc}
+{$h+}
+
+Type
+  TA = Class(TObject)
+  Private
+    class var myprivatea : integer;
+  public
+    class Function GetA : Integer;  static;
+    class Procedure SetA(AValue : Integer); static;
+  end;
+
+Class Function TA.GetA : Integer;
+
+begin
+  Result:=myprivateA;
+end;
+
+Class Procedure TA.SetA(AValue : integer);
+
+begin
+  myprivateA:=AValue;
+end;
+
+
+begin
+  TA.SetA(123);
+  Writeln(TA.MyPrivateA);
+end.
+\end{verbatim}
+Which will output \var{123}, when run.
+
+In the implementation of a static class method, the \var{Self} identifier is
+not available. The method behaves as if \var{Self} is hardcoded to the
+declared class, not the actual class with which it was called. In regular
+class methods, \var{Self} contains the Actual class for which the method was
+called.  The following example makes this clear:
+\begin{verbatim}
+Type
+  TA = Class
+    Class procedure DoIt; virtual;
+    Class Procedure DoitStatic; static;
+  end;
+  
+  TB = CLass(TA)
+    Class procedure DoIt; override;
+  end;
+  
+  
+Class procedure TA.DOit;
+
+begin
+  Writeln('TA.Doit : ',Self.ClassName);
+end;
+
+Class procedure TA.DOitStatic;
+
+begin
+  Doit;
+  Writeln('TA.DoitStatic : ',ClassName);
+end;
+
+Class procedure TB.DoIt;
+
+begin
+  Inherited;
+  Writeln('TB.Doit : ',Self.ClassName);
+end;
+
+begin
+  Writeln('Through static method:');
+  TB.DoItStatic;
+  Writeln('Through class method:');
+  TB.Doit;
+end.
+\end{verbatim}
+When run, this example will print:
+\begin{verbatim}
+Through static method:                                                                                                  
+TA.Doit : TA                                                                                                            
+TA.DoitStatic : TA                                                                                                      
+Through class method:
+TA.Doit : TB
+TB.Doit : TB
+\end{verbatim}
+For the static class method, even though it was called using \var{TB}, the class
+(\var{Self}, if it were available) is set to \var{TA}, the class in which the
+static method was defined.
+For the class method, the class is set to the actual class used to call the method
+(\var{TB}).
 
 \subsection{Message methods}
 \index{Methods!Message}
@@ -4171,8 +4401,9 @@ Indexes can only be integer values.
 
 \subsection{Array properties}
 Array properties also exist.\index{Properties!Array} These are properties that accept an
-index, just as an array does. Only now the index doesn't have to be an
-ordinal type, but can be any type.
+index, just as an array does. The idnex can be one-dimensional, or multi-dimensional.
+In difference with normal (static or dynamic) arrays, the index of an array property 
+doesn't have to be an ordinal type, but can be any type.
 
 A \var{read specifier} for an array property is the name method function
 that has the same return type as the property type.
@@ -4217,6 +4448,22 @@ AIntList.StrItems[26] := 'zero';
 \end{verbatim}
 Because the index types are wrong.
 
+Array properties can be multi-demensional:
+\begin{verbatim}
+Type 
+  TGrid = Class
+  Private
+    Function GetCell (I,J : Longint) : String;
+    Procedure SetCell (I,J : Longint; Value : String);
+  Public
+    Property Cellcs [Row,Col : Longint] : String Read GetCell
+                                            Write SetCell;
+  end;
+\end{verbatim}
+If there are N dimensions, then the types of the first N arguments of the getter and 
+setter must correspond to the types of the N index specifiers in the array property definition.
+
+
 \subsection{Default properties}
 Array properties can be declared as \var{default} properties. This means that
 it is not necessary to specify the property name when assigning or reading
@@ -4234,8 +4481,8 @@ Would be equivalent to the following abbreviation.
 \begin{verbatim}
 AIntList[26] := 1;
 \end{verbatim}
-Only one default property per class is allowed, and descendent classes
-cannot redeclare the default property.
+Only one default property per class is allowed, but descendent classes
+can redeclare the default property.
 
 \subsection{Storage information}
 The {\em stored specifier} should be either a boolean constant, a boolean
@@ -4348,10 +4595,100 @@ begin
 end;
 \end{verbatim}
 
+\section{Class properties}
+Class properties are very much like global property definitions. They are
+associated with the class, not with an instance of the class. 
+
+A consequence of this is that the storage for the property value must be a
+class var, not a regular field or variable of the class: normal fields or
+variables are stored in an instance of the class.
+
+Class properties can have a getter and setter method like regular
+properties, but these must be static methods of the class. 
+
+That means that the following contains a valid class property definition:
+\begin{verbatim}
+TA = Class(TObject)
+Private
+  class var myprivatea : integer;
+  class Function GetB : Integer;  static;
+  class Procedure SetA(AValue : Integer); static;
+  class Procedure SetB(AValue : Integer); static;
+public
+  Class property MyA : Integer Read MyPrivateA Write SetA;
+  Class property MyA : Integer Read GetB Write SetB;
+end;
+\end{verbatim}
+The reason for the requirement is that a class property is associated to
+the particular class in which it is defined, but not to descendent classes. 
+Since class methods can be virtual, this would allow descendent classes 
+to override the method, making them unsuitable for class property access.
+
+
+
 % Nested types
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Nested types and variables}
+\section{Nested types, constants and variables}
+A class definition can contain a type section, const section and a variable section.
+The type and constant sections act as a regular type section as found in a unit or 
+method/function/procedure implementation. The variables act as regular fields of the 
+class, unless they are in a \var{class var} section, in which case they act as if they 
+were defined at the unit level, within the namespace of the class.
+
+However, the visibility of these sections does play a role: private and protected 
+(strict or not) constants, types and variables can only be used as far as their 
+visibility allows.
+
+Public types can be used outside the class, by their full name:
+\begin{verbatim}
+type
+  TA = Class(TObject)
+  Public
+    Type TEnum = (a,b,c);
+    Class Function DoSomething : TEnum;
+  end;
+  
+Class Function TA.DoSomething : TEnum;
+
+begin
+  Result:=a;
+end;
+
+var
+  E : TA.TEnum;
+  
+begin
+  E:=TA.DoSomething;
+end.
+\end{verbatim}
+Whereas
+\begin{verbatim}
+type
+  TA = Class(TObject)
+  Strict Private
+    Type TEnum = (a,b,c);
+  Public
+    Class Function DoSomething : TEnum;
+  end;
+  
+Class Function TA.DoSomething : TEnum;
+
+begin
+  Result:=a;
+end;
+
+var
+  E : TA.TEnum;
+  
+begin
+  E:=TA.DoSomething;
+end.
+\end{verbatim}
+Will not compile and will return an error:
+\begin{verbatim}
+tt.pp(20,10) Error: identifier idents no member "TEnum"
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Interfaces
