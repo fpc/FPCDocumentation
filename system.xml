@@ -43,6 +43,30 @@ and procedures.
 </p>
 </descr>
 
+<topic name="RuntimeErrors">
+<short>Run-Time Error behaviour</short>
+<descr>
+<p>
+The sytem unit handles errors by default by generating a run-time error, and
+halting the program with an exit code equal to the run-time error number.
+</p>
+<p>
+This behaviour changes when the <link id="#rtl.sysutils">SysUtils</link>
+unit is used. In that case, all run-time errors are converted to exceptions:
+most run-time errors have their own exception class.
+</p>
+<p>
+If these exceptions are caught, the program code decides what to do with it.
+If the exception is not caught, the program will exit through the default
+exception handler.
+</p>
+<p>
+When the system unit documentation refers to run-time errors, the above
+should be kept in mind.
+</p>
+</descr>
+</topic>
+
 <topic name="FileFunctions">
 <short>File handling functions</short>
 <descr>
@@ -1408,11 +1432,13 @@ The return value of <var>High</var> depends on it's argument:
  value in the range of the given ordinal type.
 </li>
 <li> If the argument is an array type or an array type variable then
-<var>High</var> returns the highest possible value of it's index.
+<var>High</var> returns the highest possible value of it's index. For
+dynamic arrays, it returns the same as <var>Length -1</var>, meaning that it
+reports -1 for empty arrays.
 </li>
 <li> If the argument is an open array identifier in a function or
 procedure, then <var>High</var> returns the highest index of the array, as if the
-array has a zero-based index.
+array has a zero-based index. If the array is empty, then -1 is returned.
 </li>
 <li> If the argument is a set type then it returns the highest value of
 the underlying ordinal type.
@@ -1930,12 +1956,16 @@ For an example, see <link id="Dispose"/>.
 </p>
 </descr>
 <errors>
-If not enough memory is available, <var>Nil</var> will be returned.
+What happens if no more memory is available,
+depends on the value of the variable <link id="ReturnNilIfGrowHeapfails"/>:
+if the variable is <var>True</var> then <var>Nil</var> is returned. If the
+variable is <var>False</var>, a run-time error is generated. 
 </errors>
 <seealso>
 <link id="Dispose"/>
 <link id="Freemem"/>
 <link id="Getmem"/>
+<link id="ReturnNilIfGrowHeapfails"/>
 </seealso>
 </element>
 
