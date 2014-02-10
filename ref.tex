@@ -1840,6 +1840,33 @@ goes out of \index{Scope} scope and B does not, then the array is not yet dispos
 reference count of A (and B) is decreased with 1. As soon as the reference
 count reaches zero the memory, allocated for the contents of the array, is disposed of.
 
+The \var{SetLength} call will make sure the reference count of the returned
+array is 1, that it, if 2 dynamic array variables were pointing to the same
+memory they will no longer do so after the setlength call:
+\begin{verbatim}
+program testunique;
+
+Type
+  TA = array of Integer;
+  
+var   
+  A,B : TA;
+  I : Integer;
+
+begin
+  Setlength(A,10);
+  For I:=0 to 9 do
+    A[I]:=I;
+  B:=A;
+  SetLength(B,6);    
+  A[0]:=123;
+  For I:=0 to 5 do
+    Writeln(B[I]);
+end.  
+\end{verbatim}
+
+\end{verbatim}
+
 It is also possible to copy and/or resize the array with the standard 
 \var{Copy} function, which acts as the copy function for strings:
 \begin{verbatim}
