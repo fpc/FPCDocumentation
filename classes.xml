@@ -8515,9 +8515,72 @@ On non-Windows platforms, a thread can only suspend itself. Other threads can wa
 <element name="TComponentState">  <!-- Set type -->
 <short>Indicates the state of the component during the streaming process.</short>
 <descr>
+<p>The following values are possible:</p>
+<dl>
+<dt>csLoading</dt>
+<dd>
+The component (and all child components) are being loaded from a stream. 
+This means that a <link id="TReader"/> instance is reading properties from 
+this and child components from a stream and is applying the values found in 
+the stream to the properties. 
+</dd>
+<dt>csReading</dt>
+<dd>
+The properties of this component are being read from a stream. 
+This means that a <link id="TReader"/> instance is reading properties from 
+this component from a stream and is applying the values.
+</dd>
+<dt>csWriting</dt>
+<dd>
+The properties of this component are being written to a stream. 
+This means that a <link id="TWriter"/> instance is writing properties from
+this component to a stream.
+</dd>
+<dt>csDestroying</dt>
+<dd>
+The component is being destroyed.
+</dd>
+<dt>csDesigning</dt>  <!-- Enumeration value -->
+<dd>
+The component is being designed in an IDE.
+</dd>
+<dt>csAncestor</dt>
+<dd>
+The component has a design ancestor. This is used to record differences
+between a component and it's design ancestor. For example a form <var>TForm2</var> inherited
+from a form <var>TForm1</var>. <var>TForm1</var> and all its components are copied to
+<var>TForm2</var>. <var>TForm2</var> and all its inherited components have
+<var>csAncestor</var> set. Only differences between <var>TForm1</var> and
+<var>TForm2</var> are stored in the stream of <var>TForm2</var>. 
+The child components of a frame put onto a form have <var>csAncestor</var> too.
+</dd>
+<dt>csInline</dt>
+<dd>
+The component is a nested top level component. For example a frame on a
+form. The children of the frame do not have <var>csInline</var>, unless they are
+other frames.
+</dd>
+<dt>csDesignInstance</dt>
+<dd>
+The component is designed (<var>csDesigning</var>) and is a root component,
+meaning it has no owner (<var>Owner=nil</var>).
+</dd>
+<dt>csFixups</dt>  <!-- Enumeration value -->
+<dd>The component's references to other components are being fixed.
+While reading a component from stream, it can happen that the stream
+contains a component reference property with a name of a component 
+that was not yet created and read from the stream. 
+Such properties are saved, and the missing references are resolved when the
+complete stream was read. This resolving step is called fixing up
+references,  and the <var>csFixups</var> flags is set during this step.
+</dd>
+<dt>csFreeNotification</dt> 
+<dd>
+This flag indicates that the component has free notifications registered with
+<link id="TComponent.FreeNotification"/>
+</dd>
+</dl>
 </descr>
-<seealso>
-</seealso>
 </element>
 
 <element name="TComponentState.csLoading">  <!-- Enumeration value -->
