@@ -3613,41 +3613,6 @@ Classes can contain \var{Class} methods: these are functions that do not
 require an instance. The \var{Self} identifier is valid in such methods, 
 but refers to the class pointer (the VMT). 
 
-Similar to objects, if the \var{\{\$STATIC ON\}} directive is active, then a class
-can contain static fields: these fields are global to the class, and act
-like global variables, but are known only as part of the class. They can be
-referenced from within the classes' methods, but can also be referenced from
-outside the class by providing the fully qualified name.
-
-For instance, the output of the following program:
-\begin{verbatim}
-{$mode objfpc}
-{$static on}
-type
-  cl=class
-    l : longint;static;
-  end;
-var
-  cl1,cl2 : cl;
-begin
-  cl1:=cl.create;
-  cl2:=cl.create;
-  cl1.l:=2;
-  writeln(cl2.l);
-  cl2.l:=3;
-  writeln(cl1.l);
-  Writeln(cl.l);
-end.
-\end{verbatim}
-will be the following
-\begin{verbatim}
-2
-3
-3
-\end{verbatim}
-Note that the last line of code references the class type itself (\var{cl}), 
-and not an instance of the class (\var{cl1} or \var{cl2}).
-
 \begin{remark}
 Like with functions and pointer types, sometimes a forward definition of a
 class is needed. A class forward definition is simply the name of the class,
@@ -3729,13 +3694,114 @@ begin
 end;
 \end{verbatim}
 The above example will raise an exception if the passed instance
-is not a descendent of \var{TMinClass} or a descendent if \var{TMaxClass}.
+is not a descendent of \var{TMinClass} or a descendent of \var{TMaxClass}.
 
-More about instantiating a class can be found in the next section.
+More about instantiating a class can be found in \sees{classinstantiation}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Normal and static fields
+\section{Normal and static fields}
+\label{se:classfields}.
+Classes can have fields. Depending on how they are defined, fields hold data specific to 
+an instance of a class or to the class as a whole. Whatever the way they were defined, 
+fields observe the rules of visibilities just like any other member of the class.
+
+\subsection{Normal fields/variables}
+There are 2 ways to declare a normal field. 
+The first one is the classical way, similar to a definition in an object:
+
+\begin{verbatim}
+{$mode objfpc}
+type
+  cl=class
+    l : longint;
+  end;
+var
+  cl1,cl2 : cl;
+begin
+  cl1:=cl.create;
+  cl2:=cl.create;
+  cl1.l:=2;
+  writeln(cl1.l);
+  writeln(cl2.l);
+end.
+\end{verbatim}
+will be the following
+\begin{verbatim}
+2
+0
+\end{verbatim}
+The example demonstrates that values of fields are initialized with zero (or the equivalent of zero for non ordinal types: 
+empty string, empty array and so on).
+
+The second way to declare a field (only available in more recent versions of \fpc) is using a \var{var} block:
+\begin{verbatim}
+{$mode objfpc}
+type
+  cl=class
+  var
+    l : longint;
+  end;
+\end{verbatim}
+This definition is completely equivalent to the previous definition.
+
+\subsection{Class fields/variables}
+Similar to objects, a class can contain static fields or class variables: 
+these fields or variables are global to the class, and act like global 
+variables, but are known only as part of the class. They can be referenced
+ from within the classes' methods, but can also be 
+referenced from outside the class by providing the fully qualified name.
+
+Again, there are 2 ways to define class variables. The first one is equivalent 
+to the way it is done in objects, using a static modifier:
+
+For instance, the output of the following program is the same as the output for
+the version using an object:
+\begin{verbatim}
+{$mode objfpc}
+type
+  cl=class
+    l : longint;static;
+  end;
+var
+  cl1,cl2 : cl;
+begin
+  cl1:=cl.create;
+  cl2:=cl.create;
+  cl1.l:=2;
+  writeln(cl2.l);
+  cl2.l:=3;
+  writeln(cl1.l);
+  Writeln(cl.l);
+end.
+\end{verbatim}
+The output of this will be the following:
+\begin{verbatim}
+2
+3
+3
+\end{verbatim}
+Note that the last line of code references the class type itself (\var{cl}), 
+and not an instance of the class (\var{cl1} or \var{cl2}).
+
+In addition to the static field approach, in classes, a \var{Class Var} can be used. 
+Similar to the way a field can be definied in a variable block, a class variable can
+be declared in a class var block:
+\begin{verbatim}
+{$mode objfpc}
+type
+  cl=class
+  class var 
+    l : longint;
+  end;
+\end{verbatim}
+This definition is equivalent to the previous one.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Class instantiation
 \section{Class instantiation}
+\label{se:classinstantiation}
 \index{Constructor}\keywordlink{constructor}
 Classes must be created using one of their constructors (there can be
 multiple constructors). Remember that a class is a pointer to an object on
@@ -4662,7 +4728,7 @@ A class definition can contain a type section, const section and a variable sect
 The type and constant sections act as a regular type section as found in a unit or 
 method/function/procedure implementation. The variables act as regular fields of the 
 class, unless they are in a \var{class var} section, in which case they act as if they 
-were defined at the unit level, within the namespace of the class.
+were defined at the unit level, within the namespace of the class (\sees{classfields}).
 
 However, the visibility of these sections does play a role: private and protected 
 (strict or not) constants, types and variables can only be used as far as their 
