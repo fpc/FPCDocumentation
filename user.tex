@@ -3893,8 +3893,14 @@ try to allocate more memory if needed. However, if the heap has reached the
 maximum size allowed by the operating system or hardware, then you will get
 this error.
 \item [204  Invalid pointer operation]
-You will get this if you call \var{Dispose} or \var{Freemem} with an invalid 
-pointer (notably, \var{Nil}).
+You will get this in several cases:
+\begin{itemize}
+\item if you call \var{Dispose} or \var{Freemem} with an invalid pointer
+\item in case \var{New} or \var{GetMem} is called, and there is no more memory 
+available. The behaviour in this case depends on the setting of 
+\var{ReturnNilIfGrowHeapFails}. If it is \var{True}, then \var{Nil} is returned. 
+if \var{False}, then runerror 204 is raised.
+\end{itemize}
 \item [205  Floating point overflow]
 You are trying to use or produce real numbers that are too large.
 \item [206  Floating point underflow]
