@@ -13,8 +13,14 @@ TEXEXTS=.4ct .aux .dvi .xref .4tc .idx .log .tmp .lg .idv
 	$(LATEX) $<
 	$(LATEX) $<
 	$(GINSTALL) -d $(basename $<) -m755
+ifdef inUnix	
 	for ext in $(TEXEXTS); do [ -f $(basename $<)$$ext ] && mv $(basename $<)$$ext $(basename $<); done || true
 	cp -f -r ./pics/ $(basename $<)/pics/
+else
+	mkdir $(basename $<)
+	for /D %%i in ($(TEXEXTS)) do if exist $(basename $<)%%i xcopy $(basename $<)%%i $(basename $<) 
+	cp -f -r ./pics $(basename $<)/pics
+endif
 	cd $(basename $<) && tex4ht $<  && t4ht $< -m644
 	rm -f -r $(basename $<)/pics
 	rm -f $(addprefix $(basename $<)/$(basename $<),$(TEXEXTS))
