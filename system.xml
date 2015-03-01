@@ -3785,6 +3785,56 @@ None.
 </element>
 
 <!-- function Visibility: default -->
+<element name="Utf8CodePointLen">
+<short>Length of an UTF-8 codepoint.</short>
+<descr>
+<p>
+<var>Utf8CodePointLen</var> returns the length of the UTF-8 codepoint
+starting at the beginning of <var>P</var>. It will look at at most
+<var>MaxLookAhead</var> bytes to do create this codepoint. If
+<var>IncludeCombiningDiacriticalMarks</var> is true, combining
+diacritical marks trailing the first codepoint (which itself can
+also be such a mark) will be considered to be part of the codepoint.
+</p>
+<p>If the function returns a value > 0, then this is the number of
+bytes occupied by the codepoint and, if requested, the trailing
+combining diacritical marks. If the result = 0, this means that all
+bytes within the requested <var>MaxLookAhead</var> could be part of
+a single valid codepoint and, if requested, its trailing diacritical
+marks, but that the codepoint is incomplete and more bytes need to
+be looked at. If the result is &lt; 0, then the function determined that
+the codepoint was invalid after processing the number of bytes equal
+to the absolute value of the function result.
+</p>
+<p>
+If <var>IncludeCombiningDiacriticalMarks</var> is <var>True</var>, then
+</p>
+<ul>
+<li>
+If the function processes all <var>MaxLookAhead</var> bytes, it will
+return the value <var>MaxLookAhead</var> rather than 0, even though
+in theory more combining diacritical marks might follow if more bytes
+would be looked at. Therefore, in order to ascertain that all combining
+diacritical marks are processed, pass all bytes at once to this function.
+</li>
+<li>
+If an invalid sequence is detected while processing a potential
+combining diacritical mark after a valid codepoint has been found
+already, the function will return the length of this valid codepoint
+(plus that of any preceding valid combining diacritical marks) as
+a positive value. The idea is that this invalid sequence at the end
+is by definition not a combining diacritical mark (since all of those
+are valid sequences) and hence should not render the preceding
+codepoint invalid.
+</li>
+</ul>
+</descr>
+<errors>
+None.
+</errors>
+</element>
+
+<!-- function Visibility: default -->
 <element name="Space">
 <short>Return a string of spaces</short>
 <descr>
