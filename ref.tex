@@ -3600,11 +3600,11 @@ same unit. \var{Strict protected} members are only visible to descendent
 classes, not to other classes in the same unit. \keywordlink{strict protected}
 \item [Public\ ] \index{Public}\index{Visibility!Public} sections are always
 accessible.\keywordlink{public}
-\item [Published\ ] \index{Published}\index{Visibility!Published} Is the same as a \var{Public} section, but the compiler
-generates also type information that is needed for automatic streaming of
-these classes if the compiler is in the \var{\{\$M+\}} state. Fields defined in a \var{published} section must be of class type.
-Array properties cannot be in a \var{published}
-section.\keywordlink{published}
+\item [Published\ ] \index{Published}\index{Visibility!Published} From a
+language perspective, this is the same as a \var{Public} section, but the compiler generates also type 
+information that is needed for automatic streaming of these classes if the compiler is in the 
+\var{\{\$M+\}} state. Fields defined in a \var{published} section must be of class type.
+Array properties cannot be in a \var{published} section.\keywordlink{published}
 \end{description}
 In the syntax diagram, it can be seen that a class can list implemented
 interfaces. This feature will be discussed in the next chapter.
@@ -4581,6 +4581,28 @@ AIntList[26] := 1;
 \end{verbatim}
 Only one default property per class is allowed, but descendent classes
 can redeclare the default property.
+
+\subsection{Published properties}
+Classes compiled in the \var{\{\$M+\}} state (such as \var{TPersistent} from
+the \file{classes} unit) can have a published section. For methods, fields
+and properties in the \var{Published} section, the compiler generates RTTI
+information (Run Time Type Information), which can be used to query the
+defined methods, fields and properties in the published section(s). The
+\var{typinfo} unit contains the necessary routines to query this
+information, and this unit is used in the streaming system in FPC in the
+classes unit.
+
+The RTTI is generated regardless of what the read and write specifiers are:
+fields, functions/procedures or indexed functions/procedures.
+
+Only class-typed fields can be published. For properties, any simple property
+whose size is less than or equal to a pointer, can be declared published:
+floats, integers, sets (with less than 32 distinct elements), enumerateds,
+classes or dynamic arrays (not array properties).
+
+Although run-time type information is available for other types, these types cannot
+be used for a property or field definition in a published section. The
+information is present to describe f.e. arguments of procedures or functions.
 
 \subsection{Storage information}
 The {\em stored specifier} should be either a boolean constant, a boolean
