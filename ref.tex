@@ -8882,6 +8882,137 @@ end.
 Remark that this is not true for Delphi, so code relying on this feature
 will not be portable.
 
+\section{Managed types and reference counts}
+Some types (Unicodestring, Ansistring, interfaces, dynamic arrays) are
+treated somewhat specially by the compiler: the data has a reference count
+which is increased or decreased depending on how many reference to the data
+exists.
+
+The qualifiers for parameters in function or procedure calls influence
+influence what happens to the reference count of the managed types:
+\begin{itemize}
+\item nothing (pass by value): the reference count of the parameter is increased 
+on entry and decreased on exit.
+\item \var{out}: the reference count of the value that is passed in is decreased by 1,
+ and the variable that's passed into the procedure is initialized to "empty"
+(usually \var{Nil}, but that is an implementation detail which should not
+be relied on).
+\item \var{var} nothing happens to the reference count. A reference to the original
+ variable is passed in, and changing it or reading it has exactly the same effect as changing/reading the original variable.
+\item \var{const} this case is slightly tricky. Nothing happens to the reference
+count because you can pass non-lvalues here. 
+In particular, you can pass a class implementing an interface rather than the interface itself
+which can cause the class to be freed unexpectedly.
+\end{itemize}
+
+The following example demonstrates the dangers:
+\begin{verbatim}
+{$mode objfpc}
+
+Type
+  ITest = Interface
+    Procedure DoTest(ACount : Integer);
+  end;
+  
+  TTest = Class(TInterfacedObject,ITest)
+    Procedure DoTest(ACount : Integer);
+    Destructor destroy; override;
+  end;
+
+Destructor TTest.Destroy;
+
+begin
+  Writeln('Destroy called');
+end;
+  
+Procedure TTest.DoTest(ACount : Integer);
+
+begin
+  Writeln('Test ',ACount,' : ref count: ',RefCount);
+end;    
+
+procedure DoIt1(x: ITest; ACount : Integer);
+
+begin
+  // Reference count is increased
+  x.DoTest(ACount);
+  // And decreased
+end;
+
+procedure DoIt2(const x: ITest; ACount : Integer);
+
+begin
+  // No change to reference count.
+  x.DoTest(ACount);
+end;
+
+Procedure Test1;
+
+var
+  y: ITest;
+begin
+  y := TTest.Create; 
+  // Ref. count is 1 at this point.
+  y.DoTest(1);
+  // Calling DoIT will increase reference count and decrease on exit.
+  DoIt1(y,2);
+  // Reference count is still one.
+  y.DoTest(3);
+end;
+
+Procedure Test2;
+
+var
+  Y : TTest;          
+begin
+  Y := TTest.Create; // no count on the object yet
+  // Ref. count is 0 at this point.
+  y.DoTest(3);
+  // Ref count will remain zero.
+  DoIt2(y,4);
+  Y.DoTest(5);
+  Y.Free;
+end;
+
+Procedure Test3;
+
+var
+  Y : TTest;          
+begin
+  Y := TTest.Create; // no count on the object yet
+  // Ref. count is 0 at this point.
+  y.DoTest(6);
+  // Ref count will remain zero.
+  DoIt1(y,7);
+  y.DoTest(8);
+end;
+
+
+begin
+  Test1;
+  Test2;
+  Test3;
+end.
+\end{verbatim}
+The output of this example is:
+\begin{verbatim}
+Test 1 : ref count: 1
+Test 2 : ref count: 2
+Test 3 : ref count: 1
+Destroy called
+Test 3 : ref count: 0
+Test 4 : ref count: 0
+Test 5 : ref count: 0
+Destroy called
+Test 6 : ref count: 0
+Test 7 : ref count: 1
+Destroy called
+Test 8 : ref count: 0
+\end{verbatim}
+As can be seen, in test3, the reference count is decreased from 1 to 0 at
+the end of the DoIt call, causing the instance to be freed before the call
+returns.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Function overloading
 \section{Function overloading}
