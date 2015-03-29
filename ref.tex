@@ -998,8 +998,32 @@ are silently and automatically parsed as 64-bit integer constants as of version
 %ObjFPC   &  -9223372036854775808 .. 9223372036854775807 & 8 \\
 %\end{FPCltable}
 
-\fpc does automatic type conversion in expressions where different kinds of
-integer types are used.
+As a pascal compiler, \fpc does automatic type conversion and upgrading 
+in expressions where different kinds of integer types are used:
+\begin{enumerate}
+\item Every platform has a "native" integer size, depending on whether the
+platform is 8-bit, 16-bit, 32-bit or 64-bit. e.g. On AVR this is 8-bit.
+\item Every integer smaller than the "native" size is promoted to a signed
+version of the "native" size. Integers equal to the "native" size keep their
+signedness.
+\item The result of binary arithmetic operators (+, -, *, etc.) is determined
+in the following way:
+\begin{enumerate}
+\item If at least one of the operands is larger than the native integer size,
+the result is chosen to be the smallest type that encompasses the ranges of
+the types of both operands. This means that mixing an unsigned with a
+smaller or equal in size signed will produce a signed type that is larger
+than both of them.
+\item If both operands have the same signedness, the result is the same
+type as them. The only exception is subtracting (-): in the case of unsigned-unsigned
+subtracting produces a signed result in FPC (as in Delphi, but not in TP7).
+\item Mixing signed and unsigned operands of the "native" int size produces
+a larger signed result. This means that mixing longint and longword on
+32-bit platforms will produce an int64. Similarly, mixing byte and shortint on
+8-bit platforms (AVR) will produce a smallint.
+\end{enumerate}
+\end{enumerate}
+
 % 
 %
 \subsubsection{Boolean types}
