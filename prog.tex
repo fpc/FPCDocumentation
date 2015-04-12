@@ -2501,7 +2501,7 @@ your code, and it allows you to define messages or errors which will be
 displayed when compiling. It also has support for compile-time variables and
 compile-time expressions, as commonly found in \macos compilers.
 
-The various conditional compilation directives (\var{\$IF},  \var{\$IFDEF},
+The various conditional compilation directives (\var{\$IF}, \var{\$IFDEF},
 \var{\$IFOPT} are used in combination with \var{\$DEFINE}
 to allow the programmer to choose at compile time which portions 
 of the code should be compiled.  This can be used for instance
@@ -2512,7 +2512,7 @@ of the code should be compiled.  This can be used for instance
 \end{itemize}
 These options are then chosen when the program is compiled, including or
 excluding parts of the code as needed. This is opposed to using normal 
-variables and running through selected portions of code at run time,  
+variables and running through selected portions of code at run time,
 in which case extra code is included in the executable.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2799,7 +2799,7 @@ Like in regular pascal, it is possible to use \var{\{\$ELSE \}}:
   BetterCompileTheseLines;
 {$endif}
 \end{verbatim}
-If \var{expr} evaluates to \var{True},  \var{CompileTheseLines} will be
+If \var{expr} evaluates to \var{True}, \var{CompileTheseLines} will be
 compiled. Otherwise, \var{BetterCompileTheseLines} will be compiled.
 
 Additionally, it is possible to use \var{\{\$ELSEIF\}}
@@ -3155,22 +3155,22 @@ syntax. In what follows we specify what constructs are not supported in
 \fpc, but which exist in \tp:
 
 \begin{itemize}
-\item  The \var{TBYTE} qualifier is not supported.
-\item  The \var{\&} identifier override is not supported.
-\item  The \var{HIGH} operator is not supported.
-\item  The \var{LOW} operator is not supported.
-\item  The \var{OFFSET} and \var{SEG} operators are not supported.
-     Use \var{LEA} and the various \var{Lxx} instructions instead.
-\item  Expressions with constant strings are not allowed.
-\item  Access to record fields via parenthesis is not allowed
-\item  Typecasts with normal pascal types are not allowed, only
+\item The \var{TBYTE} qualifier is not supported.
+\item The \var{\&} identifier override is not supported.
+\item The \var{HIGH} operator is not supported.
+\item The \var{LOW} operator is not supported.
+\item The \var{OFFSET} and \var{SEG} operators are not supported.
+      Use \var{LEA} and the various \var{Lxx} instructions instead.
+\item Expressions with constant strings are not allowed.
+\item Access to record fields via parenthesis is not allowed
+\item Typecasts with normal pascal types are not allowed, only
     recognized assembler typecasts are allowed. Example:
 \begin{verbatim}
 mov al, byte ptr MyWord       -- allowed,
 mov al, byte(MyWord)          -- allowed,
 mov al, shortint(MyWord)      -- not allowed.
 \end{verbatim}
-\item  Pascal type typecasts on constants are not allowed.
+\item Pascal type typecasts on constants are not allowed.
 Example:
 \begin{verbatim}
 const s= 10; const t = 32767;
@@ -3181,7 +3181,7 @@ mov al, byte(s)            -- useless typecast.
 mov al, byte(t)            -- syntax error!
 \end{verbatim}
 In this parser, either of those  cases will give out a syntax error.
-\item  Constant references expressions with constants only are not
+\item Constant references expressions with constants only are not
    allowed (in all cases they do not work in protected mode,
    e.g. under \linux i386). Examples:
 \begin{verbatim}
@@ -3189,8 +3189,8 @@ mov al,byte ptr ['c']      -- not allowed.
 mov  al,byte ptr [100h]    -- not allowed.
 \end{verbatim}
  (This is due to the limitation of the GNU Assembler).
-\item  Brackets within brackets are not allowed
-\item  Expressions with segment overrides fully in brackets are
+\item Brackets within brackets are not allowed
+\item Expressions with segment overrides fully in brackets are
 currently not supported, but they can easily be implemented
 in BuildReference if requested. Example:
 \begin{verbatim}
@@ -3200,13 +3200,13 @@ use instead:
 \begin{verbatim}
 mov al,ds:[bx]
 \end{verbatim}
-\item  Possible allowed indexing are as follows:
+\item Possible allowed indexing are as follows:
 \begin{itemize}
-\item    \var{Sreg:[REG+REG*SCALING+/-disp]}
-\item    \var{SReg:[REG+/-disp]}
-\item    \var{SReg:[REG]}
-\item    \var{SReg:[REG+REG+/-disp]}
-\item    \var{SReg:[REG+REG*SCALING]}
+\item \var{Sreg:[REG+REG*SCALING+/-disp]}
+\item \var{SReg:[REG+/-disp]}
+\item \var{SReg:[REG]}
+\item \var{SReg:[REG+REG+/-disp]}
+\item \var{SReg:[REG+REG*SCALING]}
 \end{itemize}
 Where \var{Sreg} is optional and specifies the segment override.
 {\em Notes:}
@@ -3224,8 +3224,8 @@ use:
 mov al, byte ptr [esi+ebx*1]
 \end{verbatim}
 \end{enumerate}
-\item  Possible variable identifier syntax is as follows:
- (Id = Variable or typed constant identifier.)
+\item Possible variable identifier syntax is as follows:
+(Id = Variable or typed constant identifier.)
 \begin{enumerate}
 \item \var{ID}
 \item \var{[ID]}
@@ -3234,11 +3234,11 @@ mov al, byte ptr [esi+ebx*1]
 \end{enumerate}
  Possible fields are as follow:
 \begin{enumerate}
-\item  \var{ID.subfield.subfield \dots}
-\item  \var{[ref].ID.subfield.subfield \dots}
-\item  \var{[ref].typename.subfield \dots}
+\item \var{ID.subfield.subfield \dots}
+\item \var{[ref].ID.subfield.subfield \dots}
+\item \var{[ref].typename.subfield \dots}
 \end{enumerate}
-\item  Local labels: Contrary to \tp, local labels, must
+\item Local labels: Contrary to \tp, local labels, must
 at least contain one character after the local symbol indicator.
 Example:
 \begin{verbatim}
@@ -3253,10 +3253,10 @@ use instead:
 \begin{verbatim}
 lds si,@mylabel   -- not allowed
 \end{verbatim}
-\item  Contrary to Turbo Pascal, \var{SEGCS}, \var{SEGDS}, \var{SEGES} and
+\item Contrary to Turbo Pascal, \var{SEGCS}, \var{SEGDS}, \var{SEGES} and
 \var{SEGSS} segment overrides are presently not supported.
    (This is a planned addition though).
-\item  Contrary to Turbo Pascal where memory sizes specifiers can
+\item Contrary to Turbo Pascal where memory sizes specifiers can
    be practically anywhere, the \fpc Intel inline assembler requires
    memory size specifiers to be outside the brackets. Example:
 \begin{verbatim}
@@ -3266,12 +3266,12 @@ mov al,[byte ptr myvar]    -- not allowed.
 \begin{verbatim}
 mov al,byte ptr [myvar]    -- allowed.
 \end{verbatim}
-\item  Base and Index registers must be 32-bit registers.
-     (limitation of the GNU Assembler).
-\item  \var{XLAT} is equivalent to \var{XLATB}.
-\item  Only Single and Double FPU opcodes are supported.
-\item  Floating point opcodes are currently not supported
-   (except those which involve only floating point registers).
+\item Base and Index registers must be 32-bit registers.
+      (limitation of the GNU Assembler).
+\item \var{XLAT} is equivalent to \var{XLATB}.
+\item Only Single and Double FPU opcodes are supported.
+\item Floating point opcodes are currently not supported
+      (except those which involve only floating point registers).
 \end{itemize}
 
 The Intel inline assembler supports the following macros:
@@ -3333,7 +3333,7 @@ More information about the AT\&T syntax can be found in the \var{as} manual,
 although the following differences with normal AT\&T assembly must be taken
 into account:
 \begin{itemize}
-\item  Only the following directives are presently supported:
+\item Only the following directives are presently supported:
  \begin{description}
 \item[.byte]
 \item[.word]
@@ -3342,21 +3342,19 @@ into account:
 \item[.asciz]
 \item[.globl]
 \end{description}
-\item  The following directives are recognized but are not
-   supported:
+\item The following directives are recognized but are not supported:
 \begin{description}
 \item[.align]
 \item[.lcomm]
 \end{description}
 Eventually they will be supported.
 \item Directives are case sensitive, other identifiers are not case sensitive.
-\item  Contrary to \file{gas}, local labels/symbols {\em must} start with
-\var{.L}.
-\item  The not operator \var{'!'} is not supported.
-\item  String expressions in operands are not supported.
-\item  CBTW,CWTL,CWTD and CLTD are not supported, use the normal Intel
+\item Contrary to \file{gas}, local labels/symbols {\em must} start with \var{.L}.
+\item The not operator \var{'!'} is not supported.
+\item String expressions in operands are not supported.
+\item CBTW,CWTL,CWTD and CLTD are not supported, use the normal Intel
 equivalents instead.
-\item  Constant expressions which represent memory references are not
+\item Constant expressions which represent memory references are not
 allowed, even though constant immediate value expressions are supported.
 Examples:
 \begin{verbatim}
@@ -3368,7 +3366,7 @@ movl myid(%esi),%eax  -- not allowed.
 \item When the \var{.globl} directive is found, the symbol immediatly following
 it is made public and is immediately emitted.
 Therefore label names with this name will be ignored.
-\item  Only Single and Double FPU opcodes are supported.
+\item Only Single and Double FPU opcodes are supported.
 \end{itemize}
 
 The AT\&T inline assembler supports the following macros:
@@ -3398,7 +3396,7 @@ be used to declare constants which will be stored in the
 code segment.
 \item The \var{Align} directive is not supported.
 \item Arithmetic operations on constant expression use the same
-operands as the intel version, e.g,  \var{AND}, \var{XOR} ...
+operands as the intel version, e.g, \var{AND}, \var{XOR} ...
 \item Segment directives are not supported
 \item Only 68000 and a subset of 68020 opcodes are currently supported.
 \end{itemize}
@@ -4044,7 +4042,7 @@ Information on GCC registers saved, GCC stack alignment and general
 stack alignment on an operating system basis is beyond the scope of this
 manual.
 
-As of version 2.0 (actually, in 1.9.x somewhere) , the \var{register} 
+As of version 2.0 (actually, in 1.9.x somewhere), the \var{register} 
 modifier is the default calling convention, prior to that, it was the 
 \var{oldfpccall} convention.
 
@@ -6943,12 +6941,12 @@ that start with a \#. Each section starts with "\% " followed by the name of
 the section (e.g.,\% contextinsensitive\_devirtualization). 
 
 After that, until either the end of the file or until the next line starting 
-with with "\% ", first a human readable description follows of the format of 
+with "\% ", first a human readable description follows of the format of 
 this section (in comments), and then the contents of the section itself. 
 
 There are no rules for how the contents of a section should look, except
 that lines starting with \# are reserved for comments and lines starting with
-\%  are reserved for section markers. 
+\% are reserved for section markers. 
 
 
 
@@ -8758,7 +8756,7 @@ make cycle OS_TARGET=go32v2
 This will compile the go32v2 RTL, and compile a \var{go32v2} compiler.
 
 When compiling a new compiler and the compiler should be compiled using an 
-existing compiled RTL,  the \var{all} target must be used, and another RTL 
+existing compiled RTL, the \var{all} target must be used, and another RTL 
 directory than the default (which is the \file{../rtl/\$(OS\_TARGET)} 
 directory) must be indicated. For instance, assuming that the compiled RTL 
 units are in \var{/pp/rtl/units/i386-linux}, typing
