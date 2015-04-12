@@ -982,12 +982,23 @@ the current compiler.
 \item[SP] : Returns the compiler processor.
 \item[TO] : Returns the target OS.
 \item[TP] : Returns the target processor.
+\item[a] : Returns a list of supported ABI targets
+\item[c] : Returns a list of supported CPU instruction sets
+\item[f] : Returns a list of supported FPU instruction sets
+\item[i] : Returns a list of supported inline assembler modes
+\item[o] : Returns a list of supported optimizations
+\item[r] : Returns a list of recognized compiler and RTL features
+\item[t] : Returns a list of supported targets
+\item[u] : Returns a list of supported microcontroller types
+\item[w] : Returns a list of supported whole program optimizations
 \end{description}
+
 \item[-l]  Print the Free Pascal logo and version number.
 \olabel{l}
 \item [-n] Ignore the default configuration file.
 You can still pass a configuration file with the \var{@} option.
 \olabel{n}
+\item[-VNNN] set the version number to NNN (appends -NNN to the binary name)
 \end{description}
 
 %
@@ -1008,7 +1019,7 @@ You can still pass a configuration file with the \var{@} option.
 \item \var{l} : Report number of lines processed (every 100 lines).
 \item \var{u} : Show information on units being loaded.
 \item \var{t} : Show names of files being opened.
-\item \var{p} : Show names of procedures and functions being processed.
+\item \var{p} : Write parse tree (tree.log)
 \item \var{q} : Show message numbers.
 \item \var{c} : Notify on each conditional being processed.
 \item \var{mxxx} : \var{xxx} is a comma-separated list of messages numbers which should not be shown.
@@ -1016,18 +1027,18 @@ This option can be specified multiple times.
 \item \var{d} : Show additional debugging information.
 \item \var{0} : No messages. This is useful for overriding the default
           setting in the configuration file.
-\item \var{b} : Show all procedure declarations if an overloaded function
-error occurs.
+\item \var{b} : Show all procedure declarations if an overloaded function error occurs.
 \item \var{x} : Show information about the executable (Win32 platform only).
 \item \var{r} : Format errors in RHIDE/GCC compatibility mode.
 \item \var{a} : Show all possible information. (this is the same as specifying all options)
 \item \var{b} : Tells the compiler to write filenames using the full path.
 \item \var{v} : Write copious debugging information to file.
 \file{fpcdebug.txt}..
-\item \var{s} : Write timestamps.
-Mainly for the compiler developers.
-%\item \var{p} Write parse tree to file tree.log. (Intended for compiler  developers.)
+\item \var{s} : Write timestamps. Mainly for the compiler developers.
+\item \var{p} Write parse tree to file tree.log. (Intended for compiler  developers.)
+\item \var{z} Write compiler messages to standard error instead of standard output.
 \end{itemize}
+
 \end{description}
 %
 % 
@@ -1078,6 +1089,7 @@ and is followed by an option \seeo{o}), then the \var{-o} path will override
 the \var{-FE} path setting.
 \olabel{FE}
 \item [-Ffxxx] Add \file{xxx} to the framework path (only for Darwin).
+\item [-Fg] ?
 \item [-Fixxx] Add \file{xxx} to the include file search path.
 \olabel{Fi}
 \item [-Flxxx] Add \file{xxx} to the library search path. (This is also 
@@ -1089,6 +1101,7 @@ passed to the linker.)
 \item[-Fmxxx] Load the unicode conversion table from file \file{x.txt} in
 the directory where the compiler is located. Only used when \var{-Fc} is
 also in effect.
+\item[-FMxxx]  Set the directory where to search for unicode binary files to \var{xxx}.
 \item[-Foxxx] Add \file{xxx} to the object file search path.
 This path is used when looking for files that need to be linked in.
 \olabel{Fo}
@@ -1115,7 +1128,7 @@ This option has the same effect as \var{-Fi}.
 %\file{as}) that support piping...
 \item[-FWxxx] store generated Whole Program Optimization information in file
 \file{xxx}.
-\item[-Fwxxx] Read Whole Program Optimization information from file
+\item[-Fwxxx] Read Whole Program Optimization information (as saved using -FWxxx) from file
 \file{xxx}.
 \end{description}
 
@@ -1152,8 +1165,9 @@ Here \var{xxx} is one of the following :
 \item[nasmcoff] Coff (Go32v2) file using Nasm.
 \item[nasmelf] Elf32 (\linux) file using Nasm.
 \item[nasmwin32] \windows 32-bit file using Nasm.
+\item[nasmwin64] \windows 64-bit file using Nasm.
 \item[nasmwdosx] \windows 32-bit/DOSX file using Nasm.
-\item[nasmobj] Object file using Nasm.darwin Mach-O64 using GNU GAS 
+\item[nasmdarwin] Object file using Nasm.darwin Mach-O64 using GNU GAS 
 \item[macho]    Mach-O (Darwin, Intel 32 bit) using internal writer.
 \item[masm] Object file using Masm (Microsoft).
 \item[tasm] Object file using Tasm (Borland).
@@ -1161,6 +1175,7 @@ Here \var{xxx} is one of the following :
 \item[coff] Coff object file (Go32v2) using the internal binary object writer.
 \item[pecoff] PECoff object file (Win32) using the internal binary object writer.
 \item[wasm] Object file using wasm (Watcom).
+\item[yasm] Object file using yasm (experimental).
 \end{description}
 \item[-B] \olabel{B} Re-compile all used units, even
 if the unit sources didn't change since the last compilation.
@@ -1182,13 +1197,13 @@ dynamically linkable libraries on \linux.
 values are 32 and 64.
 \item[-Cg] Enable generation of PIC code. This should only be necessary when
 generating libraries on \linux or other Unices. 
-
 \item [-Chxxx] \olabel {Ch} Reserves \var{xxx} bytes heap. \var{xxx} should
 be between 1024 and 67107840.
 \item [-Ci] \olabel{Ci} Generate Input/Output checking code. In case some
 input/output code of your program returns an error status, the program will
 exit with a run-time error. Which error is generated depends on the I/O error.
 \item [-Cn] \olabel{Cn} Omit the linking stage.
+\item [-CN] \olabel{CN} Generate nil-pointer checks (AIX-only).
 \item [-Co] \olabel{Co} Generate Integer overflow checking code. In case of
 integer errors, a run-time error will be generated by your program.
 \item [-CO] \olabel{CO} Check for possible overflow of integer operations.
@@ -1205,6 +1220,10 @@ if the virtual method table for that object is valid.
 \item [-Csxxx] \olabel{Cs} Set stack size to \var{xxx}.
 \item [-Ct] \olabel{Ct} Generate stack checking code. If your program
 performs a faulty stack operation, a run-rime error will be generated.
+\item [-CTNNN] \olabel{CT} Target specific code generation options: 
+\begin{description}
+\item [cld]Emit a CLD instruction before using the x86 string instructions
+\end{description}
 \item [-CX] \olabel{Cx} Create a smartlinked unit when writing a unit.
 Smartlinking will only link in the code parts that are actually needed by
 the program. All unused code is left out. This can lead to substantially
@@ -1214,6 +1233,7 @@ to conditionally compile parts of your code.
 \item [-D] Generate a DEF file (for OS/2).
 \item [-Dd] Set the description of the executable/library (\windows).
 \item [-Dv] Set the version of the executable/library (\windows).
+\item [-Dw] PM application (for OS/2)
 \item [-E] \olabel{E} Same as \var{-Cn}.
 \item [-fPIC] same as \var{-Cg}.
 \item [-g] \olabel{g} Generate debugging information for debugging with
@@ -1236,7 +1256,7 @@ names.
 \item [-gs] Write stabs debug information.
 \item [-gt] Trash local variables. This writes a random value to local
 variables at procedure start. This can be used to detect uninitialized
-variables.
+variables. The t can be specified multiple times
 \item [-gv] Emit info for valgrind.
 \item [-gw] Emit dwarf debugging info (version 2).
 \item [-gw2] Emit dwarf debugging info (version 2).
@@ -1296,6 +1316,10 @@ observed.
 \item [-pg] \olabel{gp} Generate profiler code for \file{gprof}. This will
 define the symbol \var{FPC\_PROFILE}, which can be used in conditional
 defines.
+\item[-PB]        Show default Target CPU compiler binary
+\item[-PP]        Show default target cpu
+\item[-Pxxx]      Set target CPU (arm,avr,i386,jvm,m68k,mips,mipsel,powerpc,powerpc64,sparc,x86\_64)
+]
 \item [-s] \olabel{s} Do not call the assembler and linker.
 Instead, the compiler writes a script, \file{PPAS.BAT} under \dos, or
 \file{ppas.sh} under \linux, which can then be executed to produce an
@@ -1312,9 +1336,11 @@ can be run on the target platform. (where the binary is intended to be run)
 \item[-Txxx] \olabel{T} Specify the target operating system. \var{xxx} can be one of
 the following:
 \begin{itemize}
+\item \textbf{darwin} : Darwin Mac OS/X.
 \item \textbf{emx} : OS/2 via EMX (and DOS via EMX extender).
 \item \textbf{freebsd} : FreeBSD.
 \item \textbf{go32v2} : \dos and version 2 of the DJ DELORIE extender.
+\item \textbf{iphonesim} : iPhone simulator.
 \item \textbf{linux} : \linux.
 \item \textbf{netbsd} : NetBSD.
 \item \textbf{netware} : Novell Netware Module (clib).
@@ -1348,8 +1374,11 @@ can be one or more of the following
 \item[e] Use external resources (Darwin)
 \item[F] Generate a FS application (+) or a console application (-).
 \item[G] Generate a GUI application (+) or a console application (-).
+\item[i] Use internal (FPC) resources (Darwin)
+\item[I] Turn on/off the usage of import sections (Windows)
 \item[Mnnn] Minimum Mac OS X deployment version: nnn equals 10.4, 10.5.1, ... (Darwin)
 \item[N] Do not generate a relocation section.
+\item[PXXX] Minimum iOS deployment version needed (iphonesim) XXX is one of 8.0, 8.0.2, etc.
 \item[R] Generate a relocation section.
 \item[T] Generate a TOOL application (+) or a console application (-).
 \item[X] Enable use of an executable stack (Linux)
@@ -1365,11 +1394,17 @@ cross-compilation, to avoid linking with the host platform's libraries.
 \item \textbf{D} : Link with dynamic libraries (defines the
 \var{FPC\_LINK\_DYNAMIC} symbol) \olabel{XD}
 \item \textbf{e} use external (GNU) linker.
+\item \textbf{f}  Substitute pthread library name for linking (BSD).
 \item \textbf{g} Create debug information in a separate file and add a debuglink section to executable.
 \item \textbf{i} use internal linker.
-\item \textbf{MXXX} : Set the name of the program entry routine.
+\item \textbf{LA}  Define library name substitutions for the linking stage.
+\item \textbf{LO}  Define the order of library linking.
+\item \textbf{LD}  Exclude default order of standard libraries.
+ \item \textbf{MXXX} : Set the name of the program entry routine.
 The default is 'main'.
 \item \textbf{m} : Generate linker map file.
+\item \textbf{n} : Use target system native linker instead of GNU ld (Solaris, AIX) 
+\item \textbf{pXXX} :   First search for the compiler binary in the directory \var{XXX}.  (fpc command only).
 \item \textbf{PXXX} : Prepend binutils names with  \var{XXX} for cross-compiling.
 \item \textbf{rXXX} : Set library path to \var{XXX}.
 \item \textbf{Rxxx} Prepend \file{xxx} to all linker search paths. (used for
@@ -1378,8 +1413,8 @@ cross compiling).
 \item \textbf{S} : Link with static units (defines the \var{FPC\_LINK\_STATIC} symbol).
 \olabel{XS}
 \item \textbf{t} : Link static (passes the \var{-static} option to the linker). \olabel{Xt}
-\item \textbf{X} : Link with smartlinked units (defines the
-\var{FPC\_LINK\_SMART} symbol). \olabel{XX}
+\item \textbf{v} : Generate table for Virtual Entry calls.
+\item \textbf{X} : Link with smartlinked units (defines the \var{FPC\_LINK\_SMART} symbol). \olabel{XX}
 \end{itemize}
 \end{description}
 
@@ -1466,6 +1501,35 @@ is assumed). Instead of a number, one of \var{n}, \var{h} or \var{w} can also be
 specified. 
 In that case the compiler will consider notes, hints or warnings as errors and 
 stop when one is encountered.
+\item[-Sf] Enable certain features in compiler and RTL. This allows for
+finer control over available language features than the mode switch. 
+Possible values are:
+\begin{description}
+\item[HEAP] Allow heap memory.
+\item[INITFINAL] Initialization/finalization.
+\item[RTTI] Allow use of RTTI.
+\item[CLASSES] Allow use of classes.
+\item[EXCEPTIONS] Allow use of exceptions.
+\item[EXITCODE] Allow use of exit code for applications.
+\item[ANSISTRINGS] Allow use of ansistrings.
+\item[WIDESTRINGS] Allow use of widestrings.
+\item[TEXTIO] Allow use of standard  Pascal text file I/O.
+\item[CONSOLEIO] Allow use of standard  Pascal console I/O (text file).
+\item[FILEIO] Allow use of standard  Pascal binary file I/O.
+\item[RANDOM] Allow use of Random() function.
+\item[VARIANTS] Allow use of variants.
+\item[OBJECTS] Allow use of TP-style objects.
+\item[DYNARRAYS] Allow use of dynamic arrays.
+\item[THREADING] Allow use of threading.
+\item[COMMANDARGS] Allow use of command-line arguments.
+\item[PROCESSES] Allow use of processes.
+\item[STACKCHECK] Enable stack checking.
+\item[DYNLIBS] Allow use of dynamically loadable libraries in the system unit.
+\item[SOFTFPU] Allow (enable) the use of software floating point operations.
+\item[OBJECTIVEC1] Allow use of Objective C support routines.
+\item[RESOURCES] Allow use of resources.
+\item[UNICODESTRING] Allow use of unicode strings.
+\end{description}
 \item [-Sg] \olabel{Sg} Support the \var{label} and \var{goto} commands. By
 default these are not supported. You must also specify this option if you
 use labels in assembler statements. (if you use the \var{AT\&T} style
@@ -1474,7 +1538,11 @@ assember)
 specified, the compiler will interpret the \var{string} keyword as an
 ansistring. Otherwise it is supposed to be a shortstring (TP style).
 \item [-Si] \olabel{Si} Support \var{C++} style INLINE.
-\item [-SIXXX] Set interfaces style to XXX.
+\item [-SIXXX] Set interfaces style to  \var{XXX}. Here \var{XXX} is one of
+\begin{description}
+\item[COM] COM compatible interfaces (reference counted, descend from IUnknown).
+\item[CORBA] Not reference counted interfaces.
+\end{description}
 \item [-Sk] Load the Kylix compatibility unit (\file{fpcylix}).
 \item [-Sm] \olabel{Sm} Support C-style macros.
 \item [-So] \olabel{So} Try to be Borland TP 7.0 compatible. Deprecated, use
@@ -1484,10 +1552,13 @@ ansistring. Otherwise it is supposed to be a shortstring (TP style).
 \item [-Ss] \olabel{Ss} The name of constructors must be \var{init}, and the
 name of destructors should be \var{done}.
 \item [-St] \olabel{St} Allow the \var{static} keyword in objects.
+\item[-Sv] Support vector processing (uses CPU vector extensions if available)
 \item [-Sx] Enable exception keywords (default in Delphi/Objfpc mode). This
 will mark all exception related keywords as keywords, also in \tp or
 \file{FPC} mode. This can be used to check for code which should be
 mode-neutral as much as possible.
+\item [-Sy]  @pointer returns a typed pointer, this is the same as the \$T+ option.
+
 \item [-Un] \olabel{Un} Do not check the unit name. Normally, the unit name
 is the same as the filename. This option allows them to be different.
 \item [-Us] \olabel{Us} Compile a system unit. This option causes the
