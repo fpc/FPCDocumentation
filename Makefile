@@ -2202,7 +2202,7 @@ IPF = $(addsuffix .ipf, $(DOCS))
 .dvi.ps:
 	$(DVIPS) $<
 .tex.dvi:
-	-rm $*.aux $*.idx  $*.ilg  $*.ind  $*.log  $*.out  $*.toc $*.tmp $*.xref $*.4ht
+	-rm -f $*.aux $*.idx  $*.ilg  $*.ind  $*.log  $*.out  $*.toc $*.tmp $*.xref $*.4ht
 	cp -f preamble.$(PREAMBLETYPE) preamble.inc
 	$(LATEX) $*
 	-$(MAKEINDEX) $*.idx
@@ -2216,7 +2216,7 @@ else
 include Makefile.txt
 endif
 .tex.pdf:
-	-rm $*.aux $*.idx  $*.ilg  $*.ind  $*.log  $*.out  $*.toc $*.tmp $*.xref $*.4ht
+	-rm -f $*.aux $*.idx  $*.ilg  $*.ind  $*.log  $*.out  $*.toc $*.tmp $*.xref $*.4ht
 	cp -f preamble.$(PREAMBLETYPE) preamble.inc
 	$(PDFLATEX) $*
 	-$(MAKEINDEX) $*.idx
