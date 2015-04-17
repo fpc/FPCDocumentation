@@ -1,7 +1,6 @@
 Program Example59;
 
-{ Program to demonstrate the Ptr (compability) function.
-}
+{ Program to demonstrate the Ptr (compatibility) function. }
 
 type pString = ^String;
 

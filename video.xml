@@ -52,14 +52,14 @@ plus the blink bit. The bits describe the various color combinations:
 </p>
 <dl>
 <dt>bits 0-3</dt>
-<dd> The foreground color. Can be set using all color constants. 
+<dd>The foreground color. Can be set using all color constants. 
 </dd>
 <dt>bits 4-6</dt>
-<dd> The background color. Can be set using a subset of the
+<dd>The background color. Can be set using a subset of the
 color constants.
 </dd>
 <dt>bit 7</dt>
-<dd> The blinking bit. If this bit is set, the character will appear
+<dd>The blinking bit. If this bit is set, the character will appear
 blinking.
 </dd>
 </dl>
@@ -107,7 +107,7 @@ driver, see the <link id="SetVideoDriver"/> call. The current video driver can
 be retrieved using the <link id="GetVideoDriver"/> call.
 </p>
 <remark>
-The video unit should <em> not</em> be used together with the <file>crt</file> unit.
+The video unit should <em>not</em> be used together with the <file>crt</file> unit.
 Doing so will result in very strange behaviour, possibly program crashes.
 </remark>
 </descr>
@@ -322,7 +322,7 @@ supports colors, or <var>False</var> if not.
 </element>
 
 <element name="TVideoCell">
-<short>One cell (=screen position) in the video buffer </short>
+<short>One cell (=screen position) in the video buffer</short>
 <descr>
 <var>TVideoCell</var> describes one character on the screen. One of the bytes 
 contains the color attribute with which the character is drawn on the screen,
@@ -954,7 +954,7 @@ previous section. Some of the calls, however, need some additional remarks.
 </p>
 <dl>
 <dt>InitDriver</dt>
-<dd> Called by <var>InitVideo</var>, this function should initialize 
+<dd>Called by <var>InitVideo</var>, this function should initialize 
 any data structures needed for the functionality of the driver, maybe do some 
 screen initializations. The function is guaranteed to be called only once; It 
 can only be called again after a call to <var>DoneVideo</var>. The variables
@@ -963,14 +963,14 @@ after a call to this function, as the <var>InitVideo</var> call will initialize
 the <var>VideoBuf</var> and <var>OldVideoBuf</var> arrays based on their values.
 </dd>
 <dt>DoneDriver</dt>
-<dd> This should clean up any structures that have been
+<dd>This should clean up any structures that have been
 initialized in the <var>InitDriver</var> function. It should possibly also
 restore the screen as it was before the driver was initialized. The VideoBuf
 and <var>OldVideoBuf</var> arrays will be disposed of by the general <var>DoneVideo</var>
 call.
 </dd>
 <dt>UpdateScreen</dt>
-<dd> This is the only required function of the driver. It
+<dd>This is the only required function of the driver. It
 should update the screen based on the <var>VideoBuf</var> array's contents. It
 can optimize this process by comparing the values with values in the
 <var>OldVideoBuf</var> array. After updating the screen, the <var>UpdateScreen</var>
@@ -979,29 +979,29 @@ parameter is <var>True</var>, the whole screen should be updated, not just the
 changed values.
 </dd>
 <dt>ClearScreen</dt>
-<dd> If there is a faster way to clear the screen than to
+<dd>If there is a faster way to clear the screen than to
 write spaces in all character cells, then it can be implemented here. If the
 driver does not implement this function, then the general routines will
 write spaces in all video cells, and will call <var>UpdateScreen(True)</var>.
 </dd>
 <dt>SetVideoMode</dt>
-<dd> Should set the desired video mode, if available. It
+<dd>Should set the desired video mode, if available. It
 should return <var>True</var> if the mode was set, <var>False</var> if not.
 </dd>
 <dt>GetVideoModeCount</dt>
-<dd> Should return the number of supported video modes.
+<dd>Should return the number of supported video modes.
 If no modes are supported, this function should not be implemented; the
 general routines will return 1. (for the current mode)
 </dd>
 <dt>GetVideoModeData</dt>
-<dd> Should return the data for the <var>Index</var>-th mode;
+<dd>Should return the data for the <var>Index</var>-th mode;
 <var>Index</var> is zero based. The function should return true if the data was
 returned correctly, false if <var>Index</var> contains an invalid index.
 If this is not implemented, then the general routine will return the current 
 video mode when <var>Index</var> equals 0.
 </dd>
 <dt>GetCapabilities</dt>
-<dd> If this function is not implemented, zero (i.e.
+<dd>If this function is not implemented, zero (i.e.
 no capabilities) will be returned by the general function.
 </dd>
 </dl>
