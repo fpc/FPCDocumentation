@@ -180,6 +180,42 @@ Routines to convert angles between different angle units.
 </descr>
 </topic>
 
+<topic name="CashFlowFunctions">
+<short>Cash flow functions</short>
+<descr>
+<p>
+The cash flow functions in the math unit resolve the following equation:
+</p>
+<pre>
+FV + PV * q^n + PMT (q^n - 1) / (q - 1) = 0
+</pre>
+<p>
+In this formula, the following variables are present:
+</p>
+<dl>
+<dt>FV</dt><dd>Future value</dd>
+<dt>PV</dt><dd>Present value</dd>
+<dt>PMT</dt><dd>Payment per period</dd>
+<dt>n</dt><dd>Number of payments (number of periods)</dd>
+<dt>q></dt><dd>Interest Rate (return rate)</dd>
+</dl>
+<p>
+The financial functions <link id="FutureValue"/>, <link id="NumberOfPeriods"/>, 
+<link id="Payment"/>, <link id="PresentValue"/> and 
+<link id="InterestRate"/> solve this equation for one of the variables, when
+the other variables are known.
+</p>
+</descr>
+<seealso>
+<element name="FutureValue"/>
+<link id="FutureValue"/>
+<link id="NumberOfPeriods"/>
+<link id="Payment"/>
+<link id="PresentValue"/>
+<link id="TPaymentTime"/>
+</seealso>
+</topic>
+
 <element name="Float">
 <short>Float type used in all calls</short>
 <descr>
@@ -1843,6 +1879,173 @@ The return value has the same type as the type of the array elements.
 <link id="#rtl.system.Random"/>
 <link id="RandomRange"/>
 </seealso>
+</element>
+
+
+<!-- function Visibility: default -->
+<element name="FutureValue">
+<short>Calculate the future value of an investment.</short>
+<descr>
+<p>
+<var>FutureValue</var> calculates the future value of an investment
+(<var>FV</var>) in the cash flow formula (see <link id="CashFlowFunctions"/>)
+The function result is the future value of an investment of
+<var>APresentValue</var> (<var>PV</var>), where <var>APayment</var>
+(<var>PMT</var>) is invested for <var>NPeriods</var> (<var>n</var>) at the rate of
+<var>ARate</var> (<var>q</var>) per period. 
+</p>
+<p>
+The <var>APaymentTime</var> parameter determines whether the investment (payment) 
+is an ordinary annuity or an annuity due: <var>ptEndOfPeriod</var> must be used if 
+payments are at the end of each period. If the payments are at the beginning
+of the periode, <var>ptStartOfPeriod</var> must be used. 
+</p>
+</descr>
+<seealso>
+<link id="InterestRate"/>
+<link id="NumberOfPeriods"/>
+<link id="Payment"/>
+<link id="PresentValue"/>
+<link id="TPaymentTime"/>
+<link id="CashFlowFunctions"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="InterestRate">
+<short>Calculate the interest rate value of an investment</short>
+<descr>
+<p>
+<var>InterestRate</var> calculates the future value of an investment
+(<var>q</var>) in the cash flow formula (see <link id="CashFlowFunctions"/>).
+The function result is the interest rate value in case of a future value
+<var>AFutureValue</var> for an investment of a start value <var>APresentValue</var> 
+(<var>PV</var>), where <var>APayment</var> (<var>PMT</var>) is invested 
+for <var>NPeriods</var> (<var>n</var>).
+</p>
+<p> 
+The <var>APaymentTime</var> parameter determines whether the investment
+(payment) is an ordinary annuity or an annuity due: <var>ptEndOfPeriod</var> 
+must be used if payments are at the end of each period. If the payments are at the beginning
+of the periode, <var>ptStartOfPeriod</var> must be used. 
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="FutureValue"/>
+<link id="NumberOfPeriods"/>
+<link id="Payment"/>
+<link id="PresentValue"/>
+<link id="TPaymentTime"/>
+<link id="CashFlowFunctions"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="NumberOfPeriods">
+<short>Calculate the number of periods for an investment</short>
+<descr>
+<p>
+<var>NumberOfPeriods</var> calculates the number of periods (<var>n</var>)
+needed to obtain future value of an investment  in the cash flow formula (see <link
+id="CashFlowFunctions"/>).
+The function result is the number of periods a payment
+<var>APayment</var> (<var>PMT</var>) must be paid in order to obtain a future value
+<var>AFutureValue</var> for an investment of a start value <var>APresentValue</var>
+(<var>PV</var>), where <var>APayment</var> (<var>PMT</var>) is invested
+at a rate <var>ARate</var> (<var>q</var>).
+</p>
+<p> 
+The <var>APaymentTime</var> parameter determines whether the investment
+(payment) is an ordinary annuity or an annuity due: <var>ptEndOfPeriod</var>
+NumberOfPeriodsmust be used if payments are at the end of each period. If the payments are
+at the beginning
+of the periode, <var>ptStartOfPeriod</var> must be used.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="FutureValue"/>
+<link id="InterestRate"/>
+<link id="Payment"/>
+<link id="PresentValue"/>
+<link id="TPaymentTime"/>
+<link id="CashFlowFunctions"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="Payment">
+<short>Calculate the payment for an investment</short>
+<descr>
+<p>
+<var>Payment</var> calculates the amount that must be payed (<var>PMT</var>)
+during number of periods (<var>n</var>) needed to obtain future value of an 
+investment in the cash flow formula (see <link id="CashFlowFunctions"/>).
+The function result is the amount (<var>PMT</var>) that must be paid in order to obtain a
+future value <var>AFutureValue</var> for an investment of a start value
+<var>APresentValue</var> (<var>PV</var>), where the amount must be payed
+<var>NPeriods</var> (<var>PMT</var>) and the interest rate is<var>ARate</var> (<var>q</var>).
+</p>
+<p>
+The <var>APaymentTime</var> parameter determines whether the investment
+(payment) is an ordinary annuity or an annuity due: <var>ptEndOfPeriod</var>
+NumberOfPeriodsmust be used if payments are at the end of each period. If
+the payments are
+at the beginning
+of the periode, <var>ptStartOfPeriod</var> must be used.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="FutureValue"/>
+<link id="InterestRate"/>
+<link id="NumberOfPeriods"/>
+<link id="PresentValue"/>
+<link id="TPaymentTime"/>
+<link id="CashFlowFunctions"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="PresentValue">
+<short>Calculate the present value given the future value of an investment.</short>
+<descr>
+<p>
+<var>PresentValue</var> calculates the present (start) value of an investment
+(<var>PV</var>) in the cash flow formula (see <link id="CashFlowFunctions"/>)
+The function result is the start value of an investment, when the future
+value is <var>AFutureValue</var> (<var>FV</var>) and  <var>APayment</var>
+(<var>PMT</var>) is invested for <var>NPeriods</var> (<var>n</var>) at the rate of
+<var>ARate</var> (<var>q</var>) per period. 
+</p>
+<p>
+The <var>APaymentTime</var> parameter determines whether the investment (payment) 
+is an ordinary annuity or an annuity due: <var>ptEndOfPeriod</var> must be used if 
+payments are at the end of each period. If the payments are at the beginning
+of the periode, <var>ptStartOfPeriod</var> must be used. 
+</p>
+</descr>
+<seealso>
+<link id="FutureValue"/>
+<link id="InterestRate"/>
+<link id="NumberOfPeriods"/>
+<link id="Payment"/>
+<link id="TPaymentTime"/>
+<link id="CashFlowFunctions"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="DegNormalize">
+<short>Normalize an angle measured in degrees</short>
+<descr>
+<var>DegNormalize</var> returns the angle <var>deg</var> as a positive angle between
+<var>0</var> and <var>360</var> degrees.
+</descr>
 </element>
 
 </module>
