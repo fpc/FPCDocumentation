@@ -371,6 +371,7 @@ On error a <link id="EProcess"/> exception is raised.
 <link id="TProcess.Suspend"/>
 <link id="TProcess.Resume"/>
 <link id="TProcess.ExitStatus"/>
+<link id="TProcess.ExitCode"/>
 </seealso>
 </element>
 
@@ -450,6 +451,7 @@ On error, a nonzero value is returned.
 <link id="TProcess.Suspend"/>
 <link id="TProcess.Execute"/>
 <link id="TProcess.WaitOnExit"/>
+<link id="TProcess.ExitCode"/>
 </seealso>
 </element>
 
@@ -486,6 +488,7 @@ available, as it is highly system dependent.
 <link id="TProcess.ExitStatus"/>
 <link id="TProcess.Terminate"/>
 <link id="TProcess.Running"/>
+<link id="TProcess.ExitCode"/>
 </seealso>
 </element>
 
@@ -710,6 +713,7 @@ is zero.
 <seealso>
 <link id="TProcess.Running"/>
 <link id="TProcess.Terminate"/>
+<link id="TProcess.ExitCode"/>
 </seealso>
 </element>
 
@@ -1048,6 +1052,7 @@ running.
 <link id="TProcess.Terminate"/>
 <link id="TProcess.Active"/>
 <link id="TProcess.ExitStatus"/>
+<link id="TProcess.ExitCode"/>
 </seealso>
 </element>
 
@@ -1307,6 +1312,7 @@ This event is not used on windows.
 <link id="TProcessForkEvent"/>
 </seealso>
 </element>
+
 <element name="TProcessForkEvent">
 <short>Prototype for <var>TProcess.OnForkEvent</var> event handler</short>
 <descr>
@@ -1637,6 +1643,29 @@ On error, <var>False</var> is returned.
 <!-- argument Visibility: default -->
 <element name="RunCommand.cmdline">
 <short>Filename of ninary to start and command-line arguments, separated by whitespace.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TProcessForkEvent.Sender">
+<short><var>TProcess</var> instance that caused the fork.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProcess.ExitCode">
+<short>Exit code of the process</short>
+<descr>
+<var>ExitCode</var> is the actual exit code of the process. On unixes, this may differ
+from the <link id="ExitStatus"/> value if the process was terminated by a
+signal: in that case <var>ExitStatus</var> is the raw exit status as
+reported by one of the unix <var>Wait</var>, and <var>ExitCode</var> is the
+exit code reported by the program.
+</descr>
+<seealso>
+<link id="TProcess.ExitStatus"/>
+<link id="TProcess.Running"/>
+<link id="TProcess.WaitOnExit"/>
+<link id="TProcess.Terminate"/>
+</seealso>
 </element>
 
 </module> <!-- process -->
