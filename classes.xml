@@ -15730,6 +15730,352 @@ exposed so it can be used in <var>DefineProperties</var>.
 </descr>
 </element>
 
+<!--
+  ********************************************************************
+    #rtl.Classes.EThreadExternalException
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="EThreadExternalException">
+<short>Exception raised when an invalid operation is attempted on an
+external thread</short>
+<descr>
+<var>EThreadExternalException</var> is raised by for example <link id="TThread.CheckTerminated"/>
+and <link id="TThread.SetReturnValue"/> when the thread was not created by
+the Free Pascal program, but by an external code base (for example a DLL, or
+the calling application in a DLL).
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TThread.CheckTerminated"/>
+<link id="TThread.SetReturnValue"/>
+</seealso>
+</element>
+
+
+<!-- record type Visibility: public -->
+<element name="TThread.TSystemTimes">
+<short>Record for returning processor usage</short>
+<descr>
+<var>TThread.TSystemTimes</var> is used in <link id="TThread.GetSystemTimes"/>
+to report processor usage. The fields are in microseconds.
+</descr>
+<seealso>
+<link id="TThread.GetSystemTimes"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TThread.TSystemTimes.IdleTime">
+<short>Processor idle time</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TThread.TSystemTimes.UserTime">
+<short>User code execution time</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TThread.TSystemTimes.KernelTime">
+<short>Kernel (OS) code execution time</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TThread.TSystemTimes.NiceTime">
+<short>Nice (reduced priority) code execution time</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TThread.CreateAnonymousThread">
+<short>Execute code in an anonymous thread</short>
+<descr>
+<p>
+<var>CreateAnonymousThread</var> will create an instance of a <var>TThread</var> descendent
+and calls <var>aProc</var> in this procedure. This can be used to quickly
+execute a method in another thread without having to expliticly declare a thread for
+such purposes. It returns the created <var>TThread</var> instance, which can
+be checked for termination etc.
+</p>
+<p>
+Note that this method differs slightly from Delphi in that FPC does not yet support anonymous
+methods, so the signature of <var>aProc</var> differs slightly.
+</p>
+</descr>
+<seealso>
+<link id="TThread.CheckTerminated"/>
+</seealso>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TThread.NameThreadForDebugging">
+<short>Set a thread name</short>
+<descr>
+<p>
+<var>NameThreadForDebugging</var> sets the name of thread
+<var>aThreadID</var> to <var>aThreadName</var>. The thread name can be
+unicode or ansistring. This is mainly useful for debugging purposes, as
+thread names are more easily recognizable than IDs.
+</p>
+<p>
+Note that this requires OS support. 
+Currently this is not implemented for any FPC platform and is supported for
+Delphi compatibility only.
+</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TThread.SetReturnValue">
+<short>Set return value of a thread</short>
+<descr>
+<var>TThread.SetReturnValue</var> sets the return value of an internally
+created thread.
+</descr>
+<errors>
+If the thread was not created by the FPC program, an <link
+id="EThreadExternalException"/> exception is raised.
+</errors>
+<seealso>
+<link id="EThreadExternalException"/> 
+<link id="TThread.CheckTerminated"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TThread.CheckTerminated">
+<short>Check if the current thread has finished executing.</short>
+<descr>
+<var>TThread.CheckTerminated</var> can be used to check if the current
+thread has finished executing (i.e. <var>Execute</var> has finished. 
+This can be called from methods in other classes where the current thread instance is not available.
+</descr>
+<errors>
+If the thread was not created by the FPC program, an <link
+id="EThreadExternalException"/> exception is raised.
+</errors>
+<seealso>
+<link id="EThreadExternalException"/> 
+<link id="TThread.SetReturnValue"/>
+</seealso>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TThread.Queue" alwaysvisible="1">
+<short>Queue a method for execution in the main thread</short>
+<descr>
+<p>
+<var>Queue</var> schedules a method <var>aMethod</var> for execution in the
+main thread. In difference with <link id="TThread.Synchronize"/>,
+<var>Queue</var> just posts the method for execution in a queue, and 
+does not wait for it to be executed, so this call returns at once.
+</p>
+<p>
+In the class procedure overloaded version of this call, the thread for which the method must be
+posted is the first argument. In the protected version of this call (used in
+the tthread instance), this argument is not there, and the thread instance
+is used.
+</p>
+<p>
+When a thread finishes it's execution, all its queued calls are removed from
+the queue list.
+</p>
+</descr>
+<seealso>
+<link id="TThread.Synchronize"/>
+<link id="TThread.RemoveQueuedEvents"/> 
+</seealso>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TThread.RemoveQueuedEvents">
+<short>Remove methods scheduled for execution from queue</short>
+<descr>
+<var>RemoveQueuedEvents</var> removes methods from the list of methods
+waiting for execution in the main thread. If only <var>aThread</var> is
+specified, all methods scheduled for execution by that thread are removed.
+If only <var>aMethod</var> is specified, then all calls to that method are
+removed, regardless of the thread. If both arguments are specified, then
+all calls to the given method by the given thread are removed.
+</descr>
+<seealso>
+<link id="TThread.Synchronize"/>
+<link id="TThread.Queue"/>
+</seealso>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TThread.SpinWait">
+<short>Prevent thread execution in a spin-wait loop</short>
+<descr>
+<p>
+<var>SpinWait</var> blocks the execution of the thread in a spin-wait loop:
+it simply executes some simple instructions.
+</p>
+<p>
+This can be used to create short time delays without an immediate thread
+switch (e.g. <link id="SysUtils.Sleep"/> can cause a thread switch).
+The input parameter (aIterations) specifies the number of spin loops. 
+</p>
+</descr>
+<seealso>
+<link id="SysUtils.Sleep"/>
+<link id="TThread.Sleep"/>
+</seealso>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TThread.Sleep">
+<short>Prevent thread execution</short>
+<descr>
+<p>
+<var>Sleep</var> blocks the execution of the thread for
+<var>aMilliseconds</var>.
+This function simply calls <link id="sysutils.sleep"/>
+</p>
+<p>
+In difference with <link id="TThread.SpinWait"/>, a thread switch may occur
+during the sleep.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="SysUtils.Sleep"/>
+<link id="TThread.SpinWait"/> 
+</seealso>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TThread.Yield">
+<short>Yield execution to other threads</short>
+<descr>
+<var>TThread.Yield</var> yields the processor to other threads. It can be
+called from methods outside the thread class itself.
+</descr>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TThread.GetSystemTimes">
+<short>Return CPU stats</short>
+<descr>
+<var>GetSystemTimes</var> is provided for Delphi compatibility only, it
+currently returns empty values only.
+</descr>
+<seealso>
+<link id="TSystemTimes"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TThread.GetTickCount">
+<short>Return tick count (32-bit)</short>
+<descr>
+<var>GetTickCount</var> is deprecated and should not be used. Use <link
+id="TThread.GetTickCount64"/> instead.
+</descr>
+<seealso>
+<link id="TThread.GetTickCount64"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TThread.GetTickCount64">
+<short>Return tick count (64-bit)</short>
+<descr>
+<var>GetTickCount64</var> simply calls <link id="SysUtils.GetTickCount64"/>
+and is implemented for Delphi compatibility only.
+</descr>
+<seealso>
+<link id="SysUtils.GetTickCount64"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TThread.CurrentThread">
+<short>Return current thread instance</short>
+<descr>
+<p>
+<var>TThread.CurrentThread</var> can be used to get the current thread instance. 
+This is useful in code that is not inside a TThread implementation, but
+which needs access to the current thread.
+</p>
+<p>
+For threads that were created outside of FPC code (DLLs or a calling
+program) this will return a dummy TThread instance.
+</p>
+</descr>
+<seealso>
+<link id="TThread.ExternalThread"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TThread.ProcessorCount">
+<short>Return the processor count for this system</short>
+<descr>
+<p>
+<var>ProcessorCount</var> returns the processor count for this system.
+</p>
+<p>
+Whether this is the number of cores or the number of CPUs present in the
+hardware, is deliberately unspecified. The number of cores can also vary
+during the lifetime of the program, and the FPC implementation does not
+guarantee that this will always match, the value is set at program start.
+</p>
+<p>
+As such, the number specified should only be used as an indication of how
+many threads can be executed at once by the system.
+</p>
+</descr>
+<seealso>
+<link id="TThread.IsSingleProcessor"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TThread.IsSingleProcessor">
+<short>Is the current system single processor or not</short>
+<descr>
+<var>Thread.IsSingleProcessor</var> returns <var>True</var> if <link
+id="TThread.ProcessorCount"/> is less than or equal to 1, <var>False</var> otherwise.
+</descr>
+<seealso>
+<link id="TThread.ProcessorCount"/> 
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TThread.ExternalThread">
+<short>Is the thread instance an external thread ?</short>
+<descr>
+<var>ExternalThread</var> returns <var>True</var> if the thread is an
+externally created thread. If the thread was created by the FPC program,
+this returns <var>False</var>. This is useful for examining instances returned
+by <link id="TThread.CurrentThread"/>.
+</descr>
+<seealso>
+<link id="TThread.CurrentThread"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TThread.Finished">
+<short>Has the thread finished executing</short>
+<descr>
+<var>Finished</var> is <var>True</var> when <link id="TThread.Execue"/> has
+finished executing, but the thread is still cleaning up (calling
+OnTerminate, etc).
+</descr>
+<seealso>
+<link id="TThread.Execue"/>
+<link id="TThread.OnTerminate"/>
+</seealso>
+</element>
+
 <!-- Template for copy&paste:
 <element name="">
 <short>
