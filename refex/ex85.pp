@@ -5,7 +5,7 @@ Program Example85;
 Var S : String;
 
 begin
-  FillChar(S[1],100,#32);
   Setlength(S,100);
+  FillChar(S[1],100,#32);
   Writeln ('"',S,'"');
 end.
