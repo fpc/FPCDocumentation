@@ -1942,6 +1942,205 @@ to section <var>Section</var>, key <var>Ident</var>.
 <short>Value to write</short>
 </element>
 
+<!--
+  ********************************************************************
+    #fcl.IniFiles.TStringHash
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TStringHash">
+<short>String hash list</short>
+<descr>
+<var>TStringHash</var> is a Delphi compatibility object. It is not used in
+the TIniFile implementation. It implements a bucket list for
+<var>Name=Value</var> pairs, where <var>Value</var> is an integer. 
+This enables quick lookup of values based on a name.
+</descr>
+<seealso>
+<link id="TIniFIle"/>
+<link id="TStringHash.Create"/>
+<link id="TStringHash.ValueOf"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TStringHash.Create">
+<short>Create a new instance of <var>TStringHash</var></short>
+<descr>
+<var>Create</var> instantiates  a new instance of  <var>TStringHash</var>.
+The <var>ACapacity</var> argument is present for Delphi compatibility, but
+is otherwise unused.
+</descr>
+<seealso>
+<link id="TStringHash.ValueOf"/>
+<link id="TStringHash.Destroy"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TStringHash.Create.ACapacity">
+<short>Unused</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TStringHash.Destroy">
+<short>Free <var>TStringHash</var> instance</short>
+<descr>
+<var>Destroy</var> clears the internal datastructures and removes the
+<var>TStringHash</var> instance from memory.
+</descr>
+<seealso>
+<link id="TStringHash.Create"/>
+<link id="TStringHash.Clear"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStringHash.Add">
+<short>Add a new value to the hash</short>
+<descr>
+<var>Add</var> adds the value <var>Value</var> with name <var>AKey</var> to
+the list. The behaviour of <var>Add</var> depends on <link
+id="TStringHash.AddReplacesExisting">AddReplacesExisting</link>. If if it is
+<var>False</var>, then the existing value is left unchanged, and an
+exception is raised. If <var>AddReplacesExisting</var> is <var>True</var>
+then an existing value is replaced.
+</descr>
+<errors>
+An exception will be raised if the value already exists and
+<var>AddReplacesExisting</var> is <var>False</var>
+</errors>
+<seealso>
+<link id="TStringHash.AddReplacesExisting"/>
+<link id="TStringHash.Modify"/>
+<link id="TStringHash.Remove"/>
+<link id="TStringHash.ValueOf"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TStringHash.Add.Key">
+<short>Key for this value</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TStringHash.Add.Value">
+<short>Value to add to hash</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStringHash.Clear">
+<short>Remove all values</short>
+<descr>
+<var>Clear</var> removes all values from the hash.
+</descr>
+<seealso>
+<link id="TStringHash.Destroy"/>
+<link id="TStringHash.Add"/>
+<link id="TStringHash.Remove"/>
+<link id="TStringHash.ValueOf"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHash.Modify">
+<short>Try to modify an existing value</short>
+<descr>
+<var>Modify</var> will replace the value of <var>Key</var> with
+<var>Value</var>. <var>Key</var> must exist.
+It returns <var>True</var> if the operation was succesful.
+If the value didn't exist, <var>False</var> is returned.
+</descr>
+<seealso>
+<link id="TStringHash.Add"/>
+<link id="TStringHash.Clear"/>
+<link id="TStringHash.Remove"/>
+<link id="TStringHash.ValueOf"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TStringHash.Modify.Result">
+<short>True if the operation was succesful</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TStringHash.Modify.Key">
+<short>Key to replace</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TStringHash.Modify.Value">
+<short>New value for <var>key</var></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStringHash.Remove">
+<short>Remove a key from the hash</short>
+<descr>
+<var>Remove</var> removes the key <var>Key</var> from the hash, if it was
+present.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TStringHash.Add"/>
+<link id="TStringHash.Clear"/>
+<link id="TStringHash.Modify"/>
+<link id="TStringHash.ValueOf"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TStringHash.Remove.Key">
+<short>Key to remove from the hash</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHash.ValueOf">
+<short>Retrieve value of <var>Key</var></short>
+<descr>
+<p>
+<var>ValueOf</var> returns the value of <var>AKey</var>, if it is present. 
+if the key is not present, <var>-1</var> is returned.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TStringHash.Add"/>
+<link id="TStringHash.Clear"/>
+<link id="TStringHash.Modify"/>
+<link id="TStringHash.Remove"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TStringHash.ValueOf.Result">
+<short>Value associated with <var>Key</var></short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TStringHash.ValueOf.Key">
+<short>Key whose value must be returned.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStringHash.AddReplacesExisting">
+<short>Should <var>Add</var> replace existing values or not</short>
+<descr>
+<var>AddReplacesExisting</var> indicates whether <link id="TStringHash.Add"/>
+will replace an existing value (<var>True</var>) or will raise an exception
+when an existing value is added (<var>False</var>).
+</descr>
+<seealso>
+<link id="TStringHash.Add"/>
+</seealso>
+</element>
+
 </module> <!-- IniFiles -->
 
 </package>
