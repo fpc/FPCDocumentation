@@ -1051,7 +1051,7 @@ initializes the value with <var>AValue</var>.
 
 <!-- function result Visibility: public -->
 <element name="TJSONInt64Number.Clone.Result">
-<short>New instance of <var>TJSONIntegerNumber</var> with the same int64 value</short>
+<short>New instance of <var>TJSONInt64Number</var> with the same int64 value</short>
 </element>
 
 <!--
@@ -1857,6 +1857,7 @@ there, it is replaced with the written integer value.
 <link id="TJSONData.IsNull"/>
 <link id="TJSONArray.Types"/>
 <link id="TJSONArray.Int64s"/>
+<link id="TJSONArray.QWords"/>
 <link id="TJSONArray.Floats"/>
 <link id="TJSONArray.Strings"/>
 <link id="TJSONArray.Booleans"/>
@@ -1893,6 +1894,7 @@ there, it is replaced with the written int64 value.
 <link id="TJSONArray.Floats"/>
 <link id="TJSONArray.Strings"/>
 <link id="TJSONArray.Booleans"/>
+<link id="TJSONArray.QWords"/>
 </seealso>
 </element>
 
@@ -1923,6 +1925,7 @@ there, it is replaced with the written string value.
 <link id="TJSONData.IsNull"/>
 <link id="TJSONArray.Types"/>
 <link id="TJSONArray.Integers"/>
+<link id="TJSONArray.QWords"/>
 <link id="TJSONArray.Floats"/>  
 <link id="TJSONArray.Int64s"/> 
 <link id="TJSONArray.Booleans"/>
@@ -1958,6 +1961,7 @@ numerical value is there, it is replaced with the written floating point value.
 <link id="TJSONArray.Integers"/>
 <link id="TJSONArray.Strings"/>  
 <link id="TJSONArray.Int64s"/>  
+<link id="TJSONArray.QWords"/>
 <link id="TJSONArray.Booleans"/>
 </seealso>
 </element>
@@ -1991,6 +1995,7 @@ it is replaced with the written boolean value.
 <link id="TJSONArray.Integers"/>
 <link id="TJSONArray.Strings"/> 
 <link id="TJSONArray.Int64s"/>  
+<link id="TJSONArray.QWords"/>
 <link id="TJSONArray.Floats"/>
 </seealso>
 </element>
@@ -2024,6 +2029,7 @@ by the array.
 <link id="TJSONArray.Integers"/>
 <link id="TJSONArray.Strings"/> 
 <link id="TJSONArray.Int64s"/>  
+<link id="TJSONArray.QWords"/>
 <link id="TJSONArray.Floats"/>
 <link id="TJSONArray.Objects"/>
 </seealso>
@@ -2058,6 +2064,7 @@ by the array.
 <link id="TJSONArray.Integers"/>
 <link id="TJSONArray.Strings"/> 
 <link id="TJSONArray.Int64s"/>  
+<link id="TJSONArray.QWords"/>
 <link id="TJSONArray.Floats"/>  
 <link id="TJSONArray.Arrays"/> 
 </seealso>
@@ -3516,6 +3523,10 @@ By default, the classes in the <var>fpJSON</var> unit are used.
 The <link id="CreateJSON"/> functions also use the types registered here to
 instantiate their data.
 </p>
+<p>
+The return value is the previously registered instance type for the
+<var>AType</var>.
+</p>
 </descr>
 <errors>
 If <var>AClass</var> is not suitable to contain data of type
@@ -3736,6 +3747,9 @@ by <var>GetJSON</var> to parse the data. This is done once at the
 initialization of that unit, so it is sufficient to include the unit in the
 uses clause of the program.
 </p>
+<p>
+The function returns the previously registered callback.
+</p>
 </descr>
 <seealso>
 <link id="GetJSONParserHandler"/>
@@ -3773,6 +3787,361 @@ using a separate unit.
 <!-- function result Visibility: default -->
 <element name="GetJSONParserHandler.Result">
 <short>The current parser callback value</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONInstanceType.jitNumberQWord">
+<short>Qword integer number type</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TFormatOption.foSkipWhiteSpace">
+<short>Skip whitespace</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="AsCompressedJSON">
+<short>Constant to format JSON with minimal whitespace</short>
+<descr>
+<var>AsCompressedJSON</var> can be used to let <link
+id="TJSONData.FormatJSON">FormatJSON</link> behave as <link
+id="TJSONData.AsJSON"/> with <link id="TJSONData.CompressedJSON"/> equal to
+<var>True</var>
+</descr>
+<seealso>
+<link id="TJSONData.FormatJSON"/>
+<link id="TJSONData.AsJSON"/>
+<link id="TJSONData.CompressedJSON"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="AsCompactJSON">
+<short>Constant to format JSON with minimal whitespace and unquoted property names</short>
+<descr>
+<var>AsCompressedJSON</var> can be used to let <link
+id="TJSONData.FormatJSON">FormatJSON</link> behave as <link id="TJSONData.AsJSON"/> 
+with <link id="TJSONData.CompressedJSON"/> equal to <var>True</var> and 
+<link id="TJSONData.UnquotedMemberNames"/> equal to <var>True</var>.
+</descr>
+<seealso>
+<link id="TJSONData.FormatJSON"/>
+<link id="TJSONData.AsJSON"/>
+<link id="TJSONData.CompressedJSON"/>
+<link id="TJSONObject.UnquotedMemberNames"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONData.CompressedJSON">
+<short>Compress JSON - skip whitespace</short>
+<descr>
+<var>CompressedJSON</var> can be used to let <link id="TJSONData.AsJSON"/>
+return JSON which does not contain any whitespace. By default it is
+<var>False</var> and whitespace is inserted. If set to <var>True</var>,
+output will contain no whitespace.
+</descr>
+<seealso>
+<link id="TJSONData.FormatJSON"/>
+<link id="TJSONData.AsJSON"/>
+<link id="TJSONData.UnquotedMemberNames"/>
+<link id="TJSONData.AsCompressedJSON"/>
+<link id="TJSONObject.UnquotedMemberNames"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONData.DumpJSON">
+<short>Fast, memory efficient dump of JSON in stream</short>
+<descr>
+<var>DumpJSON</var> writes the data as a JSON string to the stream <var>S</var>.
+No intermediate strings are created, making this a more fast and memory efficient 
+operation than creating a string with <link id="TJSONData.AsJSON"/> and writing it to
+stream.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TJSONData.FormatJSON"/>
+<link id="TJSONData.AsJSON"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONData.DumpJSON.S">
+<short>Stream to write JSON to</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONData.AsQWord">
+<short>Access the raw JSON value as an 64-bit unsigned integer</short>
+<descr>
+<p>
+<var>AsQWord</var> allows access to the raw value as a 64-bit unsigned integer value.
+When reading, it attempts to convert the native value of the data to a
+64-bit unsigned integer value.  When writing, it attempts to transform the 64-bit 
+unsigned integer value to a native value. 
+If either conversion fails, an <var>EConvertError</var> exception is raised.           
+</p>
+<p>
+For <link id="TJSONQwordNumber"/> this will return the native value.
+</p>
+<p> 
+For complex values, reading or writing this property will always result in an
+<var>EConvertError</var> exception.
+</p>
+</descr>
+<seealso>
+<link id="AsFloat"/>
+<link id="Value"/>
+<link id="AsInteger"/>
+<link id="AsInt64"/>
+<link id="AsString"/>
+<link id="AsBoolean"/>
+<link id="IsNull"/>   
+<link id="AsJSON"/>   
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONNumberType.ntQWord">
+<short>64-bit unsigned integer value</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.fpjson.TJSONQWordNumber
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TJSONQWordNumber">
+<short>Class to represent 64-bit unsigned integer JSON data.</short>
+<descr> 
+<var>TJSONQWordNumber</var> must be used whenever 64-bit unsigned integer data must
+be represented. For 32-bit integer data, <link id="TJSONIntegerNumber"/> must
+be used.For 64-bit signed integer data, <link id="TJSONInt64Number"/> must
+be used.
+</descr>  
+<seealso>
+<link id="TJSONFloatNumber"/>
+<link id="TJSONIntegerNumber"/>
+<link id="TJSONInt64Number"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TJSONQWordNumber.Create">
+<short>Create a new instance of 64-bit unsigned integer JSON data</short>
+<descr>   
+<var>Create</var> instantiates a new 64-bit unsigned integer JSON data and
+initializes the value with <var>AValue</var>.
+</descr>
+<seealso>
+<link id="TJSONIntegerNumber.Create"/>
+<link id="TJSONInt64Number.Create"/>
+<link id="TJSONFloatNumber.Create"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONQWordNumber.Create.AValue">
+<short>Initial 64-bit unsigned integer value</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TJSONQWordNumber.NumberType">
+<short>Kind of numerical data managed by this class.</short>
+<descr>
+<var>NumberType</var> is overridden by <var>TJSONQwordNumber</var> to return
+<var>ntQWord</var>.
+</descr>
+<seealso>
+<link id="TJSONNumberType"/>
+<link id="TJSONData.JSONtype"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONQWordNumber.NumberType.Result">
+<short>Always <var>ntInt64</var></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONQWordNumber.Clear">
+<short>Clear value</short>
+<descr>
+<var>Clear</var> is overridden by <var>TJSONQwordNumber</var> to set the value to 0.
+</descr>
+<seealso>
+<link id="TJSONData.Clear"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONQWordNumber.Clone">
+<short>Clone 64-bit unsigned integer value</short>
+<descr>
+<var>Clone</var> overrides <link id="TJSONData.Clone"/> and creates an
+instance of the same class with the 64-bit unsigned integer value.
+</descr>
+<seealso>
+<link id="TJSONData.Clone"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TJSONQWordNumber.Clone.Result">
+<short>New instance of <var>TJSONQwordNumber</var> with the same QWord value</short>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TJSONQWordNumberClass">
+<short>Class of <var>TJSONQWordNumber</var></short>
+<descr>
+<var>TJSONQwordNumberClass</var> is the class type of <link
+id="TJSONQWordNumber"/>. It is used in the factory methods.
+</descr>
+<seealso>
+<link id="TJSONQwordNumber"/>
+<link id="SetJSONInstanceType"/>
+<link id="GetJSONInstanceType"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONArray.QWords">
+<short>Get or set elements as QWord values</short>
+<descr>
+<p>
+<var>QWords</var> gives direct access to the <link id="TJSONData.AsQWord"/>
+property when reading. Reading it is the equivalent to accessing
+</p>
+<code>
+Items[Index].AsQWord
+</code>
+<p>
+When writing, it will check if an 64-bit unsigned integer JSON value is located at the given
+location, and replace it with the new value. If a non-64-bit unsigned integer JSON value is 
+there, it is replaced with the written QWord value.
+</p>
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="TJSONData.IsNull"/>
+<link id="TJSONArray.Types"/>
+<link id="TJSONArray.Integers"/>
+<link id="TJSONArray.QWords"/>
+<link id="TJSONArray.Floats"/>
+<link id="TJSONArray.Strings"/>
+<link id="TJSONArray.Booleans"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONArray.QWords.Index">
+<short>Index of element to read/write</short>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TJSONArrayClass">
+<short>Class of TJSONArray</short>
+<descr>
+<var>TJSONArray</var> is the class type for the <link id="TJSONArray"/> class.
+It is used in <link id="CreateJSONArray"/>.
+</descr>
+<seealso>
+<link id="SetJSONInstanceType"/>
+<link id="TJSONObjectClass"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONObject.UnquotedMemberNames">
+<short>Should member names be written unquoted or quoted in JSON</short>
+<descr>
+<p>
+<var>UnquotedMemberNames</var> can be set to let <var>AsJSON</var> write the
+member names of a JSON object without quotes (<var>True</var>) or with quotes
+(<var>False</var>) around the member names. 
+</p>
+<p>When the value is <var>False</var>, JSON is written as:</p>
+<pre>
+{
+  "name" : "Free Pascal",
+  "type" : "Compiler"
+}
+</pre>
+<p>When the value is  <var>True</var>, JSON is written as:</p>
+<pre>
+{
+  name : "Free Pascal",
+  type : "Compiler"
+}
+</pre>
+<p>
+Care must be taken when setting this property: The JSON standard requires
+the quotes to be written, but since JSON is mostly consumed in a Javascipt
+engine, the unquoted values are usually also accepted.
+</p>
+</descr>
+<seealso>
+<link id="TJSONData.CompressedJSON"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONObject.QWords">
+<short>Named access to QWord values</short>
+<descr>
+<var>QWords</var> allows to retrieve or set the QWord values in
+the object by name. If a non-existent name is specified, an <link  
+id="EJSON"/> exception is raised when reading. When writing, any existing
+value is replaced by the specified QWord value.
+</descr>
+<seealso>
+<link id="TJSONData.Items"/>
+<link id="Names"/>
+<link id="Elements"/>
+<link id="Floats"/>  
+<link id="Integers"/>  
+<link id="QWords"/>  
+<link id="Booleans"/>
+<link id="Strings"/> 
+<link id="Nulls"/>   
+<link id="Arrays"/>  
+<link id="Types"/>   
+<link id="Objects"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TJSONObject.QWords.AName">
+<short>Name of QWord value</short>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TJSONObjectClass">
+<short>Class of TJSONObject</short>
+<descr>
+<var>TJSONObject</var> is the class type for the <link id="TJSONObject"/> class.
+It is used in <link id="CreateJSONObject"/>.
+</descr>
+<seealso>
+<link id="SetJSONInstanceType"/>
+<link id="TJSONArrayClass"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="SetJSONInstanceType.Result">
+<short>Previous JSON instance type</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="SetJSONParserHandler.Result">
+<short>Previous JSON Parser handler</short>
 </element>
 
 </module> <!-- fpjson -->
