@@ -3884,6 +3884,565 @@ to <var>TParam</var> instances.
 </seealso>
 </element>
 
+<!--
+  ********************************************************************
+    #fcl.sqldb.ESQLDatabaseError
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="ESQLDatabaseError">
+<short>SQL database error class.</short>
+<descr>
+<var>ESQLDatabaseError</var> is raised by SQLDB routines if the underlying
+engine raises an error. The error code returned by the engine is contained
+in <link id="ESQLDatabaseError.ErrorCode"/>, and an Ansi SQL compliant SQL
+state can be passed in <link id="ESQLDatabaseError.SQLState"/>
+</descr>
+<seealso>
+<link id="db.EDatabaseError"/>
+<link id="ESQLDatabaseError.SQLState"/>
+<link id="ESQLDatabaseError.ErrorCode"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="ESQLDatabaseError.ErrorCode">
+<short>SQL engine error code</short>
+<descr>
+<var>ErrorCode</var> contains the engine-specific error code (if any).
+</descr>
+<seealso>
+<link id="ESQLDatabaseError.SQLState"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="ESQLDatabaseError.SQLState">
+<short>ANSI SQL error state</short>
+<descr>
+<var>ErrorState</var> contains an ansi-SQL compliant error state, if such a
+state is provided by the engine.
+</descr>
+<seealso>
+<link id="ESQLDatabaseError.ErrorCode"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="ESQLDatabaseError.CreateFmt">
+<short>Create a new instance of <var>ESQLDatabaseError</var></short>
+<descr>
+<var>CreateFmt</var> is overloaded in <var>ESQLDatabaseError</var> to be
+able to specify the <link id="ESQLDatabaseError.ErrorCode">ErrorCode</link> and
+<link id="ESQLDatabaseError.SQLState">SQLState</link>.
+</descr>
+<seealso>
+<link id="ESQLDatabaseError.ErrorCode"/>
+<link id="ESQLDatabaseError.SQLState"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="ESQLDatabaseError.CreateFmt.Fmt">
+<short>Format string</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="ESQLDatabaseError.CreateFmt.Args">
+<short>Arguments for format string</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="ESQLDatabaseError.CreateFmt.Comp">
+<short>Component raising the error</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="ESQLDatabaseError.CreateFmt.AErrorCode">
+<short>Native client error code</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="ESQLDatabaseError.CreateFmt.ASQLState">
+<short>Native client SQL reported state</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.sqldb.TSQLDBFieldDef
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TSQLDBFieldDef">
+<short><var>TFieldDef</var> descendant with room to store engine-specific data</short>
+<descr>
+<var>TSQLDBFieldDef</var> is a SQLDB specific <link id="db.TFieldDef"/>
+descendent which has room for storing engine-specific data for the result
+set fields.
+</descr>
+<seealso>
+<link id="TSQLDBFieldDef.SQLDBData"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSQLDBFieldDef.SQLDBData">
+<short>Pointer to store engine-specific data for the result field</short>
+<descr>
+<var>SQLDBData</var> can be used by the <link id="TSQLConnection"/>
+descendents to store additional data about fields in a result set. It is not
+used by <var>TSQLQuery</var> itself.
+</descr>
+<seealso>
+<link id="TSQLQuery"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.sqldb.TSQLDBFieldDefs
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TSQLDBFieldDefs">
+<short><var>TFieldDefs</var> descendant with room to store engine-specific data</short>
+<descr>
+<var>TSQLDBFieldDefs</var> is a <var>TFieldDefs</var> descendent which
+creates <link id="TSQLDBFieldDef"/> descendents when a new field is added to
+the field set, to provide storage for engine-specific field data.
+</descr>
+<seealso>
+<link id="TSQLDBFieldDef"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.sqldb.TSQLDBParam
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TSQLDBParam">
+<short><var>TParam</var> descendent used in SQLDB</short>
+<descr>
+<var>TSQLDBParam</var> is used to be able to create parameters which can store info
+about a field on which the parameter is based in the <link id="TSQLDBParam.FieldDef"/>
+field. This is useful when constructing update or insert queries. It can
+also store private data needed for the various <link id="TSQLConnection"/>
+descendents in the <link id="TSQLDBParam.SQLDBData"/> property.
+</descr>
+<seealso>
+<link id="TSQLDBFieldDef"/>
+<link id="TSQLDBParam.FieldDef"/>
+<link id="TSQLDBParam.SQLDBData"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSQLDBParam.FieldDef">
+<short>Field definition for update sql</short>
+<descr>
+<var>FieldDef</var> is used during generation of update SQL statements to
+store information about the field to be updated.
+</descr>
+<seealso>
+<link id="TSQLDBFieldDef"/>
+<link id="TSQLDBParam.SQLDBData"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSQLDBParam.SQLDBData">
+<short>Private data for TSQLDB descendents.</short>
+<descr>
+<var>SQLDBData</var> should not be used by the end-user, it is for internal
+use by the <link id="TSQLConnection"/> descendents.
+</descr>
+<seealso>
+<link id="TSQLConnection"/> 
+<link id="TSQLDBParam.FieldDef"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.sqldb.TSQLDBParams
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TSQLDBParams">
+<short><var>TParams</var> descendant with room to store engine-specific data</short>
+<descr>
+<var>TSQLDBParams</var> is a <var>TParams</var> descendent which
+creates <link id="TSQLDBParams"/> descendents when a new field is added to
+the field set, to provide storage for engine-specific field data.
+</descr>
+<seealso>
+<link id="TSQLDBParam"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TConnOption.sqSupportEmptyDatabaseName">
+<short>Does the connection allow empty database names ?</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TConnOption.sqImplicitTransaction">
+<short>Does the connection support implicit transaction management</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TConnOption.sqLastInsertID">
+<short>Does the connection support getting the ID for the last insert operation.</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TSQLConnectionOption">
+<short>Connection handling options</short>
+<descr>
+<var>TSQLConnectionOption</var> enumerates several options that can be set
+for  <link id="TSQLConnection"/> instances using <link id="TSQLConnection.Options"/>
+</descr>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSQLConnectionOption.scoExplicitConnect">
+<short>Require explicit connection to the database (default is implicit)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSQLConnectionOption.scoApplyUpdatesChecksRowsAffected">
+<short>ApplyUpdates will check that the RowsAffected is 1 after an update.</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TSQLConnectionOptions">
+<short>Set of <var>TSQLConnectionOption</var></short>
+<var>TSQLConnectionOptions</var> is the type of the <link
+id="TSQLConnection.Options"/> property.
+<seealso>
+<link id="TSQLConnectionOption"/>
+<link id="TSQLConnection.Options"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSQLConnection.GetStatementInfo">
+<short>Get statement information</short>
+<descr>
+<var>GetStatementInfo</var> returns information about the <var>ASQL</var>
+sql command. To this end, it will partially parse the statement.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TStatementInfo"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TSQLConnection.GetStatementInfo.Result">
+<short>SQL Statement information</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TSQLConnection.GetStatementInfo.ASQL">
+<short>SQL statement to analyse</short>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSQLConnection.Options">
+<short>Options to observe for this connection.</short>
+<descr>
+<p><var>Options</var> can be used to control the behaviour of SQLDB for this
+connection. The following options can be set:
+</p>
+<dl>
+<dt>scoExplicitConnect</dt><dd>When set, the connection must be explicitly
+made. Default behaviour is for <var>TSQLQuery</var> to implicitly open the
+connection as needed.</dd>
+<dt>scoApplyUpdatesChecksRowsAffected</dt><dd>When set, whenever an update
+SQL Statement is executed during ApplyOptions of a dataset, the
+<link id="TSQLStatement.RowsAffected"/>  is checked and must be equal to 1.
+</dd>
+</dl>
+</descr>
+<seealso>
+<link id="TSQLQuery.ApplyUpdates"/>
+<link id="TSQLStatement.RowsAffected"/>
+<link id="TSQLQuery.RowsAffected"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TSQLTransactionOption">
+<short>Transaction control options</short>
+<descr>
+<var>TSQLTransactionOption</var> enumerates several options that can be used
+to control the transaction behaviour of <link id="TSQLTransaction"/>.
+</descr>
+<seealso>
+<link id="TSQLTransaction"/>
+<link id="TSQLTransaction.Options"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSQLTransactionOption.stoUseImplicit">
+<short>Use implicit transaction control if the engine allows it.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSQLTransactionOption.stoExplicitStart">
+<short>Require explicit start of transactions by <var>TSQLQuery</var></short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TSQLTransactionOptions">
+<short>Set of <var>TSQLTransactionOption</var></short>
+<descr>
+<var>TSQLTransactionOptions</var> is the property type of <link
+id="TSQLTransaction.Options"/>.
+</descr>
+<seealso>
+<link id="TSQLTransaction.Options"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSQLTransaction.SQLConnection">
+<short>Database as TSQLConnection</short>
+<descr>
+<var>SQLConnection</var> returns or sets the <var>Database</var> property, typecasted to <var>TSQLConnection</var>.
+</descr>
+<seealso>
+<link id="TSQLConnection"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSQLTransaction.Options">
+<short>Transaction options</short>
+<descr>
+<p>
+<var>Options</var> can be used to control the behaviour of SQLDB for this
+transaction.
+</p>
+<dl>
+<dt>stoUseImplicit</dt><dd>Use the implicit transaction support of the DB
+engine. This means that no explicit transaction start and stop commands will
+be sent to the server when the Commit or Rollback methods are called
+(effectively making them a no-op at the DB level).
+</dd>
+<dt>stoExplicitStart</dt><dd>When set, whenever an SQL statement is
+executed, the transaction must have been started explicitly. Default
+behaviour is that the <link id="TSQLStatement"/> or <link id="TSQLQuery"/>
+start the transaction as needed.
+</dd>
+</dl>
+</descr>
+<seealso>
+<link id="TSQLStatement"/>
+<link id="TSQLQuery"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TSQLQueryOption">
+<short>SQL Query options</short>
+<descr>
+<var>TSQLQueryOption</var> enumerates several options available to control
+the behaviour of an <link id="TSQLQuery"/> instance.
+</descr>
+<seealso>
+<link id="TSQLQueryOptions"/>
+<link id="TCustomSQLQuery.Options"/> 
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSQLQueryOption.sqoKeepOpenOnCommit">
+<short>Keep the dataset open after the query was committed (will fetch all records).</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSQLQueryOption.sqoAutoApplyUpdates">
+<short>Call <var>ApplyUpdates</var> on <var>Post</var> or <var>Delete</var> </short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSQLQueryOption.sqoAutoCommit">
+<short>Call commit after every <var>ApplyUpdates</var> or <var>ExecSQL</var></short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TSQLQueryOptions">
+<short>Set of <var>TSQLQueryOption</var></short>
+<descr>
+<var>TSQLQueryOptions</var> is the type of the <link id="TSQLQuery.Options"/>
+property.
+</descr>
+<seealso>
+<link id="TSQLQueryOption"/>
+<link id="TSQLQuery.Options"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomSQLQuery.SQLConnection">
+<short>Database as TSQLConnection</short>
+<descr>
+<var>SQLConnection</var> equals the <var>Database</var> property, but
+typecasted as a <link id="TSQLConnection"/> descendent.
+</descr>
+<seealso>
+<link id="TSQLConnection"/>
+<link id="TCustomSQLQuery.SQLTransaction"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomSQLQuery.SQLTransaction">
+<short>Transaction as TSQLTransaction</short>
+<descr>
+<var>SQLTransaction</var> equals the <var>Transaction</var> property, but
+typecasted as a <link id="TSQLTransaction"/> descendent.
+</descr>
+<seealso>
+<link id="TSQLConnection"/>
+<link id="TCustomSQLQuery.SQLConnection"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomSQLQuery.ApplyUpdates">
+<short>Apply updates and check result</short>
+<descr>
+<var>ApplyUpdates</var> is overridden in <link id="TCustomSQLQuery"/> to
+check the result of the update (using <link id="TCustomSQLQuery.RowsAffected">RowsAffected</link>).
+</descr>
+<seealso>
+<link id="TSQLQueryOptions"/>
+<link id="TSQLQuery.Options"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomSQLQuery.ApplyUpdates.MaxErrors">
+<short>Maximum allowed number of errors before aborting the update operation</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomSQLQuery.Post">
+<short>Post pending changes and optionally apply updates</short>
+<descr>
+<var>Post</var> is overridden from <link id="DB.TDataset.Post"/> to
+implement the auto-applyupdates mechanism: if <link id="TSQLQuery.Options"/>
+contains <var>sqoAutoApplyUpdates</var>, then <var>ApplyUpdates</var> is
+called as the last step of the <var>Post</var> operation.
+</descr>
+<seealso>
+<link id="TSQLQuery.Options"/>
+<link id="TCustomSQLQuery.ApplyUpdates"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomSQLQuery.Delete">
+<short>Delete and optionally apply updates </short>
+<descr>
+<var>Delete</var> is overridden from <link id="DB.TDataset.Delete"/> to
+implement the auto-applyupdates mechanism: if <link id="TSQLQuery.Options"/>
+contains <var>sqoAutoApplyUpdates</var>, then <var>ApplyUpdates</var> is
+called as the last step of the <var>Post</var> operation. 
+</descr>  
+<seealso> 
+<link id="TSQLQuery.Options"/>
+<link id="TCustomSQLQuery.ApplyUpdates"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSQLQuery.RefreshSQL">
+<short>Refresh query to re-fetch field values after a DB update</short>
+<descr>
+<p>
+<var>RefreshSQL</var> can be used to specify a SQL statement that is
+executed after an <var>UPDATE</var> or <var>INSERT</var> operation. 
+The query will be executed, and the values of all fields in the result set
+will be copied to the dataset. This SQL statement is only executed during
+the <var>ApplyUpdates</var> operation, not during the <var>Post</var> call
+itself.
+</p>
+<p>
+A <var>RefreshSQL</var> can be constructed automatically by SQLDB by setting
+the <var>pfRefreshOnUpdate</var> or <var>pfRefreshOnInsert</var> flags in
+the <link id="TField.Providerflags">ProviderFlags</link> of the fields in the
+dataset, depending on whether the operation was an update or insert.
+</p>
+<p>
+For SQL engines that support RETURNING clauses, the <var>RETURNING</var>
+clause will be used to refresh field values, unless
+<var>sqoPreferRefresh</var> is specified in <link id="TSQLQuery.Options"/>
+</p>
+</descr>
+<seealso>
+<link id="TField.Providerflags"/>
+<link id="TSQLQuery.Options"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSQLQuery.Options">
+<short>Options controlling the behaviour of the dataset</short>
+<descr>
+<p>
+<var>Options</var> controls the behaviour of the dataset. The following
+options can be specified:
+</p>
+<dl>
+<dt>sqoKeepOpenOnCommit</dt>
+<dd>The default SQLDB behaviour is to close all
+datasets connected to a transaction when a transaction is committed or
+rolled back, which means that transactions must remain active as long as the
+dataset is open. This can create problems with locking of records etc.
+With this option set, the dataset will be kept open. Note that
+setting this option will cause SQLDB to fetch all records in the result set
+in memory.</dd>
+<dt>sqoAutoApplyUpdates</dt>
+<dd>Setting this option will make <var>TSQLQuery</var> call
+<var>ApplyUpdates</var> after every <var>Post</var> or <var>Delete</var>
+operation. </dd>
+<dt>sqoAutoCommit</dt><dd>Setting this option will make
+<var>TSQLQuery</var> call commit after every <var>ApplyUpdates</var></dd>
+<dt>sqoCancelUpdatesOnRefresh</dt>
+<dd>Setting this option will cause <var>TSQLQuery</var> to abandon all
+pending changes when <var>Refresh</var> is called. The default behaviour is
+to raise an exception when <var>Refresh</var> is called and there are
+pending changes</dd>
+<dt>sqoPreferRefresh</dt>
+<dd>
+If the database engine supports <var>RETURNING</var>, then the returning
+mechanism is used to fetch field values after an update of the database.
+Setting this option will disable the use of <var>RETURNING</var> and will
+fetch updated or new values instead with the <link
+id="TSQLQuery.RefreshSQL"/> property or a constructed refresh SQL statement.
+</dd>
+</dl>
+</descr>
+<seealso>
+<link id="TCustomSQLQuery.ApplyUpdates"/>
+<link id="TCustomSQLQuery.Post"/>
+<link id="TCustomSQLQuery.Delete"/>
+</seealso>
+</element>
+
 </module>
     <!-- sqldb -->
   </package>
