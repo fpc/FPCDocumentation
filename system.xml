@@ -285,7 +285,7 @@ The windows code page identifiers are used. There are 3 special codepage identif
 <table>
 <th><td>Name</td><td>Description</td></th>
 <tr><td><link id="CP_ACP"/></td><td>Currently set default syststem cpdepage</td></tr>
-<tr><td><link id="CP_OEM"/></td><td>OEM (console)  code page (only on windows)</td></tr>
+<tr><td><link id="CP_OEMCP"/></td><td>OEM (console)  code page (only on windows)</td></tr>
 <tr><td><link id="CP_NONE"/></td><td>Indicates absence of code page information for a string</td></tr>
 <tr><td><link id="DefaultRTLFileSystemCodePage"/></td><td></td></tr>
 </table>
@@ -295,13 +295,13 @@ The following routines may perform code page conversions:
 <table>
 <th><td>Name</td><td>Description</td></th>
 <tr><td><link id="LowerCase"/></td><td><printshort id="LowerCase"/></td></tr>
-<tr><td><link id="UpperCase"/></td><td><printshort id="UpperCase"/></td></tr>
+<tr><td><link id="UpCase"/></td><td><printshort id="UpCase"/></td></tr>
 <tr><td><link id="GetDir"/></td><td><printshort id="GetDir"/></td></tr>
 <tr><td><link id="MkDir"/></td><td><printshort id="MkDir"/></td></tr>
 <tr><td><link id="ChDir"/></td><td><printshort id="ChDir"/></td></tr>
 <tr><td><link id="RmDir"/></td><td><printshort id="RmDir"/></td></tr>
 <tr><td><link id="Assign"/></td><td><printshort id="Assign"/></td></tr>
-<tr><td><link id="Erase"/></td><td><printshort id="Eraser"/></td></tr>
+<tr><td><link id="Erase"/></td><td><printshort id="Erase"/></td></tr>
 <tr><td><link id="Rename"/></td><td><printshort id="Rename"/></td></tr>
 <tr><td><link id="Read"/></td><td><printshort id="Read"/></td></tr>
 <tr><td><link id="ReadLn"/></td><td><printshort id="ReadLn"/></td></tr>
@@ -1936,7 +1936,7 @@ None.
 </seealso>
 </element>
 
-<element name="Lowercase">
+<element name="LowerCase">
 <short>Return lowercase version of a string.</short>
 <descr>
 <var>Lowercase</var> returns the lowercase version of its argument <var>C</var>.
@@ -8283,9 +8283,6 @@ This pointer must be set by a routine that calls the OS COM handling
 routines.
 </p>
 </descr>
-<seealso>
-<link id="VarDispProc"/>
-</seealso>
 </element>
 
 <!-- variable Visibility: default -->
@@ -9496,15 +9493,15 @@ in <var>Dest</var>. At most <var>Len</var> characters will be copied.
 None.
 </errors>
 <seealso>
-<link id="DefaultWide2AnsiMove"/>
+<link id="DefaultUnicode2AnsiMove"/>
 </seealso>
 </element>
 
 
-<element name="DefaultWide2AnsiMove">
+<element name="DefaultUnicode2AnsiMove">
 <short>Standard implementation of Widestring to Ansi conversion routine</short>
 <descr>
-<var>DefaultWide2AnsiMove</var> simply copies each character from
+<var>DefaultUnicode2AnsiMove</var> simply copies each character from
 <var>Source</var> having an ordinal value of less than 255 to the
 corresponding character in <var>Dest</var>. Characters having an 
 ordinal valuelarger than 255 will be replaced by question marks.
@@ -9655,7 +9652,6 @@ None.
 </errors>
 <seealso>
 <link id="TThreadManager"/>
-<link id="TThreadManager.InitThreadVar"/>
 </seealso>
 </element>
 
@@ -15782,14 +15778,14 @@ array, and can therefor only be used in open array arguments to functions.
 <example file="refex/ex113"/>
 </element>
 
-<topic name="UnicodeString">
+<element name="UnicodeString">
 <short>A string consisting of widechars.</short>
 <descr>
 <var>UnicodeString</var> is a string of WideChars. The main difference with
 WideString is that unicodestring is reference counted, and WideString is not
 reference counted on Windows.
 </descr>
-</topic>
+</element>
 
 <!-- alias type Visibility: default -->
 <element name="Int8">
@@ -16522,12 +16518,12 @@ encoding is unknown.
 <li>Other platforms: same as <var>DefaultSystemCodePage</var>.</li>
 </ul>
 <p>The value of this variable can be set using the
-<link id="SetMultiByteRTLFileSystem"/> call.</p>
+<link id="SetMultiByteRTLFileSystemCodePage"/> call.</p>
 </descr>
 <seealso>
 <link id="DefaultSystemCodePage"/>
 <link id="DefaultFileSystemCodePage"/>
-<link id="SetMultiByteRTLFileSystem"/>
+<link id="SetMultiByteRTLFileSystemCodePage"/>
 </seealso>
 </element>
 
@@ -17265,7 +17261,7 @@ may need to be done when changing the code page.
 <short>Description of standard used codepages</short>
 <descr>
 <var>TStandardCodePageEnum</var> describes several types of standard used codepages, which can 
-be queried by the unicode string manager  using <link id="TUnicodeStringManager.GetStandardCodePage"/>.
+be queried by the unicode string manager <link id="TUnicodeStringManager"/>.
 </descr>
 <seealso>
 <link id="TUnicodeStringManager"/>
