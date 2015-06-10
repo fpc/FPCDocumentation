@@ -339,6 +339,96 @@ Functions for various conversions.
 </descr>
 </topic>
 
+<topic name="UnicodeAndCodePages">
+<short>Unicode and codepage awareness</short>
+<descr>
+<p>
+The many functions that deal with filenames in the sysutils routines have been changed 
+from <var>AnsiString</var> to RawByteString so they do not perform implict codepage conversions
+to the ansi code page. At the same time, overloaded versions that accept a
+unicode string have been created.
+</p>
+<p>
+For routines that access actual OS functions using single-byte string APIS,
+the strings are converted to ensure that the OS routine receives a string
+with the correct encoding when using single-byte strings. 
+This encoding is normally the <link id="#rtl.system.DefaultFileSystemCodePage">DefaultFileSystemCodePage</link>
+encoding.
+</p>
+<p>
+On systems with a unicode I/O API (2-byte strings), the native API is used, meaning that unicode 
+strings will be passed on as-is, but single-byte strings will be converted (implicitly) to Unicode.
+</p>
+<p>
+The following is a minimal list of functions that have been changed and duplicated:
+</p>
+<table>
+<th><td>Name</td><td>Description</td></th>
+<tr><td><link id="FileCreate"/></td><td><printshort id="FileCreate"/></td></tr>
+<tr><td><link id="FileOpen"/></td><td><printshort id="FileOpen"/></td></tr>
+<tr><td><link id="FileExists"/></td><td><printshort id="FileExists"/></td></tr>
+<tr><td><link id="DirectoryExists"/></td><td><printshort id="DirectoryExists"/></td></tr>
+<tr><td><link id="FileSetDate"/></td><td><printshort id="FileSetDate"/></td></tr>
+<tr><td><link id="FileGetAttr"/></td><td><printshort id="FileGetAttr"/></td></tr>
+<tr><td><link id="FileSetAttr"/></td><td><printshort id="FileSetAttr"/></td></tr>
+<tr><td><link id="DeleteFile"/></td><td><printshort id="DeleteFile"/></td></tr>
+<tr><td><link id="RenameFile"/></td><td><printshort id="RenameFile"/></td></tr>
+<tr><td><link id="FileSearch"/></td><td><printshort id="FileSearch"/></td></tr>
+<tr><td><link id="ExeSearch"/></td><td><printshort id="ExeSearch"/></td></tr>
+<tr><td><link id="FindFirst"/></td><td><printshort id="FindFirst"/></td></tr>
+<tr><td><link id="FindNext"/></td><td><printshort id="FindNext"/></td></tr>
+<tr><td><link id="FindClose"/></td><td><printshort id="FindClose"/></td></tr>
+<tr><td><link id="FileIsReadOnly"/></td><td><printshort id="FileIsReadOnly"/></td></tr>
+<tr><td><link id="GetCurrentDir"/></td><td><printshort id="GetCurrentDir"/></td></tr>
+<tr><td><link id="SetCurrentDir"/></td><td><printshort id="SetCurrentDir"/></td></tr>
+<tr><td><link id=""/></td><td><printshort id=""/></td></tr>
+</table>
+<p>
+The following functions do not interact with the OS, but may nevertheless
+change the codepage of the strings involved in their operation:
+</p>
+<table>
+<th><td>Name</td><td>Description</td></th>
+<tr><td><link id="ChangeFileExt"/></td><td><printshort id="ChangeFileExt"/></td></tr>
+<tr><td><link id="ExtractFilePath"/></td><td><printshort id="ExtractFilePath"/></td></tr>
+<tr><td><link id="ExtractFileDrive"/></td><td><printshort id="ExtractFileDrive"/></td></tr>
+<tr><td><link id="ExtractFileName"/></td><td><printshort id="ExtractFileName"/></td></tr>
+<tr><td><link id="ExtractFileExt"/></td><td><printshort id="ExtractFileExt"/></td></tr>
+<tr><td><link id="ExtractFileDir"/></td><td><printshort id="ExtractFileDir"/></td></tr>
+<tr><td><link id="ExtractShortPathName"/></td><td><printshort id="ExtractShortPathName"/></td></tr>
+<tr><td><link id="ExpandFileName"/></td><td><printshort id="ExpandFileName"/></td></tr>
+<tr><td><link id="ExpandFileNameCase"/></td><td><printshort id="ExpandFileNameCase"/></td></tr>
+<tr><td><link id="ExtractRelativepath"/></td><td><printshort id="ExtractRelativepath"/></td></tr>
+<tr><td><link id="ExpandUNCFileName"/></td><td><printshort id="ExpandUNCFileName"/></td></tr>
+<tr><td><link id="IncludeTrailingPathDelimiter"/></td><td><printshort id="IncludeTrailingPathDelimiter"/></td></tr>
+<tr><td><link id="IncludeTrailingBackslash"/></td><td><printshort id="IncludeTrailingBackslash"/></td></tr>
+<tr><td><link id="ExcludeTrailingBackslash"/></td><td><printshort id="ExcludeTrailingBackslash"/></td></tr>
+<tr><td><link id="ExcludeTrailingPathDelimiter"/></td><td><printshort id="ExcludeTrailingPathDelimiter"/></td></tr>
+<tr><td><link id="IncludeLeadingPathDelimiter"/></td><td><printshort id="IncludeLeadingPathDelimiter"/></td></tr>
+<tr><td><link id="ExcludeLeadingPathDelimiter"/></td><td><printshort id="ExcludeLeadingPathDelimiter"/></td></tr>
+<tr><td><link id="IsPathDelimiter"/></td><td><printshort id="IsPathDelimiter"/></td></tr>
+<tr><td><link id="DoDirSeparators"/></td><td><printshort id="DoDirSeparators"/></td></tr>
+<tr><td><link id="SetDirSeparators"/></td><td><printshort id="SetDirSeparators"/></td></tr>
+<tr><td><link id="GetDirs"/></td><td><printshort id="GetDirs"/></td></tr>
+<tr><td><link id="ConcatPaths"/></td><td><printshort id="ConcatPaths"/></td></tr>
+<tr><td><link id="GetEnvironmentVariable"/></td><td><printshort id="GetEnvironmentVariable"/></td></tr>
+</table>
+<!--
+FileCreate, FileOpen, FileExists, DirectoryExists, FileSetDate, FileGetAttr,
+FileSetAttr, DeleteFile, RenameFile, FileSearch, ExeSearch, FindFirst,
+FindNext, FindClose, FileIsReadOnly, GetCurrentDir, SetCurrentDir,
+ChangeFileExt, ExtractFilePath, ExtractFileDrive, ExtractFileName,
+ExtractFileExt, ExtractFileDir, ExtractShortPathName, ExpandFileName,
+ExpandFileNameCase, ExpandUNCFileName, ExtractRelativepath,
+IncludeTrailingPathDelimiter, IncludeTrailingBackslash,
+ExcludeTrailingBackslash, ExcludeTrailingPathDelimiter,
+IncludeLeadingPathDelimiter, ExcludeLeadingPathDelimiter, IsPathDelimiter,
+DoDirSeparators, SetDirSeparators, GetDirs, ConcatPaths,
+GetEnvironmentVariable 
+-->
+</descr>
+</topic>
+
 <topic name="Localization">
 <short>Localization support</short>
 <descr>
