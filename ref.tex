@@ -1254,42 +1254,46 @@ Const
 However, no special support for these character types exists, they have been
 defined for Delphi compatibility only.
 
-\subsection{Strings}
-\index{Types!String} \keywordlink{String}
+\subsection{Single-byte String types}
+\index{Types!String} \keywordlink{String}\index{String!Single-byte string}
 \fpc supports the \var{String} type as it is defined in \tp:
-a sequence of characters with an optional size specification.
-It also supports ansistrings (with unlimited length) as in Delphi.
+a sequence of single-byte characters with an optional size specification.
+It also supports ansistrings (with unlimited length) and codepage information\footnote{As of version 3.0 of \fpc} as in Delphi.
 
 To declare a variable as a string, use the following type specification:
 \input{syntax/sstring.syn}
-If there is a size specifier, then its maximum value - indicating the maximum 
-size of the string - is 255.
+If there is a size specifier (using square brackets), then its maximum value - indicating the maximum 
+size of the string - is 255. If there is a codepage specifier, (using round brackets) it indicates an 
+ansistring with associated code page information.
 
-The meaning of a string declaration statement without size indicator is 
-interpreted differently depending on the \var{\{\$H\}} switch. If no size
-indication is present, the above declaration can declare an ansistring or 
-a short string.
+The meaning of a string declaration statement without size and code page indication is 
+interpreted differently depending on the \var{\{\$H\}} switch:
+\begin{verbatim}
+var
+  A : String;
+\end{verbatim}
+If no size and code page indication indication is present, the above declaration can declare 
+an ansistring or a short string.
 
-Whatever the actual type, ansistrings and short strings can be used
-interchangeably. The compiler always takes care of the necessary type
-conversions. Note, however, that the result of an expression that contains
-ansistrings and short strings will always be an ansistring.
+Whatever the actual type, single byte strings can be used interchangeably. 
+The compiler always takes care of the necessary type conversions. 
+Note, however, that the result of an expression that contains ansistrings and short strings will always be an ansistring.
 
-\subsection{Short strings}
-\index{Shortstring} \keywordlink{ShortString}
+\subsubsection{Short strings}
+\index{Shortstring}\index{Types!ShortString} \keywordlink{ShortString}\index{String!ShortString}
 A string declaration declares a short string in the following cases:
 \begin{enumerate}
-\item If the switch is off: \var{\{\$H-\}}, the string declaration
-will always be a short string declaration.
-\item If the switch is on \var{\{\$H+\}}, and there is a maximum length (the
-size) specifier, the declaration is a short string declaration.
+\item If the \var{\$H} switch is off: \var{\{\$H-\}}, the string declaration will always be a short string declaration.
+\item If the switch is on \var{\{\$H+\}}, and there is a maximum length (the size) specifier, the declaration is a short 
+string declaration.
 \end{enumerate}
+Short strings are always assumed to use the system code page.
 The predefined type \var{ShortString} is defined as a string of size 255:
 \begin{verbatim}
  ShortString = String[255];
 \end{verbatim}
-If the size of the string is not specified, \var{255} is taken as a
-default. The actual length of the string can be obtained with the
+If the size of the string is not specified, \var{255} is taken as a default. 
+The actual length of the string can be obtained with the
 \var{Length} standard runtime routine.
 For example in
 \begin{verbatim}
@@ -1311,8 +1315,8 @@ Error: string length must be a value from 1 to 255
 \end{verbatim}
 
 For short strings, the length is stored in the character at index 0. Old
-\tp code relies on this, and it is implemented similarly in Free
-Pascal. 
+\tp code relies on this, and it is implemented similarly in Free Pascal. 
+
 Despite this, to write portable code, it is best to set the length of a 
 shortstring  with the \var{SetLength} call, and to retrieve
 it with the \var{Length} call.  These functions will always work, whatever
@@ -1320,17 +1324,22 @@ the internal representation of the shortstrings or other strings in use:
 this allows easy switching between the various string types.
 \end{remark}
 
-\subsection{Ansistrings}
-\index{Ansistring}\index{Types!Ansistring}\index{Types!Reference counted}
+\subsubsection{Ansistrings}
+\index{Ansistring}\index{Types!Ansistring}\index{Types!Reference counted}\index{CodePage}\index{String!CodePage}\index{String!Ansistring}
 \keywordlink{AnsiString}
-Ansistrings are strings that have no length limit. They are reference
-counted and are guaranteed to be null terminated. Internally, an ansistring is treated as 
-a pointer: the actual content of the string is stored on the heap, as much
+Ansistrings are strings that have no length limit, and have a code page associated with 
+them\footnote{codepage was introduced in version 3.0 of \fpc}. 
+They are reference counted and are guaranteed to be null terminated. 
+
+Internally, an ansistring is treated as a pointer: the actual content of the string is stored on the heap, as much
 memory as needed to store the string content is allocated. 
+
+If no codepage is given in the declaration, the system codepage is assumed. 
+What codepage this is, is determined by the \var{DefaultSystemCodePage} constant in the system unit.
 
 This is all handled transparently, i.e. they can be manipulated as a normal 
 short string. Ansistrings can be defined using the predefined \var{AnsiString} 
-type. 
+type or using the \var{string} keyword in mode \var{\{\$H+\}}. 
 
 \begin{remark} 
 The null-termination does not mean that null characters (char(0) or \#0) 
@@ -1340,7 +1349,7 @@ null-terminated string (as most C routines do).
 \end{remark}
 
 If the \var{\{\$H\}} switch is on, then a string definition using the
-regular \var{String} keyword and that doesn't contain a length specifier, 
+regular \var{String} keyword that doesn't contain a length specifier, 
 will be regarded as an ansistring as well. If a length specifier is present,
 a short string will be used, regardless of the \var{\{\$H\}} setting.
 
@@ -1462,8 +1471,103 @@ In this case you should call \var{Uniquestring} to ensure the
 string has reference count 1.
 \end{enumerate}
 
-\subsection{UnicodeStrings}
-\index{Unicodestring}\index{Types!Unicodestring}\index{Types!Reference counted}
+\subsubsection{Code page conversions}
+\index{CodePage}\index{CodePage!Conversion}\index{Types!Reference counted}\index{String!Codepage}
+\keywordlink{Rawbytestring}
+Since strings have code page information associated with them, it is important to know which code page a string uses:
+\begin{itemize}
+\item Short strings always use the system code page.
+\item Plain ansistrings use the system code page.
+\item Single byte strings with declared code page use that code page.
+\item The \var{RawBytestring} type has no code page information associated with it.
+\end{itemize}
+The compiler will convert the code page of strings as needed: When assigning a string,
+the actual codepage of the source string will always be converted to the declared code 
+page of the target string.
+
+This means that in the following code:
+\begin{verbatim}
+Type
+  TString1 = Type String(1252);
+  TString2 = Type String(1251);
+
+Var
+  A : TString1;
+  B : TString2;
+  
+begin
+  A:='123'+'345'+intToStr(123);
+  B:=A;
+  Writeln('B : ',StringRefCount(B));
+  Writeln('A : ',StringRefCount(A));
+end.
+\end{verbatim}
+The compiler will convert the contents in string \var{B} to the codepage of string \var{A}.
+Note that if a code page conversion takes place, the reference count mechanism is not used: 
+a new string will be allocated.
+
+This automated conversion of code pages can slow down the code seriously, so care must be 
+taken to see to it that the code page conversions are limited to a minimum.
+
+The code page of a string can be set explicitly using the \var{SetCodePage} routine of the system unit.
+Calling this routine will convert the value of a string to the requested code page.
+
+\begin{remark}
+Code page conversions can result in loss of data: if a certain character cannot be represented in the target 
+code page, the output for that character is undefined.
+\end{remark}
+
+\begin{remark}
+Code page support requires quite some helper routines, these are implemented in the unicodestring manager. 
+On windows, the system routines are used for this. On Unices, the \var{cwstring} unit can be used to link 
+to the C library and use the C library conversion support. 
+Alternatively, the \var{fpwidestring} unit contains a unicodestring manager implemented natively in Object Pascal.
+\end{remark}
+
+\subsubsection{RawByteString}
+\index{Rawbytestring}\index{Types!Rawbytestring}\index{Types!Reference counted}\index{String!RawByteString}
+\keywordlink{Rawbytestring}
+The pre-defined \var{RawByteString} type is an ansistring string type without codepage information (\var{CP\_NONE}):
+\begin{verbatim}
+Type
+  RawByteString = type ansistring(CP_NONE);
+\end{verbatim}
+It is treated specially in the sense that if the conversion routines encounter \var{CP\_NONE} in a target string,
+no code page conversion is performed, the code page of the source string is preserved.
+
+For this reason, most single-byte string routines in the system and sysutils units use the \var{RawByteString} type.
+
+\subsubsection{UTF8String}
+\index{UTF8String}\index{Types!UTF8String}\index{Types!UnicodeString}\index{String!UTF8String}
+\keywordlink{UTF8String}
+Single-byte code page strings can only store the characters available in that code page.  
+Characters that are not present in the code page, cannot be represented by that string.
+The UTF-8 unicode encoding is an encoding that can be used with single-byte strings: 
+The ASCII characters (ordinal value <128) in this encoding map exactly to the CP_ACP encoding. 
+This fact is used to define a single byte string type that can contain all characters:
+\begin{verbatim}
+Type
+  UTF8String = type AnsiString(CP_UTF8);
+\end{verbatim}
+The \var{UTF8string} string type can be used to represent all Unicode characters. This power comes as a price, though. 
+Since a unicode character may require several bytes to be represented in the UTF-8 encoding, there are 2 points to take 
+care of when using UTF8String:
+\begin{enumerate}
+\item The character index -- which retrieves a byte-sized char at a certain position -- must be used with care: the expression 
+\var{S[i]} will not necessarily be a valid character for a string \var{S} of type \var{UTF8String}.
+\item The byte length of the string is not equal to the number of characters in the string. 
+The standard function \var{length} cannot be used to get the character length, it will always return the byte length.
+\end{enumerate}
+For all other code pages, the number of characters in a single-byte code page string is equal to the byte length of the string.
+
+
+\subsection{Multi-byte String types}
+\index{String!Multi-byte}
+For multi-byte string types, the basic character has a size of at least 2. 
+This means it can be used to store a unicode character in UTF16 or UCS2 encoding.
+
+\subsubsection{UnicodeStrings}
+\index{Unicodestring}\index{Types!UnicodeString}\index{Types!Reference counted}\index{String!UnicodeString}
 \keywordlink{UnicodeString}
 Unicodestrings (used to represent unicode character strings) are implemented in much 
 the same way as ansistrings: reference counted, null-terminated arrays, only they 
@@ -1491,8 +1595,8 @@ Const
 \end{verbatim}
 
 
-\subsection{WideStrings}
-\index{Widestring}\index{Types!Widestring}
+\subsubsection{WideStrings}
+\index{Widestring}\index{Types!Widestring}\index{String!WideString}
 \keywordlink{Widestring}
 Widestrings (used to represent unicode character strings in COM applications)
 are implemented in much the same way as unicodestrings. Unlike the latter,
@@ -1509,7 +1613,7 @@ unicodestring type.
 
 % Constant strings
 \subsection{Constant strings}
-\index{Constants!String}
+\index{Constants!String}\index{String!Constant}
 To specify a constant string, it must be enclosed in single-quotes, just
 as a \var{Char} type, only now more than one character is allowed.
 Given that \var{S} is of type \var{String}, the following are valid assignments:
@@ -1918,7 +2022,79 @@ The \var{Low} function on a dynamic array will always return 0, and the
 \var{High} function will return the value \var{Length-1}, i.e., the value of the
 highest allowed array index. 
 
+\subsubsection{Dynamic array constructor}
+\index{Types!Constructor}\index{Array!Constructor}\index{Array constructor}
+As of version 3.0 of \fpc, Dynamic array types have a constructor. This is intrinsic, the compiler provides it.
+Up to version 2.6.4, the only way to initialize a dynamic array was as follows:
+\begin{verbatim}
+Type
+  TIntegerArray = Array of Integer;
+  
+var
+  A : TIntegerArray;
+  
+begin
+  SetLength(A,3);
+  A[0]:=1;
+  A[1]:=2;
+  A[3]:=3;
+  Writeln(Length(A));
+end. 
+\end{verbatim}
+As of version 3.0 of \fpc, an dynamic array can be initialized using a constructor-like syntax. 
+The constructor is called \var{Create}, and accepts as parameters a variable number of parameters of the element type of the array type.
+This means the above initialization can now be done as:
+\begin{verbatim}
+Type
+  TIntegerArray = Array of Integer;
+  
+var
+  A : TIntegerArray;
+  
+begin
+  A:=TIntegerArray.Create(1,2,3);
+  Writeln(Length(A));
+end. 
+\end{verbatim}
+Note that this will not work for dynamic arrays for which no type was created. That is, the following will not work:
+\begin{verbatim}
+var
+  A : Array of Integer;
+  
+begin
+  A:=Array of Integer.Create(1,2,3);
+  Writeln(Length(A));
+end. 
+\end{verbatim}
+This approach also works recursively for multi-dimensional arrays:
+\begin{verbatim}
+Type
+  TIntegerArray = Array of Integer;
+  TIntegerArrayArray = Array of TIntegerArray;
+  
+var
+  A : TIntegerArrayArray;
+  
+begin
+  A:=TIntegerArrayArray.Create(TIntegerArray.Create(1,2,3),
+                               TIntegerArray.Create(4,5,6),
+                               TIntegerArray.Create(7,8,9));
+  Writeln('Length ',length(A));
+end.
+\end{verbatim}
+However, since it is a constructor (code is run at run-time) it is not possible to use this in an initialized variable syntax. 
+That is, the following will not work:
+\begin{verbatim}
+Type
+  TIntegerArray = Array of Integer;
 
+var
+  A : TIntegerArray = TIntegerArray.Create(1,2,3);
+
+begin
+  Writeln('Length ',length(A));
+end.
+\end{verbatim}
 \subsubsection{Packing and unpacking an array}
 Arrays can be packed and bitpacked. 2 array types which have the same index
 type and element type, but which are differently packed are not assignment 
@@ -2922,6 +3098,61 @@ occurred in the previous invocation of the routine will be undone, because
 they are again initialized.
 \end{remark}
 
+\section{Initializing variables using default}
+\label{se:initusingdefault}\index{Variables!Initialized}
+Some variables must be initialized because they contain managed types. 
+For variables that are declared in the \var{var}  section of a function or in the main program, this happens automatically.
+For variables that are allocated on the heap, this is not necessarily the case.
+
+For this, the compiler contains the \var{Default} intrinsic. This function accepts a type identifier as the argument, 
+and will return a correctly initialized variable of that type. in essence, it will zero out the whole variable.
+
+The following gives an example of its use:
+\begin{verbatim}
+type
+  TRecord = record
+    i: LongInt;
+    s: AnsiString;
+  end;
+ 
+var
+  i: LongInt;
+  o: TObject;
+  r: TRecord;
+begin
+  i := Default(LongInt); // 0
+  o := Default(TObject); // Nil
+  r := Default(TRecord); // ( i: 0; s: '')
+end.
+\end{verbatim}
+The case where a variable is allocated on the heap, is more interesting:
+\begin{verbatim}
+type
+  TRecord = record
+    i: LongInt;
+    s: AnsiString;
+  end;
+ 
+var
+  i: ^LongInt;
+  o: ^TObject;
+  r: ^TRecord;
+begin
+  i:=GetMem(SizeOf(Longint));
+  i^ := Default(LongInt); // 0
+  o:=GetMem(SizeOf(TObject));
+  o^ := Default(TObject); // Nil
+  r:=GetMem(SizeOf(TRecord));
+  r^ := Default(TRecord); // ( i: 0; s: '')
+end.
+\end{verbatim}
+It works for all types, except the various file types (or complex types containing a file type).
+
+\begin{remark}
+For generics, the use of \var{Default} is especially useful, since the type of a variable may not 
+be known during the declaration of a generic. For more information \sees{genericdefault}.
+\end{remark}
+
 \section{Thread Variables}
 \index{Thread Variables}\index{Threadvar}\keywordlink{threadvar}
 For a program which uses threads, the variables can be really global, i.e. the same for all 
@@ -3768,6 +3999,13 @@ type
   end;
 \end{verbatim}
 This definition is completely equivalent to the previous definition.
+
+\begin{remark}
+As of version 3.0 of the compiler, the compiler can re-order the fields in memory if this leads to better alignment and smaller instances.
+That means that in an instance, the fields do not necessarily appear in the same order as in the declaration. RTTI generated for a class 
+will reflect this change.
+\end{remark}
+
 
 \subsection{Class fields/variables}
 Similar to objects, a class can contain static fields or class variables: 
@@ -5486,6 +5724,28 @@ When compiling, an error will result:
 Error: Incompatible types: got "TMyClass$1$crc31B95292" 
 expected "TMyClass$1$crc1ED6E3D5"
 \end{verbatim}
+
+\section{Using the default intrinsic}
+\label{se:genericdefault}
+When writing generic routines, sometimes a variable must be initialized whose type is not known during the declaration of the generic.
+This is where the \var{Default} intrinsic (\sees{initusingdefault}) also comes into play. Given the following generic declaration:
+\begin{verbatim}
+type
+  generic TTest<T> = class
+    procedure Test;
+  end;
+\end{verbatim}
+The following code will correctly initialize the variable \var{myt} during specialization:
+\begin{verbatim}
+procedure TTest.Test;
+var
+  myt: T;
+begin
+  // will have the correct Default if class is specialized
+  myt := Default(T); 
+end;
+\end{verbatim}
+
 \section{A word about scope}
 It should be stressed that all identifiers other than the template placeholders
 should be known when the generic class is declared. This works in 2 ways.
@@ -5849,30 +6109,37 @@ This will allow the code to run as well.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Class helpers
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Class and record helpers}
+\chapter{Class, Record and Type helpers}
 \label{ch:ClassHelpers}
 \index{Class helpers}\index{Types!Class helpers}%
-\index{Record helpers}\index{Types!Record helpers}
+\index{Record helpers}\index{Types!Record helpers}\index{Types!Type helpers}
+\index{Type!Helpers}
 \keywordlink{helper} 
 
 % Definition
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Definition}
-Class and record helpers can be used to add methods to an existing class or
-record, without making a derivation of the class or re-declaring the record.
-The effect is like inserting a method in the method table of the class.
+Class, record and type helpers can be used to add methods to an existing class,
+record or simple type, without making a derivation of the class or re-declaring the record.
+
+For a record or a simple type, the type helper acts as if record or the simple type 
+is a class, and methods are declared for it. Inside the methods, \var{Self} will refer 
+to the value of the record or simple type.
+
+For classes, the effect is like inserting a method in the method table of the class.
 If the helper declaration is in the current scope of the code, then the
 methods and properties of the helper can be used as if they were part of the 
 class declaration for the class or record that the helper extends.
 
-The syntax diagram for a class or record helper is presented below.
+The syntax diagram for a class, record or type helper is presented below:
 \input{syntax/helper.syn}
 The diagram shows that a helper definition looks very much like a regular
 class definition. It simply declares some extra constructors, methods, properties and fields
-for a class: the class or record type for which the helper is an extension is indicated
-after the \var{for} keyword. Since an enumerator for a class is obtained
-through a regular method, class helpers can also be used to override the
-enumerators.
+for a class: the class, record or simple type for which the helper is an extension is indicated
+after the \var{for} keyword. 
+
+Since an enumerator for a class is obtained through a regular method, 
+class helpers can also be used to override the enumerators for the class.
 
 As can be seen from the syntax diagram, it is possible to create descendants of helpers: 
 the helpers can form a hierarchy of their own, allowing to override methods of a
@@ -5960,7 +6227,6 @@ fail:
 TTestHelper = record helper for TObject
 end;
 \end{verbatim}
-\item Record helpers cannot implement constructors.
 \item Inside a helper's declaration the methods/fields of the extended record
 can't be accessed in e.g. a property definition. They can be accessed in the 
 implementation, of course. This means that the following will not compile:
@@ -6008,6 +6274,164 @@ begin
 end;
 \end{verbatim}
 \end{itemize}
+
+\section{Considerations for (simple) type helpers}
+For simple types, the rules are pretty much the same as for records, plus there are some extra requirements:
+\begin{itemize}
+\item Support for type helpers needs to be activated using the modeswitch typehelpers:
+\begin{verbatim}
+{$modeswitch typehelpers} 
+\end{verbatim}
+This modeswitch is enabled by default only in mode Delphi and DelphiUnicode.
+\item In Delphi (and DelphiUnicode) mode, for stricter Delphi compatibility, the record helpers must be used instead 
+of a type helper. 
+\item The modes ObjFPC and MacPas use type helper, but the modeswitch TypeHelpers must be used. 
+\item The following types are not supported:
+\begin{itemize}
+\item All file types (\var{Text}, \var{file of ...})
+\item Procedural variables
+\item Types like records, classes, Objective C classes, C++ classes, objects and interfaces are forbidden as well, 
+the class helper must be used for classes. That means that for instance, the following will fail:
+\begin{verbatim}
+TTestHelper = type helper for TObject
+end;
+\end{verbatim}
+\end{itemize}
+This of course means that all other simple types are supported.
+\item Type helpers can implement constructors.
+\item Inheritance of record helpers is only allowed in ObjFPC mode; In Delphi mode, it is not allowed.
+\item Type helpers can only descend from other type helpers, not from class or record helpers.
+\item A descendent type helper must extend the same type.
+\end{itemize}
+The following gives an idea of the possibilities:
+\begin{verbatim}
+{$mode objpas}
+{$modeswitch typehelpers}
+
+type
+ TLongIntHelper = type helper for LongInt
+   constructor create(AValue: LongInt);
+   class procedure Test; static;
+   procedure DoPrint;
+ end;
+
+constructor TLongIntHelper.create(AValue: LongInt);
+
+begin
+  Self:=Avalue;
+  DoPrint;
+end;
+           
+class procedure TLongIntHelper.Test;
+
+begin
+   Writeln('Test');
+end;
+
+procedure TLongIntHelper.DoPrint;
+
+begin
+   Writeln('Value :',Self);
+end;
+              
+var
+  i: LongInt;
+begin
+  I:=123;
+  i.Test;
+  $12345678.Test;
+  LongInt.Test;
+  I:=123;
+  i.DoPrint;
+  $12345678.DoPrint;
+end. 
+\end{verbatim}
+
+\section{A note on scope and lifetime for record and type helpers}
+For classes, the lifetime of an instance of a class is explicitly managed by 
+the programmer. It is therefor clear what the \var{Self} parameter means and when it is valid.
+
+Records and other simple types are allocated on the stack, which means they go out 
+of scope when the function, procedure or method in which they are used, exits.
+
+Combined with the fact that helper methods are type compatible to class methods, 
+and can therefor be used as event handlers, this can lead to surprising situations:
+The data pointer in a helper method is set to the address of the variable.
+
+Consider the following example:
+\begin{verbatim}
+{$mode objfpc}
+{$modeswitch typehelpers}
+uses
+  Classes;
+
+type
+  TInt32Helper = type helper for Int32
+    procedure Foo(Sender: TObject);
+  end;
+
+procedure TInt32Helper.Foo(Sender: TObject);
+begin
+  Writeln(Self);
+end;
+
+var
+  i: Int32 = 10;
+  m: TNotifyEvent;
+begin
+  m := @i.Foo;
+  WriteLn('Data : ',PtrUInt(TMethod(m).Data));
+  m(nil);
+end.
+\end{verbatim}
+This will print something like (the actual value for data may differ):
+\begin{verbatim}
+Data : 6848896
+10
+\end{verbatim}
+The variable \var{i} is still in scope when \var{m} is called.
+
+But changing the code to
+\begin{verbatim}
+{$mode objfpc}
+{$modeswitch typehelpers}
+uses
+  Classes;
+
+type
+  TInt32Helper = type helper for Int32
+    procedure Foo(Sender: TObject);
+  end;
+
+procedure TInt32Helper.Foo(Sender: TObject);
+begin
+  Writeln(Self);
+end;
+
+Function GetHandler  :TNotifyEvent;
+
+var
+  i: Int32 = 10;
+  
+begin
+  Result:=@i.foo;
+end;
+
+Var
+  m: TNotifyEvent;
+begin
+  m := GetHandler;
+  WriteLn(PtrUInt(TMethod(m).Data));
+  m(nil);
+end.
+\end{verbatim}
+The output will be:
+\begin{verbatim}
+140727246638796
+0
+\end{verbatim}
+The actual output will depend on the architecture, but the point is that \var{i} is no longer in scope, 
+making the output of it's value meaningless, and  possibly even leading to access violations and program crashes.
 
 \section{Inheritance}
 As noted in the previous section, it is possible to create descendants of
@@ -6167,6 +6591,7 @@ compile and function as expected.
 
 Note that it is not enough to include a unit with a class helper once in a
 project; The unit must be included whenever the class helper is needed. 
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Objective Pascal classes
@@ -8605,7 +9030,8 @@ must be retrieved, a \var{out} parameter can be used.
 
 Needless to say, default values are not supported for \var{out} parameters.
 
-The difference of \var{out} parameters and parameters by reference is very small:
+The difference of \var{out} parameters and parameters by reference is very small 
+(however, see below for managed types):
 the former gives the compiler more information about what happens to the
 arguments when passed to the procedure: it knows that the variable does not
 have to be initialized prior to the call. The following example illustrates
@@ -8650,6 +9076,14 @@ is used only to return a value.
 \var{Out} parameters are only supported in \var{Delphi} and \var{ObjFPC} mode. For the other 
 modes, \var{out} is a valid identifier.
 \end{remark}
+
+\begin{remark}
+For managed types (reference counted types), using \var{Out} parameters incurs some overhead: 
+the compiler must be sure that the value is correctly initialized (i.e. has a reference count 
+of zero (0)). This initialization is normally done by the caller.
+\end{remark}
+
+
 
 %
 \subsection{Constant parameters}\index{Parameters!Constant}\keywordlink{const}
@@ -8907,6 +9341,7 @@ Remark that this is not true for Delphi, so code relying on this feature
 will not be portable.
 
 \section{Managed types and reference counts}
+\index{Types|Reference counted}
 Some types (Unicodestring, Ansistring, interfaces, dynamic arrays) are
 treated somewhat specially by the compiler: the data has a reference count
 which is increased or decreased depending on how many reference to the data
@@ -9036,6 +9471,12 @@ Test 8 : ref count: 0
 As can be seen, in test3, the reference count is decreased from 1 to 0 at
 the end of the DoIt call, causing the instance to be freed before the call
 returns.
+
+The following small program demonstrates the reference counts used in strings:
+\begin{verbatim}
+ 
+\end{verbatim}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Function overloading
@@ -10266,6 +10707,128 @@ Begin
   InitializeUnit;
 end.
 \end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Units
+\section{Namespaces: Dotted Units}
+As can be seen in the syntax diagram for a unit, a unit name can contain dots.
+This means that the units can be organized in namespaces.
+
+So, the following is a correct unit declaration:
+\begin{verbatim}
+unit a.b;
+
+interface 
+
+Function C : integer;
+
+implementation
+
+Function C : integer;
+
+begin
+  Result:=1;
+end;
+
+end.
+\end{verbatim}
+The unit can be used as follows:
+\begin{verbatim}
+program d;
+
+uses a.b;
+
+begin
+  Writeln(c);
+end.
+\end{verbatim}
+When resolving symbols, unit scopes always take precedence over symbols inside units.
+
+Given the following units:
+\begin{verbatim}
+unit myunit;
+
+interface
+
+var
+  test: record
+    a: longint;
+  end;
+         
+implementation
+         
+initialization
+  test.a:=2;
+end.
+\end{verbatim}
+and
+\begin{verbatim}
+unit myunit.test;
+
+interface
+
+var
+  a: longint;
+  
+implementation
+
+initialization
+  a:=1;  
+end.
+\end{verbatim}
+The following program will resolve \var{myunit.test.a} to the variable \var{a} in unit \var{myunit.test}:
+\begin{verbatim}
+uses
+   myunit, myunit.test;
+   
+begin
+  Writeln('myunit.test.a : ',myunit.test.a);
+end.
+\end{verbatim}
+So it will print:
+\begin{verbatim}
+myunit.test.a : 1
+\end{verbatim}
+Reversing the order of the units will not change this:
+\begin{verbatim}
+uses
+   myunit.test, myunit;
+   
+begin
+  Writeln('myunit.test.a : ',myunit.test.a);
+end.
+\end{verbatim}
+will also print
+\begin{verbatim}
+myunit.test.a : 1
+\end{verbatim}
+Similarly, the following program will resolve \var{myunit.test.a} to the variable \var{a} in unit \var{myunit.test}:
+\begin{verbatim}
+uses
+   myunit.test, myunit;
+   
+begin
+  Writeln('a : ',a);
+end.
+\end{verbatim}
+it will print:
+\begin{verbatim}
+a : 1
+\end{verbatim}
+Similarly, the following program will resolve \var{test.a} to the variable \var{test.a} in unit \var{myunit}:
+\begin{verbatim}
+uses
+   myunit.test, myunit;
+   
+begin
+  Writeln('test.a : ',test.a);
+end.
+\end{verbatim}
+will print
+\begin{verbatim}
+test.a : 2
+\end{verbatim}
+
 \section{Unit dependencies}
 When a program uses a unit (say \file{unitA}) and this units uses a second
 unit, say \file{unitB}, then the program depends indirectly also on
