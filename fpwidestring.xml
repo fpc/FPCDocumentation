@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="rtl">
+
+<!--
+  ====================================================================
+    fpwidestring
+  ====================================================================
+-->
+
+<module name="fpwidestring">
+<short>Native Object Pascal Unicode string support</short>
+<descr>
+<p>
+<var>fpwidestring</var> implements unicode string support for the Free
+Pascal RTL using native Object Pascal routines. It is meant to be used on
+operating systems where the operating system does not natively support
+Unicode transformations and operations.
+</p>
+<p>
+In general, it is sufficient to include the unit in the uses clause of a
+program. The initialization code of the unit will set the unicode string
+manager of the system unit to the object pascal implementation contained in
+this unit.
+</p>
+<p>
+This unit needs unicode collation and character set tables in order to be able to do
+its work correctly. These must be registered using the routines of the <link id="unicodedata"/> unit.
+</p>
+<p>
+In order for sorting and comparing of strings to work, a collation must be used.
+The collation in general depends on the internationalization of the
+application. Since the system unit does not know about collations, the
+collation must be set in the <var>fpWideString</var> unit using the <link
+id="SetActiveCollation"/> function.  The collation can be set on a per-thread basis.
+</p>
+<p>
+New threads get <link id="DefaultCollationName"/> as the active collation name.
+</p>
+</descr>
+<seealso>
+<link id="cwstring"/>
+</seealso>
+
+<element name="unicodedata">
+<short>Unicode character and collation data</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="SetActiveCollation">
+<short>Set the active collation for the current thread.</short>
+<descr>
+<var>SetActiveCollation</var> sets the collation used in the current thread 
+of the application. This can be done using the name of the collation
+(<var>AName</var>) as registered or 
+in the <link id="unicodedata"/> unit or using the actual collation data
+(<var>ACollation</var>).
+</descr>
+<errors>
+If the collation <var>AName</var> was not found, or <var>ACollation</var> is
+nil, then <var>False</var> is returned.
+</errors>
+<seealso>
+<link id="GetActiveCollation"/>
+<link id="DefaultCollationName"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="SetActiveCollation.Result">
+<short><var>True</var> if the collation was succesfully set</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SetActiveCollation.AName">
+<short>Name with which the collation was registered</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="SetActiveCollation.ACollation">
+<short>Actual collation data to set as active collation</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="GetActiveCollation">
+<short>Return the currently active collation for the current thread</short>
+<descr>
+<p>
+<var>GetActiveCollation</var> returns the currently active collation, for
+the current thread, as set using the <link id="SetActiveCollation"/> function.
+</p>
+<p>
+New threads get <link id="DefaultCollationName"/> as the active collation name.
+The collation can be changed per thread using the  <link
+id="SetActiveCollation"/> function.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="SetActiveCollation"/>
+<link id="DefaultCollationName"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="GetActiveCollation.Result">
+<short>The currently active collation for this thread</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultCollationName">
+<short>Default collation for new threads.</short>
+<descr>
+<var>DefaultCollationName</var> is the collation name for new threads. It is
+empty by default.
+</descr>
+<seealso>
+<link id="SetActiveCollation"/>
+<link id="GetActiveCollation"/>
+</seealso>
+</element>
+
+</module> <!-- fpwidestring -->
+
+</package>
+</fpdoc-descriptions>
