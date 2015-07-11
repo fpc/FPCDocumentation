@@ -2635,17 +2635,17 @@ updatertlxml: fpc_all
 	$(RTLMAKESKEL) $(RTLCHARACTER) --output=character.new.xml
 	./cleanxml $(RTLNEWXML)
 rtl.inc: $(RTLXML)
-	$(FPDOC) --output=rtl.inc $(RTLOPTS) --format=latex
+	$(FPDOC) --output=rtl.inc --project=rtl-project.xml --format=latex
 fcl.inc: $(FCLXML)
-	$(FPDOC) --output=fcl.inc $(FCLOPTS) --format=latex
+	$(FPDOC) --output=fcl.inc --project=fcl-project.xml --format=latex
 fclres.inc: $(FCLRESXML)
 	$(FPDOC) --output=fclres.inc $(FCLRESOPTS) --format=latex
 RTFFILES = $(addsuffix .rtf,$(RTFS))
 rtf: $(RTFFILES)
 rtl.rtf: $(RTLXML)
-	$(FPDOC) --output=rtl.rtf $(RTLOPTS) --format=rtf
+	$(FPDOC) --output=rtl.rtf --project=rtl-project.xml --format=rtf
 fcl.rtf: $(FCLXML)
-	$(FPDOC) --output=fcl.rtf $(FCLOPTS) --format=rtf
+	$(FPDOC) --output=fcl.rtf --project=fcl-project.xml --format=rtf
 fclres.rtf: $(FCLXML)
 	$(FPDOC) --output=fclres.rtf $(FCLRESOPTS) --format=rtf
 ref.dvi: ref.tex $(INCLUDES)
@@ -2671,13 +2671,13 @@ ifndef USEELINKS
 txt : dvi $(TXT)
 else
 fcl.txt: $(FCLXML)
-	$(FPDOC) $(FCLOPTS) --format=txt --output=fcl.txt
+	$(FPDOC) --project=fcl-project.xml --format=txt --output=fcl.txt
 	unix2dos fcl.txt
 fclres.txt: $(FCLRESXML)
 	$(FPDOC) $(FCLRESOPTS) --format=txt --output=fclres.txt
 	unix2dos fcl.txt
 rtl.txt: $(RTLXML)
-	$(FPDOC) $(RTLOPTS) --format=txt --output=rtl.txt
+	$(FPDOC) --project=rtl-project.xml --format=txt --output=rtl.txt
 	unix2dos rtl.txt
 user.txt: messages.inc
 txt : fpc_all comphelp.inc $(INCLUDES) $(TXT)
@@ -2706,7 +2706,7 @@ endif  # USEL2H
 endif  # USEPLASTEX
 endif  # USEHEVEA
 fcl.chk: $(FCLXML)
-	$(FPDOC) $(FCLOPTS) --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLCHMOPTS)
+	$(FPDOC) --project=fcl-project.xml --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst fcl/fpdoc.css
 endif
@@ -2718,7 +2718,7 @@ ifndef CSSFILE
 endif
 	@$(ECHO) '' > fclres.chk
 rtl.chk: $(RTLXML)
-	$(FPDOC) $(RTLOPTS) --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
+	$(FPDOC) --project=rtl-project.xml --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst rtl/fpdoc.css
 endif
