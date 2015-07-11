@@ -2520,7 +2520,7 @@ RTLUNITS=system objpas types sysutils strutils dateutils strings mouse keyboard 
 	 ports getopts emu387 dxeload go32 gpm  baseunix \
 	 unixtype unix classes unixutil x86 dynlibs linux math matrix \
 	 dateutils rtl wincrt clocale cthreads cmem cwstring \
-	 exeinfo lineinfo lnfodwrf ctypes errors fpwidestring fgl
+	 exeinfo lineinfo lnfodwrf ctypes errors fpwidestring fgl character
 RTLXML=$(addsuffix .xml,$(RTLUNITS))
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
 RTLTYPES= --descr=types.xml --input="$(FPCSRCDIR)/rtl/objpas/types.pp $(OSDIRINCLUDES)"
@@ -2571,6 +2571,7 @@ RTLCTYPES= --descr=ctypes.xml --input="$(FPCSRCDIR)/rtl/inc/ctypes.pp -Fi$(FPCSR
 RTLFPWIDESTRING= --descr=fpwidestring.xml --input="$(FPCSRCDIR)/rtl/objpas/fpwidestring.pp -Fi$(FPCSRCDIR)/rtl/inc -Fi$(FPCSRCDIR)/rtl/linux $(OSDIRINCLUDES)"
 RTLERRORS= --descr=errors.xml --input="$(FPCSRCDIR)/rtl/unix/errors.pp -Fi$(FPCSRCDIR)/rtl/linux/  $(OSDIRINCLUDES)"
 RTLFGL= --descr=fgl.xml --input="$(FPCSRCDIR)/rtl/objpas/fgl.pp  $(OSDIRINCLUDES)"
+RTLCHARACTER= --descr=character.xml --input="$(FPCSRCDIR)/rtl/objpas/character.pas  $(OSDIRINCLUDES)"
 RTLOPTS+= $(RTLSYSTEM) $(RTLOBJPAS) $(RTLTYPES) 
 RTLOPTS+= $(RTLSTRUTILS) $(RTLSYSUTILS) $(RTLSTRINGS) $(RTLMOUSE) $(RTLKEYBOARD)
 RTLOPTS+= $(RTLCRT) $(RTLVIDEO) $(RTLDOS) $(RTLSOCKETS) $(RTLOBJECTS)
@@ -2581,7 +2582,7 @@ RTLOPTS+= $(RTLUNIX) $(RTLCLASSES) $(RTLUNIXUTIL) $(RTLX86) $(RTLDYNLIBS)
 RTLOPTS+= $(RTLLINUX) $(RTLMATH) $(RTLMATRIX) 
 RTLOPTS+= $(RTLDATEUTILS) $(RTLWINCRT) $(RTLCLOCALE) $(RTLCTHREADS) $(RTLCMEM)
 RTLOPTS+= $(RTLCWSTRING) $(RTLEXEINFO) $(RTLLINEINFO) $(RTLLNFODWRF) $(RTLCTYPES)
-RTLOPTS+= $(RTLFPWIDESTRING) $(RTLERRORS) $(RTLFGL)
+RTLOPTS+= $(RTLFPWIDESTRING) $(RTLERRORS) $(RTLFGL) $(RTLCHARACTER)
 endif 
 updatexml: updatefclxml updatertlxml updatefclresxml
 updatertlxml: fpc_all
@@ -2631,6 +2632,7 @@ updatertlxml: fpc_all
 	$(RTLMAKESKEL) $(RTLFPWIDESTRING) --output=fpwidestring.new.xml
 	$(RTLMAKESKEL) $(RTLERRORS) --output=errors.new.xml 
 	$(RTLMAKESKEL) $(RTLFGL) --output=fgl.new.xml
+	$(RTLMAKESKEL) $(RTLCHARACTER) --output=character.new.xml
 	./cleanxml $(RTLNEWXML)
 rtl.inc: $(RTLXML)
 	$(FPDOC) --output=rtl.inc $(RTLOPTS) --format=latex

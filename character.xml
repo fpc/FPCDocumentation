@@ -1,0 +1,1944 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="rtl">
+
+<!--
+  ====================================================================
+    character
+  ====================================================================
+-->
+
+<module name="character">
+<short>Unicode character classification and conversion</short>
+<descr>
+The <file>character</file> unit contains the <link id="TCharacter"/> class,
+which consists mainly of class functions. It should not be constructed, but
+its class methods can be used. All class methods also exist as regular
+methods.
+</descr>
+
+<!-- enumeration type Visibility: default -->
+<element name="TUnicodeCategory">
+<short>Unicode code point (character) category</short>
+<descr>
+This enumeration type contains the characterization of all possible unicode
+characters. It is used in the <link id="GetUnicodeCategory"/> and
+<link id="TCharacter.GetUnicodeCategory"/> functions.
+</descr>
+<seealso>
+<link id="GetUnicodeCategory"/>
+<link id="TCharacter.GetUnicodeCategory"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucUppercaseLetter">
+<short>Letter, uppercase (Lu)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucLowercaseLetter">
+<short>Letter, lowercase (Ll)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucTitlecaseLetter">
+<short>Letter, titlecase (Lt)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucModifierLetter">
+<short>Letter, modifier (Lm)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucOtherLetter">
+<short>Letter, other (Lo)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucNonSpacingMark">
+<short>Mark, nonspacing (Mn)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucCombiningMark">
+<short>Mark, spacing combining (Mc)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucEnclosingMark">
+<short>Mark, enclosing (Me)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucDecimalNumber">
+<short>Number, decimal digit (Nd)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucLetterNumber">
+<short>Number, letter (Nl)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucOtherNumber">
+<short>Number, other (No)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucConnectPunctuation">
+<short>Punctuation, connector (Pc)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucDashPunctuation">
+<short>Punctuation, dash (Pd)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucOpenPunctuation">
+<short>Punctuation, open (Ps)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucClosePunctuation">
+<short>Punctuation, close (Pe)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucInitialPunctuation">
+<short>Punctuation, initial quote (Pi, may behave like Ps or Pe depending on usage)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucFinalPunctuation">
+<short>Punctuation, final quote (Pf, may behave like Ps or Pe depending on usage)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucOtherPunctuation">
+<short>Punctuation, other (Po)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucMathSymbol">
+<short>Symbol, math (Sm)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucCurrencySymbol">
+<short>Symbol, currency (Sc)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucModifierSymbol">
+<short>Symbol, modifier (Sk)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucOtherSymbol">
+<short>Symbol, other (So)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucSpaceSeparator">
+<short>Separator, space (Zs)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucLineSeparator">
+<short>Separator, line (Zl)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucParagraphSeparator">
+<short>Separator, paragraph (Zp)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucControl">
+<short>Other, control (Cc)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucFormat">
+<short>Other, format (Cf)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucSurrogate">
+<short>Other, surrogate (Cs)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucPrivateUse">
+<short>Other, private use (Co)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUnicodeCategory.ucUnassigned">
+<short>Other, not assigned (including noncharacters) (Cn)</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TUnicodeCategorySet">
+<short>Set of <var>TUnicodeCategory</var></short>
+<descr>
+<var>TUnicodeCategorySet</var> is the set of <link id="TUnicodeCategory"/>.
+It is used internally in the <link id="TCharacter"/> class.
+</descr>
+<seealso>
+<link id="TUnicodeCategory"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TCharacterOption">
+<short>Character functions behaviour options</short>
+<descr>
+<var>TCharacterOption</var> is used in the <link id="toUpper"/> and <link
+id="toLower"/> functions to control the behaviour of the function.
+</descr>
+<seealso>
+<link id="toUpper"/>
+<link id="toLower"/> 
+<link id="TCharacter.toUpper"/>
+<link id="Tcharacter.toLower"/> 
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCharacterOption.coIgnoreInvalidSequence">
+<short>Ignore invalid unicodecode sequences</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TCharacterOptions">
+<short>Set of <var>TCharacterOptions</var></short>
+<descr>
+<var>TCharacterOptions</var> is the set of <var>TCharacterOption</var>, used
+in <link id="toUpper"/> and <link id="toLower"/> functions to control the behaviour of the function.
+</descr>
+<seealso>
+<link id="toUpper"/>
+<link id="toLower"/> 
+<link id="TCharacter.toUpper"/>
+<link id="Tcharacter.toLower"/> 
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TCharacter">
+<short>Character operation</short>
+<descr>
+<var>TCharacter</var> is provided for Delphi compatibility. All it's class
+functions and methods are also available as regular functions.
+</descr>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCharacter.Create">
+<short>Constructor (do not call)</short>
+<descr>
+<var>Create</var> is provided for completeness and Delphi compatibility, but
+should not be called in FPC code, it will raise an exception.
+</descr>
+<errors>
+Any attempt to call <var>Create</var> will result in an exception being raised.
+</errors>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.ConvertFromUtf32">
+<short>Convert a UTF32 character to UnicodeString</short>
+<descr>
+<p>
+<var>TCharacter.ConvertFromUtf32</var> converts a single UTF32 character <var>AChar</var> to a UTF16 string. 
+This is the opposite of <link id="TCharacter.ConvertToUtf32"/>.
+</p>
+<p>
+The result is a string, since multiple UTF16 characters can be needed to encode a single UTF32 character.
+</p>
+</descr>
+<errors>
+If <var>AChar</var> is not in the valid range of UTF32 characters, an <link id="EArgumentOutOfRangeException"/>
+exception is raised. 
+</errors>
+<seealso>
+<link id="EArgumentOutOfRangeException"/>
+<link id="TCharacter.ConvertToUtf32"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.ConvertFromUtf32.Result">
+<short>A UTF16 unicode string representing <var>AChar</var></short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.ConvertFromUtf32.AChar">
+<short>UTF32 character to convert to UTF16.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.ConvertToUtf32">
+<short>Convert a UTF16 character to a UTF32 character</short>
+<descr>
+<p>
+<var>TCharacter.ConvertToUtf32</var> converts a UTF16-encoded unicode character to a Unicode32
+character. This is the opposite of <link id="TCharacter.ConvertFromUtf32"/>.
+The function exists in several overloaded versions, to be able to
+present the  unicode character in one of 2 ways:
+</p>
+<ol>
+<li> 
+As a position <var>AIndex</var> (in unicodechar units) in a string <var>AString</var> to a Unicode32 character.
+The source is a string, since multiple UTF16 characters can be needed to encode a single UTF32 character.
+In this form, Optionally, the character length (1 or 2) can be returned in <var>ACharLength</var>.
+</li>
+<li>
+As 2 UTF16 unicode characters, representing the high and low surrogate pairs:
+<var>AHighSurrogate</var> and <var>ALowSurrogate</var>.
+</li>
+</ol>
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="TCharacter.ConvertFromUtf32"/>
+<link id="EArgumentOutOfRangeException"/>
+<link id="EArgumentException"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.ConvertToUtf32.Result">
+<short>The unicode character in UTF32 format</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.ConvertToUtf32.AString">
+<short>String containing the character to encode</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.ConvertToUtf32.AIndex">
+<short>Index at which the character to encode is located.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.ConvertToUtf32.ACharLength">
+<short>Character length (in UTF16 characters)</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.ConvertToUtf32.AHighSurrogate">
+<short>The high pair of the surrogate</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.ConvertToUtf32.ALowSurrogate">
+<short>The low pair of the surrogate</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.GetNumericValue">
+<short>Get the numeric value of the character</short>
+<descr>
+<var>TCharacter.GetNumericValue</var> returns the numerical value (ID) of the unicode character.
+The character can be presented in 2 ways: <var>AChar</var>, a UTF16 unicode
+character, or a surrogate pair in a unicode string <var>AString</var> starting at position <var>AIndex</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="TCharacter.GetUnicodeCategory"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.GetNumericValue.Result">
+<short>Numerical ID of the unicode character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.GetNumericValue.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.GetNumericValue.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.GetNumericValue.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.GetUnicodeCategory">
+<short>Get the unicode category of a character</short>
+<descr>
+<var>TCharacter.GetUnicodeCategory</var> returns the unicode category of a
+character. The character can be presented in 2 ways: <var>AChar</var>, a
+UTF16 unicode character, or a surrogate pair in a unicode string <var>AString</var>
+starting at position <var>AIndex</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="TUnicodeCategory"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.GetUnicodeCategory.Result">
+<short>The unicode character category</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.GetUnicodeCategory.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.GetUnicodeCategory.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.GetUnicodeCategory.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsControl">
+<short>Check whether a unicode character is a unicode control character</short>
+<descr>
+<var>IsControl</var> returns <var>True</var> if a unicode character has category
+<var>ucControl</var>. The character can be specified as a UTF16 character <var>AChar</var> 
+or a UTF16 encoded character starting at position <var>AIndex</var> in string <var>AString</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="TCharacter.GetUnicodeCategory">GetUnicodeCategory</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsSurrogatePair">IsSurrogatePair</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSeparator">IsSeparator</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsControl.Result">
+<short><var>True</var> if the indicated character has category <var>ucControl</var></short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsControl.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsControl.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsControl.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsDigit">
+<short>Check whether a unicode character is a digit</short>
+<descr>
+<var>IsDigit</var> returns <var>True</var> if a unicode character has category
+<var>ucDecimalNumber</var>. The character can be specified as a UTF16 character <var>AChar</var> 
+or a UTF16 encoded character starting at position <var>AIndex</var> in string <var>AString</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsSurrogatePair">IsSurrogatePair</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSeparator">IsSeparator</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsDigit.Result">
+<short><var>True</var> if the indicated character has category <var>ucDecimalNumber</var></short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsDigit.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsDigit.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsDigit.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsSurrogate">
+<short>Check whether a unicode character is a surrogate</short>
+<descr>
+<var>IsSurrogate</var> returns <var>True</var> if a unicode character has category
+<var>ucSurrogate</var>. The character can be specified as a UTF16 character <var>AChar</var> 
+or a UTF16 encoded character starting at position <var>AIndex</var> in string <var>AString</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="EArgumentException"/> exception is raised. 
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsSurrogate.Result">
+<short><var>True</var> if the indicated character has category <var>ucSurrogate</var></short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsSurrogate.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsSurrogate.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsSurrogate.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsHighSurrogate">
+<short>Check whether a unicode character is a surrogate in the high range</short>
+<descr>
+<var>IsHighSurrogate</var> returns <var>True</var> if a unicode character has category
+<var>ucSurrogate</var> and is in the high range of the surrogate characters (between HIGH_SURROGATE_BEGIN and HIGH_SURROGATE_END).
+The character can be specified as a UTF16 character <var>AChar</var> or a UTF16 encoded character starting at position <var>AIndex</var> in string <var>AString</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="EArgumentException"/> exception is raised. 
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsHighSurrogate.Result">
+  <short><var>True</var> if the indicated character has category <var>ucSurrogate</var> and is in the high range of the surrogate characters.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsHighSurrogate.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsHighSurrogate.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsHighSurrogate.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsLowSurrogate">
+<short>Check whether a unicode character is a surrogate in the low range</short>
+<descr>
+<var>IsLowSurrogate</var> returns <var>True</var> if a unicode character has category
+<var>ucSurrogate</var> and is in the low range of the surrogate characters (between LOW_SURROGATE_BEGIN and LOW_SURROGATE_END).
+The character can be specified as a UTF16 character <var>AChar</var> or a UTF16 encoded character starting at position <var>AIndex</var> in string <var>AString</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="EArgumentException"/> exception is raised. 
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsLowSurrogate.Result">
+<short><var>True</var> if the indicated character has category <var>ucSurrogate</var> and is in the low range of the surrogate characters.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsLowSurrogate.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsLowSurrogate.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsLowSurrogate.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsSurrogatePair">
+<short>Check if a pair of characters is a set of high/low surrorgate characters</short>
+<descr>
+<var>IsSurrogatePair</var> returns <var>True</var> if <var>AHighSurrogate</var> and <var>ALowSurrogate</var> 
+form a valid unicode surrogate pair. (<var>AHighSurrogate</var> is a high surrogate and <var>ALowSurrogate</var> a matching low surrogate)
+The character can be specified as a UTF16 character <var>AChar</var> 
+or a pair of UTF16 encoded characters starting at position <var>AIndex</var> in string <var>AString</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="EArgumentException"/> exception is raised. 
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsSurrogatePair.Result">
+<short><var>True</var> if <var>AHighSurrogate</var> and <var>ALowSurrogate</var> form a valid unicode surrogate pair</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsSurrogatePair.AHighSurrogate">
+<short>High surrogate character in pair</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsSurrogatePair.ALowSurrogate">
+<short>Low surrogate character in pair</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsSurrogatePair.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsSurrogatePair.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsLetter">
+<short>Check if a unicode character is a letter.</short>
+<descr>
+<var>IsLetter</var> returns <var>True</var> if a unicode character has category that is one of the letter categories 
+(<var>ucUppercaseLetter</var>, <var>ucLowercaseLetter</var>, <var>ucTitlecaseLetter</var>, <var>ucModifierLetter</var>, 
+<var>ucOtherLetter</var>).
+The character can be specified as a UTF16 character <var>AChar</var> or a UTF16 encoded character starting at 
+position <var>AIndex</var> in string <var>AString</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+</errors>
+<seealso>
+<link id="EArgumentException"/> exception is raised. 
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsSurrogatePair">IsSurrogatePair</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsLetter.Result">
+  <short><var>True</var> if the indicated characters is a letter.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsLetter.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsLetter.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsLetter.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsLetterOrDigit">
+<short>Check if a unicode character is a letter or digit</short>
+<descr>
+<var>IsLetterOrDigit</var> returns <var>True</var> if a unicode character has category that is one of the letter categories 
+(<var>ucUppercaseLetter</var>, <var>ucLowercaseLetter</var>, <var>ucTitlecaseLetter</var>, <var>ucModifierLetter</var>, 
+<var>ucOtherLetter</var>,<var>ucDecimalNumber</var>,<var>ucLetterNumber</var>).
+The character can be specified as a UTF16 character <var>AChar</var> or a UTF16 encoded character starting at 
+position <var>AIndex</var> in string <var>AString</var>.
+
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsSurrogatePair">IsSurrogatePair</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsLetterOrDigit.Result">
+<short><var>True</var> if the indicated characters is a letter or digit.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsLetterOrDigit.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsLetterOrDigit.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsLetterOrDigit.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsLower">
+<short>Check if a unicode character is a lowercase letter</short>
+<descr>
+<var>IsLower</var> returns <var>True</var> if a unicode character has category <var>ucLowercaseLetter</var>.
+The character can be specified as a UTF16 character <var>AChar</var> or a UTF16 encoded character starting at 
+position <var>AIndex</var> in string <var>AString</var>.
+
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsSurrogatePair">IsSurrogatePair</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsLower.Result">
+<short><var>True</var> if the indicated characters has category <var>ucLowercaseLetter</var></short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsLower.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsLower.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsLower.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsNumber">
+<short>Check if a unicode character is a number</short>
+<descr>
+<var>IsNumber</var> returns <var>True</var> if a unicode character has category that is one of the number categories 
+(<var>ucDecimalNumber</var>, <var>ucLetterNumber</var>, <var>ucOtherNumber</var>).
+The character can be specified as a UTF16 character <var>AChar</var> or a UTF16 encoded character starting at 
+position <var>AIndex</var> in string <var>AString</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsSurrogatePair">IsSurrogatePair</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsNumber.Result">
+<short><var>True</var> if the indicated characters is a number</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsNumber.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsNumber.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsNumber.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsPunctuation">
+<short>Check if a unicode character is a punctuation character</short>
+<descr>
+<var>IsPunctuation</var> returns <var>True</var> if a unicode character has category that is one of the punctuation categories 
+(<var>ucConnectPunctuation</var>, <var>ucDashPunctuation</var>, <var>ucOpenPunctuation</var>, <var>ucClosePunctuation</var>,
+ <var>ucInitialPunctuation</var>, <var>ucFinalPunctuation</var>, <var>ucOtherPunctuation</var>).
+The character can be specified as a UTF16 character <var>AChar</var> or a UTF16 encoded character starting at 
+position <var>AIndex</var> in string <var>AString</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsSurrogatePair">IsSurrogatePair</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsPunctuation.Result">
+<short><var>True</var> if the indicated characters is a punctuation character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsPunctuation.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsPunctuation.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsPunctuation.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsSeparator">
+<short>Check if a unicode character is a separator character</short>
+<descr>
+<var>IsSeparator</var> returns <var>True</var> if a unicode character has category that is one of the separator categories 
+(<var>ucSpaceSeparator</var>, <var>ucLineSeparator</var>, <var>ucParagraphSeparator</var>).
+The character can be specified as a UTF16 character <var>AChar</var> or a UTF16 encoded character starting at 
+position <var>AIndex</var> in string <var>AString</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsSurrogatePair">IsSurrogatePair</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsSeparator.Result">
+<short><var>True</var> if the indicated characters is a separator character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsSeparator.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsSeparator.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsSeparator.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsSymbol">
+<short>Check if a unicode character is a symbol character</short>
+<descr>
+<var>IsSymbol</var> returns <var>True</var> if a unicode character has category that is one of the symbol categories 
+(<var>ucMathSymbol</var>, <var>ucCurrencySymbol</var>, <var>ucModifierSymbol</var>, <var>ucOtherSymbol</var>).
+The character can be specified as a UTF16 character <var>AChar</var> or a UTF16 encoded character starting at 
+position <var>AIndex</var> in string <var>AString</var>.
+
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsSurrogatePair">IsSurrogatePair</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSeparator">IsSeparator</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsSymbol.Result">
+<short><var>True</var> if the indicated characters is a symbol character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsSymbol.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsSymbol.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsSymbol.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsUpper">
+<short>Check whether a unicode character is an uppercase letter</short>
+<descr>
+<var>IsUpper</var> returns <var>True</var> if a unicode character has category <var>ucUppercaseLetter</var>.
+The character can be specified as a UTF16 character <var>AChar</var> or a UTF16 encoded character starting at 
+position <var>AIndex</var> in string <var>AString</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsSurrogatePair">IsSurrogatePair</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSeparator">IsSeparator</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsWhiteSpace">IsWhiteSpace</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsUpper.Result">
+<short><var>True</var> if the indicated unicode character has category <var>ucUppercaseLetter</var></short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsUpper.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsUpper.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsUpper.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.IsWhiteSpace">
+<short>Check whether a unicode character is a whitespace character</short>
+<descr>
+<var>IsUpper</var> returns <var>True</var> if a unicode character has is a whitespace character. It checks the character properties.
+The character can be specified as a UTF16 character <var>AChar</var> or a UTF16 encoded character starting at 
+position <var>AIndex</var> in string <var>AString</var>.
+</descr>
+<errors>
+If <var>AIndex</var> is not a valid character index in the string
+<var>AString</var>, an <link id="EArgumentOutOfRangeException"/>
+exception is raised.  If the character at that position is not complete, an
+<link id="EArgumentException"/> exception is raised. 
+</errors>
+<seealso>
+<link id="TCharacter.IsControl">IsControl</link>
+<link id="TCharacter.IsDigit">IsDigit</link>
+<link id="TCharacter.IsSurrogate">IsSurrogate</link>
+<link id="TCharacter.IsHighSurrogate">IsHighSurrogate</link>
+<link id="TCharacter.IsLowSurrogate">IsLowSurrogate</link>
+<link id="TCharacter.IsSurrogatePair">IsSurrogatePair</link>
+<link id="TCharacter.IsLetter">IsLetter</link>
+<link id="TCharacter.IsLetterOrDigit">IsLetterOrDigit</link>
+<link id="TCharacter.IsLower">IsLower</link>
+<link id="TCharacter.IsNumber">IsNumber</link>
+<link id="TCharacter.IsPunctuation">IsPunctuation</link>
+<link id="TCharacter.IsSeparator">IsSeparator</link>
+<link id="TCharacter.IsSymbol">IsSymbol</link>
+<link id="TCharacter.IsUpper">IsUpper</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.IsWhiteSpace.Result">
+<short><var>True</var> if the indicated unicode character is a whitespace character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsWhiteSpace.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsWhiteSpace.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.IsWhiteSpace.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.ToLower">
+<short>Convert a character or string to lowercase</short>
+<descr>
+<var>ToLower</var> converts the  unicode character <var>AChar</var> or string <var>AString</var> to lowercase.
+<var>Options</var> determines the behaviour of the conversion: if <var>AOptions</var> contains <var>coIgnoreInvalidSequence</var> then no exception will be raised when the 
+string or character contains an invalid unicode sequence. The default behaviour is to raise an <link id="EArgumentException"/> exception 
+when this happens.
+</descr>
+<errors>
+If an invalid character is encountered, an <link id="EArgumentException"/> exception is raised, unless <var>coIgnoreInvalidSequence</var> is specified in the options.
+</errors>
+<seealso>
+<link id="TCharacter.ToUpper"/>
+<link id="TCharacter.IsLower"/>
+<link id="TCharacter.IsUpper"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.ToLower.Result">
+<short>The lowercase version of the character or string</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.ToLower.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.ToLower.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.ToLower.AOptions">
+<short>Options controlling the behaviour of the conversion</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCharacter.ToUpper">
+<short>Convert a character or string to uppercase</short>
+<descr>
+<var>ToUpper</var> converts the  unicode character <var>AChar</var> or string <var>AString</var> to uppercase.
+<var>Options</var> determines the behaviour of the conversion: if <var>AOptions</var> contains <var>coIgnoreInvalidSequence</var> then no exception will be raised when the 
+string or character contains an invalid unicode sequence. The default behaviour is to raise an <link id="EArgumentException"/> exception 
+when this happens.
+</descr>
+<errors>
+If an invalid character is encountered, an <link id="EArgumentException"/> exception is raised, unless <var>coIgnoreInvalidSequence</var> is specified in the options.</errors>
+<seealso>
+<link id="TCharacter.ToUpper"/>
+<link id="TCharacter.IsLower"/>
+<link id="TCharacter.IsUpper"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCharacter.ToUpper.Result">
+<short>The uppercase version of the character or string</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.ToUpper.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.ToUpper.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCharacter.ToUpper.AOptions">
+<short>Options controlling the behaviour of the conversion</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ConvertFromUtf32">
+  <short>alias for <var>TCharacter.ConvertFromUtf32</var></short>
+<descr>
+<var>ConvertFromUtf32</var> is a shortcut for <link id="TCharacter.ConvertFromUtf32"/>.
+</descr>
+<seealso>
+<link id="TCharacter.ConvertFromUtf32"/>.
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ConvertFromUtf32.Result">
+<short>UTF16 Unicode string for AChar</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ConvertFromUtf32.AChar">
+<short>UTF32 Character</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ConvertToUtf32">
+<short>alias for <var>TCharacter.ConvertToUtf32</var></short>
+<descr>
+<var>ConvertToUtf32</var> is a shortcut for <link id="TCharacter.ConvertToUtf32"/>.  
+</descr>
+<seealso>
+<link id="TCharacter.ConvertToUtf32"/>.
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ConvertToUtf32.Result">
+<short>UTF32 Unicode character for AString</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ConvertToUtf32.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ConvertToUtf32.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ConvertToUtf32.ACharLength">
+<short>Number of characters to take into account starting at AIndex</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ConvertToUtf32.AHighSurrogate">
+<short>High surrogate character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ConvertToUtf32.ALowSurrogate">
+<short>Low surrogate character</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="GetNumericValue">
+<short>Alias for <var>TCharacter.GetNumericValue</var></short>
+<descr>
+<var>GetNumericValue</var> is a shortcut for <link id="TCharacter.GetNumericValue"/>. 
+</descr>
+<seealso>
+<link id="TCharacter.GetNumericValue"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="GetNumericValue.Result">
+<short>Numerical value of unicode character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetNumericValue.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetNumericValue.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetNumericValue.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="GetUnicodeCategory">
+<short>Alias for <var>TCharacter.GetUnicodeCategory</var></short>
+<descr>
+ <var>GetUnicodeCategory</var> is a shortcut for <link id="TCharacter.GetUnicodeCategory"/>.  
+</descr>
+<seealso>
+<link id="TCharacter.GetUnicodeCategory"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="GetUnicodeCategory.Result">
+<short>Unicode category of indicated character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetUnicodeCategory.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetUnicodeCategory.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetUnicodeCategory.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsControl">
+<short>Alias for <var>TCharacter.IsControl</var></short>
+<descr>
+<var>IsControl</var> is a shortcut for <link id="TCharacter.IsControl"/>.
+</descr>
+<seealso>
+<link id="TCharacter.IsControl"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsControl.Result">
+<short><var>True</var> if the indicated character has category <var>ucControl</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsControl.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsControl.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsControl.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsDigit">
+<short>Alias for <var>TCharacter.IsDigit</var></short>
+<descr>
+<var>IsDigit</var> is a shortcut for <link id="TCharacter.IsDigit"/>.
+</descr>
+<seealso>
+<link id="TCharacter.IsDigit"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsDigit.Result">
+<short><var>True</var> if the indicated character has category <var>ucDecimalNumber</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsDigit.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsDigit.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsDigit.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsSurrogate">
+<short>Alias for <var>TCharacter.IsSurrogate</var></short>
+<descr>
+<var>IsSurrogate</var> is a shortcut for <link id="TCharacter.IsSurrogate"/>.
+</descr>
+<seealso>
+<link id="TCharacter.IsSurrogate"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsSurrogate.Result">
+<short><var>True</var> if the indicated character has category <var>ucSurrogate</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsSurrogate.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsSurrogate.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsSurrogate.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsHighSurrogate">
+<short>Alias for <var>TCharacter.IsHighSurrogate</var></short>
+<descr><var>IsHighSurrogate</var> is a shortcut for <link id="TCharacter.IsHighSurrogate"/>
+</descr>
+<seealso>
+<link id="TCharacter.IsHighSurrogate"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsHighSurrogate.Result">
+<short><var>True</var> if the indicated character has category <var>ucSurrogate</var> and is in the high range of the surrogate characters.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsHighSurrogate.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsHighSurrogate.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsHighSurrogate.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsLowSurrogate">
+<short>Alias for <var>TCharacter.IsLowSurrogate</var></short>
+<descr>
+<var>IsLowSurrogate</var> is a shortcut for <link id="TCharacter.IsLowSurrogate"/>  
+</descr>
+<seealso>
+<link id="TCharacter.IsLowSurrogate"/>  
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsLowSurrogate.Result">
+<short><var>True</var> if the indicated character has category <var>ucSurrogate</var> and is in the low range of the surrogate characters.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsLowSurrogate.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsLowSurrogate.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsLowSurrogate.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsSurrogatePair">
+<short>Alias for <var>TCharacter.IsSurrogatePair</var></short>
+<descr>
+<var>IsSurrogatePair</var> is a shortcut for <link id="TCharacter.IsSurrogatePair"/>  
+</descr>
+<seealso>
+<link id="TCharacter.IsSurrogatePair"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsSurrogatePair.Result">
+<short><var>True</var> if <var>AHighSurrogate</var> and <var>ALowSurrogate</var> form a valid unicode surrogate pair</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsSurrogatePair.AHighSurrogate">
+<short>High surrogate character in pair</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsSurrogatePair.ALowSurrogate">
+<short>Low surrogate character in pair</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsSurrogatePair.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsSurrogatePair.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsLetter">
+  <short>Alias for <var>TCharacter.IsLetter</var></short>
+<descr>
+<var>IsLetter</var> is a shortcut for <link id="TCharacter.IsLetter"/>  
+</descr>
+<seealso>
+<link id="TCharacter.IsLetter"/>  
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsLetter.Result">
+<short><var>True</var> if the indicated characters is a letter.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsLetter.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsLetter.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsLetter.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsLetterOrDigit">
+<short>Alias for <var>TCharacter.IsLetterOrDigit</var></short>
+<descr>  
+<var>IsLetterOrDigit</var> is a shortcut for <link id="TCharacter.IsLetterOrDigit"/>.
+</descr>
+<seealso>
+<link id="TCharacter.IsLetterOrDigit"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsLetterOrDigit.Result">
+<short><var>True</var> if the indicated characters is a letter.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsLetterOrDigit.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsLetterOrDigit.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsLetterOrDigit.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsLower">
+<short>Alias for <var>TCharacter.IsLower</var></short>
+<descr>
+<var>IsLower</var> is a shortcut for <link id="TCharacter.IsLower"/>
+</descr>
+<seealso>
+<link id="TCharacter.IsLower"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsLower.Result">
+<short><var>True</var> if the indicated characters has category <var>ucLowercaseLetter</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsLower.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsLower.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsLower.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsNumber">
+<short>Alias for <var>TCharacter.IsNumber</var></short>
+<descr>
+<var>IsNumber</var> is a shortcut for <link id="TCharacter.IsNumber"/>
+</descr>
+<seealso>
+<link id="TCharacter.IsNumber"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsNumber.Result">
+<short><var>True</var> if the indicated characters is a number</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsNumber.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsNumber.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsNumber.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsPunctuation">
+<short>Alias for <var>TCharacter.IsPunctuation</var></short>
+<descr>
+<var>IsPunctuation</var> is a shortcut for <link id="TCharacter.IsPunctuation"/>
+</descr>
+<seealso>
+<link id="TCharacter.IsPunctuation"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsPunctuation.Result">
+<short><var>True</var> if the indicated characters is a punctuation character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsPunctuation.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsPunctuation.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsPunctuation.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsSeparator">
+<short>Alias for <var>TCharacter.IsSeparator</var></short>
+<descr><var>IsSeparator</var> is a shortcut for <link id="TCharacter.IsSeparator"/>
+</descr>
+<seealso>
+  <link id="TCharacter.IsSeparator"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsSeparator.Result">
+<short><var>True</var> if the indicated characters is a separator character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsSeparator.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsSeparator.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsSeparator.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsSymbol">
+<short>Alias for <var>TCharacter.IsSymbol</var></short>
+<descr><var>IsSymbol</var> is a shortcut for <link id="TCharacter.IsSymbol"/>
+</descr>
+<seealso>
+<link id="TCharacter.IsSymbol"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsSymbol.Result">
+<short><var>True</var> if the indicated characters is a symbol character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsSymbol.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsSymbol.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsSymbol.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsUpper">
+<short>Alias for <var>TCharacter.IsUpper</var></short>
+<descr><var>IsUpper</var> is a shortcut for <link id="TCharacter.IsUpper"/>
+</descr>
+<seealso>
+<link id="TCharacter.IsUpper"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsUpper.Result">
+<short><var>True</var> if the indicated unicode character has category <var>ucUppercaseLetter</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsUpper.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsUpper.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsUpper.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IsWhiteSpace">
+<short>Alias for <var>TCharacter.IsWhiteSpace</var></short>
+<descr>
+<var>IsWhiteSpace</var> is a shortcut for <link id="TCharacter.IsWhiteSpace"/>
+</descr>
+<seealso>
+<link id="TCharacter.IsWhiteSpace"/>  
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IsWhiteSpace.Result">
+<short><var>True</var> if the indicated unicode character is a whitespace character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsWhiteSpace.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsWhiteSpace.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IsWhiteSpace.AIndex">
+<short>Index of UTF16 encoded character in <var>AString</var> to be checked.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ToLower">
+<short>Alias for <var>TCharacter.ToLower</var></short>
+<descr>
+<var>ToLower</var> is a shortcut for <link id="TCharacter.ToLower"/>
+</descr>
+<seealso>
+<link id="TCharacter.ToLower"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ToLower.Result">
+<short>The lowercase version of the character or string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ToLower.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ToLower.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ToUpper">
+<short>Alias for <var>TCharacter.ToUpper</var></short>
+<descr>
+<var>ToUpper</var> is a shortcut for <link id="TCharacter.ToUpper"/>
+</descr>
+<seealso>
+<link id="TCharacter.ToUpper"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ToUpper.Result">
+<short>The uppercase version of the character or string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ToUpper.AChar">
+<short>UTF16 Character</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ToUpper.AString">
+<short>String containing UTF-16 encoded characters</short>
+</element>
+
+</module> <!-- character -->
+
+</package>
+</fpdoc-descriptions>
