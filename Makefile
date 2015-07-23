@@ -2557,7 +2557,7 @@ RTLDYNLIBS= --descr=dynlibs.xml --input="$(FPCSRCDIR)/rtl/inc/dynlibs.pas -Fi$(F
 RTLLINUX= --descr=linux.xml --input="-dclone_implemented $(FPCSRCDIR)/rtl/linux/linux.pp -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/unix $(OSDIRINCLUDES)"
 RTLMATH= --descr=math.xml --input="-dFPDOC_MATH $(FPCSRCDIR)/rtl/objpas/math.pp -Fi$(FPCSRCDIR)/rtl/i386 -dFPC_HAS_TYPE_EXTENDED $(OSDIRINCLUDES)"
 RTLMATRIX= --descr=matrix.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/inc/matrix.pp -Fi$(FPCSRCDIR)/packages/rtl-extra/src/inc $(OSDIRINCLUDES)"
-RTLSYSTEM= --descr=system.xml --input="-dfpdocsystem -dHASGETHEAPSTATUS -dSUPPORT_DOUBLE $(FPCSRCDIR)/rtl/$(SYSTEMUNITDIR)/system.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/inc -Fi$(FPCSRCDIR)/rtl/i386 -dCPU32 -dHASVARIANT -dFPC_HAS_TYPE_EXTENDED -dHASWIDECHAR $(OSDIRINCLUDES)"
+RTLSYSTEM= --descr=system.xml --input="-Sd -dfpdocsystem -dHASGETHEAPSTATUS -dSUPPORT_DOUBLE $(FPCSRCDIR)/rtl/$(SYSTEMUNITDIR)/system.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/inc -Fi$(FPCSRCDIR)/rtl/i386 -dCPU32 -dHASVARIANT -dFPC_HAS_TYPE_EXTENDED -dHASWIDECHAR $(OSDIRINCLUDES)"
 RTLOBJPAS= --descr=objpas.xml --input="-dHASINTF $(FPCSRCDIR)/rtl/objpas/objpas.pp $(OSDIRINCLUDES)"
 RTLDATEUTILS= --descr=dateutils.xml --input="$(FPCSRCDIR)/packages/rtl-objpas/src/inc/dateutils.pp -Fi$(FPCSRCDIR)/rtl/objpas $(OSDIRINCLUDES)"
 RTLCLOCALE= --descr=clocale.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/unix/clocale.pp $(OSDIRINCLUDES)"
