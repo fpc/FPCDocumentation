@@ -2161,153 +2161,86 @@ Type
           end;
 \end{verbatim}
 \end{remark}
-By default the size of a record is the sum of the sizes of its fields, each size of a
-field is rounded up to a power of two. If the record contains a variant part, the size
-of the variant part is the size of the biggest variant, plus the size of the
-tag field type {\em if an identifier was declared for it}. Here also, the size of
-each part is first rounded up to two. So in the above example:
+
+\subsubsection{Record layout and size}
+
+The layout and size of a record is influenced by five aspects:
 \begin{itemize}
-\item \var{SizeOf} would return 24 for \var{Point}, 
-\item It would result in 24 for \var{RPoint} 
-\item Finally, 26 would be the size of \var{BetterRPoint}. 
-\item For \var{MyRec}, the value would be 12.
+\item The size of its fields
+\item The alignment requirements of the types of the fields, which are
+platform-dependent. Note that the alignment requirements of a type
+inside a record may be different from those of a separate variable of
+that type. Additionally, the location of a field inside a record may
+also influence its type's alignment requirements.
+\item The currently active \var{\{\$ALIGN N\}} or \var{\{\$PACKRECORDS
+N\}} setting (these settings override each other, so the last one
+specified is the active one; note that these directives to not accept
+exactly the same arguments, see the programmer's manual for more
+information)
+\item The currently active \var{\{\$CODEALIGN RECORDMIN=X\}} setting
+\item The currently active \var{\{\$CODEALIGN RECORDMAX=X\}} setting
 \end{itemize}
 
-If a typed file with records, produced by a \tp program, must be read,
-then chances are that attempting to read that file correctly will fail.
-The reason for this is that by default, elements of a record are aligned at
-2-byte boundaries, for performance reasons. 
+The layout and size of variant parts in records is determined by
+replacing them with a field whose type is a record with as first element
+a field of the tag field type {\em if an identifier was declared for
+this tag field}, followed by the elements of the biggest variant.
 
-This default behaviour can be changed with the \var{\{\$PACKRECORDS N\}} 
-switch. Possible values for \var{N} are 1, 2, 4, 16 or \var{Default}.\index{Packed}
-This switch tells the compiler to align elements of a record or object or
-class that have size larger than \var{n} on \var{n} byte boundaries.
-
-Elements that have size smaller or equal than \var{n} are aligned on
-natural boundaries, i.e. to the first power of two that is larger than or
-equal to the size of the record element.
-
-The keyword \var{Default} selects the default value for the platform
-that the code is compiled for (currently, this is 2 on all platforms)
-Take a look at the following program:
-\begin{verbatim}
-Program PackRecordsDemo;
-type
-   {$PackRecords 2}
-     Trec1 = Record
-       A : byte;
-       B : Word;
-     end;
-
-     {$PackRecords 1}
-     Trec2 = Record
-       A : Byte;
-       B : Word;
-       end;
-   {$PackRecords 2}
-     Trec3 = Record
-       A,B : byte;
-     end;
-
-    {$PackRecords 1}
-     Trec4 = Record
-       A,B : Byte;
-       end;
-   {$PackRecords 4}
-     Trec5 = Record
-       A : Byte;
-       B : Array[1..3] of byte;
-       C : byte;
-     end;
-
-     {$PackRecords 8}
-     Trec6 = Record
-       A : Byte;
-       B : Array[1..3] of byte;
-       C : byte;
-       end;
-   {$PackRecords 4}
-     Trec7 = Record
-       A : Byte;
-       B : Array[1..7] of byte;
-       C : byte;
-     end;
-
-     {$PackRecords 8}
-     Trec8 = Record
-       A : Byte;
-       B : Array[1..7] of byte;
-       C : byte;
-       end;
-Var rec1 : Trec1;
-    rec2 : Trec2;
-    rec3 : TRec3;
-    rec4 : TRec4;
-    rec5 : Trec5;
-    rec6 : TRec6;
-    rec7 : TRec7;
-    rec8 : TRec8;
-
-begin
-  Write ('Size Trec1 : ',SizeOf(Trec1));
-  Writeln (' Offset B : ',Longint(@rec1.B)-Longint(@rec1));
-  Write ('Size Trec2 : ',SizeOf(Trec2));
-  Writeln (' Offset B : ',Longint(@rec2.B)-Longint(@rec2));
-  Write ('Size Trec3 : ',SizeOf(Trec3));
-  Writeln (' Offset B : ',Longint(@rec3.B)-Longint(@rec3));
-  Write ('Size Trec4 : ',SizeOf(Trec4));
-  Writeln (' Offset B : ',Longint(@rec4.B)-Longint(@rec4));
-  Write ('Size Trec5 : ',SizeOf(Trec5));
-  Writeln (' Offset B : ',Longint(@rec5.B)-Longint(@rec5),
-           ' Offset C : ',Longint(@rec5.C)-Longint(@rec5));
-  Write ('Size Trec6 : ',SizeOf(Trec6));
-  Writeln (' Offset B : ',Longint(@rec6.B)-Longint(@rec6),
-           ' Offset C : ',Longint(@rec6.C)-Longint(@rec6));
-  Write ('Size Trec7 : ',SizeOf(Trec7));
-  Writeln (' Offset B : ',Longint(@rec7.B)-Longint(@rec7),
-           ' Offset C : ',Longint(@rec7.C)-Longint(@rec7));
-  Write ('Size Trec8 : ',SizeOf(Trec8));
-  Writeln (' Offset B : ',Longint(@rec8.B)-Longint(@rec8),
-           ' Offset C : ',Longint(@rec8.C)-Longint(@rec8));
-end.
-\end{verbatim}
-The output of this program will be :
-\begin{verbatim}
-Size Trec1 : 4 Offset B : 2
-Size Trec2 : 3 Offset B : 1
-Size Trec3 : 2 Offset B : 1
-Size Trec4 : 2 Offset B : 1
-Size Trec5 : 8 Offset B : 4 Offset C : 7
-Size Trec6 : 8 Offset B : 4 Offset C : 7
-Size Trec7 : 12 Offset B : 4 Offset C : 11
-Size Trec8 : 16 Offset B : 8 Offset C : 15
-\end{verbatim}
-And this is as expected:
+Field \var{F2}'s offset in a record is equal to the sum of the previous
+field \var{F1}'s offset and \var{F1}'s size, rounded up to a multiple of
+\var{F2}'s required alignment. This required alignment is calculated as
+follows:
 \begin{itemize}
-\item In \var{Trec1}, since \var{B} has size 2, it is
-aligned on a 2 byte boundary, thus leaving an empty byte between \var{A}
-and \var{B}, and making the total size 4. In \var{Trec2}, \var{B} is aligned
-on a 1-byte boundary, right after \var{A}, hence, the total size of the
-record is 3.
-\item For \var{Trec3}, the sizes of \var{A,B} are 1, and hence they are aligned on 1
-byte boundaries. The same is true for \var{Trec4}.
-\item For \var{Trec5}, since the size of B -- 3 -- is smaller than 4, \var{B} will
-be on a  4-byte boundary, as this is the first power of two that is
-larger than its size. The same holds for \var{Trec6}.
-\item For \var{Trec7}, \var{B} is aligned on a 4 byte boundary, since its size --
-7 -- is larger than 4. However, in \var{Trec8}, it is aligned on a 8-byte
-boundary, since 8 is the first power of two that is greater than 7, thus
-making the total size of the record 16.
+\item The required alignment is set to the default alignment of the
+field's type, possibly adjusted based on the fact that this type occurs
+in a record and on field's location in the record.
+\item If the required alignment is smaller than the currently active
+\var{\{\$CODEALIGN RECORDMIN=X\}} setting, it is changed to this \var{X}
+value
+\item If the currently active \var{\{\$ALIGN N\}} or
+\var{\{\$PACKRECORDS N\}} setting is
+  \begin{itemize}
+  \item a numerical value: if the required alignment is larger than
+  \var{N}, it is changed to \var{N}. I.e., if \var{N} is 1, all fields
+  will be placed right after each other.
+  \item \var{RESET} or \var{DEFAULT}: the resultinf required alignment
+  is target dependent
+  \item \var{C}: the required alignment is adjusted according to the
+  rules specified in the official ABI for the current platform
+  \item \var{POWER}/\var{POWERPC}, \var{MAC68K}: the alignment value's
+  adjustment is determined by following the official ABI rules for
+  resp.\ the (Classic) Macintosh PowerPC or Macintosh 680x0 platforms.
+  \end{itemize}
 \end{itemize}
-\fpc supports also the 'packed record', this is a record where all the
-elements are byte-aligned. Thus the two following declarations are equivalent:
+
+The size of a record is equal to the sum of record's last field's offset
+and this field's size, rounded up to a multiple of the record's required
+alignment. The record's required alignment is calculated as followed:
+\begin{itemize}
+  \item The required alignment is set to the alignment of the record's
+  field with the largest alignment, as determined while laying out the
+  record
+  \item If the currently \var{\{\$ALIGN N\}} or \var{\{\$PACKRECORDS
+  N\}} setting is different from \var{C} and the required alignment is
+  larger than than the currently active \var{\{\$CODEALIGN
+  RECORDMAX=X\}}, the required alignment is changed to \var{X}
+  \item If the currently \var{\{\$ALIGN N\}} or \var{\{\$PACKRECORDS
+  N\}} setting is equal to \var{C}, the required alignment is determined
+  by following the official ABI rules.
+\end{itemize}
+
+\subsubsection{Remarks and examples}
+
+\fpc also supports a 'packed record', which is a record where all the
+elements are byte-aligned. As a result, the two following declarations
+are equivalent:
 \begin{verbatim}
      {$PackRecords 1}
      Trec2 = Record
        A : Byte;
        B : Word;
        end;
-     {$PackRecords 2}
+     {$PackRecords default}
 \end{verbatim}
 and
 \begin{verbatim}
@@ -2316,7 +2249,31 @@ and
        B : Word;
        end;
 \end{verbatim}
-Note the \var{\{\$PackRecords 2\}} after the first declaration !
+Note the \var{\{\$PackRecords Default\}} after the first declaration to
+restore the default setting!
+
+Given the platform-dependent nature of how records are laid out in
+memory, the only way to ensure a compatible layout across platforms
+(assuming that all fields are declared using a type with the same
+meaning across these same platforms) is by using \var{\{\$PACKRECORDS
+1\}}.
+
+In particular, if a typed file with records, produced by a \tp program,
+must be read, then chances are that attempting to read that file
+correctly will fail. The reason is that \fpc{}'s default
+\var{\{\$PACKRECORDS N\}} setting is not necessarily compatible with
+\tp{}'s. It can be changed to \var{\{\$PACKRECORDS 1\}} or
+\var{\{\$PACKRECORDS 2\}} depending on the setting used in the \tp
+program that create the file (although it may still fail with
+\var{\{\$PACKRECORDS 2\}} due to different type alignment requirements
+between 16 bit MSDOS and your current platform).
+
+The same remark goes for \delphi{}: exchanging data is only guaranteed
+to be possible if both the producer and consumer use a packed record, or
+if they are on the same platform and use the same \var{\{\$PACKRECORDS
+X\}} setting.
+
+
 %
 \subsection{Set types}
 \index{Set}\index{Types!Set}\keywordlink{set}
