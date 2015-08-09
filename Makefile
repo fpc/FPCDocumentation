@@ -2520,7 +2520,7 @@ RTLUNITS=system objpas types sysutils strutils dateutils strings mouse keyboard 
 	 ports getopts emu387 dxeload go32 gpm  baseunix \
 	 unixtype unix classes unixutil x86 dynlibs linux math matrix \
 	 dateutils rtl wincrt clocale cthreads cmem cwstring \
-	 exeinfo lineinfo lnfodwrf ctypes errors fpwidestring fgl character
+	 exeinfo lineinfo lnfodwrf ctypes errors fpwidestring fgl character unicodedata
 RTLXML=$(addsuffix .xml,$(RTLUNITS))
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
 RTLTYPES= --descr=types.xml --input="$(FPCSRCDIR)/rtl/objpas/types.pp $(OSDIRINCLUDES)"
