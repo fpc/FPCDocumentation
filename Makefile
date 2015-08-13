@@ -2520,7 +2520,9 @@ RTLUNITS=system objpas types sysutils strutils dateutils strings mouse keyboard 
 	 ports getopts emu387 dxeload go32 gpm  baseunix \
 	 unixtype unix classes unixutil x86 dynlibs linux math matrix \
 	 dateutils rtl wincrt clocale cthreads cmem cwstring \
-	 exeinfo lineinfo lnfodwrf ctypes errors fpwidestring fgl character unicodedata
+	 exeinfo lineinfo lnfodwrf ctypes errors fpwidestring fgl character unicodedata \
+	 unicodeducet cp895 cp932 cp936 cp949 cp950 collation_de collation_es collation_fr_ca \
+	 collation_ja collation_ko collation_ru collation_sv collation_zh
 RTLXML=$(addsuffix .xml,$(RTLUNITS))
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
 RTLTYPES= --descr=types.xml --input="$(FPCSRCDIR)/rtl/objpas/types.pp $(OSDIRINCLUDES)"
@@ -2717,7 +2719,7 @@ ifndef CSSFILE
 	cp fpdoc.cst fclres/fpdoc.css
 endif
 	@$(ECHO) '' > fclres.chk
-rtl.chk: $(RTLXML)
+rtl.chk: $(RTLXML) rtl-project.xml
 	$(FPDOC) --project=rtl-project.xml --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst rtl/fpdoc.css

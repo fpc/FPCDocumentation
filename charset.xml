@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="rtl">
+
+<!--
+  ====================================================================
+    charset
+  ====================================================================
+-->
+
+<module name="charset">
+<short>Character set support</short>
+<descr>
+<p>
+The charset unit can be used to load single-byte character set (code page) descriptions.
+It is used in the <link id="fpwidestring"/> unit to add support for
+converting single-byte codepage strings to unicode strings (and vice versa).
+</p>
+<p>Data of a code page may be included using one of the ready-made units, or
+can be loaded (in a binary form)  at runtime with the <link
+id="loadbinaryunicodemapping"/> function. 
+The binary files have the <file>.bcm</file> extension and are produced by
+the <file>creumap</file> utility distributed with Free Pascal.
+</p>
+<p>
+Pre-made units are available for the following codepages:
+<link id="cp895"/>, <link id="cp932"/>, <link id="cp936"/>, <link id="cp949"/>
+and <link id="cp950"/>.
+</p>
+</descr>
+<seealso>
+<link id="fpwidestring"/>
+<link id="unicodedata"/>
+<link id="loadbinaryunicodemapping"/>
+<link id="cp895"/> 
+<link id="cp932"/>
+<link id="cp936"/>
+<link id="cp949"/>
+<link id="cp950"/>
+</seealso>
+
+<!-- alias type Visibility: default -->
+<element name="tunicodechar">
+<short>Unicode character representation.</short>
+<descr>
+<var>tunicodechar</var> is a type used to represent unicode characters in this file, it should not be used for other unicode routines.
+</descr>
+<seealso>
+<link id="tunicodestring"/>
+</seealso>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="tunicodestring">
+<short>Unicode string representation.</short>
+<descr>
+<var>tunicodestring</var> is a type used to represent unicode strings in this file, it should not be used for other unicode routines.
+</descr>
+<seealso>
+<link id="tunicodechar"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="tunicodecharmappingflag">
+<short>Information flags for unicode characters</short>
+<descr>
+<var>tunicodecharmappingflag</var>  contains various Flags describing information about a unicode character.
+</descr>
+<seealso>
+<link id="tunicodecharmapping"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tunicodecharmappingflag.umf_noinfo">
+<short>No extra information about unicode character</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tunicodecharmappingflag.umf_leadbyte">
+<short>Unicode character uses leading byte</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tunicodecharmappingflag.umf_undefined">
+<short>Currently unused</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tunicodecharmappingflag.umf_unused">
+<short>Unused position in code page</short>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="punicodecharmapping">
+<short>Pointer to <var>tunicodecharmapping</var></short>
+<seealso>
+<link id="tunicodecharmapping"/>
+</seealso>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="tunicodecharmapping">
+<short>Describe a single byte character to unicode character mapping.</short>
+<descr>
+<var>tunicodecharmapping</var> describes a unicode character. 
+An array of these mappings is built for each character in the single-byte character set, 
+</descr>
+<seealso>
+<link id="punicodecharmapping"/>
+<link id="tunicodecharmappingflag"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tunicodecharmapping.unicode">
+<short>Unicode character</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tunicodecharmapping.flag">
+<short>Flag for this unicode character.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tunicodecharmapping.reserved">
+<short>Unused</short>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="preversecharmapping">
+<short>Pointer to <var>treversecharmapping</var></short>
+<seealso>
+<link id="treversecharmapping"/> 
+</seealso>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="treversecharmapping">
+<short>Describe a unicode character to single byte character mapping.</short>
+<descr>
+<var>treversecharmapping</var> describes how a unicode character can be created in terms of single-byte characters.
+</descr>
+<seealso>
+<link id="preversecharmapping"/> 
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="treversecharmapping.unicode">
+<short>Unicode character</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="treversecharmapping.char1">
+<short>First single-byte character</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="treversecharmapping.char2">
+<short>Second single-byte character.</short>
+</element>
+
+<!-- pointer type Visibility: default -->
+<element name="punicodemap">
+<short>Pointer to <var>tunicodemap</var></short>
+<seealso>
+<link id="tunicodemap"/>
+</seealso>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="tunicodemap">
+<short>Unicode character mapping for single-byte codepage</short>
+<descr>
+<var>tunicodemap</var> describes a complete mapping between a single-byte code page and a unicode character set.
+It contains both a forward and backward mapping.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tunicodemap.cpname">
+<short>Codepage name</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tunicodemap.cp">
+<short>Numerical codepage identifier</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tunicodemap.map">
+<short>Forward map (array)</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tunicodemap.lastchar">
+<short>Index of last character (or size of <var>map</var> array)</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tunicodemap.reversemap">
+<short>Reverse map (array)</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tunicodemap.reversemaplength">
+  <short>Length of reverse map (or size of <var>reversemap</var> array)</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tunicodemap.next">
+<short>Pointer to next unicode map in chain</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tunicodemap.internalmap">
+<short>Is this an internal map (not dynamically loaded, may not be freed)</short>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TSerializedMapHeader">
+<short>Record describing binary file header</short>
+<descr>
+<var>TSerializedMapHeader</var> is a record describing the binary map data file. 
+The contents of this record can be found at offset zero of a (.bcm) file containing 
+a single-byte unicode map.
+</descr>
+<seealso>
+<link id="loadbinaryunicodemapping"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TSerializedMapHeader.cpName">
+<short>Code page name</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TSerializedMapHeader.cp">
+<short>Numerical code page identifier</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TSerializedMapHeader.mapLength">
+<short>Map length</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TSerializedMapHeader.lastChar">
+<short>Last character in map</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TSerializedMapHeader.reverseMapLength">
+<short>Reverse map length</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="BINARY_MAPPING_FILE_EXT">
+<short>Default extension of binary map file</short>
+<descr>
+<var>BINARY_MAPPING_FILE_EXT</var> contains the default extension of a file containing a binary-coded map.
+</descr>
+<seealso>
+<link id="loadbinaryunicodemapping"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="loadunicodemapping">
+<short>Load textual single-byte codepage to unicode map from file</short>
+<descr>
+<p><var>loadunicodemapping</var> loads a text description of a single-byte unicode mapping. 
+It will analyse the textual description in file <var>f</var>,
+and produce an in-memory map of the file. It returns a pointer to the map, or <var>Nil</var> if something went wrong.
+The unicode map name must be specified in <var>cpName</var>, and the numerical identifier in <var>cp</var> 
+</p>
+<p>
+The resulting mapping can be registered using <link id="registermapping"/>.
+</p>
+</descr>
+<errors>
+On error, <var>Nil</var> is returned.
+</errors>
+<seealso>
+<link id="loadbinaryunicodemapping"/>
+<link id="registermapping"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="loadunicodemapping.Result">
+<short>The single-byte to unicode map, or Nil on error.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="loadunicodemapping.cpname">
+<short>Codepage name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="loadunicodemapping.f">
+<short>File to open and analyse</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="loadunicodemapping.cp">
+<short>Numerical code page identifier.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="loadbinaryunicodemapping">
+<short>Load binary single-byte codepage to unicode map from file or memory</short>
+<descr>
+<p><var>loadbinaryunicodemapping</var> loads a binary description of a single-byte unicode mapping. 
+The mapping can reside in a file, in which case the file to load can be specified using a filename <var>filename</var> 
+or using a directory <var>directory</var> and codepage name <var>cpname</var>. In the latter case, a suffix 
+consisting of <file>_le</file> or <file>_be</file> depending on the endianness of the current platform will be appended, and the 
+filename extension is <file>.bcm</file>. Note that the file names may be case sensitive.
+</p>
+<p>
+The data can also be loaded from a memory block <var>AData</var> with size <var>ADataLength</var>.
+</p>
+<p>
+It will produce an in-memory map of the file. It returns a pointer to the map, or <var>Nil</var> if something went wrong.
+The resulting mapping can be registered using <link id="registermapping"/>.
+</p>
+</descr>
+<errors>
+On error, <var>Nil</var> is returned.
+</errors>
+<seealso>
+<link id="loadunicodemapping"/>
+<link id="registermapping"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="loadbinaryunicodemapping.Result">
+<short>Pointer to single-byte codepage to unicode map.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="loadbinaryunicodemapping.directory">
+<short>Directory in which to search file</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="loadbinaryunicodemapping.cpname">
+<short>Code page name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="loadbinaryunicodemapping.filename">
+<short>Filename to load</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="loadbinaryunicodemapping.AData">
+<short>Memory block to load</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="loadbinaryunicodemapping.ADataLength">
+<short>Length of <var>AData</var> memory block.</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="registermapping">
+<short>Register mapping</short>
+<descr>
+<var>RegisterMapping</var> registers mapping <var>p</var> in the registry of single-byte codepages.
+No attempt is made to avoid double registrations. In case of doubles, the last registered mapping will be used first.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="loadunicodemapping"/>
+<link id="loadbinaryunicodemapping"/>
+<link id="registerbinarymapping"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="registermapping.p">
+<short>Map to register.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="registerbinarymapping">
+<short>Load and register binary single-byte codepage to unicode map from file</short>
+<descr>
+<var>registerbinarymapping</var> calls <link id="loadbinaryunicodemapping"/> using <var>directory</var> 
+and <var>cpname</var> and registers the resulting mapping, if any was succesfully loaded, using <link id="registermapping"/>.
+It returns <var>True</var> if the operation was succesful.
+</descr>
+<errors>
+On error, <var>False</var> is returned.
+</errors>
+<seealso>
+<link id="loadbinaryunicodemapping"/>
+<link id="registermapping"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="registerbinarymapping.Result">
+<short>True on succes, false on error.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="registerbinarymapping.directory">
+<short>Directory to load mapping from.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="registerbinarymapping.cpname">
+<short>Code page mapping to load.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="getmap">
+<short>Find a codepage map</short>
+<descr>
+<var>getmap</var> looks in the registered codepage mappings and returns the mapping for the requested codepage.
+The codepage can be specified using a name <var>s</var> or a numerical identifier <var>cp</var>.
+The search is case sensitive.
+</descr>
+<errors>
+if the requested map is not found, <var>Nil</var> is returned.
+</errors>
+<seealso>
+<link id="registermapping"/>
+<link id="registerbinarymapping"/>
+<link id="mappingavailable"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="getmap.Result">
+<short>Pointer to requested code page mapping.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="getmap.s">
+<short>Name of code page to search</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="getmap.cp">
+<short>Numerical identifier of code page to search</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="mappingavailable">
+<short>Check if a mapping is available for a specified code page.</short>
+<descr>
+<var>mappingavailable</var> returns <var>True</var> if a mapping for a 
+specified code page (using name <var>s</var> or numerical identifier <var>cp</var>) is available, or <var>False</var> if it is not.
+</descr>
+<seealso>
+<link id="registermapping"/>
+<link id="registerbinarymapping"/>
+<link id="getmap"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="mappingavailable.Result">
+  <short>True if a map is available for codepage <var>s</var> or <var>cp</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="mappingavailable.s">
+<short>Code page name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="mappingavailable.cp">
+<short>Numerical code page identifier.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="getunicode">
+<short>Map single-byte character to unicode character.</short>
+<descr>
+<p>
+The first form of <var>getunicode</var> will map a single character <var>c</var> to its unicode equivalent for mapping <var>p</var>. 
+If no equivalent can be found, <var>0</var> is returned.
+</p>
+<p>
+The second form of <var>getunicode</var> will transform a string (specified using a pointer <var>AAnsiStr</var> to a buffer with 
+length <var>AAnsiLen</var>) to a unicode string using single byte codepage map <var>AMap</var>. It returns the number of unicode characters. 
+If <var>ADest</var> is <var>Nil</var> then just the number of characters is returned. If <var>ADest</var> is not <var>nil</var>, 
+it must point to a buffer large enough to contain the unicode string, and the converted string will be copied to it.
+</p> 
+</descr>
+<errors>
+No checking on the validity of the buffers is done.
+</errors>
+<seealso>
+<link id="getascii"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="getunicode.Result">
+<short>Unicode character or number of unicode characters in translated string. </short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="getunicode.c">
+<short>Character to translate</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="getunicode.p">
+<short>Single-byte to Unicode character map to use.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="getunicode.AAnsiStr">
+<short>Ansi string to tranform.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="getunicode.AAnsiLen">
+<short>Length (in bytes) of ansi string to tranform</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="getunicode.AMap">
+<short>Single-byte to Unicode character map to use.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="getunicode.ADest">
+<short>Buffer for translated unicode string.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="getascii">
+<short>Convert unicode character or string to single-byte character or string.</short>
+<descr>
+<var>getascii</var> converts a unicode character <var>c</var> to one or more single-byte characters according to the map in <var>p</var>.
+The result can be a string containing up to 2 characters, or the number of characters copied to the buffer <var>ABuffer</var> 
+with length <var>ABufferLen</var>.
+</descr>
+<errors>
+If the character cannot be translated, ASCII character 63 is returned (or copied to the buffer).
+In the case of the buffer variant of the function, -1 is then returned. If the buffer is not large enough, -1 is returned.
+</errors>
+<seealso>
+<link id="getunicode"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="getascii.Result">
+<short>Translated character as string, or number of characters copied to buffer.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="getascii.c">
+<short>Character to translate.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="getascii.p">
+<short>Mapping to use</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="getascii.ABuffer">
+<short>Buffer to copy characters to.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="getascii.ABufferLen">
+<short>Length of buffer <var>ABuffer</var></short>
+</element>
+
+</module> <!-- charset -->
+
+</package>
+</fpdoc-descriptions>

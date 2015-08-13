@@ -11,11 +11,55 @@
 <module name="unicodedata">
 <short>Unicode data management</short>
 <descr>
+<p>
 The <link id="fpwidestring"/> unit relies on having relevant unicode collation data linked
 in the binary. The unicode data is managed using the routines in the <file>unicodedata</file> unit.
 The FPC project distributes some unicode collation data in <var>.bco</var> files which can be loaded 
 using the <link id="#rtl.unicodedata.LoadCollation">LoadCollation</link> routines.
 The <var>LoadCollation</var> is the main routine of this unit.
+</p>
+<p>
+All collation data requires at least the Default Unicode Collation 
+Element Table to be registered (called <var>DUCET</var>). 
+The DUCET encoding is provided by the <file>unicodeducet</file> unit, part of the rtl-unicode package.
+</p>
+<p>
+There are two ways to register collations :
+</p>
+<ol>
+<li><b>at compile time</b>: by including the desired collation unit, for example
+for Russian and Japanese languages to be available you will have to include
+<file>collation_ru</file> and <file>collation_ja</file> from package "rtl-unicode".
+</li>
+<li>
+<b> at runtime</b> using the abovementioned <var>LoadCollation</var> function.
+</li>
+</ol>
+<p>
+The two ways can co-exist: some collations may be compile time included
+(for example for most used collations) and others can be loaded at runtime 
+in the same application.
+</p>
+<p>
+The binary collation files are endian sensitive:
+</p>
+<ul>
+<li> 
+there are files for little endian systems named <file>collation_<b>lang</b>_le.bco</file>
+(such as collation_ru_le.bco and collation_ja_le.bco)
+</li>
+<li>
+there are files for big endian systems named <file>collation_<b>lang</b>_be.bco</file> 
+(such as collation_ru_be.bco and collation_ja_be.bco).
+</li>
+</ul>
+<p>
+  Note that the compile time units collation units (collation_<b>lang</b>.pas)
+include already the unicodeducet.pas (DUCET) unit so it is not necessary to
+include it manually, contrary to the binary files. So an application that
+only uses the binary collation files should at least manually include the
+<file>unicodeducet</file> unit.
+</p>
 </descr>
 
 <!-- constant Visibility: default -->
