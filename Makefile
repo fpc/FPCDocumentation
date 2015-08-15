@@ -2522,7 +2522,9 @@ RTLUNITS=system objpas types sysutils strutils dateutils strings mouse keyboard 
 	 dateutils rtl wincrt clocale cthreads cmem cwstring \
 	 exeinfo lineinfo lnfodwrf ctypes errors fpwidestring fgl character unicodedata \
 	 unicodeducet cp895 cp932 cp936 cp949 cp950 collation_de collation_es collation_fr_ca \
-	 collation_ja collation_ko collation_ru collation_sv collation_zh charset windirs
+	 collation_ja collation_ko collation_ru collation_sv collation_zh charset windirs \
+	 cp1250 cp1251 cp1252 cp1253 cp1254 cp1255 cp1256 cp1257 cp1258 cp437 cp646 cp850 \
+	 cp852 cp856 cp866 cp874 cp8859_1 cp8859_2 cp8859_5 cpall
 RTLXML=$(addsuffix .xml,$(RTLUNITS))
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
 RTLTYPES= --descr=types.xml --input="$(FPCSRCDIR)/rtl/objpas/types.pp $(OSDIRINCLUDES)"
