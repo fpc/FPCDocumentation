@@ -1027,7 +1027,7 @@ a larger signed result. This means that mixing longint and longword on
 % 
 %
 \subsubsection{Boolean types}
-\index{Types!Boolean}\index{Boolean}
+\index{Types!Boolean}\index{Boolean}\index{Type!Compatibility}
 \fpc supports the \var{Boolean} type, with its two pre-defined possible
 values \var{True} and \var{False}. These are the only two values that can be
 assigned to a \var{Boolean} type. Of course, any expression that resolves
@@ -2022,6 +2022,48 @@ The \var{Low} function on a dynamic array will always return 0, and the
 \var{High} function will return the value \var{Length-1}, i.e., the value of the
 highest allowed array index. 
 
+\subsubsection{Dynamic array Type compatibility}
+\index{Type!Compatibility}
+Object Pascal is a strictly typed language. 2 technically distinct types are sometimes considered assignment compatible
+(i.e. a value of one type can be assigned to a variable of another type) under certain circumstances. 
+Dynamic arrays are considered assignment compatible when they use the same element type. 
+That means that the following will compile:
+\begin{verbatim}
+{$mode objfpc}
+
+Type
+  TA = Array of Integer;
+  TB = Array of Integer;
+
+Var
+  A : TA;
+  B : TB;
+
+begin
+  SetLength(A,1);
+  A[0]:=1;
+  B:=A;
+end.
+\end{verbatim}
+But the following will not, even though the integer and word types are assignement compatible:
+\begin{verbatim}
+{$mode objfpc}
+
+Type
+  TA = Array of Word;
+  TB = Array of Integer;
+
+Var
+  A : TA;
+  B : TB;
+
+begin
+  SetLength(A,1);
+  A[0]:=1;
+  B:=A;
+end.
+\end{verbatim}
+
 \subsubsection{Dynamic array constructor}
 \index{Types!Constructor}\index{Array!Constructor}\index{Array constructor}
 As of version 3.0 of \fpc, Dynamic array types have a constructor. This is intrinsic, the compiler provides it.
@@ -2861,7 +2903,8 @@ Var
   B :  Integer;
 \end{verbatim}
 Will not have the same type from the point of view of the compiler. However,
-these 2 types will be assignment compatible. That means that an assignment
+these 2 types will be assignment compatible.\index{Type!Compatibility}
+That means that an assignment
 \begin{verbatim}
   A:=B;
 \end{verbatim}
@@ -5379,48 +5422,37 @@ temporary variable is finalized, it will attempt to free \var{B} again.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Generics}
 \label{ch:generics}
-\index{Generics}
+\index{Generics}\index{Type!Generics}
 \section{Introduction}
-Generics are templates for generating classes. It is a concept that
-comes from C++, where it is deeply integrated in the language. As of
-version 2.2, Free Pascal also officially has support for templates or
-Generics. They are implemented as a kind of macro which is stored in the
-unit files that the compiler generates, and which is replayed as soon
-as a generic class is specialized.
-
-Currently, only generic classes can be defined. Later, support for
-generic records, functions and arrays may be introduced.
+\label{se:genericsintroduction}
+Generics are templates for generating other types. These can be classes, objects, interfaces and even functions, arrays, records. 
+It is a concept that comes from C++, where it is deeply integrated in the language. 
+As of version 2.2, Free Pascal also officially has support for templates or Generics. 
+They are implemented as a kind of macro which is stored in the unit files that the compiler generates, 
+and which is replayed as soon as a generic class is specialized.
 
 Creating and using generics is a 2-phase process.
 \begin{enumerate}
-\item The definition of the generic class is defined as a new type: 
+\item The definition of the generic is defined as a new type: 
 this is a code template, a macro which can be replayed by the compiler 
 at a later stage.
-\item A generic class is specialized: this defines a second class,
-which is a specific implementation of the generic class: the compiler
-replays the macro which was stored when the generic class was defined.
+\item A generic type is specialized: this defines a second type,
+which is a specific implementation of the generic type: the compiler
+replays the macro which was stored when the generic type was defined.
 \end{enumerate}
 
-\section{Generic class definition}
-A generic class definition is much like a class definition, with the
-exception that it contains a list of placeholders for types, and can 
-contain a series of local variable blocks or local type blocks, as can be
-seen in the following syntax diagram:
+\section{Generic type definition}
+A generic type definition is much like a type definition, with the exception that it contains a list of placeholders for types, 
+as can be seen in the following syntax diagram:
 \input{syntax/generic.syn}
-The generic class declaration should be followed by a class implementation.
+For classes, objects, procedural types and extended records, the generic 
+type declaration should be followed by a type implementation.
 It is the same as a normal class implementation with a single exception,
 namely that any identifier with the same name as one of the template
 identifiers must be a type identifier.
 
-The generic class declaration is much like a normal class declaration, 
-except for the local variable and local type block. The local type block
-defines types that are type placeholders: they are not actualized until
-the class is specialized.
-
-The local variable block is just an alternate syntax for ordinary class fields.
-The reason for introducing is the introduction of the \var{Type} block: just
-as in a unit or function declaration, a class declaration can now have a
-local type and variable block definition.
+So, the generic type declaration is much like a normal type declaration, except that there is an as yet unknown type present.
+The unknown types are listed in the placeholder list, and they are unknown until the class is specialized.
 
 The following is a valid generic class definition:
 \begin{verbatim}
@@ -5451,8 +5483,8 @@ There are some noteworthy things about this declaration and implementation:
 \begin{enumerate}
 \item There is a single placeholder \var{\_T}. It will be substituted by a
 type identifier when the generic class is specialized. The identifier
-\var{\_T} may not be used for anything else than a placeholder. This means
-that the following would be invalid:
+\var{\_T} may not be used for anything else than a type placeholder. 
+This means that the following would be invalid:
 \begin{verbatim}
 procedure TList.Sort(compare: TCompareFunc);
 
@@ -5479,14 +5511,74 @@ when the generic class is specialized.
     procedure Sort(compare: TCompareFunc);
   end;
 \end{verbatim}
-\item Both the local variable block and local type block have a visibility
-specifier. This is optional; if it is omitted, the current visibility is
-used.
 \end{enumerate}
 
-\section{Generic class specialization}
-Once a generic class is defined, it can be used to generate other classes:
-this is like replaying the definition of the class, with the template
+Not only generic classes can be defined, but also other types:
+\begin{verbatim}
+{$mode objfpc}
+{$INTERFACES CORBA}
+type
+
+  generic PlanarCoordinate<t> = record
+    x,y : t;
+  end;
+
+  TScreenCoordinate = specialize PLanarCoordinate<word>;
+  TDiscreteCoordinate = specialize PlanarCoordinate<integer>;
+  TRealCoordinate = specialize PlanarCoordinate<extended>;
+
+  generic TDistanceFunction<t> = function (x,y : t) : Extended of object;
+
+  TScreenDistance = specialize TDistanceFunction<word>;
+  TDiscreteDistance = specialize TDistanceFunction<integer>;
+  TRealDistance = specialize TDistanceFunction<Extended>;
+
+  generic TArray<t> = array of t;
+
+  TMyIntegerArray = specialize TArray<integer>;
+
+  generic IList<_T> = Interface
+    Function GetItem(AIndex : Integer) : _T;
+    Procedure SetItem(AIndex : Integer; AValue : _T);
+    Function GetCount : Integer;
+    Property Items [AIndex : Integer] : _T Read GetItem Write SetItem;
+    Property Count : Integer Read GetCount;
+  end;
+
+  generic TList<_T>=class(TObject, specialize IList<_T>)
+  public type
+    TCompareFunc = function(const Item1, Item2: _T): Integer;
+    Function GetItem(AIndex : Integer) : _T;
+    Procedure SetItem(AIndex : Integer; AValue : _T);
+    Function GetCount : Integer;
+  Public
+     data : _T;
+     procedure Add(item: _T);
+     procedure Sort(compare: TCompareFunc);
+  end;
+
+  generic TPointSet<t> = array of specialize PlanarCoordinate<t>;
+
+  TScreenPointSet = specialize TPointSet<word>;
+  TDiscretePointSet =  specialize TPointSet<integer>;
+  TRealPointSet = specialize TPointSet<extended>;
+\end{verbatim}
+
+\begin{remark}
+A word on visibility: the template types \var{T} or \var{\_T} are available as strict private types. 
+That means that the types are not available in the descendent classes, unless they are made available 
+through some protected or private mechanism, as in the following example:
+\begin{verbatim}
+  generic TList<_T>=class(TObject)
+  public type
+    TItemType = _T;
+  end;
+\end{verbatim}
+\end{remark}
+
+\section{Generic type specialization}
+Once a generic type is defined, it can be used to generate other types:
+this is like replaying the definition of the types, with the template
 placeholders filled in with actual type definitions.
 
 This can be done in any \var{Type} definition block. The specialized type
@@ -5499,15 +5591,14 @@ Type
   TPointerList = specialize TList<Pointer>;
   TIntegerList = specialize TList<Integer>;
 \end{verbatim}
-The following is not allowed:
+As of version 3.0 of Free Pascal, the specialize keyword can also be used in a variable declaration:
 \begin{verbatim}
 Var
   P : specialize TList<Pointer>;  
 \end{verbatim}
-that is, a variable cannot be directly declared using a specialization.
 
-The type in the specialize statement must be known. Given the 2 generic
-class definitions:
+The type in the specialize statement must be known, except in another generic type definition. 
+Given the 2 generic class definitions:
 \begin{verbatim}
 type 
   Generic TMyFirstType<T1> = Class(TMyObject);
@@ -5518,8 +5609,12 @@ Then the following specialization is not valid:
 type
   TMySpecialType = specialize TMySecondType<TMyFirstType>;
 \end{verbatim}
-because the type \var{TMyFirstType} is a generic type, and thus
-not fully defined. However, the following is allowed:
+because the type \var{TMyFirstType} is a generic type, and thus not fully defined.  The compiler will complain:
+\begin{verbatim}
+Error: Generics cannot be used as parameters when specializing generics
+\end{verbatim}
+
+However, the following is allowed:
 \begin{verbatim}
 type
   TA = specialize TMyFirstType<Atype>;
@@ -5527,36 +5622,231 @@ type
 \end{verbatim}
 because \var{TA} is already fully defined when \var{TB} is specialized.
 
-Note that 2 specializations of a generic type with the same types in a
-placeholder are not assignment compatible. In the following example:
+However, the \var{specialize} keyword can be used in another generic type definition as shown in the example above:
 \begin{verbatim}
-type
-  TA = specialize TList<Pointer>;
-  TB = specialize TList<Pointer>;
+  generic TList<_T>=class(TObject, specialize IList<_T>)
 \end{verbatim}
-variables of types \var{TA} and \var{TB} cannot be assigned to each other,
-i.e the following assignment will be invalid:
+and
 \begin{verbatim}
-Var
-  A : TA;
-  B : TB;
-
-begin
-  A:=B;
+  generic TPointSet<t> = array of specialize PlanarCoordinate<t>;
 \end{verbatim}
+In these definitions, the specialization is only performed when the generic type itself is specialized, 
+and at that time, the types are known.
 
 \begin{remark}
-It is not possible to make a forward definition of a generic class. The
-compiler will generate an error if a forward declaration of a class is
-later defined as a generic specialization.
+As of version 3.0, it is possible to make a forward definition of a generic class. 
+In prior versions the compiler would generate an error if a forward declaration of a class was
+later defined as a generic specialization. This means that the following is now possible:
+\begin{verbatim}
+{$mode objfpc}
+Type
+  TMyClass = Class;
+ 
+  // Other declarations
+
+  TMyClass = specialize TList<T>;
+\end{verbatim}
 \end{remark}
 
-\section{A word about type compatibility}
+
+\section{Generic type restrictions}
+\index{Type!Restrictions}\index{Generics!Type Restrictions}
+The diagram in \sees{genericsintroduction} shows that the type template list can have extra specifiers for the types.
+This is especially useful for object types: if the template type must descend from a certain class, then this can be 
+specified in the template list:
+\begin{verbatim}
+{$mode objfpc}
+{$h+}
+uses sysutils, classes;
+
+Type
+  generic TList<_T : TComponent> = class(TObject)
+  public 
+    Type TCompareFunc = function(const Item1, Item2: _T): Integer;
+  Public  
+    data : _T;
+    procedure Add(item: _T);
+    procedure Sort(compare: TCompareFunc);
+ end;
+\end{verbatim}
+Given the above definition, the following will compile:
+\begin{verbatim}
+TPersistentList = specialize TList<TPersistent>;
+\end{verbatim}
+But this will not compile
+\begin{verbatim}
+TPersistentList = specialize TList<TPersistent>;
+\end{verbatim}
+The compiler will return an error:
+\begin{verbatim}
+Error: Incompatible types: got "TPersistent" expected "TComponent"
+\end{verbatim}
+Multiple types can be grouped together:
+\begin{verbatim}
+Type
+  generic TList<Key1,Key2 : TComponent; Value1 : TObject> = class(TObject)
+\end{verbatim}
+
+Additionally, it is possible to specify more than one type identifier for class and interface type restrictions. 
+If a class is specified, then the type used for the template must be equal to or descend from the indicated type:
+\begin{verbatim}
+Type
+  generic TList<T: TComponent, IEnumerable> = class(TObject)
+\end{verbatim}
+A class used to specialize \var{T} must descend from \var{TComponent} and must implement \var{IEnumerable}.
+
+If an interface is specified, then the template type must implement at least this interface, but it can also be a descendent interface from this interface:
+\begin{verbatim}
+Type
+  generic TGenList<T: IEnumerable> = class(TObject)
+
+  IMyEnum = Interface (IEnumerable)
+    Procedure DoMy;
+  end;
+  
+  TList = specialize TGenList<IMyEnum>;
+  TSomeList = Specialize TGenList<TList>;
+\end{verbatim}
+
+Multiple interfaces can be specified, in that case the class type must implement all listed interfaces:
+It is possible to mix one class name with several interface names.
+
+If no type restrictions are in effect, the compiler will assume that template types are {\em not} assignment compatible.
+
+This is specially important when the generic class contains overloaded methods. Given the following generic type declaration:
+\begin{verbatim}
+type
+  generic TTest<T1, T2> = class
+    procedure Test(aArg: LongInt);
+    procedure Test(aArg: T1);
+    procedure Test(aArg: T2);
+  end;
+\end{verbatim}
+Specializing the above will compile if \var{T1} and \var{T2} are of two different types and neither is also \var{LongInt}. 
+The following will compile:
+\begin{verbatim}
+T1 = specialize TTest<String, TObject>;
+\end{verbatim}
+But the following 2 will not compile: 
+\begin{verbatim}
+T2 = specialize TTest<String, String>;
+\end{verbatim}
+or
+\begin{verbatim}
+T2 = specialize TTest<String, Longint>;
+\end{verbatim}
+
+\section{Delphi compatibility}
+\index{Delphi!Compatibility}
+FPC's generics support is implemented somewhat different from Delphi. In this section the main differences are highlighted. 
+
+\subsection{Syntax elements}
+\index{Delphi!Syntax}
+The syntax shown in the syntax diagrams is the syntax required in the ObjFPC mode of the compiler.
+However, in Delphi mode, the \var{specialize} and \var{generic} keywords must not be used, as shown in the following example:
+\begin{verbatim}
+Type
+  TTest<T> = Class(TObject)
+  Private
+    FObj : T;
+  Public
+    Property Obj : T Read FObj Write FObj;
+  end;
+
+  TIntegerTest = TTest<Integer>;
+\end{verbatim}
+In difference with Mode Objfpc, the template type names must be repeated in method definitions. 
+\begin{verbatim}
+Type
+  TTest<T> = Class(TObject)
+  Private
+    FObj : T;
+  Public
+    Procedure DoIt;
+    Property Obj : T Read FObj Write FObj;
+  end;
+
+Procedure TTest<T>.DoIt;
+
+begin
+end;
+\end{verbatim}
+This requirement is directly related to the generic type overload capability mentioned in the next section.
+
+\subsection{Record type restrictions}
+In Delphi mode, the \var{record} type restrictions will also allow the use of simple types:
+\begin{verbatim}
+Type
+generic TList<_T : record> = class(TObject)
+  public 
+    Type TCompareFunc = function(const Item1, Item2: _T): Integer;
+  Public  
+    data : _T;
+    procedure Add(item: _T);
+    procedure Sort(compare: TCompareFunc);
+ end;
+
+TIntList = TList<Integer>;
+\end{verbatim}
+
+\subsection{Type overloads}
+\index{Type!Type overloads}\index{Generics!Overloads}\index{Delphi!Type overloads}
+Delphi mode allows generic type overloads. This means that it is possible to declare the same generic class
+with different template type lists. The following declarations are therefor possible:
+\begin{verbatim}
+Type
+  TTest<T> = Class(TObject)
+  Private
+    FObj : T;
+  Public
+    Property Obj : T Read FObj Write FObj;
+  end;
+
+  TTest<T,S> = Class(TObject)
+  Private
+    FObj1 : T;
+    FObj2 : S;
+  Public
+    Property Obj1 : T Read FObj1 Write FObj1;
+    Property Obj2 : S Read FObj2 Write FObj2;
+  end;
+\end{verbatim}
+
+\subsection{Name space considerations}
+In Delphi mode, the generics do not interfere with the namespace for variables, this means that the following will also compile:
+\begin{verbatim}
+Type
+  TTest<T> = Class(TObject)
+  Private
+    FObj : T;
+  Public
+    Property Obj : T Read FObj Write FObj;
+  end;
+
+Var
+  TTest : Integer;
+\end{verbatim}
+However, this does not work for constants and functions.
+
+\subsection{Scope considerations}
+Delphi mode allows use a generic specialized type without explicitly declaring it. That means the following is possible:
+\begin{verbatim}
+var
+  t: TTest<LongInt>;
+begin
+  t := TTest<LongInt>.Create;
+end;
+\end{verbatim}
+In objfpc mode, the type must be declared specifically.
+
+\section{Type compatibility}
+\index{Type!Compatibility}
 Whenever a generic class is specialized, this results in a new, distinct type.
-These types are assignment compatible.
+These types are assignment compatible if the same template types are used.
 
 Take the following generic definition:
 \begin{verbatim}
+{$mode objfpc}
 unit ua;
 
 interface
@@ -5578,6 +5868,7 @@ end.
 \end{verbatim}
 And the following specializations:
 \begin{verbatim}
+{$mode objfpc}
 unit ub;
 
 interface
@@ -5593,6 +5884,7 @@ end.
 \end{verbatim}
 the following specializations is identical, but appears in a different unit:
 \begin{verbatim}
+{$mode objfpc}
 unit uc;
 
 interface
@@ -5608,6 +5900,7 @@ end.
 \end{verbatim}
 The following will then compile:
 \begin{verbatim}
+{$mode objfpc}
 unit ud;
 
 interface
@@ -5628,6 +5921,7 @@ The types ub.TB and  uc.TB are assignment compatible.
 It does not matter that the types are defined in different units. They could
 be defined in the same unit as well:
 \begin{verbatim}
+{$mode objfpc}
 unit ue;
 
 interface
@@ -5650,12 +5944,12 @@ begin
 end.
 \end{verbatim}
 Each specialization of a generic class with the same types as parameters is a new,
-distinct type, but these types are assignment compatible.
+distinct type, but these types are assignment compatible if the template types used to specialize them are equal.
 
-If the specialization is with a different type as parameters, the types are
-still distinct, but no longer assignment compatible. i.e. the following will
-not compile:
+If the specialization is with a different template type, the types are still distinct, but no longer assignment 
+compatible. i.e. the following will not compile:
 \begin{verbatim}
+{$mode objfpc}
 unit uf;
 
 interface
@@ -5679,8 +5973,8 @@ end.
 \end{verbatim}
 When compiling, an error will result:
 \begin{verbatim}
-Error: Incompatible types: got "TMyClass$1$crc31B95292" 
-expected "TMyClass$1$crc1ED6E3D5"
+Error: Incompatible types: got "TMyClass<System.LongInt>"
+                           expected "TMyClass<System.ShortString>"
 \end{verbatim}
 
 \section{Using the default intrinsic}
@@ -5710,6 +6004,7 @@ should be known when the generic class is declared. This works in 2 ways.
 First, all types must be known, that is, a type identifier with the same name
 must exist. The following unit will produce an error:
 \begin{verbatim}
+{$mode objfpc}
 unit myunit;
 
 interface
@@ -5743,6 +6038,7 @@ myunit.pp(11,1) Fatal: There were 1 errors compiling module, stopping
 
 The second way in which this is visible, is the following. Assume a unit
 \begin{verbatim}
+{$mode objfpc}
 unit mya;
 
 interface
@@ -5770,8 +6066,14 @@ end;
 
 end.
 \end{verbatim}
-and a program 
+The compiler will not allow to compile this unit, since the \var{DoLocalThings} function will not be visible when the generic type is specialized:
 \begin{verbatim}
+Error: Global Generic template references static symtable
+\end{verbatim}
+Now, if the unit is modified, and the \var{DoLocalThings} function  is moved to the interface section, the unit will compile.
+When using this generic in a program:
+\begin{verbatim}
+{$mode objfpc}
 program myb;
 
 uses mya;
@@ -5793,16 +6095,14 @@ begin
   B.DoSomething(1);
 end.
 \end{verbatim}
-Despite the fact that generics act as a macro which is replayed at
-specialization time, the reference to \var{DoLocalThings} is resolved
-when \var{TMyClass} is defined, not when TB is defined. This means that the
-output of the program is:
+Despite the fact that generics act as a macro which is replayed at specialization time, the reference to \var{DoLocalThings} is resolved
+when \var{TMyClass} is defined, not when TB is defined. This means that the output of the program is:
 \begin{verbatim}
 home: >fpc -S2 myb.pp
 home: >myb
 mya.DoLocalThings
 \end{verbatim}
-This is dictated by safety and necessity:
+This behaviour is dictated by safety and necessity:
 \begin{enumerate}
 \item A programmer specializing a class has no way of knowing which local
 procedures are used, so he cannot accidentally 'override' it.
@@ -5815,56 +6115,106 @@ altogether, and the programmer has no way of knowing he should include them
 before specializing his class.
 \end{enumerate}
 
-%\section{Operator overloading and generics}
-%Operator overloading and generics are closely related. Imagine a generic
-%class that has the following definition:
-%\begin{verbatim}
-%unit mya;
-%
-%interface
-%
-%type
-%  Generic TMyClass<T> = Class(TObject)
-%    Function Add(A,B : T) : T;
-%  end;
-%
-%
-%Implementation
-%
-%Function TMyClass.Add(A,B : T) : T;
-%
-%begin
-%  Result:=A+B;
-%end;
-%
-%end.
-%\end{verbatim}
-%When the compiler replays the generics macro, the addition must be possible.
-%For a specialization like this:
-%\begin{verbatim}
-%TMyIntegerClass = specialize TMyClass<integer>;
-%\end{verbatim}
-%This is not a problem, as the \var{Add} method would become:
-%\begin{verbatim}
-%Procedure TMyIntegerClass.Add(A,B : Integer) : Integer;
-%
-%begin
-%  Result:=A+B;
-%end;
-%\end{verbatim}
-%The compiler knows how to add 2 integers, so this code will compile without
-%problems. But the following code:
-%\begin{verbatim}
-%Type
-%  TComplex = record
-%   Re,Im : Double;
-%  end;
-%
-%Type
-%  TMyIntegerClass = specialize TMyClass<TComplex>;
-%\end{verbatim}
-%Will not compile, unless the addition of 2 \var{TComplex} types is defined.
-%Luckily, this can be done using operator overloading.
+\section{Operator overloading and generics}
+Operator overloading (\seec{operatoroverloading}) and  generics are closely related. 
+Imagine a generic class that has the following definition:
+\begin{verbatim}
+{$mode objfpc}
+unit mya;
+
+interface
+
+type
+  Generic TMyClass<T> = Class(TObject)
+    Function Add(A,B : T) : T;
+  end;
+
+Implementation
+
+Function TMyClass.Add(A,B : T) : T;
+
+begin
+  Result:=A+B;
+end;
+
+end.
+\end{verbatim}
+When the compiler replays the generics macro, the addition must be possible.
+For a specialization like this:
+\begin{verbatim}
+TMyIntegerClass = specialize TMyClass<integer>;
+\end{verbatim}
+This is not a problem, as the \var{Add} method would become:
+\begin{verbatim}
+Procedure TMyIntegerClass.Add(A,B : Integer) : Integer;
+
+begin
+  Result:=A+B;
+end;
+\end{verbatim}
+The compiler knows how to add 2 integers, so this code will compile without
+problems. But the following code:
+\begin{verbatim}
+Type
+  TComplex = record
+   Re,Im : Double;
+  end;
+
+Type
+  TMyIntegerClass = specialize TMyClass<TComplex>;
+\end{verbatim}
+Will not compile, unless the addition of 2 \var{TComplex} types is defined.
+This can be done using record operators:
+\begin{verbatim}
+{$modeswitch advancedrecords}
+uses mya;
+
+Type
+  TComplex = record
+     Re,Im : Double;
+     class operator +(a,b : TComplex) : TComplex;
+  end;
+
+class operator TComplex.+ (a,b : TComplex) : TComplex;
+
+begin
+  Result.re:=A.re+B.re;
+  Result.im:=A.im+B.im;
+end;
+
+
+Type
+  TMyComplexClass = specialize TMyClass<TComplex>;
+
+begin
+  // Code here
+end.
+\end{verbatim}
+Currently, due to an implementation restriction, it will not work using a global operator, i.e. the following does not work yet:
+\begin{verbatim}
+uses mya;
+
+Type
+  TComplex = record
+     Re,Im : Double;
+  end;
+
+operator + (a,b : TComplex) : TComplex;
+
+begin
+  Result.re:=A.re+B.re;
+  Result.im:=A.im+B.im;
+end;
+
+Type
+  TMyComplexClass = specialize TMyClass<TComplex>;
+
+begin
+  // Code here
+end.
+\end{verbatim}
+Support for this construct is expected in a future version of Free Pascal.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Extended Records
@@ -7283,7 +7633,8 @@ denotes an empty set. One should be careful when denoting a range.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Value typecasts
 \section{Value typecasts}
-\index{Typecast}\index{Typecast!Value}
+\index{Typecast}\index{Typecast!Value}\index{Type!Compatibility}
+
 Sometimes it is necessary to change the type of an expression, or a part of
 the expression, to be able to be assignment compatible. This is done through
 a value typecast. The syntax diagram for a value typecast is as follows:
@@ -7389,7 +7740,8 @@ end.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The @ operator
 \section{The @ operator}
-\index{Operators}\index{Address}
+\index{Operators}\index{Address}\index{Type!Compatibility}
+
 The address operator \var{@} returns the address of a variable, procedure
 or function. It is used as follows:
 \input{syntax/address.syn}
@@ -8908,7 +9260,8 @@ to these parameters are purely local to the procedure's block, and do not
 propagate back to the calling block.
 
 A block that wishes to call a procedure with value parameters must pass
-assignment compatible parameters to the procedure. This means that the types
+assignment compatible parameters to the procedure\index{Type!Compatibility}. 
+This means that the types
 should not match exactly, but can be converted to the actual parameter
 types. This conversion code is inserted by the compiler itself.
 
