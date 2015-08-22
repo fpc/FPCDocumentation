@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="rtl">
+
+<!--
+  ====================================================================
+    unixcp
+  ====================================================================
+-->
+
+<module name="unixcp">
+<short>Code Page name to number conversions</short>
+<descr>
+<p>
+The <file>unixcp</file> unit provides routines to handle mapping of code page names to numerical values as used in <file>libiconv</file>>.
+The <link id="GetCodepageByName"/> function is the main function for this. The <link id="GetCodepageData"/> can be used to map 
+a code page number to a name. These function can be used for instance to map code page information in environment variables to 
+code page numbers used in string encodings. The supported code page names are the ones commonly in use in <file>libiconv</file>.
+</p>
+<p>
+This unit is used for example in unit <link id="#rtl.cwstring">cwstring</link>.
+</p>
+</descr>
+<seealso>
+<link id="GetCodepageByName"/>
+<link id="GetCodepageData"/>
+<link id="GetSystemCodepage"/>
+<link id="#rtl.cwstring">cwstring</link>
+</seealso>
+
+<!-- record type Visibility: default -->
+<element name="TUnixCpData">
+<short>Structure to map code page number to name </short>
+<descr>
+<var>TUnixCpData</var> contains 2 fields necessary to construct a map between code page number (<var>cp</var>) and name (<var>name</var>).
+</descr>
+<seealso>
+<link id="UnixCpMap"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TUnixCpData.cp">
+<short>Code page number</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TUnixCpData.name">
+<short>Code page name</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="UnixCpMapLimit">
+<short>Number of code pages in map <var>UnixCpMap</var>.</short>
+<seealso>
+<link id="UnixCpMap"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="UnixCpMap">
+<short>Map with codepage names.</short>
+<descr>
+<p>
+<var>UnixCpMap</var> is a fixed structure with codepage number/codepage name pairs.
+It is used in <link id="GetCodepageData"/>, <link id="GetSystemCodepage"/> and 
+<link id="GetCodepageByName"/> to map code page names to numbers and vice versa.
+</p>
+<p>
+The map is ordered  on code page number, and for equal code page numbers, the 
+names are ordered so the most common one is used first.
+</p>
+</descr>
+<seealso>
+<link id="GetCodepageData"/>
+<link id="GetSystemCodepage"/>
+<link id="GetCodepageByName"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="GetCodepageData">
+<short>Return index of codepage.</short>
+<descr>
+<var>GetCodepageData</var> returns the index of the first entry in 
+<link id="UnixCpMap"/> which matches <var>cp</var>. Since the entries 
+are ordered by code page number, this means the entries can be scanned 
+for alternate code names starting at this index.
+</descr>
+<errors>
+If no matching code page is found, -1 is returned.
+</errors>
+<seealso>
+<link id="UnixCpMap"/>
+<link id="GetSystemCodepage"/>
+<link id="GetCodepageByName"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="GetCodepageData.Result">
+<short>Index of first entry in <var>UnixCpMap</var> or -1</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetCodepageData.cp">
+<short>Code page to search for</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="GetCodepageByName">
+<short>Find code page by name</short>
+<descr>
+<var>GetCodepageByName</var> returns the code page number matching <var>cpname</var>.
+The supported code page names are the ones commonly in use in <file>libiconv</file>.
+Names are searched case-sentively, with the exception that 'cpN' is converted to 'CPN', 
+where N is a digit.
+</descr>
+<errors>
+If no matching code page name is found, <var>CP_NONE</var> is returned.
+</errors>
+<seealso>
+<link id="UnixCpMap"/>
+<link id="GetSystemCodepage"/>
+<link id="GetCodepageData"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="GetCodepageByName.Result">
+<short>Code page number corresponding to <var>cpname</var> or <var>CP_NONE</var> if none found.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetCodepageByName.cpname">
+<short>Name of code page.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="GetSystemCodepage">
+<short>Return the system code page based on the program environment.</short>
+<descr>
+<var>GetSystemCodepage</var> returns the system code page, based on one of the environment variables <var>LC_ALL</var>, 
+<var>LC_CTYPE</var> or <var>LANG</var>. The first non-empty variable (in the order mentioned here) is used. 
+</descr>
+<errors>
+If none is found, then a system default is used: Linux and Darwin use <var>CP_UTF8</var>, others use <var>CP_ASCII</var>.
+</errors>
+<seealso>
+<link id="UnixCpMap"/>
+<link id="GetSystemCodepage"/>
+<link id="GetCodepageByName"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="GetSystemCodepage.Result">
+<short>Detected code page, or system default if no system found.</short>
+</element>
+
+</module> <!-- unixcp -->
+
+</package>
+</fpdoc-descriptions>
