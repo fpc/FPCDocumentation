@@ -1,0 +1,40 @@
+#!/bin/sh
+../utils/fpdoc/bin/x86_64-linux/fpclasschart \
+  --output=rtlclasses.xml --kind=class --format=xml \
+  --input="-Sd -dfpdocsystem -dHASGETHEAPSTATUS -dSUPPORT_DOUBLE ../rtl/linux/system.pp -Fi../rtl/linux -Fi../rtl/unix -Fi../rtl/inc -Fi../rtl/i386 -dCPU32 -dHASVARIANT -dFPC_HAS_TYPE_EXTENDED -dHASWIDECHAR " \
+  --input="-Sd -dHASINTF ../rtl/objpas/objpas.pp " \
+  --input="-Sd ../rtl/unix/sysutils.pp -Fi../rtl/objpas/sysutils -Fi../rtl/inc " \
+  --input="../packages/rtl-objpas/src/inc/strutils.pp " \
+  --input="../rtl/inc/strings.pp -Fi../rtl/i386 -Fi../rtl/inc " \
+  --input="../packages/rtl-console/src/unix/mouse.pp -Fi../packages/rtl-console/src/inc " \
+  --input="../packages/rtl-console/src/unix/keyboard.pp -Fi../packages/rtl-console/src/inc " \
+  --input="../packages/rtl-console/src/unix/crt.pp -Fi../packages/rtl-console/src/inc " \
+  --input="../packages/rtl-console/src/unix/video.pp -Fi../packages/rtl-console/src/inc " \
+  --input="../rtl/unix/dos.pp -Fi../rtl/inc -dcpui386 " \
+  --input="-dver1_0 ../packages/rtl-extra/src/unix/sockets.pp -Fi../packages/rtl-extra/src/inc -Fi../packages/rtl-extra/src/linux " \
+  --input="../packages/rtl-extra/src/inc/objects.pp -Fi../packages/rtl-extra/src/i386 -Fi../packages/rtl-extra/src/linux " \
+  --input="../rtl/inc/heaptrc.pp -Fi../rtl/i386 -Fi../rtl/linux " \
+  --input="../rtl/i386/mmx.pp -Fi../rtl/linux " \
+  --input="../rtl/unix/ipc.pp -Fi../rtl/linux " \
+  --input="../packages/rtl-extra/src/unix/printer.pp -Fi../packages/rtl-extra/src/linux -Fi../packages/rtl-extra/src/inc " \
+  --input="../rtl/objpas/typinfo.pp -Fi../rtl/linux "  \
+  --input="../rtl/unix/ports.pp -Fi../rtl/linux " \
+  --input="../rtl/inc/getopts.pp -Fi../rtl/linux " \
+  --input="../rtl/go32v2/emu387.pp -Fi../rtl/i386 " \
+  --input="../rtl/go32v2/dxeload.pp -Fi../rtl/i386 " \
+  --input="../rtl/go32v2/go32.pp -Fi../rtl/i386 " \
+  --input="-dVER1_0 ../packages/rtl-extra/src/unix/gpm.pp -Fi../packages/rtl-extra/src/i386 " \
+  --input="../packages/graph/src/unix/graph.pp -Fi../packages/graph/src/inc " \
+  --input="../rtl/linux/oldlinux.pp -Fi../rtl/linux -Fi../rtl/unix " \
+  --input="../rtl/unix/unixtype.pp -Fi../rtl/unix -Fi../rtl/linux -Fi../rtl/linux/i386 " \
+  --input="../rtl/unix/baseunix.pp -Fi../rtl/unix -Fi../rtl/linux -Fi../rtl/linux/i386 "  \
+  --input="../rtl/unix/unix.pp -Fi../rtl/unix -Fi../rtl/linux -Fi../rtl/linux/i386 " \
+  --input='../rtl/unix/classes.pp -Fi../rtl/objpas/classes  -dfpdocsystem' \
+  --input="../rtl/unix/unixutil.pp " \
+  --input="../rtl/unix/x86.pp " \
+  --input="../rtl/inc/dynlibs.pas -Fi../rtl/unix " \
+  --input="../rtl/linux/linux.pp -Fi../rtl/linux -Fi../rtl/unix " \
+  --input="../rtl/objpas/math.pp -Fi../rtl/i386 -dFPC_HAS_TYPE_EXTENDED " \
+  --input="../packages/rtl-extra/src/inc/matrix.pp -Fi../packages/rtl-extra/src/inc " \
+  --input="../packages/rtl-objpas/src/inc/dateutils.pp -Fi../packages/rtl-objpas/src/inc " \
+  --input="../packages/graph/src/win32/wincrt.pp" 
