@@ -54,13 +54,20 @@ there are files for big endian systems named <file>collation_<b>lang</b>_be.bco<
 </li>
 </ul>
 <p>
-  Note that the compile time units collation units (collation_<b>lang</b>.pas)
+Note that the compile time units collation units (collation_<b>lang</b>.pas)
 include already the unicodeducet.pas (DUCET) unit so it is not necessary to
 include it manually, contrary to the binary files. So an application that
-only uses the binary collation files should at least manually include the
-<file>unicodeducet</file> unit.
+only uses the binary collation files should at least include the
+<file>unicodeducet</file> unit or manually load the binary collation
+collation_ducet_le.bco or collation_ducet_be.bco, depending on the
+endianness of the platform. The <link id="LoadCollation"/> call using a
+directory and the language <var>ducet</var> automatically select the correct
+file.
 </p>
 </descr>
+<seealso>
+<link id="LoadCollation"/> 
+</seealso>
 
 <!-- constant Visibility: default -->
 <element name="MAX_WORD">
@@ -1587,22 +1594,22 @@ A collation data book must be specified when comparing unicode strings.
 
 <!-- variable Visibility: public -->
 <element name="TUCA_DataBook.BMP_Table1">
-<short>BMP Data, table 1</short>
+<short>Basic Multilingual Plane Data, table 1 (code points U+0000..U+FFFF)</short>
 </element>
 
 <!-- variable Visibility: public -->
 <element name="TUCA_DataBook.BMP_Table2">
-<short>BMP Data, table 2</short>
+<short>Basic Multilingual Plane Data, table 2 (code points U+0000..U+FFFF)</short>
 </element>
 
 <!-- variable Visibility: public -->
 <element name="TUCA_DataBook.OBMP_Table1">
-<short>?</short>
+<short>Data for code points above U+FFFF, table 1</short>
 </element>
 
 <!-- variable Visibility: public -->
 <element name="TUCA_DataBook.OBMP_Table2">
-<short>?</short>
+<short>Data for code points above U+FFFF, table 2</short>
 </element>
 
 <!-- variable Visibility: public -->
@@ -1627,7 +1634,7 @@ A collation data book must be specified when comparing unicode strings.
 
 <!-- variable Visibility: public -->
 <element name="TUCA_DataBook.Dynamic">
-<short>?</short>
+<short>Indicates the data was loaded from file (True) or is compiled-in (False).</short>
 </element>
 
 <!-- function Visibility: public -->
@@ -1856,7 +1863,6 @@ If the transformation was succesful, then the function returns <var>0</var>. A n
 <var>AResultString</var> will remain untouched in that case.
 </p>
 <p>
-The transformation depends on the necessery unicode collation data tables being present in memory. 
 If a character in <var>AString</var> cannot be found in the unicode data tables, an error will be reported, unless <var>AIgnoreInvalidSequence</var> 
 is set to <var>True</var>, in which case the character will be copied as-is to the output.
 </p>
@@ -1904,7 +1910,6 @@ If the transformation was succesful, then the function returns <var>0</var>. A n
 <var>AResultString</var> will remain untouched in that case.
 </p>
 <p>
-The transformation depends on the necessery unicode collation data tables being present in memory. 
 If a character in <var>AString</var> cannot be found in the unicode data tables, an error will be reported, unless <var>AIgnoreInvalidSequence</var> 
 is set to <var>True</var>, in which case the character will be copied as-is to the output.
 </p>
@@ -2178,7 +2183,8 @@ Sort keys can be constructed from unicode strings using <link id="ComputeSortKey
 <short>Compare 2 strings using the specified collation</short>
 <descr>
 <var>IncrementalCompareString</var> creates 2 compare keys from the strings <var>AStrA</var> and <var>AStrB</var> using 
-collation data in <var>ACollation</var>.
+collation data in <var>ACollation</var>. The keys are computed only to the point where the two strings
+differ. This means the keys cannot be reused for other comparisons if the strings differ. 
 The two strings can be specified as a unicode string or as a pointer to a null-terminated character array with a length
  (<var>ALengthA</var> and <var>ALengthB</var>). It returns then the result of <link id="CompareSortKey"/>.
 </descr>
