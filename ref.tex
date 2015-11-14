@@ -1702,18 +1702,23 @@ Operation & Result \\ \hline
 The memory occupied by a string depends on the string type. Some string
 types allocate the string data in memory on the heap, others have the string
 data on the stack. Table \seet{StringSizes} summarizes the memory usage of
-the various string types for the various string types. In the table,
-\var{Headersize} depends on the version of \fpc, but is 16 bytes as
-of \fpc 2.7.1. The \var{WideHeaderSize} size is 8 bytes for all versions of
-\fpc. \var{L} is the actual length of the string.
+the various string types for the various string types. In the table, the following symbolic constants are used:
+\begin{enumerate}
+\item \var{L} is the actual length of the string.
+\item \var{HS} depends on the version of \fpc, but is 16 bytes as
+of \fpc 2.7.1.
+\item \var{WHS} size is 4 bytes for all versions of \fpc.
+\item \var{UHS} size is 8 bytes for all versions of \fpc.
+\end{enumerate}
+
 
 
 \begin{FPCltable}{lll}{String memory sizes}{StringSizes}
 String type & Stack size & heap size \\ \hline
 Shortstring & Declared length + 2 & 0 \\
-Ansistring  & Pointer size & L + 1 + HeaderSize  \\
-Widestring  & Pointer size & 2*(L + 1) + WideHeaderSize \\
-UnicodeString  & Pointer size & 2*(L + 1) + WideHeaderSize \\
+Ansistring  & Pointer size & L + 1 + HS  \\
+Widestring  & Pointer size & 2*(L + 1) + WHS \\
+UnicodeString  & Pointer size & 2*(L + 1) + UHS \\
 Pchar & Pointer size & L+1 \\
 \hline
 \end{FPCltable}
