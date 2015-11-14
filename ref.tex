@@ -3424,37 +3424,54 @@ In this example, between the \var{begin} and \var{end}, it is as if
 \var{AnObject} was prepended to the \var{Afield} and \var{Amethod}
 identifiers. More about this in \sees{With}.
 
-\section{Static fields}
+\section{Class or Static fields}
 \keywordlink{static}
-An object can contain static fields: these fields are global to the object type, 
-and act like global variables, but are known only as part of the
-object\footnote{Older versions of the compiler required a directive for
-this to work: the \var{\{\$STATIC ON\}} directive}. They can be
-referenced from within the objects methods, but can also be referenced from
+An object can contain class or static fields: these fields are global to the object type, 
+and act like global variables, but are known only in the scope of the object. 
+The difference between static and class variables is purely the mode in which they work:
+The \var{static} keyword will always work, the \var{class} keyword will need \var{\{\$MODE DELPHI\}}.
+
+They can be referenced from within the objects methods, but can also be referenced from
 outside the object by providing the fully qualified name.
 
 For instance, the output of the following program:
 \begin{verbatim}
+{$mode delphi}
 {$static on}
 type
   cl=object
-    l : longint;static;
+    l : longint; static;
+    class var v : integer;
   end;
+  
 var
   cl1,cl2 : cl;
+
 begin
+  Writeln('Static');
   cl1.l:=2;
   writeln(cl2.l);
   cl2.l:=3;
   writeln(cl1.l);
   Writeln(cl.l);
+  Writeln('Class');
+  cl1.v:=4;
+  writeln(cl2.v);
+  cl2.v:=5;
+  writeln(cl1.v);                 
+  Writeln(cl.v);
 end.
 \end{verbatim}
 will be the following
 \begin{verbatim}
+Static
 2
 3
 3
+Class
+4
+5
+5
 \end{verbatim}
 Note that the last line of code references the object type itself (\var{cl}), 
 and not an instance of the object (\var{cl1} or \var{cl2}).
@@ -3561,9 +3578,9 @@ object instance identifier prepended to them (see also \seec{Statements}).
 To determine which method is called, it is necessary to know the type of
 the method. We treat the different types in what follows.
 
-\subsubsection{Static methods}
+\subsubsection{Normal static methods}
 \index{Methods!Static}
-Static methods are methods that have been declared without a \var{abstract}
+Normal (static) methods are methods that have been declared without a \var{abstract}
 or \var{virtual} keyword. When calling a static method, the declared (i.e.
 compile time) method of the object is used.
 For example, consider the following declarations:
@@ -3748,6 +3765,71 @@ testo.pp(32,3) Error: Abstract methods can't be called directly
 If, through some mechanism, an abstract method is called at run-time,
 then a run-time error will occur. (run-time error 211, to be precise)
 \end{remark}
+
+\subsubsection{Class or static methods}
+Class methods or methods declared with the \var{static} directive are 
+methods that are global to the object type. When called, the implicit 
+'self' pointer is not available. This means that normal methods cannot 
+be called, and none of the fields of an object can be accessed. 
+Class variables can be used, however.
+
+Class or static methods are regular methods, they can be assigned to a procedural variable.
+
+The following program demonstrates all this. The commented-out statements will not compile.
+\begin{verbatim}
+{$APPTYPE CONSOLE}
+{$IFDEF FPC}{$MODE DELPHI}{$H+}{$ENDIF}
+type
+  TTest = object
+    const Epsylon = 100;
+    var f : integer;
+    class var cv1,cv2:integer;
+    procedure myproc;
+    class procedure testproc;
+    class procedure testproc2;static;
+    procedure testproc3; static;
+  end;
+
+  procedure TTest.myproc;
+  begin 
+    cv1:=0;
+    f:=1;
+  end;
+
+  class procedure TTest.Testproc;
+  begin 
+    cv1:=1;
+    // f:=1;
+  end;
+
+  class procedure TTest.Testproc2;
+  begin 
+    cv1:=2;
+    // f:=1;
+  end;
+
+  procedure TTest.Testproc3; 
+  begin
+    cv1:=3;
+    // f:=1;
+  end;
+  
+
+Var
+  P : Procedure;  
+  
+begin
+  P:=@TTest.Myproc;
+  P:=@TTest.Testproc;
+  P:=@TTest.Testproc2;
+  P:=@TTest.Testproc3;
+end.
+\end{verbatim}
+Uncommenting one of the commented statements and trying to compile the resulting code will result in a compiler error:
+\begin{verbatim}
+ocv.pp(32,6) Error: Only class methods, class properties and 
+  class variables can be accessed in class methods
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Visibility
