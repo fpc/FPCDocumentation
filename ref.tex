@@ -1715,7 +1715,7 @@ of \fpc 2.7.1.
 
 \begin{FPCltable}{lll}{String memory sizes}{StringSizes}
 String type & Stack size & heap size \\ \hline
-Shortstring & Declared length + 2 & 0 \\
+Shortstring & Declared length + 1 & 0 \\
 Ansistring  & Pointer size & L + 1 + HS  \\
 Widestring  & Pointer size & 2*(L + 1) + WHS \\
 UnicodeString  & Pointer size & 2*(L + 1) + UHS \\
@@ -10813,8 +10813,9 @@ matrix, which needn't be the same in all cases.
 \section{Comparison operator}
 \index{Operators!Comparison}
 The comparison operator can be overloaded to compare two different types
-or to compare two equal types that are not basic types. The result type of
-a comparison operator is always a boolean.
+or to compare two equal types that are not basic types. If the operands 
+are not simple types, the result type of a comparison operator need not 
+always be a boolean, but then they cannot be used in an \var{if}, \var{repeat} or \var{while} statement.
 
 The comparison operators that can be overloaded are:
 \begin{description}
@@ -10877,6 +10878,47 @@ end;
 \end{verbatim}
 Note that the order of the real and complex type in the two comparisons
 is reversed.
+
+The following example shows that the result type does not need to be a boolean:
+\begin{verbatim}
+Type
+  TMyRec = record a,b : integer; end;
+
+operator = (x,y : TMyRec) r : string;
+
+begin
+  if (x.a=y.a) and (x.b=y.b) then
+    R:='equal'
+  else
+    R:='differ';
+end;
+
+var
+  x,y : TMyRec;
+
+begin
+  x.a:=1;
+  y.a:=1;
+  Writeln(x=y);
+  x.a:=2;
+  y.a:=3;
+  Writeln(x=y);
+end.
+\end{verbatim}
+When executed, this example will print
+\begin{verbatim}
+equal
+differ
+\end{verbatim}
+obviously, a statement as
+\begin{verbatim}
+if (x=y) then
+  writeln('Equal');
+\end{verbatim}
+Will not compile, since the if statement needs a boolean check:
+\begin{verbatim}
+Error: Incompatible types: got "ShortString" expected "Boolean"
+\end{verbatim}
 
 \section{In operator}
 As of version 2.6 of Free pascal, the \var{In} operator can be overloaded as well.
