@@ -1598,18 +1598,19 @@ Const
 \subsubsection{WideStrings}
 \index{Widestring}\index{Types!Widestring}\index{String!WideString}
 \keywordlink{Widestring}
-Widestrings (used to represent unicode character strings in COM applications)
-are implemented in much the same way as unicodestrings. Unlike the latter,
-they are \emph{not} reference counted, and on Windows, they are allocated with a
-special windows function which allows them to be used for OLE automation.
-This means they are implemented as null-terminated arrays of \var{WideChars} 
-instead of regular \var{Chars}. 
-Mostly the same rules apply for \var{WideStrings} as for \var{AnsiStrings}. 
+The \var{Widestring} type (used to represent unicode character strings in COM applications)
+is implemented in much the same way as \var{Unicodestring} on Windows, and on other 
+platforms, they are simply the same type. If interaction with COM is not required, 
+the \var{UnicodeString} type should be used.
+ 
+On Windows, unlike \var{UnicodeString}, the \var{WideString} type is \emph{not} reference counted, 
+and are allocated with a special windows function which allows them to be used for OLE automation.
+This means they are implemented as null-terminated arrays of \var{WideChars} instead of regular \var{Chars}. 
+\var{WideString} obeys the same rules as for \var{UnicodeStrings}. 
 Similar to unicodestrings, the compiler transparenty converts WideStrings 
 to AnsiStrings and vice versa. \index{Ansistring}
 
-For typecasting and conversion, the same rules apply as for the
-unicodestring type.
+For typecasting and conversion, the same rules apply as for the \var{UnicodeString} type.
 
 % Constant strings
 \subsection{Constant strings}
@@ -1707,8 +1708,9 @@ the various string types for the various string types. In the table, the followi
 \item \var{L} is the actual length of the string.
 \item \var{HS} depends on the version of \fpc, but is 16 bytes as
 of \fpc 2.7.1.
-\item \var{WHS} size is 4 bytes for all versions of \fpc.
 \item \var{UHS} size is 8 bytes for all versions of \fpc.
+\item On Windows, \var{WHS} size is 4 bytes for all versions of \fpc. On all other platforms, 
+\var{WHS} equals \var{UHS} because the \var{WideString} type equals the \var{UnicodeString} type.
 \end{enumerate}
 
 
