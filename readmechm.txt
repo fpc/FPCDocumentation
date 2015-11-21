@@ -29,7 +29,7 @@ The helpconfiguration is stored, with paths in fp.ini, and might look like
 this:
 
 [Help]
-Files="/fpc/fpcdocs/toc.chm;/fpc/fpcdocs/fcl.chm;/fpc/fpcdocs/ref.chm;/fpc/fpcdocs/rtl.chm;/fpc/fpcdocs/prog.chm;/fpc/fpcdocs/user.chm"
+Files="/fpc/fpcdocs/toc.chm;/fpc/fpcdocs/fcl.chm;/fpc/fpcdocs/ref.chm;/fpc/fpcdocs/rtl.chm;/fpc/fpcdocs/prog.chm;/fpc/fpcdocs/user.chm;/fpc/fpcdocs/fclres.chm"
 
 Troubleshooting
 --------------
