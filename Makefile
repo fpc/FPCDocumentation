@@ -2672,9 +2672,9 @@ updatertlxml: fpc_all
 	$(RTLMAKESKEL) $(RTLCHARACTER) --output=character.new.xml
 	./cleanxml $(RTLNEWXML)
 rtl.inc: $(RTLXML)
-	$(FPDOC) --output=rtl.inc --project=rtl-project.xml --format=latex
+	$(FPDOC) --base-input-dir=$(FPCSRCDIR)/rtl --output=rtl.inc --project=rtl-project.xml --format=latex
 fcl.inc: $(FCLXML)
-	$(FPDOC) --output=fcl.inc --project=fcl-project.xml --format=latex
+	$(FPDOC) --base-input-dir=$(FPCSRCDIR)/packages --output=fcl.inc --project=fcl-project.xml --format=latex
 fclres.inc: $(FCLRESXML)
 	$(FPDOC) --output=fclres.inc $(FCLRESOPTS) --format=latex
 RTFFILES = $(addsuffix .rtf,$(RTFS))
