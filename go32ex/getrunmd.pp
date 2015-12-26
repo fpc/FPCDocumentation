@@ -1,7 +1,12 @@
+{ Simply write a message according to the current environment }
+
 uses
         go32;
 
 begin
+        { depending on the detected environment we simply write
+        another message Note: in go32v2 this will always be rm_dpmi. }
+
         case (get_run_mode) of
                 rm_unknown :
                         Writeln('Unknown environment found');

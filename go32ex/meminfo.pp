@@ -1,3 +1,8 @@
+{ Shows how to obtain memory information via get_meminfo();
+
+notice the checks if any of the returned information is invalid (-1)
+}
+
 uses
         go32;
 
