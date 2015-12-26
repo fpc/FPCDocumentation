@@ -48,6 +48,7 @@ Input : AX = 000Ch
 For more detailed information consult any mouse reference or
 interrupt list.
 }
+{$CALLING REGISTER}
 {$ASMMODE ATT}
 {$MODE FPC}
 
@@ -94,7 +95,7 @@ asm
    movw %ax, %ds
 
    { give control to user procedure if installed }
-   cmpl $1, USERPROC_INSTALLED
+   cmpl $0, USERPROC_INSTALLED
    jne .LNoCallback
    pushal
    movw DOSmemSELECTOR, %ax
