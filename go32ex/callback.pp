@@ -96,7 +96,7 @@ asm
 
    { give control to user procedure if installed }
    cmpl $0, USERPROC_INSTALLED
-   jne .LNoCallback
+   je .LNoCallback
    pushal
    movw DOSmemSELECTOR, %ax
    movw %ax, %fs  { set fs for FPC }
