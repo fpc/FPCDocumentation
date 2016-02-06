@@ -1,6 +1,6 @@
 Program example64;
 
-{ Program to demonstrate the SigRaise function.}
+{ Program to demonstrate the fpKill/getPID function.}
 
 uses Unix,BaseUnix;
 
@@ -29,5 +29,5 @@ begin
      halt(1);
      end;
    Writeln('Sending USR1 (',sigusr1,') signal to self.');
-   SigRaise(sigusr1);
+   fpKill(fpgetPID,sigusr1);
 end.
