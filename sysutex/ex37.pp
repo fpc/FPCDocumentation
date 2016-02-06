@@ -1,6 +1,6 @@
 Program Example37;
 
-{ This program demonstrates the FileCreate function }
+{ This program demonstrates the FileCreate/FileSeek/FileReed/FileTruncate functions }
 
 Uses sysutils;
 
