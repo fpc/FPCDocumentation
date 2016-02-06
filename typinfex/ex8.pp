@@ -20,9 +20,9 @@ begin
   O:=TMyTestObject.Create;
   O.SetField:=[mefirst,meSecond,meThird];
   PI:=GetPropInfo(O,'SetField');
-  Writeln('SetToString (brackets) : ',SetToString(Pi,Integer(O.SetField),True));
-  Writeln('SetToString (default)  : ',SetToString(Pi,Integer(O.SetField)));
-  O.SetField:=TMyEnums(StringToSet(PI,ConstSet));
-  Writeln('Stringtoset            : ',SetToString(PI,Integer(O.SetField)));
+  Writeln('SetToString (brackets) : ',SetToString(Pi,Byte(O.SetField),True));
+  Writeln('SetToString (default)  : ',SetToString(Pi,Byte(O.SetField)));
+  O.SetField := TMyEnums(Byte(StringToSet(PI,ConstSet)));
+  Writeln('StringToSet            : ',SetToString(PI,Byte(O.SetField)));
   O.Free;
 end.
