@@ -17,10 +17,10 @@ ifneq ($(FPCPROG),)
 FPCPROG:=$(firstword $(FPCPROG))
 FPC:=$(shell $(FPCPROG) -PB)
 ifneq ($(findstring Error,$(FPC)),)
-override FPC=ppc386
+override FPC=fpc
 endif
 else
-override FPC=ppc386
+override FPC=fpc
 endif
 endif
 override FPC:=$(subst $(SRCEXEEXT),,$(FPC))
