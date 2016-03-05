@@ -1480,12 +1480,50 @@ Since strings have code page information associated with them, it is important t
 \item Plain ansistrings use the system code page.
 \item Single byte strings with declared code page use that code page.
 \item The \var{RawBytestring} type has no code page information associated with it.
+\item Constant strings have the code page of the source file. 
+If none is specified the system codepage is used (CP\_ACP).\\
+See \progref, \{\$CODEPAGE \} directive.
 \end{itemize}
-The compiler will convert the code page of strings as needed: When assigning a string,
-the actual codepage of the source string will always be converted to the declared code 
-page of the target string.
+This code page is called the declared code page.
 
-This means that in the following code:
+The compiler will convert the code page of strings as needed: When assigning a string,
+the actual codepage of the source string will be converted to the declared code 
+page of the target string if the declared source and target code pages are different.
+
+If a string with a declared page \var{SOURCE\_CP} assigned to a string with
+declared code page \var{DEST\_CP}, in a file with code page \var{CODE_CP} then
+the following describes the mechanism:
+
+\begin{itemize}
+\item if (\var{SOURCE\_CP}=\var{CP\_NONE}) or (\var{DEST\_CP} =
+\var{CP\_NONE}), see RawByteString.
+\item if (\var{CODE\_CP} <> \var{CP\_ACP}), then if (\var{DEST\_CP} =
+\var{CP\_ACP}) and (\var{SOURCE\_CP} = \var{CODE\_CP}) or vice versa, no conversion will
+occur, even if at run time \var{DefaultSystemCodePage} has a different value from 
+\var{SOURCE\_CP}. \\
+The reason for this "(\var{CODE\_CP} <>\var{CP\_ACP})"  condition is backward compatibility with previous FPC versions:
+While they did not support \var{AnsiStrings} with arbitrary code pages, they did
+always reinterpret \var{AnsiStrings} according to the current value of the system
+code page. \\
+Otherwise,
+\item if (\var{SOURCE\_CP} <> \var{DEST\_CP}), the string data will be converted from
+codepage \var{SOURCE\_CP} to codepage  \var{DEST\_CP} before assignment, whereby
+\var{CP\_ACP} will be
+interpreted as the current value of \var{DefaultSystemCodePage}. Otherwise,
+\item if (\var{SOURCE\_CP} = \var{DEST\_CP}), no codepage conversion will be performed.
+\end{itemize}
+These rules mean that it is perfectly possible for an \var{AnsiString} variable to
+get a code page that differs from its declared code page. 
+E.g. in the third case \var{SOURCE\_CP} could be \var{CP\_ACP}, while after the 
+assignment it may have a dynamic code page equal to \var{DefaultSystemCodePage}.
+
+Note: as mentioned above, whether or not a potential code page conversion
+happens only depends on the declared code pages of the involved strings. 
+This means that if you assign one AnsiString(X) to another AnsiString(X) and the
+former's dynamic code was different from X, the string data will not be
+converted to code page X by the assignment. 
+
+All this means that in the following code:
 \begin{verbatim}
 Type
   TString1 = Type String(1252);
@@ -1509,11 +1547,22 @@ a new string will be allocated.
 This automated conversion of code pages can slow down the code seriously, so care must be 
 taken to see to it that the code page conversions are limited to a minimum.
 
+
+
 The code page of a string can be set explicitly using the \var{SetCodePage} routine of the system unit.
 Calling this routine will convert the value of a string to the requested code page.
 
 \begin{remark}
 Code page conversions can result in loss of data: if a certain character cannot be represented in the target 
+code page, the output for that character is undefined.
+\end{remark}
+
+\begin{remark}
+When a string whose static code page equals the source file code page, to anything with
+code page CP\_ACP (i.e., a plain ansistring, shortstring, or pchar), no conversion will
+be performed either.
+No code page conversion is done when 
+s can result in loss of data: if a certain character cannot be represented in the target 
 code page, the output for that character is undefined.
 \end{remark}
 
@@ -1524,6 +1573,7 @@ to the C library and use the C library conversion support.
 Alternatively, the \var{fpwidestring} unit contains a unicodestring manager implemented natively in Object Pascal.
 \end{remark}
 
+
 \subsubsection{RawByteString}
 \index{Rawbytestring}\index{Types!Rawbytestring}\index{Types!Reference counted}\index{String!RawByteString}
 \keywordlink{Rawbytestring}
@@ -1532,8 +1582,8 @@ The pre-defined \var{RawByteString} type is an ansistring string type without co
 Type
   RawByteString = type ansistring(CP_NONE);
 \end{verbatim}
-It is treated specially in the sense that if the conversion routines encounter \var{CP\_NONE} in a target string,
-no code page conversion is performed, the code page of the source string is preserved.
+It is treated specially in the sense that if the conversion routines encounter \var{CP\_NONE} in a
+source or target string, no code page conversion is performed, the code page of the source string is preserved.
 
 For this reason, most single-byte string routines in the system and sysutils units use the \var{RawByteString} type.
 
