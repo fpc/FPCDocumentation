@@ -2929,12 +2929,12 @@ None.
 
 
 <element name="Str">
-<short>Convert a numerical value to a string.</short>
+<short>Convert a numerical or enumeration value to a string.</short>
 <descr>
 <p>
 <var>Str</var> returns a string which represents the value of X. X can be any
-numerical type. The actual declaration of <var>Str</var> is not according
-to pascal syntax, and should be
+numerical or enumerated type. The actual declaration of <var>Str</var> is not 
+according to pascal syntax, and should be
 </p>
 <code>
 procedure Str(var X: TNumericType[:NumPlaces[:Decimals]];var S: String)
@@ -2945,7 +2945,56 @@ formatting of the string: <var>NumPlaces</var> gives the total width of the
 string, and <var>Decimals</var> the number of decimals after the decimal
 separator char.
 </p>
-</descr>
+<p>
+<var>Str</var> can also be used to convert an enumerated type value to a string
+representation of the declared enumeration value. That means that the following will work:
+</p>
+<code>
+Type
+  TMyEnum = (OnE);
+
+Var
+  S : String;
+begin
+  Str(one, s); 
+  Writeln(S);
+end.        
+</code>
+<p>
+This will write <var>OnE</var> on the screen, which is consistent with the
+following - equivalent - program:
+</p>
+<code>
+Type
+  TMyEnum = (OnE);
+     
+Var
+  S : String;
+  E : TMyEnum;
+begin
+  E:=one;
+  Str(E,s);
+  Writeln(S);
+end.   
+</code>
+<p>
+For scoped enumerated types, only the value is written, which means the
+following program will have the same output:
+</p>
+<code>
+{$SCOPEDENUMS+}
+Type  
+  TMyEnum = (OnE);
+  
+Var
+  S : String;
+  
+begin
+  Str(one, s);
+  Writeln(S); 
+end.          
+</code>
+</descr>        
 <errors>
 None.
 </errors>
