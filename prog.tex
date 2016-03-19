@@ -2650,7 +2650,8 @@ sum          { Will be infinitely recursively expanded... }
 On my system, the last example results in a heap error, causing the compiler
 to exit with a run-time error 203.
 
-\begin{remark}Macros defined in the interface part of a unit are not
+\begin{remark}
+Macros defined in the interface part of a unit are not
 available outside that unit! They can just be used as a notational
 convenience, or in conditional compiles.
 \end{remark}
@@ -2670,10 +2671,28 @@ uses 2 digits for the \var{RELEASE} and \var{PATCH}  version numbers. This
 means that version 2.3.1 will result in \var{FPC\_FULLVERSION=20301}. This
 number makes it easier to determine minimum versions.
 
-\begin{remark}Don't forget that macro support isn't on by default. It must
+\begin{remark}
+Don't forget that macro support isn't on by default. It must
 be turned on  with the \var{-Sm} command line switch or using the
 \var{\{\$MACRO ON\}} directive.
 \end{remark}
+
+As of version 3.1.1, for embedded targets (such as AVR), the compiler defines several macros 
+defining the memory layout of the target, they are listed in
+\seet{embeddedmacros}. These macros are integer values and can be used in
+code and in \$IF statements.
+\begin{FPCltable}{ll}{Emmbedded target memory layout}{embeddedmacros} \hline
+Symbol & Contains \\ \hline
+\var{FPC\_FLASHBASE} & Base address of flash memory. \\
+\var{FPC\_FLASHSIZE} & Size of flash memory. \\
+\var{FPC\_RAMBASE} & Base address of RAM memory. \\
+\var{FPC\_RAMSIZE} & Size of RAM memory. \\
+\var{FPC\_BOOTBASE} & Base address of boot memory. \\
+\var{FPC\_BOOTSIZE} & Size of boot memory. \\
+\var{FPC\_EEPROMBASE} & Base address of EEPROM memory. \\
+\var{FPC\_EEPROMSIZE} & Size of EEPROM memory. \\
+\hline
+\end{FPCltable}
 
 
 \section{Compile time variables}
