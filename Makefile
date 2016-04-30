@@ -2327,8 +2327,6 @@ else
 	$(FPC) -h >>comphelp.inc
 	$(ECHO) '\end{verbatim}' >> comphelp.inc
 endif
-syntax.sty: styles/syntax.sty
-	cp $(wildcard styles/*.sty) .
 INCLUDES=date.inc syntax.sty
 SYSTEMUNITDIR=$(OS_SOURCE)
 ifneq ($(findstring bsd,$(OS_SOURCE)),)
