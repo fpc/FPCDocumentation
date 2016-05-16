@@ -5037,21 +5037,30 @@ on 64-bit processors.
 \subsection{String types}
 
 \subsubsection{Ansistring types}
+The ansistring is a dynamically allocated string which has no length limitation
+(other than addressable memory). When the string is no longer being referenced 
+(its reference count reaches zero), its memory is automatically freed.
 
-The ansistring is a dynamically allocated string which
-has no length limitation. When the string is no longer
-being referenced (its reference count reaches zero),
-its memory is automatically freed.
+If the ansistring is a constant, then its reference count will be equal to -1, 
+indicating that it should never be freed. The structure in memory for an
+ansistring is shown in \seet{ansistrings32} for 32-bit programs, and
+\seet{ansistrings64} for 64-bit programs
 
-If the ansistring is a constant, then its reference
-count will be equal to -1, indicating that it should
-never be freed. The structure in memory for an
-ansistring is shown in \seet{ansistrings}.
-
-\begin{FPCltable}{rl}{AnsiString memory structure (32-bit model)}{ansistrings}
+\begin{FPCltable}{rl}{AnsiString memory structure (32-bit model)}{ansistrings32}
 Offset & Contains \\ \hline
+-12  & Code page indicator (2 bytes). \\
+-10  & Character size (2 bytes) \\
 -8   & Longint with reference count.\\
 -4   & Longint with actual string size.\\
+0    & Actual array of \var{char}, null-terminated. \\ \hline
+\end{FPCltable}
+
+\begin{FPCltable}{rl}{AnsiString memory structure (64-bit model)}{ansistrings64}
+Offset & Contains \\ \hline
+-24  & Code page indicator (2 bytes). \\
+-22  & Character size (2 bytes) \\
+-16  & Sizeint with reference count.\\
+-8   & Sizeint with actual string size.\\
 0    & Actual array of \var{char}, null-terminated. \\ \hline
 \end{FPCltable}
 
@@ -5064,11 +5073,39 @@ following bytes contain the actual characters (of type \var{char})
 of the string. The maximum size of a short string is the length
 byte followed by 255 characters.
 
+
+
+\subsubsection{Unicodestring types}
+
+A unicode string is allocated on the heap, much like an ansistring. Unlike the
+ansistring, a unicodestring takes 2 bytes per character, and is terminated with
+a double null.  It is reference counted just like an ansistring. The
+structure in memory for a unicodestring is shown in \seet{ansistrings32} 
+for 32-bit programs, and \seet{ansistrings64} for 64-bit programs
+
+
+\begin{FPCltable}{rl}{UnicodeString memory structure (32-bit model)}{unicodestrings32}
+Offset & Contains \\ \hline
+-8 & Longint with reference count.\\
+-4 & Longint with actual string size.\\
+0  & Actual array of \var{char}, null-terminated. \\ \hline
+\end{FPCltable}
+
+\begin{FPCltable}{rl}{AnsiString memory structure (64-bit
+model)}{ansistrings64}
+Offset & Contains \\ \hline
+-16 & SizeInt with reference count.\\
+-8  & SizeInt with actual string size.\\
+0   & Actual array of \var{char}, null-terminated. \\ \hline
+\end{FPCltable}
+
 \subsubsection{Widestring types}
 
-A widestring is allocated on the heap, much like an ansistring. Unlike the
-ansistring, a widestring takes 2 bytes per character, and is terminated with
-a double null. 
+On Non-Windows platforms, the widestring type is equal to the unicode string type.
+
+On Windows platforms, a widestring is allocated on the heap, much like a unicode
+string, and is terminated with a double null. In difference with a unicode
+string, it is not reference counted.
 
 \subsection{Set types}
 
