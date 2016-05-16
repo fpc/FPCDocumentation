@@ -32,7 +32,16 @@ gracefully.
 <p>
 This also means that if the process is killed with the KILL signal, 
 it has no chance of removing the files (KILL signals cannot be caught), 
-in which case socket files may remain in the filesystem.
+in which case socket files may remain in the filesystem. However,
+the client code attempts to cater for this and will remove the stale sockets
+if it detects them.
+</p>
+<p>
+Under Windows, the communication is done through \var{WM\_COPYDATA} messages.
+Starting from Windows Vista it is forbidden to send messages between service
+applications and desktop applications, so a SimpleIPC client in a desktop
+application cannot connect to a SimpleIPC server in a service application
+and vice versa.
 </p>
 </descr>
 
