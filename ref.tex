@@ -3028,6 +3028,38 @@ will work too.
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Managed types
+\section{Managed types}
+\label{se:managedtypes}
+By default, pascal types are unmanaged. That means that variables must be
+explicitly initialized, finalized, memory allocated and so on. 
+However, in Object Pascal, several types are managed, which means that the 
+compiler initializes and finalizes variables of this type: this is necessary, 
+for instance for reference counted data types.
+
+The following types are managed:
+\begin{description}
+\item[AnsiString] They are initialized  to \var{Nil}.
+\item[UnicodeString] They are initialized  to \var{Nil}.
+\item[WideString] They are initialized  to \var{Nil}.
+\item[Interface] They are initialized  to \var{Nil}.
+\item[Dynamic arrays] They are initialized  to \var{Nil}.
+\end{description}
+And any record or array whose elements contain managed types.
+
+Class instances containing managed types are also initialized, but the class
+instance pointer itself is not.
+
+Variables of managed types will also be finalized: this means, in general, that their
+reference count will be decreased at the latest at the end of the current scope.
+
+\begin{remark}
+Note that no assumption should be made about the exact time of this
+finalization. All that is guaranteed that they are finalized when they go
+out of sope.
+\end{remark}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Variables
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Variables}
@@ -3135,11 +3167,15 @@ global initialized variable.
 
 \section{Initialized variables}
 \label{se:initializedvars}\index{Variables!Initialized}
-By default, variables in Pascal are not initialized after their declaration.
+By default, simple variables in Pascal are not initialized after their declaration.
 Any assumption that they contain 0 or any other default value is erroneous:
 They can contain rubbish. To remedy this, the concept of initialized variables 
 exists. The difference with normal variables is that their declaration includes 
 an initial value, as can be seen in the diagram in the previous section.
+
+Managed types are an exception to this rule: Managed types are always
+initialized: in general this means setting the reference count to zero, or
+setting the pointer value of the type to \var{Nil}. See \sees{managedtypes}
 
 Given the declaration:
 \begin{verbatim}
