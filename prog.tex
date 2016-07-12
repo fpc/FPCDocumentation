@@ -735,7 +735,7 @@ information about which part of the code is being compiled.
 
 The \var{\{\$INLINE ON\}} directive tells the compiler that the \var{Inline}
 procedure modifier should be allowed. Procedures that are declared inline
-are copied to the places where they are called. This has the effect that
+are copied to the locations where they are called. This has the effect that
 there is no actual procedure call, the code of the procedure is just copied
 to where the procedure is needed, this results in faster execution speed if
 the function or procedure is used a lot.
@@ -847,16 +847,10 @@ implementation
 end.
 \end{verbatim}
 will include the file \file{testi} or \file{testi.pp} if they exist.
-\begin{verbatim}
-Type
-  A = Integer;
-\end{verbatim}
+
 Care should be taken with this mechanism, because the unit name should
 already match the unit filename, meaning most likely the unit will include
 itself recursively.
-
-
-
 
 Include files can be nested, but not infinitely deep. The number of files is
 restricted to the number of file descriptors available to the \fpc compiler.
@@ -866,7 +860,7 @@ a block can start in one file (with a \var{Begin} keyword) and can end in anothe
 a \var{End} keyword). The smallest entity in an include file must be a token,
 i.e. an identifier, keyword or operator.
 
-The compiler will look for the file to include in the following places:
+The compiler will look for the file to include in the following locations:
 
 \begin{enumerate}
 \item It will look in the path specified in the include file name.
@@ -1066,7 +1060,7 @@ which is part of the \fpc Run-Time Library.
 
 \begin{remark}
 The streaming system implemented by \fpc requires that all
-streamable components be descendent from \var{TPersistent}. It is possible
+streamable components be descendants from \var{TPersistent}. It is possible
 to create classes with published sections that do not descend from
 \var{TPersistent}, but those classes will not be streamed correctly by the
 streaming system of the \file{Classes} unit. 
@@ -1084,17 +1078,17 @@ More information on using macros can be found in \sees{Macros}.
 
 \subsection{\var{\protect\$MAXFPUREGISTERS} : Maximum number of FPU registers for variables}
 
-The \var{\{\$MAXFPUREGISTERS XXX\}} directive tells the compiler how much floating point
+The \var{\{\$MAXFPUREGISTERS XXX\}} directive tells the compiler how many floating point
 variables can be kept in the floating point processor registers on an Intel
 X86 processor. This switch is ignored unless the \var{-Or} (use register variables) 
 optimization is used.
 
 This is quite tricky because the Intel FPU stack is limited to 8 entries.
-The compiler uses a heuristic algorithm to determine how much variables should be
+The compiler uses a heuristic algorithm to determine how many variables should be
 put onto the stack: in leaf procedures it is limited to 3 and in non leaf
 procedures to 1. But in case of a deep call tree or, even worse, a recursive
 procedure, this can still lead to a FPU stack overflow, so the user can tell
-the compiler how much (floating point) variables should be kept in registers.
+the compiler how many (floating point) variables should be kept in registers.
 
 The directive accepts the following arguments:
 
@@ -1108,15 +1102,37 @@ Currently this can be in the range 0 to 7.
 \begin{remark}This directive is valid until the end of the current procedure.
 \end{remark}
 
-\subsection{\var{\protect\$MESSAGE} : Generate info message}
+\subsection{\var{\protect\$MESSAGE} : Generate user-defined message}
+The \var{\$MESSAGE} directive allows to insert user-defined Warning, Hint or Note. 
+It is equivalent to one of the \var{\$FATAL}, \var{\$ERROR}, \var{\$WARNING}, \var{\$HINT} or \var{\$NOTE} 
+directives. It must be followed by one of the words \var{ERROR} \var{WARNING}\, \var{HINT} or
+\var{NOTE}, and then the message to display, as follows:
 
-If the generation of info is turned on, through the \var{-vi} command line
-option, then
 \begin{verbatim}
-{$MESSAGE This was coded on a rainy day by Bugs Bunny }
+{$MESSAGE WARNING This was coded on a rainy day by Bugs Bunny}
 \end{verbatim}
-will display an info message when the compiler encounters it. The effect is
-the same as the \var{\{\$INFO\}} directive.
+This will display a warning message when the compiler encounters it. 
+The effect is the same as the \var{\{\$WARNING\}} directive.
+
+This means that the following:
+\begin{verbatim}
+{$MESSAGE WARNING Coded on a rainy day}
+{$MESSAGE NOTE Coded on a very very rainy day}
+{$MESSAGE HINT Coded on a very rainy day}
+{$MESSAGE ERROR This is wrong}
+{$MESSAGE FATAL This is so wrong, the compiler will stop at once}
+\end{verbatim}
+is completely equivalent to
+\begin{verbatim}
+{$WARNING Coded on a rainy day}
+{$NOTE Coded on a very very rainy day}
+{$HINT Coded on a very rainy day}
+{$ERROR This is wrong}
+{$FATAL This is so wrong, the compiler will stop at once}
+\end{verbatim}
+
+Note that if the \var{-Sew} switch is used, the WARNING message will be
+treated as an error, and the compiler will stop.
 
 \subsection{\var{\protect \$MINENUMSIZE} : Specify minimum enumeration size}
 
@@ -1126,9 +1142,12 @@ as the \var{\$PACKENUM} directive (see \sees{Packenum}).
 \subsection{\var{\protect \$MINFPCONSTPREC} : Specify floating point constant precision}
 \label{se:Minfpconstprec}
 
-This switch is the equivalent of the \var{-CF} command line switch. Normally, the compiler will set the precision of a floating point constant to the minimally required precision to represent it exactly. This switch can be used to ensure that the compiler never lowers the precision belowed the specified value.
-Supported values are 32, 64 and \var{DEFAULT}. 
-80 is not supported for implementation reasons.
+This switch is the equivalent of the \var{-CF} command line switch. 
+Normally, the compiler will set the precision of a floating point constant to the minimally 
+required precision to represent it exactly. 
+
+This switch can be used to ensure that the compiler never lowers the precision below the specified value.
+Supported values are 32, 64 and \var{DEFAULT}.  80 is not supported for implementation reasons.
 
 Note that this has nothing to do with the actual precision used by
 calculations: there the type of the variable will determine what precision
@@ -1375,25 +1394,25 @@ Note that global settings are not restored by this directive.
 
 \subsection{\var{\protect\$PUSH} : Save compiler settings}
 \label{se:Push}
-The \var{\$PUSH} directive saves the values of all local compiler
-directives that were stored on the settings stack. Up to 20 sets of
-settings can be stored on the stack.
+The \var{\$PUSH} directive saves the current values of all local compiler
+directives on the settings stack. Up to 20 sets of settings can be stored on the stack.
 
 The settings can be restored from the stack using the \var{\$POP} directive
 (see \sees{Pop}).
 
-Note that global [settings (search paths etc.) are not saved by this 
+Note that global settings (search paths etc.) are not saved by this 
 directive.
 
 The settings stack is preserved accross units, i.e. when the compiler starts
 compiling a new unit, the stack is not emptied.
 
 \subsection{\var{\protect\$Q} or \var{\protect\$OV} or \var{\protect\$OVERFLOWCHECKS}: Overflow checking}
+%
 The \var{\{\$Q+\}} or \var{\{\$OV+\}} (MACPAS mode only) or \var{\{\$OVERFLOWCHECKS ON\}} directive turns on
 integer overflow checking. This means that the compiler inserts code
 to check for overflow when doing computations with integers.
-When an overflow occurs, the run-time library will generate a run-time error
-215: It prints a message \var{Overflow at xxx}, and exits the program with exit code 215.
+When an overflow occurs, the run-time library will generate a run-time error 215: 
+it prints a message \var{Overflow at xxx}, and exits the program with exit code 215.
 
 \begin{remark}Overflow checking behaviour is not the same as in
 Turbo Pascal since all arithmetic operations are done via 32-bit or
@@ -1407,8 +1426,8 @@ checking code generation.
 The generation of overflow checking code can also be controlled
 using the \var{-Co} command line compiler option (see the \userref).
 
-In Delphi, overflow checking is only switchable on a procedure level. In Free
-Pascal, the \var{\{\$Q \}} directive can be used on an expression-level.
+In Delphi, overflow checking is only switchable at the procedure level. 
+In Free Pascal, the \var{\{\$Q \}} directive can be used at the expression level.
 
 \subsection{\var{\protect\$R} or \var{\protect\$RANGECHECKS} : Range checking}
 
@@ -1429,8 +1448,8 @@ will be generated.
 when the call is compiled in \var{\{\$R+\}} mode.
 \end{remark}
 
-In Delphi, range checking is only switchable on a procedure level. In Free
-Pascal, the \var{\{\$R \}} directive can be used on an expression-level.
+In Delphi, range checking is only switchable at the procedure level. 
+In Free Pascal, the \var{\{\$R \}} directive can be used at the expression level.
 
 \subsection{\var{\protect\$REGION} : Mark start of collapsible region}
 The \var{\$REGION} directive is recognised for Delphi compatibility only.
@@ -1438,8 +1457,8 @@ In Delphi it serves to mark the beginning of a collapsible region in the
 IDE.
 
 \subsection{\var{\protect\$R} or \var{\protect\$RESOURCE} : Include resource}
-This directive includes a resource in the binary. The argument to this directive is the resource
-file to include in the binary:
+This directive includes a resource in the binary. 
+The argument to this directive is the resource file to include in the binary:
 \begin{verbatim}
 {$R icons.res}
 \end{verbatim}
@@ -1448,7 +1467,7 @@ version 2.2.N, resources are supported only for Windows (native resources are us
 and for platforms using ELF binaries (linux, BSD). As of version 2.3.1,
 resources have been implemented for all supported platforms.
 
-The asterix can be used as a placeholder for the current unit/program filename:
+The asterisk can be used as a placeholder for the current unit/program filename:
 \begin{verbatim}
 unit myunit;
 {$R *.res}
@@ -1463,11 +1482,13 @@ saturation support (\sees{SaturationSupport}) for more information
 on the effect of this directive.
 
 \subsection{\var{\protect\$SAFEFPUEXCEPTIONS} Wait when storing FPU values on Intel x86}
-This boolean directives controls how the compiler generates code to store
-FPU values. If set to ON, the compiler inserts a \var{FWAIT} opcode after
-the store of a floating point value, so any errors are reported at once.
-This slows down code, but makes sure that the errors are reported on the
-location where the instruction was executed.
+
+This Boolean directive controls the generation of code to store FPU values.  
+If set ON, the compiler inserts an \var{FWAIT} opcode after storing
+a floating point value.  This ensures that any errors are reported
+immediately.  The generated code is slower, but errors are reported at
+the location where the instruction was executed
+
 
 \subsection{\var{\protect\$SCOPEDENUMS} Control use of scoped enumeration types}
 The boolean \var{\$SCOPEDENUMS} directive controls how enumeration type values 
@@ -1608,7 +1629,7 @@ provided for Mac Pascal compatibility.
 
 The \var{\{\$VARSTRINGCHECKS \}} determines how strict the compiler is when 
 checking string type compatibility for strings passed by reference. When in the \var{+} or \var{ON} state, 
-the compiler checks that strings passed as parameters are of the string type as the declared
+the compiler checks that strings passed as parameters are of the same string type as the declared
 parameters of the procedure.
 
 By default, the compiler assumes that all short strings are type compatible.
@@ -1643,20 +1664,19 @@ passed by value.
 \subsection{\var{\protect\$W} or \var{\protect\$STACKFRAMES} : Generate stackframes}
 
 The \var{\{\$W\}} switch directive controls the generation of stackframes.
-In the on state, the compiler will generate a
-stackframe for every procedure or function.
+In the \var{ON} state, the compiler will generate a stackframe for every procedure or function.
 
-In the off state, the compiler will omit the generation of a stackframe if
-the following conditions are satisfied:
+In the \var{OFF} state the compiler will omit the generation of a
+stackframe if the procedure or function satisfies the following conditions:
+
 \begin{itemize}
-\item The procedure has no parameters.
-\item The procedure has no local variables.
-\item If the procedure is not an \var{assembler} procedure, it must not have
+\item it has no parameters.
+\item it has no local variables.
+\item it is not an \var{assembler} procedure, i.e., it must not have
 a \var{asm \dots end;} block.
 \item it is not a constructor or destructor.
 \end{itemize}
-If these conditions are satisfied, the stack frame will be omitted.
-
+The stack frame will be omitted only if all these conditions are satisfied.
 
 \subsection{\var{\protect\$WAIT} : Wait for enter key press}
 
@@ -1891,7 +1911,7 @@ command line counterpart for this directive.
 \subsubsection{Intel 80x86 version}
 
 When this switch is enabled, all floating point instructions
-which are not supported by standard coprocessor emulators will give out
+which are not supported by standard coprocessor emulators will issue
 a warning.
 
 The compiler itself doesn't do the emulation of the coprocessor.
@@ -1921,7 +1941,7 @@ associated with the extension) may not be present.
 
 Example:
 \begin{verbatim}
-{$EXTENSTION 'cgi'}
+{$EXTENSION 'cgi'}
 \end{verbatim}
 will set the extension to 'cgi'.
 
@@ -1932,7 +1952,7 @@ where the compiler looks for framework files. Used as
 {$FRAMEWORKPATH XXX}
 \end{verbatim}
 it will add \var{XXX} to the framework path. The value \var{XXX} can contain
-one or more paths, separated by semi-colons or colons.
+one or more paths, separated by semicolons or colons.
 
 
 \subsection{\var{\protect\$G} : Generate 80286 code}
@@ -1958,7 +1978,7 @@ include files. Used as
 {$INCLUDEPATH XXX}
 \end{verbatim}
 it will add \var{XXX} to the include path. The value \var{XXX} can contain one or more paths, 
-separated by semi-colons or colons.
+separated by semicolons or colons.
 
 For example:
 \begin{verbatim}
@@ -1973,7 +1993,7 @@ in both these directories, and will include the first found file. This directive
 equivalent to the \var{-Fi} command line switch.
 
 Caution is in order when using this directive: If you distribute files, the
-places of the files may not be the same as on your machine; moreover, the
+locations of the files may not be the same as on your machine; moreover, the
 directory structure may be different. In general it would be fair to say
 that you should avoid using {\em absolute} paths. Instead, one should use 
 {\em relative} paths only, as in the example above. 
@@ -2007,7 +2027,7 @@ will result in a filename \file{librarytl.so} on linux, or
 This option serves to specify the library path, where the linker looks for
 static or dynamic libraries. \var{\{\$LIBRARYPATH XXX\}} will add \var{XXX}
 to the library path. \var{XXX} can contain one or more paths, separated
-by semi-colons or colons.
+by semicolons or colons.
 
 For example:
 \begin{verbatim}
@@ -2022,16 +2042,16 @@ in both these directories, and use the first found file. This directive is
 equivalent to the \var{-Fl} command line switch.
 
 Caution is in order when using this directive: If you distribute files, the
-places of the libraries may not be the same as on your machine; moreover, the
+locations of the libraries may not be the same as on your machine; moreover, the
 directory structure may be different. In general it would be fair to say
 that you should avoid using this directive. If you are not sure, it is better
 practice to use makefiles and makefile variables.
 
 \subsection{\var{\protect\$LIBSUFFIX} : Set the library suffix}
-The LIBSUFFIX directive has a similar function as the \var{\{\$EXTENSION \}} and
-\var{\{\$LIBPREFIX \}} compiler directives. directive: it sets the suffix of the 
-library. This is usually used for version numbers: it is simply added to the 
-outputfilename, before the extension.
+Similar to the \var{\{\$EXTENSION \}} and \var{\{\$LIBPREFIX \}} directives, the
+\var{\protect\$LIBSUFFIX} directive sets the suffix of the library. 
+This is usually used for version numbers, which are simply added to the 
+output filename, followed by the extension.
 
 Example:
 \begin{verbatim}
@@ -2069,7 +2089,7 @@ platforms unless stack checking is enabled: in that case the
 stack checking code will use the size set here as maximum stack size.
 
 On those systems, in addition to the stack size set here, the operating
-system or the run environment may have set other (possibly more strict) 
+system or the run-time environment may have set other (possibly more strict) 
 limits on stack size using the OS'es \var{ulimit} system calls.
 
 The two numbers can be set on the command line using the \var{-Ch}
@@ -2115,13 +2135,15 @@ For an exact description of each of these modes, see appendix \ref{ch:AppD},
 on page \pageref{ch:AppD}.
 
 \subsection{\var{\protect\$MODESWITCH} : Select mode features}
-As of FPC 2.3.1, the \var{\{\$MODESWITCH\}} directive selects some of the features that a
-\var{\{\$MODE \}} directive selects: it can be used to use features that
-would otherwise not be available in the current mode. For instance, one
-wishes to program in TP mode, but would like to use the 'Out' parameter,
-an option available only in Delphi mode. The \var{\{\$MODESWITCH \}}
-directive allows to activate or deactivate some individual mode features, 
-while not changing the current compiler mode.
+As of FPC 2.3.1, the \var{\{\$MODESWITCH\}} directive can be used to select 
+some of the features that a \var{\{\$MODE \}} directive would select.
+
+It can be used to enable language features that would otherwise not be available 
+in the current mode. For example, you might be programming in TP mode, but
+want to use the \var{Out} parameters, which are only available in Delphi mode. 
+
+The \var{\{\$MODESWITCH \}} directive enables or disables individual mode features
+without changing the current compiler mode.
 
 This switch is a global switch, and can be used wherever the \var{\{\$MODE\}}
 switch can be used.
@@ -2204,7 +2226,7 @@ for more explanations and more detailed optimization settings.
 
 This option serves to specify the object path, where the compiler looks for
 object files. \var{\{\$OBJECTPATH XXX\}} will add \var{XXX} to the object
-path. \var{XXX} can contain one or more paths, separated by semi-colons or
+path. \var{XXX} can contain one or more paths, separated by semicolons or
 colons.
 
 For example:
@@ -2220,11 +2242,11 @@ in both these directories, and will link the first found file in the
 program. This directive is equivalent to the \var{-Fo} command line switch.
 
 Caution is in order when using this directive: If you distribute files, the
-places of the files may not be the same as on your machine; moreover, the
+locations of the files may not be the same as on your machine; moreover, the
 directory structure may be different. In general it would be fair to say
 that you should avoid using {\em absolute} paths, instead use {\em relative}
 paths, as in the example above. Only use this directive if you are certain
-of the places where the files reside. If you are not sure, it is better
+of the locations where the files reside. If you are not sure, it is better
 practice to use makefiles and makefile variables.
 
 \subsection{\var{\protect\$P} or \var{\protect\$OPENSTRINGS} : Use open strings}
@@ -2271,8 +2293,9 @@ tells the compiler to compile \file{myunit} using PIC code.
 \subsection{\var{\protect\$POINTERMATH} : Allow use of pointer math}
 
 This boolean directive enables or disables the use of pointer arithmatics in
-expressions nivolving pointers. When enabled, it allows to take the
-difference of 2 pointers, or to add an integer value to pointers?
+expressions involving pointers. When enabled, the
+difference of 2 pointers is a valid integer expression, and an integer value 
+can be added to a pointer value.
 By default, POINTERMATH is on.
 
 The following 
@@ -2286,9 +2309,10 @@ expression.
 
 \subsection{\var{\protect\$PROFILE} : Profiling}
 
-This directive turns the generation of profiling code on (or off). It is
-equivalent to the \var{-gp} command line option. Default is \var{OFF}. This
-directive only makes sense in a program source file, not in a unit.
+This directive turns the generation of profiling code on or off. 
+It is equivalent to the \var{-gp} command line option. 
+Default is \var{OFF}. 
+This directive only makes sense in a program source file, not in a unit.
 
 
 \subsection{\var{\protect\$S} : Stack checking}
@@ -2385,7 +2409,7 @@ Netware.
 
 This option serves to specify the unit path, where the compiler looks for
 unit files. \var{\{\$UNITPATH XXX\}} will add \var{XXX} to the unit
-path. \var{XXX} can contain one or more paths, separated by semi-colons or
+path. \var{XXX} can contain one or more paths, separated by semicolons or
 colons.
 
 For example:
@@ -2401,11 +2425,11 @@ in both these directories, and will link the first found file in the
 program. This directive is equivalent to the \var{-Fu} command line switch.
 
 Caution is in order when using this directive: If you distribute files, the
-places of the files may not be the same as on your machine; moreover, the
+locations of the files may not be the same as on your machine; moreover, the
 directory structure may be different. In general it would be fair to say
 that you should avoid using {\em absolute} paths, instead use {\em relative}
 paths, as in the example above. Only use this directive if you are certain
-of the places where the files reside. If you are not sure, it is better
+of the locations where the files reside. If you are not sure, it is better
 practice to use makefiles and makefile variables.
 
 Note that this switch does not propagate to other units, i.e. it's scope
@@ -2439,8 +2463,8 @@ testvp.pp(7,48) Error: Illegal symbol for property access
 On \windows, this can be used to specify a version number for a library.
 This version number will be used when the library is installed, and can be
 viewed in the Windows Explorer by opening the property sheet of the DLL and
-looking on the tab 'Version'. The version number consists of minimally one,
-maximum 3 numbers:
+looking on the tab 'Version'. 
+The version number contains 1, 2 or 3 integers, separated by a dot:
 \begin{verbatim}
 {$VERSION 1}
 \end{verbatim}
@@ -2457,7 +2481,7 @@ the future.
 
 \subsection{\var{\protect\$WEAKPACKAGEUNIT} : ignored}
 This switch is parsed for Delphi compatibility but is otherwise ignored. 
-The compiler will write a warning when it is encountered.
+The compiler will issue a warning when it is encountered.
 
 \subsection{\var{\protect\$X} or \var{\protect\$EXTENDEDSYNTAX} : Extended syntax}
 
@@ -2620,7 +2644,7 @@ versions older than 0.9.8, the assignment operator for a macros wasn't
 \end{verbatim}
 If the compiler encounters \var{ident} in the rest of the source file, it
 will be replaced immediately by \var{expr}. This replacement works
-recursive, meaning that when the compiler expanded one macro, it
+recursively, meaning that when the compiler expanded one macro, it
 will look at the resulting expression again to see if another replacement
 can be made. This means that care should be taken when using macros, 
 because an infinite loop can occur in this manner.
@@ -2630,7 +2654,7 @@ Here are two examples which illustrate the use of macros:
 {$define sum:=a:=a+b;}
 ...
 sum          { will be expanded to 'a:=a+b;'
-               remark the absence of the semicolon}
+               Note the absence of the semicolon}
 ...
 {$define b:=100}
 sum          { Will be expanded recursively to a:=a+100; }
@@ -2641,7 +2665,7 @@ The previous example could go wrong:
 {$define sum:=a:=a+b;}
 ...
 sum          { will be expanded to 'a:=a+b;'
-               remark the absence of the semicolon}
+               Note the absence of the semicolon}
 ...
 {$define b=sum} { DON'T do this !!!}
 sum          { Will be infinitely recursively expanded... }
@@ -2699,7 +2723,7 @@ Symbol & Contains \\ \hline
 In MacPas mode, compile time variables can be defined. They are distinct
 from symbols in that they have a value, and they are distinct from macros,
 in that they cannot be used to replace portions of the source text with
-their value. Their behaviour are compatible with compile time variables 
+their value. Their behaviour is compatible with compile time variables 
 found in popular pascal compilers for Macintosh. 
 
 A compile time variable is defined like this:
@@ -2727,7 +2751,7 @@ In mode MacPas, compile time variables are always enabled.
 \section{Compile time expressions}
 \subsection{Definition}
 \label{se:compileexpressions}
-Except for the regular Turbo Pascal constructs for conditional compilation,
+In addition to the regular Turbo Pascal constructs for conditional compilation,
 the \fpc compiler also supports a stronger conditional compile mechanism: 
 The \var{\{\$IF\}} construct, which can be used to evaluate compile-time
 expressions.
@@ -2748,7 +2772,7 @@ compile-time:
 \item Constants (strings, numbers)
 \item Macros
 \item Compile time variables (mode MacPas only)
-\item Pascal constant expression (mode Delphi only)
+\item Pascal constant expressions (mode Delphi only)
 \end{itemize}
 The symbols are replaced with their value. For macros recursive substitution
 might occur.
@@ -3024,7 +3048,7 @@ The following example works only in MacPas mode:
 \label{se:Messages}
 \fpc lets you define normal, warning and error messages in your code.
 Messages can be used to display useful information, such as copyright
-notices, a list of symbols that your code reacts on etc.
+notices, a list of symbols that your code responds to etc.
 
 Warnings can be used if you think some part of your code is still buggy, or
 if you think that a certain combination of symbols isn't useful.
@@ -3041,9 +3065,17 @@ stops at once.
 
 For messages, the syntax is as follows:
 \begin{verbatim}
-{$Message Message text}
+{$Message TYPE Message text}
 \end{verbatim}
-or
+Where \var{TYPE} is one of 
+\begin{description}
+\item[NOTE] a note message is emitted. Equivalent to \var{\$NOTE}.
+\item[HINT] a hint message is emitted. Equivalent to \var{\$HINT}.
+\item[WARNING] a warning message is emitted. Equivalent to \var{\$WARNING}.
+\item[ERROR] an error message is emitted. Equivalent to \var{\$ERROR}.
+\item[FATAL] a fatal error message is emitted. Equivalent to \var{\$FATAL}.
+\end{description}
+Alternatively, one of the following can be used:
 \begin{verbatim}
 {$Info Message text}
 \end{verbatim}
@@ -3073,7 +3105,7 @@ or
 \end{verbatim}
 The difference between \var{\$Error} and \var{\$FatalError} or \var{\$Stop}
 messages is that when the compiler encounters an error, it still continues
-to compile. With a fatal error, the compiler stops.
+to compile. With a fatal error or stop, the compiler stops at once.
 
 \begin{remark}You cannot use the '\var{\}}' character in your message, since
 this will be treated as the closing brace of the message.
@@ -3205,9 +3237,8 @@ in Turbo Pascal:
 mov al, byte(s)            -- useless typecast.
 mov al, byte(t)            -- syntax error!
 \end{verbatim}
-In this parser, either of those  cases will give out a syntax error.
-\item Constant references expressions with constants only are not
-   allowed (in all cases they do not work in protected mode,
+In Free Pascal the compiler emits a syntax error in both cases will give out a syntax error.
+\item Expressions with constants only are not allowed (in all cases they do not work in protected mode,
    e.g. under \linux i386). Examples:
 \begin{verbatim}
 mov al,byte ptr ['c']      -- not allowed.
@@ -3217,7 +3248,7 @@ mov  al,byte ptr [100h]    -- not allowed.
 \item Brackets within brackets are not allowed
 \item Expressions with segment overrides fully in brackets are
 currently not supported, but they can easily be implemented
-in BuildReference if requested. Example:
+in the compiler if requested. Example:
 \begin{verbatim}
 mov al,[ds:bx]     -- not allowed
 \end{verbatim}
@@ -3257,7 +3288,7 @@ mov al, byte ptr [esi+ebx*1]
 \item \var{[ID+expr]}
 \item \var{ID[expr]}
 \end{enumerate}
- Possible fields are as follow:
+ Possible fields are as follows:
 \begin{enumerate}
 \item \var{ID.subfield.subfield \dots}
 \item \var{[ref].ID.subfield.subfield \dots}
@@ -3322,16 +3353,16 @@ in \tp are summarized in the following:
 say that the AT\&T opcode name is the Intel opcode name, suffixed with a
 '\var{l}', '\var{w}' or '\var{b}' for, respectively, longint (32 bit),
 word (16 bit) and byte (8 bit) memory or register references. As an example,
-the Intel construct \mbox{'\var{mov al bl}} is equivalent to the AT\&T style '\var{movb
+the Intel construct \mbox{'\var{mov al, bl}} is equivalent to the AT\&T style '\var{movb
 \%bl,\%al}' instruction.
 \item AT\&T immediate operands are designated with '\$', while Intel syntax
 doesn't use a prefix for immediate operands. Thus the Intel construct
 '\var{mov ax, 2}' becomes '\var{movb \$2, \%al}' in AT\&T syntax.
-\item AT\&T register names are preceded by a '\var{\%}' sign.
+\item AT\&T register names are prefixed with a '\var{\%}' sign.
 They are undelimited in Intel syntax.
 \item AT\&T indicates absolute jump/call operands with '\var{*}', Intel
 syntax doesn't delimit these addresses.
-\item The order of the source and destination operands are switched. AT\&T
+\item The order of the source and destination operands is reversed. AT\&T
 syntax uses '\var{Source, Dest}', while Intel syntax features '\var{Dest,
 Source}'. Thus the Intel construct '\var{add eax, 4}' transforms to
 '\var{addl \$4, \%eax}' in the AT\&T dialect.
@@ -3342,15 +3373,15 @@ Intel '\var{ret far}'.
 \item Memory references are specified differently in AT\&T and Intel
 assembly. The Intel indirect memory reference
 \begin{quote}
-\var{Section:[Base + Index*Scale + Offs]}
+\var{Segment:[Base + Index*Scale + Offs]}
 \end{quote}
 is written in AT\&T syntax as:
 \begin{quote}
-\var{Section:Offs(Base,Index,Scale)}
+\var{Segment:Offs(Base,Index,Scale)}
 \end{quote}
 Where \var{Base} and \var{Index} are optional 32-bit base and index
 registers, and \var{Scale} is used to multiply \var{Index}. It can take the
-values 1,2,4 and 8. The \var{Section} is used to specify an optional section
+values 1,2,4 and 8. The \var{Segment} is used to specify an optional segment
 register for the memory operand.
 \end{itemize}
 
@@ -3518,8 +3549,9 @@ unit:
 \item Some debugging information, when compiled with debugging.
 \end{enumerate}
 
-The detailed contents and structure of this file are described in the first
-appendix. You can examine a unit description file using the \file{ppudump}
+The detailed contents and structure of this file are described in appendix
+\ref{ch:AppA}, on page \pageref{ch:AppD}.
+You can examine a unit description file using the \file{ppudump}
 program, which shows the contents of the file.
 
 If you want to distribute a unit without source code, you must provide both
@@ -3615,7 +3647,7 @@ end.
 \label{se:SaturationSupport}
 
 One important point of MMX is the support of saturated operations.
-If a operation would cause an overflow, the value stays at the
+If an operation would cause an overflow, the value stays at the
 highest or lowest possible value for the data type:
 If you use byte values you get normally 250+12=6. This is very
 annoying when doing color manipulations or changing audio samples,
@@ -3685,12 +3717,12 @@ An important restriction is that MMX operations aren't range or overflow
 checked, even when you turn range and overflow checking on. This is due to
 the nature of MMX operations.
 
-The \var{MMX} unit must always be used when doing MMX operations
-because the exit code of this unit clears the MMX unit. If it wouldn't do
-that, other program will crash. A consequence of this is that you can't use
-MMX operations in the exit code of your units or programs, since they would
-interfere  with the exit code of the \var{MMX} unit. The compiler can't
-check this, so you are responsible for this!
+The \var{MMX} unit must always be used when performing MMX operations
+because the exit code of this unit clears the MMX registers. Failure to do
+so would result in a program crash. Therefore you must not use
+MMX operations in the exit code of your units or programs, since these
+operations would interfere with the exit code of the \var{MMX} unit. 
+The compiler cannot check this, so you are responsible for this!
 
 \section{Supported MMX operations}
 \label{se:SupportedMMX}
@@ -3741,7 +3773,7 @@ be linked to \fpc created code blocks.
 
 The compiler has different register conventions, depending on the
 target processor used; some of the registers have specific uses
-during the code generation. The following section describes the
+during code generation. The following section describes the
 generic names of the registers on a platform per platform basis. It
 also indicates what registers are used as scratch registers, and
 which can be freely used in assembler blocks.
@@ -4024,7 +4056,7 @@ creating shared libraries, \seec{libraries}.
 \label{se:CallingConventions}
 
 By default, the calling mechanism the compiler uses is \var{register}, 
-that is, the compiler will try to pass as much parameters as possible by 
+that is, the compiler will try to pass as many parameters as possible by 
 storing them in a free register. Not all registers are used, because
 some registers have a special meaning, but this depends on the CPU.
 
@@ -4279,7 +4311,7 @@ operating system and processor.
 
 For example, on \freebsd, all parameters passed to a routine guarantee
 a minimal stack decrease of four bytes per parameter, even if the
-parameter actually takes less then 4 bytes to store on the stack (such
+parameter actually takes less than 4 bytes to store on the stack (such
 as passing a byte value parameter to the stack).
 
 
@@ -4361,10 +4393,10 @@ The external directive doesn't specify a calling convention; it just tells
 the compiler that the code for a procedure or function resides in an
 external code block. A calling convention modifier should be declared
 if the external code blocks does not have the same calling conventions
-as \fpc. For more information on the calling conventions
+as \fpc. For more information on calling conventions
 \sees{CallingConventions}.
 
-There exist four variants of the external directive:
+There exist four variants of the \var{external} directive:
 \begin{enumerate}
 \item A simple external declaration:
 \begin{verbatim}
@@ -4476,11 +4508,13 @@ Program ExtDemo;
 
 {$L extvar.o}
 
-Var { Case sensitive declaration !! }
-    extvar : longint; cvar;external;
-    I : longint; external name 'extvar';
+Var 
+  { Case sensitive declaration }
+  extvar : longint; cvar;external;
+  I : longint; external name 'extvar';
+
 begin
-  { Extvar can be used case insensitive !! }
+  { Extvar can be used case insensitively }
   Writeln ('Variable ''extvar'' has value: ',ExtVar);
   Writeln ('Variable ''I''      has value: ',i);
 end.
@@ -4502,7 +4536,7 @@ on your screen.
 \subsection{Declaring the calling convention modifier}
 
 To make sure that all parameters are correctly passed to the
-external routines, you should declare it with the correct
+external routines, you should declare them with the correct
 calling convention modifier. When linking with code blocks
 compiled with standard C compilers (such as GCC), the \var{cdecl}
 modifier should be used so as to indicate that the external
@@ -4520,7 +4554,7 @@ any calling convention modifier.
 \label{se:LinkIn}
 
 Having declared the external function or variable that resides in an object file,
-you can use it as if it was defined in your own program or unit.
+you can use it as if it were defined in your own program or unit.
 To produce an executable, you must still link the object file in.
 This can be done with the \var{\{\$L file.o\}} directive.
 
@@ -4732,16 +4766,16 @@ from these units too.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Exporting variables.
 \subsection{Exporting variables}
-Similarly as when you export functions, you can export variables.
+Just as you can export functions, you can also export variables.
 When exporting variables, one should only consider the names of the
 variables. To declare a variable that should be used by a C program,
 one declares it with the \var{cvar} modifier:
 \begin{verbatim}
 Var MyVar : MyTpe; cvar;
 \end{verbatim}
-This will tell the compiler that the assembler name of the variable (the one
-which is used by C programs) should be exactly as specified in the
-declaration, i.e., case sensitive.
+This will tell the compiler that the assembler name of the variable 
+(as used by C programs) should be exactly as specified in the
+declaration, i.e., case-sensitive.
 
 It is not allowed to declare multiple variables as \var{cvar} in one
 statement, i.e. the following code will produce an error:
@@ -4769,7 +4803,7 @@ the RTL. These routines are not present in a C library.
 \item Each library thus made will attempt to initialize the RTL. 
 \end{itemize}
 To remedy these (and other) problems requires intimate knowledge of the
-inner workings of the compiler and RTL, and it is therefor a bad idea to
+inner workings of the compiler and RTL, and it is therefore a bad idea to
 attempt the use of static libraries with Free Pascal.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4829,7 +4863,7 @@ Interface
 Smartlinking will slow down the compilation process, especially for large
 units.
 
-When a unit \file{foo.pp} is smartlinked, the name of the codefile is
+When a unit \file{foo.pp} is smartlinked, the name of the code file is
 changed to \file{libfoo.a}.
 
 Technically speaking, the compiler makes small assembler files for each
@@ -4938,9 +4972,9 @@ space used is shown in \seet{enumstoragetp}.
 \end{FPCltable}
 
 When the \var{\{\$Z2\}} or \var{\{\$PACKENUM 2\}} switches are in 
-effect, the value is stored in 2 bytes (a word), if the enumeration 
+effect, the value is stored in 2 bytes (a \var{word}), if the enumeration 
 has less or equal than 65535 elements. If there are more elements,
-the enumeration value is stored as a 4 byte value (a longword).
+the enumeration value is stored as a 4 byte value (a \var{longword}).
 
 \subsection{Floating point types}
 
@@ -4988,9 +5022,8 @@ the \{\$E+\} switch), the \var{double} type does not exist.
 
 \subsubsection{Extended}
 
-For Intel 80x86 processors, the \var{extended} type has
-takes up 10 bytes of memory space. For more information
-on the extended type consult the Intel Programmer's reference.
+For Intel 80x86 processors, the \var{extended} type takes up 10 bytes of memory space. For more information
+on the \var{extended} type, consult the Intel Programmer's reference.
 
 For all other processors which support floating point operations,
 the \var{extended} type is a nickname for the type which supports
@@ -5029,7 +5062,7 @@ Motorola 680x0 (with \{\$E+\} switch) & \var{single}\\
 
 \subsection{Pointer types}
 
-A \var{pointer} type is stored as a longword (unsigned 32-bit value) on
+A \var{pointer} type is stored as a \var{longword} (unsigned 32-bit value) on
 32-bit processors, and is stored as a 64-bit unsigned value\footnote{this
 is actually the \var{qword} type, which is not supported in \fpc v1.0}
 on 64-bit processors.
@@ -5113,7 +5146,7 @@ A set is stored as an array of bits, where each bit indicates
 if the element is in the set or excluded from the set. The maximum
 number of elements in a set is 256.
 
-If a set has less than 32 elements, it is coded as an unsigned
+If a set has fewer than 32 elements, it is coded as an unsigned
 32-bit value. Otherwise it is coded as an array of 8 
 unsigned 32-bit values (longwords), and hence has a size of 256 bytes.
 
@@ -5151,7 +5184,7 @@ Each field of a record is stored in a contiguous sequence
 of variables, where the first field is stored at the
 lowest address in memory. In case of variant fields in
 a record, each variant starts at the same address in
-memory. Fields of record are usually aligned, unless
+memory. Fields of a record are usually aligned, unless
 the \var{packed} directive is specified when declaring
 the record type. 
 
@@ -5429,7 +5462,7 @@ The algorithm for allocating memory is as follows:
 \begin{enumerate}
 \item The size of the block to allocate is adjusted to a 16 (or 32) byte granularity.
 \item The cached free list is searched to find a free block of the specified
- size or bigger size, if so it is allocated and the routine exits.
+ size or greater, if so it is allocated and the routine exits.
 \item The \var{freelist} is searched to find a free block of the specified size
 or of bigger size, if so it is allocated and the routine exits.
 \item If not found in the \var{freelist} the heap is grown to allocate the
@@ -5538,8 +5571,8 @@ memory.
 pointed to by P. This should be disregarded, but can be used to check the
 behaviour of the program.
 \item[AllocMem] Is the same as getmem, only the allocated memory should
-be filled with zeroes before the call returns.
-\item[ReAllocMem] Should allocate a memory block \var{Size} bytes large,
+be filled with zeros before the call returns.
+\item[ReAllocMem] Should allocate a memory block of the specified \var{Size},
 and should fill it with the contents of the memory block pointed to by
 \var{P}, truncating this to the new size of needed. After that, the memory
 pointed to by P may be deallocated. The return value is a pointer to the
@@ -5806,8 +5839,8 @@ The fact that 16-bit code is no longer used, means that some of the older
 Turbo Pascal constructs and functions are obsolete. The following is a
 list of functions which shouldn't be used anymore:
 \begin{description}
-\item [Seg()]: Returned the segment of a memory address. Since segments have
-no more meaning, zero is returned in the \fpc run-time library implementation of
+\item [Seg()]: Returned the segment of a memory address. Since segments no
+longer have meaning, zero is returned in the \fpc run-time library implementation of
 \var{Seg}.
 \item [Ofs()]: Returned the offset of a memory address. Since segments have
 no more meaning, the complete address is returned in the \fpc implementation
@@ -5879,7 +5912,7 @@ a uniform way of handling constant strings.
 Most applications communicate with the user through some messages on the
 graphical screen or console. Storing these messages in special constants
 allows storing them in a uniform way in separate files, which can be used
-for translation. A programmers interface exists to manipulate the actual
+for translation. A programmer's interface exists to manipulate the actual
 values of the constant strings at runtime, and a utility tool comes with the
 Free Pascal compiler to convert the resource string files to whatever format
 is wanted by the programmer. Both these things are discussed in the
@@ -5889,8 +5922,7 @@ following sections.
 When a unit is compiled that contains a \var{resourcestring} section,
 the compiler does 2 things:
 \begin{enumerate}
-\item It generates a table that contains the value of the strings as it
-is declared in the sources.
+\item It generates a table that contains the value of the strings as declared in the sources.
 \item It generates a {\em resource string file} that contains the names
 of all strings, together with their declared values.
 \end{enumerate}
