@@ -307,6 +307,8 @@ The strings are matched ignoring case.</descr>
 <seealso>
 <link id="AnsiIndexStr"/>
 <link id="AnsiMatchStr"/>
+<link id="IndexStr"/>
+<link id="MatchStr"/>
 <link id="AnsiMatchText"/>
 </seealso>
 </element>
@@ -520,7 +522,7 @@ The check is performed case-sensitive. Basically, it checks whether the position
 <short>Check whether a string occurs in an array of strings, observing case.</short>
 <descr>
 <p>
-<var>AnsiIndexStr</var>
+<var>AnsiMatchStr</var>
  matches <var>AText</var> against each string in <var>AValues</var>. 
 If a match is found, it returns <var>True</var>, otherwise <var>False</var> is returned.
 The strings are matched observing case. 
@@ -535,9 +537,7 @@ The strings are matched observing case.
 
 <element name="AnsiMatchStr.Result">
 <short>
-<var>True</var>
-
- if the value appears in the array, <var>False</var> if not.</short>
+<var>True</var> if the value appears in the array, <var>False</var> if not.</short>
 <descr/>
 <errors/>
 <seealso/>
@@ -563,12 +563,8 @@ The strings are matched observing case.
 <element name="AnsiIndexStr">
 <short>Searches, observing case, for a string in an array of strings.</short>
 <descr>
-<var>AnsiIndexStr</var>
- matches <var>AText</var>
- against each string in <var>AValues</var>
-. 
-If a match is found, the corresponding index (zero-based) in the <var>AValues</var>
- array is returned. 
+<var>AnsiIndexStr</var> matches <var>AText</var> against each string in <var>AValues</var>. 
+If a match is found, the corresponding index (zero-based) in the <var>AValues</var> array is returned. 
 If no match is found, -1 is returned.
 The strings are matched observing case.</descr>
 <errors>None.</errors>
@@ -4207,6 +4203,183 @@ If the conversion fails, <var>ADefault</var> is returned.
 <link id="TryRomanToInt"/>
 <link id="RomanToInt"/>
 <link id="IntToRoman"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="MatchStr">
+<short>Check whether a string occurs in an array of strings, observing case.</short>
+<descr>
+<p>
+<var>MatchStr</var>  matches <var>AText</var> against each unicode string in <var>AValues</var>. 
+If a match is found, it returns <var>True</var>, otherwise <var>False</var> is returned.
+The strings are matched observing case. 
+</p>
+<p>This function simply calls <link id="IndexStr"/> and checks whether it returns -1 or not.
+</p>
+</descr>
+<errors/>
+<link id="IndexStr"/>
+<link id="AnsiMatchStr"/>
+<seealso/>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IndexStr">
+<short>Searches, observing case, for a string in an array of strings.</short>
+<descr>
+<var>IndexStr</var> matches <var>AText</var> against each unicode string in <var>AValues</var>. 
+If a match is found, the corresponding index (zero-based) in the <var>AValues</var> array is returned. 
+If no match is found, -1 is returned. The strings are matched observing case.
+</descr>
+<errors>None.</errors>
+<seealso>
+<link id="AnsiIndexText"/>
+<link id="MatchStr"/>
+<link id="AnsiIndexStr"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="NaturalCompareText">
+<short>Compare using natural sort</short>
+<descr>
+<p>
+<var>NaturalCompareText</var> will compare 2 strings and return one of the
+following values:
+</p>
+<dl>
+<dt>-1</dt><dd>If <var>S1</var> comes before <var>S2</var></dd>
+<dt>0</dt><dd>If <var>S1</var> equals <var>S2</var></dd>
+<dt>1</dt><dd>If <var>S1</var> comes after <var>S2</var></dd>
+</dl>
+<p>
+When <var>S1</var> and <var>S2</var> are integer or floating point values,
+the actual values are compared. Thus '12' will come after '2'. If either of
+the values is not a valid  integer or floating point values, the strings are
+compared case insensitively as texts using <link id="#rtl.sysutils.CompareText">CompareText</link>
+</p>
+<p>
+A decimal separator and thousands separator can optionally be specified in
+<var>ADecSeparator</var>, <var>AThousandSeparator</var>. If none are
+specified, the defaults from the system unit will be used.
+</p>
+</descr>
+<seealso>
+<link id="CompareText"/>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="SizeIntArray">
+<short>Array of <var>SizeInt</var></short>
+<descr>
+<var>SizeIntArray</var> is an auxiliary type used in <link id="StringReplace"/>
+</descr>
+<seealso>
+<link id="StringReplace"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="FindMatchesBoyerMooreCaseSensitive">
+<short>Find case-sensitive matches of a string using a Boyer-Moore algorithm</short>
+<descr>
+<var>FindMatchesBoyerMooreCaseSensitive</var> finds occurrences of <var>OldPattern</var> 
+(with length <var>OldPatternSize</var>) in <var>S</var> (with length <var>SSize</var>).
+The search is performed case-sensitively, and all (zero based) positions are
+reported in <var>aMatches</var>. If <var>aMatchAll</var> is <var>True</var>,
+all positions will be reported. If <var>aMatchAll</var> is <var>False</var>,
+only the first position is reported.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="FindMatchesBoyerMooreCaseInSensitive"/>
+<link id="SringReplace"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="FindMatchesBoyerMooreCaseInSensitive">
+<short>Find case-sensitive matches of a string using a Boyer-Moore algorithm</short>
+<descr>
+<var>FindMatchesBoyerMooreCaseInSensitive</var> finds occurrences of <var>OldPattern</var> 
+(with length <var>OldPatternSize</var>) in <var>S</var> (with length <var>SSize</var>).
+The search is performed case-insensitively, and all (zero based) positions are
+reported in <var>aMatches</var>. If <var>aMatchAll</var> is <var>True</var>,
+all positions will be reported. If <var>aMatchAll</var> is <var>False</var>,
+only the first position is reported.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="FindMatchesBoyerMooreCaseSensitive"/>
+<link id="SringReplace"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TStringReplaceAlgorithm">
+<short>Algorithm to use in StringReplace</short>
+<descr>
+<p>
+<var>TStringReplaceAlgorithm</var> enumerates the available algorithms to <link id="StringReplace"/>
+</p>
+<dl>
+<dt>sraDefault</dt><dd><printshort id="TStringReplaceAlgorithm.sraDefault"/></dd>
+<dt>sraManySmall</dt><dd><printshort id="TStringReplaceAlgorithm.sraManySmall"/></dd>
+<dt>sraBoyerMoore</dt><dd><printshort id="TStringReplaceAlgorithm.sraBoyerMoore"/></dd>
+</dl>
+<p>
+Depending on the kind of data that is being treated, one or the other of
+these algorithms may produce faster results.
+</p>
+</descr>
+<seealso>
+<link id="StringReplace"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStringReplaceAlgorithm.sraDefault">
+<short>Use the sysutils algorithm, which does a straightforward linear search and replace</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStringReplaceAlgorithm.sraManySmall">
+<short>Use an approach which is suitable for a string with many occurrences of the same small text</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStringReplaceAlgorithm.sraBoyerMoore">
+<short>Use a Boyer-Moore search algorithm</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="StringReplace">
+<short>Optimized search-and-replace algorithm</short>
+<descr>
+<p>
+<var>StringReplace</var> replaces one or all occurrences of
+<var>OldPattern</var> with <var>NewPattern</var> in the string <var>S</var>.
+The behaviour is controlled by <var>Flags</var> and the search mechanism may be
+optimized usin <var>Algorithm</var>. A list of possible algorithms is
+specified in <link id="TStringReplaceAlgorithm"/>.
+</p>
+<p>
+For ansistrings, this is an optimized version of the <link id="#rtl.sysutils.stringreplace">SysUtils.StringReplace</link> algorithm.
+For widestrings or unicodestrings, the algorithm parameter is ignored and the default mechanism in sysutils is always used.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.sysutils.stringreplace">SysUtils.StringReplace</link>
+<link id="TStringReplaceAlgorithm"/>
 </seealso>
 </element>
 
