@@ -346,7 +346,8 @@ be created directly. Instead, one of the <var>TIniFile</var> or
 <p>
 <var>Create</var> creates a new instance of <var>TCustomIniFile</var> and
 loads it with the data from <var>AFileName</var>, if this file exists.
-If the <var>AEscapeLineFeeds</var> parameter is <var>True</var>, then lines
+If the <var>ifoEscapeLineFeeds</var> option is present in
+<var>AOptions</var> or <var>AEscapeLineFeeds</var> parameter is <var>True</var>, then lines
 which have their end-of-line markers escaped with a backslash, will be
 concatenated. This means that the following 2 lines
 </p>
@@ -364,12 +365,17 @@ Description=This is a line with a long text
 By default, not escaping of linefeeds is performed (for Delphi
 compatibility)
 </p>
+<p>
+Default options for the <link id="TCustomIniFile.Options"/> property can be
+specified in <var>AOptions</var>.
+</p>
 </descr>
 <errors>
 If the file cannot be read, an exception may be raised.
 </errors>
 <seealso>
 <link id="TCustomIniFile.Destroy">Destroy</link>
+<link id="TCustomIniFile.Options"/>
 </seealso>
 </element>
 
@@ -1320,16 +1326,23 @@ abstract methods introduced in <var>TCustomIniFile</var>
 <element name="TIniFile.Create">
 <short>Create a new instance of <var>TIniFile</var></short>
 <descr>
+<p>
 <var>Create</var> creates a new instance of <var>TIniFile</var> and
 initializes the class by reading the file from disk if the filename
 <var>AFileName</var> is specified, or from stream in case <var>AStream</var>
 is specified. It also sets most variables to their initial values, i.e. 
 <var>AEscapeLineFeeds</var> is saved prior to reading the file, and
 <var>Cacheupdates</var> is set to <var>False</var>.
+</p>
+<p>
+Default options for the <link id="TCustomIniFile.Options"/> property can be
+specified in <var>AOptions</var>.
+</p>
 </descr>
 <seealso>
 <link id="TCustomIniFile"/>
 <link id="TMemIniFile"/>
+<link id="TCustomIniFile.Options"/>
 </seealso>
 </element>
 
@@ -2139,6 +2152,204 @@ when an existing value is added (<var>False</var>).
 <seealso>
 <link id="TStringHash.Add"/>
 </seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TIniFileOption">
+<short>Options to use hen creating a new <var>TIniFile</var> instance</short>
+<descr>
+<p>
+<var>TIniFileOption</var> enumerates the possible options when creating a
+new <link id="TCustomIniFileoption"/> instance.
+</p>
+<dl>
+<dt>ifoStripComments</dt><dd><printshort id="TIniFileOption.ifoStripComments"/></dd>
+<dt>ifoStripInvalid</dt><dd><printshort id="TIniFileOption.ifoStripInvalid"/></dd>
+<dt>ifoEscapeLineFeeds</dt><dd><printshort id="TIniFileOption.ifoEscapeLineFeeds"/></dd>
+<dt>ifoCaseSensitive</dt><dd><printshort id="TIniFileOption.ifoCaseSensitive"/></dd>
+<dt>ifoStripQuotes</dt><dd><printshort id="TIniFileOption.ifoStripQuotes"/></dd>
+<dt>ifoFormatSettingsActive</dt><dd><printshort id="TIniFileOption.ifoFormatSettingsActive"/></dd>
+</dl>
+</descr>
+<seealso>
+<link id="TIniFileOptions"/>
+<link id="TCustomIniFile.Options"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIniFileOption.ifoStripComments">
+<short>Strip coments from file</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIniFileOption.ifoStripInvalid">
+<short>Strip invalid lines from file</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIniFileOption.ifoEscapeLineFeeds">
+<short>Observe backslash as linefeed escape character</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIniFileOption.ifoCaseSensitive">
+<short>Key and section names are case sensitive</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIniFileOption.ifoStripQuotes">
+<short>Strip double quotes from values</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIniFileOption.ifoFormatSettingsActive">
+<short>Observe the values in FormatSettings</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TIniFileOptions">
+<short>Set of <var>TIniFileOption</var></short>
+<descr>
+<var>TIniFIleOptions</var> is the set for <link id="TIniFileOption"/>.
+It is used in the <link id="TCUstomIniFile.Create"/> constructor and <link
+id="TCustomIniFile.Options"/> property.
+</descr>
+<seealso>
+<link id="TIniFileOption"/>
+<link id="TCUstomIniFile.Create"/>
+<link id="TCustomIniFile.Options"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TSectionValuesOption">
+<short>Options to use when reading section values</short>
+<descr>
+<p>
+<var>TSectionValuesOption</var> is used to control the behaviour of <link
+id="TCustomIniFile.ReadSectionValues"/>
+</p>
+<dl>
+<dt>svoIncludeComments</dt><dd><printshort id="TSectionValuesOption.svoIncludeComments"/></dd>
+<dt>svoIncludeInvalid</dt><dd><printshort id="TSectionValuesOption.svoIncludeInvalid"/></dd>
+<dt>svoIncludeQuotes</dt><dd><printshort id="TSectionValuesOption.svoIncludeQuotes"/></dd>
+</dl>
+</descr>
+<seealso>
+<link id="TCustomIniFile.ReadSectionValues"/>
+<link id="TSectionValuesOptions"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSectionValuesOption.svoIncludeComments">
+<short>Include comment lines</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSectionValuesOption.svoIncludeInvalid">
+<short>Include invalid lines</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSectionValuesOption.svoIncludeQuotes">
+<short>Include existing quotes around values</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TSectionValuesOptions">
+<short>Set of <var>TSectionValuesOption</var></short>
+<descr>
+<var>TSectionValuesOptions</var> is the set for <link id="TSectionValuesOptions"/>.
+It is used in the <link id="TCUstomIniFile.ReadSectionValues"/> call.
+</descr>
+<seealso>
+<link id="TSectionValuesOption"/>
+<link id="TCUstomIniFile.ReadSectionValues"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="TCustomIniFile.FormatSettings">
+<short>Format settings to use when reading date/time/float values</short>
+<descr>
+<var>FormatSetting</var> is a set of formatting settings similar to <link
+id="#rtl.sysutils.formatsettings">Sysutils.FormatSettings</link>. If <link
+id="TCustomIniFile.FormatSettingsActive"/> is <var>True</var>, then the
+value of this field will be used to read values in 
+<link id="TCustomIniFile.ReadDateTime"/>, 
+<link id="TCustomIniFile.ReadDate"/>, 
+<link id="TCustomIniFile.ReadTime"/> and 
+<link id="TCustomIniFile.ReadFloat"/> 
+or when writing values in 
+<link id="TCustomIniFile.WriteDateTime"/>, 
+<link id="TCustomIniFile.WrireDate"/>,
+<link id="TCustomIniFile.WriteTime"/> 
+and 
+<link id="TCustomIniFile.WriteFloat"/>.
+</descr>
+<seealso>
+<link id="TCustomIniFile.FormatSettingsActive"/>
+<link id="TCustomIniFile.ReadDateTime"/>
+<link id="TCustomIniFile.ReadDate"/>
+<link id="TCustomIniFile.ReadTime"/> 
+<link id="TCustomIniFile.ReadFloat"/> 
+<link id="TCustomIniFile.WriteDateTime"/>
+<link id="TCustomIniFile.WrireDate"/>
+<link id="TCustomIniFile.WriteTime"/> 
+<link id="TCustomIniFile.WriteFloat"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomIniFile.Create.AOptions">
+<short>Options to use when processing the ini file.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomIniFile.ReadSectionValues.Options">
+<short>Options to use when </short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomIniFile.Options">
+<short>Options currently in effect</short>
+<descr>
+<var>Options</var> is the set of options currently in effect. 
+See <link id="TInifileOption"/> for a list of allowed options. The initial
+value of this property can be specified using the constructor of the class,
+<link id="TCustomIniFile.Create"/>.
+Not all options can be specified after the ini file object was created.
+</descr>
+<seealso>
+<link id="TInifileOption"/>
+<link id="TInifileOptions"/>
+<link id="TCustomIniFile.Create"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomIniFile.FormatSettingsActive">
+<short>Is <var>FormatSettings</var> used or not</short>
+<descr>
+<var>FormatSettingsActive</var> can be set to <var>True</var> to use the
+<link id="TCustomIniFile.FormatSettings"/> field when reading and/or writing
+values of type date/time  or float. If the setting is set to
+<var>False</var> then the defaults specified in the sysutils unit are used.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TIniFile.Create.AOptions">
+<short>Initial value for <var>Options</var> property.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TIniFile.ReadSectionValues.AOptions">
+<short>Options to control the behaviour of <var>ReadSectionValues</var></short>
 </element>
 
 </module> <!-- IniFiles -->
