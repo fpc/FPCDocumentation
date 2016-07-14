@@ -3082,6 +3082,513 @@ and no moving will take place.
 </seealso>
 </element>
 
+<!-- function Visibility: public -->
+<element name="TFPGMap.TryGetData">
+<short>Find data or return default</short>
+<descr>
+<var>TryGetData</var> will search the map for <var>AKey</var> and return
+<var>True</var> or <var>False</var> depending on whether the value with the
+given key was found. If the key was found, the associated value is returned
+in <var>AData</var>, if it is not found a default value (using
+<var>Default</var>) is returned.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPGMap.Find"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPGMap.AddOrSetData">
+<short>Add data with given or set value if the key already exists.</short>
+<descr>
+<var>AddOrSetData</var> will check if key <var>AKey</var> already exists. if
+yes, the value associated with it will be replaced with <var>AData</var>. If
+the key does not yet exist, it will be added with value <var>AData</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPGMap.TryGetData"/>
+<link id="TFPGMap.Add"/>
+<link id="TFPGMap.Find"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.fgl.TFPGMapObject
+  ********************************************************************
+-->
+
+<!-- generic class Visibility: default -->
+<element name="TFPGMapObject">
+<short>Generic map</short>
+<descr>
+<var>TFPGMapObject</var> is a generic map class. It can be used to specialize a map for object types, 
+but not objects with automated reference counting: For reference counted interface objects, 
+<link id="TFPGMapInterfacedObjectData"/> must be used.
+</descr>
+<seealso>
+<link id="TFPGMapInterfacedObjectData"/>
+</seealso>
+</element>
+
+<!-- generic element Visibility: default -->
+<element name="TFPGMapObject.TKey">
+<short>Map Key type</short>
+</element>
+
+<!-- generic element Visibility: default -->
+<element name="TFPGMapObject.TData">
+<short>Map data type. This must be a <var>TObject</var> descendent</short>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TFPGMapObject.Create">
+<short>Create a new instance of the map</short>
+<descr>
+<var>Create</var> instantiates a new map. It mainly initializes the
+<link id="TFPSMap"/> parent with the sized of the key and data.
+</descr>
+<seealso>
+<link id="TFPSMap.Create"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPGMapObject.Add">
+<short>Add a key and value to the map</short>
+<descr>
+<var>Add</var> adds a new key <var>AKey</var> of generic type <var>TKey</var>
+with data object <var>AData</var> to the list and returns the position at which 
+the key was added. 
+</descr>
+<errors>
+If the item could not be added, an <link id="EListError"/> exception is raised.
+If <link id="TFPSMap.Duplicates">Duplicates</link> is set to <var>dupError</var>
+and a duplicate key is added, an <link id="EListError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TFPGMapObject.Keys"/>
+<link id="TFPGMapObject.IndexOf"/>
+<link id="TFPGMapObject.KeyData"/>
+<link id="TFPGMapObject.Data"/>
+<link id="TFPSMap.Duplicates"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TFPGMapObject.Add.Result">
+<short>Index of the new key</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.Add.AKey">
+<short>Key value</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.Add.AData">
+<short>Data item</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPGMapObject.Find">
+<short>Find item based on key</short>
+<descr>
+<var>Find</var> will search the first key smaller than or equal
+to <var>AKey</var> and return its index in <var>AIndex</var>. If the key was
+not found then -1 is returned. The return value of the function is
+<var>True</var> if an exact match for <var>AKey</var> is found,
+<var>False</var> otherwise.
+</descr>
+<seealso>
+<link id="TFPGMapObject.IndexOf"/>
+<link id="TFPGMapObject.IndexOfData"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TFPGMapObject.Find.Result">
+<short>True if an exact match for <var>AKey</var> was found.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.Find.AKey">
+<short>Key to search for.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.Find.Index">
+<short>Index of found key</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPGMapObject.IndexOf">
+<short>Find index of a key in the list.</short>
+<descr>
+<var>IndexOf</var> returns the index of <var>AKey</var> in the list, or -1
+if the key was not found in the list.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPGMapObject.Find"/>
+<link id="TFPGMapObject.IndexOfData"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TFPGMapObject.IndexOf.Result">
+<short>Index of <var>AKey</var> in the list, -1 if not present.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.IndexOf.AKey">
+<short>Key value to search.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPGMapObject.IndexOfData">
+<short>Find index of data value in the list.</short>
+<descr>
+<var>IndexOfData</var> returns the index of object <var>AData</var> in the list, or -1
+if the data was not found in the list.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPGMapObject.Find"/>
+<link id="TFPGMapObject.IndexOf"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TFPGMapObject.IndexOfData.Result">
+<short>Index of <var>AData</var> in the list, -1 if not present.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.IndexOfData.AData">
+<short>Data value to search</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPGMapObject.InsertKey">
+<short>Insert a new key in the list</short>
+<descr>
+<var>InsertKey</var> inserts key <var>AKey</var> at position <var>Index</var> in the list.
+It is not allowed to insert a key in a sorted list.
+</descr>
+<errors>
+If the index <var>AIndex</var> is out of range [0..Count-1], or the list is
+sorted, an <link id="EListError"/> exception will be raised.
+</errors>
+<seealso>
+<link id="TFPGMapObject.InsertKeyData"/>
+<link id="TFPGMapObject.Add"/>
+<link id="TFPSMap.Delete"/>
+<link id="TFPSMap.Remove"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.InsertKey.Index">
+<short>Index at which to insert <var>AKey</var></short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.InsertKey.AKey">
+<short>Key to insert in the list.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPGMapObject.InsertKeyData">
+<short>Insert a new key with associated data in the list</short>
+<descr>
+<var>InsertKey</var> inserts key <var>AKey</var> with associated data
+<var>AData</var> at position <var>Index</var> in the list.
+It is not allowed to insert a key in a sorted list.
+</descr>
+<errors>
+If the index <var>AIndex</var> is out of range [0..Count-1], or the list is
+sorted, an <link id="EListError"/> exception will be raised.
+</errors>
+<seealso>
+<link id="TFPGMapObject.InsertKey"/>
+<link id="TFPGMapObject.Add"/>
+<link id="TFPSMap.Delete"/>
+<link id="TFPGMapObject.Remove"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.InsertKeyData.Index">
+<short>Index at which to insert <var>AKey</var> and <var>AData</var></short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.InsertKeyData.AKey">
+<short>Key to insert in the list.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.InsertKeyData.AData">
+<short>Data to associate with <var>AKey</var></short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPGMapObject.Remove">
+<short>Remove a key from the list</short>
+<descr>
+<var>Remove</var> removes the key <var>AKey</var> from the list, together
+with its associated data. The function returns the index of <var>AKey</var>
+prior to removal from the list, or -1 if <var>AKey</var> was not present in
+the list.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPGMapObject.InsertKey"/>
+<link id="TFPGMapObject.InsertKeyData"/>
+<link id="TFPGMapObject.Add"/>
+<link id="TFPSMap.Delete"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TFPGMapObject.Remove.Result">
+<short>Index of <var>AKey</var> prior to removal.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.Remove.AKey">
+<short>Key to remove from the list.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPGMapObject.Keys">
+<short>Indexed access to the keys in the list.</short>
+<descr>
+<var>Keys</var> provides indexed access to the key values in the list. 
+Valid values for <var>Index</var> are in the range <var>[0..Count-1]</var>.
+Key values can always be read, but can only be written if the list is unsorted.
+</descr>
+<errors>
+If the index <var>AIndex</var> is out of range [0..Count-1], an <link id="EListError"/> exception will be
+raised. The same exception is raised if a key is written and the list is sorted.
+</errors>
+<seealso>
+<link id="TFPSList.Count"/>
+<link id="TFPGMapObject.Data"/>
+<link id="TFPGMapObject.KeyData"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.Keys.Index">
+<short>Index of key value to retrieve</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPGMapObject.Data">
+<short>Indexed access to the data in the list</short>
+<descr>
+<var>Data</var> provides indexed access to the data values in the list.
+Valid values for <var>Index</var> are in the range <var>[0..Count-1]</var>.
+Data can always be read or written.
+</descr>
+<errors>
+If the index <var>AIndex</var> is out of range [0..Count-1], an <link
+id="EListError"/> exception will be raised.                      
+</errors>
+<seealso>
+<link id="TFPSList.Count"/>
+<link id="TFPGMapObject.Keys"/>  
+<link id="TFPGMapObject.KeyData"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.Data.Index">
+<short>Index of data value to retrieve</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPGMapObject.KeyData">
+<short>Access to data based on key</short>
+<descr>
+<var>KeyData</var> allows access to the data based on the key value
+<var>AKey</var>. The data can be read and written. When writing, writing
+using an existing key will overwrite the current data. If it does not exist
+yet, it will be created. When reading, if the key is not present, an
+<link id="EListError"/> will be raised.
+</descr>
+<errors>
+If the key does not exist, an <link id="EListError"/> exception will be raised.
+</errors>
+<seealso>
+<link id="TFPSList.Count"/> 
+<link id="TFPGMapObject.Keys"/>   
+<link id="TFPGMapObject.Data"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPGMapObject.KeyData.AKey">
+<short>Key associated with data valueto read or write</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPGMapObject.OnCompare">
+<short>Alias for <var>OnKeyCompare</var></short>
+<descr>
+<var>OnCompare</var> is a deprecated property, use <link id="TFPGMapObject.OnKeyCompare"/> instead.
+</descr>
+<seealso>
+<link id="TFPGMapObject.OnKeyCompare"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPGMapObject.OnKeyCompare">
+<short>Compare function for key values.</short>
+<descr>
+<p>
+<var>OnKeyCompare</var> can be set to a function that compares key values.
+The default value for this event is a function that compares keys based on a
+byte-by-byte comparison of the memory block.
+The function must have the following semantics:
+</p>
+<ul>
+<li>If the result of this function is negative, the first key (<var>key1</var>) is
+assumed to be 'less' than the second key (<var>key2</var>) and will be moved
+before the second in the list.
+</li>
+<li>If the function result is positive, the first key (<var>key1</var>)
+pointer is assumed to be 'greater than' the second key (<var>key2</var>)and will be moved after
+the second in the list.
+</li>
+<li>if the function result is zero, the keys are assumed to be 'equal'
+and no moving will take place.
+</li>
+</ul>
+</descr>
+<seealso>
+<link id="TFPGMapObject.OnDataCompare"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPGMapObject.OnDataCompare">
+<short>Compare function for data values.</short>
+<descr>
+<p>
+<var>OnDataCompare</var> can be set to a function that compares data values.
+The default value for this event is a function that compares data based on a
+byte-by-byte comparison of the memory block.
+The function must have the following semantics:
+</p>
+<ul>
+<li>If the result of this function is negative, the first data item (<var>Data1</var>) is
+assumed to be 'less' than the second data item (<var>Data2</var>) and will be moved
+before the second in the list.
+</li>
+<li>If the function result is positive, the first data item (<var>Data1</var>)
+pointer is assumed to be 'greater than' the second data item (<var>Data2</var>)and will be moved after
+the second in the list.
+</li>
+<li>if the function result is zero, the data items are assumed to be 'equal'
+and no moving will take place.
+</li>
+</ul>
+</descr>
+<seealso>
+<link id="TFPGMapObject.OnKeyCompare"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPGMapObject.TryGetData">
+<short>Find data or return default</short>
+<descr>
+<var>TryGetData</var> will search the map for <var>AKey</var> and return
+<var>True</var> or <var>False</var> depending on whether the value with the
+given key was found. If the key was found, the associated value is returned
+in <var>AData</var>, if it is not found a default value (using
+<var>Default</var>) is returned.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPGMapObject.Find"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPGMapObject.AddOrSetData">
+<short>Add data with given or set value if the key already exists.</short>
+<descr>
+<var>AddOrSetData</var> will check if key <var>AKey</var> already exists. if
+yes, the value associated with it will be replaced with <var>AData</var>. If
+the key does not yet exist, it will be added with value <var>AData</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPGMapObject.TryGetData"/>
+<link id="TFPGMapObject.Add"/>
+<link id="TFPGMapObject.Find"/>
+</seealso>
+</element>
+
+
+<!-- function Visibility: public -->
+<element name="TFPGMapInterfacedObjectData.TryGetData">
+<short>Find data or return default</short>
+<descr>
+<var>TryGetData</var> will search the map for <var>AKey</var> and return
+<var>True</var> or <var>False</var> depending on whether the value with the
+given key was found. If the key was found, the associated value is returned
+in <var>AData</var>, if it is not found a default value (using
+<var>Default</var>) is returned.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPGMapInterfacedObjectData.Find"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPGMapInterfacedObjectData.AddOrSetData">
+<short>Add data with given or set value if the key already exists.</short>
+<descr>
+<var>AddOrSetData</var> will check if key <var>AKey</var> already exists. if
+yes, the value associated with it will be replaced with <var>AData</var>. If
+the key does not yet exist, it will be added with value <var>AData</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TFPGMapInterfacedObjectData.TryGetData"/>
+<link id="TFPGMapInterfacedObjectData.Add"/>
+<link id="TFPGMapInterfacedObjectData.Find"/>
+</seealso>
+</element>
+
+
 </module> <!-- fgl -->
 
 </package>
