@@ -260,15 +260,25 @@ None.
 <element name="TCustomApplication.Terminate">
 <short>Terminate the application.</short>
 <descr>
+<p>
 <var>Terminate</var> sets the <var>Terminated</var> property to
 <var>True</var>. By itself, this does not terminate the application.
 Instead, descendent classes should in their <var>DoRun</var> method,
 check the value of the <link id="TCustomApplication.Terminated">Terminated</link> property
 and properly shut down the application if it is set to <var>True</var>.
+</p>
+<p>
+When <var>AExitCode</var> is specified, it will passed to <link
+id="System.ExitCode"/>, and when the program is halted, that is the exit
+code of the program as returned to the OS. If the application is terminated
+due to an exception, <link id="TCustomApplication.ExceptionExitCode">ExceptionExitCode</link> will be used as the value for this argument.
+</p>
 </descr>
 <seealso>
 <link id="TCustomApplication.Terminated"/>
 <link id="TCustomApplication.Run"/>
+<link id="TCustomApplication.ExceptionExitCode">ExceptionExitCode</link>
+<link id="System.ExitCode"/>
 </seealso>
 </element>
 
@@ -350,6 +360,11 @@ Options are identified as command-line parameters which start with
 <link id="TCustomApplication.OptionChar">OptionChar</link> (by default the
 dash ('-') character).
 </p>
+<p>
+If an option can appear multiple times, use <link id="TCustomApplication.GetOptionValues"/>
+to retrieve all values. This function only returns the value of the first
+occurrence of an option.
+</p>
 </descr>
 <seealso>
 <link id="TCustomApplication.FindOptionIndex">FindOptionIndex</link>
@@ -357,6 +372,7 @@ dash ('-') character).
 <link id="TCustomApplication.CheckOptions">CheckOptions</link>
 <link id="TCustomApplication.CaseSensitiveOptions">CaseSensitiveOptions</link>
 <link id="TCustomApplication.OptionChar">OptionChar</link>
+<link id="TCustomApplication.GetOptionValues"/>
 </seealso>
 </element>
 
@@ -763,11 +779,17 @@ the exception was handled.
 <element name="TCustomApplication.Log">
 <short>Write a message to the event log</short>
 <descr>
+<p>
 <var>Log</var> is meant for all applications to have a default logging
 mechanism. By default it does not do anything, descendent classes should
 override this method to provide appropriate logging: they should write the
 message <var>Msg</var> with type <var>EventType</var> to some log mechanism
 such as <link id="#fcl.eventlog.TEventLog"/>
+</p>
+<p>
+The second form using <var>Fmt</var> and <var>Args</var> will format the
+message using the provided arguments prior to logging it.
+</p>
 </descr>
 <errors>
 None.
@@ -830,6 +852,183 @@ the set, and if not, will not send the message to the system log.
 </descr>
 <seealso>
 <link id="TCustomApplication.Log"/>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TStringArray">
+<short>Helper type: Array of strings</short>
+<descr>
+<var>TStringArray</var> is an array of strings, used in the <link id="TCustomApplication.GetOptionValues"/> call.
+</descr>
+<seealso>
+<link id="TCustomApplication.GetOptionValues"/> 
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomApplication.Terminate.AExitCode">
+<short>Exit code for the program</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomApplication.FindOptionIndex.StartAt">
+<short>Index to start searching for option.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomApplication.GetOptionValues">
+<short>Get the values for an option that may be specified multiple times</short>
+<descr>
+<p>
+<var>GetOptionValues</var> returns all values specified by command-line option
+switches <var>C</var> or <var>S</var>. For each occurrence of the
+command-line option <var>C</var> or <var>S</var>, the associated value is added to the array.
+</p>
+<p>
+<link id="TCustomApplication.GetOptionValue"/> will only return the first occurrence of a value.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TCustomApplication.GetOptionValue"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCustomApplication.GetOptionValues.Result">
+<short>All values specified using <var>C</var> or <var>S</var> switched.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomApplication.GetOptionValues.C">
+<short>Short form of the command-line switch</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomApplication.GetOptionValues.S">
+<short>Long form of the command-line switch</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomApplication.GetNonOptions">
+<short>Get all non-switch options</short>
+<descr>
+<p>
+<var>GetNonOptions</var> returns the items on the command-line that are not associated with a
+switch. It checks the command-line for allowed switches as they are
+indicated by <var>ShortOptions</var> and <var>Longopts</var>. The format is
+identical to <link id="TCustomApplication.Checkoptions"/>.
+This is useful for an application which accepts a command form such as <var>svn</var>:
+</p>
+<pre>
+svn commit [options] files
+</pre>
+<p>
+In the above example, "commit" and "files" would be returned by <var>GetNonOptions</var>
+</p>
+<p>
+The non-options are returned in the form of a string array, or a stringlist
+instance can be passed in <var>NonOptions</var>. Either will be filled with the
+non-options on return.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TCustomApplication.HasOption"/>
+<link id="TCustomApplication.Checkoptions"/>
+<link id="TCustomApplication.GetOptionValue"/>
+<link id="TCustomApplication.GetOptionValues"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TCustomApplication.GetNonOptions.Result">
+<short>The list of non-options</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomApplication.GetNonOptions.ShortOptions">
+<short>List of short options</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomApplication.GetNonOptions.Longopts">
+<short>List of long options</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomApplication.GetNonOptions.NonOptions">
+<short>Non options in the form of a string list</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomApplication.Log.Fmt">
+<short>Format string</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomApplication.Log.Args">
+<short>Formatting arguments</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomApplication.ExceptionExitCode">
+<short>ExitCode to use then terminating the program due to an exception</short>
+<descr>
+<var>ExceptionExitCode</var> is the exit code that will be passed to
+<link id="TCustomApplication.Terminate"/>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomApplication.SingleInstance">
+<short>Single instance used to control single application instance behaviour</short>
+<descr>
+<var>SingleInstance</var> is used when <link id="SingleInstanceEnabled"/> is set to <var>True</var>.
+It can be used to send a message to an already running instance, or to check for messages if the 
+current instance is the sole ("server") instance running.
+</descr>
+<seealso>
+<link id="TCustomApplication.SingleInstanceClass"/>
+<link id="TCustomApplication.SingleInstanceEnabled"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomApplication.SingleInstanceClass">
+<short>Class to use when creating single instance</short>
+<descr>
+<var>SingleInstanceClass</var> can be used to set the class used to
+instantiate <link
+id="TCustomApplication.SingleInstance">SingleInstance</link>.
+The default class is determined by the global singleinstance default class
+as specified in <link id="singleinstance.DefaultSingleInstanceClass"/>.
+</descr>
+<seealso>
+<link id="TCustomApplication.SingleInstance"/>
+<link id="singleinstance.DefaultSingleInstanceClass"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomApplication.SingleInstanceEnabled">
+<short>Enable single application instance control.</short>
+<descr>
+<var>SingleInstanceEnabled</var>  can be set to <var>true</var> to start
+single-instance application control. This will instantiate <link id="TCustomApplication.SingleInstance"/>
+using <link id="TCustomApplication.SingleInstanceClass"/> and starts the
+check to wee whether this application is a client or server instance.
+</descr>
+<seealso>
+<link id="TCustomApplication.SingleInstance"/>
+<link id="TCustomApplication.SingleInstanceClass"/>
 </seealso>
 </element>
 
