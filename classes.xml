@@ -4331,6 +4331,8 @@ Free Pascal.
 </descr>
 </element>
 
+
+
 <!--
   *********************************************************************
   TStringList
@@ -8303,16 +8305,23 @@ None.
 <element name="TThread">  <!-- Class -->
 <short>Abstract Thread class.</short>
 <descr>
+<p>
 The <var>TThread</var> class encapsulates the native thread support of the
 operating system. To create a thread, declare a descendant of the
 <var>TThread</var> object and override the <link
 id="TThread.Execute">Execute</link> method. In this method, the tthread's
 code should be executed. To run a thread, create an instance of the tthread
 descendant, and call it's execute method.
+</p>
+<p>
+It is also possible to simply execute a method or static procedure in a thread using the 
+<link id="TThread.ExecuteInThread"/> class method.
+</p>
 </descr>
 <seealso>
 <link id="EThread"/>
 <link id="TThread.Execute"/>
+<link id="TThread.ExecuteInThread"/>
 </seealso>
 </element>
 
@@ -16077,6 +16086,449 @@ OnTerminate, etc).
 <seealso>
 <link id="TThread.Execue"/>
 <link id="TThread.OnTerminate"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStrings.LineBreak">
+<short>LineBreak character to use</short>
+<descr>
+<var>LineBreak</var> is the character used to separate lines when reading or
+writing  <link id="TStrings.Text"/>, and it is also used when reading from file.
+</descr>
+<seealso>
+<link id="TStrings.Text"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStrings.SkipLastLineBreak">
+<short>Do not add a linebreak to the last item</short>
+<descr>
+<var>SkipLastLineBreak</var> can be set to <var>True</var> to omit a
+linebreak character after the last string in the  <link
+id="TStrings.Text"/>. This also means when writing to file, that the file
+will not have a terminating linebreak character.
+</descr>
+<seealso>
+<link id="TStrings.LineBreak"/>
+<link id="TStrings.Text"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TStringsSortStyle">
+<short>Determines how the strings are sorted</short>
+<descr>
+<p>
+<var>TStringsSortStyle</var> is the type used in the <link id="TStringList.SortStyle"/>
+property, and describes how the strings are sorted when the <link id="TStringList.Sorted"/> 
+property is <var>True</var>. It has the following values:
+</p>
+<dl>
+<dt>sslNone</dt><dd><printshort id="TStringsSortStyle.sslNone"/></dd>
+<dt>sslUser</dt><dd><printshort id="TStringsSortStyle.sslUser"/></dd>
+<dt>sslAuto</dt><dd><printshort id="TStringsSortStyle.sslAuto"/></dd>
+</dl>
+</descr>
+<seealso>
+<link id="TStringList.Sorted"/>
+<link id="TStringList.SortStyle"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStringsSortStyle.sslNone">
+<short>The strings are not sorted</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStringsSortStyle.sslUser">
+<short>The strings are kept sorted by the user.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStringsSortStyle.sslAuto">
+<short>The <var>TStrings</var> instance keeps the strings sorted.</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TStringsSortStyles">
+<short>Set of <var>TStringsSortStyle</var></short>
+<descr>
+<var>TStringsSortStyles</var> is the set type for enumeration <link id="TStringsSortStyle"/>.
+</descr>
+<seealso>
+<link id="TStringsSortStyle"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStringList.SortStyle">
+<short>Sort style for strings</short>
+<descr>
+<p>
+<var>SortStyle</var> sets the sort style for the <var>TStringList</var> instance.
+Setting it to <var>sslAuto</var> will keep the list sorted automatically at all times.
+</p>
+<p>
+<link id="TstringList.Find">Find</link> (and hence <link id="TStrings.IndexOf">IndexOf</link>) will use
+a binary search if <var>SortStyle</var> differs from <var>sslNone</var>. if
+<var>SortStyle</var> is <var>sslNone</var>, then it will raise an exception.
+</p>
+</descr>
+<seealso>
+<link id="TStringsSortStyle"/>
+<link id="TStrings.Sorted"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStream.WriteDescendent">
+<short>Write descendent of a component</short>
+<descr>
+<var>WriteDescendent</var> will create a <link id="TWriter"/> writer class and write <var>Instance</var> as a descendent of <var>Ancestor</var>
+using the writer. This is used to create diff streams: only the properties
+where <var>Instance</var> differs from <var>Ancestor</var> are written to the stream.
+</descr>
+<seealso>
+<link id="TWriter.WriteDescendent"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStream.WriteDescendentRes">
+<short>Write descendent of a component as resource</short>
+<descr>
+<var>WriteDescendentRes</var> calls <var>WriteDescendent</var> as a resource stream.
+</descr>   
+<seealso> 
+<link id="TWriter.WriteDescendent"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractObjectReader.ReadSignature">
+<short>Read resource signature</short>
+<descr>
+<var>ReadSignature</var> reads the streaming signature from a stream. 
+This method does nothing. 
+It must be implemented by descendents that have a signature header in the stream.
+(such as binary streams)
+</descr>
+<seealso>
+<link id="TAbstractObjectWriter.WriteSignature"/>
+<link id="TBinaryObjectReader.ReadSignature"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBinaryObjectReader.ReadSignature">
+<short>Reads the filer signature</short>
+<descr>
+<var>ReadSignature</var> is overridden by <var>TBinaryObjectReader</var> to
+read the signature (<var>TPF0</var>) from binary streams.
+</descr>
+<errors>
+If the stream does not start with the correct signature, an <link
+id="EReadError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TAbstractObjectReader.ReadSignature"/>
+<link id="TAbstractObjectWriter.WriteSignature"/>
+<link id="TBinaryObjectWriter.WriteSignature"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TReader.ReadSignature">
+<short>Read stream signature from the stream</short>
+<descr>
+<var>ReadSignature</var> is called when starting to read a root component from a stream.
+Some streams contain a signature (header) to detect whether the stream contains correct data.
+</descr>
+<errors>
+If the stream does not start with the correct signature, an <link
+id="EReadError"/> exception
+will be raised.
+</errors>
+<seealso>
+<link id="TAbstractObjectReader.ReadSignature"/>
+<link id="TAbstractObjectWriter.WriteSignature"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractObjectWriter.WriteSignature">
+<short>Write stream signature to the stream</short>
+<descr>
+<var>WriteSignature</var> writes the streaming signature to a stream.
+This method does nothing, it must be implemented by descendents that have a signature header in the stream.
+(such as binary streams)
+</descr>
+<seealso>
+<link id="TAbstractObjectReader.ReadSignature"/>
+<link id="TBinaryObjectWriter.WriteSignature"/>   
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBinaryObjectWriter.WriteSignature">
+<short>Write stream signature to the stream</short>
+<descr>
+<var>WriteSignature</var> is overridden by <var>TBinaryObjectWriter</var> to
+write the signature (<var>TPF0</var>) to binary streams.
+</descr>
+<seealso>
+<link id="TAbstractObjectWriter.WriteSignature"/>
+<link id="TAbstractObjectReader.ReadSignature"/>
+<link id="TBinaryObjectReader.ReadSignature"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TWriter.WriteDescendent">
+<short>Write descendent to stream</short>
+<descr>
+<var>WriteDescendent</var> writes <var>ARoot</var> as a descendent of <var>AAncestor</var>
+This is used to create diff streams: only the properties where <var>ARoot</var> differs from
+<var>AAncestor</var> are written to the stream.
+</descr>
+<seealso>
+<link id="TStream.WriteDescendent"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TWriter.WriteSignature">
+<short>Write a signature to the stream</short>
+<descr>
+<var>WriteSignature</var> writes the streaming signature (if any) to a stream.
+It is called once, at the start of writing the root component to a stream.
+</descr>
+<seealso>
+<link id="TAbstractObjectWriter.WriteSignature"/>
+<link id="TBinaryObjectWriter.WriteSignature"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TThreadReportStatus">
+<short>Thread status report callback prototype</short>
+<descr>
+<var>TThreadReportStatus</var> is the callback prototype for the <link id="TThread.ExecuteInThread"/> method.
+This callback is used to report thread status to the main thread: the <var>Status</var> string can be used to 
+report the status of thread execution.
+</descr>
+<seealso>
+<link id="TThread.ExecuteInThread"/>
+<link id="TThreadExecuteStatusHandler"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TThreadStatusNotifyEvent">
+<short>Signature of thread status report event handler</short>
+<descr>
+<p>
+<var>TThreadStatusNotifyEvent</var> is the signature of the method to be provided
+when executing something in a thread using <link id="TThread.ExecuteInThread"/>
+when status reporting is required.
+</p>
+<p>
+This event handler will be called in the main thread. When called, it has the
+thread whose status is reported in <var>Sender</var>, and the status message
+in <var>ReportStatus</var> is passed to the method. 
+</p>
+<p>
+Note that the thread reporting its status is blocked while the callback is being handled: 
+The status is be reported to the main thread using <link id="TThread.synchronize"/>.
+</p>
+</descr>
+<seealso>
+<link id="TThread.ExecuteInThread"/>
+<link id="TThreadReportStatus"/>
+<link id="TThreadExecuteStatusHandler"/>
+</seealso>
+
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TThreadExecuteHandler">
+<short>Signature of method to execute in a thread, without status reporting</short>
+<descr>
+<p>
+<var>TThreadExecuteHandler</var> is the signature of the method to be used
+when executing something in a thread using <link id="TThread.ExecuteInThread"/>
+when no status reporting is required.
+</p>
+</descr>
+<seealso>
+<link id="TThread.ExecuteInThread"/>
+<link id="TThreadReportStatus"/>
+<link id="TThreadStatusNotifyEvent"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TThreadExecuteStatusHandler">
+<short>Signature of method to execute in a thread, with status reporting</short>
+<descr>
+<p>
+<var>TThreadExecuteStatusHandler</var> is the signature of the method to be used
+when executing something in a thread using <link id="TThread.ExecuteInThread"/>
+when status reporting is required.
+</p>
+<p>
+On entry in the method, <var>ReportStatus</var> is passed to the method, and the
+method can call <var>ReportStatus</var> at various stages to report about
+the status of the method: The status will be reported to the main thread
+using <link id="TThread.synchronize"/>, and calls <var>ReportStatus</var>
+will be blocked as long as the status was not reported.
+</p>
+</descr>
+<seealso>
+<link id="TThread.ExecuteInThread"/>
+<link id="TThreadReportStatus"/>
+<link id="TThreadStatusNotifyEvent"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TNotifyCallBack">
+<short>Thread termination callback handler</short>
+<descr>
+<var>TNotifyCallBack</var> is used to notify about thread termination when using static callbacks.
+When called, the <var>Sender</var> will contain the thread which is
+terminating, and <var>AData</var> is the <var>AData</var> parameter passed
+to <link id="TThread.ExecuteInThread"/>.
+</descr>
+<seealso>
+<link id="TThread.ExecuteInThread"/>
+<link id="TThread"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TThreadStatusNotifyCallBack">
+<short>Signature of thread status report callback</short>
+<descr>
+<p>
+<var>TThreadStatusNotifyCallBack</var> is the signature of the callback to be provided
+when executing a static procedure in a thread using <link id="TThread.ExecuteInThread"/>
+when status reporting is required.   
+</p>
+<p>
+This callback will be called in the main thread. When called, it has the
+thread whose status is reported in <var>Sender</var>, 
+<var>AData</var> is the <var>AData</var> parameter passed to <link id="TThread.ExecuteInThread"/>.
+Finally, the status message in <var>ReportStatus</var> is passed to the callback.
+</p>
+<p>
+Note that the thread reporting its status is blocked while the callback is
+being handled: The status is be reported to the main thread using <link id="TThread.synchronize"/>.
+</p>
+</descr>
+<seealso>
+<link id="TThread.ExecuteInThread"/>
+<link id="TThreadReportStatus"/>
+<link id="TThreadExecuteStatusHandler"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TThreadExecuteCallBack">
+<short>Signature of procedure to execute in a thread, without status reporting</short>
+<descr>
+<p>
+<var>TThreadExecuteCallBack</var> is the signature of the static procedure to be used
+when executing something in a thread using <link id="TThread.ExecuteInThread"/>
+when no status reporting is required.
+</p>
+</descr>
+<seealso>
+<link id="TThread.ExecuteInThread"/>
+<link id="TThreadReportStatus"/>
+<link id="TThreadStatusNotifyEvent"/>
+<link id="TThreadExecuteStatusCallBack"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TThreadExecuteStatusCallBack">
+<short>Signature of procedure to execute in a thread, with status reporting</short>
+<descr>
+<p>
+<var>TThreadExecuteStatusCallBack</var> is the signature of a procedure to be used
+when executing something in a thread using <link id="TThread.ExecuteInThread"/>
+when status reporting is required.
+</p>
+<p>
+On entry in the method, <var>AData</var> is the <var>AData</var> parameter passed to <link id="TThread.ExecuteInThread"/>. 
+<var>ReportStatus</var> is passed to the method, and the threaded procedure can call <var>ReportStatus</var> 
+at various stages to report about the status of the method: The status will be reported to the main thread
+using <link id="TThread.synchronize"/>, so calls to <var>ReportStatus</var> will be blocked as long as the 
+status was not reported.
+</p>
+</descr>
+<seealso>
+<link id="TThread.ExecuteInThread"/> 
+<link id="TThreadReportStatus"/>
+<link id="TThreadStatusNotifyCallback"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TThread.ExecuteInThread">
+<short>Execute a method or static procedure in a thread</short>
+<descr>
+<p>
+<var>TThread.ExecuteInThread</var> is a class method which allows to quickly
+execute a method or procedure in a thread. The method or procedure to be
+executed is passed in <var>Method</var>, this can be a method or a plain
+(static) procedure.
+</p>
+<p>
+The caller can be notified of thread termination: In the optional argument <var>AOnTerminate</var> a
+callback (procedure or method, depending on the signature) can be specified that will be called when 
+the thread terminated. This callback is executed in the main thread.
+</p>
+<p> 
+The signature of <var>AMethod</var> determines whether status reporting is enabled or not. 
+If the method of type <link id="TThreadExecuteStatusHandler"/> or <link id="TThreadExecuteStatusCallback"/>, 
+then an extra <var>AOnStatus</var> callback must be specified. This callback
+will be called in the main thread whenever the thread wishes to be report its
+status. The status callback should not do extensive work, because while the 
+status callback is called, thread execution is suspended.
+</p>
+<p>
+When using a plain procedure, extra data can be passed on to the procedure
+in <var>AData</var>. The <var>AData</var> pointer will be passed to the 
+thread method, and also to the thread status callback and thread termination
+callback.
+</p>
+</descr>
+<seealso>
+<link id="TThreadExecuteHandler"/>
+<link id="TThreadExecuteStatusHandler"/>
+<link id="TThreadExecuteStatusCallback"/>
+<link id="TThreadExecuteCallback"/>
+</seealso>
+<example file="classesex/tthrc"/>
+<example file="classesex/tthre"/>
+<example file="classesex/tthrcs"/>
+<example file="classesex/tthres"/>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="GroupDescendentsWith">
+<short>Provided for Delphi compatibility</short>
+<descr>
+<var>GroupDescendentsWith</var> exists for Delphi compatibility, it doesn't
+actually do anything in Free Pascal.
+</descr>
+<seealso>
+<link id="RegisterClasses"/>
 </seealso>
 </element>
 
