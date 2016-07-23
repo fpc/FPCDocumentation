@@ -189,6 +189,12 @@ communication channel, and send messages to the server.
 It is called when the <link id="TSimpleIPC.Active"/> property of the <link
 id="TSimpleIPCServer"/> instance is set to <var>True</var>.
 </p>
+<p>
+If <var>Threaded</var> is <var>True</var> then a background thread is
+started which will check for new messages periodically (see also <link
+id="TSimpleIPCServer.ThreadTimeOut"/>). The arrival of new messages can be
+acted upon with <link id="TSimpleIPCServer.OnMessageQueued"/>.
+</p>
 </descr>
 <errors>
 In case of an error, an <link id="EIPCError"/> exception is raised.
@@ -196,6 +202,8 @@ In case of an error, an <link id="EIPCError"/> exception is raised.
 <seealso>
 <link id="TSimpleIPCServer"/>
 <link id="TSimpleIPC.Active"/>
+<link id="TSimpleIPCServer.OnMessageQueued"/>
+<link id="TSimpleIPCServer.ThreadTimeOut"/>
 </seealso>
 </element>
 
@@ -1149,6 +1157,450 @@ communication protocol used by the server, obviously).
 <!-- resource string Visibility: default -->
 <element name="SErrInActive">
 <short>Error message if client/server is not active.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="DefaultThreadTimeOut">
+<short>Default timeout (in milliseconds) for thread-based waiting for a message</short>
+<descr>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TIPCMessageOverflowAction">
+<short>Action to take when the message queue is going to overflow</short>
+<descr>
+<p>
+<var>TIPCMessageOverflowAction</var> describes what will happen if the message queue hits the size limit for the queue.
+</p>
+<dl>
+<dt></dt><dd><printshort id="TIPCMessageOverflowAction.ipcmoaNone"/></dd>
+<dt></dt><dd><printshort id="TIPCMessageOverflowAction.ipcmoaDiscardOld"/></dd>
+<dt></dt><dd><printshort id="TIPCMessageOverflowAction.ipcmoaDiscardNew"/></dd>
+</dl>
+</descr>
+<seealso>
+<link id="DefaultIPCMessageOverflowAction"/>
+<link id="TIPCServerMsgQueue.MaxAction"/>
+<link id="TIPCServerMsgQueue.MaxCount"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIPCMessageOverflowAction.ipcmoaNone">
+<short>Do nothing, just add the message</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIPCMessageOverflowAction.ipcmoaDiscardOld">
+<short>Discard the oldest message</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIPCMessageOverflowAction.ipcmoaDiscardNew">
+<short>Discard the new message</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIPCMessageOverflowAction.ipcmoaError">
+<short>Raise an error</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultIPCMessageOverflowAction">
+<short>Default action to take take when the message queue is going to overflow</short>
+<descr>
+<var>DefaultIPCMessageOverflowAction</var> is the default for the message queue overflow action
+when a new queue is made.
+</descr>
+<seealso>
+<link id="TIPCServerMsgQueue.MaxAction"/>
+<link id="TIPCServerMsgQueue.MaxCount"/>
+<link id="TIPCMessageOverflowAction"/>
+<link id="DefaultIPCMessageQueueLimit"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultIPCMessageQueueLimit">
+<short>Default maximum queue message size</short>
+<descr>
+<var>DefaultIPCMessageOverflowAction</var> is the default for the maximum message
+queue size when a new queue is made. A zero size means no limit.
+</descr>
+<seealso>
+<link id="TIPCServerMsgQueue.MaxCount"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.simpleipc.TIPCServerMsg
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TIPCServerMsg">
+<short>Server message queue class</short>
+<descr>
+<var>TIPCServerMsg</var> is an auxiliary class used in the IPC server class  <link
+id="TSimpleIPCServer"/>. It keeps the data for 1 message. The set of
+messages is managed in <link id="TIPCServerMsgQueue"/>. There should
+normally be no need to use this class directly.
+</descr>
+<seealso>
+<link id="TIPCServerMsgQueue"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TIPCServerMsg.Create">
+<short>Create a new instance of a server message</short>
+<descr>
+<var>Create</var> initializes the stream used to hold the message data.
+</descr>
+<seealso>
+<link id="TIPCServerMsg.Destroy"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TIPCServerMsg.Destroy">
+<short>Destroy an instance of a server message</short>
+<descr>
+<var>Destroy</var> frees the stream used to hold the message data.
+</descr>
+<seealso>
+<link id="TIPCServerMsg.Create"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIPCServerMsg.Stream">
+<short>Stream to store message data</short>
+<descr>
+<var>Stream</var> contains the message data as binary data.
+</descr>
+<seealso>
+<link id="TIPCServerMsg.MsgType"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIPCServerMsg.MsgType">
+<short>Message type</short>
+<descr>
+<var>MsgType</var> simply contains the message type. The possible message types are application defined.
+</descr>
+<seealso>
+<link id="TIPCServerMsg.Stream"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.simpleipc.TIPCServerMsgQueue
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TIPCServerMsgQueue">
+<short>A simple message queue, with FIFO characteristics and overflow
+management</short>
+<descr>
+<var>TIPCServerMsgQueue</var> implements a message queue with FIFO characteristics. 
+It has support for a maximum queue length (<link id="TIPCServerMsgQueue.MaxCount"/>)
+and various ways of dealing with overflowing queue (<link id="TIPCServerMsgQueue.MaxAction"/>)
+</descr>
+<seealso>
+<link id="TIPCServerMsgQueue.MaxCount"/>
+<link id="TIPCServerMsgQueue.MaxAction"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TIPCServerMsgQueue.Create">
+<short>Create a new message queue instance</short>
+<descr>
+<p>
+<var>Create</var> creates a list to contain the messages, and initializes 
+<link id="TIPCServerMsgQueue.MaxCount"/> and <link id="TIPCServerMsgQueue.MaxAction"/> with their default values
+(<link id="DefaultIPCMessageQueueLimit"/> and <link id="DefaultIPCMessageOverflowAction"/>, respectively)
+</p>
+<p>
+Note that the messages are owned by the queue till they are popped of the queue.
+</p>
+</descr>
+<seealso>
+<link id="TIPCServerMsgQueue.MaxCount"/>
+<link id="TIPCServerMsgQueue.MaxAction"/> 
+<link id="DefaultIPCMessageQueueLimit"/>
+<link id="DefaultIPCMessageOverflowAction"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TIPCServerMsgQueue.Destroy">
+<short>Destroy server message queue instance</short>
+<descr>
+<var>Destroy</var> discards the remaining messages in the list and removes the message queue from memory.
+</descr>
+<seealso>
+<link id="TIPCServerMsgQueue.Create"/>
+<link id="TIPCServerMsgQueue.Clear"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIPCServerMsgQueue.Clear">
+<short>Clear the message queue</short>
+<descr>
+<var>Clear</var> discards the remaining messages in the list.
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIPCServerMsgQueue.Push">
+<short>Add a new message to the queue</short>
+<descr>
+<p>
+<var>Push</var> verifies if the message can be added to the queue
+(discarding old messages depending on the setting of <link
+id="TIPCServerMsgQueue.MaxAction"/>)  and adds the message <var>AItem</var> to the
+queue.
+</p>
+<p>
+The message <var>AItem</var> is owned by the queue until it is popped off the queue.
+</p>
+</descr>
+<errors>
+If the maximum queue length is reached, and the <link
+id="TIPCServerMsgQueue.MaxAction">MaxAction</link> is set to 
+<var>ipcmoaError</var>, an exception will be raised.
+</errors>
+<seealso>
+<link id="TIPCServerMsgQueue.MaxCount"/>
+<link id="TIPCServerMsgQueue.MaxAction"/>
+<link id="TIPCServerMsgQueue.Pop"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TIPCServerMsgQueue.Push.AItem">
+<short>New message to add to the queue</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCServerMsgQueue.Pop">
+<short>Remove the oldest message from the queue </short>
+<descr>
+<var>Pop</var> removes the oldest message from the queue if there is one, and returns it.
+If none exists, <var>Nil</var> is returned. The caller is responsible for
+freeing the message instance.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TIPCServerMsgQueue.Push"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TIPCServerMsgQueue.Pop.Result">
+<short>Oldest message in the queue, or <var>Nil</var></short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIPCServerMsgQueue.Count">
+<short>Number of messages in the queue</short>
+<descr>
+<var>Count</var> is the current number of messages in the queue.
+</descr>
+<seealso>
+<link id="TIPCServerMsgQueue.MaxCount">MaxCount</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIPCServerMsgQueue.MaxCount">
+<short>Maximum number of messages in the queue, 0 for unlimited</short>
+<descr>
+<p>
+<var>MaxCount</var> is the maximum number of messages in the queue. 
+When this amount is zero, the amount of messages is unlimited. 
+</p>
+<p>
+When a new message is pushed, and the <link
+id="TIPCServerMsgQueue.Count">Count</link> is equal to <var>MaxCount</var>,
+the <link id="TIPCServerMsgQueue.MaxAction">MaxAction</link> property is
+examined to know what to do.
+</p>
+</descr>
+<seealso>
+<link id="TIPCServerMsgQueue.Count">Count</link>
+<link id="TIPCServerMsgQueue.MaxAction">MaxAction</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIPCServerMsgQueue.MaxAction">
+<short>Action to take when the number of messages will exceed <var>MaxCount</var>.</short>
+<descr>
+<p>
+<var>MaxAction</var> determines what will happen if the current <link
+id="TIPCServerMsgQueue.Count">Count</link> equals <link
+id="TIPCServerMsgQueue.MaxCount">MaxCount</link> and a new message is put in
+the queue using <link id="TIPCServerMsgQueue.Push">Push</link>:
+</p>
+<dl>
+<dt></dt><dd><printshort id="TIPCMessageOverflowAction.ipcmoaNone"/></dd>
+<dt></dt><dd><printshort
+id="TIPCMessageOverflowAction.ipcmoaDiscardOld"/></dd>
+<dt></dt><dd><printshort
+id="TIPCMessageOverflowAction.ipcmoaDiscardNew"/></dd>
+</dl>
+</descr>
+<seealso>
+<link id="TIPCServerMsgQueue.Count"/> 
+<link id="TIPCServerMsgQueue.MaxCount"/>
+<link id="TIPCServerMsgQueue.Push"/>
+<link id="TIPCMessageOverflowAction"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TMessageQueueEvent">
+<short>Event handler, executed when a message is detected on the queue.</short>
+<descr>
+<var>TMessageQueueEvent</var> is the signature of the event handler that is
+executed when a new message arrives on the server and the queue is full, and
+maxaction is <var>ipcmoaError</var>. 
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.OnMessageError"/>
+<link id="TSimpleIPCServer"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMessageQueueEvent.Sender">
+<short><var>TSimpleIPCServer</var> instance on which the message arrives.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMessageQueueEvent.Msg">
+<short>Message that arrived on the queue</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TSimpleIPCServer.StartServer.Threaded">
+<short>Start the server in threaded mode.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSimpleIPCServer.ReadMessage">
+<short>Read message from the queue</short>
+<descr>
+<p>
+<var>ReadMessage</var> will read the oldest message from the queue, and make 
+it available in <link id="TSimpleIPCServer.MsgType"/> and <link id="TSimpleIPCServer.MsgData"/>
+</p>
+<p>
+It is safe to call this even if a watch thread is started.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.MsgType"/>
+<link id="TSimpleIPCServer.MsgData"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSimpleIPCServer.ThreadTimeOut">
+<short>Timeout waiting for message</short>
+<descr>
+<p>
+<var>ThreadTimeOut</var> is the time the thread will wait for messages
+between loop iterations, if the server is started with threading enabled. 
+</p>
+<p>
+When stopping the server, this is also the maximum time the server will be 
+blocked when stopping, because it needs to wait for the thread to stop.
+</p>
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.StartServer"/>
+<link id="TSimpleIPCServer.StopServer"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSimpleIPCServer.OnMessageQueued">
+<short>Event called when a new message has arrived</short>
+<descr>
+<var>OnMessageQueued</var> is an event handler that is called whenever a new message is pushed on the queue.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.PeekMessage"/>
+<link id="TSimpleIPCServer.OnMessageError"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSimpleIPCServer.OnMessageError">
+<short>Event called when a new message has arrived, and the queue is full</short>
+<descr>
+<var>OnMessageError</var> is called whenever the message queue is full and a
+new message arrives on the server, and <link id="maxaction"/> is <var>ipcmoaError</var>.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSimpleIPCServer.MaxQueue">
+<short>Maximum number of messages in the queue, 0 for unlimited</short>
+<descr>
+<p> 
+<var>MaxQueue</var> is the maximum number of messages in the queue.
+When this amount is zero, the amount of messages is unlimited.
+</p>
+<p>
+When a new message is pushed, and the <link id="TIPCServerMsgQueue.Count">Count</link> 
+is equal to <var>MaxQueue</var>, the <link id="TSimpleIPCServer.MaxAction">MaxAction</link> property is
+examined to know what to do.
+</p>
+</descr>
+<seealso> 
+<link id="TSimpleIPCServer.MaxAction">MaxAction</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSimpleIPCServer.MaxAction">
+<short>Action to take when the number of messages will exceed <var>MaxQueue</var>.</short>
+<descr>
+<p>
+<var>MaxAction</var> determines what will happen if the number of messages
+on the queue equals <link id="TSimpleIPCServer.MaxQueue">MaxQueue</link> 
+and a new message is put in the queue during  <link id="TSimpleIPCServer.PeekMessage">PeekMessage</link>:
+</p>
+<dl>
+<dt></dt><dd><printshort id="TIPCMessageOverflowAction.ipcmoaNone"/></dd>
+<dt></dt><dd><printshort
+id="TIPCMessageOverflowAction.ipcmoaDiscardOld"/></dd>
+<dt></dt><dd><printshort
+id="TIPCMessageOverflowAction.ipcmoaDiscardNew"/></dd>
+</dl>
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.MaxQueue"/>
+<link id="TSimpleIPCServer.PeekMessage"/>
+<link id="TIPCMessageOverflowAction"/>
+</seealso>
 </element>
 
 </module> <!-- simpleipc -->
