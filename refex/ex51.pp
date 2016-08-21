@@ -12,7 +12,8 @@ begin
   Reset (F);
   {$I+}
   FileExists:=(IoResult=0) and (Name<>'');
-  Close (f);
+  if FileExists then
+    Close (f);
 end;
 
 begin
