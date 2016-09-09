@@ -3284,8 +3284,14 @@ end.
 It works for all types, except the various file types (or complex types containing a file type).
 
 \begin{remark}
+\begin{itemize}
+\item 
 For generics, the use of \var{Default} is especially useful, since the type of a variable may not 
 be known during the declaration of a generic. For more information \sees{genericdefault}.
+\item
+Function results are available as a \var{Result} identifier, and as such
+resemble variables. They are not variables, but are treated as passed-by-reference
+parameters. They are therefor not initialized.
 \end{remark}
 
 \section{Thread Variables}
@@ -5637,6 +5643,9 @@ evaluates \var{B.Intf}, it creates a temporary variable. This variable may be
 released only when the procedure exits: it is therefor invalid to e.g. 
 free the instance \var{B} prior to the exit of the procedure, since when the 
 temporary variable is finalized, it will attempt to free \var{B} again.
+
+Additionally, function results may point to a non-nil valid COM interface on
+entry: this is because the function result is treated as a var parameter.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Generics
@@ -9468,6 +9477,12 @@ The \var{Exit} call sets the result of the function and jumps to the final
 \var{End} of the function declaration block. It can be seen as the equivalent 
 of the C \var{return} instruction.
 
+\begin{remark}
+Function results are treated as pass-by-reference parameters. 
+That is especially important for managed types: 
+The function result may be non-nil on entry, and set to a valid instance of the type.
+\end{remark}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Parameter lists
 \section{Parameter lists}
@@ -9557,9 +9572,18 @@ File type variables must always be passed as variable parameters.
 Open arrays can be passed as variable parameters. See \sees{openarray} for
 more information on using open arrays.
 
-Note that default values are not supported for variable parameters. This
+\begin{remark}
+\begin{itemize}
+\item Note that default values are not supported for variable parameters. This
 would make little sense since it defeats the purpose of being able to pass a
 value back to the caller.
+\item A function result is internally treated as a variable parameter, and
+may have a non-zero (or non-nil) initial value. This is especially important
+for managed types.
+\end{itemize}
+\end{remark}
+
+
 
 \subsection{Out parameters}
 \label{se:outparams}\index{Parameters!Out}\keywordlink{out}
@@ -9899,7 +9923,7 @@ which is increased or decreased depending on how many reference to the data
 exists.
 
 The qualifiers for parameters in function or procedure calls influence
-influence what happens to the reference count of the managed types:
+what happens to the reference count of the managed types:
 \begin{itemize}
 \item nothing (pass by value): the reference count of the parameter is increased 
 on entry and decreased on exit.
@@ -9914,6 +9938,11 @@ count because you can pass non-lvalues here.
 In particular, you can pass a class implementing an interface rather than the interface itself
 which can cause the class to be freed unexpectedly.
 \end{itemize}
+
+\begin{remark}
+The function result is internally treated as a var parameter to the
+function, and the same rules as for var parameters apply.
+\end{remark}
 
 The following example demonstrates the dangers:
 \begin{verbatim}
