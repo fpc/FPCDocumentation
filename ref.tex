@@ -10018,7 +10018,75 @@ returns.
 
 The following small program demonstrates the reference counts used in strings:
 \begin{verbatim}
- 
+{$mode objfpc}
+{$H+}
+
+// Auxiliary function to extract reference count.
+function SRefCount(P : Pointer) : integer;
+
+Type
+  PAnsiRec = ^TAnsiRec;
+  TAnsiRec = Record
+    CodePage    : TSystemCodePage;
+    ElementSize : Word;
+  {$ifdef CPU64}
+  { align fields  }
+    Dummy       : DWord;
+  {$endif CPU64}
+    Ref         : SizeInt;
+    Len         : SizeInt;
+  end;
+                                  
+
+begin
+  if P=Nil then
+    Result:=0
+  else  
+    Result:=PAnsiRec(P-SizeOf(TAnsiRec))^.Ref;
+end;
+
+Procedure ByVar(Var S : string);
+
+begin
+  Writeln('By var, ref count : ',SRefCount(Pointer(S)));
+end;
+
+Procedure ByConst(Const S : string);
+   
+begin
+  Writeln('Const, ref count : ',SRefCount(Pointer(S)));
+end;
+
+Procedure ByVal(S : string);
+   
+begin
+  Writeln('Value, ref count : ',SRefCount(Pointer(S)));
+end;
+
+Function FunctionResult(Var S : String) : String;
+   
+begin
+  Writeln('Function argument, ref count : ',SRefCount(Pointer(S)));
+  Writeln('Function result, ref count : ',SRefCount(Pointer(Result)));
+end;
+
+Var
+  S,T : String;
+  
+begin
+  S:='Some string';
+  Writeln('Constant       : ',SrefCount(Pointer(S)));
+  UniqueString(S);
+  Writeln('Unique         : ',SRefCount(Pointer(S)));
+  T:=S;
+  Writeln('After Assign   : ',SRefCount(Pointer(S)));
+  ByVar(S);
+  ByConst(S);
+  ByVal(S);
+  UniqueString(S);
+  T:=FunctionResult(S);  
+  Writeln('After function : ',SRefCount(Pointer(S)));
+end.     
 \end{verbatim}
 
 
@@ -10786,7 +10854,7 @@ begin
 Will be handled by an operator
 \begin{verbatim}
 Operator := (aRight: T1) Res: T2;
-\begin{verbatim}
+\end{verbatim}
 However, an \var{Explicit} operator can be defined, and then it will be
 used instead when the compiler encounters a typecast.
 
