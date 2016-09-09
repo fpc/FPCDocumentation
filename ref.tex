@@ -4292,15 +4292,17 @@ heap. So, to initialize an instance of some class, one would do the following :
   ClassVar := ClassType.ConstructorName;
 \end{verbatim}
 The extended syntax of \var{new} and \var{dispose} can {\em not} be used to
-instantiate and destroy class instances.
+instantiate and destroy class instances:
 That construct is reserved for use with objects only.
-Calling the constructor will provoke a call to \var{getmem}, to allocate
+Calling the constructor will provoke a call to the virtual class method
+\var{NewInstance}, which, in its default implementation, calls \var{getmem}, to allocate
 enough space to hold the class instance data.
 After that, the constructor's code is executed.
 The constructor has a pointer to its data, in \var{Self}.
 
 \begin{remark}
-\begin{itemize}\index{Packed}
+\begin{itemize}
+\index{Packed}
 \item The \var{\{\$PackRecords \}} directive also affects classes,
 i.e. the alignment in memory of the different fields depends on the
 value of  the \var{\{\$PackRecords \}} directive.
@@ -4322,6 +4324,9 @@ the constructor, there is no choice in destructors: the destructor {\em must}
 have the name \var{Destroy}, it {\em must}  override the \var{Destroy} destructor 
 declared in \var{TObject}, cannot have arguments, and the inherited destructor 
 must always be called.
+
+\var{Destroy} will call \var{FreeInstance}, which, in its default implementation,
+calls \var{FreeMem} to release the memory occupied by the instance.
 
 To avoid calling a destructor on a \var{Nil} instance, it is best to call
 the \var{Free} method of \var{TObject}. This method will check if \var{Self} is not \var{Nil}, 
@@ -4378,7 +4383,7 @@ declarations in objects:
 The only differences are the \var{override}, \var{reintroduce} and
 \var{message} directives.
 
-\subsection{invocation}
+\subsection{Invocation}
 Method invocation for classes is no different than for objects. The
 following is a valid method invocation:
 \begin{verbatim}
