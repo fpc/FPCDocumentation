@@ -45,8 +45,9 @@ Var
   
 begin
   For I:=0 to FileNames.Count-1 do
-    if Not (HasElementNode(FileNames[i])) then
-      RemoveFile(FileNames[i]);   
+    if FileExists(FileNames[i]) then
+      if Not (HasElementNode(FileNames[i])) then
+        RemoveFile(FileNames[i]);   
   FreeAndNil(FileNames);
 end;
 
