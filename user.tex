@@ -633,6 +633,47 @@ environment variable expansion) will be tested.
 You can see what paths the compiler will search by giving the compiler
 the \var{-vu} option.
 
+Note that unit file paths specified in a config file will be added at the
+end, while paths specified on the command-line are added at the beginning.
+
+Imagine the following command-line:
+\begin{verbatim}
+fpc -n -Fu/home @cfg  -Fu/usr foo.pp 
+\end{verbatim}
+Where the file \file{cfg} has the following contents:
+\begin{verbatim}
+-Fu/etc
+\end{verbatim}
+This will result in the following search path
+\begin{verbatim}
+Using unit path: /home/
+Using unit path: /usr/
+Using unit path: /etc/
+Using unit path: /data/FPC/installed/3.1.1/
+\end{verbatim}
+Reverting the order of the files on the command-line :
+\begin{verbatim}
+fpc -n -Fu/usr @cfg  -Fu/home foo.pp 
+\end{verbatim}
+Results in 
+\begin{verbatim}
+Using unit path: /usr/
+Using unit path: /home/
+Using unit path: /etc/
+Using unit path: /data/FPC/installed/3.1.1/
+\end{verbatim}
+Moving the position of \var{@cfg} will not change the path:
+\begin{verbatim}
+fpc -n @cfg -Fu/home  -Fu/usr foo.pp 
+\end{verbatim}
+Results in 
+\begin{verbatim}
+Using unit path: /home/
+Using unit path: /usr/
+Using unit path: /etc/
+Using unit path: /data/FPC/installed/3.1.1/
+\end{verbatim}
+
 On systems where filenames are case sensitive (such as \unix and \linux), 
 the compiler will :
 \begin{enumerate}
@@ -660,6 +701,7 @@ places:
 \item In the subdirectory \file{units} of the current directory
 \item In the standard unit directory.
 \end{enumerate}
+
 
 Also, unit names that are longer than 8 characters will first be looked for
 with their full length. If the unit is not found with this name, the name
