@@ -705,6 +705,7 @@ values as appropriate. The following syntax diagram shows how to construct
 a legal declaration of an ordinary constant.
 
 \input{syntax/const.syn}
+
 The compiler must be able to evaluate the expression in a constant
 declaration at compile time.  This means that most of the functions
 in the Run-Time library cannot be used in a constant
@@ -712,6 +713,25 @@ declaration.\index{Operators}
 Operators such as \var{+, -, *, /, not, and, or, div, mod, ord, chr,
 sizeof, pi, int, trunc, round, frac, odd} can be used, however. 
 For more information on expressions, see \seec{Expressions}.
+
+When a previously declared ordinary constant is used in the code, the compiler will insert
+the actual value of the constant instead of the constant name. That is, the
+following 2 pieces of code are entirely equivalent:
+
+\begin{verbatim}
+Const
+  One = 1;
+
+begin
+  Writeln(One);
+end.
+\end{verbatim}
+The above will produce the same code as if one had written:
+\begin{verbatim}
+begin
+  Writeln(1);
+end.
+\end{verbatim}
 
 Only constants of the following types can be declared:
 
