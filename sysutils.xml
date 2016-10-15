@@ -452,6 +452,37 @@ applied by this unit, these must be initialized separately by including the
 </p>
 </descr>
 </topic>
+
+<topic name="TypeHelpers">
+<short>Type Helpers for basic types</short>
+<descr>
+<p>
+The sysutils unit contains type helpers for basic language types: boolean,
+ordinals (shortint, smallint, byte, word, integer, cardinal, int64, wqord,
+nativeint, nativeuint), strings, GUID values.  
+They can be used as-is, or they can be descended from to form your own type helpers.
+</p>
+</descr>
+<seealso>
+<link id="TGuidHelper"/>
+<link id="TStringHelper"/>
+<link id="TByteHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TWordHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TInt64Helper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TBooleanHelper"/>
+<link id="TByteBoolHelper"/>
+<link id="TWordBoolHelper"/>
+<link id="TLongBoolHelper"/>
+</seealso>
+</topic>
+
+
 <element name="TDateTime">
 <short>Type describing date/time</short>
 <descr>
@@ -4802,6 +4833,7 @@ None.
 </errors>
 <seealso>
 <link id="TReplaceFlags"/>
+<link id="WideStringReplace"/>
 </seealso>
 </element>
 
@@ -10564,6 +10596,4141 @@ concatenation of classname and <link id="Exception.Message"/>.
 </descr>
 <seealso>
 <link id="Exception.Message"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TSystemTime.DayOfWeek">
+<short></short>
+<descr>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="SameStr">
+<short>Check whether 2 strings are the same, case insensitive</short>
+<descr>
+<var>SameStr</var> checks whether <var>S1</var> and <var>S2</var> are the same. 
+This is equivalent to checking that <link id="CompareStr"/>  returns 0.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="CompareStr"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="StrToDWord">
+<short>Convert string to DWord (cardinal)</short>
+<descr>
+<var>StrToDWord</var> will convert the string <var>S</var> to a <var>DWord</var> value, 
+and returns the value.
+</descr>
+<errors>
+In case the string <var>S</var> is not a valid number, 
+or is a value outside the <var>DWord</var> range, an <var>EConvertError</var> 
+exception will be raised.
+</errors>
+<seealso>
+<link id="TryStrToDWord"/>
+<link id="StrToDWordDef"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TryStrToDWord">
+<short>Try to convert a string to DWord (cardinal)</short>
+<descr>
+<p><var>TryStrToDWord</var> will try to convert the string 
+<var>S</var> to a <var>DWord</var> value. It returns <var>True</var> 
+if the conversion was succesful, and in that case returns the value in <var>D</var>.
+</p>
+<p>
+If the conversion failed or the value was outside of the valid range for DWord values, 
+<var>False</var> is returned.
+</p>
+</descr>
+<seealso>
+<link id="StrToDWord"/>
+<link id="StrToDWordDef"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="StrToDWordDef">
+<short>Convert string to DWord (cardinal), using default</short>
+<descr>
+<p><var>StrToDWordDef</var> will try to convert the string 
+<var>S</var> to a <var>DWord</var> value. 
+If the conversion was succesful, it returns the value. 
+</p>
+<p>
+If the conversion failed, the fallback  value  in <var>Default</var> is returned.
+</p>
+</descr>
+<seealso>
+<link id="TryStrToDWord"/>
+<link id="StrToDWord"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.EArgumentNilException
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="EArgumentNilException">
+<short>Exception raised when a required argument is <var>Nil</var>.</short>
+<descr>
+<p>
+<var>EArgumentNilException</var> is an exception raised when an argument 
+is <var>Nil</var> when it should not be <var>Nil</var>.
+</p>
+<p>
+This exception class is provided for Delphi compatibility, but is not actually used in FPC.
+</p>
+</descr>
+<seealso>
+<link id="Exception"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.EPathTooLongException
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="EPathTooLongException">
+<short>Exception raised when a path name is too long.</short>
+<descr>
+<p>
+<var>EPathTooLongException</var> is an exception raised when a pathname argument 
+is longer than the allowed pathname length for files.
+</p>
+<p>
+This exception class is provided for Delphi compatibility, but is not actually used in FPC.
+</p>
+</descr>
+<seealso>
+<link id="Exception"/>
+<link id="EFileNotFoundException"/>
+<link id="EDirectoryNotFoundException"/>
+<link id="EPathNotFoundException"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.ENotSupportedException
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="ENotSupportedException">
+<short>Exception raised when a feature is not supported.</short>
+<descr>
+<p>
+<var>ENotSupportedException</var> is an exception raised when a function 
+or procedure is not supported for a certain platform.
+</p>
+<p>
+This exception class is provided for Delphi compatibility, but is not actually used in FPC.
+</p>
+</descr>
+<seealso>
+<link id="Exception"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.EDirectoryNotFoundException
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="EDirectoryNotFoundException">
+<short>Exception raised when a directory is not found.</short>
+<descr>
+<p>
+<var>EDirectoryNotFoundException</var> is an exception raised when a directory is 
+referenced that does not exist.
+</p>
+<p>
+This exception class is provided for Delphi compatibility, but is not actually used in FPC.
+</p>
+</descr>
+<seealso>
+<link id="Exception"/>
+<link id="EFileNotFoundException"/>
+<link id="EPathNotFoundException"/>
+<link id="EPathTooLongException"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.EFileNotFoundException
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="EFileNotFoundException">
+<short>Exception raised when a file is not found.</short>
+<descr>
+<p>
+<var>EFileNotFoundException</var> is an exception raised when a file is 
+referenced that does not exist.
+</p>
+<p>
+This exception class is provided for Delphi compatibility, but is not actually used in FPC.
+</p>
+</descr>
+<seealso>
+<link id="Exception"/>
+<link id="EPathNotFoundException"/>
+<link id="EDirectoryNotFoundException"/>
+<link id="EPathTooLongException"/>
+
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.EPathNotFoundException
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="EPathNotFoundException">
+<short>Exception raised when a path is not found.</short>
+<descr>
+<p>
+<var>EPathNotFoundException</var> is an exception raised when a path is 
+referenced that does not exist.
+</p>
+<p>
+This exception class is provided for Delphi compatibility, but is not actually used in FPC.
+</p>
+</descr>
+<seealso>
+<link id="Exception"/>
+<link id="EFileNotFoundException"/>
+<link id="EDirectoryNotFoundException"/>
+<link id="EPathTooLongException"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="WideStringReplace">
+<short>Replace occurrences of one substring with another in a widestring.</short>
+<descr>
+<var>WideStringReplace</var> searches the string <var>S</var> for
+occurrences of the string <var>OldPattern</var> and, if it is found,
+replaces it with <var>NewPattern</var>. It returns the resulting string. The
+behaviour of <var>StringReplace</var> can be runed with <var>Flags</var>,
+which is of type <link id="TReplaceFlags"/>. Standard behaviour is to
+replace only the first occurrence of <var>OldPattern</var>, and to search
+case sensitively.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TReplaceFlags"/>
+<link id="StringReplace"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="faNormal">
+<short>Normal file attribute</short>
+<descr>
+<var>faNormal</var> can be used in <link id="FindFirst"/> to indicate that normal files must be included in the result.
+</descr>
+<seealso>
+<link id="faTemporary"/>
+<link id="faDirectory"/>
+<link id="faArchive"/>
+<link id="faHidden"/>
+<link id="FindFirst"/>
+<link id="faCompressed"/>
+<link id="faEncrypted"/>
+
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="faTemporary">
+<short>Temporary file attribute</short>
+<descr>
+<var>faTemporary</var> can be returned by <link id="FindFirst"/> or <link id="FindNext"/> 
+to indicate that a returned file is a temporary file.
+</descr>
+<seealso>
+<link id="faDirectory"/>
+<link id="faArchive"/>
+<link id="faHidden"/>
+<link id="faCompressed"/>
+<link id="faEncrypted"/>
+<link id="faNormal"/>
+<link id="FindFirst"/>
+<link id="FindNext"/> 
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="faCompressed">
+<short>Compressed file attribute</short>
+<descr>
+<var>faTemporary</var> can be returned by <link id="FindFirst"/> or <link id="FindNext"/> 
+to indicate that a returned file is compressed (on filesystems that support this).
+</descr>
+<seealso>
+<link id="faDirectory"/>
+<link id="faArchive"/>
+<link id="faHidden"/>
+<link id="faEncrypted"/>
+<link id="faNormal"/>
+<link id="FindFirst"/>
+<link id="FindNext"/> 
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="faEncrypted">
+<short>Encrypted file attribute</short>
+<descr>
+<var>faEncrypted</var> can be returned by <link id="FindFirst"/> or <link id="FindNext"/> 
+to indicate that a returned file is encrypted (on filesystems that support this).
+</descr>
+<seealso>
+<link id="faDirectory"/>
+<link id="faArchive"/>
+<link id="faHidden"/>
+<link id="faCompressed"/>
+<link id="faNormal"/>
+<link id="FindFirst"/>
+<link id="FindNext"/> 
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="faVirtual">
+<short>Virtual file attribute</short>
+<descr>
+<var>faVirtual</var> can be returned by <link id="FindFirst"/> or <link id="FindNext"/> 
+to indicate that a returned file is virtual (on filesystems that support this).
+</descr>
+<seealso>
+<link id="faDirectory"/>
+<link id="faArchive"/>
+<link id="faHidden"/>
+<link id="faCompressed"/>
+<link id="faVirtual"/>
+<link id="faEncrypted"/>
+<link id="faNormal"/>
+<link id="FindFirst"/>
+<link id="FindNext"/> 
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="GetDriveIDFromLetter">
+<short>Return the drive ID based on a drive letter</short>
+<descr>
+<var>GetDriveIDFromLetter</var> returns the drive ID based on a drive letter. 
+The drive ID can then be used in the <link id="DiskSize"/> and <link id="DiskFree"/> calls.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="DiskSize"/>
+<link id="DiskFree"/>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TArray">
+<short>Generic array definition</short>
+<descr>
+<p>
+<var>TArray</var> is a generic array. It can be used to define dynamic arrays in generic functions or classes.
+</p>
+<p>
+This definition is provided for Delphi compatibility only, it is not needed in Free Pascal, 
+where 2 array types are equal if they element types are equal.
+</p>
+</descr>
+<seealso>
+<link id="TStringArray"/>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TStringArray">
+<short>Dynamic array of strings</short>
+<descr>
+<var>TStringArray</var> is a dynamic array of strings.
+
+</descr>
+<seealso>
+<link id="TArray"/>
+<link id="TCharArray"/>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TCharArray">
+<short>Array of characters</short>
+<descr>
+<var>TCharArray</var> is a dynamic array of characters.
+</descr>
+<seealso>
+<link id="TArray"/>
+<link id="TStringArray"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TEndian">
+<short>Endianness of a CPU</short>
+<descr>
+<var>TEndian</var> indicates whether the platform is little endian (LSB first), or big endian (MSB first).
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TEndian.Little">
+<short>Little endian (LSB first)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TEndian.Big">
+<short>Big endian (MSB first)</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="CPUEndian">
+<short>Current CPU endianness</short>
+<descr>
+<var>CPUEndian</var> describes whether the current CPU is little or big endian.
+</descr>
+<seealso>
+<link id="TEndian"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TGuidHelper
+  ********************************************************************
+-->
+
+<!-- Record helper type Visibility: default -->
+<element name="TGuidHelper">
+<short>Helper type for <var>TGUID</var></short>
+<descr>
+<var>TGuidHelper</var> provides various methods for a <link id="TGUID"/> type.
+</descr>
+<seealso>
+<link id="TGUID"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: default -->
+<element name="TGuidHelper.Create">
+<short>Initialize a <var>TGUID</var> instance from data.</short>
+<descr>
+<p>
+<var>Create</var> will initialize a <link id="TGUID"/> from byte data. 
+The byte-data can come in different forms
+</p>
+<dl>
+<dt>Data</dt><dd> can be a plain buffer. The GUID Data will be read from the buffer 
+(<var>SizeOf(TGUID)</var> bytes),  according to the  <var>BigEndian</var> argument.
+</dd>
+<dt>Data</dt><dd> can be an array of bytes. <var>SizeOf(TGUID)</var> bytes will be read from
+the array, starting at index <var>StartIndex</var> (default 0).
+The GUID Data will be read according to the <var>BigEndian</var> argument.
+</dd>
+<dt>S</dt><dd> can be a string containing a string representation of the GUID, 
+which is converted using <link id="StringToGUID"/>.</dd>
+<dt>A,B,C,D (optionally E,F,G,H,I,J,K)</dt><dd> where the arguments are simply the 
+various components of the GUID.</dd>
+</dl>
+</descr>
+<seealso>
+<link id="TGUID"/>
+<link id="StringToGUID"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: default -->
+<element name="TGuidHelper.NewGuid">
+<short>Create a new GUID</short>
+<descr>
+<var>NewGUID</var> creates and returns a new <link ID="TGUID"/> using <link id="CreateGUID"/>
+</descr>
+<seealso>
+<link id="CreateGUID"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TGuidHelper.ToByteArray">
+<short>Convert to array of bytes</short>
+<descr>
+<var>ToByteArray</var> converts the TGUID to an array of bytes
+(of length <var>SizeOf(TGUID)</var>). The bytes will be ordered accoring to <var>DataEndian</var>.
+
+</descr>
+<seealso>
+<link id="TGUIDHelper.ToString"/>
+<link id="TGUIDHelper.Create"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TGuidHelper.ToString">
+<short>Convert to string</short>
+<descr>
+<var>ToString</var> will convert the TGUID to a string representation, using <link id="GUIDToString"/> 
+</descr>
+<seealso>
+<link id="GUIDToString"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TCompareOption">
+<short>String compare options</short>
+<descr>
+<var>TCompareOption</var> is an alias for 
+<link id="#rtl.system.TCompareOption">System.TCompareOption</link>.
+</descr>
+<seealso>
+<link id="#rtl.system.TCompareOption">System.TCompareOption</link>.
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TCompareOptions">
+<short>Set of string compare options</short>
+<descr>
+<var>TCompareOptions</var> is an alias for 
+<link id="#rtl.system.TCompareOptions">System.TCompareOptions</link>.
+</descr>
+<seealso>
+<link id="#rtl.system.TCompareOptions">System.TCompareOptions</link>.
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TStringSplitOptions">
+<short>String split options used in <var>TSTringHelper.Split</var></short>
+<descr>
+<var>TStringSplitOptions</var> describes the possible options for 
+<link id="TStringHelper.Split"/>.
+</descr>
+<seealso>
+<link id="TStringHelper.Split"/>.
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStringSplitOptions.None">
+<short>No options specified. The default</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStringSplitOptions.ExcludeEmpty">
+<short>Do not include empty strings in the result.</short>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TStringHelper
+  ********************************************************************
+-->
+
+<!-- #rtl.sysutils.TStringHelper Visibility: default -->
+<element name="TStringHelper">
+<short>Helper type for strings.</short>
+<descr>
+<p>
+<var>TStringHelper</var> adds various helper routines to the string type.
+These are mostly conversion routines, and some formatting routines.
+</p>
+<p>
+For similarity to C-like languages, all the indexes in these helper routines are zero based.
+</p>
+</descr>
+<seealso>
+<link id="TGUIDHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TStringHelper.Empty">
+<short>Check if the string is empty</short>
+<descr>
+<var>Empty</var> returns <var>True</var> if the string has length 0 (zero).
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.Compare">
+<short>Compare 2 strings</short>
+<descr>
+<p>
+<var>Compare</var> compares strings <var>A</var> and <var>B</var>. 
+It returns the following result:
+</p>
+<ul>
+<li>0 if the strings are equal</li>
+<li> a negative number if <var>A</var> &lt; <var>B</var></li>
+<li> a positive number if <var>A</var> &gt; <var>B</var></li>. 
+</ul>
+<p>The comparison can be influenced by using the appropriate overloaded version of the 
+function.</p>
+<ul>
+<li> If the <var>IndexA</var> and <var>IndexB</var> parameters are present, 
+the comparison starts at character index <var>IndexA</var> and <var>IndexB</var>. 
+The indexes are zero-based.</li>
+<li> If the <var>ALen</var> parameters is present, then only the first <var>ALen</var> 
+characters are compared. If not enough characters are present in either <var>A</var> 
+or <var>B</var>, the comparison will  include only as much characters as are present.
+</li>
+<li>
+If <var>IgnoreCase</var> is present and used, it determines whether the comparison is 
+done case-sensitively. This form is deprecated, it is recommended to use the 
+<var>AOptions</var> parameter and to include <var>coIgnoreCase</var>.
+</li>
+<li>The <var>AOptions</var> argument can be used to specify additional options. 
+See <link id="#rtl.system.TCompareOption">TCompareOption</link> for a list of possible values in this
+set.
+</li>
+</ul>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TStringHelper.CompareOrdinal"/>
+<link id="#rtl.system.TCompareOption">TCompareOption</link>
+<link id="TStringHelper.CompareTo"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.CompareOrdinal">
+<short>Compare 2 strings byte for byte</short>
+<descr>
+<p>
+<var>CompareOrdinal</var> compares 2 strings <var>A</var> and <var>B</var> bytewise. 
+It is faster than a regular compare, but offers less options.
+</p>
+<ul>
+<li>0 if the strings are equal</li>
+<li> a negative number if <var>A</var> &lt; <var>B</var></li>
+<li> a positive number if <var>A</var> &gt; <var>B</var></li>. 
+</ul>
+<p>Optionally, a zero-based starting index for the compare can be given for each 
+of the strings: <var>IndexA</var> and <var>IndexB</var>. 
+In this case a maximum amount of characters (<var>ALen</var>) to be compared must also be specified.
+</p> 
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TStringHelper.Compare"/>
+<link id="TStringHelper.CompareTo"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.CompareText">
+<short>Compare 2 strings case insensitively.</short>
+<descr>
+<var>CompareText</var> simply calls <link id="#rtl.sysutils.CompareText">SysUtils</link> with the 2 passed arguments.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.sysutils.CompareText">SysUtils</link>
+<link id="TStringHelper.CompareTo"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.Copy">
+<short>Return a unique copy of a string</short>
+<descr>
+<var>Copy</var> will copy the string on which it operates, 
+and makes sure the result has reference count 1.
+</descr>
+<seealso>
+<link id="UniqueString"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.Create">
+<short>Create a new string</short>
+<descr>
+<p>
+<var>Create</var> returns a new string with an initial value based on the passed arguments:
+</p>
+<ul>
+<li>
+A character (<var>ACHar</var>) and a count (<var>ACount</var>, in which case a string 
+is returned of the specified length, filled with <var>AChar</var>.
+</li>
+<li>
+An array of characters <var>AValue</var>. The returned string will have the same 
+length as the array, and the characters will be copied from the elements in the array. 
+Optionally, a starting index <var>StartIndex</var> (zero based) and length <var>ALen</var> 
+can be specified, in which case the string will contain at most <var>ALen</var> characters, 
+which will have been copied starting at index <var>StartIndex</var>.
+</li>
+</ul>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="StringOfChar"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.EndsText">
+<short>Check if one string is the ending of another.</short>
+<descr>
+<var>EndsText</var> returns <var>True</var> if <var>AText</var> ends on <var>SubText</var>,
+i.e. whether the last characters in <var>AText</var> are the ones found in <var>SubText</var>.
+The comparison is done case insensitively.
+</descr>
+<seealso>
+<link id="CompareText"/>
+<link id="TStringHelper.EndsWith"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.Equals">
+<short>Check if 2 strings are equal</short>
+<descr>
+<var>Equals</var> returns <var>True</var> if <var>A=B</var>, false otherwise.
+</descr>
+<seealso>
+<link id="CompareText"/>
+<link id="TStringHelper.Compare"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.Format">
+<short>Format a string using provided arguments.</short>
+<descr>
+<var>Format</var> just calls <link id="#rtl.sysutils.Format">Sysutils.Format</link>, passing on <var>AFormat</var> and <var>Args</var>.
+If <var>AFormat</var> is omitted, the string itself is used as the formatting string.
+</descr>
+<seealso>
+<link id="#rtl.sysutils.Format">Sysutils.Format</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.IsNullOrEmpty">
+<short>Check if a string is empty</short>
+<descr>
+<var>IsNullOrEmpty</var> returns <var>True</var> if string <var>A</var> has length 0.
+</descr>
+<seealso>
+<link id="System.Length"/>
+<link id="TStringHelper.IsNullOrWhiteSpace"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.IsNullOrWhiteSpace">
+<short>Check if a string is empty or contains only whitespace characters.</short>
+<descr>
+<var>IsNullOrEmpty</var> returns <var>True</var> if string <var>A</var> has length 0 
+or contains only whitespace characters  (characters with ASCII code 32 or less).
+</descr>
+<seealso>
+<link id="TStringHelper.IsNullOrEmpty"/>
+<link id="Trim"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.Join">
+<short>Join a series of strings, separated using a given separator</short>
+<descr>
+<p>
+<var>Join</var> will return a string that consists of all the strings in
+<var>Values</var> concatenated, with <var>Separator</var> between them. 
+<var>Values</var>  can be an array of strings, but can also be an array of 
+arbitrary values: the values will first be transformed to a string representation first.
+</p>
+<p>
+In case an array of strings is passed on, a start index <var>StartIndex</var> 
+and element count <var>ACount</var> can be passed on as well.
+</p>
+</descr>
+<errors>
+Classes, pointers or interfaces will not be transformed, but will result in a 'unknown type: NNN' string being inserted.
+</errors>
+<seealso>
+<link id="TStringHelper.Split"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.LowerCase">
+<short>Return the lowercase version of a string.</short>
+<descr>
+<var>LowerCase</var> returns the lowercase version of the string <var>S</var>. 
+This function is an alias for the <link id="#rtl.sysutils.LowerCase">SysUtils.LowerCase</link> function.
+</descr>
+<seealso>
+<link id="#rtl.sysutils.LowerCase">sysutils.LowerCase</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.Parse">
+<short>Return a string representation of the argument</short>
+<descr>
+<p>
+<var>Parse</var> will return a string representation of the argument
+<var>AValue</var>. How this is done depends on the type of the
+<var>AValue</var>argument:
+</p>
+<dl>
+<dt>Boolean</dt><dd>The result is formatted using <link id="BoolToStr"/>.</dd>
+<dt>Extended</dt><dd>The result is formatted using <link id="FloatToStr"/>.</dd>
+<dt>Int64</dt><dd>The result is formatted using <link id="IntToStr"/>.</dd>
+<dt>Integer</dt><dd>he result is formatted using <link id="IntToStr"/>.</dd>
+</dl>
+</descr>
+<seealso>
+<link id="BoolToStr"/>
+<link id="FloatToStr"/>
+<link id="IntToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.ToBoolean">
+<short>Convert string to boolean</short>
+<descr>
+<var>ToBoolean</var> returns the contents of the string <var>S</var> as a boolean (if
+possible). It uses <link id="StrToBool"/> to convert the value to a boolean.
+</descr>
+<errors>
+If the string contains a value that cannot be translated to a boolean, an
+<link id="EConvertError"/> exception may be raised.
+</errors>
+<seealso>
+<link id="StrToBool"/>
+<link id="EConvertError"/>
+<link id="TStringHelper.ToDouble"/>
+<link id="TStringHelper.ToExtended"/>
+<link id="TStringHelper.ToInt64"/>
+<link id="TStringHelper.ToInteger"/>
+<link id="TStringHelper.ToSingle"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.ToDouble">
+<short>Convert string to double-sized floating point value</short>
+<descr>
+<var>ToDouble</var> returns the contents of the string <var>S</var> as a
+Double-sized floating point value (if
+possible). It uses <link id="StrToFloat"/> to convert the value to a
+floating point value.
+</descr>
+<errors>
+If the string contains a value that cannot be translated to a floating point
+value, an <link id="EConvertError"/> exception may be raised.
+</errors>
+<seealso>
+<link id="StrToFloat"/>
+<link id="EConvertError"/>
+<link id="TStringHelper.ToBoolean"/>
+<link id="TStringHelper.ToExtended"/>
+<link id="TStringHelper.ToInt64"/>   
+<link id="TStringHelper.ToInteger"/> 
+<link id="TStringHelper.ToSingle"/>  
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.ToExtended">
+<short>Convert string to extended-sized floating point value</short>
+<descr>
+<var>ToExtended</var> returns the contents of the string <var>S</var> as a
+Extended-sized floating point value (if
+possible). It uses <link id="StrToFloat"/> to convert the value to a
+floating point value.
+</descr>
+<errors>
+If the string contains a value that cannot be translated to a floating point
+value, an <link id="EConvertError"/> exception may be raised.
+</errors>
+<seealso>
+<link id="StrToFloat"/>
+<link id="EConvertError"/>
+<link id="TStringHelper.ToBoolean"/>
+<link id="TStringHelper.ToDouble"/>
+<link id="TStringHelper.ToInt64"/>   
+<link id="TStringHelper.ToInteger"/> 
+<link id="TStringHelper.ToSingle"/>  
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.ToInt64">
+<short>Convert string to 64-bit signed integer</short>
+<descr>
+<var>ToInt64</var> returns the contents of the string <var>S</var> as a
+64-bit signed integer value (if
+possible). It uses <link id="StrToInt64"/> to convert the value to an 64-bit
+sized integer value.
+</descr>
+<errors>
+If the string contains a value that cannot be translated to an integer
+value, an <link id="EConvertError"/> exception may be raised.
+</errors>
+<seealso>
+<link id="StrToInt64"/>
+<link id="EConvertError"/>
+<link id="TStringHelper.ToBoolean"/>
+<link id="TStringHelper.ToDouble"/>
+<link id="TStringHelper.ToExtended"/>
+<link id="TStringHelper.ToInteger"/>
+<link id="TStringHelper.ToSingle"/>  
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.ToInteger">
+<short>Convert string to 32-bit signed integer</short>
+<descr>
+<var>ToInteger</var> returns the contents of the string <var>S</var> as a
+32-bit signed integer  value (if
+possible). It uses <link id="StrToInt64"/> to convert the value to an 64-bit
+sized integer value.
+</descr>
+<errors>
+If the string contains a value that cannot be translated to an integer      
+value, an <link id="EConvertError"/> exception may be raised.
+</errors>
+<seealso>
+<link id="StrToInt64"/>
+<link id="EConvertError"/>
+<link id="TStringHelper.ToBoolean"/>
+<link id="TStringHelper.ToDouble"/> 
+<link id="TStringHelper.ToExtended"/>
+<link id="TStringHelper.ToInt64"/> 
+<link id="TStringHelper.ToSingle"/> 
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.ToSingle">
+<short>Convert string to single-sized floating point value</short>
+<descr>
+<var>ToSingle</var> returns the contents of the string <var>S</var> as a     
+single-sized floating point value (if      
+possible). It uses <link id="StrToFloat"/> to convert the value to a
+floating point value.
+</descr>
+<errors>
+If the string contains a value that cannot be translated to a floating point
+value, an <link id="EConvertError"/> exception may be raised.
+</errors>
+<seealso>
+<link id="StrToFloat"/>
+<link id="EConvertError"/>
+<link id="TStringHelper.ToBoolean"/>
+<link id="TStringHelper.ToDouble"/>  
+<link id="TStringHelper.ToInt64"/>   
+<link id="TStringHelper.ToInteger"/> 
+<link id="TStringHelper.ToExtended"/>  
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TStringHelper.UpperCase">
+<short>Return uppercase version of a string</short>
+<descr>
+<var>UpperCase</var> returns an uppercase version of the string <var>S</var>.
+</descr>
+<seealso>
+<link id="#rtl.sysutils.UpperCase"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.CompareTo">
+<short>Compare string to another</short>
+<descr>
+<p>
+<var>CompareTo</var> will compare the string value to the string <var>B</var>.
+It returns the following result:
+</p>
+<ul>
+<li>0 if the strings are equal</li>
+<li> a negative number if <var>Self</var> &lt; <var>B</var></li> 
+<li> a positive number if <var>Self</var> &gt; <var>B</var></li>.
+</ul>
+<p>
+The <link id="StrComp"/> function is used for this.
+</p>
+</descr>
+<seealso>
+<link id="TStringHelper.Compare"/>
+<link id="TStringHelper.CompareOrdinal"/>
+<link id="StrComp"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.Contains">
+<short>Check is the string contains another</short>
+<descr>
+<var>Contains</var> returns <var>True</var> if the string value contains
+<var>AValue</var>, i.e. it returns <var>Pos(Self,AValue)>0</var>.
+</descr>
+<seealso>
+<link id="#rtl.system.Pos">Pos</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStringHelper.CopyTo">
+<short>Copy part of the string to an array of characters</short>
+<descr>
+<var>CopyTo</var> copies at most <var>ACount</var> characters from the source string (<var>Self</var>)
+to the array <var>Destination</var>, starting at (zero based) index <var>SourceIndex</var>. 
+The characters are copied to the array starting at position <var>DestinationIndex</var> (zero based).
+</descr>
+<seealso>
+<link id="#rtl.system.Copy">Copy</link>.
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.CountChar">
+<short>Count the occurrences of a character</short>
+<descr>
+<var>CountChar</var> returns the number of occurrences of <var>C</var> in the string (<var>Self</var>).
+</descr>
+<seealso>
+<link id="TStringHelper.IndexOf"/>
+<link id="TStringHelper.IndexOfAny"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.DeQuotedString">
+<short>Return a dequoted version of the string</short>
+<descr>
+<var>DeQuotedString</var> will return a dequoted version of the string
+(<var>Self</var>), where the quote character is <var>AQuoteChar</var>
+(default: a single quote '). The string must start and end with the 
+quote character, or it is returned as-is. 
+Any double occurrences of the quote character  <var>AQuoteChar</var> 
+will be returned as a single quote.
+</descr>
+<seealso>
+<link id="AnsiQuotedString"/>
+<link id="AnsiExtractQuotedString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.EndsWith">
+<short>Check if the string is ended by another.</short>
+<descr>
+<var>EndsWith</var> returns <var>True</var> if the string (<var>Self</var>) ends on
+<var>AValue</var>, i.e. whether the last characters in <var>Self</var> are the ones found in
+<var>AValue</var>.
+The comparison is done case insensitively depending on the <var>IgnoreCase</var> argument (which is false by default).
+</descr>  
+<seealso> 
+<link id="CompareText"/>
+<link id="TStringHelper.EndsText"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.GetHashCode">
+<short>Get a hash code for the string</short>
+<descr>
+<var>GetHashCode</var> returns a hash value for the string (<var>Self</var>).
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.IndexOf">
+<short>Find the position (index) of a string or character</short>
+<descr>
+<p>
+<var>IndexOf</var> returns the zero-based index of <var>AValue</var> in the string (<var>Self</var>).
+The value to search for can be a character or string (<var>AValue</var>).
+</p>
+<p>
+if no match is found, -1 is returned.
+</p>
+<p>
+The search can be refined by specifying a (zero based) index
+<var>StartIndex</var>. When specified, the search will start at the given character.
+Not specifying this option is equivalent to specifying zero.
+</p>
+<p>
+If <var>ACount</var> is given, at most <var>ACount</var> characters in the source string will be considered for the search.
+This count includes the starting character. Not specifying this argument is equivalent to specifying the amount of remaining characters.
+</p>
+</descr>
+<seealso>
+<link id="#rtl.system.Pos">Pos</link>
+<link id="TStringHelper.IndexOfUnQuoted"/>
+<link id="TStringHelper.IndexOfAny"/>
+<link id="TStringHelper.IndexOfAnyUnquoted"/>
+<link id="TStringHelper.LastIndexOf"/>
+<link id="TStringHelper.LastIndexOfAny"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.IndexOfUnQuoted">
+<short>Index of string, skipping quoted parts.</short>
+<descr>
+<var>IndexOfUnQuoted</var> will return the zero-based index of
+<var>AValue</var> in the string (<var>Self</var>), but disregards any quoted
+parts in the string. A quoted part is determined by a starting <var>StartQuote</var> and
+end-quote character <var>EndQuote</var>. The search starts at (zero-based) 
+position <var>StartIndex</var>, which is by default 0.
+</descr>
+<seealso>
+<link id="#rtl.system.Pos">Pos</link>
+<link id="TStringHelper.IndexOf"/>
+<link id="TStringHelper.IndexOfAny"/>
+<link id="TStringHelper.IndexOfAnyUnquoted"/>
+<link id="TStringHelper.LastIndexOf"/>
+<link id="TStringHelper.LastIndexOfAny"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.IndexOfAny">
+<short>Find the position (index) of any string or character in a list.</short>
+<descr>
+<p>
+<var>IndexOfAny</var> returns the zero-based index of the first matching element in an array of charaters or strings
+(<var>AnyOf</var>). 
+</p>
+<p>
+if no match is found, -1 is returned.
+</p>
+<p>
+The search can be refined by specifying a (zero-based) index
+<var>StartIndex</var>. When specified, the search will start at the given character.
+Not specifying this option is equivalent to specifying zero.
+</p>
+<p>
+If <var>ACount</var> is given, at most <var>ACount</var> characters in the source string will be considered for the search.
+This count includes the starting character. Not specifying this argument is equivalent to specifying the amount of remaining characters.
+</p>
+<p>
+If <var>AMatch</var> is specified, on succesful return it will contain the index of the element in the array that
+contains the found match. 
+</p>
+</descr>
+<seealso>
+<link id="#rtl.system.Pos">Pos</link>
+<link id="TStringHelper.IndexOf"/>
+<link id="TStringHelper.IndexOfUnquoted"/>
+<link id="TStringHelper.IndexOfAnyUnquoted"/>
+<link id="TStringHelper.LastIndexOf"/>
+<link id="TStringHelper.LastIndexOfAny"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.IndexOfAnyUnquoted">
+<short>Find the position (index) of any string or character in a list.</short>
+<descr>
+<p>
+<var>IndexOfAnyUnQuoted</var> returns the zero-based index of the first matching
+element in an array of charaters or strings (<var>AnyOf</var>), but disregards 
+any quoted parts in the string. A quoted part is determined by a starting <var>StartQuote</var> and
+end-quote character <var>EndQuote</var>.
+</p>
+<p> 
+if no match is found, -1 is returned.
+</p>
+<p> 
+The search can be refined by specifying a (zero-based) index
+<var>StartIndex</var>. When specified, the search will start at the given
+character.
+Not specifying this option is equivalent to specifying zero.
+</p>
+<p> 
+If <var>ACount</var> is given, at most <var>ACount</var> characters in the
+source string will be considered for the search.
+This count includes the starting character. Not specifying this argument is
+equivalent to specifying the amount of remaining characters.
+</p>
+<p> 
+If <var>AMatch</var> is specified, on succesful return it will contain the
+index of the element in the array that
+contains the found match. 
+</p>
+</descr>
+<seealso>
+<link id="#rtl.system.Pos">Pos</link>
+<link id="TStringHelper.IndexOf"/>
+<link id="TStringHelper.IndexOfUnquoted"/>
+<link id="TStringHelper.IndexOfAny"/>
+<link id="TStringHelper.LastIndexOf"/>
+<link id="TStringHelper.LastIndexOfAny"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.Insert">
+<short>Insert a string at a given position</short>
+<descr>
+<var>Insert</var> inserts the string <var>AValue</var> in a string
+(<var>Self</var>) at the (zero-based) position <var>StartIndex</var>. It
+returns the resulting string (<var>Self</var>). If <var>StartIndex</var> is
+less than zero, it is set to zero. If <var>StartIndex</var> is higher than the length,
+<var>AValue</var> is appended to the string.
+</descr>
+<seealso>
+<link id="#rtl.system.Insert">Insert</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.IsDelimiter">
+<short>Check whether a character at a given position is a delimiter</short>
+<descr>
+<var>IsDelimiter</var> returns <var>True</var> if the character at
+(zero-based) position <var>Index</var> is one of the delimiter characters in
+<var>Delimiters</var>. If <var>Index</var> is out of range, <var>False</var>
+is returned.
+</descr>
+<seealso>
+<link id="#rtl.sysutils.IsDelimiter">IsDelimiter</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.IsEmpty">
+<short>Check whether the string is empty.</short>
+<descr>
+<var>IsEmpty</var> returns <var>True</var> if the string has length zero.
+</descr>
+<seealso>
+<link id="TStringHelper.IsNullOrEmpty"/>
+<link id="TStringHelper.Length"/>
+<link id="#rtl.system.length">Length</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.LastDelimiter">
+<short>Return the last position of one of a series of delimiters</short>
+<descr>
+<var>LastDelimiter</var> searches the string backwards for an occurence of
+one of the characters in <var>Delims</var>, and returns the corresponding
+(zero-based) index in the string. If no occurrence is found, -1 is returned.
+</descr>
+<seealso>
+<link id="TStringHelper.isDelimiter"/>
+<link id="TStringHelper.IndexOf"/>
+<link id="TStringHelper.IndexOfAny"/>
+<link id="TStringHelper.LastIndexOf"/>
+<link id="TStringHelper.LastIndexOfAny"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.LastIndexOf">
+<short>Find the last position (index) of a string or character</short>
+<descr>
+<p>
+<var>LasyIndexOf</var> returns the zero-based index of the last occurrence
+of <var>AValue</var> in the string (<var>Self</var>). 
+The value to search for can be a character or string (<var>AValue</var>).
+</p>
+<p>
+if no match is found, -1 is returned.
+</p>
+<p>
+The search can be refined by specifying a (zero based) index
+<var>StartIndex</var>. When specified, the search will start at the given character
+and proceeds towards the beginning of the string.
+Not specifying this option is equivalent to specifying <var>length-1</var>.
+</p>
+<p>
+If <var>ACount</var> is given, at most <var>ACount</var> characters in the source string will be considered for the search.
+This count includes the starting character. Not specifying this argument is equivalent to specifying <var>StartIndex+1</var>.
+</p>
+</descr>
+<seealso>
+<link id="#rtl.system.Pos">Pos</link>
+<link id="TStringHelper.IndexOfUnQuoted"/>
+<link id="TStringHelper.IndexOfAny"/>
+<link id="TStringHelper.IndexOfAnyUnquoted"/>
+<link id="TStringHelper.IndexOf"/>
+<link id="TStringHelper.LastIndexOfAny"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.LastIndexOfAny">
+<short>Find the last position (index) of any string or character in a list.</short>
+<descr>
+<p>
+<var>LasyIndexOfAny</var> returns the zero-based index of the first matching element in an array of charaters or strings
+(<var>AnyOf</var>). 
+</p>
+<p>
+if no match is found, -1 is returned.
+</p>
+<p>
+The search can be refined by specifying a (zero-based) index
+<var>StartIndex</var>. When specified, the search will start at the given character
+and proceeds to the start of the string.
+Not specifying this option is equivalent to specifying <var>Length-1</var>.
+</p>
+<p>
+If <var>ACount</var> is given, at most <var>ACount</var> characters in the source string will be considered for the search.
+This count includes the starting character. Not specifying this argument is equivalent to specifying <var>StartIndex+1</var>.
+</p>
+</descr>
+<seealso>
+<link id="#rtl.system.Pos">Pos</link>
+<link id="TStringHelper.IndexOf"/>
+<link id="TStringHelper.IndexOfUnquoted"/>
+<link id="TStringHelper.IndexOfAnyUnquoted"/>
+<link id="TStringHelper.LastIndexOf"/>
+<link id="TStringHelper.IndexOfAny"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.PadLeft">
+<short>Pad the string on the left with an indicated character</short>
+<descr>
+<var>PadLeft</var> pads the string (<var>Self</var>) on the left (i.e. at the
+beginning) till it reaches length <var>ATotalWidth</var> with character
+<var>PaddingChar</var>. If <var>PaddingChar</var> is omitted, a space is
+used.
+</descr>
+<seealso>
+<link id="TStringHelper.PadRight"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.PadRight">
+<short>Pad the string on the right with an indicated character</short>
+<descr>
+<var>PadLeft</var> pads the string (<var>Self</var>) on the right (i.e. at the
+end) till it reaches length <var>ATotalWidth</var> with character <var>PaddingChar</var>. 
+If <var>PaddingChar</var> is omitted, a space is used.
+</descr>
+<seealso>
+<link id="TStringHelper.PadLeft"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.QuotedString">
+<short>Return a quoted version of the string</short>
+<descr>
+<var>QuotedString</var> returns a quoted version of the string
+(<var>Self</var>). The quote character is specified in
+<var>AQuoteChar</var>, which by default is the double quote (").
+Any existing quote characters occurrences will be doubled.
+</descr>
+<seealso>
+<link id="QuotedStr"/>
+<link id="AnsiQuotedStr"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.Remove">
+<short>Remove a number of characters from the string</short>
+<descr>
+<var>Remove</var> removes <var>ACount</var> characters from the string,
+starting at (zero-based) index <var>StartIndex</var>. If <var>ACount</var>
+is omitted, all remaining characters are removed.
+</descr>
+<seealso>
+<link id="#rtl.system.Delete">Delete</link>
+<link id="TStringHelper.Replace"/>
+<link id="TStringHelper.Insert"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.Replace">
+<short>Replace occurrences of one string with another.</short>
+<descr>
+<p>
+<var>Replace</var> will replace occurrences of <var>OldChar</var> with
+<var>NewChar</var> or <var>OldValue</var> with <var>NewValue</var>.
+</p>
+<p>
+If <var>rfReplaceAll</var> is in the <var>ReplaceFlags</var>, then all
+occurrences will be replaced, otherwise only the first occurrence is
+replaced.
+</p>
+<p>
+If <var>rfCaseInsensitive</var> is in the <var>ReplaceFlags</var>, then
+the search for <var>OldChar</var> or <var>OldValue</var> is performed
+ignoring case.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="StringReplace"/>
+<link id="TReplaceFlags"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.Split">
+<short>Split a string in a number of parts</short>
+<descr>
+<p>
+<var>Split</var> will split the string (<var>Self</var>) using
+<var>Separators</var> as separator characters. 
+</p>
+<p>
+If <var>ACount</var> is supplied, then at most <var>ACount</var> strings will be included in the result.
+The default behaviour is to supply all strings.
+</p>
+<p>
+if <var>Options</var> contains <var>ExcludeEmpty</var> then no empty strings
+will be included in the result. Empty strings may be included if multiple 
+succesive separator characters are found in the source string.
+</p>
+<p>
+If <var>AQuoteStart</var> and <var>AQuoteEnd</var> are supplied, 
+then no splitting will be performed between <var>AQuoteStart</var> and
+<var>AQuoteEnd</var> characters.
+</p>
+</descr>
+<seealso>
+<link id="TStringHelper.Join"/>
+<link id="TStringHelper.IndexOfAny"/>
+<link id="TStringHelper.IndexOfAnyUnquoted"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.StartsWith">
+<short>Check if one string starts with another</short>
+<descr>
+<var>StartsWith</var> will return <var>True</var> if the first characters of
+the string (<var>Self</var>) equal the string <var>AValue</var>. If
+<var>IgnoreCase</var> is <var>True</var>, then the comparison is done case
+insensitive. The default is to compare strings case sensitively.
+</descr>
+<seealso>
+<link id="TStringHelper.EndsWith"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.Substring">
+<short>Return a part of the string</short>
+<descr>
+<var>SubString</var> returns the portion of the string starting at
+(zero-based) index <var>AStartIndex</var> with length <var>ALen</var>. 
+If <var>ALen</var> is omitted, then all remaining characters are returned.
+</descr>
+<seealso>
+<link id="TStringHelper.Insert"/>
+<link id="#rtl.system.Copy">Copy</link>
+<link id="TStringHelper.ToCharArray"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.ToCharArray">
+<short>Return the string ar an array of characters.</short>
+<descr>
+<var>ToCharArray</var> returns part of the string (<var>Self</var>) as an array of
+characters. The characters are copied starting at (zero-based) index
+<var>AStartIndex</var> and at most <var>ALen</var> characters are copied. If
+<var>AStartIndex</var> and <var>ALen</var> are omitted, all the characters
+are returned.
+</descr>
+<errors>
+If AStartIndex is less than zero, an <link id="EAccessViolation"/> exception
+may be raised.
+</errors>
+<seealso>
+<link id="TStringHelper.Substring"/>
+<link id="TStringHelper.Insert"/>
+<link id="#rtl.system.Copy">Copy</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.ToLower">
+<short>Convert to lowercase</short>
+<descr>
+<var>ToLower</var> returns a lowercase version of the string.
+</descr>
+<seealso>
+<link id="TStringHelper.LowerCase"/>
+<link id="TStringHelper.ToUpper"/>
+<link id="TStringHelper.ToUpperInvariant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.ToLowerInvariant">
+<short>Convert to lowercase</short>
+<descr>
+<var>ToLowerInvariant</var> is equal to <link id="TStringHelper.ToLower"/>
+</descr>
+<seealso>
+<link id="TStringHelper.ToLower"/>
+<link id="TStringHelper.ToUpper"/>
+<link id="TStringHelper.ToUpperInvariant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.ToUpper">
+<short>Convert to uppercase.</short>
+<descr>
+<var>>ToUpper</var> returns an uppercase version of the string.
+</descr>
+<seealso>
+<link id="TStringHelper.ToLower"/>
+<link id="TStringHelper.ToLowerInvariant"/>
+<link id="TStringHelper.ToUpperInvariant"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.ToUpperInvariant">
+<short>Convert to uppercase</short>
+<descr>
+<var>ToUpperInvariant</var> is equal to <link id="TStringHelper.ToUpper"/>
+</descr>
+<seealso>
+<link id="TStringHelper.ToLower"/>
+<link id="TStringHelper.ToLowerInvariant"/>
+<link id="TStringHelper.ToUpper"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.Trim">
+<short>Strips a set of trim characters from the beginning and end of the string.</short>
+<descr>
+<var>Trim</var> returns the string (<var>Self</var>), removing all characters
+occurring in <var>ATrimChars</var>  from the start and end of the string. 
+If <var>ATrimChars</var> is not specified, all characters with ASCII code 32 or lower are
+assumed.
+</descr>
+<seealso>
+<link id="#rtl.sysutils.trim">Trim</link>
+<link id="TStringHelper.TrimLeft"/>
+<link id="TStringHelper.TrimRight"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.TrimLeft">
+<short>Strips a set of trim characters from the beginning of the string.</short>
+<descr>
+<var>Trim</var> returns the string (<var>Self</var>), removing all characters
+occurring in <var>ATrimChars</var>  from the start of the string. 
+If <var>ATrimChars</var> is not specified, all characters with ASCII code 32 or lower are
+assumed.
+</descr>
+<seealso>
+<link id="#rtl.sysutils.trim">TrimLeft</link>
+<link id="TStringHelper.Trim"/>
+<link id="TStringHelper.TrimRight"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.TrimRight">
+<short>Strips a set of trim characters from the end of the string.</short>
+<descr>
+<var>Trim</var> returns the string (<var>Self</var>), removing all characters
+occurring in <var>ATrimChars</var>  from the end of the string. 
+If <var>ATrimChars</var> is not specified, all characters with ASCII code 32 or lower are
+assumed.
+</descr>
+<seealso>
+<link id="#rtl.sysutils.trim">Trim</link>
+<link id="TStringHelper.Trim"/>
+<link id="TStringHelper.TrimLeft"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.TrimEnd">
+<short>Alias for <var>TrimRight</var></short>
+<descr>
+<var>TrimEnd</var> is an alias for <link id="TStringHelper.TrimRight"/>
+</descr>
+<seealso>
+<link id="TStringHelper.TrimRight"/>
+<link id="TStringHelper.TrimStart"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringHelper.TrimStart">
+<short>Alias for <var>TrimLeft</var></short>
+<descr>
+<var>TrimStart</var> is an alias for <link id="TStringHelper.TrimLeft"/>
+</descr>
+<seealso>
+<link id="TStringHelper.TrimEnd"/>
+<link id="TStringHelper.TrimLeft"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStringHelper.Chars">
+<short>Zero-based Indexed access to the characters in the string.</short>
+<descr>
+<var>Chars</var> provides zero-based indexed access to the characters in the
+string. The first character is at index 0, the last at <var>Length-1</var>.
+</descr>
+<seealso>
+<link id="TStringHelper.Length"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStringHelper.Length">
+<short>Return the length of the string</short>
+<descr>
+<var>Length</var> returns the length (in bytes for single-byte strings) of the string.
+</descr>
+<seealso>
+<link id="#rtl.system.length">Length</link>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TByteHelper
+  ********************************************************************
+-->
+
+<!-- #rtl.sysutils.TByteHelper Visibility: default -->
+<element name="TByteHelper">
+<short>Helper for a byte-typed ordinal value</short>
+<descr>
+<var>TByteHelper</var> contains some auxiliary routines for a byte-typed ordinal value.
+It consists mainly of conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TWordHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TInt64Helper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TNativeUIntHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TByteHelper.MaxValue">
+<short>Maximum value for a byte</short>
+<descr>
+<var>MaxValue</var> is the biggest value a byte-typed value can contain.
+</descr>
+<seealso>
+<link id="TByteHelper.MinValue"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TByteHelper.MinValue">
+<short>Minimum value for a byte</short>
+<descr>
+<var>MinValue</var> is the smallest value a byte-typed value can contain.    
+</descr>
+<seealso>
+<link id="TByteHelper.MaxValue"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TByteHelper.Parse">
+<short>Convert from a string</short>
+<descr>
+<var>Parse</var> will attempt to convert the string <var>AString</var> to a byte value. 
+It uses the <link id="StrToInt"/> function to perform the conversion, so no
+localization is taken into account. </descr>
+<errors>
+If the string does not contain a valid byte value, an <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TByteHelper.ToString"/>
+<link id="TByteHelper.TryParse"/>
+<link id="StrToInt"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TByteHelper.Size">
+<short>Size, in bytes, of the byte value</short>
+<descr>
+<var>Size</var> returns the size (in bytes) of the byte value. 
+This is equivalent to <var>SizeOf(Byte)</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TByteHelper.ToString">
+<short>Convert the value to string</short>
+<descr>
+<var>ToString</var> will, in the class function variant of this method, convert <var>AValue</var> to
+a string representation. In the regular method overloaded version of <var>ToString</var>, the byte value itself is used.
+The <link id="IntToStr"/> function is used to do the conversion.
+</descr>
+<seealso>
+<link id="TByteHelper.Parse"/>
+<link id="IntToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TByteHelper.TryParse">
+<short>Try to convert a string to a byte, report success or failure</short>
+<descr>
+<p>
+<var>TryParse</var> attempts to convert the string <var>AString</var> to a
+byte, and reports the success of the attempt. If the attempt is succesful,
+then <var>True</var> is returned, and the actual value of the byte is
+returned in <var>AValue</var>.
+</p>
+<p>
+It uses the <link id="val"/> function to perform the conversion, so no
+localization is taken into account. 
+</p>
+</descr>
+<seealso>
+<link id="TByteHelper.Parse"/>
+<link id="#rtl.system.val">Val</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TByteHelper.ToBoolean">
+<short>Convert to a boolean value</short>
+<descr>
+<var>ToBoolean</var> converts the byte value to a boolean: it returns
+<var>True</var> if the value is nonzero, <var>False</var> if it is zero.
+</descr>
+<seealso>
+<link id="TByteHelper.ToSingle"/>
+<link id="TByteHelper.ToDouble"/>
+<link id="TByteHelper.ToExtended"/>
+<link id="TByteHelper.ToString"/>
+<link id="TByteHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TByteHelper.ToDouble">
+<short>Convert to a double-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the byte value to a double-sized floating point value.
+</descr>
+<seealso>
+<link id="TByteHelper.ToBoolean"/>
+<link id="TByteHelper.ToExtended"/>
+<link id="TByteHelper.ToSingle"/>
+<link id="TByteHelper.ToString"/>
+<link id="TByteHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TByteHelper.ToExtended">
+<short>Convert to an extended-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the byte value to an extended-sized floating point value
+</descr>
+<seealso>
+<link id="TByteHelper.ToBoolean"/>
+<link id="TByteHelper.ToSingle"/>
+<link id="TByteHelper.ToDouble"/>
+<link id="TByteHelper.ToString"/>
+<link id="TByteHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TByteHelper.ToHexString">
+<short>Convert to a hexadecimal string representation</short>
+<descr>
+<var>ToHexString</var> converts the byte value to a hexadecimal string
+representation. The <var>AMinDigits</var> argument specifies the minimal
+number of characters in the resulting string. The string will be left-padded
+with zeroes if the representation contains less than  <var>AMinDigits</var>
+characters.
+</descr>
+<seealso>
+<link id="TByteHelper.ToBoolean"/>
+<link id="TByteHelper.ToSingle"/>
+<link id="TByteHelper.ToDouble"/>
+<link id="TByteHelper.ToString"/>
+<link id="TByteHelper.ToExtended"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TByteHelper.ToSingle">
+<short>Convert to an single-sized floating point value</short>
+<descr>
+<var>ToSingle</var> converts the byte value to a single-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TByteHelper.ToBoolean"/>
+<link id="TByteHelper.ToDouble"/>
+<link id="TByteHelper.ToExtended"/>
+<link id="TByteHelper.ToString"/>
+<link id="TByteHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TShortIntHelper
+  ********************************************************************
+-->
+
+<!-- #rtl.sysutils.TShortIntHelper Visibility: default -->
+<element name="TShortIntHelper">
+<short>Helper for a ShortInt-typed ordinal value</short>
+<descr>
+<var>TShortIntHelper</var> contains some auxiliary routines for a ShortInt-typed ordinal value.
+It consists mainly of conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TByteHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TWordHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TInt64Helper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TNativeUIntHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TShortIntHelper.MaxValue">
+<short>Maximum value for a ShortInt</short>
+<descr>
+<var>MaxValue</var> is the biggest value a ShortInt-typed value can contain.
+</descr>
+<seealso>
+<link id="TShortIntHelper.MinValue"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TShortIntHelper.MinValue">
+<short>Minimum value for a ShortInt</short>
+<descr>
+<var>MinValue</var> is the smallest value a ShortInt-typed value can contain.    
+</descr>
+<seealso>
+<link id="TShortIntHelper.MaxValue"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TShortIntHelper.Parse">
+<short>Convert from a string</short>
+<descr>
+<p>
+<var>Parse</var> will attempt to convert the string <var>AString</var> to a ShortInt value. 
+It uses the <link id="StrToInt"/> function to perform the conversion, so no
+localization is taken into account. 
+</p>
+</descr>
+<errors>
+If the string does not contain a valid ShortInt value, an <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TShortIntHelper.ToString"/>
+<link id="TShortIntHelper.TryParse"/>
+<link id="StrToInt"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TShortIntHelper.Size">
+<short>Size, in bytes, of the ShortInt value</short>
+<descr>
+<var>Size</var> returns the size (in ShortInts) of the ShortInt value. 
+This is equivalent to <var>SizeOf(Byte)</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TShortIntHelper.ToString">
+<short>Convert the value to string</short>
+<descr>
+<var>ToString</var> will, in the class function variant of this method, convert <var>AValue</var> to
+a string representation. In the regular method overloaded version of <var>ToString</var>, the ShortInt value itself is used.
+The <link id="IntToStr"/> function is used to do the conversion.
+</descr>
+<seealso>
+<link id="TShortIntHelper.Parse"/>
+<link id="IntToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TShortIntHelper.TryParse">
+<short>Try to convert a string to a ShortInt, report success or failure</short>
+<descr>
+<p>
+<var>TryParse</var> attempts to convert the string <var>AString</var> to a
+ShortInt, and reports the success of the attempt. If the attempt is succesful,
+then <var>True</var> is returned, and the actual value of the ShortInt is
+returned in <var>AValue</var>.
+</p>
+<p>
+It uses the <link id="val"/> function to perform the conversion, so no
+localization is taken into account. 
+</p>
+</descr>
+<seealso>
+<link id="TShortIntHelper.Parse"/>
+<link id="#rtl.system.val">Val</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TShortIntHelper.ToBoolean">
+<short>Convert to a boolean value</short>
+<descr>
+<var>ToBoolean</var> converts the ShortInt value to a boolean: it returns
+<var>True</var> if the value is nonzero, <var>False</var> if it is zero.
+</descr>
+<seealso>
+<link id="TShortIntHelper.ToSingle"/>
+<link id="TShortIntHelper.ToDouble"/>
+<link id="TShortIntHelper.ToExtended"/>
+<link id="TShortIntHelper.ToString"/>
+<link id="TShortIntHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TShortIntHelper.ToDouble">
+<short>Convert to a double-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the ShortInt value to a double-sized floating point value.
+</descr>
+<seealso>
+<link id="TShortIntHelper.ToBoolean"/>
+<link id="TShortIntHelper.ToExtended"/>
+<link id="TShortIntHelper.ToSingle"/>
+<link id="TShortIntHelper.ToString"/>
+<link id="TShortIntHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TShortIntHelper.ToExtended">
+<short>Convert to an extended-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the ShortInt value to an extended-sized floating point value.
+</descr>
+<seealso>
+<link id="TShortIntHelper.ToBoolean"/>
+<link id="TShortIntHelper.ToSingle"/>
+<link id="TShortIntHelper.ToDouble"/>
+<link id="TShortIntHelper.ToString"/>
+<link id="TShortIntHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TShortIntHelper.ToHexString">
+<short>Convert to a hexadecimal string representation</short>
+<descr>
+<var>ToHexString</var> converts the ShortInt value to a hexadecimal string
+representation. The <var>AMinDigits</var> argument specifies the minimal
+number of characters in the resulting string. The string will be left-padded
+with zeroes if the representation contains less than  <var>AMinDigits</var>
+characters.
+</descr>
+<seealso>
+<link id="TShortIntHelper.ToBoolean"/>
+<link id="TShortIntHelper.ToSingle"/>
+<link id="TShortIntHelper.ToDouble"/>
+<link id="TShortIntHelper.ToString"/>
+<link id="TShortIntHelper.ToExtended"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TShortIntHelper.ToSingle">
+<short>Convert to an single-sized floating point value</short>
+<descr>
+<var>ToSingle</var> converts the ShortInt value to a single-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TShortIntHelper.ToBoolean"/>
+<link id="TShortIntHelper.ToDouble"/>
+<link id="TShortIntHelper.ToExtended"/>
+<link id="TShortIntHelper.ToString"/>
+<link id="TShortIntHelper.ToHexString"/>
+</seealso>
+</element>
+
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TSmallIntHelper
+  ********************************************************************
+-->
+
+<!-- #rtl.sysutils.TSmallIntHelper Visibility: default -->
+<element name="TSmallIntHelper">
+<short>Helper for a SmallInt-typed ordinal value</short>
+<descr>
+<var>TSmallIntHelper</var> contains some auxiliary routines for a SmallInt-typed ordinal value.
+It consists mainly of conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TByteHelper"/>
+<link id="TWordHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TInt64Helper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TNativeUIntHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TSmallIntHelper.MaxValue">
+<short>Maximum value for a SmallInt</short>
+<descr>
+<var>MaxValue</var> is the biggest value a SmallInt-typed value can contain.
+</descr>
+<seealso>
+<link id="TSmallIntHelper.MinValue"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TSmallIntHelper.MinValue">
+<short>Minimum value for a SmallInt</short>
+<descr>
+<var>MinValue</var> is the smallest value a SmallInt-typed value can contain.    
+</descr>
+<seealso>
+<link id="TSmallIntHelper.MaxValue"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TSmallIntHelper.Parse">
+<short>Convert from a string</short>
+<descr>
+<var>Parse</var> will attempt to convert the string <var>AString</var> to a SmallInt value. 
+It uses the <link id="StrToInt"/> function to perform the conversion, so no
+localization is taken into account. 
+</descr>
+<errors>
+If the string does not contain a valid SmallInt value, an <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TSmallIntHelper.ToString"/>
+<link id="TSmallIntHelper.TryParse"/>
+<link id="StrToInt"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TSmallIntHelper.Size">
+<short>Size, in bytes, of the SmallInt value</short>
+<descr>
+<var>Size</var> returns the size (in SmallInts) of the SmallInt value. 
+This is equivalent to <var>SizeOf(SmallInt)</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TSmallIntHelper.ToString">
+<short>Convert the value to string</short>
+<descr>
+<var>ToString</var> will, in the class function variant of this method, convert <var>AValue</var> to
+a string representation. In the regular method overloaded version of <var>ToString</var>, the SmallInt value itself is used.
+The <link id="IntToStr"/> function is used to do the conversion.
+</descr>
+<seealso>
+<link id="TSmallIntHelper.Parse"/>
+<link id="IntToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TSmallIntHelper.TryParse">
+<short>Try to convert a string to a SmallInt, report success or failure</short>
+<descr>
+<p>
+<var>TryParse</var> attempts to convert the string <var>AString</var> to a
+SmallInt, and reports the success of the attempt. If the attempt is succesful,
+then <var>True</var> is returned, and the actual value of the SmallInt is
+returned in <var>AValue</var>.
+</p>
+<p>
+It uses the <link id="val"/> function to perform the conversion, so no
+localization is taken into account. 
+</p>
+</descr>
+<seealso>
+<link id="TSmallIntHelper.Parse"/>
+<link id="#rtl.system.val">Val</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSmallIntHelper.ToBoolean">
+<short>Convert to a boolean value</short>
+<descr>
+<var>ToBoolean</var> converts the SmallInt value to a boolean: it returns
+<var>True</var> if the value is nonzero, <var>False</var> if it is zero.
+</descr>
+<seealso>
+<link id="TSmallIntHelper.ToSingle"/>
+<link id="TSmallIntHelper.ToDouble"/>
+<link id="TSmallIntHelper.ToExtended"/>
+<link id="TSmallIntHelper.ToString"/>
+<link id="TSmallIntHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSmallIntHelper.ToDouble">
+<short>Convert to a double-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the SmallInt value to a double-sized floating point value
+</descr>
+<seealso>
+<link id="TSmallIntHelper.ToBoolean"/>
+<link id="TSmallIntHelper.ToExtended"/>
+<link id="TSmallIntHelper.ToSingle"/>
+<link id="TSmallIntHelper.ToString"/>
+<link id="TSmallIntHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSmallIntHelper.ToExtended">
+<short>Convert to an extended-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the SmallInt value to an extended-sized floating point value.
+</descr>
+<seealso>
+<link id="TSmallIntHelper.ToBoolean"/>
+<link id="TSmallIntHelper.ToSingle"/>
+<link id="TSmallIntHelper.ToDouble"/>
+<link id="TSmallIntHelper.ToString"/>
+<link id="TSmallIntHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSmallIntHelper.ToHexString">
+<short>Convert to a hexadecimal string representation</short>
+<descr>
+<var>ToHexString</var> converts the SmallInt value to a hexadecimal string
+representation. The <var>AMinDigits</var> argument specifies the minimal
+number of characters in the resulting string. The string will be left-padded
+with zeroes if the representation contains less than  <var>AMinDigits</var>
+characters.
+</descr>
+<seealso>
+<link id="TSmallIntHelper.ToBoolean"/>
+<link id="TSmallIntHelper.ToSingle"/>
+<link id="TSmallIntHelper.ToDouble"/>
+<link id="TSmallIntHelper.ToString"/>
+<link id="TSmallIntHelper.ToExtended"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSmallIntHelper.ToSingle">
+<short>Convert to an single-sized floating point value</short>
+<descr>
+<var>ToSingle</var> converts the SmallInt value to a single-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TSmallIntHelper.ToBoolean"/>
+<link id="TSmallIntHelper.ToDouble"/>
+<link id="TSmallIntHelper.ToExtended"/>
+<link id="TSmallIntHelper.ToString"/>
+<link id="TSmallIntHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TWordHelper
+  ********************************************************************
+-->
+
+<!-- #rtl.sysutils.TWordHelper Visibility: default -->
+
+<element name="TWordHelper">
+<short>Helper for a Word-typed ordinal value</short>
+<descr>
+<var>TWordHelper</var> contains some auxiliary routines for a Word-typed ordinal value.
+It consists mainly of conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TByteHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TInt64Helper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TNativeUIntHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TWordHelper.MaxValue">
+<short>Maximum value for a Word</short>
+<descr>
+<var>MaxValue</var> is the biggest value a Word-typed value can contain.
+</descr>
+<seealso>
+<link id="TWordHelper.MinValue"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TWordHelper.MinValue">
+<short>Minimum value for a Word</short>
+<descr>
+<var>MinValue</var> is the smallest value a Word-typed value can contain.    
+</descr>
+<seealso>
+<link id="TWordHelper.MaxValue"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TWordHelper.Parse">
+<short>Convert from a string</short>
+<descr>
+<var>Parse</var> will attempt to convert the string <var>AString</var> to a Word value. 
+It uses the <link id="StrToInt"/> function to perform the conversion, so no
+localization is taken into account. 
+</descr>
+<errors>
+If the string does not contain a valid Word value, an <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TWordHelper.ToString"/>
+<link id="TWordHelper.TryParse"/>
+<link id="StrToInt"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TWordHelper.Size">
+<short>Size, in bytes, of the Word value</short>
+<descr>
+<var>Size</var> returns the size (in Words) of the Word value. 
+This is equivalent to <var>SizeOf(Word)</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TWordHelper.ToString">
+<short>Convert the value to string</short>
+<descr>
+<var>ToString</var> will, in the class function variant of this method, convert <var>AValue</var> to
+a string representation. In the regular method overloaded version of <var>ToString</var>, the Word value itself is used.
+The <link id="IntToStr"/> function is used to do the conversion.
+</descr>
+<seealso>
+<link id="TWordHelper.Parse"/>
+<link id="IntToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TWordHelper.TryParse">
+<short>Try to convert a string to a Word, report success or failure</short>
+<descr>
+<p>
+<var>TryParse</var> attempts to convert the string <var>AString</var> to a
+Word, and reports the success of the attempt. If the attempt is succesful,
+then <var>True</var> is returned, and the actual value of the Word is
+returned in <var>AValue</var>.
+</p>
+<p>
+It uses the <link id="val"/> function to perform the conversion, so no
+localization is taken into account. 
+</p>
+</descr>
+<seealso>
+<link id="TWordHelper.Parse"/>
+<link id="#rtl.system.val">Val</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TWordHelper.ToBoolean">
+<short>Convert to a boolean value</short>
+<descr>
+<var>ToBoolean</var> converts the Word value to a boolean: it returns
+<var>True</var> if the value is nonzero, <var>False</var> if it is zero.
+</descr>
+<seealso>
+<link id="TWordHelper.ToSingle"/>
+<link id="TWordHelper.ToDouble"/>
+<link id="TWordHelper.ToExtended"/>
+<link id="TWordHelper.ToString"/>
+<link id="TWordHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TWordHelper.ToDouble">
+<short>Convert to a double-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the Word value to a double-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TWordHelper.ToBoolean"/>
+<link id="TWordHelper.ToExtended"/>
+<link id="TWordHelper.ToSingle"/>
+<link id="TWordHelper.ToString"/>
+<link id="TWordHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TWordHelper.ToExtended">
+<short>Convert to an extended-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the Word value to an extended-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TWordHelper.ToBoolean"/>
+<link id="TWordHelper.ToSingle"/>
+<link id="TWordHelper.ToDouble"/>
+<link id="TWordHelper.ToString"/>
+<link id="TWordHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TWordHelper.ToHexString">
+<short>Convert to a hexadecimal string representation</short>
+<descr>
+<var>ToHexString</var> converts the Word value to a hexadecimal string
+representation. The <var>AMinDigits</var> argument specifies the minimal
+number of characters in the resulting string. The string will be left-padded
+with zeroes if the representation contains less than  <var>AMinDigits</var>
+characters.
+</descr>
+<seealso>
+<link id="TWordHelper.ToBoolean"/>
+<link id="TWordHelper.ToSingle"/>
+<link id="TWordHelper.ToDouble"/>
+<link id="TWordHelper.ToString"/>
+<link id="TWordHelper.ToExtended"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TWordHelper.ToSingle">
+<short>Convert to an single-sized floating point value</short>
+<descr>
+<var>ToSingle</var> converts the Word value to a single-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TWordHelper.ToBoolean"/>
+<link id="TWordHelper.ToDouble"/>
+<link id="TWordHelper.ToExtended"/>
+<link id="TWordHelper.ToString"/>
+<link id="TWordHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TCardinalHelper
+  ********************************************************************
+-->
+
+
+<!-- #rtl.sysutils.TCardinalHelper Visibility: default -->
+<element name="TCardinalHelper">
+<short>Helper for a Cardinal-typed ordinal value</short>
+<descr>
+<var>TCardinalHelper</var> contains some auxiliary routines for a Cardinal-typed ordinal value.
+It consists mainly of conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TWordHelper"/>
+<link id="TByteHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TInt64Helper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TNativeUIntHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TCardinalHelper.MaxValue">
+<short>Maximum value for a Cardinal</short>
+<descr>
+<var>MaxValue</var> is the biggest value a Cardinal-typed value can contain.
+</descr>
+<seealso>
+<link id="TCardinalHelper.MinValue"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TCardinalHelper.MinValue">
+<short>Minimum value for a Cardinal</short>
+<descr>
+<var>MinValue</var> is the smallest value a Cardinal-typed value can contain.    
+</descr>
+<seealso>
+<link id="TCardinalHelper.MaxValue"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCardinalHelper.Parse">
+<short>Convert from a string</short>
+<descr>
+<var>Parse</var> will attempt to convert the string <var>AString</var> to a Cardinal value. 
+It uses the <link id="StrToInt"/> function to perform the conversion, so no
+localization is taken into account. 
+</descr>
+<errors>
+If the string does not contain a valid Cardinal value, an <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TCardinalHelper.ToString"/>
+<link id="TCardinalHelper.TryParse"/>
+<link id="StrToInt"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCardinalHelper.Size">
+<short>Size, in bytes, of the Cardinal value</short>
+<descr>
+<var>Size</var> returns the size (in Cardinals) of the Cardinal value. 
+This is equivalent to <var>SizeOf(Cardinal)</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCardinalHelper.ToString">
+<short>Convert the value to string</short>
+<descr>
+<var>ToString</var> will, in the class function variant of this method, convert <var>AValue</var> to
+a string representation. In the regular method overloaded version of <var>ToString</var>, the Cardinal value itself is used.
+The <link id="IntToStr"/> function is used to do the conversion.
+</descr>
+<seealso>
+<link id="TCardinalHelper.Parse"/>
+<link id="IntToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TCardinalHelper.TryParse">
+<short>Try to convert a string to a Cardinal, report success or failure</short>
+<descr>
+<p>
+<var>TryParse</var> attempts to convert the string <var>AString</var> to a
+Cardinal, and reports the success of the attempt. If the attempt is succesful,
+then <var>True</var> is returned, and the actual value of the Cardinal is
+returned in <var>AValue</var>.
+</p>
+<p>
+It uses the <link id="val"/> function to perform the conversion, so no
+localization is taken into account. 
+</p>
+</descr>
+<seealso>
+<link id="TCardinalHelper.Parse"/>
+<link id="#rtl.system.val">Val</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCardinalHelper.ToBoolean">
+<short>Convert to a boolean value</short>
+<descr>
+<var>ToBoolean</var> converts the Cardinal value to a boolean: it returns
+<var>True</var> if the value is nonzero, <var>False</var> if it is zero.
+</descr>
+<seealso>
+<link id="TCardinalHelper.ToSingle"/>
+<link id="TCardinalHelper.ToDouble"/>
+<link id="TCardinalHelper.ToExtended"/>
+<link id="TCardinalHelper.ToString"/>
+<link id="TCardinalHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCardinalHelper.ToDouble">
+<short>Convert to a double-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the Cardinal value to a double-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TCardinalHelper.ToBoolean"/>
+<link id="TCardinalHelper.ToExtended"/>
+<link id="TCardinalHelper.ToSingle"/>
+<link id="TCardinalHelper.ToString"/>
+<link id="TCardinalHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCardinalHelper.ToExtended">
+<short>Convert to an extended-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the Cardinal value to an extended-sized floating point value.
+</descr>
+<seealso>
+<link id="TCardinalHelper.ToBoolean"/>
+<link id="TCardinalHelper.ToSingle"/>
+<link id="TCardinalHelper.ToDouble"/>
+<link id="TCardinalHelper.ToString"/>
+<link id="TCardinalHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCardinalHelper.ToHexString">
+<short>Convert to a hexadecimal string representation</short>
+<descr>
+<var>ToHexString</var> converts the Cardinal value to a hexadecimal string
+representation. The <var>AMinDigits</var> argument specifies the minimal
+number of characters in the resulting string. The string will be left-padded
+with zeroes if the representation contains less than  <var>AMinDigits</var>
+characters.
+</descr>
+<seealso>
+<link id="TCardinalHelper.ToBoolean"/>
+<link id="TCardinalHelper.ToSingle"/>
+<link id="TCardinalHelper.ToDouble"/>
+<link id="TCardinalHelper.ToString"/>
+<link id="TCardinalHelper.ToExtended"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCardinalHelper.ToSingle">
+<short>Convert to an single-sized floating point value</short>
+<descr>
+<var>ToSingle</var> converts the Cardinal value to a single-sized floating point value.
+</descr>
+<seealso>
+<link id="TCardinalHelper.ToBoolean"/>
+<link id="TCardinalHelper.ToDouble"/>
+<link id="TCardinalHelper.ToExtended"/>
+<link id="TCardinalHelper.ToString"/>
+<link id="TCardinalHelper.ToHexString"/>
+</seealso>
+</element>
+
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TIntegerHelper
+  ********************************************************************
+-->
+
+
+<!-- #rtl.sysutils.TIntegerHelper Visibility: default -->
+<element name="TIntegerHelper">
+<short>Helper for a Integer-typed ordinal value</short>
+<descr>
+<var>TIntegerHelper</var> contains some auxiliary routines for a Integer-typed ordinal value.
+It consists mainly of conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TWordHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TByteHelper"/>
+<link id="TInt64Helper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TNativeUIntHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TIntegerHelper.MaxValue">
+<short>Maximum value for a Integer</short>
+<descr>
+<var>MaxValue</var> is the biggest value a Integer-typed value can contain.
+</descr>
+<seealso>
+<link id="TIntegerHelper.MinValue"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TIntegerHelper.MinValue">
+<short>Minimum value for a Integer</short>
+<descr>
+<var>MinValue</var> is the smallest value a Integer-typed value can contain.    
+</descr>
+<seealso>
+<link id="TIntegerHelper.MaxValue"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TIntegerHelper.Parse">
+<short>Convert from a string</short>
+<descr>
+<var>Parse</var> will attempt to convert the string <var>AString</var> to a Integer value. 
+It uses the <link id="StrToInt"/> function to perform the conversion, so no
+localization is taken into account. 
+</descr>
+<errors>
+If the string does not contain a valid Integer value, an <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TIntegerHelper.ToString"/>
+<link id="TIntegerHelper.TryParse"/>
+<link id="StrToInt"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TIntegerHelper.Size">
+<short>Size, in bytes, of the Integer value</short>
+<descr>
+<var>Size</var> returns the size (in Integers) of the Integer value. 
+This is equivalent to <var>SizeOf(Integer)</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TIntegerHelper.ToString">
+<short>Convert the value to string</short>
+<descr>
+<var>ToString</var> will, in the class function variant of this method, convert <var>AValue</var> to
+a string representation. In the regular method overloaded version of <var>ToString</var>, the Integer value itself is used.
+The <link id="IntToStr"/> function is used to do the conversion.
+</descr>
+<seealso>
+<link id="TIntegerHelper.Parse"/>
+<link id="IntToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TIntegerHelper.TryParse">
+<short>Try to convert a string to a Integer, report success or failure</short>
+<descr>
+<p>
+<var>TryParse</var> attempts to convert the string <var>AString</var> to a
+Integer, and reports the success of the attempt. If the attempt is succesful,
+then <var>True</var> is returned, and the actual value of the Integer is
+returned in <var>AValue</var>.
+</p>
+<p>
+It uses the <link id="val"/> function to perform the conversion, so no
+localization is taken into account. 
+</p>
+</descr>
+<seealso>
+<link id="TIntegerHelper.Parse"/>
+<link id="#rtl.system.val">Val</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIntegerHelper.ToBoolean">
+<short>Convert to a boolean value</short>
+<descr>
+<var>ToBoolean</var> converts the Integer value to a boolean: it returns
+<var>True</var> if the value is nonzero, <var>False</var> if it is zero.
+</descr>
+<seealso>
+<link id="TIntegerHelper.ToSingle"/>
+<link id="TIntegerHelper.ToDouble"/>
+<link id="TIntegerHelper.ToExtended"/>
+<link id="TIntegerHelper.ToString"/>
+<link id="TIntegerHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIntegerHelper.ToDouble">
+<short>Convert to a double-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the Integer value to a double-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TIntegerHelper.ToBoolean"/>
+<link id="TIntegerHelper.ToExtended"/>
+<link id="TIntegerHelper.ToSingle"/>
+<link id="TIntegerHelper.ToString"/>
+<link id="TIntegerHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIntegerHelper.ToExtended">
+<short>Convert to an extended-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the Integer value to an extended-sized floating point value.
+</descr>
+<seealso>
+<link id="TIntegerHelper.ToBoolean"/>
+<link id="TIntegerHelper.ToSingle"/>
+<link id="TIntegerHelper.ToDouble"/>
+<link id="TIntegerHelper.ToString"/>
+<link id="TIntegerHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIntegerHelper.ToHexString">
+<short>Convert to a hexadecimal string representation</short>
+<descr>
+<var>ToHexString</var> converts the Integer value to a hexadecimal string
+representation. The <var>AMinDigits</var> argument specifies the minimal
+number of characters in the resulting string. The string will be left-padded
+with zeroes if the representation contains less than  <var>AMinDigits</var>
+characters.
+</descr>
+<seealso>
+<link id="TIntegerHelper.ToBoolean"/>
+<link id="TIntegerHelper.ToSingle"/>
+<link id="TIntegerHelper.ToDouble"/>
+<link id="TIntegerHelper.ToString"/>
+<link id="TIntegerHelper.ToExtended"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIntegerHelper.ToSingle">
+<short>Convert to an single-sized floating point value</short>
+<descr>
+<var>ToSingle</var> converts the Integer value to a single-sized floating point value.
+</descr>
+<seealso>
+<link id="TIntegerHelper.ToBoolean"/>
+<link id="TIntegerHelper.ToDouble"/>
+<link id="TIntegerHelper.ToExtended"/>
+<link id="TIntegerHelper.ToString"/>
+<link id="TIntegerHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TInt64Helper
+  ********************************************************************
+-->
+
+
+<!-- #rtl.sysutils.TInt64Helper Visibility: default -->
+<element name="TInt64Helper">
+<short>Helper for a Int64-typed ordinal value</short>
+<descr>
+<var>TInt64Helper</var> contains some auxiliary routines for a Int64-typed ordinal value.
+It consists mainly of conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TWordHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TByteHelper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TNativeUIntHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TInt64Helper.MaxValue">
+<short>Maximum value for a Int64</short>
+<descr>
+<var>MaxValue</var> is the biggest value a Int64-typed value can contain.
+</descr>
+<seealso>
+<link id="TInt64Helper.MinValue"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TInt64Helper.MinValue">
+<short>Minimum value for a Int64</short>
+<descr>
+<var>MinValue</var> is the smallest value a Int64-typed value can contain.    
+</descr>
+<seealso>
+<link id="TInt64Helper.MaxValue"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TInt64Helper.Parse">
+<short>Convert from a string</short>
+<descr>
+<var>Parse</var> will attempt to convert the string <var>AString</var> to a Int64 value. 
+It uses the <link id="StrToInt64"/> function to perform the conversion, so no
+localization is taken into account. 
+</descr>
+<errors>
+If the string does not contain a valid Int64 value, an <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TInt64Helper.ToString"/>
+<link id="TInt64Helper.TryParse"/>
+<link id="StrToInt64"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TInt64Helper.Size">
+<short>Size, in bytes, of the Int64 value</short>
+<descr>
+<var>Size</var> returns the size (in Int64s) of the Int64 value. 
+This is equivalent to <var>SizeOf(Int64)</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TInt64Helper.ToString">
+<short>Convert the value to string</short>
+<descr>
+<var>ToString</var> will, in the class function variant of this method, convert <var>AValue</var> to
+a string representation. In the regular method overloaded version of <var>ToString</var>, the Int64 value itself is used.
+The <link id="IntToStr"/> function is used to do the conversion.
+</descr>
+<seealso>
+<link id="TInt64Helper.Parse"/>
+<link id="IntToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TInt64Helper.TryParse">
+<short>Try to convert a string to a Int64, report success or failure</short>
+<descr>
+<p>
+<var>TryParse</var> attempts to convert the string <var>AString</var> to a
+Int64, and reports the success of the attempt. If the attempt is succesful,
+then <var>True</var> is returned, and the actual value of the Int64 is
+returned in <var>AValue</var>.
+</p>
+<p>
+It uses the <link id="val"/> function to perform the conversion, so no
+localization is taken into account. 
+</p>
+</descr>
+<seealso>
+<link id="TInt64Helper.Parse"/>
+<link id="#rtl.system.val">Val</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TInt64Helper.ToBoolean">
+<short>Convert to a boolean value</short>
+<descr>
+<var>ToBoolean</var> converts the Int64 value to a boolean: it returns
+<var>True</var> if the value is nonzero, <var>False</var> if it is zero.
+</descr>
+<seealso>
+<link id="TInt64Helper.ToSingle"/>
+<link id="TInt64Helper.ToDouble"/>
+<link id="TInt64Helper.ToExtended"/>
+<link id="TInt64Helper.ToString"/>
+<link id="TInt64Helper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TInt64Helper.ToDouble">
+<short>Convert to a double-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the Int64 value to a double-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TInt64Helper.ToBoolean"/>
+<link id="TInt64Helper.ToExtended"/>
+<link id="TInt64Helper.ToSingle"/>
+<link id="TInt64Helper.ToString"/>
+<link id="TInt64Helper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TInt64Helper.ToExtended">
+<short>Convert to an extended-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the Int64 value to an extended-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TInt64Helper.ToBoolean"/>
+<link id="TInt64Helper.ToSingle"/>
+<link id="TInt64Helper.ToDouble"/>
+<link id="TInt64Helper.ToString"/>
+<link id="TInt64Helper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TInt64Helper.ToHexString">
+<short>Convert to a hexadecimal string representation</short>
+<descr>
+<var>ToHexString</var> converts the Int64 value to a hexadecimal string
+representation. The <var>AMinDigits</var> argument specifies the minimal
+number of characters in the resulting string. The string will be left-padded
+with zeroes if the representation contains less than  <var>AMinDigits</var>
+characters.
+</descr>
+<seealso>
+<link id="TInt64Helper.ToBoolean"/>
+<link id="TInt64Helper.ToSingle"/>
+<link id="TInt64Helper.ToDouble"/>
+<link id="TInt64Helper.ToString"/>
+<link id="TInt64Helper.ToExtended"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TInt64Helper.ToSingle">
+<short>Convert to an single-sized floating point value</short>
+<descr>
+<var>ToSingle</var> converts the Int64 value to a single-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TInt64Helper.ToBoolean"/>
+<link id="TInt64Helper.ToDouble"/>
+<link id="TInt64Helper.ToExtended"/>
+<link id="TInt64Helper.ToString"/>
+<link id="TInt64Helper.ToHexString"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TQWordHelper
+  ********************************************************************
+-->
+
+
+<!-- #rtl.sysutils.TQWordHelper Visibility: default -->
+<element name="TQWordHelper">
+<short>Helper for a QWord-typed ordinal value</short>
+<descr>
+<var>TQWordHelper</var> contains some auxiliary routines for a QWord-typed ordinal value.
+It consists mainly of conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TWordHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TInt64Helper"/>
+<link id="TByteHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TNativeUIntHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TQWordHelper.MaxValue">
+<short>Maximum value for a QWord</short>
+<descr>
+<var>MaxValue</var> is the biggest value a QWord-typed value can contain.
+</descr>
+<seealso>
+<link id="TQWordHelper.MinValue"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TQWordHelper.MinValue">
+<short>Minimum value for a QWord</short>
+<descr>
+<var>MinValue</var> is the smallest value a QWord-typed value can contain.    
+</descr>
+<seealso>
+<link id="TQWordHelper.MaxValue"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TQWordHelper.Parse">
+<short>Convert from a string</short>
+<descr>
+<var>Parse</var> will attempt to convert the string <var>AString</var> to a QWord value. 
+It uses the <link id="StrToQWord"/> function to perform the conversion, so no
+localization is taken into account. 
+</descr>
+<errors>
+If the string does not contain a valid QWord value, an <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TQWordHelper.ToString"/>
+<link id="TQWordHelper.TryParse"/>
+<link id="StrToQWord"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TQWordHelper.Size">
+<short>Size, in bytes, of the QWord value</short>
+<descr>
+<var>Size</var> returns the size (in QWords) of the QWord value. 
+This is equivalent to <var>SizeOf(QWord)</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TQWordHelper.ToString">
+<short>Convert the value to string</short>
+<descr>
+<var>ToString</var> will, in the class function variant of this method, convert <var>AValue</var> to
+a string representation. In the regular method overloaded version of <var>ToString</var>, the QWord value itself is used.
+The <link id="IntToStr"/> function is used to do the conversion.
+</descr>
+<seealso>
+<link id="TQWordHelper.Parse"/>
+<link id="IntToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TQWordHelper.TryParse">
+<short>Try to convert a string to a QWord, report success or failure</short>
+<descr>
+<p>
+<var>TryParse</var> attempts to convert the string <var>AString</var> to a
+QWord, and reports the success of the attempt. If the attempt is succesful,
+then <var>True</var> is returned, and the actual value of the QWord is
+returned in <var>AValue</var>.
+</p>
+<p>
+It uses the <link id="val"/> function to perform the conversion, so no
+localization is taken into account. 
+</p>
+</descr>
+<seealso>
+<link id="TQWordHelper.Parse"/>
+<link id="#rtl.system.val">Val</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TQWordHelper.ToBoolean">
+<short>Convert to a boolean value</short>
+<descr>
+<var>ToBoolean</var> converts the QWord value to a boolean: it returns
+<var>True</var> if the value is nonzero, <var>False</var> if it is zero.
+</descr>
+<seealso>
+<link id="TQWordHelper.ToSingle"/>
+<link id="TQWordHelper.ToDouble"/>
+<link id="TQWordHelper.ToExtended"/>
+<link id="TQWordHelper.ToString"/>
+<link id="TQWordHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TQWordHelper.ToDouble">
+<short>Convert to a double-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the QWord value to a double-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TQWordHelper.ToBoolean"/>
+<link id="TQWordHelper.ToExtended"/>
+<link id="TQWordHelper.ToSingle"/>
+<link id="TQWordHelper.ToString"/>
+<link id="TQWordHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TQWordHelper.ToExtended">
+<short>Convert to an extended-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the QWord value to an extended-sized floating point value.
+</descr>
+<seealso>
+<link id="TQWordHelper.ToBoolean"/>
+<link id="TQWordHelper.ToSingle"/>
+<link id="TQWordHelper.ToDouble"/>
+<link id="TQWordHelper.ToString"/>
+<link id="TQWordHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TQWordHelper.ToHexString">
+<short>Convert to a hexadecimal string representation</short>
+<descr>
+<var>ToHexString</var> converts the QWord value to a hexadecimal string
+representation. The <var>AMinDigits</var> argument specifies the minimal
+number of characters in the resulting string. The string will be left-padded
+with zeroes if the representation contains less than  <var>AMinDigits</var>
+characters.
+</descr>
+<seealso>
+<link id="TQWordHelper.ToBoolean"/>
+<link id="TQWordHelper.ToSingle"/>
+<link id="TQWordHelper.ToDouble"/>
+<link id="TQWordHelper.ToString"/>
+<link id="TQWordHelper.ToExtended"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TQWordHelper.ToSingle">
+<short>Convert to an single-sized floating point value</short>
+<descr>
+<var>ToSingle</var> converts the QWord value to a single-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TQWordHelper.ToBoolean"/>
+<link id="TQWordHelper.ToDouble"/>
+<link id="TQWordHelper.ToExtended"/>
+<link id="TQWordHelper.ToString"/>
+<link id="TQWordHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TNativeIntHelper
+  ********************************************************************
+-->
+
+
+<!-- #rtl.sysutils.TNativeIntHelper Visibility: default -->
+<element name="TNativeIntHelper">
+<short>Helper for a NativeInt-typed ordinal value</short>
+<descr>
+<var>TNativeIntHelper</var> contains some auxiliary routines for a NativeInt-typed ordinal value.
+It consists mainly of conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TWordHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TInt64Helper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TByteHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TNativeIntHelper.MaxValue">
+<short>Maximum value for a NativeInt</short>
+<descr>
+<var>MaxValue</var> is the biggest value a NativeInt-typed value can contain.
+</descr>
+<seealso>
+<link id="TNativeIntHelper.MinValue"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TNativeIntHelper.MinValue">
+<short>Minimum value for a NativeInt</short>
+<descr>
+<var>MinValue</var> is the smallest value a NativeInt-typed value can contain.    
+</descr>
+<seealso>
+<link id="TNativeIntHelper.MaxValue"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TNativeIntHelper.Parse">
+<short>Convert from a string</short>
+<descr>
+<var>Parse</var> will attempt to convert the string <var>AString</var> to a NativeInt value. 
+It uses the <link id="StrToInt"/> function to perform the conversion, so no
+localization is taken into account. 
+</descr>
+<errors>
+If the string does not contain a valid NativeInt value, an <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TNativeIntHelper.ToString"/>
+<link id="TNativeIntHelper.TryParse"/>
+<link id="StrToInt"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TNativeIntHelper.Size">
+<short>Size, in bytes, of the NativeInt value</short>
+<descr>
+<var>Size</var> returns the size (in NativeInts) of the NativeInt value. 
+This is equivalent to <var>SizeOf(NativeInt)</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TNativeIntHelper.ToString">
+<short>Convert the value to string</short>
+<descr>
+<var>ToString</var> will, in the class function variant of this method, convert <var>AValue</var> to
+a string representation. In the regular method overloaded version of <var>ToString</var>, the NativeInt value itself is used.
+The <link id="IntToStr"/> function is used to do the conversion.
+</descr>
+<seealso>
+<link id="TNativeIntHelper.Parse"/>
+<link id="IntToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TNativeIntHelper.TryParse">
+<short>Try to convert a string to a NativeInt, report success or failure</short>
+<descr>
+<p>
+<var>TryParse</var> attempts to convert the string <var>AString</var> to a
+NativeInt, and reports the success of the attempt. If the attempt is succesful,
+then <var>True</var> is returned, and the actual value of the NativeInt is
+returned in <var>AValue</var>.
+</p>
+<p>
+It uses the <link id="val"/> function to perform the conversion, so no
+localization is taken into account. 
+</p>
+</descr>
+<seealso>
+<link id="TNativeIntHelper.Parse"/>
+<link id="#rtl.system.val">Val</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TNativeIntHelper.ToBoolean">
+<short>Convert to a boolean value</short>
+<descr>
+<var>ToBoolean</var> converts the NativeInt value to a boolean: it returns
+<var>True</var> if the value is nonzero, <var>False</var> if it is zero.
+</descr>
+<seealso>
+<link id="TNativeIntHelper.ToSingle"/>
+<link id="TNativeIntHelper.ToDouble"/>
+<link id="TNativeIntHelper.ToExtended"/>
+<link id="TNativeIntHelper.ToString"/>
+<link id="TNativeIntHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TNativeIntHelper.ToDouble">
+<short>Convert to a double-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the NativeInt value to a double-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TNativeIntHelper.ToBoolean"/>
+<link id="TNativeIntHelper.ToExtended"/>
+<link id="TNativeIntHelper.ToSingle"/>
+<link id="TNativeIntHelper.ToString"/>
+<link id="TNativeIntHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TNativeIntHelper.ToExtended">
+<short>Convert to an extended-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the NativeInt value to an extended-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TNativeIntHelper.ToBoolean"/>
+<link id="TNativeIntHelper.ToSingle"/>
+<link id="TNativeIntHelper.ToDouble"/>
+<link id="TNativeIntHelper.ToString"/>
+<link id="TNativeIntHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TNativeIntHelper.ToHexString">
+<short>Convert to a hexadecimal string representation</short>
+<descr>
+<var>ToHexString</var> converts the NativeInt value to a hexadecimal string
+representation. The <var>AMinDigits</var> argument specifies the minimal
+number of characters in the resulting string. The string will be left-padded
+with zeroes if the representation contains less than  <var>AMinDigits</var>
+characters.
+</descr>
+<seealso>
+<link id="TNativeIntHelper.ToBoolean"/>
+<link id="TNativeIntHelper.ToSingle"/>
+<link id="TNativeIntHelper.ToDouble"/>
+<link id="TNativeIntHelper.ToString"/>
+<link id="TNativeIntHelper.ToExtended"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TNativeIntHelper.ToSingle">
+<short>Convert to an single-sized floating point value</short>
+<descr>
+<var>ToSingle</var> converts the NativeInt value to a single-sized floating point
+value.
+</descr>
+<seealso>
+<link id="TNativeIntHelper.ToBoolean"/>
+<link id="TNativeIntHelper.ToDouble"/>
+<link id="TNativeIntHelper.ToExtended"/>
+<link id="TNativeIntHelper.ToString"/>
+<link id="TNativeIntHelper.ToHexString"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TNativeUIntHelper
+  ********************************************************************
+-->
+
+
+<!-- #rtl.sysutils.NativeUInt Visibility: default -->
+<element name="NativeUInt">
+<short>Helper for a NativeUInt-typed ordinal value</short>
+<descr>
+<var>NativeUInt</var> contains some auxiliary routines for a NativeUInt-typed ordinal value.
+It consists mainly of conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TWordHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TInt64Helper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TByteHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="NativeUInt.MaxValue">
+<short>Maximum value for a NativeUInt</short>
+<descr>
+<var>MaxValue</var> is the biggest value a NativeUInt-typed value can contain.
+</descr>
+<seealso>
+<link id="NativeUInt.MinValue"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="NativeUInt.MinValue">
+<short>Minimum value for a NativeUInt</short>
+<descr>
+<var>MinValue</var> is the smallest value a NativeUInt-typed value can contain.    
+</descr>
+<seealso>
+<link id="NativeUInt.MaxValue"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="NativeUInt.Parse">
+<short>Convert from a string</short>
+<descr>
+<var>Parse</var> will attempt to convert the string <var>AString</var> to a NativeUInt value. 
+It uses the <link id="StrToInt"/> function to perform the conversion, so no
+localization is taken into account. 
+</descr>
+<errors>
+If the string does not contain a valid NativeUInt value, an <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="NativeUInt.ToString"/>
+<link id="NativeUInt.TryParse"/>
+<link id="StrToInt"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="NativeUInt.Size">
+<short>Size, in bytes, of the NativeUInt value</short>
+<descr>
+<var>Size</var> returns the size (in NativeUInts) of the NativeUInt value. 
+This is equivalent to <var>SizeOf(NativeUInt)</var>.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="NativeUInt.ToString">
+<short>Convert the value to string</short>
+<descr>
+<var>ToString</var> will, in the class function variant of this method, convert <var>AValue</var> to
+a string representation. In the regular method overloaded version of <var>ToString</var>, the NativeUInt value itself is used.
+The <link id="IntToStr"/> function is used to do the conversion.
+</descr>
+<seealso>
+<link id="NativeUInt.Parse"/>
+<link id="IntToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="NativeUInt.TryParse">
+<short>Try to convert a string to a NativeUInt, report success or failure</short>
+<descr>
+<p>
+<var>TryParse</var> attempts to convert the string <var>AString</var> to a
+NativeUInt, and reports the success of the attempt. If the attempt is succesful,
+then <var>True</var> is returned, and the actual value of the NativeUInt is
+returned in <var>AValue</var>.
+</p>
+<p>
+It uses the <link id="val"/> function to perform the conversion, so no
+localization is taken into account. 
+</p>
+</descr>
+<seealso>
+<link id="NativeUInt.Parse"/>
+<link id="#rtl.system.val">Val</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="NativeUInt.ToBoolean">
+<short>Convert to a boolean value</short>
+<descr>
+<var>ToBoolean</var> converts the NativeUInt value to a boolean: it returns
+<var>True</var> if the value is nonzero, <var>False</var> if it is zero.
+</descr>
+<seealso>
+<link id="NativeUInt.ToSingle"/>
+<link id="NativeUInt.ToDouble"/>
+<link id="NativeUInt.ToExtended"/>
+<link id="NativeUInt.ToString"/>
+<link id="NativeUInt.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="NativeUInt.ToDouble">
+<short>Convert to a double-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the NativeUInt value to a double-sized floating point
+value.
+</descr>
+<seealso>
+<link id="NativeUInt.ToBoolean"/>
+<link id="NativeUInt.ToExtended"/>
+<link id="NativeUInt.ToSingle"/>
+<link id="NativeUInt.ToString"/>
+<link id="NativeUInt.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="NativeUInt.ToExtended">
+<short>Convert to an extended-sized floating point value</short>
+<descr>
+<var>ToDouble</var> converts the NativeUInt value to an extended-sized floating point
+value.
+</descr>
+<seealso>
+<link id="NativeUInt.ToBoolean"/>
+<link id="NativeUInt.ToSingle"/>
+<link id="NativeUInt.ToDouble"/>
+<link id="NativeUInt.ToString"/>
+<link id="NativeUInt.ToHexString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="NativeUInt.ToHexString">
+<short>Convert to a hexadecimal string representation</short>
+<descr>
+<var>ToHexString</var> converts the NativeUInt value to a hexadecimal string
+representation. The <var>AMinDigits</var> argument specifies the minimal
+number of characters in the resulting string. The string will be left-padded
+with zeroes if the representation contains less than  <var>AMinDigits</var>
+characters.
+</descr>
+<seealso>
+<link id="NativeUInt.ToBoolean"/>
+<link id="NativeUInt.ToSingle"/>
+<link id="NativeUInt.ToDouble"/>
+<link id="NativeUInt.ToString"/>
+<link id="NativeUInt.ToExtended"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="NativeUInt.ToSingle">
+<short>Convert to an single-sized floating point value</short>
+<descr>
+<var>ToSingle</var> converts the NativeUInt value to a single-sized floating point
+value.
+</descr>
+<seealso>
+<link id="NativeUInt.ToBoolean"/>
+<link id="NativeUInt.ToDouble"/>
+<link id="NativeUInt.ToExtended"/>
+<link id="NativeUInt.ToString"/>
+<link id="NativeUInt.ToHexString"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TUseBoolStrs">
+<short>Use boolean strings</short>
+<descr>
+<var>TUseBoolStrs</var> is an enumerated type which indicates whether bool
+strs must be used when converting boolean to strings.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUseBoolStrs.False">
+<short>Numerical values should be used (0 and 1)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TUseBoolStrs.True">
+<short>String representations should be used.</short>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TBooleanHelper
+  ********************************************************************
+-->
+
+<!-- #rtl.sysutils.TBooleanHelper Visibility: default -->
+<element name="TBooleanHelper">
+<short>Helper for the <var>Boolean</var> type.</short>
+<descr>
+<var>TBooleanHelper</var> is a helper type for the <var>Boolean</var> type.
+It contains mostly conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TWordHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TInt64Helper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TByteHelper"/>
+<link id="TByteBoolHelper"/>
+<link id="TWordBoolHelper"/>
+<link id="TLongBoolHelper"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TBooleanHelper.Parse">
+<short>Convert string value to boolean value.</short>
+<descr>
+<var>Parse</var> attempts to convert the string <var>S</var> to a boolean value.
+It uses the <link id="StrToBool"/> function to perform the conversion.
+</descr>
+<errors>
+If <var>S</var> does not contain a valid string representation, then an
+<link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TBooleanHelper.TryToParse"/>
+<link id="TBooleanHelper.ToString"/>
+<link id="TBooleanHelper.ToInteger"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TBooleanHelper.Size">
+<short>Return the size (in bytes) of the </short>
+<descr>
+<var>Size</var> returns the size (in bytes) of the boolean value. This is
+equivalent to <var>SizeOf(Boolean)</var>.
+</descr>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TBooleanHelper.ToString">
+<short>Convert a boolean value to string.</short>
+<descr>
+<p>
+<var>ToString</var> will, in the class method version, convert the
+<var>AValue</var> boolean to a string representation. In the function method
+version the boolean value itself (<var>Self</var>) will be converted.
+</p>
+<p>
+If the <var>UseBoolStrs</var> parameter equals <var>TUseBoolStrs.True</var>, then
+the string representation will use the boolean strings <link id="BoolStrs"/>.
+The default value for <var>UseBoolStrs</var> is <var>TUseBoolStrs.False</var>.
+</p>
+<p>
+The conversion is done using the <link id="BoolTostr"/> function.
+</p>
+</descr>
+<seealso>
+<link id="BoolStrs"/>
+<link id="BoolToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TBooleanHelper.TryToParse">
+<short>Try to convert a string to a boolean value</short>
+<descr>
+<var>TryToParse</var> will attempt to convert the string <var>S</var> to a
+boolean value. If the attempt is succesful, <var>True</var> is returned, and
+the actual value is returned in <var>AValue</var>. If the attempt failed,
+<var>False</var> is returned.
+</descr>
+<seealso>
+<link id="TBooleanHelper.Parse"/>
+<link id="TBooleanHelper.ToString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TBooleanHelper.ToInteger">
+<short>Convert to an integer value</short>
+<descr>
+<var>ToInteger</var> will return the boolean value, typecasted to <var>Integer</var>.
+</descr>
+<seealso>
+<link id="TBooleanHelper.ToString"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TByteBoolHelper
+  ********************************************************************
+-->
+
+
+<!-- #rtl.sysutils.TByteBoolHelper Visibility: default -->
+<element name="TByteBoolHelper">
+<short>Helper for the <var>ByteBool</var> type.</short>
+<descr>
+<var>TByteBoolHelper</var> is a helper type for the <var>ByteBool</var> type.
+It contains mostly conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TWordHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TInt64Helper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TByteHelper"/>
+<link id="TByteBoolHelper"/>
+<link id="TWordBoolHelper"/>
+<link id="TLongBoolHelper"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TByteBoolHelper.Parse">
+<short>Convert string value to ByteBool value.</short>
+<descr>
+<var>Parse</var> attempts to convert the string <var>S</var> to a ByteBool value.
+It uses the <link id="StrToBool"/> function to perform the conversion.
+</descr>
+<errors>
+If <var>S</var> does not contain a valid string representation, then an
+<link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TByteBoolHelper.TryToParse"/>
+<link id="TByteBoolHelper.ToString"/>
+<link id="TByteBoolHelper.ToInteger"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TByteBoolHelper.Size">
+<short>Return the size (in bytes) of the </short>
+<descr>
+<var>Size</var> returns the size (in bytes) of the ByteBool value. This is
+equivalent to <var>SizeOf(ByteBool)</var>.
+</descr>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TByteBoolHelper.ToString">
+<short>Convert a ByteBool value to string.</short>
+<descr>
+<p>
+<var>ToString</var> will, in the class method version, convert the
+<var>AValue</var> ByteBool to a string representation. In the function method
+version the ByteBool value itself (<var>Self</var>) will be converted.
+</p>
+<p>
+If the <var>UseBoolStrs</var> parameter equals <var>TUseBoolStrs.True</var>, then
+the string representation will use the ByteBool strings <link id="BoolStrs"/>.
+The default value for <var>UseBoolStrs</var> is <var>TUseBoolStrs.False</var>.
+</p>
+<p>
+The conversion is done using the <link id="BoolTostr"/> function.
+</p>
+</descr>
+<seealso>
+<link id="BoolStrs"/>
+<link id="BoolToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TByteBoolHelper.TryToParse">
+<short>Try to convert a string to a ByteBool value</short>
+<descr>
+<var>TryToParse</var> will attempt to convert the string <var>S</var> to a
+ByteBool value. If the attempt is succesful, <var>True</var> is returned, and
+the actual value is returned in <var>AValue</var>. If the attempt failed,
+<var>False</var> is returned.
+</descr>
+<seealso>
+<link id="TByteBoolHelper.Parse"/>
+<link id="TByteBoolHelper.ToString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TByteBoolHelper.ToInteger">
+<short>Convert to an integer value</short>
+<descr>
+<var>ToInteger</var> will return the ByteBool value, typecasted to <var>Integer</var>.
+</descr>
+<seealso>
+<link id="TByteBoolHelper.ToString"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TWordBoolHelper
+  ********************************************************************
+-->
+
+
+
+<!-- #rtl.sysutils.TWordBoolHelper Visibility: default -->
+<element name="TWordBoolHelper">
+<short>Helper for the <var>WordBool</var> type.</short>
+<descr>
+<var>TWordBoolHelper</var> is a helper type for the <var>WordBool</var> type.
+It contains mostly conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TWordHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TInt64Helper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TByteHelper"/>
+<link id="TByteBoolHelper"/>
+<link id="TWordBoolHelper"/>
+<link id="TLongBoolHelper"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TWordBoolHelper.Parse">
+<short>Convert string value to WordBool value.</short>
+<descr>
+<var>Parse</var> attempts to convert the string <var>S</var> to a WordBool value.
+It uses the <link id="StrToBool"/> function to perform the conversion.
+</descr>
+<errors>
+If <var>S</var> does not contain a valid string representation, then an
+<link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TWordBoolHelper.TryToParse"/>
+<link id="TWordBoolHelper.ToString"/>
+<link id="TWordBoolHelper.ToInteger"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TWordBoolHelper.Size">
+<short>Return the size (in bytes) of the </short>
+<descr>
+<var>Size</var> returns the size (in bytes) of the WordBool value. This is
+equivalent to <var>SizeOf(WordBool)</var>.
+</descr>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TWordBoolHelper.ToString">
+<short>Convert a WordBool value to string.</short>
+<descr>
+<p>
+<var>ToString</var> will, in the class method version, convert the
+<var>AValue</var> WordBool to a string representation. In the function method
+version the WordBool value itself (<var>Self</var>) will be converted.
+</p>
+<p>
+If the <var>UseBoolStrs</var> parameter equals <var>TUseBoolStrs.True</var>, then
+the string representation will use the WordBool strings <link id="BoolStrs"/>.
+The default value for <var>UseBoolStrs</var> is <var>TUseBoolStrs.False</var>.
+</p>
+<p>
+The conversion is done using the <link id="BoolTostr"/> function.
+</p>
+</descr>
+<seealso>
+<link id="BoolStrs"/>
+<link id="BoolToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TWordBoolHelper.TryToParse">
+<short>Try to convert a string to a WordBool value</short>
+<descr>
+<var>TryToParse</var> will attempt to convert the string <var>S</var> to a
+WordBool value. If the attempt is succesful, <var>True</var> is returned, and
+the actual value is returned in <var>AValue</var>. If the attempt failed,
+<var>False</var> is returned.
+</descr>
+<seealso>
+<link id="TWordBoolHelper.Parse"/>
+<link id="TWordBoolHelper.ToString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TWordBoolHelper.ToInteger">
+<short>Convert to an integer value</short>
+<descr>
+<var>ToInteger</var> will return the WordBool value, typecasted to <var>Integer</var>.
+</descr>
+<seealso>
+<link id="TWordBoolHelper.ToString"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TLongBoolHelper
+  ********************************************************************
+-->
+
+
+
+<!-- #rtl.sysutils.TLongBoolHelper Visibility: default -->
+<element name="TLongBoolHelper">
+<short>Helper for the <var>LongBool</var> type.</short>
+<descr>
+<var>TLongBoolHelper</var> is a helper type for the <var>LongBool</var> type.
+It contains mostly conversion routines to and from other types.
+</descr>
+<seealso>
+<link id="TStringHelper"/>
+<link id="TShortIntHelper"/>
+<link id="TSmallIntHelper"/>
+<link id="TWordHelper"/>
+<link id="TCardinalHelper"/>
+<link id="TIntegerHelper"/>
+<link id="TInt64Helper"/>
+<link id="TQWordHelper"/>
+<link id="TNativeIntHelper"/>
+<link id="TByteHelper"/>
+<link id="TByteBoolHelper"/>
+<link id="TWordBoolHelper"/>
+<link id="TLongBoolHelper"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TLongBoolHelper.Parse">
+<short>Convert string value to LongBool value.</short>
+<descr>
+<var>Parse</var> attempts to convert the string <var>S</var> to a LongBool value.
+It uses the <link id="StrToBool"/> function to perform the conversion.
+</descr>
+<errors>
+If <var>S</var> does not contain a valid string representation, then an
+<link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TLongBoolHelper.TryToParse"/>
+<link id="TLongBoolHelper.ToString"/>
+<link id="TLongBoolHelper.ToInteger"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TLongBoolHelper.Size">
+<short>Return the size (in bytes) of the </short>
+<descr>
+<var>Size</var> returns the size (in bytes) of the LongBool value. This is
+equivalent to <var>SizeOf(LongBool)</var>.
+</descr>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TLongBoolHelper.ToString">
+<short>Convert a LongBool value to string.</short>
+<descr>
+<p>
+<var>ToString</var> will, in the class method version, convert the
+<var>AValue</var> LongBool to a string representation. In the function method
+version the LongBool value itself (<var>Self</var>) will be converted.
+</p>
+<p>
+If the <var>UseBoolStrs</var> parameter equals <var>TUseBoolStrs.True</var>, then
+the string representation will use the LongBool strings <link id="BoolStrs"/>.
+The default value for <var>UseBoolStrs</var> is <var>TUseBoolStrs.False</var>.
+</p>
+<p>
+The conversion is done using the <link id="BoolTostr"/> function.
+</p>
+</descr>
+<seealso>
+<link id="BoolStrs"/>
+<link id="BoolToStr"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TLongBoolHelper.TryToParse">
+<short>Try to convert a string to a LongBool value</short>
+<descr>
+<var>TryToParse</var> will attempt to convert the string <var>S</var> to a
+LongBool value. If the attempt is succesful, <var>True</var> is returned, and
+the actual value is returned in <var>AValue</var>. If the attempt failed,
+<var>False</var> is returned.
+</descr>
+<seealso>
+<link id="TLongBoolHelper.Parse"/>
+<link id="TLongBoolHelper.ToString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TLongBoolHelper.ToInteger">
+<short>Convert to an integer value</short>
+<descr>
+<var>ToInteger</var> will return the LongBool value, typecasted to <var>Integer</var>.
+</descr>
+<seealso>
+<link id="TLongBoolHelper.ToString"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="FreeMemAndNil">
+<short>Free the heap memory pointed to by a pointer and set pointer to nil.</short>
+<descr>
+<var>FreeMemAndNil</var> will free the memory pointed to by <var>P</var> and
+will set <var>P</var> to Nil. Note that this function is not type safe; the
+programmer is responsible for ensuring that this function is called with a
+correct pointer parameter. Failure to do so may result in run-time errors.
+</descr>
+<seealso>
+<link id="FreeAndNil"/>
 </seealso>
 </element>
 
