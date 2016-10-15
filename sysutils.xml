@@ -459,7 +459,7 @@ applied by this unit, these must be initialized separately by including the
 <p>
 The sysutils unit contains type helpers for basic language types: boolean,
 ordinals (shortint, smallint, byte, word, integer, cardinal, int64, wqord,
-nativeint, nativeuint), strings, GUID values.  
+nativeint, nativeuint), strings, floating-point and GUID values.  
 They can be used as-is, or they can be descended from to form your own type helpers.
 </p>
 </descr>
@@ -479,6 +479,9 @@ They can be used as-is, or they can be descended from to form your own type help
 <link id="TByteBoolHelper"/>
 <link id="TWordBoolHelper"/>
 <link id="TLongBoolHelper"/>
+<link id="TSingleHelper"/>
+<link id="TDoubleHelper"/>
+<link id="TExtendedHelper"/>
 </seealso>
 </topic>
 
@@ -14061,7 +14064,7 @@ value.
 
 
 <!-- #rtl.sysutils.NativeUInt Visibility: default -->
-<element name="NativeUInt">
+<element name="TNativeUIntHelper">
 <short>Helper for a NativeUInt-typed ordinal value</short>
 <descr>
 <var>NativeUInt</var> contains some auxiliary routines for a NativeUInt-typed ordinal value.
@@ -14082,7 +14085,7 @@ It consists mainly of conversion routines to and from other types.
 </element>
 
 <!-- constant Visibility: public -->
-<element name="NativeUInt.MaxValue">
+<element name="TNativeUIntHelper.MaxValue">
 <short>Maximum value for a NativeUInt</short>
 <descr>
 <var>MaxValue</var> is the biggest value a NativeUInt-typed value can contain.
@@ -14093,7 +14096,7 @@ It consists mainly of conversion routines to and from other types.
 </element>
 
 <!-- constant Visibility: public -->
-<element name="NativeUInt.MinValue">
+<element name="TNativeUIntHelper.MinValue">
 <short>Minimum value for a NativeUInt</short>
 <descr>
 <var>MinValue</var> is the smallest value a NativeUInt-typed value can contain.    
@@ -14104,7 +14107,7 @@ It consists mainly of conversion routines to and from other types.
 </element>
 
 <!-- class function Visibility: public -->
-<element name="NativeUInt.Parse">
+<element name="TNativeUIntHelper.Parse">
 <short>Convert from a string</short>
 <descr>
 <var>Parse</var> will attempt to convert the string <var>AString</var> to a NativeUInt value. 
@@ -14122,7 +14125,7 @@ If the string does not contain a valid NativeUInt value, an <link id="EConvertEr
 </element>
 
 <!-- class function Visibility: public -->
-<element name="NativeUInt.Size">
+<element name="TNativeUIntHelper.Size">
 <short>Size, in bytes, of the NativeUInt value</short>
 <descr>
 <var>Size</var> returns the size (in NativeUInts) of the NativeUInt value. 
@@ -14137,7 +14140,7 @@ None.
 </element>
 
 <!-- class function Visibility: public -->
-<element name="NativeUInt.ToString">
+<element name="TNativeUIntHelper.ToString">
 <short>Convert the value to string</short>
 <descr>
 <var>ToString</var> will, in the class function variant of this method, convert <var>AValue</var> to
@@ -14151,7 +14154,7 @@ The <link id="IntToStr"/> function is used to do the conversion.
 </element>
 
 <!-- class function Visibility: public -->
-<element name="NativeUInt.TryParse">
+<element name="TNativeUIntHelper.TryParse">
 <short>Try to convert a string to a NativeUInt, report success or failure</short>
 <descr>
 <p>
@@ -14172,7 +14175,7 @@ localization is taken into account.
 </element>
 
 <!-- function Visibility: public -->
-<element name="NativeUInt.ToBoolean">
+<element name="TNativeUIntHelper.ToBoolean">
 <short>Convert to a boolean value</short>
 <descr>
 <var>ToBoolean</var> converts the NativeUInt value to a boolean: it returns
@@ -14188,7 +14191,7 @@ localization is taken into account.
 </element>
 
 <!-- function Visibility: public -->
-<element name="NativeUInt.ToDouble">
+<element name="TNativeUIntHelper.ToDouble">
 <short>Convert to a double-sized floating point value</short>
 <descr>
 <var>ToDouble</var> converts the NativeUInt value to a double-sized floating point
@@ -14204,7 +14207,7 @@ value.
 </element>
 
 <!-- function Visibility: public -->
-<element name="NativeUInt.ToExtended">
+<element name="TNativeUIntHelper.ToExtended">
 <short>Convert to an extended-sized floating point value</short>
 <descr>
 <var>ToDouble</var> converts the NativeUInt value to an extended-sized floating point
@@ -14220,7 +14223,7 @@ value.
 </element>
 
 <!-- function Visibility: public -->
-<element name="NativeUInt.ToHexString">
+<element name="TNativeUIntHelper.ToHexString">
 <short>Convert to a hexadecimal string representation</short>
 <descr>
 <var>ToHexString</var> converts the NativeUInt value to a hexadecimal string
@@ -14239,7 +14242,7 @@ characters.
 </element>
 
 <!-- function Visibility: public -->
-<element name="NativeUInt.ToSingle">
+<element name="TNativeUIntHelper.ToSingle">
 <short>Convert to an single-sized floating point value</short>
 <descr>
 <var>ToSingle</var> converts the NativeUInt value to a single-sized floating point
@@ -14719,6 +14722,1258 @@ the actual value is returned in <var>AValue</var>. If the attempt failed,
 <link id="TLongBoolHelper.ToString"/>
 </seealso>
 </element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TSingleHelper
+  ********************************************************************
+-->
+
+<!-- #rtl.sysutils.TSingleHelper Visibility: default -->
+<element name="TSingleHelper">
+<short>Helper for Single floating point type</short>
+<descr>
+<var>TSingleHelper</var> is the helper type for the single-sized floating point type.
+It contains some conversion methods, as well as access to the low-level
+structure of the floating-point representation of a single.
+</descr>
+<seealso>
+<link id="TDoubleHelper"/>
+<link id="TExtendedHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TSingleHelper.Epsilon">
+<short>Precision for this floating point type</short>
+<descr>
+<var>Epsilon</var> returns the precision of the floating point value :
+differences smaller than this value cannot be detected or represented.
+It can also be viewed as the smallest positive value that can be
+represented.
+</descr>
+<seealso>
+<link id="TSingleHelper.MinValue"/>
+<link id="TSingleHelper.MaxValue"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TSingleHelper.MaxValue">
+<short>Largest possible value for the <var>Single</var> floating point type</short>
+<descr>
+<var>MaxValue</var> is the largest possible value that can be represented by
+the <var>Single</var> floating point type. For bigger values, <var>Double</var> or
+<var>Extended</var> types must be used.
+</descr>
+<seealso>
+<link id="TSingleHelper.MinValue"/>
+<link id="TSingleHelper.Epsilon"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TSingleHelper.MinValue">
+<short>Smallest (negative) possible value for the <var>Single</var> floating point type</short>
+<descr>
+<var>MaxValue</var> is the largest possible value that can be represented by
+the <var>Single</var> floating point type. For bigger values,
+<var>Double</var> or
+<var>Extended</var> types must be used.
+</descr>
+<seealso>
+<link id="TSingleHelper.MaxValue"/>
+<link id="TSingleHelper.Epsilon"/> 
+<link id="TSingleHelper.PositiveInfinity"/>
+<link id="TSingleHelper.NegativeInfinity"/>
+<link id="TSingleHelper.NaN"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TSingleHelper.PositiveInfinity">
+<short>Positive infinity as represented by a single floating point type</short>
+<descr>
+<var>PositiveInfinity</var> is the value representing positive infinity in a
+single-sized floating point value.
+</descr>
+<seealso>
+<link id="TSingleHelper.MaxValue"/>
+<link id="TSingleHelper.MinValue"/>
+<link id="TSingleHelper.Epsilon"/>
+<link id="TSingleHelper.NegativeInfinity"/>
+<link id="TSingleHelper.NaN"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TSingleHelper.NegativeInfinity">
+<short>Negative infinity as represented by a single floating point type</short>
+<descr>
+<var>NegativeInfinity</var> is the value representing negative infinity in a
+single-sized floating point value.
+</descr>
+<seealso>
+<link id="TSingleHelper.MaxValue"/>
+<link id="TSingleHelper.MinValue"/>
+<link id="TSingleHelper.Epsilon"/>
+<link id="TSingleHelper.PositiveInfinity"/>
+<link id="TSingleHelper.NaN"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TSingleHelper.NaN">
+<short>Representation of NaN (Not a Number)</short>
+<descr>
+<var>NaN</var> is the Representation of NaN (Not a Number) for a single-sized floating point type.
+</descr>
+<seealso>
+<link id="TSingleHelper.MaxValue"/>
+<link id="TSingleHelper.MinValue"/>
+<link id="TSingleHelper.Epsilon"/> 
+<link id="TSingleHelper.PositiveInfinity"/>
+<link id="TSingleHelper.NegativeInfinity"/>
+</seealso>
+
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TSingleHelper.IsNan">
+<short>Check whether a value equals <var>NaN</var>.</short>
+<descr>
+<var>IsNan</var> checks whether a single-sized floating point value is
+<var>NaN</var> (Not a Number). If so, it returns <var>True</var>.
+When the class function version is used, the value can be specified using
+<var>AValue</var>. In the method version, the used value is (<var>Self</var>).
+</descr>
+<seealso>
+<link id="TSingleHelper.IsInfinity"/>
+<link id="TSingleHelper.IsPositiveInfinity"/>
+<link id="TSingleHelper.IsNegativeInfinity"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TSingleHelper.IsInfinity">
+<short>Check whether a value is positive or negative infinity.</short>
+<descr>
+<var>IsInfinity</var> checks whether a  single-sized floating point value
+represents a positive or negative infinity. If so, it returns <var>True</var>.
+When the class function version is used, the value can be specified using
+<var>AValue</var>. In the method version, the used value is
+(<var>Self</var>).
+</descr>
+<seealso>
+<link id="TSingleHelper.IsNan"/>
+<link id="TSingleHelper.IsPositiveInfinity"/>
+<link id="TSingleHelper.IsNegativeInfinity"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TSingleHelper.IsNegativeInfinity">
+<short>Check whether a value is  negative infinity.</short>
+<descr>
+<var>IsNegativeInfinity</var> checks whether a  single-sized floating point value
+represents a negative infinity. If so, it returns <var>True</var>.
+When the class function version is used, the value can be specified using
+<var>AValue</var>. In the method version, the used value is
+(<var>Self</var>).
+</descr>
+<seealso>
+<link id="TSingleHelper.IsNan"/>
+<link id="TSingleHelper.IsPositiveInfinity"/>
+<link id="TSingleHelper.IsInfinity"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TSingleHelper.IsPositiveInfinity">
+<short>Check whether a value is positive infinity.</short>
+<descr>
+<var>IsPositiveInfinity</var> checks whether a  single-sized floating point value
+represents a positive infinity. If so, it returns <var>True</var>.
+When the class function version is used, the value can be specified using
+<var>AValue</var>. In the method version, the used value is
+(<var>Self</var>).
+</descr>
+<seealso>
+<link id="TSingleHelper.IsNan"/>
+<link id="TSingleHelper.IsNegativeInfinity"/>
+<link id="TSingleHelper.IsInfinity"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TSingleHelper.Parse">
+<short>Convert a string to a floating point value</short>
+<descr>
+<var>Parse</var> will try to convert <var>AString</var> to a single-sized
+floating point value. It will take into account internationalization settings.
+(it uses <var>FloatToStr</var>).
+</descr>
+<errors>
+If the string <var>AString</var> is not a valid floating-point value, a
+<link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="FloatToStr"/>
+<link id="TSingleHelper.ToString"/>
+<link id="TSingleHelper.TryParse"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TSingleHelper.Size">
+<short>Size (in bytes) of a single-sized floating point value.</short>
+<descr>
+<var>Size</var> is the size (in bytes) of a single-sized floating point value.
+It is equivalent to calling <var>SizeOf(Single)</var>.
+</descr>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TSingleHelper.ToString">
+<short>Convert a single-sized floating point value to a string</short>
+<descr>
+<p>
+<var>ToString</var> will convert <var>AValue</var> (or <var>Self</var> in
+the plain method version) to a string. Optionally <var>FormatSettings</var>
+can be specified, to be able to specify the decimal separator character to
+use.
+</p>
+<p>
+Additionally, a precision <var>APrecision</var> and number of digits
+<var>ADigits</var> can be specified, in conjunction with a
+<var>AFormat</var> parameter to specify the form in which the floating-point
+value must be represented. (see <link id="TFloatFormat"/> for an explanation
+of the various values). In this case, <link id="FloatToStrF"/> is used to
+format the value. In the absence of these parameters, <link id="FloatToStr"/>
+is called.
+</p>
+</descr>
+<seealso>
+<link id="FloatToStr"/>
+<link id="FloatToStrF"/>
+<link id="TFloatFormat"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TSingleHelper.TryParse">
+<short>Try to convert a string to a single-sized floating point value.</short>
+<descr>
+<p>
+<var>TryParse</var> attempts to convert the string <var>AString</var> to
+a single-sized floating point value and reports <var>True</var> if the
+conversion was succesful. 
+In that case the parsed value is returned in <var>AValue</var>.
+</p>
+<p>
+If the conversion failed, <var>False</var> is returned.
+</p>
+</descr>
+<seealso>
+<link id="TSingleHelper.Parse"/>
+<link id="TSingleHelper.ToString"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSingleHelper.BuildUp">
+<short>Build a single-sized floating point from its composing parts</short>
+<descr>
+<var>BuildUp</var> will compose a single-sized floating point value from the
+sign <var>ASignFlag</var>, mantissa <var>AMantissa</var> and exponent
+<var>AExponent</var>. It simply sets the <link
+id="TSingleHelper.Sign">Sign</link>, <link id="TSingleHelper.Exp">Exp</link>
+and <link id="TSingleHelper.Frac">Frac</link> properties in 1 call.
+</descr>
+<seealso>
+<link id="TSingleHelper.Sign"/>
+<link id="TSingleHelper.Exp"/>
+<link id="TSingleHelper.Frac"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSingleHelper.Exponent">
+<short>Exponent of the floating-point value</short>
+<descr>
+<var>Exponent</var> is the value <var>X</var> in the representation of the
+floating-point value in <var>m*2^X</var>, i.e. the exponent.
+</descr>
+<seealso>
+<link id="TSingleHelper.Sign"/>
+<link id="TSingleHelper.Exp"/> 
+<link id="TSingleHelper.Frac"/>
+<link id="TSingleHelper.Fraction"/>
+<link id="TSingleHelper.Mantissa"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSingleHelper.Fraction">
+<short>Fraction of the floating-point value</short>
+<descr>
+<var>Fraction</var> is the decimal part of the floating-point value.
+</descr>
+<seealso>
+<link id="TSingleHelper.Sign"/>
+<link id="TSingleHelper.Exp"/> 
+<link id="TSingleHelper.Exponent"/> 
+<link id="TSingleHelper.Frac"/>
+<link id="TSingleHelper.Mantissa"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSingleHelper.Mantissa">
+<short>Mantissa of the floating-point</short>
+<descr>
+<var>Mantissa</var> is the value of the significand without the hidden bit.
+This means it the plain bit pattern as it is stored in memory.
+</descr>
+<seealso>
+<link id="TSingleHelper.Sign"/>
+<link id="TSingleHelper.Exp"/> 
+<link id="TSingleHelper.Exponent"/> 
+<link id="TSingleHelper.Frac"/>
+<link id="TSingleHelper.Fraction"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSingleHelper.SpecialType">
+<short>Return the type of the single-sized floating point value</short>
+<descr>
+<p>
+<var>SpecialType</var> checks whether the single-sized floating point value
+equals one of several special values, and returns an enumerated value
+describing which value this is. See <link id="TFloatSpecial"/> for an
+explanation of the possible values.
+</p>
+</descr>
+<seealso>
+<link id="TFloatSpecial"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSingleHelper.Bytes">
+<short>Indexed access to the individual bytes of the floating point value</short>
+<descr>
+<var>Bytes</var> can be used to get or set the various bytes that make up
+the single-sized floating point value. The index runs from 0 to
+<var>Size-1</var>.
+</descr>
+<seealso>
+<link id="TSingleHelper.Words"/>
+<link id="TSingleHelper.Size"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSingleHelper.Words">
+<short>Indexed access to the words that make up the floating point value</short>
+<descr>
+<var>Words</var> can be used to get or set the various bytes that make up
+the single-sized floating point value. The index runs from 0 to <var>(Size-1) div 2</var>.
+</descr>
+<seealso>
+<link id="TSingleHelper.Bytes"/>
+<link id="TSingleHelper.Size"/> 
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSingleHelper.Sign">
+<short>Sign of the floating point value</short>
+<descr>
+<var>Sign</var> returns <var>True</var> if the sign bit of the value is set (i.e. it is
+a negative value) or <var>False</var> if it is not set (i.e. it is a positive value).
+</descr>
+<seealso>
+<link id="TSingleHelper.Bytes"/>
+<link id="TSingleHelper.Exp"/>
+<link id="TSingleHelper.Frac"/>
+<link id="TSingleHelper.Mantissa"/>
+<link id="TSingleHelper.Fraction"/>
+<link id="TSingleHelper.Exponent"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSingleHelper.Exp">
+<short>The bit pattern of the exponent as stored in memory.</short>
+<descr>
+<var>Exp</var> is the internal representation of the <link id="TSingleHelper.Exponent">Exponent</link>.
+</descr>
+<seealso>
+<link id="TSingleHelper.Bytes"/>
+<link id="TSingleHelper.Sign"/>
+<link id="TSingleHelper.Frac"/>
+<link id="TSingleHelper.Mantissa"/>
+<link id="TSingleHelper.Fraction"/>
+<link id="TSingleHelper.Exponent"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSingleHelper.Frac">
+<short>Bitpattern that makes up the fractional part.</short>
+<descr>
+<var>Frac</var> is the bit pattern representing the fractional part
+(significand) including the preceding 1 (the hidden bit).
+</descr>
+<seealso>
+<link id="TSingleHelper.Bytes"/>
+<link id="TSingleHelper.Sign"/>
+<link id="TSingleHelper.Exp"/>
+<link id="TSingleHelper.Mantissa"/>
+<link id="TSingleHelper.Fraction"/>
+<link id="TSingleHelper.Exponent"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TDoubleHelper
+  ********************************************************************
+-->
+
+<!-- #rtl.sysutils.TDoubleHelper Visibility: default -->
+<element name="TDoubleHelper">
+<short>Helper for Double floating point type</short>
+<descr>
+<var>TDoubleHelper</var> is the helper type for the Double-sized floating point type.
+It contains some conversion methods, as well as access to the low-level
+structure of the floating-point representation of a Double.
+</descr>
+<seealso>
+<link id="TDoubleHelper"/>
+<link id="TExtendedHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TDoubleHelper.Epsilon">
+<short>Precision for this floating point type</short>
+<descr>
+<var>Epsilon</var> returns the precision of the floating point value :
+differences smaller than this value cannot be detected or represented.
+It can also be viewed as the smallest positive value that can be
+represented.
+</descr>
+<seealso>
+<link id="TDoubleHelper.MinValue"/>
+<link id="TDoubleHelper.MaxValue"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TDoubleHelper.MaxValue">
+<short>Largest possible value for the <var>Double</var> floating point type</short>
+<descr>
+<var>MaxValue</var> is the largest possible value that can be represented by
+the <var>Double</var> floating point type. For bigger values, <var>Double</var> or
+<var>Extended</var> types must be used.
+</descr>
+<seealso>
+<link id="TDoubleHelper.MinValue"/>
+<link id="TDoubleHelper.Epsilon"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TDoubleHelper.MinValue">
+<short>Smallest (negative) possible value for the <var>Double</var> floating point type</short>
+<descr>
+<var>MaxValue</var> is the largest possible value that can be represented by
+the <var>Double</var> floating point type. For bigger values,
+<var>Double</var> or
+<var>Extended</var> types must be used.
+</descr>
+<seealso>
+<link id="TDoubleHelper.MaxValue"/>
+<link id="TDoubleHelper.Epsilon"/> 
+<link id="TDoubleHelper.PositiveInfinity"/>
+<link id="TDoubleHelper.NegativeInfinity"/>
+<link id="TDoubleHelper.NaN"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TDoubleHelper.PositiveInfinity">
+<short>Positive infinity as represented by a Double floating point type</short>
+<descr>
+<var>PositiveInfinity</var> is the value representing positive infinity in a
+Double-sized floating point value.
+</descr>
+<seealso>
+<link id="TDoubleHelper.MaxValue"/>
+<link id="TDoubleHelper.MinValue"/>
+<link id="TDoubleHelper.Epsilon"/>
+<link id="TDoubleHelper.NegativeInfinity"/>
+<link id="TDoubleHelper.NaN"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TDoubleHelper.NegativeInfinity">
+<short>Negative infinity as represented by a Double floating point type</short>
+<descr>
+<var>NegativeInfinity</var> is the value representing negative infinity in a
+Double-sized floating point value.
+</descr>
+<seealso>
+<link id="TDoubleHelper.MaxValue"/>
+<link id="TDoubleHelper.MinValue"/>
+<link id="TDoubleHelper.Epsilon"/>
+<link id="TDoubleHelper.PositiveInfinity"/>
+<link id="TDoubleHelper.NaN"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TDoubleHelper.NaN">
+<short>Representation of NaN (Not a Number)</short>
+<descr>
+<var>NaN</var> is the Representation of NaN (Not a Number) for a Double-sized floating point type.
+</descr>
+<seealso>
+<link id="TDoubleHelper.MaxValue"/>
+<link id="TDoubleHelper.MinValue"/>
+<link id="TDoubleHelper.Epsilon"/> 
+<link id="TDoubleHelper.PositiveInfinity"/>
+<link id="TDoubleHelper.NegativeInfinity"/>
+</seealso>
+
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TDoubleHelper.IsNan">
+<short>Check whether a value equals <var>NaN</var>.</short>
+<descr>
+<var>IsNan</var> checks whether a Double-sized floating point value is
+<var>NaN</var> (Not a Number). If so, it returns <var>True</var>.
+When the class function version is used, the value can be specified using
+<var>AValue</var>. In the method version, the used value is (<var>Self</var>).
+</descr>
+<seealso>
+<link id="TDoubleHelper.IsInfinity"/>
+<link id="TDoubleHelper.IsPositiveInfinity"/>
+<link id="TDoubleHelper.IsNegativeInfinity"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TDoubleHelper.IsInfinity">
+<short>Check whether a value is positive or negative infinity.</short>
+<descr>
+<var>IsInfinity</var> checks whether a  Double-sized floating point value
+represents a positive or negative infinity. If so, it returns <var>True</var>.
+When the class function version is used, the value can be specified using
+<var>AValue</var>. In the method version, the used value is
+(<var>Self</var>).
+</descr>
+<seealso>
+<link id="TDoubleHelper.IsNan"/>
+<link id="TDoubleHelper.IsPositiveInfinity"/>
+<link id="TDoubleHelper.IsNegativeInfinity"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TDoubleHelper.IsNegativeInfinity">
+<short>Check whether a value is  negative infinity.</short>
+<descr>
+<var>IsNegativeInfinity</var> checks whether a  Double-sized floating point value
+represents a negative infinity. If so, it returns <var>True</var>.
+When the class function version is used, the value can be specified using
+<var>AValue</var>. In the method version, the used value is
+(<var>Self</var>).
+</descr>
+<seealso>
+<link id="TDoubleHelper.IsNan"/>
+<link id="TDoubleHelper.IsPositiveInfinity"/>
+<link id="TDoubleHelper.IsInfinity"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TDoubleHelper.IsPositiveInfinity">
+<short>Check whether a value is positive infinity.</short>
+<descr>
+<var>IsPositiveInfinity</var> checks whether a  Double-sized floating point value
+represents a positive infinity. If so, it returns <var>True</var>.
+When the class function version is used, the value can be specified using
+<var>AValue</var>. In the method version, the used value is
+(<var>Self</var>).
+</descr>
+<seealso>
+<link id="TDoubleHelper.IsNan"/>
+<link id="TDoubleHelper.IsNegativeInfinity"/>
+<link id="TDoubleHelper.IsInfinity"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TDoubleHelper.Parse">
+<short>Convert a string to a floating point value</short>
+<descr>
+<var>Parse</var> will try to convert <var>AString</var> to a Double-sized
+floating point value. It will take into account internationalization settings.
+(it uses <var>FloatToStr</var>).
+</descr>
+<errors>
+If the string <var>AString</var> is not a valid floating-point value, a
+<link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="FloatToStr"/>
+<link id="TDoubleHelper.ToString"/>
+<link id="TDoubleHelper.TryParse"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TDoubleHelper.Size">
+<short>Size (in bytes) of a Double-sized floating point value.</short>
+<descr>
+<var>Size</var> is the size (in bytes) of a Double-sized floating point value.
+It is equivalent to calling <var>SizeOf(Double)</var>.
+</descr>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TDoubleHelper.ToString">
+<short>Convert a Double-sized floating point value to a string</short>
+<descr>
+<p>
+<var>ToString</var> will convert <var>AValue</var> (or <var>Self</var> in
+the plain method version) to a string. Optionally <var>FormatSettings</var>
+can be specified, to be able to specify the decimal separator character to
+use.
+</p>
+<p>
+Additionally, a precision <var>APrecision</var> and number of digits
+<var>ADigits</var> can be specified, in conjunction with a
+<var>AFormat</var> parameter to specify the form in which the floating-point
+value must be represented. (see <link id="TFloatFormat"/> for an explanation
+of the various values). In this case, <link id="FloatToStrF"/> is used to
+format the value. In the absence of these parameters, <link id="FloatToStr"/>
+is called.
+</p>
+</descr>
+<seealso>
+<link id="FloatToStr"/>
+<link id="FloatToStrF"/>
+<link id="TFloatFormat"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TDoubleHelper.TryParse">
+<short>Try to convert a string to a Double-sized floating point value.</short>
+<descr>
+<p>
+<var>TryParse</var> attempts to convert the string <var>AString</var> to
+a Double-sized floating point value and reports <var>True</var> if the
+conversion was succesful. 
+In that case the parsed value is returned in <var>AValue</var>.
+</p>
+<p>
+If the conversion failed, <var>False</var> is returned.
+</p>
+</descr>
+<seealso>
+<link id="TDoubleHelper.Parse"/>
+<link id="TDoubleHelper.ToString"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TDoubleHelper.BuildUp">
+<short>Build a Double-sized floating point from its composing parts</short>
+<descr>
+<var>BuildUp</var> will compose a Double-sized floating point value from the
+sign <var>ASignFlag</var>, mantissa <var>AMantissa</var> and exponent
+<var>AExponent</var>. It simply sets the <link
+id="TDoubleHelper.Sign">Sign</link>, <link id="TDoubleHelper.Exp">Exp</link>
+and <link id="TDoubleHelper.Frac">Frac</link> properties in 1 call.
+</descr>
+<seealso>
+<link id="TDoubleHelper.Sign"/>
+<link id="TDoubleHelper.Exp"/>
+<link id="TDoubleHelper.Frac"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDoubleHelper.Exponent">
+<short>Exponent of the floating-point value</short>
+<descr>
+<var>Exponent</var> is the value <var>X</var> in the representation of the
+floating-point value in <var>m*2^X</var>, i.e. the exponent.
+</descr>
+<seealso>
+<link id="TDoubleHelper.Sign"/>
+<link id="TDoubleHelper.Exp"/> 
+<link id="TDoubleHelper.Frac"/>
+<link id="TDoubleHelper.Fraction"/>
+<link id="TDoubleHelper.Mantissa"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDoubleHelper.Fraction">
+<short>Fraction of the floating-point value</short>
+<descr>
+<var>Fraction</var> is the decimal part of the floating-point value.
+</descr>
+<seealso>
+<link id="TDoubleHelper.Sign"/>
+<link id="TDoubleHelper.Exp"/> 
+<link id="TDoubleHelper.Exponent"/> 
+<link id="TDoubleHelper.Frac"/>
+<link id="TDoubleHelper.Mantissa"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDoubleHelper.Mantissa">
+<short>Mantissa of the floating-point</short>
+<descr>
+<var>Mantissa</var> is the value of the significand without the hidden bit.
+This means it the plain bit pattern as it is stored in memory.
+</descr>
+<seealso>
+<link id="TDoubleHelper.Sign"/>
+<link id="TDoubleHelper.Exp"/> 
+<link id="TDoubleHelper.Exponent"/> 
+<link id="TDoubleHelper.Frac"/>
+<link id="TDoubleHelper.Fraction"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDoubleHelper.SpecialType">
+<short>Return the type of the Double-sized floating point value</short>
+<descr>
+<p>
+<var>SpecialType</var> checks whether the Double-sized floating point value
+equals one of several special values, and returns an enumerated value
+describing which value this is. See <link id="TFloatSpecial"/> for an
+explanation of the possible values.
+</p>
+</descr>
+<seealso>
+<link id="TFloatSpecial"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDoubleHelper.Bytes">
+<short>Indexed access to the individual bytes of the floating point value</short>
+<descr>
+<var>Bytes</var> can be used to get or set the various bytes that make up
+the Double-sized floating point value. The index runs from 0 to
+<var>Size-1</var>.
+</descr>
+<seealso>
+<link id="TDoubleHelper.Words"/>
+<link id="TDoubleHelper.Size"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDoubleHelper.Words">
+<short>Indexed access to the words that make up the floating point value</short>
+<descr>
+<var>Words</var> can be used to get or set the various bytes that make up
+the Double-sized floating point value. The index runs from 0 to <var>(Size-1) div 2</var>.
+</descr>
+<seealso>
+<link id="TDoubleHelper.Bytes"/>
+<link id="TDoubleHelper.Size"/> 
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDoubleHelper.Sign">
+<short>Sign of the floating point value</short>
+<descr>
+<var>Sign</var> returns <var>True</var> if the sign bit of the value is set (i.e. it is
+a negative value) or <var>False</var> if it is not set (i.e. it is a positive value).
+</descr>
+<seealso>
+<link id="TDoubleHelper.Bytes"/>
+<link id="TDoubleHelper.Exp"/>
+<link id="TDoubleHelper.Frac"/>
+<link id="TDoubleHelper.Mantissa"/>
+<link id="TDoubleHelper.Fraction"/>
+<link id="TDoubleHelper.Exponent"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDoubleHelper.Exp">
+<short>The bit pattern of the exponent as stored in memory.</short>
+<descr>
+<var>Exp</var> is the internal representation of the <link id="TDoubleHelper.Exponent">Exponent</link>.
+</descr>
+<seealso>
+<link id="TDoubleHelper.Bytes"/>
+<link id="TDoubleHelper.Sign"/>
+<link id="TDoubleHelper.Frac"/>
+<link id="TDoubleHelper.Mantissa"/>
+<link id="TDoubleHelper.Fraction"/>
+<link id="TDoubleHelper.Exponent"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDoubleHelper.Frac">
+<short>Bitpattern that makes up the fractional part.</short>
+<descr>
+<var>Frac</var> is the bit pattern representing the fractional part
+(significand) including the preceding 1 (the hidden bit).
+</descr>
+<seealso>
+<link id="TDoubleHelper.Bytes"/>
+<link id="TDoubleHelper.Sign"/>
+<link id="TDoubleHelper.Exp"/>
+<link id="TDoubleHelper.Mantissa"/>
+<link id="TDoubleHelper.Fraction"/>
+<link id="TDoubleHelper.Exponent"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TExtendedHelper
+  ********************************************************************
+-->
+
+<!-- #rtl.sysutils.TExtendedHelper Visibility: default -->
+<element name="TExtendedHelper">
+<short>Helper for Extended floating point type</short>
+<descr>
+<var>TExtendedHelper</var> is the helper type for the Extended-sized floating point type.
+It contains some conversion methods, as well as access to the low-level
+structure of the floating-point representation of a Extended.
+</descr>
+<seealso>
+<link id="TDoubleHelper"/>
+<link id="TExtendedHelper"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TExtendedHelper.Epsilon">
+<short>Precision for this floating point type</short>
+<descr>
+<var>Epsilon</var> returns the precision of the floating point value :
+differences smaller than this value cannot be detected or represented.
+It can also be viewed as the smallest positive value that can be
+represented.
+</descr>
+<seealso>
+<link id="TExtendedHelper.MinValue"/>
+<link id="TExtendedHelper.MaxValue"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TExtendedHelper.MaxValue">
+<short>Largest possible value for the <var>Extended</var> floating point type</short>
+<descr>
+<var>MaxValue</var> is the largest possible value that can be represented by
+the <var>Extended</var> floating point type. For bigger values, <var>Double</var> or
+<var>Extended</var> types must be used.
+</descr>
+<seealso>
+<link id="TExtendedHelper.MinValue"/>
+<link id="TExtendedHelper.Epsilon"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TExtendedHelper.MinValue">
+<short>Smallest (negative) possible value for the <var>Extended</var> floating point type</short>
+<descr>
+<var>MaxValue</var> is the largest possible value that can be represented by
+the <var>Extended</var> floating point type. For bigger values,
+<var>Double</var> or
+<var>Extended</var> types must be used.
+</descr>
+<seealso>
+<link id="TExtendedHelper.MaxValue"/>
+<link id="TExtendedHelper.Epsilon"/> 
+<link id="TExtendedHelper.PositiveInfinity"/>
+<link id="TExtendedHelper.NegativeInfinity"/>
+<link id="TExtendedHelper.NaN"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TExtendedHelper.PositiveInfinity">
+<short>Positive infinity as represented by a Extended floating point type</short>
+<descr>
+<var>PositiveInfinity</var> is the value representing positive infinity in a
+Extended-sized floating point value.
+</descr>
+<seealso>
+<link id="TExtendedHelper.MaxValue"/>
+<link id="TExtendedHelper.MinValue"/>
+<link id="TExtendedHelper.Epsilon"/>
+<link id="TExtendedHelper.NegativeInfinity"/>
+<link id="TExtendedHelper.NaN"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TExtendedHelper.NegativeInfinity">
+<short>Negative infinity as represented by a Extended floating point type</short>
+<descr>
+<var>NegativeInfinity</var> is the value representing negative infinity in a
+Extended-sized floating point value.
+</descr>
+<seealso>
+<link id="TExtendedHelper.MaxValue"/>
+<link id="TExtendedHelper.MinValue"/>
+<link id="TExtendedHelper.Epsilon"/>
+<link id="TExtendedHelper.PositiveInfinity"/>
+<link id="TExtendedHelper.NaN"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: public -->
+<element name="TExtendedHelper.NaN">
+<short>Representation of NaN (Not a Number)</short>
+<descr>
+<var>NaN</var> is the Representation of NaN (Not a Number) for a Extended-sized floating point type.
+</descr>
+<seealso>
+<link id="TExtendedHelper.MaxValue"/>
+<link id="TExtendedHelper.MinValue"/>
+<link id="TExtendedHelper.Epsilon"/> 
+<link id="TExtendedHelper.PositiveInfinity"/>
+<link id="TExtendedHelper.NegativeInfinity"/>
+</seealso>
+
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TExtendedHelper.IsNan">
+<short>Check whether a value equals <var>NaN</var>.</short>
+<descr>
+<var>IsNan</var> checks whether a Extended-sized floating point value is
+<var>NaN</var> (Not a Number). If so, it returns <var>True</var>.
+When the class function version is used, the value can be specified using
+<var>AValue</var>. In the method version, the used value is (<var>Self</var>).
+</descr>
+<seealso>
+<link id="TExtendedHelper.IsInfinity"/>
+<link id="TExtendedHelper.IsPositiveInfinity"/>
+<link id="TExtendedHelper.IsNegativeInfinity"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TExtendedHelper.IsInfinity">
+<short>Check whether a value is positive or negative infinity.</short>
+<descr>
+<var>IsInfinity</var> checks whether a  Extended-sized floating point value
+represents a positive or negative infinity. If so, it returns <var>True</var>.
+When the class function version is used, the value can be specified using
+<var>AValue</var>. In the method version, the used value is
+(<var>Self</var>).
+</descr>
+<seealso>
+<link id="TExtendedHelper.IsNan"/>
+<link id="TExtendedHelper.IsPositiveInfinity"/>
+<link id="TExtendedHelper.IsNegativeInfinity"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TExtendedHelper.IsNegativeInfinity">
+<short>Check whether a value is  negative infinity.</short>
+<descr>
+<var>IsNegativeInfinity</var> checks whether a  Extended-sized floating point value
+represents a negative infinity. If so, it returns <var>True</var>.
+When the class function version is used, the value can be specified using
+<var>AValue</var>. In the method version, the used value is
+(<var>Self</var>).
+</descr>
+<seealso>
+<link id="TExtendedHelper.IsNan"/>
+<link id="TExtendedHelper.IsPositiveInfinity"/>
+<link id="TExtendedHelper.IsInfinity"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TExtendedHelper.IsPositiveInfinity">
+<short>Check whether a value is positive infinity.</short>
+<descr>
+<var>IsPositiveInfinity</var> checks whether a  Extended-sized floating point value
+represents a positive infinity. If so, it returns <var>True</var>.
+When the class function version is used, the value can be specified using
+<var>AValue</var>. In the method version, the used value is
+(<var>Self</var>).
+</descr>
+<seealso>
+<link id="TExtendedHelper.IsNan"/>
+<link id="TExtendedHelper.IsNegativeInfinity"/>
+<link id="TExtendedHelper.IsInfinity"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TExtendedHelper.Parse">
+<short>Convert a string to a floating point value</short>
+<descr>
+<var>Parse</var> will try to convert <var>AString</var> to a Extended-sized
+floating point value. It will take into account internationalization settings.
+(it uses <var>FloatToStr</var>).
+</descr>
+<errors>
+If the string <var>AString</var> is not a valid floating-point value, a
+<link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="FloatToStr"/>
+<link id="TExtendedHelper.ToString"/>
+<link id="TExtendedHelper.TryParse"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TExtendedHelper.Size">
+<short>Size (in bytes) of a Extended-sized floating point value.</short>
+<descr>
+<var>Size</var> is the size (in bytes) of a Extended-sized floating point value.
+It is equivalent to calling <var>SizeOf(Extended)</var>.
+</descr>
+<seealso>
+<link id="#rtl.system.SizeOf">SizeOf</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TExtendedHelper.ToString">
+<short>Convert a Extended-sized floating point value to a string</short>
+<descr>
+<p>
+<var>ToString</var> will convert <var>AValue</var> (or <var>Self</var> in
+the plain method version) to a string. Optionally <var>FormatSettings</var>
+can be specified, to be able to specify the decimal separator character to
+use.
+</p>
+<p>
+Additionally, a precision <var>APrecision</var> and number of digits
+<var>ADigits</var> can be specified, in conjunction with a
+<var>AFormat</var> parameter to specify the form in which the floating-point
+value must be represented. (see <link id="TFloatFormat"/> for an explanation
+of the various values). In this case, <link id="FloatToStrF"/> is used to
+format the value. In the absence of these parameters, <link id="FloatToStr"/>
+is called.
+</p>
+</descr>
+<seealso>
+<link id="FloatToStr"/>
+<link id="FloatToStrF"/>
+<link id="TFloatFormat"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TExtendedHelper.TryParse">
+<short>Try to convert a string to a Extended-sized floating point value.</short>
+<descr>
+<p>
+<var>TryParse</var> attempts to convert the string <var>AString</var> to
+a Extended-sized floating point value and reports <var>True</var> if the
+conversion was succesful. 
+In that case the parsed value is returned in <var>AValue</var>.
+</p>
+<p>
+If the conversion failed, <var>False</var> is returned.
+</p>
+</descr>
+<seealso>
+<link id="TExtendedHelper.Parse"/>
+<link id="TExtendedHelper.ToString"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TExtendedHelper.BuildUp">
+<short>Build a Extended-sized floating point from its composing parts</short>
+<descr>
+<var>BuildUp</var> will compose a Extended-sized floating point value from the
+sign <var>ASignFlag</var>, mantissa <var>AMantissa</var> and exponent
+<var>AExponent</var>. It simply sets the <link
+id="TExtendedHelper.Sign">Sign</link>, <link id="TExtendedHelper.Exp">Exp</link>
+and <link id="TExtendedHelper.Frac">Frac</link> properties in 1 call.
+</descr>
+<seealso>
+<link id="TExtendedHelper.Sign"/>
+<link id="TExtendedHelper.Exp"/>
+<link id="TExtendedHelper.Frac"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TExtendedHelper.Exponent">
+<short>Exponent of the floating-point value</short>
+<descr>
+<var>Exponent</var> is the value <var>X</var> in the representation of the
+floating-point value in <var>m*2^X</var>, i.e. the exponent.
+</descr>
+<seealso>
+<link id="TExtendedHelper.Sign"/>
+<link id="TExtendedHelper.Exp"/> 
+<link id="TExtendedHelper.Frac"/>
+<link id="TExtendedHelper.Fraction"/>
+<link id="TExtendedHelper.Mantissa"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TExtendedHelper.Fraction">
+<short>Fraction of the floating-point value</short>
+<descr>
+<var>Fraction</var> is the decimal part of the floating-point value.
+</descr>
+<seealso>
+<link id="TExtendedHelper.Sign"/>
+<link id="TExtendedHelper.Exp"/> 
+<link id="TExtendedHelper.Exponent"/> 
+<link id="TExtendedHelper.Frac"/>
+<link id="TExtendedHelper.Mantissa"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TExtendedHelper.Mantissa">
+<short>Mantissa of the floating-point</short>
+<descr>
+<var>Mantissa</var> is the value of the significand without the hidden bit.
+This means it the plain bit pattern as it is stored in memory.
+</descr>
+<seealso>
+<link id="TExtendedHelper.Sign"/>
+<link id="TExtendedHelper.Exp"/> 
+<link id="TExtendedHelper.Exponent"/> 
+<link id="TExtendedHelper.Frac"/>
+<link id="TExtendedHelper.Fraction"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TExtendedHelper.SpecialType">
+<short>Return the type of the Extended-sized floating point value</short>
+<descr>
+<p>
+<var>SpecialType</var> checks whether the Extended-sized floating point value
+equals one of several special values, and returns an enumerated value
+describing which value this is. See <link id="TFloatSpecial"/> for an
+explanation of the possible values.
+</p>
+</descr>
+<seealso>
+<link id="TFloatSpecial"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TExtendedHelper.Bytes">
+<short>Indexed access to the individual bytes of the floating point value</short>
+<descr>
+<var>Bytes</var> can be used to get or set the various bytes that make up
+the Extended-sized floating point value. The index runs from 0 to
+<var>Size-1</var>.
+</descr>
+<seealso>
+<link id="TExtendedHelper.Words"/>
+<link id="TExtendedHelper.Size"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TExtendedHelper.Words">
+<short>Indexed access to the words that make up the floating point value</short>
+<descr>
+<var>Words</var> can be used to get or set the various bytes that make up
+the Extended-sized floating point value. The index runs from 0 to <var>(Size-1) div 2</var>.
+</descr>
+<seealso>
+<link id="TExtendedHelper.Bytes"/>
+<link id="TExtendedHelper.Size"/> 
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TExtendedHelper.Sign">
+<short>Sign of the floating point value</short>
+<descr>
+<var>Sign</var> returns <var>True</var> if the sign bit of the value is set (i.e. it is
+a negative value) or <var>False</var> if it is not set (i.e. it is a positive value).
+</descr>
+<seealso>
+<link id="TExtendedHelper.Bytes"/>
+<link id="TExtendedHelper.Exp"/>
+<link id="TExtendedHelper.Frac"/>
+<link id="TExtendedHelper.Mantissa"/>
+<link id="TExtendedHelper.Fraction"/>
+<link id="TExtendedHelper.Exponent"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TExtendedHelper.Exp">
+<short>The bit pattern of the exponent as stored in memory.</short>
+<descr>
+<var>Exp</var> is the internal representation of the <link id="TExtendedHelper.Exponent">Exponent</link>.
+</descr>
+<seealso>
+<link id="TExtendedHelper.Bytes"/>
+<link id="TExtendedHelper.Sign"/>
+<link id="TExtendedHelper.Frac"/>
+<link id="TExtendedHelper.Mantissa"/>
+<link id="TExtendedHelper.Fraction"/>
+<link id="TExtendedHelper.Exponent"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TExtendedHelper.Frac">
+<short>Bitpattern that makes up the fractional part.</short>
+<descr>
+<var>Frac</var> is the bit pattern representing the fractional part
+(significand) including the preceding 1 (the hidden bit).
+</descr>
+<seealso>
+<link id="TExtendedHelper.Bytes"/>
+<link id="TExtendedHelper.Sign"/>
+<link id="TExtendedHelper.Exp"/>
+<link id="TExtendedHelper.Mantissa"/>
+<link id="TExtendedHelper.Fraction"/>
+<link id="TExtendedHelper.Exponent"/>
+</seealso>
+</element>
+
 
 <!-- procedure Visibility: default -->
 <element name="FreeMemAndNil">
