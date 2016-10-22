@@ -563,6 +563,950 @@ If not all data (8 bytes) can be written, an <var>EWriteError</var> exception is
 <element name="TStreamHelper.WriteQWordBE.dq">
 <short>QWord value to write</short>
 </element>
+
+<!-- constant Visibility: default -->
+<element name="MIN_BUFFER_SIZE">
+<short>Minimum buffer size for <var>TStreamReader</var></short>
+<seealso>
+<link id="TStreamReader"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="BUFFER_SIZE">
+<short>Default buffer size for <var>TStreamReader</var></short>
+<seealso>
+<link id="TStreamReader"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FILE_RIGHTS">
+<short>Default file rights for <var>TStreamReader</var></short>
+<seealso>
+<link id="TStreamReader"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.streamex.TTextReader
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TTextReader">
+<short>Text reader class.</short>
+<descr>
+<var>TTextReader</var> is an abstract class that provides a line-oriented reading API. 
+It allows to read data from streams or memory blocks as if one was using regular pascal
+<var>Read</var> or <var>ReadLn</var> operations: the <link id="TTextReader.ReadLine">ReadLine</link> procedure.
+Several descendents of this class exist which implement the reader interface for several sources of text
+data: <link id="TStreamReader"/>, <link id="TFileReader"/>, <link id="TStringReader"/>.
+</descr>
+<seealso>
+<link id="TStreamReader"/>
+<link id="TFileReader"/>
+<link id="TStringReader"/>
+<link id="TTextReader.ReadLine">ReadLine</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TTextReader.Create">
+<short>Instantiate a new instance.</short>
+<descr>
+<var>Create</var> does nothing in <var>TTextReader</var>.
+</descr>
+<seealso>
+<link id="TTextReader.ReadLine">ReadLine</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextReader.Reset">
+<short>Reset the reader to the start position</short>
+<descr>
+<p>
+<var>Reset</var> resets the position to the start of the text data.
+</p>
+<p>
+This is an abstract call which must be implemented by descendents.
+</p>
+</descr>
+<seealso>
+<link id="TTextReader.Close"/>
+<link id="TTextReader.ReadLine"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextReader.Close">
+<short>Close the text data stream</short>
+<descr>
+<var>Close</var> closes the data stream. No <link id="TTextReader.ReadLine">ReadLine</link> 
+call can be performed after a call to <var>Close</var>.
+</descr>
+<seealso>
+<link id="TTextReader.Reset"/>
+<link id="TTextReader.ReadLine"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TTextReader.IsEof">
+<short>Check whether the end of the text data is returned.</short>
+<descr>
+<p>
+<var>isEOF</var> is the getter for the <link id="TTextReader.Eof">Eof</link>
+property. It must return <var>True</var> when there is no more text data availabe
+for reading. Do not use <var>IsEof</var> directly, instead use <var>Eof</var>.
+</p>
+<p>
+It is an abstract method that must be implemented by descendent classes.
+</p>
+</descr>
+<seealso>
+<link id="TTextReader.Eof">Eof</link>
+<link id="TTextReader.ReadLine"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TTextReader.IsEof.Result">
+<short>True if no more text data is available for reading.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextReader.ReadLine">
+<short>Read a line of text</short>
+<descr>
+<p>
+<var>ReadLine</var> will read a line of text from the text data source. 
+A line of text is delimited by a CRLF character pair, a LF character or a 
+CR character. The line ending characters are not included in the string.
+</p>
+<p>
+The method exists in 2 versions: one function where the line of text is returned
+as the function result, one procedure where the line of text is returned in
+the <var>AString</var> parameter.
+</p>
+</descr>
+<seealso>
+<link id="TTextReader.Eof">Eof</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextReader.ReadLine.AString">
+<short>The line of text that was read</short>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TTextReader.ReadLine.Result">
+<short>The line of text that was read</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTextReader.Eof">
+<short>Check whether the end of the text data is returned.</short>
+<descr>
+<var>Eof</var> is <var>True</var> if no more data is available for reading. 
+If there is still data, then it is <var>False</var>.
+</descr>
+<seealso>
+<link id="TTextReader.ReadLine"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.streamex.TStreamReader
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TStreamReader">
+<short>Implement <var>TTextReader</var> for streams</short>
+<descr>
+<var>TStreamReader</var> is a <var>TTextReader</var> descendent that takes a
+stream as the source of text data. It can free the stream and the buffer 
+size to use for reading data can be set.
+</descr>
+<seealso>
+<link id="TTextReader"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TStreamReader.Create">
+<short>Create a new instance of <var>TStreamReader</var> from a stream</short>
+<descr>
+<p>
+<var>Create</var> initializes a <var>TStreamReader</var> using the provided <var>AStream</var>. 
+It will allocate a buffer of <var>ABufferSize</var> bytes for faster reading of data.
+If no buffer size is specified, <link id="BUFFER_SIZE"/> will be used. 
+If the <var>ABufferSize</var> argument is less than <link id="MIN_BUFFER_SIZE"/>, then
+<var>MIN_BUFFER_SIZE</var> bytes will be used.
+</p>
+<p>
+If <var>AOwnsStream</var> is true, the stream will be freed when the <var>TStreamReader</var> instance is freed.
+If omitted, its value is assumed to be <var>False</var>.
+</p>
+</descr>
+<errors>
+If <var>AStream</var> is <var>Nil</var>, an  <link id="#rtl.sysutils.EArgumentException"/>
+exception will be raised.
+</errors>
+<seealso>
+<link id="TStreamReader.Destroy"/>
+<link id="#rtl.classes.TStream">TStream</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TStreamReader.Create.AStream">
+<short>Stream to use as source of text data.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TStreamReader.Create.ABufferSize">
+<short>Buffer size to use for read buffer.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TStreamReader.Create.AOwnsStream">
+<short>Should the stream be freed when the textreader is freed.</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TStreamReader.Destroy">
+<short>Destroy the <var>TStreamReader</var> instance.</short>
+<descr>
+<var>Destroy</var> frees the resources taken by the buffer, and frees the
+source stream (<link id="TStreamReader.BaseStream">BaseStream</link>) if <var>OwnsStream</var> is <var>True</var>.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TStreamReader.OwnsStream"/>
+<link id="TStreamReader.Create"/>
+<link id="TStreamReader.BaseStream"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStreamReader.Reset">
+<short>Reset the stream to its original position</short>
+<descr>
+<var>Reset</var> sets the stream to its original position.  This is the
+stream-specific implementation of the abstract <link id="TTextReader.Reset"/>
+method.
+</descr>
+<errors>
+If the source stream (<link id="TStreamReader.BaseStream"/>) is not
+seekable, then this method may raise an exception.
+</errors>
+<seealso>
+<link id="TStreamReader.BaseStream"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStreamReader.Close">
+<short>Close and possibly free the stream</short>
+<descr>
+<var>Close</var> closed the text data stream. 
+It will free the source stream if <var>OwnsStream</var> is <var>True</var>
+</descr>
+<seealso>
+<link id="TStreamReader.BaseStream"/>
+<link id="TStreamReader.OwnsStream"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStreamReader.IsEof">
+<short>Check if the end of the stream is reached.</short>
+<descr>
+<p>
+<var>IsEOF</var> is <var>True</var> if the end of the text data is reached,
+or after <link id="TStreamReader.Close"/> was called. Do not use
+<var>IsEof</var>, instead use the <var>EOF</var> property.
+</p>
+<p>
+This is the <var>TStreamReader</var>-specific implementation of the abstract
+<link id="TTextReader.IsEOF"/> method.
+</p>
+</descr>
+<seealso>
+<link id="TTextReader.IsEOF"/>
+<link id="TTextReader.EOF"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TStreamReader.IsEof.Result">
+<short>True if the stream is closed or the end of the text data was reached.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStreamReader.ReadLine">
+<short>Read a line of text</short>
+<descr>
+<p>
+<var>ReadLine</var> will read a line of text from the text data source.
+A line of text is delimited by a CRLF character pair, a LF character or a
+CR character. The line ending characters are not included in the string.
+</p>
+<p>
+The method exists in 2 versions: one function where the line of text is
+returned
+as the function result, one procedure where the line of text is returned in
+the <var>AString</var> parameter.
+</p>
+<p>
+This is the <var>TStreamReader</var> specific implementation of the abstract
+<link id="TTextReader.ReadLine"/> method.
+</p>
+</descr>  
+<seealso> 
+<link id="TTextReader.Eof">Eof</link>
+<link id="TTextReader.ReadLine"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TStreamReader.ReadLine.AString">
+<short>The line of text that was read</short>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TStreamReader.ReadLine.Result">
+<short>The line of text that was read</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStreamReader.BaseStream">
+<short>The stream with the text data</short>
+<descr>
+<p>
+<var>BaseStream</var> is the stream that was passed to the
+<var>TStreamReader</var> instance in the <link id="TStreamReader.Create"/>
+call. 
+</p>
+<p>
+Manipulating the stream between calls to <link id="TStreamReader.ReadLine"/> is not allowed, it will lead to wrong data
+being read from the stream.
+</p>
+</descr>
+<seealso>
+<link id="TStreamReader.Create"/> 
+<link id="TStreamReader.OwnsStream"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStreamReader.OwnsStream">
+<short>Should the stream be freed on close</short>
+<descr>
+<var>OwnsStream</var> determines whether the stream <link
+id="TStreamReader.BaseStream"/> must be freed when
+<link id="TStreamReader.Close"/> is called or when the
+<var>TStreamReader</var> instance is destroyed.
+</descr>
+<seealso>
+<link id="TStreamReader.BaseStream"/>
+<link id="TStreamReader.Close"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.streamex.TStringReader
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TStringReader">
+<short>Implement <var>TTextReader</var> for a single string</short>
+<descr>
+<var>TStreamReader</var> is a <var>TTextReader</var> descendent that takes a
+single string as the source of text data. 
+</descr>  
+<seealso>
+<link id="TTextReader"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TStringReader.Create">
+<short>Create a new instance of <var>TStreamReader</var> from a string</short>
+<descr>
+<p>
+<var>Create</var> initializes a <var>TStringReader</var> instance using the provided <var>AString</var>.
+It will allocate a buffer of <var>ABufferSize</var> bytes for faster reading of data.
+If no buffer size is specified, <link id="BUFFER_SIZE"/> will be used.
+If the <var>ABufferSize</var> argument is less than <link id="MIN_BUFFER_SIZE"/>, then
+<var>MIN_BUFFER_SIZE</var> bytes will be used.
+</p>
+</descr>
+<errors> 
+If <var>AStream</var> is <var>Nil</var>, an  <link id="#rtl.sysutils.EArgumentException"/>
+exception will be raised.
+</errors>
+<seealso> 
+<link id="TStreamReader.Destroy"/>
+<link id="#rtl.classes.TStream">TStream</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TStringReader.Create.AString">
+<short>String to read data from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TStringReader.Create.ABufferSize">
+<short>Size for the read buffer</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TStringReader.Destroy">
+<short>Free the <var>TStringReader</var> instance.</short>
+<descr>
+<var>Destroy</var> deallocates all resources for the <var>TStringReader</var> instance.
+</descr>
+<seealso>
+<link id="TStringReader.Create"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStringReader.Reset">
+<short>Reset the stream to its original position</short>
+<descr>
+<var>Reset</var> sets the stream to its original position.  This is the
+string-specific implementation of the abstract <link
+id="TTextReader.Reset"/> method.
+</descr>
+<seealso>
+<link id="TStreamReader.BaseStream"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStringReader.Close">
+<short>Close and possibly free the stream</short>
+<descr>
+<var>Close</var> closes the text reader.  This is the
+string-specific implementation of the abstract <link
+id="TTextReader.Close"/> method.
+</descr>
+<seealso>
+<link id="TTextReader.Close"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringReader.IsEof">
+<short>Check if the end of the string is reached.</short>
+<descr>
+<p>
+<var>IsEOF</var> is <var>True</var> if the end of the text data is reached,
+or after <link id="TStringReader.Close"/> was called. 
+Do not use <var>IsEof</var>, instead use the <var>EOF</var> property.
+</p>
+<p>
+This is the <var>TStringReader</var>-specific implementation of the abstract
+<link id="TTextReader.IsEOF"/> method.
+</p>
+</descr>
+<seealso>
+<link id="TStringReader.Close"/>
+<link id="TTextReader.EOF"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TStringReader.IsEof.Result">
+<short>True if the reader is closed or the end of the text string was reached.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStringReader.ReadLine">
+<short>Read a line of text</short>
+<descr>
+<p>
+<var>ReadLine</var> will read a line of text from the text data source.
+A line of text is delimited by a CRLF character pair, a LF character or a
+CR character. The line ending characters are not included in the string.
+</p>
+<p>
+The method exists in 2 versions: one function where the line of text is
+returned as the function result, one procedure where the line of text is returned in
+the <var>AString</var> parameter.
+</p>
+<p>
+This is the <var>TStringReader</var> specific implementation of the abstract
+<link id="TTextReader.ReadLine"/> method.
+</p>
+</descr>  
+<seealso> 
+<link id="TTextReader.Eof">Eof</link>
+<link id="TTextReader.ReadLine"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TStringReader.ReadLine.AString">
+<short>The line of text that was read</short>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TStringReader.ReadLine.Result">
+<short>The line of text that was read</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.streamex.TFileReader
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TFileReader">
+<short>Implement <var>TTextReader</var> for files</short>
+<descr>
+<var>TFileReader</var> is a <var>TTextReader</var> descendent that takes a
+file on disk as the source of text data. 
+</descr>
+<seealso>
+<link id="TStreamReader"/>
+<link id="TTextReader"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TFileReader.Create">
+<short>Create a new instance of <var>TFileReader</var> for a disk file</short>
+<descr>
+<p>
+<var>Create</var> initializes a <var>TFileReader</var> using the provided
+<var>AFileName</var>. 
+It will allocate a buffer of <var>ABufferSize</var> bytes for faster reading
+of data.
+If no buffer size is specified, <link id="BUFFER_SIZE"/> will be used. 
+If the <var>ABufferSize</var> argument is less than <link
+id="MIN_BUFFER_SIZE"/>, then
+<var>MIN_BUFFER_SIZE</var> bytes will be used.
+</p>
+<p>
+The <var>AMode</var> can be used to specify the mode in which to open the file.
+This is one of the <var>fmOpenRead</var> and <var>fmShare*</var> constants
+which can be used in a <var>TFileStream</var> constructor. The file must be
+opened for reading.
+</p>
+</descr>
+<errors>
+If <var>AStream</var> is <var>Nil</var>, an <link id="#rtl.sysutils.EArgumentException"/> exception will be raised.
+</errors>
+<seealso>
+<link id="TStreamReader.Destroy"/>
+<link id="#rtl.classes.TFileStream">TFileStream</link>
+<link id="#rtl.classes.TFileStream.Create">TFileStream.Create</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFileReader.Create.AFileName">
+<short>Filename of file to open</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFileReader.Create.AMode">
+<short>Mode in which to open the file </short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFileReader.Create.ARights">
+<short>Not used</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFileReader.Create.ABufferSize">
+<short>Size of buffer to use when reading.</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TFileReader.Destroy">
+<short>Remove the <var>TFileReader</var> instance from memory.</short>
+<descr>
+<var>Destroy</var> closes the file and releases the buffer used to read data.
+</descr>
+<seealso>
+<link id="TFileReader.Create"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFileReader.Reset">
+<short>Reset the stream to its original position</short>
+<descr>
+<var>Reset</var> sets the stream to its original position.  This is the
+stream-specific implementation of the abstract <link
+id="TTextReader.Reset"/>
+method.
+</descr>
+<seealso>
+<link id="TTextReader.Reset"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFileReader.Close">
+<short>Close the file</short>
+<descr>
+<var>Close</var> closes the text file. Any read operations after <var>Close</var> is called
+will fail. This is the stream-specific implementation of the abstract <link id="TTextReader.Close"/>
+</descr>
+<seealso>
+<link id="TTextReader.Close"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFileReader.IsEof">
+<short>Check if the end of the file is reached.</short>
+<descr>
+<p>
+<var>IsEOF</var> is <var>True</var> if the end of the file is reached,
+or after <link id="TFileReader.Close"/> was called. Do not use
+<var>IsEof</var>, instead use the <var>EOF</var> property.
+</p>
+<p>
+This is the <var>TFileReader</var>-specific implementation of the abstract
+<link id="TTextReader.IsEOF"/> method.
+</p>
+</descr>
+<seealso>
+<link id="TTextReader.IsEOF"/>
+<link id="TTextReader.EOF"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TFileReader.IsEof.Result">
+<short>True if the file is closed or the end of the file was reached.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFileReader.ReadLine">
+<short>Read a line of text</short>
+<descr>
+<p>
+<var>ReadLine</var> will read a line of text from the text data source.
+A line of text is delimited by a CRLF character pair, a LF character or a
+CR character. The line ending characters are not included in the string.
+</p>
+<p>
+The method exists in 2 versions: one function where the line of text is
+returned
+as the function result, one procedure where the line of text is returned in
+the <var>AString</var> parameter.
+</p>
+<p>
+This is the <var>TFileReader</var> specific implementation of the abstract
+<link id="TTextReader.ReadLine"/> method.
+</p>
+</descr>  
+<seealso> 
+<link id="TTextReader.Eof">Eof</link>
+<link id="TTextReader.ReadLine"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFileReader.ReadLine.AString">
+<short>The line of text that was read</short>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TFileReader.ReadLine.Result">
+<short>The line of text that was read</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.streamex.TWindowedStream
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TWindowedStream">
+<short>Provide a window on another stream</short>
+<descr>
+<p>
+<var>TWindowedStream</var> is a <link id="TStream"/> descendent that can be used to provide a window
+on the data of another stream. The position and size of the window can be
+determined in the constructor, and the stream will behave as a normal stream.
+The actual reading (or writing) will happen on the source stream.
+</p>
+<p>
+If the source stream has some limitations (e.g. no <link
+id="#rtl.classes.TStream.Seek">Seek</link>) then the
+<var>TWindowedStream</var> will inherit these limitations.
+</p>
+<p>
+The <var>TWindowedStream</var> will keep track of the last position it used,
+and will attempt to restore it if it was modified between calls to
+<var>Read</var> and <var>Write</var>.
+</p>
+</descr>
+<seealso>
+<link id="TStream"/>
+<link id="TWindowedStream.Create"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TWindowedStream.Create">
+<short>Initialize a new instance of <var>TWindowedStream</var></short>
+<descr>
+<p>
+<var>Create</var> will create a new instance of <var>TWindowedStream</var>.
+The source stream <var>aStream</var> must be specified, as well as the start
+<var>aPositionHere</var> position of the window in the source stream and the
+size of the window <var>aSize</var>.
+</p>
+<p>
+No checks on the validity of <var>aPositionHere</var> and <var>aSize</var>
+are done.
+</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWindowedStream.Create.aStream">
+<short>Stream to create a window on.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWindowedStream.Create.aSize">
+<short>Size of the window (in bytes)</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWindowedStream.Create.aPositionHere">
+<short>Start position of the window</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TWindowedStream.Destroy">
+<short>Destroy the <var>TWindowedStream</var> instance.</short>
+<descr>
+<var>Destroy</var> simply calls the inherited destroy, it removes the
+<var>TWindowedStream</var> instance from memory. The source stream is not
+freed.
+</descr>
+<seealso>
+<link id="TWindowedStream.Create"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TWindowedStream.Read">
+<short>Read data from the stream</short>
+<descr>
+<var>Read</var> attempts to read data from the stream. It will attempt to
+restore the source stream position if it was changed since the last read, write or
+seek operation. It then attempts to read <var>ACount</var> bytes from the
+source stream into <var>ABuffer</var> and returns the number of actually read bytes.
+<var>TWindowedStream.Read</var> will only read as much data as the window allows, 
+even if the source stream has more data available.
+</descr>
+<seealso>
+<link id="TWindowedStream.Write"/>
+<link id="TWindowedStream.Seek"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TWindowedStream.Read.Result">
+<short>Number of read bytes</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWindowedStream.Read.aBuffer">
+<short>Buffer into which to read the data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWindowedStream.Read.aCount">
+<short>Maximum number of bytes to be read.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TWindowedStream.Write">
+<short>Read data to the stream</short>
+<descr>
+<var>Write</var> attempts to write data to the stream. It will attempt to
+restore the source stream position if it was changed since the last read,
+write or seek operation. It then attempts to write <var>ACount</var> bytes
+from <var>ABuffer</var> to the source stream and returns the number of actually
+written bytes. 
+</descr>
+<errors>
+<var>TWindowedStream.Write</var> will raise an <var>EWriteError</var>
+exception if an attempt is made to write more bytes than will fit in the
+window, even if the source stream has more room available.
+</errors>
+<seealso>
+<link id="TWindowedStream.Read"/>
+<link id="TWindowedStream.Seek"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TWindowedStream.Write.Result">
+<short>Number of written bytes</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWindowedStream.Write.aBuffer">
+<short>Buffer from which to write data in the stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWindowedStream.Write.aCount">
+<short>Maximum number of bytes to be written</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TWindowedStream.Seek">
+<short>Reposition the stream</short>
+<descr>
+<var>Seek</var> will reposition the windowed stream based on <var>aOffset</var> and
+<var>aOrigin</var>. It will interpret <var>AOrigin</var> and <var>aOffset</var>
+relative to the position and size of the window, and will then call
+<var>Seek</var> on the source stream. It will return the new position in the
+windowed stream.
+</descr>
+<errors>
+If the source stream does not support seek operations, an exception may be
+raises. If the combination of <var>AOrigin</var> and <var>aOffset</var>
+falls outside the valid window of the stream, an <var>EReadError</var> exception
+is raised.
+</errors>
+<seealso>
+<link id="TWindowedStream.Read"/>
+<link id="TWindowedStream.Write"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: public -->
+<element name="TWindowedStream.Seek.Result">
+<short>The new position in the windowed stream.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWindowedStream.Seek.aOffset">
+<short>offset to seek relative to aOffset.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWindowedStream.Seek.aOrigin">
+<short>Origin of the operation, in the windowed stream</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TStreamHelper.ReadSingle">
+<short>Read a single-precision floating point value from the stream</short>
+<descr>
+<var>ReadSingle</var> reads a single-precision floating point value from the stream
+and returns the value. No endianness corrections are performed.
+</descr>
+<errors>
+If the end of stream is reached before all necessary bytes can be read, an
+<link id="#rtl.classes.EReadError">EReadError</link> exception is raised.
+</errors>
+<seealso>
+<link id="TStreamHelper.ReadDouble"/>
+<link id="TStreamHelper.WriteSingle"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TStreamHelper.ReadSingle.Result">
+<short>The single-precision floating point type.</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TStreamHelper.ReadDouble">
+<short>Read a double-precision floating point value from the stream</short>
+<descr>
+<var>ReadDouble</var> reads a double-precision floating point value from the
+stream and returns the value. No endianness corrections are performed.
+</descr>
+<errors>
+If the end of stream is reached before all necessary bytes can be read, an
+<link id="#rtl.classes.EReadError">EReadError</link> exception is raised.
+</errors>
+<seealso>
+<link id="TStreamHelper.ReadSingle"/>
+<link id="TStreamHelper.WriteDouble"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TStreamHelper.ReadDouble.Result">
+<short>The double-precision floating point type.</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="TStreamHelper.WriteSingle">
+<short>Write a single-precision floating point value to the stream</short>
+<descr>
+<var>WriteSingle</var> writes the single-precision floating point value
+<var>S</var> to the stream. No endianness corrections are performed.
+</descr>
+<errors> 
+If not all bytes can be written, an <link id="#rtl.classes.EWriteError">EWriteError</link> exception is raised.
+</errors> 
+<seealso>
+<link id="TStreamHelper.ReadSingle"/>
+<link id="TStreamHelper.WriteDouble"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TStreamHelper.WriteSingle.s">
+<short>Value to write to the stream</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="TStreamHelper.WriteDouble">
+<short>Write a double-precision floating point value to the stream</short>
+<descr>
+<var>WriteDouble</var> writes the double-precision floating point value
+<var>D</var> to the stream. No endianness corrections are performed.
+</descr>
+<errors>
+If not all bytes can be written, an <link id="#rtl.classes.EWriteError">EWriteError</link> exception is raised.
+</errors>
+<seealso>
+<link id="TStreamHelper.ReadDouble"/>
+<link id="TStreamHelper.WriteSingle"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TStreamHelper.WriteDouble.d">
+<short>Value to write to the stream</short>
+</element>
+
 </module> <!-- streamex -->
 
 </package>
