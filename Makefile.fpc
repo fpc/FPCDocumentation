@@ -99,12 +99,18 @@ ifndef HIDEPROTECTED
 HIDEPROTECTED=YES
 endif
 
-FCLOPTS=$(FPDOCOPTS) --package=fcl --warn-no-node --descr=fcl.xml --content=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX) $(FCLUNITOPTS)
+ifdef FPDOCOPTS
+FPDOCOPTS+= --macro=FPCDIR=$(FPCSRCDIR)
+else
+FPDOCOPTS=--macro=FPCDIR=$(FPCSRCDIR)
+endif
+
+FCLOPTS= --package=fcl --warn-no-node --descr=fcl.xml --content=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX) $(FCLUNITOPTS)
 ifeq ($(HIDEPROTECTED),YES)
 FCLOPTS+= --hide-protected
 endif
 
-FCLRESOPTS=$(FPDOCOPTS) --package=fcl-res --warn-no-node --content=fclres.xct --import=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX) $(FCLRESUNITOPTS)
+FCLRESOPTS= --package=fcl-res --warn-no-node --content=fclres.xct --import=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX) $(FCLRESUNITOPTS)
 ifeq ($(HIDEPROTECTED),YES)
 FCLOPTS+= --hide-protected
 endif
@@ -446,7 +452,8 @@ RTLMAKESKEL=$(MAKESKEL) --package=rtl --disable-arguments --disable-function-res
 FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream \
          base64 gettext pooledmm dbugmsg streamex inicol streamcoll cachecls \
          eventlog syncobjs custapp blowfish simpleipc inifiles rttiutils uriparser \
-         daemonapp libtar ascii85 fptimer db avl_tree ibconnection mssqlconn zipper sqldb
+         daemonapp libtar ascii85 fptimer db avl_tree ibconnection mssqlconn zipper sqldb \
+         fpjson
 FCLUNITS+= ezcgi
 
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
@@ -630,7 +637,7 @@ updatefclresxml: fpc_all
 # RTL reference docs
 #
 
-RTLOPTS=$(FPDOCOPTS) --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
+RTLOPTS= --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifeq ($(HIDEPROTECTED),YES)
 RTLOPTS+= --hide-protected
 endif
@@ -653,7 +660,7 @@ RTLXML=$(addsuffix .xml,$(RTLUNITS)) rtl-project.xml
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
 RTLTYPES= --descr=types.xml --input="$(FPCSRCDIR)/rtl/objpas/types.pp $(OSDIRINCLUDES)"
 RTLSTRUTILS= --descr=strutils.xml --input="$(FPCSRCDIR)/packages/rtl-objpas/src/inc/strutils.pp $(OSDIRINCLUDES)"
-RTLSYSUTILS= --descr=sysutils.xml --input="$(FPCSRCDIR)/rtl/unix/sysutils.pp -Fi$(FPCSRCDIR)/rtl/objpas/sysutils -Fi$(FPCSRCDIR)/rtl/inc $(OSDIRINCLUDES)"
+RTLSYSUTILS= --descr=sysutils.xml --input="-dFPC_HAS_TYPE_SINGLE -dFPC_HAS_TYPE_DOUBLE -dFPC_HAS_TYPE_EXTENDED $(FPCSRCDIR)/rtl/unix/sysutils.pp -Fi$(FPCSRCDIR)/rtl/objpas/sysutils -Fi$(FPCSRCDIR)/rtl/inc $(OSDIRINCLUDES)"
 RTLSTRINGS= --descr=strings.xml --input="$(FPCSRCDIR)/rtl/inc/strings.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/inc $(OSDIRINCLUDES)"
 RTLMOUSE= --descr=mouse.xml --input="$(FPCSRCDIR)/packages/rtl-console/src/unix/mouse.pp -Fi$(FPCSRCDIR)/packages/rtl-console/src/inc $(OSDIRINCLUDES)"
 RTLKEYBOARD= --descr=keyboard.xml --input="$(FPCSRCDIR)/packages/rtl-console/src/unix/keyboard.pp -Fi$(FPCSRCDIR)/packages/rtl-console/src/inc $(OSDIRINCLUDES)"
@@ -775,13 +782,13 @@ updatertlxml: fpc_all
 #####################################################################
 
 rtl.inc: $(RTLXML)
-        $(FPDOC) --base-input-dir=$(FPCSRCDIR)/rtl --output=rtl.inc --project=rtl-project.xml --format=latex
+        $(FPDOC)  $(FPDOCOPTS) --output=rtl.inc --project=rtl-project.xml --format=latex
 
 fcl.inc: $(FCLXML)
-        $(FPDOC) --base-input-dir=$(FPCSRCDIR)/packages --output=fcl.inc --project=fcl-project.xml --format=latex
+        $(FPDOC) $(FPDOCOPTS) --output=fcl.inc --project=fcl-project.xml --format=latex
 
 fclres.inc: $(FCLRESXML)
-        $(FPDOC) --output=fclres.inc $(FCLRESOPTS) --format=latex
+        $(FPDOC) $(FPDOCOPTS) --output=fclres.inc $(FCLRESOPTS) --format=latex
 
 #####################################################################
 # DVI files
@@ -791,13 +798,13 @@ RTFFILES = $(addsuffix .rtf,$(RTFS))
 rtf: $(RTFFILES)
 
 rtl.rtf: $(RTLXML)
-        $(FPDOC) --output=rtl.rtf --project=rtl-project.xml --format=rtf
+        $(FPDOC) $(FPDOCOPTS) --output=rtl.rtf --project=rtl-project.xml --format=rtf
 
 fcl.rtf: $(FCLXML)
-        $(FPDOC) --output=fcl.rtf --project=fcl-project.xml --format=rtf
+        $(FPDOC) $(FPDOCOPTS) --output=fcl.rtf --project=fcl-project.xml --format=rtf
 
 fclres.rtf: $(FCLXML)
-        $(FPDOC) --output=fclres.rtf $(FCLRESOPTS) --format=rtf
+        $(FPDOC) $(FPDOCOPTS) --output=fclres.rtf $(FCLRESOPTS) --format=rtf
 
 
 #####################################################################
@@ -850,15 +857,15 @@ else
 # TXT creation
 #######################################################################
 fcl.txt: $(FCLXML)
-        $(FPDOC) --project=fcl-project.xml --format=txt --output=fcl.txt
+        $(FPDOC) $(FPDOCOPTS) --project=fcl-project.xml --format=txt --output=fcl.txt
 	unix2dos fcl.txt
 
 fclres.txt: $(FCLRESXML)
-        $(FPDOC) $(FCLRESOPTS) --format=txt --output=fclres.txt
+        $(FPDOC) $(FPDOCOPTS) $(FCLRESOPTS) --format=txt --output=fclres.txt
 	unix2dos fcl.txt
 
 rtl.txt: $(RTLXML)
-        $(FPDOC) --project=rtl-project.xml --format=txt --output=rtl.txt
+        $(FPDOC) $(FPDOCOPTS) --project=rtl-project.xml --format=txt --output=rtl.txt
 	unix2dos rtl.txt
 
 user.txt: messages.inc
@@ -903,22 +910,22 @@ endif  # USEL2H
 endif  # USEPLASTEX
 endif  # USEHEVEA
 
-fcl.chk: $(FCLXML)
-        $(FPDOC) --project=fcl-project.xml --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLCHMOPTS)
+fcl.chk: $(FCLXML) fcl-project.xml
+        $(FPDOC) $(FPDOCOPTS) --project=fcl-project.xml --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLCHMOPTS)
 ifndef CSSFILE
         cp fpdoc.cst fcl/fpdoc.css
 endif
         @$(ECHO) '' > fcl.chk
 
 fclres.chk: $(FCLRESXML)
-        $(FPDOC) $(FCLRESOPTS) --format=$(HTMLFMT) --output=fclres$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLRESCHMOPTS)
+        $(FPDOC) $(FPDOCOPTS) $(FCLRESOPTS) --format=$(HTMLFMT) --output=fclres$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLRESCHMOPTS) 
 ifndef CSSFILE
         cp fpdoc.cst fclres/fpdoc.css
 endif
         @$(ECHO) '' > fclres.chk
 
 rtl.chk: $(RTLXML) rtl-project.xml
-        $(FPDOC) --project=rtl-project.xml --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
+        $(FPDOC) $(FPDOCOPTS) --project=rtl-project.xml --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
 ifndef CSSFILE
         cp fpdoc.cst rtl/fpdoc.css
 endif
