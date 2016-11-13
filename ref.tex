@@ -3240,6 +3240,30 @@ occurred in the previous invocation of the routine will be undone, because
 they are again initialized.
 \end{remark}
 
+\begin{remark}
+Care should be taken when using initialized pointer types such as \var{PChars}. 
+In the following examples, \var{S} is a pointer, pointing to a block of constant
+(read-only) program data.
+Assigning \var{S\[0\]} will therefor not work. Assigning \var{S} itself will
+of course work.
+\begin{verbatim}
+procedure foo1;
+var
+  s: PChar = 'PChar';
+begin
+  s[0] := 'a';
+end;
+ 
+procedure foo2;
+var
+  s: PChar;
+begin
+  s := 'PChar';
+  s[0] := 'a';
+end;
+\end{verbatim}
+\end{remark}
+
 \section{Initializing variables using default}
 \label{se:initusingdefault}\index{Variables!Initialized}
 Some variables must be initialized because they contain managed types. 
