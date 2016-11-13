@@ -93,7 +93,7 @@ is set to
 <short>Does the option have arguments (values)</short>
 </element>
 <element name="TOption.Flag">
-<short>Flag</short>
+<short>Where to write <var>Value</var> if the option is found.</short>
 </element>
 <element name="TOption.Value">
 <short>Value to return when option is encountered</short>
@@ -129,9 +129,13 @@ equal to <var>paramcount+1</var>.
 <descr>
 <p>
 Returns the next option found on the command-line, taking into account long
-options as well. If no more options are
-found, returns <var>EndOfOptions</var>. If the option requires an argument, it is
-returned in the <var>OptArg</var> variable.
+options as well. If no more options are found, returns <var>EndOfOptions</var>. 
+If the option requires an argument, it is returned in the <var>OptArg</var> variable.
+</p>
+<p>
+if any of the option definitions in <var>LongOpts</var> array has the <var>Flag</var> 
+pointer set, then the return value is the null character (<var>#0</var> or <var>char(0)</var>) 
+and the actual option letter is written in  the location pointed to by <var>Flag</var>.
 </p>
 <p>
 <var>ShortOptions</var> is a string containing all possible one-letter options.
@@ -143,9 +147,12 @@ records, the last of which needs a name of zero length.
 The function tries to match the names even partially (i.e. <var>--app</var> 
 will match e.g. the <var>append</var> option), but will report an error in case of
 ambiguity.
+</p>
+<p>
 If the option needs an argument, set <var>Has_arg</var> to
-<var>Required_argument</var>, if the option optionally has an argument, set
-<var>Has_arg</var> to <var>Optional_argument</var>. If the option needs no argument,
+<var>Required_argument</var> (1), if the option optionally has an argument, set
+<var>Has_arg</var> to <var>Optional_argument</var> (2). 
+If the option needs no argument,
 set <var>Has_arg</var> to zero.
 </p>
 <p>
