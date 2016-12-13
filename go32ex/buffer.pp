@@ -90,7 +90,7 @@ begin
         fillchar(infobuf, sizeof(VBEInfoBuf), 0);
         { allocate real mode memory }
         dosalloc(selector, segment, sizeof(VBEInfoBuf));
-        { check if an error occured during allocation }
+        { check if an error occurred during allocation }
         if (int31error<>0) then begin
                 Writeln('Error while allocating real mode memory, halting');
                 halt;

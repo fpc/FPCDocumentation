@@ -58,10 +58,10 @@ begin
      Writeln('-- Press any key to exit --');
      { set new handler }
      set_pm_interrupt(int1c, newint1c);
-     { write the number of interrupts occured }
+     { write the number of interrupts occurred }
      while (not keypressed) do begin
            gotoxy(1, wherey);
-           write('Number of interrupts occured : ', int1c_counter);
+           write('Number of interrupts occurred : ', int1c_counter);
      end;
      { restore old handler }
      set_pm_interrupt(int1c, oldint1c);
