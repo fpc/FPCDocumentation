@@ -780,6 +780,17 @@ problems.
 Conversely, \var{\{\$I+\}} will turn error-checking back on, until another
 directive is encountered which turns it off again.
 
+\begin{remark}
+When an I/O error occurs and I/O-checking code generation is off, all subsequent 
+I/O operations are ignored until the IO error status code is cleared. 
+
+When the \var{IOResult} function from the system unit is called, it returns the
+current IO status code and resets it.
+
+The effect of this is that \var{IOResult} must be checked after each I/O
+operation for subsequent I/O operations to succeed.
+\end{remark}
+
 The most common use for this switch is to check if the opening of a file
 went without problems, as in the following piece of code:
 \begin{verbatim}
