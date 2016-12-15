@@ -2343,7 +2343,7 @@ else
 	$(FPC) -h >>comphelp.inc
 	$(ECHO) '\end{verbatim}' >> comphelp.inc
 endif
-INCLUDES=date.inc syntax.sty
+INCLUDES=date.inc
 SYSTEMUNITDIR=$(OS_SOURCE)
 ifneq ($(findstring bsd,$(OS_SOURCE)),)
 override SYSTEMUNITDIR=bsd
