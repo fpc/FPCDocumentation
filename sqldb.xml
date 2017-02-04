@@ -20,8 +20,8 @@ databases.
 <li><link id ="TSQLConnection"/> represents the connection to the database.
 Here, properties pertaining to the connection (machine, database, user
 password) must be set. This is an abstract class, which should not be used
-directly. Per database type (mysql, firebird, postgres, oracle, sqlite) 
-a descendent should be made and used.</li> 
+directly. Per database type (mysql, firebird, postgres, oracle, sqlite)
+a descendent should be made and used.</li>
 <li><link id ="TSQLQuery"/> is a <link id="#fcl.db.TDataset"/> descendent
 which can be used to view and manipulate the result of an SQL select query.
 It can also be used to execute all kinds of SQL statements.</li>
@@ -56,7 +56,7 @@ typical example:
 SELECT * FROM MyTable WHERE (id=:id)
 </code>
 <p>
-The <var>:id</var> is a parameter with the name <var>id</var>. 
+The <var>:id</var> is a parameter with the name <var>id</var>.
 It does not contain a value yet. The
 value of the parameter will be specified separately. In SQLDB this happens
 through the <var>TParams</var> collection, where each element of
@@ -120,7 +120,7 @@ which means that the database server will insert whatever is in the
 <var>DEFAULT</var> clause of the corresponding field definition.
 </p>
 <p>
-The <var>WHERE</var> clause for update and delete statements consists 
+The <var>WHERE</var> clause for update and delete statements consists
 of all fields with <var>pfInKey</var> in their <var>ProviderFlags</var> property.
 Depending on the value of the <link id="TSQLQuery.UpdateMode">UpdateMode</link>
 property, additional fields may be added to the <var>WHERE</var> clause:
@@ -138,7 +138,7 @@ their old value.</dd>
 <p>
 In order to let SQLDB generate correct statements, it is important to set
 the <link id="#fcl.db.TField.ProviderFlags">ProviderFlags</link> properties
-correct for all fields. 
+correct for all fields.
 </p>
 <p>
 In many cases, for example when only a single table is queried, and no <var>AS</var> field aliases
@@ -147,16 +147,16 @@ with <var>UpdateMode</var> equal to <var>upWhereKeyOnly</var> is sufficient.
 </p>
 <p>
 If the automatically generated queries are not correct, it is possible to
-specify the SQL statements to be used in the 
+specify the SQL statements to be used in the
 <link id="TSQLQuery.UpdateSQL">UpdateSQL</link>,
-<link id="TSQLQuery.InsertSQL">InsertSQL</link> and 
+<link id="TSQLQuery.InsertSQL">InsertSQL</link> and
 <link id="TSQLQuery.DeleteSQL">DeleteSQL</link> properties.
 The new field values should be specified using params with the same name as the
 field. The old field values should be specified using the <var>OLD_</var>
 prefix to the field name. The following example demonstrates this:
 </p>
 <code>
-INSERT INTO MYTABLE 
+INSERT INTO MYTABLE
   (MYFIELD,MYFIELD2)
 VALUES
   (:MYFIELD,:MYFIELD2);
@@ -166,7 +166,7 @@ UPDATE MYTABLE SET
   MYFIELD2=:MYFIELD2
 WHERE
   (MYFIELD=:OLD_MYFIELD);
-  
+
 DELETE FROM MYTABLE WHERE (MyField=:OLD_MYFIELD);
 </code>
 </descr>
@@ -206,12 +206,12 @@ A more versatile system is the schema info query: the <link
 id="TCustomSQLQuery.SetSchemaInfo"/> method can be used to create a result
 set (dataset) with schema information. The parameter <var>SchemaType</var>
 determines the resulting information when the dataset is opened.
-The following information can be requested: 
+The following information can be requested:
 </p>
 <dl>
 <dt>stTables</dt>
 <dd>
-Retrieves the list of user Tables in database. 
+Retrieves the list of user Tables in database.
 This is used internally by <link id="TSQLConnection.GetTableNames"/>.
 </dd>
 <dt>stSysTables</dt>
@@ -227,8 +227,8 @@ by <link id="TSQLConnection.GetProcedureNames"/>.
 </dd>
 <dt>stColumns</dt>
 <dd>
-Retrieves the list of columns (fields) in a table. 
-This is used internally by <link id="TSQLConnection.GetFieldNames"/>. 
+Retrieves the list of columns (fields) in a table.
+This is used internally by <link id="TSQLConnection.GetFieldNames"/>.
 </dd>
 <dt>stProcedureParams</dt>
 <dd>
@@ -258,14 +258,14 @@ of <var>TSQLConnection</var> must be used. When using a lot of different
 connection types and components, this may be confusing and a lot of work.
 </p>
 <p>
-There is a universal connector component <link id="TSQLConnector"/> which can 
+There is a universal connector component <link id="TSQLConnector"/> which can
 connect to any database supported by SQLDB: it works as a proxy. Behind the
 scenes it uses a normal <var>TSQLConnection</var> descendent to do the real
 work. All this happens transparenty to the user code, the universal
 connector acts and works like any normal connection component.
 </p>
 <p>
-The type of database can be set in its <link id="TSQLConnector.ConnectorType">ConnectorType</link> property. 
+The type of database can be set in its <link id="TSQLConnector.ConnectorType">ConnectorType</link> property.
 By setting the <var>ConnectorType</var> property, the connector knows which
 <var>TSQLConnection</var> descendent must be created.
 </p>
@@ -273,12 +273,12 @@ By setting the <var>ConnectorType</var> property, the connector knows which
 Each <var>TSQLConnection</var> descendent registers itself with a unique
 name in the initialization section of the unit implementing it: this is the
 name that should be specified in the <var>ConnectorType</var> of the
-universal connection. 
+universal connection.
 The list of available connections can be retrieved with the <link id="GetConnectionList"/>
 call.
 </p>
 <p>
-From this mechanism it follows that before a particular connection type can be used, 
+From this mechanism it follows that before a particular connection type can be used,
 its definition must be present in the list of connector types. This means
 that the unit of the connection type (<var>ibconnection</var>,
 <var>pqconnection</var> etc.) must be included in the <var>uses</var> clause
@@ -288,11 +288,11 @@ connector.
 </p>
 <p>
 The universal connector only exposes the properties common to all connection
-types (the ones in <var>TSQLConnection</var>). It does not expose properties 
-for all the properties available in specific <var>TSQLConnection</var> descendents. 
+types (the ones in <var>TSQLConnection</var>). It does not expose properties
+for all the properties available in specific <var>TSQLConnection</var> descendents.
 This means that if connection-specific options must be used, they must be included in
-the <link id="TSQLConnection.Params">Params</link> property of the universal 
-connector in the form <var>Name=Value</var>. When the actual connection instance 
+the <link id="TSQLConnection.Params">Params</link> property of the universal
+connector in the form <var>Name=Value</var>. When the actual connection instance
 is created, the connection-specific properties will be set from the
 specified parameters.
 </p>
@@ -308,7 +308,7 @@ specified parameters.
 <descr>
 <p>
 SQLDB can be used to connect to any SQL capable database. It allows to
-execute SQL statements on any supported database type in a uniform way, 
+execute SQL statements on any supported database type in a uniform way,
 and allows to fetch and manipulate result sets (such as returned by a SELECT
 statement) using a standard <link id="#fcl.db.TDataset">TDataset</link>
 interface. SQLDB takes care that updates to the database are posted
@@ -322,7 +322,7 @@ When using SQLDB, 3 components are always needed:
 A <link id="TSQLConnection"/> descendent. This represents the
 connection to the database: the location of the database, and the username
 and password to authenticate the connection must be specified here.
-For each supported database type (Firebird, PostgreSQL, MySQL) there 
+For each supported database type (Firebird, PostgreSQL, MySQL) there
 is a separate connection component. They all descend from <var>TSQLConnection</var>.
 </li>
 <li>
@@ -342,7 +342,7 @@ mechanisms.
 </ol>
 <p>
 The 3 components must be linked together: the connection must point to a
-default transaction (it is used to execute certain queries for metadata), 
+default transaction (it is used to execute certain queries for metadata),
 the transaction component must point to a connection component. The
 TSQLQuery component must point to both a transaction and a database.
 </p>
@@ -357,7 +357,7 @@ Var
   C : TSQLConnection;
   T : TSQLTransaction;
   Q : TSQLQuery;
-  
+
 begin
   // Create a connection.
   C:=TIBConnection.Create(Nil);
@@ -386,16 +386,16 @@ begin
       Writeln(Q.FieldByName('U_NAME').AsString);
       Q.Next
       end;
-    Q.Close;  
+    Q.Close;
   finally
     C.Free;
   end;
-end.  
+end.
 </code>
 <p>
 The above code is quite simple. The connection type is
 <var>TIBConnection</var>, which is used for Firebird/Interbase databases.
-To connect to another database (for instance PostgreSQL), the exact same 
+To connect to another database (for instance PostgreSQL), the exact same
 code could be used, but instead of a <var>TIBConnection</var>, a
 <var>TPQConnection</var> component must be used:
 </p>
@@ -407,7 +407,7 @@ Var
   C : TSQLConnection;
   T : TSQLTransaction;
   Q : TSQLQuery;
-       
+
 begin
   // Create a connection.
   C:=TPQConnection.Create(Nil);
@@ -427,7 +427,7 @@ Var
   C : TSQLConnection;
   T : TSQLTransaction;
   Q : TSQLQuery;
-  
+
 begin
   C:=TIBConnection.Create(Nil);
   try
@@ -448,15 +448,15 @@ begin
       Add(' U_PASSWORD VARCHAR(50) ');
       Add(' ) ');
       end;
-    // And now execute the query using ExecSQL 
+    // And now execute the query using ExecSQL
     // There is no result, so Open cannot be used.
     Q.ExecSQL;
     // Commit the transaction.
-    T.Commit;   
+    T.Commit;
   finally
     C.Free;
   end;
-end.  
+end.
 </code>
 <p>
 As can be seen from the above example, the setup is the same as in the case
@@ -474,7 +474,7 @@ the data that you edit in it (see <link id="UpdateSQLs"/>).
 <link id="TSQLConnection"/>
 <link id="TSQLTransaction"/>
 <link id="TSQLQuery"/>
-<link id="TSQLConnector"/> 
+<link id="TSQLConnector"/>
 <link id="TSQLScript"/>
 <link id="UsingParams"/>
 <link id="UpdateSQLs"/>
@@ -489,7 +489,7 @@ the data that you edit in it (see <link id="UpdateSQLs"/>).
 <var>TSchemaType</var> describes which schema information to retrieve in the
 <link id="TCustomSQLQuery.SetSchemaInfo"/> call. Depending on its value,
 the result set of the dataset will have different fields, describing the
-requested schema data. The result data will always have the same structure.  
+requested schema data. The result data will always have the same structure.
 </descr>
 <seealso>
 <link id="RetrievingSchemaInformation"/>
@@ -528,6 +528,15 @@ requested schema data. The result data will always have the same structure.
 <!-- enumeration value Visibility: default -->
 <element name="TSchemaType.stPackages">
 <short>Packages (for databases that support them)</short>
+</element>
+<!-- enumeration value Visibility: default -->
+<element name="TSchemaType.stSchemata">
+<short>Database schemas (for databases that support them)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSchemaType.stSequences">
+<short>Sequences (for databases that support them)</short>
 </element>
 
 <!-- enumeration type Visibility: default -->
@@ -598,7 +607,7 @@ database.
 <p>
 <var>TSQLConnection</var> is an abstract class for making a connection to a SQL
 Database. This class will never be instantiated directly, for each database
-type a descendent class specific for this database type must be created. 
+type a descendent class specific for this database type must be created.
 </p>
 <p>
 Most of common properties to SQL databases are implemented in this class.
@@ -631,14 +640,14 @@ id="TSQLConnection"/> used in an application.
 <short>Custom Class to handle SQL commands (with or without result set)</short>
 <descr>
 <p>
-<var>TCustomSQLQuery</var> encapsulates a SQL statement: it implements 
+<var>TCustomSQLQuery</var> encapsulates a SQL statement: it implements
 all the necessary <link id="#fcl.db.TDataset"/> functionality to be
 able to handle a result set. It can also be used to execute SQL statements
 that do not return data, using the <link
 id="TCustomSQLQuery.ExecSQL">ExecSQL</link> method.
 </p>
 <p>
-Do not instantiate a <var>TCustomSQLQuery</var> class directly, 
+Do not instantiate a <var>TCustomSQLQuery</var> class directly,
 instead use the <link id="TSQLQuery"/> descendent.
 </p>
 </descr>
@@ -653,7 +662,7 @@ instead use the <link id="TSQLQuery"/> descendent.
 <descr>
 <p>
 <var>TSQLQuery</var> exposes the properties and some methods introduced in
-<link id="TCustomSQLQuery"/>. It encapsulates a single SQL statement: it implements 
+<link id="TCustomSQLQuery"/>. It encapsulates a single SQL statement: it implements
 all the necessary <link id="#fcl.db.TDataset"/> functionality to be
 able to handle a result set. It can also be used to execute a single SQL
 statement that does not return data, using the <link id="TCustomSQLQuery.ExecSQL"/> method.
@@ -662,7 +671,7 @@ statement that does not return data, using the <link id="TCustomSQLQuery.ExecSQL
 Typically, the <link id="TSQLQuery.Database"/> property must be set once, the <link
 id="TSQLQuery.Transaction"/> property as well. Then the <link id="TSQLQuery.SQL"/> property can
 be set. Depending on the kind of SQL statement, the <link
-id="#fcl.db.TDataset.Open">Open</link> method can be used to retrieve 
+id="#fcl.db.TDataset.Open">Open</link> method can be used to retrieve
 data, or the <var>ExecSQL</var> method can be used to execute the SQL
 statement (this can be used for DDL statements, or update statements).
 </p>
@@ -680,13 +689,13 @@ statement (this can be used for DDL statements, or update statements).
 <short>Component to execute various SQL statements</short>
 <descr>
 <var>TSQLScript</var> is a component that can be used to execute many SQL
-statements using a <link id="TSQLQuery"/> component. 
+statements using a <link id="TSQLQuery"/> component.
 The SQL statements are specified in a script <link id="TSQLScript.Script"/> separated
-by a terminator character (typically a semicolon (;)). 
+by a terminator character (typically a semicolon (;)).
 </descr>
 <seealso>
 <link id="TSQLTransaction"/>
-<link id="TSQLConnection"/>   
+<link id="TSQLConnection"/>
 <link id="TCustomSQLQuery.ExecSQL"/>
 <link id="TSQLQuery.SQL"/>
 </seealso>
@@ -761,7 +770,7 @@ enteredin the <var>SQL</var> property of a <link id="TSQLQuery"/> component.
 <p>
 <var>TSQLHandle</var> is an abstract internal object representing a database
 client handle. It is used by the various connections to implement the
-connection-specific functionality, and usually represents a low-level handle. 
+connection-specific functionality, and usually represents a low-level handle.
 It is used by the <link id="TSQLQuery"/> component to communicate with the
 <link id="TSQLConnection"/> descendent.
 </p>
@@ -816,7 +825,7 @@ The presence of this token in the SQL statement determines the kind of
 token.
 </descr>
 <seealso>
-<link id="TStatementType"/> 
+<link id="TStatementType"/>
 </seealso>
 </element>
 
@@ -877,7 +886,7 @@ circumstances, this property must not be used.
 <short>Destroys the instance of the connection.</short>
 <descr>
 <var>Destroy</var> removes the connection from memory.
-When a connection is removed, all datasets are closed, and all transactions too. 
+When a connection is removed, all datasets are closed, and all transactions too.
 </descr>
 </element>
 
@@ -887,7 +896,7 @@ When a connection is removed, all datasets are closed, and all transactions too.
 <descr>
 <p>
 <var>StartTransaction</var> is a convenience method which starts the default
-transaction (<link id="TSQLConnection.Transaction">Transaction</link>). It is equivalent to 
+transaction (<link id="TSQLConnection.Transaction">Transaction</link>). It is equivalent to
 </p>
 <code>
 Connection.Transaction.StartTransaction
@@ -907,7 +916,7 @@ If no transaction is assigned, an exception will be raised.
 <descr>
 <p>
 <var>StartTransaction</var> is a convenience method which ends the default
-transaction (<link id="TSQLConnection.Transaction"/>). It is equivalent to 
+transaction (<link id="TSQLConnection.Transaction"/>). It is equivalent to
 </p>
 <code>
 Connection.Transaction.EndTransaction
@@ -948,7 +957,7 @@ used, otherwise the specified transaction is used.
 <var>ExecuteDirect</var> does not offer support for parameters, so only
 statements that do not need parsing and parameters substitution can be handled.
 If parameter substitution is required, use a <link id="TSQLQuery"/>
-component and its <link id="TCustomSQLQuery.ExecSQL">ExecSQL</link> method. 
+component and its <link id="TCustomSQLQuery.ExecSQL">ExecSQL</link> method.
 </p>
 </descr>
 <errors>
@@ -1008,7 +1017,7 @@ Note that the list may depend on the access rights of the user.
 <descr>
 <p>
 <var>GetProcedureNames</var> will return the names of the stored procedures in the
-database in <var>List</var>. 
+database in <var>List</var>.
 </p>
 <p>
 <var>List</var> is cleared before adding the names.
@@ -1086,15 +1095,15 @@ necessary access rights.
 <element name="TSQLConnection.DropDB">
 <short>Procedure to drop or remove a Database</short>
 <descr>
-<var>DropDB</var> does the opposite of <link id="TSQLConnection.CreateDB">CreateDB</link>. 
-It removes the database from the server. 
+<var>DropDB</var> does the opposite of <link id="TSQLConnection.CreateDB">CreateDB</link>.
+It removes the database from the server.
 The database must be connected before this command may be used. Whether or not
 this functionality is present depends on the type of the connection.
 </descr>
 <errors>
 If the connection type does not support creating a database, then an
 <var>EDatabaseError</var> exception is raised. Other exceptions may be
-raised if the operation fails, e.g. when the user does not have the   
+raised if the operation fails, e.g. when the user does not have the
 necessary access rights.
 </errors>
 <seealso>
@@ -1107,7 +1116,7 @@ necessary access rights.
 <short>Password used when authenticating on the database server</short>
 <descr>
 <p>
-<var>Password</var> is used when authenticating the user specified in 
+<var>Password</var> is used when authenticating the user specified in
 <link id="TSQLConnection.username">UserName</link> when connecting to the database server
 </p>
 <p>
@@ -1126,7 +1135,7 @@ while the connection is active has no effect.
 <short>Default transaction to be used for this connection</short>
 <descr>
 <var>Transaction</var> should be set to a <link id="TSQLTransaction"/>
-instance. It is set as the default transaction when a query is connected 
+instance. It is set as the default transaction when a query is connected
 to the database, and is used in several metadata operations such as <link
 id="TSQLConnection.GetTableNames"/>
 </descr>
@@ -1165,7 +1174,7 @@ while the connection is active has no effect.
 data will be sent to the server, and in which character set the results
 should be sent to the client. Some connection types will ignore this
 property, and the data will be sent to the client in the encoding used on
-the server. 
+the server.
 </p>
 <p>
 This property must be set prior to activating the connection. Changing it
@@ -1179,7 +1188,7 @@ conversions by itself based on the value of this setting.
 </descr>
 <seealso>
 <link id="TSQLConnection.Password"/>
-<link id="TSQLConnection.HostName"/>        
+<link id="TSQLConnection.HostName"/>
 <link id="TSQLConnection.UserName"/>
 <link id="TSQLConnection.Role"/>
 </seealso>
@@ -1190,7 +1199,7 @@ conversions by itself based on the value of this setting.
 <short>The name of the host computer where the database resides</short>
 <descr>
 <p>
-<var>HostName</var> is the name of the host computer where the 
+<var>HostName</var> is the name of the host computer where the
 database server is listening for connection. An empty value means the local
 machine is used.
 </p>
@@ -1220,7 +1229,7 @@ or not. No queries to this server can be activated as long as the value is
 <p>Setting the property to <var>True</var> will attempt a connection to the
 database <link id="TSQLConnection.DatabaseName">DatabaseName</link> on host
 <link id="TSQLConnection.HostName">HostName</link> using the credentials
-specified in  <link id="TSQLConnection.UserName">UserName</link> and 
+specified in  <link id="TSQLConnection.UserName">UserName</link> and
 <link id="TSQLConnection.Password">Password</link>. If the connection or
 authentication fails, an exception is raised. This has the same effect as
 calling <link id="#fcl.db.TCustomConnection.Open">Open</link>.
@@ -1228,7 +1237,7 @@ calling <link id="#fcl.db.TCustomConnection.Open">Open</link>.
 <p>
 Setting the property to <var>False</var> will close the connection to the
 database. All datasets connected to the database will be closed, all
-transactions will be closed as well. This has the same effect as   
+transactions will be closed as well. This has the same effect as
 calling <link id="Close"/>
 </p>
 </descr>
@@ -1301,8 +1310,8 @@ once it is established. This property is currently not implemented.
 <descr>
 <var>LoginPrompt</var> can be set to <var>True</var> to force the system to
 get a username/password pair from the user. How these data are fetched from
-the used depends on the <link id="TSQLConnection.OnLogin">OnLogin</link> event handler. 
-The <link id="TSQLConnection.UserName">UserName</link> and 
+the used depends on the <link id="TSQLConnection.OnLogin">OnLogin</link> event handler.
+The <link id="TSQLConnection.UserName">UserName</link> and
 <link id="TSQLConnection.Password">Password</link> properties are ignored in
 this case.
 </descr>
@@ -1315,7 +1324,7 @@ this case.
 
 <!-- property Visibility: published -->
 <element name="TSQLConnection.Params">
-<short>Extra connection parameters</short> 
+<short>Extra connection parameters</short>
 <descr>
 <var>Params</var> can be used to specify extra parameters to use when
 establishing a connection to the database. Which parameters can be specified
@@ -1347,7 +1356,7 @@ dialog in which the username and password can be asked.
 <short>Transaction actions (unused)</short>
 <descr>
 <var>TCommitRollbackAction</var> is currently unused in SQLDB.
-</descr>  
+</descr>
 <seealso>
 <link id="TSQLTransaction.Action"/>
 </seealso>
@@ -1380,11 +1389,11 @@ dialog in which the username and password can be asked.
 <descr>
 <p>
 <var>Commit</var> commits an active transaction. The changes will be
-irreversably written to the database. 
+irreversably written to the database.
 </p>
 <p>After this, the transaction is deactivated and must be reactivated with the <link
 id="TSQLTransaction.StartTransaction">StartTransaction</link> method.
-To commit data while retaining an active transaction, execute <link 
+To commit data while retaining an active transaction, execute <link
 id="TSQLTransaction.CommitRetaining">CommitRetaining</link> instead.
 </p>
 </descr>
@@ -1397,7 +1406,7 @@ If the database backend reports an error, an exception is raised as well.
 <link id="TSQLTransaction.StartTransaction">StartTransaction</link>
 <link id="TSQLTransaction.CommitRetaining">CommitRetaining</link>
 <link id="TSQLTransaction.Rollback">Rollback</link>
-<link id="TSQLTransaction.RollbackRetaining">RollbackRetaining</link> 
+<link id="TSQLTransaction.RollbackRetaining">RollbackRetaining</link>
 </seealso>
 </element>
 
@@ -1407,24 +1416,24 @@ If the database backend reports an error, an exception is raised as well.
 <descr>
 <p>
 <var>CommitRetaining</var> commits an active transaction. The changes will be
-irreversably written to the database. 
+irreversably written to the database.
 </p>
 <p>After this, the transaction is still active.
-To commit data and deactivate the transaction, execute <link  
-id="TSQLTransaction.Commit">Commit</link> instead. 
+To commit data and deactivate the transaction, execute <link
+id="TSQLTransaction.Commit">Commit</link> instead.
 </p>
 </descr>
 <errors>
 Executing <var>CommitRetaining</var> when no transaction is active will result in an
-exception. 
+exception.
 A transaction must be started by calling <link id="TSQLTransaction.StartTransaction">StartTransaction</link>.
-If the database backend reports an error, an exception is raised  as well. 
+If the database backend reports an error, an exception is raised  as well.
 </errors>
 <seealso>
 <link id="TSQLTransaction.StartTransaction">StartTransaction</link>
-<link id="TSQLTransaction.Commit">Retaining</link>  
+<link id="TSQLTransaction.Commit">Retaining</link>
 <link id="TSQLTransaction.Rollback">Rollback</link>
-<link id="TSQLTransaction.RollbackRetaining">RollbackRetaining</link> 
+<link id="TSQLTransaction.RollbackRetaining">RollbackRetaining</link>
 </seealso>
 </element>
 
@@ -1434,11 +1443,11 @@ If the database backend reports an error, an exception is raised  as well.
 <descr>
 <p>
 <var>Rollback</var> undoes all changes in the databack since the start of
-the transaction. It can only be executed in an active transaction. 
+the transaction. It can only be executed in an active transaction.
 </p>
 <p>After this, the transaction is no longer active.
-To undo changes but keep an active transaction, execute 
-<link id="TSQLTransaction.RollbackRetaining">RollbackRetaining</link> instead. 
+To undo changes but keep an active transaction, execute
+<link id="TSQLTransaction.RollbackRetaining">RollbackRetaining</link> instead.
 </p>
 <remark>
 Changes posted in datasets that are coupled to this transaction will not be undone
@@ -1448,16 +1457,16 @@ in memory: these datasets must be reloaded from the database (using <var>Close</
 </descr>
 <errors>
 Executing <var>Rollback</var> when no transaction is active will
-result in an exception. 
+result in an exception.
 A transaction must be started by calling <link
 id="TSQLTransaction.StartTransaction">StartTransaction</link>.
-If the database backend reports an error, an exception is raised  as well. 
+If the database backend reports an error, an exception is raised  as well.
 </errors>
 <seealso>
 <link id="TSQLTransaction.StartTransaction">StartTransaction</link>
-<link id="TSQLTransaction.CommitRetaining">CommitRetaining</link> 
-<link id="TSQLTransaction.Commit">Commit</link> 
-<link id="TSQLTransaction.RollbackRetaining">RollbackRetaining</link> 
+<link id="TSQLTransaction.CommitRetaining">CommitRetaining</link>
+<link id="TSQLTransaction.Commit">Commit</link>
+<link id="TSQLTransaction.RollbackRetaining">RollbackRetaining</link>
 </seealso>
 </element>
 
@@ -1467,11 +1476,11 @@ If the database backend reports an error, an exception is raised  as well.
 <descr>
 <p>
 <var>RollbackRetaining</var> undoes all changes in the databack since the start of
-the transaction. It can only be executed in an active transaction. 
+the transaction. It can only be executed in an active transaction.
 </p>
 <p>After this, the transaction is kept in an active state.
-To undo changes and close the transaction, execute 
-<link id="TSQLTransaction.Rollback">Rollback</link> instead. 
+To undo changes and close the transaction, execute
+<link id="TSQLTransaction.Rollback">Rollback</link> instead.
 </p>
 <remark>
 Changes posted in datasets that are coupled to this transaction will not be undone
@@ -1481,16 +1490,16 @@ in memory: these datasets must be reloaded from the database (using <var>Close</
 </descr>
 <errors>
 Executing <var>RollbackRetaining</var> when no transaction is active will
-result in an exception. 
+result in an exception.
 A transaction must be started by calling <link
 id="TSQLTransaction.StartTransaction">StartTransaction</link>.
-If the database backend reports an error, an exception is raised  as well. 
+If the database backend reports an error, an exception is raised  as well.
 </errors>
 <seealso>
 <link id="TSQLTransaction.StartTransaction">StartTransaction</link>
-<link id="TSQLTransaction.Commit">Commit</link>  
-<link id="TSQLTransaction.Rollback">Rollback</link> 
-<link id="TSQLTransaction.CommitRetaining">CommitRetaining</link> 
+<link id="TSQLTransaction.Commit">Commit</link>
+<link id="TSQLTransaction.Rollback">Rollback</link>
+<link id="TSQLTransaction.CommitRetaining">CommitRetaining</link>
 </seealso>
 </element>
 
@@ -1499,7 +1508,7 @@ If the database backend reports an error, an exception is raised  as well.
 <short>Start a new transaction</short>
 <descr>
 <p>
-<var>StartTransaction</var> starts a new transaction context. 
+<var>StartTransaction</var> starts a new transaction context.
 All changes written to the database must be confirmed with a <link
 id="TSQLTransaction.Commit">Commit</link> or can be undone with a <link
 id="TSQLTransaction.Rollback">Rollback</link> call.
@@ -1549,7 +1558,7 @@ removing the object from memory.
 <element name="TSQLTransaction.Handle">
 <short>Low-level transaction handle</short>
 <descr>
-<var>Handle</var> is the low-level transaction handle object. 
+<var>Handle</var> is the low-level transaction handle object.
 It must not be used in application code. The actual type of this object
 depends on the type of <link id="TSQLConnection"/> descendent.
 </descr>
@@ -1579,8 +1588,8 @@ depends on the type of <link id="TSQLConnection"/> descendent.
 <short>Database for which this component is handling connections</short>
 <descr>
 <var>Database</var> should be set to the particular <link id="TSQLConnection"/>
-instance this transaction is handling transactions in. 
-All datasets connected to this transaction component must have the same value 
+instance this transaction is handling transactions in.
+All datasets connected to this transaction component must have the same value
 for their <link id="TSQLQuery.Database">Database</link> property.
 </descr>
 <seealso>
@@ -1609,16 +1618,16 @@ depends on the type of connection.
 <p>
 <var>Prepare</var> will prepare the SQL for execution. It will open the
 database connection if it was not yet open, and will start a transaction if
-none was started yet. It will then determine the statement type. 
+none was started yet. It will then determine the statement type.
 Finally, it will pass the statement on to the database engine if it supports
-preparing of queries. 
+preparing of queries.
 </p>
 <p>
-Strictly speaking, it is not necessary to call prepare, the component will 
-prepare the statement whenever it is necessary. If a query will be executed 
-repeatedly, it is good practice to prepare it once before starting to execute it. 
+Strictly speaking, it is not necessary to call prepare, the component will
+prepare the statement whenever it is necessary. If a query will be executed
+repeatedly, it is good practice to prepare it once before starting to execute it.
 This will speed up execution, since resources must be allocated only once.
-</p>   
+</p>
 </descr>
 <errors>
 If the SQL server cannot prepare the statement, an exception will be raised.
@@ -1638,7 +1647,7 @@ If the SQL server cannot prepare the statement, an exception will be raised.
 <var>Unprepare</var> will unprepare a prepared query. This means that server
 resources for this statement are deallocated. After a query was unprepared,
 any <var>ExecSQL</var> or <var>Open</var> command will prepare the SQL
-statement again.  
+statement again.
 </p>
 <p>
 Several actions will unprepare the statement: Setting the <link
@@ -1653,7 +1662,7 @@ If the SQL server cannot unprepare the statement, an exception may be raised.
 <seealso>
 <link id="TSQLQuery.StatementType"/>
 <link id="TCustomSQLQuery.Prepare"/>
-<link id="TCustomSQLQuery.ExecSQL"/>  
+<link id="TCustomSQLQuery.ExecSQL"/>
 </seealso>
 </element>
 
@@ -1663,7 +1672,7 @@ If the SQL server cannot unprepare the statement, an exception may be raised.
 <descr>
 <p>
 <var>ExecSQL</var> will execute the statement in <link id="TSQLQuery.SQL"/>, preparing the statement if necessary.
-It cannot be used to get results from the database (such as returned by a <var>SELECT</var> statement): 
+It cannot be used to get results from the database (such as returned by a <var>SELECT</var> statement):
 for this, the <link id="#fcl.db.TDataset.Open">Open</link> method must be used.
 </p>
 <p>
@@ -1694,8 +1703,8 @@ If the server reports an error, an exception will be raised.
 <element name="TCustomSQLQuery.Create">
 <short>Create a new instance of <var>TCustomSQLQuery</var>.</short>
 <descr>
-<var>Create</var> allocates a new instance on the heap and will 
-allocate all resources for the SQL statement. After this it calls 
+<var>Create</var> allocates a new instance on the heap and will
+allocate all resources for the SQL statement. After this it calls
 the inherited constructor.
 </descr>
 <errors>
@@ -1736,9 +1745,9 @@ information from the connection, and represents the schema info as a dataset.
 schema information from a connection. It will store the 3 passed parameters,
 which are then used in the ParseSQL and Prepare stages to optimize the
 allocated resources. setting the schema type to anything other than
-<var>stNoSchema</var> will also set (or mimic) the SQL statement as soon 
-as the query is prepared. For connection types that support this, the 
-SQL statement is then set to whatever statement the database connection 
+<var>stNoSchema</var> will also set (or mimic) the SQL statement as soon
+as the query is prepared. For connection types that support this, the
+SQL statement is then set to whatever statement the database connection
 supports to retrieve schema information.
 </p>
 <p>
@@ -1776,7 +1785,7 @@ schema information from the database.
 <var>Prepared</var> is true if <link id="TCustomSQLQuery.Prepare">Prepare</link> was called for this
 query, and an <link id="TCustomSQLQuery.UnPrepare">UnPrepare</link> was not
 done after that (take care: several actions call <var>UnPrepare</var>
-implicitly). Initially, <var>Prepared</var> will be <var>False</var>. 
+implicitly). Initially, <var>Prepared</var> will be <var>False</var>.
 Calling <var>Prepare</var> if the query was already prepared has no effect.
 </descr>
 <seealso>
@@ -1839,13 +1848,13 @@ If the query is not connected to a database, -1 is returned.
 <short>The <var>TSQLConnection</var> instance on which to execute SQL Statements</short>
 <descr>
 <p>
-<var>Database</var> is the SQL connection (of type <link id="TSQLConnection"/>) 
-on which SQL statements will be executed, and from which result sets will be retrieved. 
-This property must be set before any form of SQL command can be executed, just like the 
+<var>Database</var> is the SQL connection (of type <link id="TSQLConnection"/>)
+on which SQL statements will be executed, and from which result sets will be retrieved.
+This property must be set before any form of SQL command can be executed, just like the
 <link id="TSQLQuery.Transaction">Transaction</link> property must be set.
 </p>
 <p>
-Multiple <var>TSQLQuery</var> instances can be connected to a database at the same time. 
+Multiple <var>TSQLQuery</var> instances can be connected to a database at the same time.
 </p>
 </descr>
 <seealso>
@@ -1861,7 +1870,7 @@ Multiple <var>TSQLQuery</var> instances can be connected to a database at the sa
 <descr>
 <p>
 <var>Transaction</var> must be set to a SQL transaction (of type <link id="TSQLTransaction"/>)
-component. All SQL statements (<var>SQL</var> / <var>InsertSQL</var> / <var>updateSQL</var> / 
+component. All SQL statements (<var>SQL</var> / <var>InsertSQL</var> / <var>updateSQL</var> /
 <var>DeleteSQL</var>) etc.) will be executed in the context of this transaction.
 </p>
 <p>
@@ -1869,7 +1878,7 @@ The transaction must be connected to the same database instance as the query its
 </p>
 <p>
 Multiple <var>TSQLQuery</var> instances can be connected to a transaction at the same time.
-If the transaction is rolled back, all changes done by all <var>TSQLQuery</var> instances 
+If the transaction is rolled back, all changes done by all <var>TSQLQuery</var> instances
 will be rolled back.
 </p>
 </descr>
@@ -1888,14 +1897,14 @@ will be rolled back.
 <short>The SQL statement to execute</short>
 <descr>
 <p><var>SQL</var> is the SQL statement that will be executed when <link
-id="TCustomSQLQuery.ExecSQL">ExecSQL</link> is called, 
+id="TCustomSQLQuery.ExecSQL">ExecSQL</link> is called,
 or <link id="#fcl.db.Tdataset.Open">Open</link> is called. It should contain
 a valid SQL statement for the connection to which the <link id="TSQLQuery"/>
 component is connected. SQLDB will not attempt to modify the SQL statement
 so it is accepted by the SQL engine.
 </p>
 <p>Setting or modifying the SQL statement will call <link
-id="TCustomSQLQuery.UnPrepare">UnPrepare</link> 
+id="TCustomSQLQuery.UnPrepare">UnPrepare</link>
 </p>
 <p>
 If <link id="TSQLQuery.ParseSQL">ParseSQL</link> is <var>True</var>,
@@ -1921,14 +1930,14 @@ See also <printshort id="#fcl.sqldb.UsingParams"/>
 <descr>
 <p>
 <var>UpdateSQL</var> can be used to specify an SQL <var>UPDATE</var>
-statement, which is used when an existing record was modified in the dataset, 
+statement, which is used when an existing record was modified in the dataset,
 and the changes must be written to the database. <var>TSQLQuery</var> can generate
 an update statement by itself for many cases, but in case it fails, the
 statement to be used for the update can be specified here.
 </p>
 <p>
-The SQL statement should be parametrized according to the conventions 
-for specifying parameters. Note that old field values can be specified 
+The SQL statement should be parametrized according to the conventions
+for specifying parameters. Note that old field values can be specified
 as <var>:OLD_FIELDNAME</var>
 </p>
 </descr>
@@ -1948,14 +1957,14 @@ as <var>:OLD_FIELDNAME</var>
 <descr>
 <p>
 <var>InsertSQL</var> can be used to specify an SQL <var>INSERT</var>
-statement, which is used when a new record was appended to the dataset, 
-and the changes must be written to the database. <var>TSQLQuery</var> 
-can generate an insert statement by itself for many cases, but in case 
+statement, which is used when a new record was appended to the dataset,
+and the changes must be written to the database. <var>TSQLQuery</var>
+can generate an insert statement by itself for many cases, but in case
 it fails, the statement to be used for the insert can be specified here.
 </p>
 <p>
-The SQL statement should be parametrized according to the conventions 
-for specifying parameters. Note that old field values can be specified 
+The SQL statement should be parametrized according to the conventions
+for specifying parameters. Note that old field values can be specified
 as <var>:OLD_FIELDNAME</var>
 </p>
 </descr>
@@ -1975,14 +1984,14 @@ as <var>:OLD_FIELDNAME</var>
 <descr>
 <p>
 <var>DeleteSQL</var> can be used to specify an SQL <var>DELETE</var>
-statement, which is used when an existing record was deleted from the dataset, 
-and the changes must be written to the database. <var>TSQLQuery</var> 
-can generate a delete statement by itself for many cases, but in case 
+statement, which is used when an existing record was deleted from the dataset,
+and the changes must be written to the database. <var>TSQLQuery</var>
+can generate a delete statement by itself for many cases, but in case
 it fails, the statement to be used for the insert can be specified here.
 </p>
 <p>
-The SQL statement should be parametrized according to the conventions 
-for specifying parameters. Note that old field values can be specified 
+The SQL statement should be parametrized according to the conventions
+for specifying parameters. Note that old field values can be specified
 as <var>:OLD_FIELDNAME</var>
 </p>
 </descr>
@@ -2015,19 +2024,19 @@ as <var>:OLD_FIELDNAME</var>
 collection is only updated when <link id="TSQLQuery.ParseSQL">ParseSQL</link>
 is <var>True</var>. For each named parameter in the <link id="TSQLQuery.SQL">SQL</link>
 property, a named item will appear in the collection, and the collection
-will be used to retrieve values from. 
+will be used to retrieve values from.
 </p>
 <p>
-When <link id="#fcl.db.TDataset.open">Open</link> or 
-<link id="TCustomSQLQuery.ExecSQL">ExecSQL</link> is called, 
+When <link id="#fcl.db.TDataset.open">Open</link> or
+<link id="TCustomSQLQuery.ExecSQL">ExecSQL</link> is called,
 and the <link id="TSQLQuery.Datasource">Datasource</link> property is not
 <var>Nil</var>,
 then for each parameter for which no value was explicitly set (its <link id="#fcl.db.TParam.Bound">Bound</link>
 property is <var>False</var>), the value
-will be retrieved from the dataset connected to the datasource. 
+will be retrieved from the dataset connected to the datasource.
 </p>
 <p>
-For each parameter, a field with the same name will be searched, 
+For each parameter, a field with the same name will be searched,
 and its value and type will be copied to the (unbound) parameter.
 The parameter remains unbound.
 </p>
@@ -2049,8 +2058,8 @@ The Update, delete and insert SQL statements are not scanned for parameters.
 <short>How to create update SQL statements.</short>
 <descr>
 <p>
-<var>UpdateMode</var> determines how the <var>WHERE</var> clause of the 
-<link id="TSQLQuery.UpdateSQL">UpdateSQL</link> and 
+<var>UpdateMode</var> determines how the <var>WHERE</var> clause of the
+<link id="TSQLQuery.UpdateSQL">UpdateSQL</link> and
 <link id="TSQLQuery.DeleteSQL">DeleteSQL</link> statements are
 auto-generated.
 </p>
@@ -2075,12 +2084,12 @@ auto-generated.
 <descr>
 <p>
 <var>UsePrimaryKeyAsKey</var> can be set to <var>True</var> to let
-<var>TSQLQuery</var> fetch all server indexes and if there is a primary key, 
+<var>TSQLQuery</var> fetch all server indexes and if there is a primary key,
 update the <link id="#fcl.db.TField.ProviderFlags">ProviderFlags</link> of the
 fields in the primary key with <link id="#fcl.db.TProviderFlag">pfInKey</link>.
 </p>
 <p>
-The effect of this is that when <link id="TSQLQuery.UpdateMode">UpdateMode</link> 
+The effect of this is that when <link id="TSQLQuery.UpdateMode">UpdateMode</link>
 equals <var>upWhereKeyOnly</var>, then only the fields that are part of the primary key
 of the table will be used in the update statements. For more information,
 see <link id="UpdateSQLs"/>.
@@ -2105,7 +2114,7 @@ from parsing the <link id="TSQLQuery.SQL">SQL</link> property and attempting
 to detect the statement type or updating the <link id="TSQLQuery.Params">Params</link>
 or <link id="TSQLQuery.StatementType">StatementType</link> properties.
 </p>
-<p> 
+<p>
 This can be used when SQLDB has problems parsing the SQL statement, or when
 the SQL statement contains parameters that are part of a DDL statement such
 as a <var>CREATE PROCEDURE</var> statement to create a stored procedure.
@@ -2126,7 +2135,7 @@ no parameter values will be passed on.
 <descr>
 <p>
 <var>StatementType</var> is determined during the <link
-id="TCustomSQLQuery.Prepare">Prepare</link> call when 
+id="TCustomSQLQuery.Prepare">Prepare</link> call when
 <link id="TSQLQuery.ParseSQL">ParseSQL</link> is set to <var>True</var>.
 It gives an indication of the type of SQL statement that is being executed.
 </p>
@@ -2147,23 +2156,23 @@ It gives an indication of the type of SQL statement that is being executed.
 values for the parameters if they were not explicitly specified.
 </p>
 <p>
-When <link id="#fcl.db.TDataset.open">Open</link> or 
-<link id="TCustomSQLQuery.ExecSQL">ExecSQL</link> is called, 
+When <link id="#fcl.db.TDataset.open">Open</link> or
+<link id="TCustomSQLQuery.ExecSQL">ExecSQL</link> is called,
 and the <var>Datasource</var> property is not <var>Nil</var>
-then for each parameter for which no value was explicitly set 
-(its <link id="#fcl.db.TParam.Bound">Bound</link> 
+then for each parameter for which no value was explicitly set
+(its <link id="#fcl.db.TParam.Bound">Bound</link>
 property is <var>False</var>), the value
-will be retrieved from the dataset connected to the datasource. 
+will be retrieved from the dataset connected to the datasource.
 </p>
 <p>
-For each parameter, a field with the same name will be searched, 
+For each parameter, a field with the same name will be searched,
 and its value and type will be copied to the (unbound) parameter.
 The parameter remains unbound.
 </p>
 </descr>
 <seealso>
 <link id="TSQLQuery.Params">Params</link>
-<link id="TCustomSQLQuery.ExecSQL">ExecSQL</link> 
+<link id="TCustomSQLQuery.ExecSQL">ExecSQL</link>
 <link id="UsingParams"/>
 <link id="#fcl.db.TParam.Bound">TParam.Bound</link>
 </seealso>
@@ -2179,14 +2188,14 @@ The parameter remains unbound.
 will be appended to the <var>select</var>  statement in <link
 id="TSQLQuery.SQL">SQL</link>, when <link id="TSQLQuery.ServerFiltered">ServerFiltered</link>
 is set to <var>True</var>. if <link id="TSQLQuery.ServerFiltered">ServerFiltered</link>
-is set to <var>False</var>, <var>ServerFilter</var> is ignored. 
+is set to <var>False</var>, <var>ServerFilter</var> is ignored.
 </p>
 <p>
 If the dataset is active and <link id="TSQLQuery.ServerFiltered">ServerFiltered</link> is set to
 true, then changing this property will re-fetch the data from the server.
 </p>
 <p>
-This property cannot be used when <link id="TSQLQuery.ParseSQL">ParseSQL</link> is <var>False</var>, because the 
+This property cannot be used when <link id="TSQLQuery.ParseSQL">ParseSQL</link> is <var>False</var>, because the
 statement must be parsed in order to know where the <var>WHERE</var> clause must be
 inserted: the <var>TSQLQuery</var> class will intelligently insert the
 clause in an SQL select statement.
@@ -2206,7 +2215,7 @@ will result in an exception.
 <short>Should server-side filter be applied</short>
 <descr>
 <var>ServerFiltered</var> can be set to <var>True</var> to apply <link
-id="TSQLQuery.ServerFilter">ServerFilter</link>. 
+id="TSQLQuery.ServerFilter">ServerFilter</link>.
 A change in the value for this property will re-fetch the query results if the dataset is active.
 </descr>
 <errors>
@@ -2225,7 +2234,7 @@ will result in an exception.
 <descr>
 <var>ServerIndexDefs</var> will be filled - during the <var>Prepare</var> call
 -  with the list of indexes defined
-on the primary table in the query if 
+on the primary table in the query if
 <link id="TSQLQuery.UsePrimaryKeyAsKey">UsePrimaryKeyAsKey</link> is <var>True</var>.
 If a primary key is found, then the fields in it will be marked
 </descr>
@@ -2280,13 +2289,13 @@ one.
 <short>The script to execute</short>
 <descr>
 <p>
-<var>Script</var> contains the list of SQL statements to be executed. 
-The statements should be separated by the character specified in the 
+<var>Script</var> contains the list of SQL statements to be executed.
+The statements should be separated by the character specified in the
 <link id="TSQLScript.Terminator">Terminator</link> property. Each of the statement will
 be executed on the database specified  in <link id="TSQLScript.DataBase">Database</link>.
 using the equivalent of the <link id="TCustomSQLQuery.ExecSQL"/> statement.
 The statements should not return result sets, but other than that all kind
-of statements are allowed. 
+of statements are allowed.
 </p>
 <p>
 Comments will be conserved and passed on in the statements to be executed,
@@ -2322,7 +2331,7 @@ property will be executed on this database.
 <short>Transaction to use in the script</short>
 <descr>
 <var>Transaction</var> is the transaction instance to use when executing
-statements. If the SQL script contains any <var>COMMIT</var> 
+statements. If the SQL script contains any <var>COMMIT</var>
 statements, they will be handled using the <link
 id="TSQLTRansaction.CommitRetaining"/> method.
 </descr>
@@ -2338,7 +2347,7 @@ id="TSQLTRansaction.CommitRetaining"/> method.
 <short>Universal connection component</short>
 <descr>
 <p>
-<var>TSQLConnector</var> implements a general connection type. 
+<var>TSQLConnector</var> implements a general connection type.
 When switching database backends, the normal procedure is to replace one instance
 of <link id="TSQLConnection"/> descendent with another, and connect all
 instances of <link id="TSQLQuery"/> and <link id="TSQLTransaction"/> to the
@@ -2388,10 +2397,10 @@ connection is active will result in an exception.
 <short>Class of <var>TSQLConnection</var> type</short>
 <descr>
 <var>TSQLConnectionClass</var> is used when registering a new connection
-type for use in the universal connector <link id="TSQLConnector.ConnectorType"/> 
+type for use in the universal connector <link id="TSQLConnector.ConnectorType"/>
 </descr>
 <seealso>
-<link id="TSQLConnector.ConnectorType"/> 
+<link id="TSQLConnector.ConnectorType"/>
 <link id="TSQLConnector"/>
 <link id="RegisterConnection"/>
 <link id="TConnectionDef.ConnectionClass"/>
@@ -2405,12 +2414,12 @@ type for use in the universal connector <link id="TSQLConnector.ConnectorType"/>
 <var>TConnectionDef</var> is an abstract class. When registering a new
 connection type for use in the universal connector, a descendent of this
 class must be made and registered using <link id="RegisterConnection"/>.
-A descendent class should override at least the <link id="TConnectionDef.TypeName"/> 
+A descendent class should override at least the <link id="TConnectionDef.TypeName"/>
 and <link id="TConnectionDef.ConnectionClass"/> methods to return the
 specific name and connection class to use.
 </descr>
 <seealso>
-<link id="TConnectionDef.TypeName"/> 
+<link id="TConnectionDef.TypeName"/>
 <link id="TConnectionDef.ConnectionClass"/>
 <link id="RegisterConnection"/>
 </seealso>
@@ -2425,7 +2434,7 @@ specific name and connection class to use.
 name for this connection type. It is what the <link id="TSQLConnector.ConnectorType"/>
 property should be set to select this connection type for the universal
 connection, and is the name that the <link id="GetConnectionDef"/> call will
-use when looking for a connection type. It must be overidden by descendents  
+use when looking for a connection type. It must be overidden by descendents
 of <var>TConnectionDef</var>.
 </p>
 <p>
@@ -2438,8 +2447,8 @@ This name can be an arbitrary name, no restrictions on the allowed characters ex
 </descr>
 <seealso>
 <link id="TSQLConnector.ConnectorType"/>
-<link id="GetConnectionDef"/> 
-<link id="GetConnectionList"/> 
+<link id="GetConnectionDef"/>
+<link id="GetConnectionList"/>
 <link id="TConnectionDef.ConnectionClass"/>
 </seealso>
 </element>
@@ -2497,13 +2506,13 @@ information about the particulars of the connection type.
 <descr>
 <p>
 <var>ApplyParams</var> must be overridden to apply any params specified in
-the <var>Params</var> argument to the <link id="TSQLConnection"/> descendent 
+the <var>Params</var> argument to the <link id="TSQLConnection"/> descendent
 in <var>AConnection</var>. It can be used to convert <var>Name=Value</var>
-pairs to properties of the actual connection instance. 
+pairs to properties of the actual connection instance.
 </p>
 <p>
-When called, <var>AConnection</var>  is guaranteed to be of the same type as 
-returned by <link id="TConnectionDef.ConnectionClass"/>. 
+When called, <var>AConnection</var>  is guaranteed to be of the same type as
+returned by <link id="TConnectionDef.ConnectionClass"/>.
 <var>Params</var> contains the contents of the <link id="TSQLConnection.Params"/>
 property of the connector.
 </p>
@@ -2532,9 +2541,9 @@ id="RegisterConnection"/> call to register a new <link id="TConnectionDef"/>
 instance.
 </descr>
 <seealso>
-<link id="RegisterConnection"/> 
+<link id="RegisterConnection"/>
 <link id="TConnectionDef"/>
-<link id="UnregisterConnection"/> 
+<link id="UnregisterConnection"/>
 </seealso>
 </element>
 
@@ -2555,7 +2564,7 @@ so simply including the unit with a particular connection type is enough to
 register it.
 </p>
 <p>
-Connection types registered with this call can be unregistered with 
+Connection types registered with this call can be unregistered with
 <link id="UnRegisterConnection"/>.
 </p>
 </descr>
@@ -2577,9 +2586,9 @@ if <var>Def</var> is <var>Nil</var>, access violations will occur.
 <element name="UnRegisterConnection">
 <short>Unregister a registered connection type</short>
 <descr>
-<var>UnRegisterConnection</var> will unregister the connection <var>Def</var>. 
+<var>UnRegisterConnection</var> will unregister the connection <var>Def</var>.
 If a connection with <var>ConnectionName</var> or with name as returned by
-the <link id="TConnectionDef.TypeName">TypeName</link> method from <var>Def</var>  
+the <link id="TConnectionDef.TypeName">TypeName</link> method from <var>Def</var>
 was previously registered, it will be removed from the list of registered connection types.
 </descr>
 <errors>
@@ -2607,7 +2616,7 @@ if <var>Def</var> is <var>Nil</var>, access violations will occur.
 <descr>
 <p>
 <var>GetConnectionDef</var> will search in the list of connection type
-definitions, and will return the one definition with the name that 
+definitions, and will return the one definition with the name that
 matches <var>ConnectorName</var>. The search is case insensitive.
 </p>
 <p>
@@ -2637,7 +2646,7 @@ If no definition is found, <var>Nil</var> is returned.
 <descr>
 <var>GetConnectionList</var> clears <var>List</var> and fills it with the
 list of currently known connection type names, as registered with <link
-id="RegisterConnection"/>. The names are the names as returned by 
+id="RegisterConnection"/>. The names are the names as returned by
 <link id="TConnectionDef.TypeName"/>
 </descr>
 <seealso>
@@ -2921,7 +2930,7 @@ example be written to a log file. Only events specified in the <link
 id="TSQLConnection.LogEvents">LogEvents</link> property will be logged.
 </p>
 <p>
-The events received by this event handler are specific for this connection. 
+The events received by this event handler are specific for this connection.
 To receive events from all active connections in the application, set the
 global <link id="GlobalDBLogHook"/> event handler.
 </p>
@@ -2937,7 +2946,7 @@ global <link id="GlobalDBLogHook"/> event handler.
 <short>Filter for events to log</short>
 <descr>
 <var>LogEvents</var> can be used to filter the events which should be sent
-to the <link id="TSQLConnection.OnLog">OnLog</link> and <link id="GlobalDBLogHook"/> event handlers. 
+to the <link id="TSQLConnection.OnLog">OnLog</link> and <link id="GlobalDBLogHook"/> event handlers.
 Only event types that are listed in this property will be sent.
 </descr>
 <seealso>
@@ -3017,10 +3026,10 @@ information will be returned by the <var>TSQLQuery</var> instance.
 <p>
 <var>MaxIndexesCount</var> determines the number of index entries that the
 dataset will reserve for indexes. No more indexes than indicated here can be
-used. The property must be set before the dataset is opened. The minimum 
+used. The property must be set before the dataset is opened. The minimum
 value for this property is 1. The default value is 2.
 </p>
-<p> 
+<p>
 If an index is added and the current index count equals
 <var>MaxIndexesCount</var>, an exception will be raised.
 </p>
@@ -3045,9 +3054,9 @@ exception.
 id="TSQLScript.Script">Script</link> one by one, till the last statement is
 processed or an exception is raised.
 </p>
-<p> 
-If an error occurs during execution, normally an exception is raised. 
-If the <link id="TSQLScript.OnException"/> event handler is set, it may 
+<p>
+If an error occurs during execution, normally an exception is raised.
+If the <link id="TSQLScript.OnException"/> event handler is set, it may
 stop the event handler.
 </p>
 </descr>
@@ -3095,7 +3104,7 @@ event handler. The list should contain one word per line, no spaces allowed.
 <short>Defined macros</short>
 <descr>
 <var>Defines</var> contains the list of defined macros for use with the
-<link id="TSQLScript.UseDefines"/> property. Each line should contain a 
+<link id="TSQLScript.UseDefines"/> property. Each line should contain a
 macro name. The names of the macros are case insensitive. The
 <var>#DEFINE</var> and <var>#UNDEFINE</var> directives will add or remove
 macro names from this list.
@@ -3130,7 +3139,7 @@ the terminator character may be changed in the script.
 <descr>
 <p>
 <var>CommentsInSQL</var> can be set to <var>True</var> to let
-<var>TSQLScript</var> preserve any comments it finds in the script. 
+<var>TSQLScript</var> preserve any comments it finds in the script.
 The comments will be passed to the SQLConnection as part of the commands.
 If the property is set to <var>False</var> the comments are discarded.
 </p>
@@ -3180,11 +3189,11 @@ semicolon (;).
 <short>Control automatic handling of the <var>COMMIT</var> command.</short>
 <descr>
 <p>
-<var>UseCommit</var> can be set to <var>True</var> to let <var>TSQLScript</var> 
+<var>UseCommit</var> can be set to <var>True</var> to let <var>TSQLScript</var>
 automatically handle the commit command as a directive. If it is set,
-the <var>COMMIT</var> command is registered as a directive, and 
+the <var>COMMIT</var> command is registered as a directive, and
 the <link id="TSQLScript.Transaction"/> will be commited and restarted
-at once whenever the <var>COMMIT</var> directive appears in the script. 
+at once whenever the <var>COMMIT</var> directive appears in the script.
 </p>
 <p>
 If this property is set to <var>False</var> then the commit command will be
@@ -3327,7 +3336,7 @@ needed when a connection of this type is requested.
 <descr>
 <var>LoadFunction</var> must return the function that will be called when the client
 library for this connection type must be loaded. This method must be
-overridden by descendent classes to return a function that will correctly 
+overridden by descendent classes to return a function that will correctly
 load the client library when a connection of this type is used.
 </descr>
 <seealso>
@@ -3370,7 +3379,7 @@ unload the client library when a connection of this type is no longer used.
 <short>Currently loaded library.</short>
 <descr>
 <var>LoadedLibraryName</var> must be overridden by descendents to return the
-filename of the currenly loaded client library for this connection type. 
+filename of the currenly loaded client library for this connection type.
 If no library is loaded, an empty string must be returned.
 </descr>
 <seealso>
@@ -3482,7 +3491,7 @@ database.
 execute SQL statements on a database. It does not support result sets, and
 has none of the methods that a <link id="TDataset"/> component has. It can
 be used to execute SQL statements on a database that update data, execute
-stored procedures and DDL statements etc. 
+stored procedures and DDL statements etc.
 </p>
 <p>
 The <var>TCustomSQLStatement</var> is equivalent to <link id="TSQLQuery"/>
@@ -3502,7 +3511,7 @@ with the <link id="Execute"/> method.
 </p>
 <p>
 <var>TCustomSQLStatement</var> is a parent class. Many of the properties are
-only made public (or published) in the <link id="TSQLStatement"/> class, which 
+only made public (or published) in the <link id="TSQLStatement"/> class, which
 should be instantiated instead of the <var>TCustomSQLStatement</var> class.
 </p>
 </descr>
@@ -3544,15 +3553,15 @@ should be instantiated instead of the <var>TCustomSQLStatement</var> class.
 <var>TCustomSQLStatement</var> and sets the <link
 id="TSQLStatement.SQL">SQL</link>
 <link id="TSQLStatement.Params">Params</link>, <link
-id="TSQLStatement.ParamCheck">ParamCheck</link> and 
+id="TSQLStatement.ParamCheck">ParamCheck</link> and
 <link id="TSQLStatement.ParseSQL">ParseSQL</link> to
 their initial values.
 </descr>
 <seealso>
 <link id="TSQLStatement.SQL"/>
 <link id="TSQLStatement.Params"/>
-<link id="TSQLStatement.ParamCheck"/> 
-<link id="TSQLStatement.ParseSQL"/> 
+<link id="TSQLStatement.ParamCheck"/>
+<link id="TSQLStatement.ParseSQL"/>
 <link id="Destroy"/>
 </seealso>
 </element>
@@ -3582,7 +3591,7 @@ instance and its properties.
 <descr>
 <var>Prepare</var> prepares the SQL statement for execution. It is called
 automatically if <link id="Execute"/> is called and the statement was not yet
-prepared. Depending on the database engine, it will also allocate the necessary 
+prepared. Depending on the database engine, it will also allocate the necessary
 resources on the database server.
 </descr>
 <errors>
@@ -3617,7 +3626,7 @@ properly) then an exception is raised as well.
 </errors>
 <seealso>
 <link id="TSQLStatement.SQL"/>
-<link id="TSQLStatement.Database"/> 
+<link id="TSQLStatement.Database"/>
 <link id="TSQLStatement.Transaction"/>
 </seealso>
 </element>
@@ -3691,7 +3700,7 @@ Not all databases may support this.
 <short>Is the statement prepared or not</short>
 <descr>
 <var>Prepared</var> equals <var>True</var> if <link id="Prepare"/> was
-called (implicitly or explictly), it returns <var>False</var> if not. 
+called (implicitly or explictly), it returns <var>False</var> if not.
 It can be set to <var>True</var> or <var>False</var> to call <link
 id="Prepare"/> or <link id="UnPrepare"/>, respectively.
 </descr>
@@ -3729,7 +3738,7 @@ id="TCustomSQLStatement.Prepare">Prepare</link> or <link
 id="TCustomSQLStatement.Execute">Execute</link>.
 </descr>
 <seealso>
-<link id="Transaction"/> 
+<link id="Transaction"/>
 <link id="TCustomSQLStatement.Prepare">Prepare</link>
 <link id="TCustomSQLStatement.Execute">Execute</link>
 </seealso>
@@ -3739,7 +3748,7 @@ id="TCustomSQLStatement.Execute">Execute</link>.
 <element name="TSQLStatement.DataSource">
 <short>Datasource to copy parameter values from</short>
 <descr>
-<var>Datasource</var> can be set to a <link id="#fcl.db.TDatasource"/> instance. 
+<var>Datasource</var> can be set to a <link id="#fcl.db.TDatasource"/> instance.
 When <link id="TCustomSQLStatement.Execute">Execute</link> is called, any
 unbound parameters remain empty, but if <var>DataSource</var> is set, the
 value of these parameters will be searched in the fields of the associated
@@ -3766,8 +3775,8 @@ statement should be checked for parameter names (in the form
 id="#fcl.db.TParam">TParam</link> instances should be added to the <link
 id="Params">Params</link> property.
 </p>
-<p> 
-When executing some DDL statements, e.g. a "create procedure" SQL 
+<p>
+When executing some DDL statements, e.g. a "create procedure" SQL
 statement can contain parameters. These parameters should not be converted
 to <var>TParam</var> instances.
 </p>
@@ -3819,10 +3828,10 @@ statement that returns a result set. This is the statement that will be
 passed on to the database engine when <link id="TCustomSQLStatement.Prepare">Prepare</link> is called.
 </p>
 <p>
-If <link id="ParamCheck"/> equals <var>True</var> (the default), the SQL statement can contain 
-parameter names where literal values can occur, in the form <var>:ParamName</var>. 
+If <link id="ParamCheck"/> equals <var>True</var> (the default), the SQL statement can contain
+parameter names where literal values can occur, in the form <var>:ParamName</var>.
 Keywords or table names cannot be specified as parameters.
-If the underlying database engine supports it, the parameter support of 
+If the underlying database engine supports it, the parameter support of
 the database will be used to transfer the values from the <link id="Params"/> collection. If not, it will be emulated.
 The <var>Params</var> collection is automatically populated when the SQL statement is set.
 </p>
@@ -3871,8 +3880,8 @@ statement should be checked for parameter names (in the form
 id="#fcl.db.TParam">TParam</link> instances should be added to the <link
 id="Params">Params</link> property.
 </p>
-<p> 
-When executing some DDL statements, e.g. a "create procedure" SQL 
+<p>
+When executing some DDL statements, e.g. a "create procedure" SQL
 statement can contain parameters. These parameters should not be converted
 to <var>TParam</var> instances.
 </p>
@@ -4063,7 +4072,7 @@ store information about the field to be updated.
 use by the <link id="TSQLConnection"/> descendents.
 </descr>
 <seealso>
-<link id="TSQLConnection"/> 
+<link id="TSQLConnection"/>
 <link id="TSQLDBParam.FieldDef"/>
 </seealso>
 </element>
@@ -4262,7 +4271,7 @@ the behaviour of an <link id="TSQLQuery"/> instance.
 </descr>
 <seealso>
 <link id="TSQLQueryOptions"/>
-<link id="TCustomSQLQuery.Options"/> 
+<link id="TCustomSQLQuery.Options"/>
 </seealso>
 </element>
 
@@ -4360,9 +4369,9 @@ called as the last step of the <var>Post</var> operation.
 <var>Delete</var> is overridden from <link id="DB.TDataset.Delete"/> to
 implement the auto-applyupdates mechanism: if <link id="TSQLQuery.Options"/>
 contains <var>sqoAutoApplyUpdates</var>, then <var>ApplyUpdates</var> is
-called as the last step of the <var>Post</var> operation. 
-</descr>  
-<seealso> 
+called as the last step of the <var>Post</var> operation.
+</descr>
+<seealso>
 <link id="TSQLQuery.Options"/>
 <link id="TCustomSQLQuery.ApplyUpdates"/>
 </seealso>
@@ -4374,7 +4383,7 @@ called as the last step of the <var>Post</var> operation.
 <descr>
 <p>
 <var>RefreshSQL</var> can be used to specify a SQL statement that is
-executed after an <var>UPDATE</var> or <var>INSERT</var> operation. 
+executed after an <var>UPDATE</var> or <var>INSERT</var> operation.
 The query will be executed, and the values of all fields in the result set
 will be copied to the dataset. This SQL statement is only executed during
 the <var>ApplyUpdates</var> operation, not during the <var>Post</var> call
@@ -4529,13 +4538,6 @@ id="TSQLQuery.RefreshSQL"/> property or a constructed refresh SQL statement.
 </seealso>
 </element>
 
-<!-- constant Visibility: default -->
-<element name="stSchemata">
-<short>Alias for <var>sqltypes.stSchemata</var></short>
-<seealso>
-<link id="#fcl.sqltypes.TSchemaType"/>
-</seealso>
-</element>
 
 <!-- constant Visibility: default -->
 <element name="stSequences">
@@ -4726,7 +4728,7 @@ id="TSQLQuery.RefreshSQL"/> property or a constructed refresh SQL statement.
 <descr>
 <p>
 <var>GetObjectNames</var> returns all the names of objects of a given type
-<var>ASchemaType</var> in the database, and returns the number of found objects 
+<var>ASchemaType</var> in the database, and returns the number of found objects
 as a result. The object names are placed in the collection <var>AList</var>.
 </p>
 <p>
@@ -4758,7 +4760,7 @@ The collection is not cleared.
 <short>Return a list of sequence names</short>
 <descr>
 <p>
-<var>GetSequenceNames</var> returns the names of all defined sequences 
+<var>GetSequenceNames</var> returns the names of all defined sequences
 (Generators in Firebird) in the databases in <var>List</var>, if the
 database engine supports them:  Not all database types support sequences.
 </p>
@@ -4843,8 +4845,8 @@ Not all databases support sequences, in that case an SQL error will be raised.
 <short>Support for applying sequences to fields</short>
 <descr>
 <var>TSQLSequence</var> is an auxiliary class, used to auto-generate
-numerical values for fields in databases that support sequences; it 
-is used as a property of <link id="TSQLQuery"/> and its properties 
+numerical values for fields in databases that support sequences; it
+is used as a property of <link id="TSQLQuery"/> and its properties
 determine which field must be auto-generated, and at what moment this value
 must be generated.
 </descr>
@@ -4900,7 +4902,7 @@ None.
 <short>Apply a new value to a field</short>
 <descr>
 <var>Apply</var> applies the new value it gets for <link id="TSQLSequence.SequenceName"/>
-using <link id="TSQLSequence.GetNextValue"/> to the field <link id="TSQLSequence.FieldName"/> 
+using <link id="TSQLSequence.GetNextValue"/> to the field <link id="TSQLSequence.FieldName"/>
 of the dataset it is attached to.
 </descr>
 <errors>
@@ -4910,7 +4912,7 @@ If the dataset is not attached to a connected database, an exception will be rai
 <link id="GetNextValue"/>
 <link id="TSQLSequence.FieldName"/>
 <link id="TSQLSequence.SequenceName"/>
-<link id="TSQLSequence.IncrementBy"/> 
+<link id="TSQLSequence.IncrementBy"/>
 </seealso>
 </element>
 
@@ -4927,7 +4929,7 @@ If the dataset is not attached to a connected database, an exception will be rai
 <seealso>
 <link id="TSQLSequence.FieldName"/>
 <link id="TSQLSequence.SequenceName"/>
-<link id="TSQLSequence.IncrementBy"/> 
+<link id="TSQLSequence.IncrementBy"/>
 <link id="TSQLSequence.Apply"/>
 <link id="TSQLConnection.GetNextValue"/>
 </seealso>
@@ -4949,7 +4951,7 @@ that owns the <var>TSQLSequence</var> instance.
 <seealso>
 <link id="TSQLSequence.Apply"/>
 <link id="TSQLSequence.SequenceName"/>
-<link id="TSQLSequence.IncrementBy"/> 
+<link id="TSQLSequence.IncrementBy"/>
 </seealso>
 </element>
 
@@ -4991,7 +4993,7 @@ is called.
 field: On new record (i.e. when <link id="#fcl.db.TDataset.Insert">Insert</link>
 or <link id="#fcl.db.TDataset.Append">Append</link> is called) or when a newly
 inserted record is saved  (when <link id="#fcl.db.TDataset.Post">Post</link>
-is called). 
+is called).
 </descr>
 <seealso>
 <link id="TSQLSequenceApplyEvent"/>
@@ -5013,8 +5015,8 @@ is called).
 <short>Sequence to use for auto-generating values using a sequence</short>
 <descr>
 <p>
-<var>Sequence</var> allows <var>TSQLQuery</var> to automatate generation of a new 
-value for a field using a sequence in the database. 
+<var>Sequence</var> allows <var>TSQLQuery</var> to automatate generation of a new
+value for a field using a sequence in the database.
 </p>
 <p>To this end, the properties in <link id="TSQLSequence"/> must be set to
 appropriate values, and <var>TSQLQuery</var> will automatically generate a
