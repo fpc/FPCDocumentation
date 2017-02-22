@@ -5572,6 +5572,33 @@ specify the interface: the compiler will not search for the methods in the
 delegate class, it will simply check if the delegate class implements the
 specified interface.
 
+It is possible to implement multiple interfaces using a single delegated
+object:
+\begin{verbatim}
+{$interfaces corba}
+type
+  IMyInterface = interface
+    procedure P1;
+  end;
+  IMyInterface1 = interface
+    procedure P2;
+  end;
+
+  // NOTE: Interface must be specified here
+  TDelegateClass = class(TObject, IMyInterface,IMyInterface1)
+  private
+    procedure P1;
+    procedure P2;
+  end;
+
+  TMyClass = class(TInterfacedObject, IMyInterface, IMyInterface1)
+  private
+    FMyInterface: TDelegateClass; // class type
+    property MyInterface: TDelegateClass
+      read FMyInterface implements IMyInterface,IMyInterface1;
+  end;
+\end{verbatim}
+
 It is not possible to mix method resolution and interface delegation. 
 That means, it is not possible to implement part of an interface through
 method resolution and implement part of the interface through delegation. 
