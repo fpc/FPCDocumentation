@@ -18,7 +18,7 @@ Var Info : TSysInfo;
 
 begin
   {$ifdef Linux}
-  If Not SysInfo(Info) then
+  If Not (SysInfo(@Info)=0) then
     Halt(1);
   With Info do
     begin
