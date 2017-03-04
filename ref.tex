@@ -5653,6 +5653,32 @@ type
   end;
 \end{verbatim}
 
+Note that interface delegation can be used to specify that a class
+implements parent interfaces:
+\begin{verbatim}
+IGMGetFileName = interface(IUnknown)
+  ['{D3ECCB42-A563-4cc4-B375-79931031ECBA}']
+  function GetFileName: String; stdcall;
+  property FileName: String read GetFileName;
+end;
+
+IGMGetSetFileName = Interface(IGMGetFileName)
+  ['{ECFB879F-86F6-41a3-A685-0C899A2B5BCA}']
+  procedure SetFileName(const Value: String); stdcall;
+  property FileName: String read GetFileName write SetFileName;
+end;
+
+TIntfDelegator = class(TInterfacedObject, IGMGetFileName, IGMGetSetFileName)
+ protected
+  FGetSetFileName: IGMGetSetFileName;
+ public
+  constructor Create;
+  destructor Destroy; override;
+  property Implementor: IGMGetSetFileName read FGetSetFileName 
+    implements IGMGetFileName, IGMGetSetFileName;
+end;
+\end{verbatim}
+
 \section{Interfaces and COM}
 \index{COM}\index{Interfaces!COM}
 When using interfaces on Windows which should be available to the COM
