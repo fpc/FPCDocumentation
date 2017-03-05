@@ -1,14 +1,18 @@
 Program heapex;
 
-{ Program used to demonstrate the usage of heaptrc unit }
-
-Uses heaptrc;
+{ 
+  Program used to demonstrate the usage of heaptrc unit 
+  Compile this program with the -gh command-line option
+}
 
 Var P1 : ^Longint;
     P2 : Pointer;
     I : longint;
 
 begin
+  {$IF NOT DECLARED(heaptrc)}
+  {$ERROR You mmust compile this program with -gh}
+  {$ENDIF}
   New(P1);
   // causes previous allocation not to be de-allocated
   New(P1);
