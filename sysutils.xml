@@ -5197,7 +5197,7 @@ a word array.
 
 <!-- array type Visibility: default -->
 <element name="TWordArray">
-<short></short>
+<short>Array of word (Unsigned 16 bit integer)</short>
 <descr>
 <var>TWordArray</var> is a generic array definition, mostly for use as a
 base type of the <link id="PWordArray"/> type.
@@ -8680,11 +8680,11 @@ None.
 
 <!-- function Visibility: default -->
 <element name="ExceptFrames">
-<short></short>
+<short>Return the current exception stack frames</short>
 <descr>
+<var>ExceptFrames</var> returns the current list frames on the exception stack. 
+If there is no exception in progress, <var>Nil</var> is returned.
 </descr>
-<errors>
-</errors>
 <seealso>
 <link id="ExceptFrameCount"/>
 <link id="ExceptAddr"/>
@@ -9394,7 +9394,7 @@ None.
 
 <!-- array type Visibility: default -->
 <element name="TWeekNameArray">
-<short></short>
+<short>Array of 7 Strings for week day names</short>
 <descr>
 <var>TWeekNameArray</var> is used in the day long and short name arrays.
 </descr>
@@ -9523,12 +9523,19 @@ The date part remains untouched.
 
 <!-- function Visibility: default -->
 <element name="AnsiDequotedStr">
-<short></short>
+<short>Extract string without quotes</short>
 <descr>
+<var>AnsiDequotedStr</var> is, similar to <link id="AnsiExtractQuotedStr"/>, a method to extract a string 
+that was quoted using <link id="AnsiQuotedStr"/>. The string <var>S<var> must start and end with the quote 
+character <var>AQuote</var> (they will be removed from the result) and all double occurrences of the quote character
+<var>AQuote</var> will be reduced to a single quote character.
 </descr>
 <errors>
+If the string does not start and end with the quote character or has length less than 2, the original string is returned.
 </errors>
 <seealso>
+<link id="AnsiExtractQuotedStr"/>
+<link id="AnsiQuotedStr"/>
 </seealso>
 </element>
 
@@ -15995,6 +16002,1069 @@ correct pointer parameter. Failure to do so may result in run-time errors.
 </descr>
 <seealso>
 <link id="FreeAndNil"/>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TUnicodeCharArray">
+<short>Array of <var>UnicodeChar</var></short>
+<descr>
+<var>TUnicodeCharArray</var> is a definition of an array of <var>UnicodeChar</var> elements.
+</descr>
+<seealso>
+<link id="UnicodeChar"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="UnicodeUpperCase">
+<short>Return uppercase version of a string</short>
+<descr>
+<var>UnicodeUpperCase</var> returns an all-uppercase version of the unicodestring <var>S</var>.
+It relies on the unicode manager to do so.
+</descr>
+<seealso>
+<link id="UnicodeLowerCase"/>
+<link id="LowerCase"/>
+<link id="UpperCase"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="UnicodeLowerCase">
+<short>Return lowercase version of a string</short>
+<descr>
+<var>UnicodeLowerCase</var> returns an all-lowercase version of the unicodestring <var>S</var>.
+It relies on the unicode manager to do so.
+</descr>
+<seealso>
+<link id="UnicodeUpperCase"/>
+<link id="UpperCase"/>
+<link id="LowerCase"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="UnicodeCompareStr">
+<short>Compare 2 unicode strings</short>
+<descr>
+<p>
+<var>UnicodeCompareStr</var> compares 2 unicode strings <var>S1</var> and <var>S2</var> in a case sensitive manner. 
+The result of the function is
+</p>
+<dl>
+<dt>&lt; 0</dt><dd>If <var>S1&lt;S2</var></dd>
+<dt>0</dt><dd>If <var>S1=S2</var></dd>
+<dt>&gt; 0</dt><dd>If <var>S1&gt;S2</var></dd>
+</dl>
+<p>
+This function relies on a widestring manager to perform the actual comparison, as it will take into account various equivalent 
+code points: it is not a simple byte-by-byte comparison.
+</p>
+</descr>
+<seealso>
+<link id="UnicodeCompareText"/>
+<link id="CompareStr"/>
+<link id="CompareText"/>
+<link id="UnicodeSameStr"/> 
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="UnicodeSameStr">
+<short>Check whether 2 strings are equal</short>
+<descr>
+<var>UnicodeSameStr</var> checks whether the unicode strings <var>S1</var> and <var>S2</var> are equal, case sensitively. 
+The function returns <var>True</var> if the strings are equal, <var>False</var> if they are not.
+This function relies on a widestring manager to perform the actual comparison, as it will take into account various equivalent 
+code points: it is not a simple byte-by-byte comparison.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="UnicodeCompareText"/>
+<link id="CompareStr"/>
+<link id="CompareText"/>
+<link id="UnicodeSameText"/>
+<link id="SameStr"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="UnicodeCompareText">
+<short>Compare 2 strings case insentivively</short>
+<descr>
+<p>
+<var>UnicodeCompareText</var> compares 2 unicode strings <var>S1</var> and <var>S2</var>, ignoring case.
+The result of the function is
+</p>
+<dl>
+<dt>&lt; 0</dt><dd>If <var>S1&lt;S2</var></dd>
+<dt>0</dt><dd>If <var>S1=S2</var></dd>
+<dt>&gt; 0</dt><dd>If <var>S1&gt;S2</var></dd>
+</dl>
+<p>
+This function relies on a widestring manager to perform the actual comparison, as it will take into account various equivalent 
+code points: it is not a simple byte-by-byte comparison.
+</p>
+</descr>
+<seealso>
+<link id="UnicodeCompareText"/>
+<link id="CompareStr"/>
+<link id="CompareText"/>
+<link id="UnicodeSameStr"/> 
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="UnicodeSameText">
+<short>Check whether 2 strings are the same, ignoring case</short>
+<descr>
+<var>UnicodeSameText</var> checks whether the unicode strings <var>S1</var> and <var>S2</var> are equal, ignoring case. 
+The function returns <var>True</var> if the strings are equal, <var>False</var> if they are not.
+This function relies on a widestring manager to perform the actual comparison, as it will take into account various equivalent 
+code points: it is not a simple byte-by-byte comparison.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="UnicodeCompareText"/>
+<link id="CompareStr"/>
+<link id="CompareText"/>
+<link id="UnicodeSameStr"/>
+<link id="SameText"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="UnicodeFormat">
+<short>Format unicode string</short>
+<descr>
+<var>UnicodeFormat</var> is the unicode equivalent of <link id="Format"/>. It follows the same rules and uses the same formatting strings.
+</descr>
+<errors>
+In case of error, an <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="Format"/>
+<link id="UnicodeFormatBuf"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="UnicodeFormatBuf">
+<short>Format a unicode string with given arguments and store the result in a unicodebuffer.</short>
+<descr>
+<var>UnicodeFormatBuf</var> is the unicode equivalent of <link id="FormatBuf"/>. It follows the same rules and uses the same formatting st
+</descr>
+<errors>
+In case of error, an <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="FormatBuf"/>
+<link id="UnicodeFormat"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="UnicodeFmtStr">
+<short>Format a string with given arguments, procedural version.</short>
+<descr>
+<var>UnicodeFmtStr</var> calls <link id="UnicodeFormat"/> with <var>Fmt</var> and <var>Args</var> 
+as arguments, and stores the result in <var>Res</var>. 
+For more information on how the resulting string is composed, see <link id="UnicodeFormat"/>.
+</descr>
+<errors>
+In case of error, an <link id="EConvertError"/> exception is raised.
+</errors>
+<seealso>
+<link id="UnicodeFormat"/>
+<link id="UnicodeFormatBuf"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="WideStrAlloc">
+<short>Allocate a null-terminated widestring on the heap.</short>
+<descr>
+<p>
+<var>WideStrAlloc</var> reserves memory on the heap for a widestring with length <var>Len</var>,
+(terminating <var>#0#0</var> included), and returns a pointer to it.
+</p>
+<p>
+Additionally, <var>WideStrAlloc</var> allocates 4 extra bytes to store the size of
+the allocated memory. 
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="StrBufSize"/>
+<link id="StrDispose"/>
+<link id="#rtl.strings.StrAlloc">StrAlloc</link>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="StringOf">
+<short>Create a unicode string from an array of bytes</short>
+<descr>
+<p>
+<var>StringOf</var> converts an array of bytes (<var>Bytes</var>) to a unicode string. 
+It interprets the bytes as a single-byte string, using  the default codepage.
+</p>
+<p>
+To create a string where the bytes are interpreted as wide chars, use <link id="WideStringOf"/> instead.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="WideBytesOf"/>
+<link id="WideStringOf"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="WideBytesOf">
+<short>Returns the contents of a widestring as an array of bytes</short>
+<descr>
+<var>WideBytesOf</var> returns the contents of the widestring <var>Value</var> as an array of bytes.
+The array will have as length twice the length of the wide string, as each wide character contains 2 bytes. 
+</descr>
+<seealso>
+<link id="StringOf"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="WideStringOf">
+<short>Create unicode string from array of bytes</short>
+<descr>
+<p>
+<var>WideStringOf</var>  converts an array of bytes (<var>Bytes</var>) to a unicode string. 
+It considers each pair of bytes in the array as a single wide char.
+The array should have an even length. If the length is uneven, the last byte will be ignored.
+</p>
+<p>
+This function performs the opposite operation of <link id="BytesOf"/>.
+</p>
+<p>
+To create a string where the bytes are interpreted as ansichars, use <link id="StringOf"/> instead.
+</p>
+</descr>
+<seealso>
+<link id="StringOf"/>
+<link id="WideBytesOf"/>
+<link id="BytesOf"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ByteLength">
+<short>Length (in bytes) of a unicodestring</short>
+<descr>
+<var>ByteLength</var> returns the length of a unicodestring in bytes. 
+This equals the character length of the string (<link id="system.length">Length</link>) multiplied by the number of bytes per character (2).
+</descr>
+<seealso>
+<link id="system.length">Length</link>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="UnicodeStringReplace">
+<short>Replace one occurrence of a string with another</short>
+<descr>
+<var>UnicodeStringReplace</var> is the unicode version of <link id="StringReplace"/>; 
+it follows the same rules and has the same behaviour, but operates on unicode strings instead of ansistrings.
+</descr>
+<seealso>
+<link id="StringReplace"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.EEncodingError
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="EEncodingError">
+<short>Exception raised by the <var>TEncoding</var> class.</short>
+<descr>
+<var>EEncodingError</var> is the exception classed used by the <var>TEncoding</var> class to indicatee errors.
+</descr>
+<seealso>
+<link id="TEncoding"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TEncoding
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TEncoding">
+<short>Encoding support</short>
+<descr>
+<var>TEncoding</var> is a mostly abstract class that contains various methods to deal with different encodings 
+in single- and double-byte strings. In practice, one instance of a descendent of this class for each needed encoding can be 
+instantiated and used. The class contains several class methods and properties to create such instances, and 
+has several often-used instances available as class properties, in particular the default encoding.
+</descr>
+<seealso>
+<link id="TEncoding.ANSI"/>
+<link id="TEncoding.ASCII"/>
+<link id="TEncoding.Default"/>
+<link id="TEncoding.BigEndianUnicode"/>
+<link id="TEncoding.Unicode"/>
+<link id="TEncoding.UTF7"/>
+<link id="TEncoding.UTF8"/>
+</seealso>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TEncoding.FreeEncodings">
+<short>Free all standard encodings</short>
+<descr>
+<var>FreeEncodings</var> frees all the standard encodings <link id="TEncoding.ANSI"/>,
+<link id="TEncoding.ASCII"/>,
+<link id="TEncoding.Default"/>,
+<link id="TEncoding.BigEndianUnicode"/>,
+<link id="TEncoding.Unicode"/>,
+<link id="TEncoding.UTF7"/> and
+<link id="TEncoding.UTF8"/>. There should be no need to call this function directly, it is called automatically w
+hen the program exits.
+</descr>
+<seealso>
+<link id="TEncoding.ANSI"/>
+<link id="TEncoding.ASCII"/>
+<link id="TEncoding.Default"/>
+<link id="TEncoding.BigEndianUnicode"/>
+<link id="TEncoding.Unicode"/>
+<link id="TEncoding.UTF7"/>
+<link id="TEncoding.UTF8"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TEncoding.Clone">
+<short>Clone a <var>TEncoding</var> instance</short>
+<descr>
+<var>Clone</var> creates a copy of a <var>TEncoding</var> instance. This method returns <var>Nil</var> in <var>TEncoding</var>
+and must be implemented in descendent classes.
+</descr>
+<seealso>
+<link id="TEncoding.Create"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TEncoding.Convert">
+<short>Convert an array of bytes from one encoding to another</short>
+<descr>
+<var>Convert</var> will convert the bytes in <var>Bytes</var> from encoding <var>Source</var> to encoding <var>Destination</var> and returns the converted bytes as an array.
+If <var>StartIndex</var> and <var>Count</var> are specified, the conversion starts at (zero-based) index <var>StartIndex</var>, and only <var>Count</var> bytes will be converted.
+</descr>
+<seealso>
+<link id="TEncoding.GetBytes"/>
+<link id="TEncoding.GetChars"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TEncoding.IsStandardEncoding">
+<short>Check if the encoding is one of the standard encodings</short>
+<descr>
+<var>IsStandardEncoding</var> will return <var>True</var> is one of the standard encoding instances  <link id="TEncoding.ANSI"/>,
+<link id="TEncoding.ASCII"/>,
+<link id="TEncoding.Default"/>,
+<link id="TEncoding.BigEndianUnicode"/>,
+<link id="TEncoding.Unicode"/>,
+<link id="TEncoding.UTF7"/> or
+<link id="TEncoding.UTF8"/>. Otherwise it returns <var>False</var>.
+</descr>
+<seealso>
+<link id="TEncoding.ANSI"/>
+<link id="TEncoding.ASCII"/>
+<link id="TEncoding.Default"/>
+<link id="TEncoding.BigEndianUnicode"/>
+<link id="TEncoding.Unicode"/>
+<link id="TEncoding.UTF7"/>
+<link id="TEncoding.UTF8"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TEncoding.GetBufferEncoding">
+<short>Attempt to guess the encoding of a buffer</short>
+<descr>
+<p>
+<var>GetBufferEncoding</var> checks the BOM marker of an array of bytes <var>Buffer</var>, and returns the 
+found encoding in <var>AEncoding</var>. Only the <link id="TEncoding.BigEndianUnicode"/>
+<link id="TEncoding.Unicode"/> and <link id="TEncoding.UTF8"/> encodings will be tried.
+</p>
+<p>
+If <var>AEncoding</var> is non-Nil on entry, it will be used to check  the BOM marker with. 
+No other encoding will be tried in that case.
+</p>
+<p> 
+If <var>ADefaultEncoding</var> is specified, it will be returned in case no match was found.
+</p>
+<p>
+The function returns the number of bytes in the BOM Marker. 
+</p>
+</descr>
+<seealso>
+<link id="TEncoding.BigEndianUnicode"/>
+<link id="TEncoding.Unicode"/>
+<link id="TEncoding.UTF8"/> 
+<link id="TEncoding.GetPreamble"/> 
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TEncoding.GetEncoding">
+<short>Get an encoding instance for a given codepage.</short>
+<descr>
+<var>GetEncoding</var> will return an instance of <var>TEncoding</var> for the given codepage <var>CodePage</var>. 
+The codepage can also be specified by name <var>EncodingName</var>. The returned instance is an appropriate descendent of 
+<var>TEncoding</var> and needs to be freed by the caller.
+</descr>
+<seealso>
+<link id="TUnicodeEncoding"/>
+<link id="TBigEndianUnicodeEncoding"/>
+<link id="TUTF8Encoding"/>
+<link id="TUTF7Encoding"/>
+<link id="TMBCSEncoding"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TEncoding.GetMaxByteCount">
+<short>Returns the maximum number of bytes needed to represent a string</short>
+<descr>
+<p>
+<var>GetMaxByteCount</var> returns  the maximum number of bytes needed to represent 
+a string of <var>CharCount</var> characters in the given encoding.
+</p>
+<p>
+This is an abstract method, implemented by descendents of <var>TEncoding</var>.
+</p>
+</descr>
+<seealso>
+<link id="TEncoding.GetMaxCharCount"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TEncoding.GetMaxCharCount">
+<short>Return the maximum number of characters that can be represented in a number of bytes</short>
+<descr>
+<p>
+<var>GetMaxCharCount</var> returns the theoretical maximum number of characters that can be represented
+in a buffer of length <var>ByteCount</var> in the given encoding. Note that the actual number of 
+characters that can be represented may well be much less and depends on the encoding and the actual characters.
+</p>
+<p>
+This is an abstract method, implemented by descendents of <var>TEncoding</var>.
+</p>
+</descr>
+<seealso>
+<link id="TEncoding.GetMaxByteCount"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TEncoding.GetPreamble">
+<short>Return the BOM Marker used by the encoding</short>
+<descr>
+<var>GetPreamble</var> returns the BOM marker bytes used by the encoding. 
+This is only meaningful for the UTF8 and Unicode encodings, 
+for all other encodings there is no BOM Marker.
+</descr>
+<seealso>
+<link id="TUnicodeEncoding"/>
+<link id="TBigEndianUnicodeEncoding"/>
+<link id="TUTF8Encoding"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TEncoding.GetString">
+<short>Return a string based on an array of bytes</short>
+<descr>
+<p>
+<var>GetString</var> will return a unicode string, created from the bytes in the <var>Bytes</var> array.
+The bytes array will be interpreted according to the encoding which the <var>TEncoding</var> represents.
+</p>
+<p>
+If <var>ByteIndex</var> and <var>ByteCount</var> are specified, only the <var>ByteCount</var> 
+bytes starting at position <var>ByteIndex</var> will be converted.
+</p>
+</descr>
+<errors>
+In case of invalid bytes, an <var>EEncodingError</var> exception may be raised.
+</errors>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEncoding.CodePage">
+<short>Codepage for this encoding</short>
+<descr>
+<var>CodePage</var> is the numerical codepage for this encoding. It is a number as used in the Windows codepage registry.
+</descr>
+<seealso>
+<link id="TEncoding.EncodingName"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEncoding.EncodingName">
+<short>Name of this encoding</short>
+<descr>
+<var>EncodingName</var> is the  name for this encoding. 
+It's based on the windows name for the encoding and is calculated from the codepage.
+</descr>
+<seealso>
+<link id="TEncoding.CodePage"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEncoding.IsSingleByte">
+<short>Is the encoding a single-byte encoding or not ?</short>
+<descr>
+<var>IsSingleByte</var> determines whether an encoding is single-byte or not. 
+It is <var>false</var> for all standard encodings.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEncoding.ANSI">
+<short>Ansi encoding instance</short>
+<descr>
+<var>ANSI</var> is the ANSI codepage encoding instance, it is the default single-byte string codepage on 
+windows (as returned by <link id="DefaultSystemCodePage"/>).
+This instance is created and maintained by the system, it should not be freed.
+</descr>
+<seealso>
+<link ID="TEncoding.ASCII"/>
+<link id="TEncoding.ASCII"/>
+<link id="TEncoding.Default"/>
+<link id="TEncoding.BigEndianUnicode"/>
+<link id="TEncoding.Unicode"/>
+<link id="TEncoding.UTF7"/>
+<link id="TEncoding.UTF8"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEncoding.ASCII">
+<short>ASCII encoding instance</short>
+<descr>
+<var>ASCII</var> is the ASCII codepage (CP_ASCII) encoding instance.
+This instance is created and maintained by the system, it should not be freed.
+</descr>
+<seealso>
+<link id="TEncoding.ANSI"/>
+<link id="TEncoding.ASCII"/>
+<link id="TEncoding.Default"/>
+<link id="TEncoding.BigEndianUnicode"/>
+<link id="TEncoding.Unicode"/>
+<link id="TEncoding.UTF7"/>
+<link id="TEncoding.UTF8"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEncoding.BigEndianUnicode">
+<short>Big-endian Unicode (UTF16BE) encoding instance</short>
+<descr>
+<var>BigEndianUnicode</var> is the Big-endian Unicode encoding instance (CP_UTF16BE)
+This instance is created and maintained by the system, it should not be freed.
+</descr>
+<seealso>
+<link ID="TEncoding.ASCII"/>
+<link id="TEncoding.ANSI"/>
+<link id="TEncoding.ASCII"/>
+<link id="TEncoding.Default"/>
+<link id="TEncoding.Unicode"/>
+<link id="TEncoding.UTF7"/>
+<link id="TEncoding.UTF8"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEncoding.Default">
+<short>Default codepage</short>
+<descr>
+<var>Defaulte</var> is the default encoding instance (it equals the ANSI codepage).
+This instance is created and maintained by the system, it should not be freed.
+</descr>
+<seealso>
+<link ID="TEncoding.ASCII"/>
+<link id="TEncoding.ANSI"/>
+<link id="TEncoding.ASCII"/>
+<link id="TEncoding.BigEndianUnicode"/>
+<link id="TEncoding.Unicode"/>
+<link id="TEncoding.UTF7"/>
+<link id="TEncoding.UTF8"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEncoding.Unicode">
+<short>UTF16 encoding instance</short>
+<descr>
+<var>Unicode</var> is the Big-endian Unicode encoding instance (CP_UTF16)
+This instance is created and maintained by the system, it should not be freed.
+</descr>
+<seealso>
+<link ID="TEncoding.ASCII"/>
+<link id="TEncoding.ANSI"/>
+<link id="TEncoding.ASCII"/>
+<link id="TEncoding.Default"/>
+<link id="TEncoding.BigEndianUnicode"/>
+<link id="TEncoding.Unicode"/>
+<link id="TEncoding.UTF7"/>
+<link id="TEncoding.UTF8"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEncoding.UTF7">
+<short>UTF7 encoding instance</short>
+<descr>
+<var>UTF7</var> is the UTF7 encoding instance (CP_UTF7)
+This instance is created and maintained by the system, it should not be freed.
+</descr>
+<seealso>
+<link ID="TEncoding.ASCII"/>
+<link id="TEncoding.ANSI"/>
+<link id="TEncoding.ASCII"/>
+<link id="TEncoding.Default"/>
+<link id="TEncoding.BigEndianUnicode"/>
+<link id="TEncoding.Unicode"/>
+<link id="TEncoding.UTF8"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TEncoding.UTF8">
+<short>UTF8 encoding instance</short>
+<descr>
+<var>UTF8</var> is the UTF7 encoding instance (CP_UTF7)
+This instance is created and maintained by the system, it should not be freed.
+</descr>
+<seealso>
+<link ID="TEncoding.ASCII"/>
+<link id="TEncoding.ANSI"/>
+<link id="TEncoding.ASCII"/>
+<link id="TEncoding.Default"/>
+<link id="TEncoding.BigEndianUnicode"/>
+<link id="TEncoding.Unicode"/>
+<link id="TEncoding.UTF7"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TMBCSEncoding
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TMBCSEncoding">
+<short>Multi-Byte character set encoding</short>
+<descr>
+<p>
+<var>TMBCSEncoding</var> is the encoding class used for most of the encodings, except the actual Unicode encodings.
+The codepage is specified during creation, and is by default the system codepage. 
+</p>
+<p>
+The name is somewhat misleading, since the MBCS is also used for single-byte encodings.
+</p>
+</descr>
+<seealso>
+<link id="TUnicodeEncoding"/>
+<link id="TUTF8Encoding"/>
+<link id="TUTF7Encoding"/>
+<link id="TBigendianUnicodeEncoding"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TMBCSEncoding.Create">
+<short>Create a new instance of a multi-byte character set encoding</short>
+<descr>
+<p>
+<var>Create</var> instantiates a new instance of the multi-byte character set encoding.
+The <var>ACodePage</var> parameter is optional, and defaults to <link id="DefaultSystemCodePage"/>.
+</p>
+<p>
+The <var>MBToWCharFlags</var> and <var>WCharToMBFlags</var> parameters are stored but are otherwise 
+unused in the Free Pascal implementation of <var>TMBCSEncoding</var>
+</p>
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMBCSEncoding.Clone" link="TEncoding.Clone">
+<short>Clone a <var>TMBCSEncoding</var> instance</short>
+<descr>
+<var>CLone</var> overrides <link id="TEncoding.Clone"/> to provide a clone of the <var>TMBCSEncoding</var> instance.
+</descr>
+<seealso>
+<link id="TEncoding.Clone"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMBCSEncoding.GetMaxByteCount" link="TEncoding.GetMaxByteCount">
+<short>Return max number of bytes needed to represent a string</short>
+<descr>
+<var>GetMaxByteCount</var> overrides <link id="TEncoding.GetMaxByteCount"/> to return the  
+maximum number of bytes needed to represent a string.
+</descr>
+<seealso>
+<link id="TEncoding.GetMaxByteCount"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMBCSEncoding.GetMaxCharCount" link="TEncoding.GetMaxCharCount">
+<short>Return max number of characters that can be represented by an array of bytes</short>
+<descr>
+<var>GetMaxCharCount</var> overrides <link id="TEncoding.GetMaxCharCount"/> to return the  
+maximum number of bytes needed to represent a string.
+</descr>
+<seealso>
+<link id="TEncoding.GetMaxCharCount"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMBCSEncoding.GetPreamble" link="TEncoding.GetPreamble">
+<short>Return BOM marker bytes</short>
+<descr>
+<var>GetPreamble</var> overrides <link id="TEncoding.GetPreamble"/> to return the  
+BOM Marker bytes (none, for this implementation).
+</descr>
+<seealso>
+<link id="TEncoding.GetPreamble"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TUTF7Encoding
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TUTF7Encoding">
+<short>UTF-7 unicode encoding</short>
+<descr>
+<p>
+<var>TUTF7Encoding</var> is the encoding class used to represent the UTF7 encoding.
+This encoding is not so often used, and the class is provided mostly for completeness.
+</p>
+</descr>
+<seealso>
+<link id="TUnicodeEncoding"/>
+<link id="TUTF8Encoding"/>
+<link id="TMBCSEncoding"/>
+<link id="TBigendianUnicodeEncoding"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TUTF7Encoding.Create">
+<short>Create a new instance of the <var>TUTF7Encoding</var> class</short>
+<descr>
+<var>Create</var> creates a new instance of the <var>TUTF7Encoding</var> class and sets the 
+codepage to <var>CP_UTF7</var>.
+</descr>
+<seealso>
+<link id="TEncoding.CodePage"/>
+<link id="TEncoding"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUTF7Encoding.Clone" link="TEncoding.Clone">
+<short>Clone a <var>TUTF7Encoding</var> instance</short>
+<descr>
+<var>CLone</var> overrides <link id="TEncoding.Clone"/> to provide a clone of the <var>TUTF7Encoding</var> instance.
+</descr>
+<seealso>
+<link id="TEncoding.Clone"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUTF7Encoding.GetMaxByteCount" link="TEncoding.GetMaxByteCount">
+<short>Return max number of bytes needed to represent a string</short>
+<descr>
+<var>GetMaxByteCount</var> overrides <link id="TEncoding.GetMaxByteCount"/> to return the  
+maximum number of bytes needed to represent a string.
+</descr>
+<seealso>
+<link id="TEncoding.GetMaxByteCount"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUTF7Encoding.GetMaxCharCount" link="TEncoding.GetMaxCharCount">
+<short>Return max number of characters that can be represented by an array of bytes</short>
+<descr>
+<var>GetMaxCharCount</var> overrides <link id="TEncoding.GetMaxCharCount"/> to return the  
+maximum number of bytes needed to represent a string.
+</descr>
+<seealso>
+<link id="TEncoding.GetMaxCharCount"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUTF7Encoding.GetPreamble" link="TEncoding.GetPreamble">
+<short>Return BOM marker bytes</short>
+<descr>
+<var>GetPreamble</var> overrides <link id="TEncoding.GetPreamble"/> to return the  
+BOM Marker bytes (none, for this implementation).
+</descr>
+<seealso>
+<link id="TEncoding.GetPreamble"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TUTF8Encoding
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TUTF8Encoding">
+<short>UTF-8 unicode encoding</short>
+<descr>
+<p>
+<var>TUTF8Encoding</var> is the encoding class used to represent the UTF-8 encoding.
+</p>
+</descr>
+<seealso>
+<link id="TUnicodeEncoding"/>
+<link id="TUTF7Encoding"/>
+<link id="TMBCSEncoding"/>
+<link id="TBigendianUnicodeEncoding"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TUTF8Encoding.Create">
+<short>Create a new instance of the <var>TUTF8Encoding</var> class</short>
+<descr>
+<var>Create</var> creates a new instance of the <var>TUTF8Encoding</var> class and sets the 
+codepage to <var>CP_UTF8</var>.
+</descr>
+<seealso>
+<link id="TEncoding.CodePage"/>
+<link id="TEncoding"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUTF8Encoding.Clone" link="TEncoding.Clone">
+<short>Clone a <var>TUTF8Encoding</var> instance</short>
+<descr>
+<var>CLone</var> overrides <link id="TEncoding.Clone"/> to provide a clone of the <var>TUTF8Encoding</var> instance.
+</descr>
+<seealso>
+<link id="TEncoding.Clone"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUTF8Encoding.GetMaxByteCount" link="TEncoding.GetMaxByteCount">
+<short>Return max number of bytes needed to represent a string</short>
+<descr>
+<var>GetMaxByteCount</var> overrides <link id="TEncoding.GetMaxByteCount"/> to return the  
+maximum number of bytes needed to represent a string.
+</descr>
+<seealso>
+<link id="TEncoding.GetMaxByteCount"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUTF8Encoding.GetMaxCharCount" link="TEncoding.GetMaxCharCount">
+<short>Return max number of characters that can be represented by an array of bytes</short>
+<descr>
+<var>GetMaxCharCount</var> overrides <link id="TEncoding.GetMaxCharCount"/> to return the  
+maximum number of bytes needed to represent a string.
+</descr>
+<seealso>
+<link id="TEncoding.GetMaxCharCount"/>
+</seealso>
+</element>
+ 
+<!-- function Visibility: public -->
+<element name="TUTF8Encoding.GetPreamble" link="TEncoding.GetPreamble">
+<short>Return BOM marker bytes</short>
+<descr>
+<var>GetPreamble</var> overrides <link id="TEncoding.GetPreamble"/> to return the  
+3 UTF8 BOM Marker bytes ($EF,$BB,$BF).
+</descr>
+<seealso>
+<link id="TEncoding.GetPreamble"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TUnicodeEncoding
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TUnicodeEncoding">
+<short>UTF-16 unicode encoding</short>
+<descr>
+<p>
+<var>TUnicodeEncoding</var> is the encoding class used to represent the UTF-16 encoding.
+</p>
+</descr>
+<seealso>
+<link id="TUnicodeEncoding"/>
+<link id="TUTF7Encoding"/>
+<link id="TMBCSEncoding"/>
+<link id="TBigendianUnicodeEncoding"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TUnicodeEncoding.Create">
+<short>Create a new instance of the <var>TUnicodeEncoding</var> class</short>
+<descr>
+<var>Create</var> creates a new instance of the <var>TUnicodeEncoding</var> class and sets the 
+codepage to <var>CP_UTF16</var>.
+</descr>
+<seealso>
+<link id="TEncoding.CodePage"/>
+<link id="TEncoding"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUnicodeEncoding.Clone" link="TEncoding.Clone">
+<short>Clone a <var>TUnicodeEncoding</var> instance</short>
+<descr>
+<var>CLone</var> overrides <link id="TEncoding.Clone"/> to provide a clone of the <var>TUnicodeEncoding</var> instance.
+</descr>
+<seealso>
+<link id="TEncoding.Clone"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUnicodeEncoding.GetMaxByteCount" link="TEncoding.GetMaxByteCount">
+<short>Return max number of bytes needed to represent a string</short>
+<descr>
+<var>GetMaxByteCount</var> overrides <link id="TEncoding.GetMaxByteCount"/> to return the  
+maximum number of bytes needed to represent a string.
+</descr>
+<seealso>
+<link id="TEncoding.GetMaxByteCount"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUnicodeEncoding.GetMaxCharCount" link="TEncoding.GetMaxCharCount">
+<short>Return max number of characters that can be represented by an array of bytes</short>
+<descr>
+<var>GetMaxCharCount</var> overrides <link id="TEncoding.GetMaxCharCount"/> to return the  
+maximum number of bytes needed to represent a string.
+</descr>
+<seealso>
+<link id="TEncoding.GetMaxCharCount"/>
+</seealso>
+</element>
+ 
+<!-- function Visibility: public -->
+<element name="TUnicodeEncoding.GetPreamble" link="TEncoding.GetPreamble">
+<short>Return BOM marker bytes</short>
+<descr>
+<var>GetPreamble</var> overrides <link id="TEncoding.GetPreamble"/> to return the  
+2 UTF-16 BOM Marker bytes ($FF,$FE).
+</descr>
+<seealso>
+<link id="TEncoding.GetPreamble"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #rtl.sysutils.TBigEndianUnicodeEncoding
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TBigEndianUnicodeEncoding">
+<short>Big-endian UTF-16 unicode encoding</short>
+<descr>
+<p>
+<var>TBigEndianUnicodeEncoding</var> is the encoding class used to represent the UTF-16 big-endian encoding.
+</p>
+</descr>
+<seealso>
+<link id="TBigEndianUnicodeEncoding"/>
+<link id="TUTF7Encoding"/>
+<link id="TMBCSEncoding"/>
+<link id="TBigendianUnicodeEncoding"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TBigEndianUnicodeEncoding.Create">
+<short>Create a new instance of the <var>TBigEndianUnicodeEncoding</var> class</short>
+<descr>
+<var>Create</var> creates a new instance of the <var>TBigEndianUnicodeEncoding</var> class and sets the 
+codepage to <var>CP_UTF16BE</var>.
+</descr>
+<seealso>
+<link id="TEncoding.CodePage"/>
+<link id="TEncoding"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TBigEndianUnicodeEncoding.Clone" link="TEncoding.Clone">
+<short>Clone a <var>TBigEndianUnicodeEncoding</var> instance</short>
+<descr>
+<var>CLone</var> overrides <link id="TEncoding.Clone"/> to provide a clone of the <var>TBigEndianUnicodeEncoding</var> instance.
+</descr>
+<seealso>
+<link id="TEncoding.Clone"/>
+</seealso>
+</element>
+
+ 
+<!-- function Visibility: public -->
+<element name="TBigEndianUnicodeEncoding.GetPreamble" link="TEncoding.GetPreamble">
+<short>Return BOM marker bytes</short>
+<descr>
+<var>GetPreamble</var> overrides <link id="TEncoding.GetPreamble"/> to return the  
+2 UTF-16 BOM Marker bytes ($FF,$FE).
+</descr>
+<seealso>
+<link id="TEncoding.GetPreamble"/>
 </seealso>
 </element>
 
