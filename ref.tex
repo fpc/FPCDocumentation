@@ -4345,8 +4345,9 @@ instantiate and destroy class instances:
 That construct is reserved for use with objects only.
 Calling the constructor will provoke a call to the virtual class method
 \var{NewInstance}, which, in its default implementation, calls \var{GetMem}, to allocate
-enough space to hold the class instance data.
-After that, the constructor's code is executed.
+enough space to hold the class instance data, and then zeroes out the memory.
+
+After that, the constructor's code is executed. 
 The constructor has a pointer to its data, in \var{Self}.
 
 \begin{remark}
@@ -4361,8 +4362,12 @@ elements are aligned on 1-byte boundaries, i.e. as close as possible.
 \item \var{SizeOf(class)} will return the same as \var{SizeOf(Pointer)}, 
 since a class is a pointer to an object. To get the size of the class 
 instance data, use the \var{TObject.InstanceSize} method.
+\item If an exception happens during an the execution of a constructor, 
+the destructor will be called automatically.
 \end{itemize}
 \end{remark}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Class destruction
@@ -4382,7 +4387,7 @@ the \var{Free} method of \var{TObject}. This method will check if \var{Self} is 
 and if so, then it calls \var{Destroy}. If \var{Self} equals \var{Nil}, it
 will just exit.
 
-Destroying an instance does not free a reference to an instance:
+Destroying an instance does not remove or Nil a reference to an instance:
 \begin{verbatim}
 Var
   A : TComponent;
@@ -4420,6 +4425,10 @@ output of this program will be:
 A is still assigned: FALSE
 \end{verbatim}
 
+\begin{remark}
+if an exception happens during an the execution of a constructor, 
+the destructor will be called automatically.
+\end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Methods
