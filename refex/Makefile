@@ -28,7 +28,6 @@ override FPC:=$(subst \,/,$(FPC))$(SRCEXEEXT)
 # Unit directory
 # UNITDIR=/usr/lib/ppc/0.99.0/linuxunits
 
-
 # Any options you wish to pass.
 PPOPTS=
 
@@ -96,5 +95,5 @@ $(OBJECTS): %: %.pp
 $(TEXOBJECTS): %.tex: %.pp head.tex foot.tex
 	$(PP2TEX) $*
 
-$(LOGFILE): %.log: %.exe 
-	$* > $*.log
+$(LOGFILE): %.log: %$(EXEEXT)
+	./$* > $*.log

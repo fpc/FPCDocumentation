@@ -86,5 +86,5 @@ $(OBJECTS): %: %.pp
 $(TEXOBJECTS) myobject.tex mysortc.tex: %.tex: %.pp head.tex foot.tex
 	$(PP2TEX) $*
 
-$(LOGFILE): %.log: %.exe 
-	$* > $*.log
+$(LOGFILE): %.log: %$(EXEEXT)
+	./$* > $*.log
