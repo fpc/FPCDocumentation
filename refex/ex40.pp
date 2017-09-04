@@ -7,6 +7,7 @@ Var
   I : longint;
 
 begin
+  {$ifdef msdos}
   { This will allocate memory until there is no more memory}
   I:=0;
   While MaxAvail>=1000 do
@@ -19,4 +20,7 @@ begin
     When compiled with the -Ch10000 switch, the program
     will be able to allocate 10 block }
   Writeln ('Allocated ',i,' blocks of 1000 bytes');
+  {$else}
+  Writeln('MaxAvail function is only present in msdos rtl, for TP compatibility');
+  {$endif}
 end.
