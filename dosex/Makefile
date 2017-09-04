@@ -91,7 +91,7 @@ $(OBJECTS): %: %.pp
 	$(FPC) $(PPOPTS) $*
 	
 $(LOGFILE): %.log: %$(EXEEXT)
-	$* > $*.log
+	./$* > $*.log
 	
 $(TEXOBJECTS): %.tex: %.pp head.tex foot.tex
 	$(PP2TEX) $*
