@@ -21,7 +21,7 @@ begin
   S:=New(PMemorySTream,Init(1000,10));
   C^.Store(S^);
   C^.FreeAll;
-  Dispose(C,Done);
+  // Dispose(C,Done);
   S^.Seek(0);
   C^.Load(S^);
   Writeln ('Read ',C^.Count,' objects from stream.');
