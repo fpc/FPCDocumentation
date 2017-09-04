@@ -1,7 +1,8 @@
 Program Example27;
 
 { Program to demonstrate the Mean function. }
-
+{ @ should return typed pointer }
+{$T+}
 Uses math;
 
 Type
