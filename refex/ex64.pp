@@ -5,5 +5,5 @@ program Example64;
 var p:ptruint;
 
 begin
-  p:=ofs(sptr); { P Contains now the current stack position. }
+  p:=ofs(stackbottom); { P Contains now the current stack position. }
 end.
