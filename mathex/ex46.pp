@@ -1,12 +1,14 @@
 Program Example45;
 
 { Program to demonstrate the SumOfSquares function. }
+{ @ should return typed pointer }
+{$T+}
 
 Uses math;
 
 Var
   I : 1..100;
-  ExArray : Array[1..100] of Float
+  ExArray : Array[1..100] of Float;
   s,ss : float;
 
 begin

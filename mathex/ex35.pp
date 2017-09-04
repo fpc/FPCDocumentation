@@ -1,6 +1,8 @@
 Program Example35;
 
 { Program to demonstrate the PopnStdDev function. }
+{ @ should return typed pointer }
+{$T+}
 
 Uses Math;
 

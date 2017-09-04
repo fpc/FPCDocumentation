@@ -1,6 +1,8 @@
 Program Example36;
 
 { Program to demonstrate the PopnVariance function. }
+{ @ should return typed pointer }
+{$T+}
 
 Uses math;
 

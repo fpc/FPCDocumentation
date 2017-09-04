@@ -1,6 +1,8 @@
 Program Example28;
 
 { Program to demonstrate the Meanandstddev function. }
+{ @ should return typed pointer }
+{$T+}
 
 Uses math;
 

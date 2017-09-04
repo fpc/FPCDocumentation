@@ -6,7 +6,7 @@ Uses Math;
 
 Var
   I : Integer;
-  ExArray : Array[1..10000] of Float;;
+  ExArray : Array[1..10000] of Float;
   Mean,stddev : Float;
 
 begin

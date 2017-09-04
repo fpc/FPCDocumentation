@@ -1,6 +1,8 @@
 Program Example50;
 
 { Program to demonstrate the Variance function. }
+{ @ should return typed pointer }
+{$T+}
 
 Uses math;
 

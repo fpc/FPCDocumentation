@@ -1,6 +1,8 @@
 Program Example49;
 
 { Program to demonstrate the TotalVariance function. }
+{ @ should return typed pointer }
+{$T+}
 
 Uses math;
 

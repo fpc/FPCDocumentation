@@ -1,6 +1,8 @@
 Program Example44;
 
 { Program to demonstrate the Sum function. }
+{ @ should return typed pointer }
+{$T+}
 
 Uses math;
 
