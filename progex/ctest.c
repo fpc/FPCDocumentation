@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 
 extern char* SubStr(const char*, int, int);
 

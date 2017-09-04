@@ -1,5 +1,6 @@
 #include <dlfcn.h>
 #include <string.h>
+#include <stdio.h>
 
 int main()
 {
