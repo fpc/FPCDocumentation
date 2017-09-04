@@ -48,6 +48,9 @@ ifdef UNITDIR
 PPOPTS:=$(PPOPTS) -Up$(UNITDIR);
 endif
 
+PPOPTS+=-Cg
+CFLAGS+=-L. -Wl,-rpath,.
+
 .SUFFIXES: .pp .tex
 
 .PHONY: all tex clean
@@ -83,7 +86,7 @@ libsubs.so: subs.pp
 	$(FPC) $(PPOPTS) $<
 
 ctest: ctest.c libsubs.so
-	$(CC) -o ctest ctest.c -lsubs
+	$(CC) $(CFLAGS) -o ctest ctest.c -lsubs
 
 ctest2: ctest2.c libsubs.so
-	$(CC) -o ctest2 ctest2.c -ldl
+	$(CC) $(CFLAGS) -o ctest2 ctest2.c -ldl
