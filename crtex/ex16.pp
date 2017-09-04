@@ -7,6 +7,7 @@ var
   i : longint;
 begin
   WriteLn('You will hear some tones from your speaker');
+  i:=0;
   while (i<15000) do
    begin
      inc(i,500);
