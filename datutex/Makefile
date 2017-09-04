@@ -90,5 +90,5 @@ $(OBJECTS): %: %.pp
 $(TEXOBJECTS): %.tex: %.pp head.tex foot.tex
 	$(PP2TEX) $*
 
-$(LOGFILE): %.log: %.exe 
-	$* > $*.log
+$(LOGFILE): %.log: %$(EXEEXT)
+	./$* > $*.log
