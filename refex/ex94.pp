@@ -12,6 +12,7 @@ Var I,J : Longint;
     S : AnsiString;
 
 begin
+{$ifndef RESSTRSECTIONS}
   { Print current values of all resourcestrings }
   For I:=0 to ResourceStringTableCount-1 do
     For J:=0 to ResourceStringCount(i)-1 do
@@ -29,4 +30,7 @@ begin
       Writeln ('Translates to : ');
       Writeln (GetResourceStringCurrentValue(I,J));
       end;
+{$else}
+  Writeln('Functions ResourceStringTableCount, ResourceStringCount and GetResourceStringCurrentValue are inot available for RESSTRSECTIONS');
+{$endif}
 end.

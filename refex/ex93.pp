@@ -11,6 +11,7 @@ ResourceString
 Var I,J : Longint;
 
 begin
+{$ifndef RESSTRSECTIONS}
   For I:=0 to ResourceStringTableCount-1 do
     For J:=0 to ResourceStringCount(i)-1 do
       If Hash(GetResourceStringDefaultValue(I,J))
@@ -18,4 +19,7 @@ begin
         Writeln ('Hash mismatch at ',I,',',J)
       else
         Writeln ('Hash (',I,',',J,') matches.');
+{$else}
+  Writeln('Functions ResourceStringTableCount, ResourceStringCount and GetResourceStringCurrentValue are inot available for RESSTRSECTIONS');
+{$endif}
 end.

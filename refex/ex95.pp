@@ -20,6 +20,7 @@ begin
 end;
 
 begin
+{$ifndef RESSTRSECTIONS}
   SetResourceStrings(@Translate);
   Writeln ('Translated strings : ');
   For I:=0 to ResourceStringTableCount-1 do
@@ -29,4 +30,7 @@ begin
       Writeln ('Translates to : ');
       Writeln (GetResourceStringCurrentValue(I,J));
       end;
+{$else}
+  Writeln('Functions ResourceStringTableCount, ResourceStringCount and GetResourceStringCurrentValue are inot available for RESSTRSECTIONS');
+{$endif}
 end.
