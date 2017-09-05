@@ -96,7 +96,7 @@ onetex : tex
 clean : 
 	-rm -f *.o *.s *.rst $(OBJECTS)
 	-rm -f $(TEXOBJECTS)
-	-rm -f *.exe *.dll *.so *.log *.tmp
+	-rm -f *.exe *.dll *.so *.rsj *.log *.tmp
  
 $(OBJECTS): %: %.pp
 	$(FPC) $(PPOPTS) $*
