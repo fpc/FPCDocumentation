@@ -75,11 +75,11 @@ OBJECTS=ex1 ex2 ex3 ex4 ex5 ex6 ex7 ex8 ex9 ex10 ex11 ex12 ex13 ex14 \
 
 TEXOBJECTS=$(addsuffix .tex, $(OBJECTS))
 
-LOGFILE=$(addsuffix .log, $(OBJECTS))
+LOGFILES=$(addsuffix .log, $(OBJECTS))
 
 EXEOBJECTS=$(addsuffix $(EXEEXT),$(OBJECTS))
 
-execute: $(LOGFILE)
+execute: $(LOGFILES)
 
 all : $(EXEOBJECTS)
 
@@ -88,16 +88,15 @@ tex : $(TEXOBJECTS)
 onetex : tex
 	$(MAKETEX) $(TEXOBJECTS)
 
-clean : 
+clean :
 	-rm -f *.o *.s $(OBJECTS) $(TEXOBJECTS) $(EXEOBJECTS)
 	-rm -f *.ow *.sw *.exe *.dll *.log *.tmp
-	
-	
+
 $(EXEOBJECTS): %$(EXEEXT): %.pp
 	$(FPC) $(PPOPTS) $*
-	
-$(LOGFILE): %.log: %$(EXEEXT)
+
+$(LOGFILES): %.log: %$(EXEEXT)
 	$(EXECPREFIX)$*$(EXEEXT) > $*.log
-	
+
 $(TEXOBJECTS): %.tex: %.pp head.tex foot.tex
 	$(PP2TEX) $*

@@ -55,7 +55,7 @@ CFLAGS+=-L. -Wl,-rpath,.
 
 .PHONY: all tex clean
 
-OBJECTS=plsubs psubs 
+OBJECTS=plsubs psubs
 COBJECTS=ctest ctest2
 LIBOBJECT=libsubs.so
 TEXOBJECTS=$(addsuffix .tex, $(OBJECTS))
@@ -69,10 +69,10 @@ tex : $(TEXOBJECTS) $(CTEXOBJECTS) subs.tex
 onetex : tex
 	$(MAKETEX) $(TEXOBJECTS)
 
-clean : 
+clean :
 	-rm -f *.o *.s *.so $(OBJECTS) $(COBJECTS) $(TEXOBJECTS) $(CTEXOBJECTS)
 	-rm -f *.ow *.sw *.exe *.dll
- 
+
 $(OBJECTS): %: %.pp $(LIBOBJECT)
 	$(FPC) $(PPOPTS) $*
 

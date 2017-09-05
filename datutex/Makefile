@@ -46,6 +46,11 @@ MAKETEX=make1tex
 ifdef UNITDIR
 PPOPTS:=$(PPOPTS) -Up$(UNITDIR);
 endif
+ifdef inUnix
+EXECPREFIX=./
+else
+EXECPREFIX=
+endif
 
 .SUFFIXES: .pp .tex
 
@@ -61,34 +66,36 @@ OBJECTS=ex1 ex2 ex3 ex4 ex5 ex6 ex7 ex9 ex10 ex11 ex12\
         ex81 ex82 ex83 ex84 ex85 ex86 ex87 ex88 ex89 ex90 ex91 ex92 \
         ex93 ex94 ex95 ex96 ex97 ex98 ex99 ex100 ex101 ex102 ex103\
         ex104 ex105 ex106
-        
+
 # This might not be the same list as objects, since some of the
 # tests might be interactive.
-TOTEST=OBJECTS
+TOTEST=$(OBJECTS)
 
-LOGFILE=$(addsuffix .log, $(TOTEST))
-        
+LOGFILES=$(addsuffix .log, $(TOTEST))
+
 
 TEXOBJECTS=$(addsuffix .tex, $(OBJECTS))
 
-all : $(OBJECTS)
+EXEOBJECTS=$(addsuffix $(EXEEXT), $(OBJECTS))
 
-execute: $(LOGFILE)
+all : $(EXEOBJECTS)
+
+execute: $(LOGFILES)
 
 tex : $(TEXOBJECTS)
 
 onetex : tex
 	$(MAKETEX) $(TEXOBJECTS)
 
-clean : 
+clean :
 	-rm -f *.o *.s $(OBJECTS) $(TEXOBJECTS)
 	-rm -f *.ow *.sw *.exe *.dll *.ppw *.tmp *.log *.dat
- 
-$(OBJECTS): %: %.pp
+
+$(EXEOBJECTS): %$(EXEEXT): %.pp
 	$(FPC) $(PPOPTS) $*
 
 $(TEXOBJECTS): %.tex: %.pp head.tex foot.tex
 	$(PP2TEX) $*
 
-$(LOGFILE): %.log: %$(EXEEXT)
-	./$* > $*.log
+$(LOGFILES): %.log: %$(EXEEXT)
+	$(EXECPREFIX)$*$(EXEEXT) > $*.log

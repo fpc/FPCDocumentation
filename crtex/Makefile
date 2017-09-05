@@ -45,7 +45,12 @@ MAKETEX=make1tex
 #######################################################################
 
 ifdef UNITDIR
-PPOPTS:=$(PPOPTS) -Up$(UNITDIR);
+PPOPTS:=$(PPOPTS) -Fu$(UNITDIR)
+endif
+ifdef inUnix
+EXECPREFIX=./
+else
+EXECPREFIX=
 endif
 
 .SUFFIXES: .pp .tex
@@ -57,7 +62,11 @@ OBJECTS=ex1 ex2 ex3 ex4 ex5 ex6 ex7 ex8 ex9 ex10 ex11 ex12 ex13 ex14 \
 
 TEXOBJECTS=$(addsuffix .tex, $(OBJECTS))
 
-all : $(OBJECTS)
+LOGOBJECTS=$(addsuffix .log, $(OBJECTS))
+
+EXEOBJECTS=$(addsuffix $(EXEEXT), $(OBJECTS))
+
+all : $(EXEOBJECTS)
 
 tex : $(TEXOBJECTS)
 
@@ -65,11 +74,14 @@ onetex : tex
 	$(MAKETEX) $(TEXOBJECTS)
 
 clean : 
-	-rm -f *.o *.s $(OBJECTS) $(TEXOBJECTS)
-	-rm -f *.ow *.sw *.exe *.dll
+	-rm -f *.o *.s $(OBJECTS) $(TEXOBJECTS) $(EXEOBJECTS) $(LOGOBJECTS)
+	-rm -f *.so *.dll
  
-$(OBJECTS): %: %.pp
+$(EXEOBJECTS): %$(EXEEXT): %.pp
 	$(FPC) $(PPOPTS) $*
 
 $(TEXOBJECTS): %.tex: %.pp head.tex foot.tex
 	$(PP2TEX) $*
+
+$(LOGOBJECTS): %.log: %$(EXEOBJECTS)
+	$(EXECPREFIX)$* > $*.log
