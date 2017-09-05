@@ -51,7 +51,7 @@ endif
 
 .PHONY: all tex clean
 
-OBJECTS=ex64 ex71
+OBJECTS=ex64 
 
 TEXOBJECTS=$(addsuffix .tex, $(OBJECTS))
 
