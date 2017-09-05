@@ -2348,9 +2348,9 @@ endif
 comphelp.inc:
 ifdef USE_UNIX_ECHO
 	$(ECHO) % Automatically generated Unix version. Do not edit > comphelp.inc
-	$(ECHO) -n '\\begin{verbatim}' >> comphelp.inc
+	$(ECHO) -n "\\begin{verbatim}" >> comphelp.inc
 	$(FPC) -h | sed 's;\\;\\\\;g' >> comphelp.inc
-	$(ECHO) '\\end{verbatim}' >> comphelp.inc
+	$(ECHO) "\\end{verbatim}" >> comphelp.inc
 else
 	$(ECHO) "% Automatically generated Win version. Do not edit" > comphelp.inc
 	$(ECHO) -n '\' >> comphelp.inc
