@@ -2894,6 +2894,11 @@ cleanexamples:
 	$(MAKE) -C sysutex clean
 	$(MAKE) -C typinfex clean
 	$(MAKE) -C kbdex clean
+	$(MAKE) -C go32ex clean
+	$(MAKE) -C mouseex clean
+	$(MAKE) -C linuxex clean
+	$(MAKE) -C sockex clean
+	$(MAKE) -C ipcex clean
 dosexamples: examples
 	$(MAKE) -C go32ex
 	$(MAKE) -C mouseex
