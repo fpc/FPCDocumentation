@@ -19,5 +19,5 @@ begin
   Writeln('Max      : ',MaxValue(ExArray):8:4);
   Writeln('Min      : ',MinValue(ExArray):8:4);
   Writeln('Mean     : ',Mean(ExArray):8:4);
-  Writeln('Mean (b) : ',Mean(@ExArray[1],100):8:4);
+  Writeln('Mean (b) : ',Mean(PExtended(@ExArray[1]),100):8:4);
 end.
