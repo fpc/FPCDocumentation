@@ -5539,6 +5539,80 @@ This declaration tells the compiler that the \var{MyFunc} method of
 the \var{IMyInterface} interface is implemented in the \var{MyOtherFunction}
 method of the \var{TMyClass} class.
 
+\section{Interface inheritance}
+It is possible to let one interface be a descendent from another interface:
+\begin{verbatim}
+IParentInterface = interface
+  ['{0F78D56E-85A6-4024-98D7-720D7C7B9573}']
+  procedure Foo;
+end;
+ 
+IChildInterface = interface(IParentInterface)
+  ['{1AB2EB85-6843-462E-8CE4-32ECC065011E}']
+  procedure Bar;
+end;
+\end{verbatim}
+\var{IChildInterface} will have 2 methods: \var{foo} and \var{bar}. 
+Any class implementing this interface will therefor need to implement both interfaces:
+\begin{verbatim}
+TImplementor = class(TInterfacedObject, IChildInterface)
+public
+  procedure Foo;
+  procedure Bar;
+end;
+
+procedure TImplementor.Foo;
+begin
+
+end;
+
+procedure TImplementor.Bar;
+begin
+
+end;
+\end{verbatim}
+
+Note that when a class declares a child interface, it can be assigned to a variable with the child interface. 
+Given the above declarations, the following will compile:
+\begin{verbatim}
+var
+  Child: IChildInterface;
+
+begin
+  Child := TImplementor.Create;
+\end{verbatim}
+But this does not imply that it automatically also is assignment compatible with a variable with the type of parent interface. The following will not compile:
+\begin{verbatim}
+var
+  Parent: IParentInterface;
+
+begin
+  Parent := TImplementor.Create;
+\end{verbatim}
+To make this compile, it is necessary to declare the class as:
+\begin{verbatim}
+TImplementor = class(TInterfacedObject, 
+                     IParentInterface, 
+                     IChildInterface)
+public
+  procedure Foo;
+  procedure Bar;
+end;
+\end{verbatim}
+The reason for this is that although the class actually implements the methods of \var{IParentInterface}, the compiler checks only actually declared interfaces when checking assignment compatibility: all declared interfaces are put in a table and only the contents of this table is checked.
+
+The same check is performed at runtime: the compiler generates a table of all interfaces a class declares, and this table is checked at runtime. That means that although the following will compile if only \var{IChildInterface} is declared:
+\begin{verbatim}
+ ParentImplementorInstance := (TImplementor.Create as IParentInterface);
+\end{verbatim}
+it will still fail with a run-time error:
+\begin{verbatim}
+home:~> ./ti
+An unhandled exception occurred at $0000000000411A27:
+EInvalidCast: Invalid type cast
+$0000000000411A27
+\end{verbatim}
+
 \section{Interface delegation}
 Sometimes, the methods of an interface are implemented by a helper (or
 delegate) object, or the class instance has obtained an interface pointer for
