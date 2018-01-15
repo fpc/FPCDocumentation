@@ -6690,7 +6690,7 @@ work on a record in the record itself, allows an IDE to show the available
 methods on the record when it is displaying code completion options.
 \end{enumerate}
 
-Defining an extended record is much as defining an object or class:
+Defining an extended record is much like defining an object or class:
 \input{syntax/typeerec.syn}
 Some of the restrictions when compared to classes or objects are 
 obvious from the syntax diagram:
@@ -6702,7 +6702,8 @@ obvious from the syntax diagram:
 \item Methods cannot be virtual or abstract - this is a consequence
 of the fact that there is no inheritance.
 \end{itemize}
-Other than that the definition much resembles that of a class or object.
+Other than that the definition much resembles that of a class or object, 
+except that operators can be defined in an extended record.
 
 \begin{remark}
 In the case of a variant record, the \var{Case} keyword implicitly starts a
@@ -6850,6 +6851,43 @@ begin
 end;
 \end{verbatim}
 This will allow the code to run as well.
+
+\section{Record operators}
+FPC supports the Delphi syntax for operators on extended records:
+\begin{verbatim}
+{$mode objfpc}
+{$modeswitch advancedrecords}
+
+Type
+  TComplex = record
+    Re,Im : Double;
+    class operator +(a,b : TComplex) : TComplex;
+  end;
+
+class operator TComplex.+ (a,b : TComplex) : TComplex;
+begin
+  Result.re:=A.re+B.re;
+  Result.im:=A.im+B.im;
+end; 
+\end{verbatim}
+The operators work just as they would if they were defined using the regular FPC syntax for operators.
+Note that they have the \var{class} keyword prefixed. 
+
+In Delphi mode, the names of the operators can also be used, similar to the syntax in Delphi:
+\begin{verbatim}
+{$mode delphi}
+Type
+TComplex = record
+Re,Im : Double;
+class operator add(a,b : TComplex) : TComplex;
+end;
+
+class operator TComplex.add (a,b : TComplex) : TComplex;
+begin
+Result.re:=A.re+B.re;
+Result.im:=A.im+B.im;
+end; 
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Class helpers
