@@ -73,8 +73,8 @@ conflict with this manual, authoritative.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % About the compiler
 \section{About the compiler}
-\fpc is a 32- and 64-bit Pascal compiler. The current version (2.6)
-can compile code for the following processors:
+\fpc is a 32- and 64-bit Pascal compiler. The current version (3.0.4)
+can compile code for the following processors (the list is not exhaustive):
 \begin{itemize}
 \item Intel i386 and higher (i486, Pentium family and higher)
 \item AMD64/x86\_64
@@ -83,6 +83,10 @@ can compile code for the following processors:
 \item SPARC
 \item ARM
 \item The m68K processor is supported by an older version.
+\item JVM
+\item Javascript
+\item aarch64
+\item Intel 8086.
 \end{itemize}
 The compiler and Run-Time Library are available for the following operating systems:
 \begin{itemize}
@@ -90,7 +94,7 @@ The compiler and Run-Time Library are available for the following operating syst
 \item \linux % (Intel, AMD64, Arm, SPARC, PPC and m68k)
 \item \amiga (version 0.99.5 only)
 \item \windows
-\item Mac OS X 
+\item Mac OS X and iOS. 
 \item \ostwo (optionally using the EMX package, so it also works on DOS/Windows)
 \item \freebsd
 \item \beos 
@@ -103,17 +107,18 @@ The compiler and Run-Time Library are available for the following operating syst
 \end{itemize}
 The complete list is at all times available on the Free Pascal website.
 
-\fpc is designed to be, as much as possible, source compatible with
-Turbo Pascal 7.0 and Delphi 7 (although this goal is not yet attained),
-but it also enhances these languages with elements like operator overloading.
-And, unlike these ancestors, it supports multiple platforms.
+\fpc is designed to be, as much as possible, language and source-level compatible with
+ISO pascal, Mac Pascal, Turbo Pascal 7.0 and most (if not all) versions of
+Delphi. It achieves this through a system of compiler directives which tell
+the compiler what language is targeted (they can be mixed to a certain
+degree).
 
 It also differs from them in the sense that you cannot use compiled units
 from one system for the other, i.e. you cannot use TP compiled units.
 
 Also, there is a text version of an Integrated Development Environment (IDE) 
 available for \fpc. Users that prefer a graphical IDE can have a look at the
-Lazarus\footnote{Lazarus homepage at http://http://www.lazarus.freepascal.org/ }
+Lazarus\footnote{Lazarus homepage at http://http://www.lazarus-ide.org/ }
 or MSEIDE\footnote{MSEIDE+MSEGUI homepage at http://www.msegui.org/ } projects.
 
 \fpc consists of several parts :
@@ -129,8 +134,8 @@ a database framework, image support, web support, XML support and many many more
 
 Of these you only need the first two, in order to be able to use the compiler.
 In this document, we describe the use of the compiler and utilities. 
-The Pascal Language is described in the \refref, and the available routines
-(units) are described in the RTL and FCL Unit reference guides.
+The supported (Object) Pascal Language constructs are described in the \refref, 
+and the available routines (units) are described in the RTL and FCL Unit reference guides.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Getting more information.
@@ -181,23 +186,19 @@ The compiler needs at least one of the following processors:
 is not required, although it will slow down your program's performance if you do 
 floating point calculations without a coprocessor, since emulation will be used.
 \item An AMD64 or EMT64 processor. 
-\item A PowerPC processor. 
+\item A PowerPC processor. (32 or 64 bit) 
 \item A SPARC processor
-\item An ARM processor.
+\item An ARM processor (32 or 64 bit).
 \item Older FPC versions exist for the motorola 68000 processor, 
 but these are no longer maintained.
 \end{enumerate}
 
 
 Memory and disk requirements:
-\begin{enumerate}
-\item 8 Megabytes of free memory. This is sufficient to allow compilation of small programs. 
-\item Large programs (such as the compiler itself) will require at least 64 MB. 
-of memory, but 128MB is recommended. 
-(Note that the compiled programs themselves do not need so much memory.)
-\item At least 80 MB free disk space. 
-When the sources are installed, another 270 MB are needed.
-\end{enumerate}
+
+The memory and disk requirements vary from platform to platform. One should
+count in the order of 100 megabytes for a basic installation; 2 Gigabytes should 
+be counted if you want to recompile the compiler and all basic packages.
 
 % Software requirements
 \subsection{Software requirements}
@@ -230,7 +231,7 @@ programs with the Free Pascal compiler. The EMX extender can be found on:\\
 
 \subsubsection{Under Mac OS X}
 Mac OS X 10.1 or higher is required, and the developer tools or XCode 
-should be installed.
+must be installed. The installer contains the necessar instructions.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Installing the compiler.
