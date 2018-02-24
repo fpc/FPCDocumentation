@@ -6806,7 +6806,7 @@ This is where the various optimizing switches and their actions are
 described, grouped per switch.
 
 \begin{description}
-\item [-On:\ ] with n = 1..3: these switches activate the optimizer.
+\item [-On:\ ] with n = 1..4: these switches activate the optimizer.
 A higher level automatically includes all lower levels.
 \begin{itemize}
 \item Level 1 (\var{-O1}) activates the peephole optimizer
@@ -6816,43 +6816,19 @@ which allows the common subexpression elimination procedure to
 remove unnecessary reloads of registers with values they already contain.
 \item Level 3 (\var{-O3}) equals level 2 optimizations plus some
 time-intensive optimizations.
+\item Level 4 (\var{-O4}) equals level 3 optimizations plus some
+optimizations which may have side effects.
+\item[-OaX=Y] Set alignment of X to Y.
+\item[-Oo[NO]XXX Enable or disable specific optimizations; See section \ref{switch:optimization}
+on \pageref{switch:optimization} for a list of possible values for XXX.
+\item[-OpXXX] Set target cpu for optimizing to XXX; see fpc -i or fpc -ic for possible values.
+\item[-OWXXX] Generate whole-program optimization feedback for optimization XXX see fpc -i or fpc -iw for possible values
+\item[-OwXXX] Perform whole-program optimization XXX; see fpc -i or fpc -iw for possible values
+\item[-Os] Optimize for size rather than speed.
 \end{itemize}
-\item[-OG:\ ]
-This causes the code generator (and optimizer, IF activated), to favor
-faster, but code-wise larger, instruction sequences (such as
-"\verb|subl $4,%esp|") instead of slower, smaller instructions
-("\verb|enter $4|").  This is the default setting.
 
-\item[-Og:\ ] This one is exactly the reverse of -OG, and as such these
-switches are mutually exclusive: enabling one will disable the other.
-
-\item[-Or:\ ] This setting causes the code generator to
-check which variables are used most, so it can keep those in a register.
-
-\item[-Opn:\ ] with n = 1..3: Setting the target processor does NOT
-activate the optimizer. It merely influences the code generator and,
-if activated, the optimizer:
-\begin{itemize}
-\item During the code generation process, this setting is used to
-decide whether a jump table or a sequence of successive jumps provides
-the best performance in a case statement.
-\item The peephole optimizer takes a number of decisions based on this
-setting, for example it translates certain complex instructions, such
-as
-\begin{verbatim}
-movzbl (mem), %eax|
-\end{verbatim}
-to a combination of simpler instructions
-\begin{verbatim}
-xorl %eax, %eax
-movb (mem), %al
-\end{verbatim}
-for the Pentium.
-\end{itemize}
-\item[-Ou:\ ] This enables uncertain optimizations. You cannot use these
-always, however. The previous section explains when they can be used, and
-when they cannot be used.
-\end{description}
+A more complete description of possible optimization switches can be found
+in section \ref{switch:optimization} on \pageref{switch:optimization}.
 
 \section{Tips to get faster code}
 Here, some general tips for getting better code are presented. They
