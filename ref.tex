@@ -4343,6 +4343,56 @@ type
 \end{verbatim}
 This definition is equivalent to the previous one.
 
+Note that a class variable is tied to a specific class. Descendent classes
+will refer to the same instance, unless the variable is redeclared. 
+The following programm demonstrates this:
+\begin{verbatim}
+{$mode objfpc}
+type
+  TA = class // base type
+    class var CODE: integer;
+  end;
+  TB = class(TA); 
+  TC = class(TA);
+
+begin
+  TA.Code:=0;
+  TB.Code:=1;
+  TC.Code:=2;
+  Writeln(Ta.Code:2,Tb.Code:2,Tc.code:2);
+end.
+\end{verbatim}
+The output of this program is:
+\begin{verbatim}
+ 2 2 2
+\end{verbatim}
+Because it is tied to a class, it can be overridden in delphi mode:
+\begin{verbatim}
+$mode delphi}
+type
+  TA = class // base type
+    class var CODE: integer;
+  end;
+  TB = class(TA)
+    Class var code : integer;
+  end; 
+  TC = class(TA)
+    Class var code : integer;
+  end;
+
+begin
+  TA.Code:=0;
+  TB.Code:=1;
+  TC.Code:=2;
+  Writeln(Ta.Code:2,Tb.Code:2,Tc.code:2);
+end.
+\end{verbatim}
+It will print the following:
+\begin{verbatim}
+ 0 1 2
+\end{verbatim}
+However, in OBJFPC mode it will not compile, and will give a duplicate
+identifier error.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Class instantiation
@@ -5368,6 +5418,54 @@ end.
 Will not compile and will return an error:
 \begin{verbatim}
 tt.pp(20,10) Error: identifier idents no member "TEnum"
+\end{verbatim}
+
+Note that for writeable constants, the same rules apply as for class
+variables with regard to scope and overriding in descendents:
+\begin{verbatim}
+{$mode delphi}{$J+}
+type
+  TA = class // base type
+    const CODE: integer = 99;
+  end;
+  TB = class(TA); 
+  TC = class(TA);
+
+begin
+  TA.Code:=0;
+  TB.Code:=1;
+  TC.Code:=2;
+  Writeln(Ta.Code:2,Tb.Code:2,Tc.code:2);
+end.
+\end{verbatim}
+Will write
+\begin{verbatim}
+ 2 2 2
+\end{verbatim}
+But
+\begin{verbatim}
+{$mode delphi}{$J+}
+type
+  TA = class // base type
+    const CODE: integer = -99;
+  end;
+  TB = class(TA)
+    const code : integer = -98;
+  end; 
+  TC = class(TA)
+    Const code : integer = -97;
+  end;
+
+begin
+  TA.Code:=0;
+  TB.Code:=1;
+  TC.Code:=2;
+  Writeln(Ta.Code:2,Tb.Code:2,Tc.code:2);
+end.
+\end{verbatim}
+Will write
+\begin{verbatim}
+ 0 1 2
 \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
