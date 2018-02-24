@@ -1396,6 +1396,7 @@ Other allowed values are \var{FIXED}, \var{DEFAULT} (or 0), or \var{NORMAL}.
 With these values, the compiler stores sets with less than 32 elements 
 in 4 bytes, and sets with less than 256 elements in 32 bytes. 
 
+
 \subsection{\var{\protect\$POP} : Restore compiler settings}
 \label{se:Pop}
 The \var{\$POP} directive restores the values of all local compiler
@@ -5136,17 +5137,60 @@ string, and is terminated with a double null. In difference with a unicode
 string, it is not reference counted.
 
 \subsection{Set types}
-
 A set is stored as an array of bits, where each bit indicates
-if the element is in the set or excluded from the set. The maximum
-number of elements in a set is 256.
+if the element is in the set or excluded from the set. 
+The maximum number of elements in a set is 256.
 
-If a set has fewer than 32 elements, it is coded as an unsigned
-32-bit value. Otherwise it is coded as an array of 8 
-unsigned 32-bit values (longwords), and hence has a size of 256 bytes.
+How many bytes the compiler uses to store a sets depends on the mode.
+For non-delphi modes, the compiler stores small sets (less than 32 elements) in a Longint, 
+if the set element type range allows it. This allows for faster processing and decreases
+program size. Otherwise, sets are stored in 32 bytes.
+
+For Delphi mode, the compiler tries to store the set in the smallest number
+of bytes in which the set will fit. 
+
+The following program illustrates this:
+\begin{verbatim} 
+Type
+  TSet1 = Set of 0..1;
+  TSet2 = Set of 0..8;
+  TSet3 = Set of 0..16;
+  TSet4 = Set of 0..128;
+  TSet5 = Set of 0..247;
+  TSet6 = Set of 0..255;
+
+begin
+  Writeln('Set 1: ',SizeOf(TSet1));
+  Writeln('Set 2: ',SizeOf(TSet2));
+  Writeln('Set 3: ',SizeOf(TSet3));
+  Writeln('Set 4: ',SizeOf(TSet4));
+  Writeln('Set 5: ',SizeOf(TSet5));
+  Writeln('Set 6: ',SizeOf(TSet6));
+end.
+\end{verbatim}
+When compiled in fpc mode, the program outputs the following:
+\begin{verbatim}
+Set 1: 4
+Set 2: 4
+Set 3: 4
+Set 4: 32
+Set 5: 32
+Set 6: 32
+\end{verbatim}
+In Delphi mode, the program will print:
+\begin{verbatim}
+Set 1: 1
+Set 2: 2
+Set 3: 4
+Set 4: 17
+Set 5: 31
+Set 6: 32
+\end{verbatim}
+
+Note that the set element size can be influenced with the \var{\{\$PACKSET \}}
+directive, \sees{Packset}.
 
 The longword number of a specific element \var{E} is given by :
-
 \begin{verbatim}
  LongwordNumber = (E div 32);
 \end{verbatim}
