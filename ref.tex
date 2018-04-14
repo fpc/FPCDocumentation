@@ -4237,6 +4237,35 @@ is not a descendent of \var{TMinClass} or a descendent of \var{TMaxClass}.
 
 More about instantiating a class can be found in \sees{classinstantiation}.
 
+\section{Abstract and sealed classes}
+A class can be declared as \var{sealed}. In that case, it is not possible to
+declare a descendent class. The compiler will return an error if it
+encounters a declaration of a descendent:
+\begin{verbatim}
+{$mode objfpc}
+{$h+}
+
+Type
+  TMyClass = Class Sealed
+    x : integer;
+  end;
+
+  TMyClass2 = Class(TMyClass)
+    Y : Integer;
+  end;
+
+begin
+end. 
+\end{verbatim}
+This will result in the following error:
+\begin{verbatim}
+Error: Cannot create a descendant of the sealed class "TMyClass"
+\end{verbatim}
+
+An abstract class is a class that cannot be instantiated directly. Instead,
+a descendent class must always be instantiated. 
+However, for Delphi compatibility, the compiler ignores this directive.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Normal and static fields
 \section{Normal and static fields}
