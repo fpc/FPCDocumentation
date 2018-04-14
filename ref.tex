@@ -3216,10 +3216,43 @@ They can contain rubbish. To remedy this, the concept of initialized variables
 exists. The difference with normal variables is that their declaration includes 
 an initial value, as can be seen in the diagram in the previous section.
 
-Managed types are an exception to this rule: Managed types are always
-initialized: in general this means setting the reference count to zero, or
-setting the pointer value of the type to \var{Nil}. See \sees{managedtypes}
+\begin{remark}
+2 exceptions to this rule exist:
+\begin{enumerate}
+\item Managed types are an exception to this rule: Managed types are always
+initialized with a default value: in general this means setting the reference 
+count to zero, or setting the pointer value of the type to \var{Nil}. 
+See \sees{managedtypes}
+\item Global variables are initialized with the equivalent of zero. 
+\end{enumerate}
+\end{remark}
 
+Note that the behaviour of zeroing out certain variables can result in invalid 
+content for variables:
+\begin{verbatim}
+Type
+  TWeekDays = 
+    (monday,tuesday,wednesday,thursday,friday,saturday,sunday);
+  TWeekend = saturday..sunday;
+
+var
+  W : TWeekend;
+
+begin
+  Writeln(W);
+end.
+\end{verbatim}
+The above will result, when run, in an error:
+\begin{verbatim}
+Runtime error 107 at $000000000040024A
+$000000000040024A
+$000000000042BF70
+$00000000004001D2
+\end{verbatim}
+Therefor is is {\em Highly recommended} to always initialize variables
+before using them.
+
+This can be easily done in the declaration of the variables. 
 Given the declaration:
 \begin{verbatim}
 Var
