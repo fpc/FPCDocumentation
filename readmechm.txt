@@ -7,7 +7,8 @@ needed for crosslinking this archive with other CHM files. These files are
 not required for viewing (but are only about 1% of the total size)
 
 toc.chm is a workaround for help systems that don't provide a list of 
-helpfiles, which enables access to the default pages of the various CHMs.
+helpfiles. In such system it provides access to the default pages of the 
+various CHMs.
 
 How to install the CHMs in Lazarus
 ------------------------------------
