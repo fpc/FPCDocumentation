@@ -1983,8 +1983,9 @@ Type
 When declaring a variable of a dynamic array type, the initial length of the
 array is zero. The actual length of the array must be set with the standard
 \var{SetLength} function, which will allocate the necessary memory to contain 
-the array elements on the heap. The following example will set the length to
-1000:
+the array elements on the heap. 
+
+The following example will set the length to 1000:
 \begin{verbatim}
 Var 
   A : TByteArray;
@@ -1994,6 +1995,47 @@ begin
 \end{verbatim}
 After a call to \var{SetLength}, valid array indexes are 0 to 999: the array
 index is always zero-based.
+
+\var{SetLength} can also be used for multi-dimensional arrays. The following example will create
+a "rectangular" array:
+\begin{verbatim}
+Var 
+  A : Array of TByteArray;
+
+begin
+  SetLength(A,10,100);
+\end{verbatim}
+After a call to \var{SetLength}, valid array indexes are 0 to 9 for the
+first dimension, and 0 to 00 for the second dimension.
+
+In difference with static multi-dimensional arrays, dynamic arrays do not
+need to be "rectangular", i.e. the various elements can have different
+lengths:
+\begin{verbatim}
+var
+  a: array of array of array of LongInt;
+  i, j, k: LongInt;
+begin
+  SetLength(a, 10, 5);
+  SetLength(a[5], 3);
+
+  for i := Low(a) to High(a) do
+    for j := Low(a[i]) to High(a[i]) do begin
+      SetLength(a[i, j], i * 10 + j);
+      for k := Low(a[i, j]) to High(a[i, j]) do
+        a[i, j, k] := i * 10000 + j * 100 + k;
+    end;
+
+  for i := Low(a) to High(a) do begin
+    for j := Low(a[i]) to High(a[i]) do begin
+      for k := Low(a[i, j]) to High(a[i, j]) do
+        Writeln(a[i, j, k]);
+      Writeln('-------');
+    end;
+    Writeln('=======');
+  end;
+end.
+\end{verbatim}
 
 Note that the length of the array is set in elements, not in bytes of 
 allocated memory (although these may be the same). The amount of 

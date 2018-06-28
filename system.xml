@@ -204,7 +204,7 @@ All things connected to string handling.
 <tr><td><link id="OctStr"/></td><td>Construct octal representation of integer</td></tr>
 <tr><td><link id="Pos"/></td><td>Calculate position of one string in another</td></tr>
 <tr><td><link id="SetLength"/></td><td>Set length of a string</td></tr>
-<tr><td><link id="SetString"/></td><td>Set contents and length of a string</td></tr>
+<tr><td><link id="SetString"/></td><td>Set contents and length of a string or dynamic array</td></tr>
 <tr><td><link id="Str"/></td><td>Convert number to string representation</td></tr>
 <tr><td><link id="StringOfChar"/></td><td>Create string consisting of a number of characters</td></tr>
 <tr><td><link id="Upcase"/></td><td>Convert string to all-uppercase</td></tr>
@@ -1707,10 +1707,20 @@ If <var>W</var> is not found then -1 is returned.
 <element name="Insert">
 <short>Insert one string in another.</short>
 <descr>
+<p>
 <var>Insert</var> inserts string <var>Source</var> in string <var>S</var>, at position
 <var>Index</var>, shifting all characters after <var>Index</var> to the right. The
 resulting string is truncated at 255 characters, if needed. (i.e. for
 shortstrings)
+</p>
+<p>
+<var>Index</var> is a 1-based index. if <var>Index</var> is less than 1, 
+the insert of <var>Source</var> happens at the start of the string, as if the value 1 was specified. 
+</p>
+<p>
+If the value of <var>Index</var> is larger than the length of the string <var>S</var>, 
+<var>Source</var> is appended to the string <var>S</var>.
+</p>
 </descr>
 <errors>
 None.
@@ -2781,16 +2791,16 @@ None.
 
 
 <element name="SetLength">
-<short>Set length of a string.</short>
+<short>Set length of a string or dynamic array.</short>
 <descr>
 <p>
-<var>SetLength</var> sets the length of the string <var>S</var> to <var>Len</var>. <var>S</var>
+<var>SetLength</var> for strings sets the length of the string <var>S</var> to <var>Len</var>. <var>S</var>
 can be an ansistring, a short string or a widestring.
 For <var>ShortStrings</var>, <var>Len</var> can maximally be 255. For <var>AnsiStrings</var>
 it can have any value. For <var>AnsiString</var> strings, <var>SetLength</var>
 \emph{must} be used to set the length of the string.
 </p>
-<p>In the case of a dynamical array <var>A</var>, setlength sets the number
+<p>In the case of a dynamical array <var>A</var>, <var>SetLength</var> sets the number
 of elements. The elements are numbered from index 0, so the count runs from
 0 to <var>Len-1</var>. If Zero is specified, the array is cleared.
 </p>
@@ -2808,6 +2818,19 @@ Note that <var>SetLength</var> is governed by the Copy-On-Write principle for st
 and dynamic arrays: the reference count after a call to <var>SetLength</var>
 will be 1.
 </p>
+<p>
+For multi-dimentional arrays, <var>SetLength</var> can be used to specify all dimensions at once:
+</p>
+<code>
+Var
+  arr : Array of Array of Integer;
+
+begin  
+  SetLength(arr, 10, 20);
+end;  
+</code>
+This will create a dynamic array with 10 elements, where each element in itself is a dynamic array of 20 elements.
+<var>SetLength</var> will of course always create "rectangular" arrays: all elements will have the same size.
 </descr>
 <errors>
 None.
