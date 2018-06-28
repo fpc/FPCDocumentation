@@ -6392,7 +6392,7 @@ This requirement is directly related to the generic type overload capability men
 In Delphi mode, the \var{record} type restrictions will also allow the use of simple types:
 \begin{verbatim}
 Type
-generic TList<_T : record> = class(TObject)
+  TList<_T : record> = class(TObject)
   public 
     Type TCompareFunc = function(const Item1, Item2: _T): Integer;
   Public  
@@ -6403,6 +6403,55 @@ generic TList<_T : record> = class(TObject)
 
 TIntList = TList<Integer>;
 \end{verbatim}
+The restriction is enforced when specializing the type. That means that the
+mode active when specializing a type determines whether a simple type can be
+used or not: if the restriction to record was compiled using ObjFPC mode,
+code written in Delphi mode can specialize it with a simple type anyway.
+
+for example:
+\begin{verbatim}
+unit tg;
+
+interface
+
+{$mode objfpc}
+
+Type
+  generic TList<_T : record> = class(TObject)
+  public
+    Type TCompareFunc = function(const Item1, Item2: _T): Integer;
+  Public
+    data : _T;
+    procedure Add(item: _T);
+    procedure Sort(compare: TCompareFunc);
+ end;
+
+implementation
+
+generic procedure TList<_T>.Add(item: _T);
+
+begin
+
+end;
+
+generic  procedure TList<_T>.Sort(compare: TCompareFunc);
+
+begin
+end;
+
+end. 
+\end{verbatim}
+can be used in \{\$MODE Delphi\} for:
+\begin{verbatim}
+{$mode delphi}
+uses tg;
+
+Type
+  TIntList = TList<Integer>;
+begin
+end.
+\end{verbatim}
+
 
 \subsection{Type overloads}
 \index{Type!Type overloads}\index{Generics!Overloads}\index{Delphi!Type overloads}
