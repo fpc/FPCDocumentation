@@ -11769,6 +11769,71 @@ begin
 end.
 \end{verbatim}
 
+\section{Logical operators}
+Logical operators \var{and}, \var{or}, \var{xor} and \var{not} can be overloaded.
+These operators are normally used on simple types in 2 different ways:
+\begin{enumerate}
+\item As boolean operators, in which case the result is a boolean (except for \var{not})
+\item As bitwise operators, in which case the result is an ordinal type.
+\end{enumerate}
+
+When overloading these operators, the result type is not restricted. This means you can define the operators as boolean logic operators:
+\begin{verbatim}
+Type
+  Rec = record
+    a,b : Boolean;
+  end;
+
+Operator and (r1,r2 : Rec) z : boolean;
+
+begin
+  z:=(R1.a and R2.a) or (R1.b and r2.b);
+end;
+
+Operator or (r1,r2 : Rec) z : Boolean;
+
+begin
+  z:=(R1.a or R2.a) and (R1.b or r2.b)
+end;
+
+Operator xor (r1,r2 : Rec) z : Boolean;
+
+begin
+  z:=(R1.a xor R2.a) and (R1.b xor r2.b)
+end;
+
+Operator not (r1 : Rec) z : rec;
+
+begin
+  z.A:=not R1.a;
+  z.B:=not R1.b;
+end;
+
+
+var
+r1,r2 : Rec;
+
+begin
+  Writeln(r1 and r2);
+  Writeln(r1 or r2);
+  Writeln(r1 xor r2);
+  Writeln((not r1).a);
+end. 
+\end{verbatim}
+
+But it is also possible to have different return types:
+
+\begin{verbatim}
+Operator and (r1,r2 : Rec) z : string;
+
+begin
+  Str(Ord((R1.a and R2.a) or (R1.b and r2.b)),Z);
+end;
+\end{verbatim}
+
+The compiler will always check the return type to determine the final type of an expression, 
+and assignments will be checked for type safety. 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Programs, Units, Blocks
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
