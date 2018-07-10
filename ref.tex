@@ -6706,9 +6706,121 @@ end;
 
 \section{A word about scope}
 It should be stressed that all identifiers other than the template placeholders
-should be known when the generic class is declared. This works in 2 ways.
-First, all types must be known, that is, a type identifier with the same name
-must exist. The following unit will produce an error:
+should be known when the generic class is declared. At the same time,
+nothing can be assumed about the template type (unless a restriction is
+placed on it).
+
+This works in several ways. 
+
+In the absence of type restrictions, the generic code cannot make
+assumptions about the template type \var{T}. Consider the following unit:
+
+\begin{verbatim}
+unit ts;
+
+interface
+{$modeswitch advancedrecords}
+
+type
+  PListEl = ^TListEl;
+  TListEl = packed record
+    Prev, Next: PListEl;
+  end;
+
+
+implementation
+
+type
+  generic LstEnumerator<T> = record
+  private
+    lst, lst_save: T;
+  public
+    constructor Create(const Value: T);
+    function MoveNext: boolean;
+  end;
+
+function LstEnumerator.MoveNext: boolean;
+begin
+  Result:=lst <> nil;
+  if Result then
+    lst:=lst^.next;
+end;
+
+constructor LstEnumerator.Create(const Value: T);
+begin
+  lst:= Value;
+  lst_save := nil;
+end;
+
+
+Type
+ TMyListEnum = specialize LstEnumerator<TListEl>;
+
+end.
+\end{verbatim}
+The compiler will throw an error because when it compiles the generic
+definition, it cannot verify that
+\begin{verbatim}
+   lst:=lst^.next;
+\end{verbatim}
+is correct. \var{lst} is of type \var{T}, but the compiler does not (yet)
+know what \var{T} is, and hence cannot know it has a field \var{next}.
+
+This problem can be solved with type restrictions:
+\begin{verbatim}
+unit ts;
+{$mode delphi}
+interface
+
+type
+  TListEl = class
+    Prev, Next: TListEl;
+  end;
+
+  TMyRecord1 = Class(TListEl)
+    MyField : String;
+  end;  
+
+  TMyRecord2 = Class(TListEl)
+    MyInteger : Integer;
+  end;  
+
+implementation
+
+type
+  TLstEnumerator<T : TListEl> = class
+  private
+    lst, lst_save: T;
+  public
+    constructor Create(const Value: T);
+    function MoveNext: boolean;
+  end;
+
+function TLstEnumerator<T>.MoveNext: boolean;
+begin
+  Result:=lst <> T(nil);
+  if Result then
+    lst:=T(lst.next);
+end;
+
+constructor TLstEnumerator<t>.Create(const Value: T);
+begin
+  lst:= Value;
+  lst_save := T(nil);
+end;
+
+
+Type
+ TMyRecord1Enum = TLstEnumerator<TMyRecord1>;
+ TMyRecord2Enum = TLstEnumerator<TMyRecord2>;
+\end{verbatim}
+Here, the compiler knows that \var{lst} is at least of type TListEl, and
+hence contains members \var{Prev} and \var{Next}.
+
+Beside the template type, all other types used in the generic declaration must be
+known.
+This means that a type identifier with the same name must exist. 
+The following unit will produce an error:
 \begin{verbatim}
 {$mode objfpc}
 unit myunit;
@@ -6742,7 +6854,7 @@ myunit.pp(8,47) Error: Identifier not found "TSomeType"
 myunit.pp(11,1) Fatal: There were 1 errors compiling module, stopping
 \end{verbatim}
 
-The second way in which this is visible, is the following. Assume a unit
+A second way in which this is visible, is the following. Assume a unit
 \begin{verbatim}
 {$mode objfpc}
 unit mya;
