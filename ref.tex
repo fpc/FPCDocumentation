@@ -2865,7 +2865,41 @@ begin
 end.
 \end{verbatim}
 If both pointers must be compared, a typecast to \var{TMethod} must be done, and
-both pointers should be compared.
+both pointers should be compared. \var{TMethod} is defined in the system
+unit as follows:
+\begin{verbatim}
+TMethod = record
+  Code : CodePointer;
+  Data : Pointer;
+end;
+\end{verbatim}
+The following program will therefor print False:
+\begin{verbatim}
+Type 
+  TSomeMethod = Procedure  of object;
+
+  TMyObject = Class(TObject)
+    Procedure DoSomething;
+  end;
+
+Procedure TMyObject.DoSomething;
+
+begin
+  Writeln('In DoSomething');
+end;
+
+var
+  X,Y : TMyObject;
+  P1,P2 : TMethod;
+
+begin
+  X:=TMyObject.Create;
+  Y:=TMyObject.Create;
+  P1:=TMethod(@X.DoSomething);
+  P2:=TMethod(@Y.DoSomething);
+  Writeln('Same method : ',(P1.Data=P2.Data) and (P1.Code=P1.Code));
+end.
+\end{verbatim}
 \end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
