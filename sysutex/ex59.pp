@@ -2,12 +2,12 @@ Program Example59;
 
 { This program demonstrates the AnsiStrLower function }
 
-Uses sysutils;
+Uses sysutils,strings;
 
 Procedure Testit (S : Pchar);
 
 begin
- Writeln (S,' -> ',AnsiStrLower(S))
+ Writeln (S,' -> ',AnsiStrLower(StrNew(S)))
 end;
 
 Begin
