@@ -2,12 +2,12 @@ Program Example60;
 
 { This program demonstrates the AnsiStrUpper function }
 
-Uses sysutils;
+Uses sysutils, strings;
 
 Procedure Testit (S : Pchar);
 
 begin
- Writeln (S,' -> ',AnsiStrUpper(S))
+ Writeln (S,' -> ',AnsiStrUpper(StrNew(S)))
 end;
 
 Begin
