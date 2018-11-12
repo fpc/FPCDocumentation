@@ -678,6 +678,23 @@ will skip the compilation of the text that follows it to the first
 If \var{Name} is defined, then compilation continues as if the directive
 wasn't there.
 
+The \var{\$IFDEF} directive will only check the first word of what follows,
+all the rest is ignored. This means that code after a
+\begin{verbatim}
+{$IFDEF RED}
+\end{verbatim}
+and
+\begin{verbatim}
+{$IFDEF RED check that red is defined}
+\end{verbatim}
+and
+\begin{verbatim}
+{$IFDEF RED or Blue}
+\end{verbatim}
+will only be parsed if \var{RED} is defined. The other words are ignored. In
+particular, the existence of \var{BLUE} will not be checked for the last case. 
+If you need to check multiple values, you should use the \var{\{\$IF\}} construct instead.
+
 \subsection{\var{\protect\$IFNDEF} : Start conditional compilation}
 
 If the symbol \var{Name} is defined then the \var{\{\$IFNDEF name\}}
@@ -685,6 +702,24 @@ will skip the compilation of the text that follows it to the first
 \var{\{\$ELSE\}} or \var{\{\$ENDIF\}} directive.
 If it is not defined, then compilation continues as if the directive
 wasn't there.
+
+Similat to \var{\$IFDEF}, the  \var{\$IFNDEF} directive will only check the first word of what follows,
+all the rest is ignored. This means that code after a
+\begin{verbatim}
+{$IFNDEF RED}
+\end{verbatim}
+and
+\begin{verbatim}
+{$IFNDEF RED check that red is defined}
+\end{verbatim}
+and
+\begin{verbatim}
+{$IFNDEF RED or Blue}
+\end{verbatim}
+will only be parsed if \var{RED} is undefined. The other words are ignored. In
+particular, the existence of \var{BLUE} will not be checked for the last case. 
+If you need to check multiple values, you should use the \var{\{\$IF\}} construct instead.
+
 
 \subsection{\var{\protect\$IFOPT} : Start conditional compilation}
 
