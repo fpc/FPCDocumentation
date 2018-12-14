@@ -12,7 +12,7 @@ begin
   if not (paramstr(1)='-son') then
     begin
     Writeln ('Calling son');
-    Assignstream (Si,So,'./ex38',['-son']);
+    Assignstream (Si,So,paramstr(0),['-son']);
     if fpgeterrno<>0 then
       begin
       writeln ('AssignStream failed !');
