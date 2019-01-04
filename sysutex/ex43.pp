@@ -20,8 +20,7 @@ Begin
         Writeln (Name:40,Size:15);
         end;
     Until FindNext(info)<>0;
+    FindClose(Info);
     end;
-  FindClose(Info);
   Writeln ('Finished search. Found ',Count,' matches');
-
 End.
