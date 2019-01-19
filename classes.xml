@@ -8493,8 +8493,21 @@ On non-Windows platforms, a thread can only suspend itself. Other threads can wa
 <element name="TThread.FreeOnTerminate">  <!-- Property -->
 <short>Indicates whether the thread should free itself when it stops executing.</short>
 <descr>
+<p>
+<var>FreeOnTerminate</var>, when set to <var>True</var> indicates that the tread instance will freed automatically as soon as the thread stops executing.
+You can use the <link id="TThread.OnTerminate">OnTerminate</link> property to get a notification of when the thread has terminated and will be freed.
+</p>
+<p>
+When setting this property to <var>True</var>, in general you may not read or write any property of the <var>TThread</var> instance from a different thread, 
+because there is no guarantee that the thread instance still exists in memory. This implies 2 things:
+</p>
+<ol>
+<li> The <var>OnTerminate</var> event handler should be set before setting <var>FreeOnTerminate</var> to <var>True</var></li>
+<li> The properties can still be read and set in the  <var>OnTerminate</var> event handler, as the thread instance is then still guaranteed to exist.</li>
+</ol> 
 </descr>
 <seealso>
+<link id="TThread.OnTerminate">OnTerminate</link> 
 </seealso>
 </element>
 
