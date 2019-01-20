@@ -964,20 +964,27 @@ to decrease <var>X</var> below its minimum value.
 
 
 <element name="Delete">
-<short>Delete part of a string.</short>
+<short>Delete elements (characters) from a string or dynamic array.</short>
 <descr>
+<p>
 <var>Delete</var> removes <var>Count</var> characters from string <var>S</var>, starting
-at position <var>Index</var>. All characters after the deleted characters are
+at position <var>Index</var>. Index is 1-based. All characters after the deleted characters are
 shifted <var>Count</var> positions to the left, and the length of the string is adjusted.
+</p>
+<p>
+For dynamic arrays, <var>Delete</var> removes <var>Count</var> elements from the array <var>A</var>, 
+starting at position <var>Index</var>. Index is 0-based. All elements after the deleted elements are
+shifted <var>Count</var> positions to the left, and the length of the array is adjusted.
+</p>
+<p>
+If the sum of <var>Index</var> and <var>Count</var> exceeds the length of the string or array, 
+<var>Delete</var> removes the end of the string  or array, starting at <var>Index</var>. 
+</p>
+<p>
+If <var>Index</var> is less than 1 or greater than the length of the string or array, 
+or if <var>Count</var> is negative or zero, <var>Delete</var> does nothing.
+</p>
 </descr>
-If sum of <var>Index</var> and <var>Size</var> exceeds length of the string, <var>Delete</var>
-removes the end of string starting from <var>Index</var>. If <var>Index</var> is less than 1
-or greater than length of the string, or if <var>Size</var> is negative or zero,
-<var>Delete</var> does nothing.
-<errors>
-Shortstring variant's third parameter is called <var>Count</var>, in other overloaded
-variants it is called <var>Index</var>
-</errors>
 <seealso>
 <link id="Copy"/>
 <link id="Pos"/>
@@ -1503,7 +1510,7 @@ None.
 of X. 
 </p>
 <table>
-<tr><th>Size</th><th>Return value</th></tr>
+<tr><td>Size</td><td>Return value</td></tr>
 <tr><td>8</td><td>Byte, High nibble</td></tr>
 <tr><td>16</td><td>Byte, High byte</td></tr>
 <tr><td>32</td><td>Word, High word</td></tr>
@@ -1705,7 +1712,7 @@ If <var>W</var> is not found then -1 is returned.
 
 
 <element name="Insert">
-<short>Insert one string in another.</short>
+<short>Insert one string or dynamic array in another.</short>
 <descr>
 <p>
 <var>Insert</var> inserts string <var>Source</var> in string <var>S</var>, at position
@@ -1720,6 +1727,18 @@ the insert of <var>Source</var> happens at the start of the string, as if the va
 <p>
 If the value of <var>Index</var> is larger than the length of the string <var>S</var>, 
 <var>Source</var> is appended to the string <var>S</var>.
+</p>
+<p>
+For dynamic arrays, <var>Insert</var> inserts the elements of array <var>Source</var> in array <var>S</var>, at position
+<var>Index</var>, shifting all elements after <var>Index</var> to the right. 
+</p>
+<p>
+<var>Index</var> is a 0-based index. if <var>Index</var> is less than 0, 
+the insert of <var>Source</var> happens at position0.
+</p>
+<p>
+If the value of <var>Index</var> is larger than the length of the array <var>S</var>, 
+<var>Source</var> is appended to the array <var>S</var>.
 </p>
 </descr>
 <errors>
@@ -1900,7 +1919,7 @@ An run-time error will occur when <var>X</var> is negative.
 of X. 
 </p>
 <table>
-<tr><th>Size</th><th>Return value</th></tr>
+<tr><td>Size</td><td>Return value</td></tr>
 <tr><td>8</td><td>Byte, low nibble</td></tr>
 <tr><td>16</td><td>Byte, low byte</td></tr>
 <tr><td>32</td><td>Word, low word</td></tr>
@@ -2829,8 +2848,10 @@ begin
   SetLength(arr, 10, 20);
 end;  
 </code>
+<p>
 This will create a dynamic array with 10 elements, where each element in itself is a dynamic array of 20 elements.
 <var>SetLength</var> will of course always create "rectangular" arrays: all elements will have the same size.
+</p>
 </descr>
 <errors>
 None.
