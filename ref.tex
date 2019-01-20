@@ -978,15 +978,30 @@ Int64 & -9223372036854775808 .. 9223372036854775807 & 8 \\
 QWord & 0 .. 18446744073709551615 & 8 \\ \hline
 \end{FPCltable}
 
-The \var{integer} type maps to the smallint type in the default\keywordlink{integer}
-\fpc mode. It maps to either a longint in either Delphi or ObjFPC
+The \var{integer} type is an alias to the smallint type in the default\keywordlink{integer}
+\fpc mode. It is an alias for the longint type in either Delphi or ObjFPC
 mode. The \var{cardinal} type is currently always mapped to the 
 longword type. 
 
 \begin{remark}
-All decimal constants which do no fit within the -2147483648..2147483647 range 
-are silently and automatically parsed as 64-bit integer constants as of version 
-1.9.0. Earlier versions would convert it to a real-typed constant.
+The compiler decides on the type of an integer constant based on the value:
+An integer constant gets the smallest possible signed type. The first match
+in \seet{integerconsttypemapping} is used.
+\begin{FPCltable}{rl}{Integer constant type mapping}{integerconsttypemapping}
+Range &  Type \\ \hline
+-128..127 & Shortint \\
+128..255 & Byte \\
+-32768..32767 & Smallint \\
+32768..65535 & Word \\
+-2147483648..2147483647 & longint \\
+2147483648..4294967295 & Cardinal (longword) \\
+-9223372036854775808 .. 9223372036854775807 & Int64 \\ \hline
+\end{FPCltable}
+That means constants in the range -128..127 are mapped to shortint,
+constants in range 128..255 are mapped to byte, etc.
+Constants in the range 2147483647..high(cardinal) are parsed as cardinals, 
+and all decimal constants which do not fit either of the above ranges are parsed 
+as 64-bit integer constants.
 \end{remark}
 
 \begin{remark}
