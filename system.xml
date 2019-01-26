@@ -10395,7 +10395,7 @@ system unit initialization code. Do not use or modify this value.
 <element name="StringToWideChar">
 <short>Convert a string to an array of widechars.</short>
 <descr>
-<var>StringToWideChar</var> converts an ansistring <var>Src</var> 
+<var>StringToWideChar</var> converts a single-byte-character string <var>Src</var> 
 to a null-terminated  array of WideChars. The destination for this
 array is pointed to by <var>Dest</var>, and contains room for at 
 least <var>DestSize</var> widechars.
@@ -11005,12 +11005,11 @@ Passing an invalid pointer may lead to access violations.
 <short>Convert a length-limited array of widechar to an ansistring</short>
 <descr>
 <var>WideCharLenToString</var> converts at most <var>Len</var> widecharacters from 
-the null-terminated widechar array <var>Src</var> to an ansistring, and returns 
-the ansistring in <var>Dest</var>.
+the null-terminated widechar array <var>Src</var> to an ansistring or unicode string, 
+and returns the resulting in <var>Dest</var>.
 </descr>
 <errors>
-No validity checking is performed on <var>Src</var>. 
-Passing an invalid pointer may lead to access violations.
+No validity checking is performed on <var>Src</var>. Passing an invalid pointer may lead to access violations.
 </errors>
 <seealso>
 <link id="StringToWideChar"/>
@@ -11044,7 +11043,7 @@ lead to access violations.
 <short>Convert a null-terminated array of widechar to an ansistring</short>
 <descr>
 <var>WideCharToString</var> converts the null-terminated widechar 
-array <var>S</var> to an ansistring, and returns the ansistring in <var>Dest</var>.
+array <var>S</var> to an ansistring or unicode string, and returns the resulting string in <var>Dest</var>.
 </descr>
 <errors>
 No validity checking is performed on <var>S</var>. 
@@ -11054,7 +11053,7 @@ lead to access violations.
 <seealso>
 <link id="StringToWideChar"/>
 <link id="WideCharToString"/>
-<link id="WideCharToStrVar"/>
+<link id="WideCharLenToStrVar"/>
 <link id="WideCharLenToString"/>
 </seealso>
 </element>
@@ -13706,7 +13705,7 @@ emulation routines do the rounding. The value can be one of the following:
 <descr>
 <p>
 <var>UnicodeCharToString</var> converts a null-word-terminated array of unicode characters 
-in <var>S</var> to an AnsiString value. It simply calls <link id="UnicodeCharLenToString"/>
+in <var>S</var> to a unicode string value. It simply calls <link id="UnicodeCharLenToString"/>
 with the length of the string <var>S</var>.
 </p>
 <p>
@@ -13750,11 +13749,11 @@ memory location.
 
 <!-- function Visibility: default -->
 <element name="UnicodeCharLenToString">
-<short>Convert a memory buffer with unicode characters to an ansistring</short>
+<short>Convert a memory buffer with unicode characters to a unicodestring</short>
 <descr>
 <p>
 <var>UnicodeCharLenToString</var> converts the unicode characters in buffer
-<var>S</var> with at most <var>len</var> bytes length, to an ansistring and
+<var>S</var> with at most <var>len</var> bytes length, to a unicodestring and
 returns the result.
 </p>
 <p>
@@ -13801,8 +13800,7 @@ No checking is done to see if the pointer <var>S</var> or length
 <descr>
 <p>
 <var>UnicodeCharLenToString</var> converts the unicode characters in buffer
-<var>S</var> up to the first null word, to an ansistring and
-returns the result in <var>Dest</var>
+<var>S</var> up to the first null word, to an ansistring and returns the result in <var>Dest</var>
 </p>
 <p>
 This function does the same as <link id="UnicodeCharToString"/>.
