@@ -11039,14 +11039,20 @@ consider the following program:
 \begin{verbatim}
 Program Aliases;
 
-Procedure Printit;alias : 'DOIT';
+Procedure Printit;[public, alias:'DOIT'];
 begin
   WriteLn ('In Printit (alias : "DOIT")');
 end;
+
+
+Procedure myprint; external name 'DOIT';
+
 begin
-  asm
-  call DOIT
-  end;
+
+asm
+  call myprint
+end;
+
 end.
 \end{verbatim}
 \begin{remark} The specified alias is inserted straight into the assembly
