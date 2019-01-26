@@ -7535,22 +7535,26 @@ We will first create an object ppufile which will be used below. We are
 opening unit \file{test.ppu} as an example.
 
 \begin{verbatim}
+uses ppu;
+
+{$mode objfpc}
+
 var
-  ppufile : pppufile;
+  ppufile : tppufile;
 begin
 { Initialize object }
-  ppufile:=new(pppufile,init('test.ppu');
+  ppufile:=tppufile.create('test.ppu');
 { open the unit and read the header, returns false when it fails }
   if not ppufile.openfile then
-    error('error opening unit test.ppu');
+    Writeln('error opening unit test.ppu');
 
 { here we can read the unit }
 
 { close unit }
   ppufile.closefile;
 { release object }
-  dispose(ppufile,done);
-end;
+  ppufile.free;
+end.
 \end{verbatim}
 
 Note: When a function fails (for example not enough bytes left in an
