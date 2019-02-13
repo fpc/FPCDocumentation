@@ -165,6 +165,11 @@ ifndef MAKEINDEX
 MAKEINDEX=makeindex
 endif
 
+ifneq ($(LATEXOPT),)
+  override LATEX+= $(LATEXOPT)
+  override PDFLATEX+= $(LATEXOPT)
+endif
+
 # Required Latex settings
 save_size=10000
 export save_size
@@ -274,11 +279,11 @@ endif
 .tex.pdf:
         -rm -f $*.aux $*.idx  $*.ilg  $*.ind  $*.log  $*.out  $*.toc $*.tmp $*.xref $*.4ht
         cp -f preamble.$(PREAMBLETYPE) preamble.inc
-        $(PDFLATEX) $*
+        $(PDFLATEX) $* $(LATEXPOSTOPT)
         -$(MAKEINDEX) $*.idx
-        $(PDFLATEX) $*
+        $(PDFLATEX) $* $(LATEXPOSTOPT)
         -$(MAKEINDEX) $*.idx
-        $(PDFLATEX) $*
+        $(PDFLATEX) $* $(LATEXPOSTOPT)
 
 ifndef USEELINKS
 $(TXT) : %.txt: %.dvi
