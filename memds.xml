@@ -1,0 +1,1907 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fpdoc-descriptions>
+  <package name="fcl">
+    <!--
+    ====================================================================
+      memds
+    ====================================================================
+    -->
+    <module name="memds">
+      <short>
+        Implements an in-memory dataset
+      </short>
+      <descr>
+        memds.pp contains classes, types, and routines needed to implement TMemDataset, an in-memory dataset. Ideas implemented in TMemDataset were taken from the THKMemTab component by Harri Kasulke. (Hamburg/Germany)
+      </descr>
+
+      <!-- unresolved external references -->
+      <element name="sysutils"/>
+      <element name="classes"/>
+      <element name="db"/>
+      <element name="types"/>
+
+      <element name="MarkerSize">
+        <short>
+          Indicates the size for markers in the memory stream for TMemDataset
+        </short>
+        <descr>
+          <p>
+            MarkerSize is a constant that indicates the size for markers used in TMemDataset. Markers are read from and written to the internal TMemoryStream for the in-memory dataset, and separates field definitions from the record data in the stream. A marker is also used to indicate the end of the stream.
+          </p>
+          <p>
+            MarkerSize is defined as the size for the Integer data type.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.CheckMarker">TMemDataset.CheckMarker</link>
+        </seealso>
+      </element>
+
+      <element name="smEOF">
+        <short>
+          Marker that indicates the End-of-File for the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            smEOF is an Integer constant that contains the marker used as the End-of-File marker for an in-memory dataset. smEOF is used in TMemDataset methods which read or write data using a file or a stream. The value for smEOF is 0 (zero).
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.InternalOpen">TMemDataset.InternalOpen</link>
+          <link id="TMemDataset.LoadFromStream">TMemDataset.LoadFromStream</link>
+          <link id="TMemDataset.SaveToStream">TMemDataset.SaveToStream</link>
+        </seealso>
+      </element>
+
+      <element name="smFieldDefs">
+        <short>
+          Marker used to signify the start of field definitions for an in-memory dataset
+        </short>
+        <descr>
+          <p>
+            smFieldDefs is an Integer constant that contains the marker used to signify the start of field definitions for an in-memory dataset. smFieldDefs is used in TMemDataset methods which read or write field definitions for the in-memory dataset. The value for smFieldDefs is 1.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.ReadFieldDefsFromStream">
+            TMemDataset.ReadFieldDefsFromStream
+          </link>
+          <link id="TMemDataset.SaveFieldDefsToStream">
+            TMemDataset.SaveFieldDefsToStream
+          </link>
+        </seealso>
+      </element>
+
+      <element name="smData">
+        <short>
+          Marker used to signify the start of record data for an in-memory dataset
+        </short>
+        <descr>
+          <p>
+            smData is an Integer constant that contains the marker used to signify the start of record data for an in-memory dataset. smData is used in TMemDataset methods which read or write record values using the stream for the in-memory dataset. The value for smData is 2.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.LoadDataFromStream">
+            TMemDataset.LoadDataFromStream
+          </link>
+          <link id="TMemDataset.SaveDataToStream">
+            TMemDataset.SaveDataToStream
+          </link>
+        </seealso>
+      </element>
+
+      <element name="MDSError">
+        <short>
+          Exception raised for errors when reading or writing an in-memory dataset
+        </short>
+        <descr>
+          <p>
+            MDSError is an Exception type raised when an error occurs while reading or writing values for an in-memory dataset. MDSError is raised in the TMemDataset.RaiseError method and uses messages defined in resource strings in the implementation for the unit, including:
+          </p>
+          <ul>
+            <li>Fieldtype of Field "%s" not supported</li>
+            <li>Bookmark %d not found</li>
+            <li>Error in data stream at position %d</li>
+            <li>Wrong data stream marker at position %d. Got %d, expected %d'</li>
+            <li>Filename must not be empty</li>
+          </ul>
+          <p>
+            An MDSError exception will be raised when a field definition uses a data type not supported in TMemDataset. The exception will be raised for the following field types:
+          </p>
+          <ul>
+            <li>ftADT</li>
+            <li>ftCursor</li>
+            <li>ftDataSet</li>
+            <li>ftDBaseOle</li>
+            <li>ftFmtMemo</li>
+            <li>ftGraphic</li>
+            <li>ftIDispatch</li>
+            <li>ftInterface</li>
+            <li>ftOraBlob</li>
+            <li>ftOraClob</li>
+            <li>ftParadoxOle</li>
+            <li>ftReference</li>
+            <li>ftTimeStamp</li>
+            <li>ftTypedBinary</li>
+            <li>ftVariant</li>
+            <li>ftUnknown</li>
+          </ul>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.RaiseError">TMemDataset.RaiseError</link>
+          <link id="TMemDataset.FieldDefs">TMemDataset.FieldDefs</link>
+          <link id="#fcl.Db.TField.FieldType">TField.FieldType</link>
+        </seealso>
+      </element>
+
+      <element name="TMemDataset" link="#fcl.Db.TDataset">
+        <short>
+          Implements an in-memory dataset
+        </short>
+        <descr>
+          <p>
+            TMemDataset is a TDataset descendant which implements an in-memory dataset. TMemDataset is a performant, single user dataset for non-mission critical use cases that do not require transactions. All record and field processing is done in memory; no data is read from or written to disk unless explicitly requested.
+          </p>
+          <p>
+            TMemDataset implements common facilities defined in the TDataset ancestor class. This includes using the FieldDefs property to define the structure  for the dataset. Most (but not all) field types are supported in TMemDataset, including:
+          </p>
+          <ul>
+            <li>ftString</li>
+            <li>ftGuid</li>
+            <li>ftFixedChar</li>
+            <li>ftBoolean</li>
+            <li>ftCurrency</li>
+            <li>ftFloat</li>
+            <li>ftBCD</li>
+            <li>ftLargeInt</li>
+            <li>ftSmallInt</li>
+            <li>ftWord</li>
+            <li>ftInteger</li>
+            <li>ftAutoInc (behave like ftInteger i.e. no auto-increment functionality)</li>
+            <li>ftDateTime</li>
+            <li>ftDate</li>
+            <li>ftTime</li>
+            <li>ftFmtBCD</li>
+            <li>ftWideString</li>
+            <li>ftFixedWideChar</li>
+            <li>ftBytes</li>
+            <li>ftVarBytes</li>
+            <li>ftBlob</li>
+            <li>ftMemo</li>
+            <li>ftWideMemo</li>
+          </ul>
+          <p>
+            TMemDataset implements common data manipulation methods such as: Append, AppendRecord, Insert, InsertRecord, Delete, Clear, and Refresh. TMemDataset implements Bookmarks and common navigation methods like: First, Next, Prior, Last, Locate, BOF, and EOF. Methods are provided that allow loading and saving both structure and data from a file, a stream, or another TDataset descendent.
+          </p>
+          <p>
+            TMemDataset provides methods to filter records, but they are implemented in a different manner than in TDataset. The Filter property is ignored; use the OnFilterRecord method and the Filtered property for this functionality.
+          </p>
+          <p>
+             One notable missing feature is Indexes. Index definitions are not implemented in TMemDataset.
+           </p>
+          <p>
+            TMemDataset uses ideas taken from the THKMemTab component by Harri Kasulke. (Hamburg/Germany)
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset">TDataset</link>
+        </seealso>
+      </element>
+
+      <!-- Visibility: private -->
+      <element name="TMemDataset.TMDSBlobList" link="TFPList"/>
+      <element name="TMemDataset.TMDSBlobList.Clear" link="TFPList.Clear"/>
+      <element name="TMemDataset.FOpenStream"/>
+      <element name="TMemDataset.FFileName"/>
+      <element name="TMemDataset.FFileModified"/>
+      <element name="TMemDataset.FStream"/>
+      <element name="TMemDataset.FRecInfoOffset"/>
+      <element name="TMemDataset.FRecCount"/>
+      <element name="TMemDataset.FRecSize"/>
+      <element name="TMemDataset.FCurrRecNo"/>
+      <element name="TMemDataset.FIsOpen"/>
+      <element name="TMemDataset.FTableIsCreated"/>
+      <element name="TMemDataset.FFilterBuffer"/>
+      <element name="TMemDataset.ffieldoffsets"/>
+      <element name="TMemDataset.ffieldsizes"/>
+      <element name="TMemDataset.FBlobs"/>
+
+      <!-- Visibility: private -->
+      <element name="TMemDataset.GetRecordBufferPointer">
+        <short>Gets a pointer to record data in the in-memory dataset</short>
+      </element>
+      <element name="TMemDataset.GetRecordBufferPointer.Result">
+        <short>Pointer to the record data</short>
+      </element>
+      <element name="TMemDataset.GetRecordBufferPointer.p">
+        <short></short>
+      </element>
+      <element name="TMemDataset.GetRecordBufferPointer.Pos">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.GetIntegerPointer">
+        <short>Gets a pointer to the offset for the specified field</short>
+      </element>
+      <element name="TMemDataset.GetIntegerPointer.Result">
+        <short>Pointer to the offset for a field</short>
+      </element>
+      <element name="TMemDataset.GetIntegerPointer.p">
+        <short></short>
+      </element>
+      <element name="TMemDataset.GetIntegerPointer.Pos">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.CalcRecordLayout">
+        <short>Calculates the Sizes and Offsets for Fields in the record</short>
+      </element>
+
+      <element name="TMemDataset.MDSGetRecordOffset">
+        <short>Gets the memory offset to data for the specified record</short>
+      </element>
+      <element name="TMemDataset.MDSGetRecordOffset.Result">
+        <short></short>
+      </element>
+      <element name="TMemDataset.MDSGetRecordOffset.ARecNo">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.MDSGetFieldOffset">
+        <short>Gets the memory offset to the definition for the specified field</short>
+      </element>
+      <element name="TMemDataset.MDSGetFieldOffset.Result">
+        <short></short>
+      </element>
+      <element name="TMemDataset.MDSGetFieldOffset.FieldNo">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.MDSGetBufferSize">
+        <short>Gets the buffer size needed for the specified field</short>
+        <descr>
+          <p>
+            MDSGetBufferSize is used to get the buffer size required for the specified field number in FieldDefs. MDSGetBufferSize provides explicit support for the following field data types in TFieldDef:
+          </p>
+          <dl>
+            <dt>ftString</dt>
+            <dd>TFieldDef.Size+1</dd>
+            <dt>ftGuid</dt>
+            <dd>TFieldDef.Size+1</dd>
+            <dt>ftFixedChar</dt>
+            <dd>TFieldDef.Size+1</dd>
+            <dt>ftBoolean</dt>
+            <dd>SizeOf(Wordbool)</dd>
+            <dt>ftCurrency</dt>
+            <dd>SizeOf(Double)</dd>
+            <dt>ftFloat</dt>
+            <dd>SizeOf(Double)</dd>
+            <dt>ftBCD</dt>
+            <dd>SizeOf(currency)</dd>
+            <dt>ftLargeInt</dt>
+            <dd>SizeOf(int64)</dd>
+            <dt>ftSmallInt</dt>
+            <dd>SizeOf(SmallInt)</dd>
+            <dt>ftWord</dt>
+            <dd>SizeOf(longint)</dd>
+            <dt>ftAutoInc</dt>
+            <dd>SizeOf(longint)</dd>
+            <dt>ftInteger</dt>
+            <dd>SizeOf(longint)</dd>
+            <dt>ftDateTime</dt>
+            <dd>SizeOf(TDateTime)</dd>
+            <dt>ftDate</dt>
+            <dd>SizeOf(TDateTime)</dd>
+            <dt>ftTime</dt>
+            <dd>SizeOf(TDateTime)</dd>
+            <dt>ftFmtBCD</dt>
+            <dd>SizeOf(TBCD)</dd>
+            <dt>ftWideString</dt>
+            <dd>(TFieldDef.Size+1)*SizeOf(WideChar)</dd>
+            <dt>ftFixedWideChar</dt>
+            <dd>(TFieldDef.Size+1)*SizeOf(WideChar)</dd>
+            <dt>ftBytes</dt>
+            <dd>TFieldDef.Size</dd>
+            <dt>ftVarBytes</dt>
+            <dd>TFieldDef.Size + SizeOf(Word)</dd>
+            <dt>ftBlob</dt>
+            <dd>SizeOf(TMDSBlobField)</dd>
+            <dt>ftMemo</dt>
+            <dd>SizeOf(TMDSBlobField)</dd>
+            <dt>ftWideMemo</dt>
+            <dd>SizeOf(TMDSBlobField)</dd>
+          </dl>
+          <p>
+            MDSGetBufferSize raises an MDSError exception if a field definition uses a data type not supported in TMemDataset. The exception will be raised for the following field types:
+          </p>
+          <ul>
+            <li>ftADT</li>
+            <li>ftCursor</li>
+            <li>ftDataSet</li>
+            <li>ftDBaseOle</li>
+            <li>ftFmtMemo</li>
+            <li>ftGraphic</li>
+            <li>ftIDispatch</li>
+            <li>ftInterface</li>
+            <li>ftOraBlob</li>
+            <li>ftOraClob</li>
+            <li>ftParadoxOle</li>
+            <li>ftReference</li>
+            <li>ftTimeStamp</li>
+            <li>ftTypedBinary</li>
+            <li>ftVariant</li>
+            <li>ftUnknown</li>
+          </ul>
+        </descr>
+      </element>
+      <element name="TMemDataset.MDSGetBufferSize.Result">
+        <short></short>
+      </element>
+      <element name="TMemDataset.MDSGetBufferSize.FieldNo">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.MDSGetActiveBuffer">
+        <short>Gets the active buffer with values for the current dataset state</short>
+      </element>
+      <element name="TMemDataset.MDSGetActiveBuffer.Result">
+        <short></short>
+      </element>
+      <element name="TMemDataset.MDSGetActiveBuffer.Buffer">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.MDSReadRecord">
+        <short>Reads and buffers the specified record in the in-memory dataset</short>
+      </element>
+      <element name="TMemDataset.MDSReadRecord.Buffer">
+        <short></short>
+      </element>
+      <element name="TMemDataset.MDSReadRecord.ARecNo">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.MDSWriteRecord">
+        <short>Writes the specified buffered record to the in-memory dataset</short>
+      </element>
+      <element name="TMemDataset.MDSWriteRecord.Buffer">
+        <short></short>
+      </element>
+      <element name="TMemDataset.MDSWriteRecord.ARecNo">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.MDSAppendRecord">
+        <short>Appends the specified record buffer to the in-memory dataset</short>
+      </element>
+      <element name="TMemDataset.MDSAppendRecord.Buffer">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.MDSFilterRecord">
+        <short>
+          Provides the specified record buffer to the OnFilterRecord event handler
+        </short>
+      </element>
+      <element name="TMemDataset.MDSFilterRecord.Result">
+        <short></short>
+      </element>
+      <element name="TMemDataset.MDSFilterRecord.Buffer">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.MDSLocateRecord">
+        <short>
+          Locates the first record with fields matching the specified values and filters
+        </short>
+      </element>
+      <element name="TMemDataset.MDSLocateRecord.Result">
+        <short></short>
+      </element>
+      <element name="TMemDataset.MDSLocateRecord.KeyFields">
+        <short></short>
+      </element>
+      <element name="TMemDataset.MDSLocateRecord.KeyValues">
+        <short></short>
+      </element>
+      <element name="TMemDataset.MDSLocateRecord.Options">
+        <short></short>
+      </element>
+      <element name="TMemDataset.MDSLocateRecord.ARecNo">
+        <short></short>
+      </element>
+
+      <!-- Visibility: protected -->
+      <element name="TMemDataset.AllocRecordBuffer" link="#fcl.Db.TDataset.AllocRecordBuffer">
+        <short>
+          Allocates memory needed for a record buffer in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            AllocRecordBuffer allocates memory needed for a record buffer in the in-memory dataset. AllocRecordBuffer calls GetMem to allocate the memory used in the return value for the method. Sufficient memory is allocated for the fields defined in FieldDefs and includes any calculated fields.
+          </p>
+          <p>
+            AllocRecordBuffer implements the virtual method from the ancestor class.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Open">TDataset.Open</link>
+          <link id="#fcl.Db.TDataset.DataSource">TDataset.DataSource</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.AllocRecordBuffer.Result">
+        <short>Memory allocated for the record buffer</short>
+      </element>
+
+      <element name="TMemDataset.FreeRecordBuffer" link="#fcl.Db.TDataset.FreeRecordBuffer">
+        <short>
+          Frees memory allocated for the specified record buffer
+        </short>
+        <descr>
+          <p>
+            FreeRecordBuffer frees memory allocated for the specified record buffer. FreeRecordBuffer implements the virtual method from the ancestor class.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.CloseCursor">TDataset.CloseCursor</link>
+          <link id="#fcl.Db.TDataset.Destroy">TDataset.Destroy</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.FreeRecordBuffer.Buffer">
+        <short>Record buffer to free in the method</short>
+      </element>
+
+      <element name="TMemDataset.GetBookmarkData" link="#fcl.Db.TDataset.GetBookmarkData">
+        <short>
+          Gets Bookmark data from the specified record buffer
+        </short>
+        <descr>
+          <p>
+            GetBookmarkData gets Bookmark data from the specified record buffer. GetBookmarkData examines the byte values in Buffer starting at the offset for record information. The values are cast to a PRecInfo record type which provides access to the Bookmark and BookmarkFlags for the record. The value in Data is updated to contain a pointer to the Integer value that is the  Bookmark for the record.
+          </p>
+          <p>
+            No actions are performed in the method when Data has not been assigned (contains <var>Nil</var>).
+          </p>
+          <p>
+            GetBookmarkData implements the virtual method from the ancestor class, and is called when reading the values in the Bookmark property.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Bookmark">TDataset.Bookmark</link>
+          <link id="#fcl.Db.TDataset.GetBookmarkStr">TDataset.GetBookmarkStr</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.GetBookmarkData.Buffer">
+        <short>Record buffer with Bookmark data</short>
+      </element>
+      <element name="TMemDataset.GetBookmarkData.Data">
+        <short>Bookmark from the specified record buffer</short>
+      </element>
+
+      <element name="TMemDataset.GetBookmarkFlag" link="#fcl.Db.TDataset.GetBookmarkFlag">
+        <short>
+          Gets BookmarkFlag data from the specified record buffer
+        </short>
+        <descr>
+          <p>
+            GetBookmarkFlag is used to get BookmarkFlag data from the specified record buffer. Bookmark flags are an internal mechanism which provide status information for the record, such as:
+          </p>
+          <dl>
+            <dt>bfCurrent</dt>
+            <dd>Record is currently selected in the dataset</dd>
+            <dt>bfBOF</dt>
+            <dd>Record is at the Beginning-of-File</dd>
+            <dt>bfEOF</dt>
+            <dd>Record is at the End-of-File</dd>
+            <dt>bfInserted</dt>
+            <dd>Record has been inserted</dd>
+          </dl>
+          <p>
+            GetBookmarkFlag examines the byte values in Buffer starting at the offset for record information. The values are cast to a PRecInfo record type which provides access to the Bookmark and BookmarkFlags for the record. The return value contains the TBookmarkFlag in the byte values.
+          </p>
+          <p>
+            GetBookmarkFlag implements the virtual method from the ancestor class. It is called from the BookmarkAvailable and SetCurrentRecord methods.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.BookmarkAvailable">TDataset.BookmarkAvailable</link>
+          <link id="#fcl.Db.TDataset.SetCurrentRecord">TDataset.SetCurrentRecord</link>
+          <link id="#fcl.Db.TBookmarkFlag">TBookmarkFlag</link>
+      </seealso>
+      </element>
+      <element name="TMemDataset.GetBookmarkFlag.Result">
+        <short>BookmarkFlag for the specified record buffer</short>
+      </element>
+      <element name="TMemDataset.GetBookmarkFlag.Buffer">
+        <short>Record buffer with BookmarkFlag data</short>
+      </element>
+
+      <element name="TMemDataset.GetFieldData" link="#fcl.Db.TDataset.GetFieldData">
+        <short>
+          Gets data for the specified field from the active record buffer
+        </short>
+        <descr>
+          <p>
+            GetFieldData is used to get data for the specified Field from the active record buffer. GetFieldData calls MDSGetActiveBuffer to get the active record buffer for the in-memory dataset. No actions are performed in the method when records do not exist in the dataset.
+          </p>
+          <p>
+            Field provides the offset into the record buffer for field data. For calculated and lookup fields, it also provides the size for the field data.
+          </p>
+          <p>
+            Buffer is updated to contain the field data for the specified Field.
+          </p>
+          <p>
+            The return value indicates if field data was successfully retrieved in the method. It contains False when Buffer has not been assigned (contains <var>Nil</var>), or when the data for the Field is a <var>null</var> pointer.
+          </p>
+          <p>
+            GetFieldData provides an implementation of the virtual function defined in the ancestor class. Please note, it does not call the inherited method.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Fields">TDataset.Fields</link>
+          <link id="#fcl.Db.TField.GetData">TField.GetData</link>
+          <link id="#fcl.Db.TField.Value">TField.Value</link>
+          <link id="#fcl.Db.TField.IsNull">TField.IsNull</link>
+          <link id="#fcl.Db.TField.Calculated">TField.Calculated</link>
+          <link id="#fcl.Db.TField.Lookup">TField.Lookup</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.GetFieldData.Result">
+        <short>True if field data was retrieved from the record buffer</short>
+      </element>
+      <element name="TMemDataset.GetFieldData.Field">
+        <short>Field to access in the record buffer</short>
+      </element>
+      <element name="TMemDataset.GetFieldData.Buffer">
+        <short>Buffer used to store data for the field</short>
+      </element>
+
+      <element name="TMemDataset.GetRecord" link="#fcl.Db.TDataset.GetRecord">
+        <short>
+          Gets a record buffer when navigating between rows in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            GetRecord is used to get a record buffer when navigating between rows in the in-memory dataset. GetRecord provides a concrete implementation of the abstract virtual method in TDataset.
+          </p>
+          <p>
+            GetRecord calls MDSReadRecord to retrieve record data which is stored in the Buffer argument. GetRecord ensures that the Bookmark and BookMarkFlag in Buffer are updated to reflect the current record number. GetRecord calls GetCalcFields to derive the values for calculated or lookup fields using the values in Buffer. When Filtered contains True, the MDSFilterRecord method is called to determine if the record values meet the filtering condition.
+          </p>
+          <p>
+            GetMode specifies the relative record to retrieve in the method, and can contain values like gmCurrent, gmNext or gmPrior. gmCurrent is used when refreshing the record buffer for the record in RecNo.
+          </p>
+          <p>
+            DoCheck is provided to satisfy the method signature from the ancestor class; it is <b>NOT</b> used in the current implementation.
+          </p>
+          <p>
+            The return value is a TGetResult type which indicates if the record was successfully retrieved. The return value can contain the following values:
+          </p>
+          <dl>
+            <dt>grOK</dt>
+            <dd>Record was successfully retrieved</dd>
+            <dt>grBOF</dt>
+            <dd>Record requested is beyond the beginning-of-file</dd>
+            <dt>grEOF</dt>
+            <dd>Record requested was beyond the end-of-file (or no records exist)</dd>
+            <dt>grError</dt>
+            <dd>Could not retrieve the record (or it does not meet the filter condition)</dd>
+          </dl>
+          <p>
+            GetRecord is used in the implementation of the Next, Prior and Resync methods.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Next">TDataset.Next</link>
+          <link id="#fcl.Db.TDataset.Prior">TDataset.Prior</link>
+          <link id="#fcl.Db.TDataset.Resync">TDataset.Resync</link>
+          <link id="#fcl.Db.TDataset.Filtered">TDataset.Filtered</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.GetRecord.Result">
+        <short>Indicates if the operation was successful</short>
+      </element>
+      <element name="TMemDataset.GetRecord.Buffer">
+        <short>Stores the values for the record</short>
+      </element>
+      <element name="TMemDataset.GetRecord.GetMode">
+        <short>Relative record requested in the method</short>
+      </element>
+      <element name="TMemDataset.GetRecord.DoCheck">
+        <short>No used in the current implementation</short>
+      </element>
+
+      <element name="TMemDataset.GetRecordSize" link="#fcl.Db.TDataset.GetRecordSize">
+        <short>
+          Gets the value for the RecordSize property
+        </short>
+        <descr>
+          <p>
+            GetRecordSize is an overridden Word function that returns the size of records in the in-memory dataset. GetRecordSize is the read access specifier for the RecordSize property.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.RecordSize">TMemDataset.RecordSize</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.GetRecordSize.Result">
+        <short>Size needed for record data in the in-memory dataset</short>
+      </element>
+
+      <element name="TMemDataset.InternalAddRecord" link="#fcl.Db.TDataset.InternalAddRecord">
+        <short>
+          Performs actions needed to add a record in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            InternalAddRecord is an overridden procedure used to perform actions needed to add a new record in the in-memory dataset. InternalAddRecord implements the method defined in the ancestor class.
+          </p>
+          <p>
+            InternalAddRecord calls MDSAppendRecord using the value in the ActiveBuffer property as the storage for the record data, and calls InternalLast to position the dataset on the newly added record.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Append">TDataset.Append</link>
+          <link id="#fcl.Db.TDataset.AppendRecord">TDataset.AppendRecord</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.InternalAddRecord.Buffer">
+        <short>Record buffer for values added in the method</short>
+      </element>
+      <element name="TMemDataset.InternalAddRecord.DoAppend">
+        <short>No used in the current implementation</short>
+      </element>
+
+      <element name="TMemDataset.InternalClose" link="#fcl.Db.TDataset.InternalClose">
+        <short>
+          Performs actions needed when closing the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            InternalClose is an overridden procedure used to perform actions needed when closing the in-memory dataset. InternalClose implements the abstract virtual method defined in the ancestor class.
+          </p>
+          <p>
+            InternalClose uses the values in the FileModified and FileName properties to  determine if additional actions are needed. When FileModified is True and FileName is not an empty string (''), the SaveToFile method is called using the value in FileName as an argument. The Save operation stores the structure (field definitions) and any record data in the in-memory dataset. When DefaultFields is True, the DestroyFields method is called to free resources allocated to the Fields property when the dataset was opened. InternalClose resets the values used in IsCursorOpen and FileModified to False.
+          </p>
+          <p>
+            InternalClose is called from the Close method, or when the value in Active is changed to False.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.FileModified">TMemDataset.FileModified</link>
+          <link id="TMemDataset.FileName">TMemDataset.FileName</link>
+          <link id="#fcl.Db.TDataset.DefaultFields">TDataset.DefaultFields</link>
+          <link id="#fcl.Db.TDataset.Close">TDataset.Close</link>
+          <link id="#fcl.Db.TDataset.Active">TDataset.Active</link>
+        </seealso>
+      </element>
+
+      <element name="TMemDataset.InternalDelete" link="#fcl.Db.TDataset.InternalDelete">
+        <short>
+          Performs actions needed to delete a record in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            InternalDelete is an overridden procedure used to perform actions needed when a record is deleted from the in-memory dataset. InternalDelete overrides the virtual method in the ancestor class. No actions are performed in the method when the current record number is -1, or positioned beyond the number of records in the dataset.
+          </p>
+          <p>
+            InternalDelete removes the data for the record by reloading the internal TMemoryStream used in the in-memory dataset. Any record data before or after the deleted record is included in the stream. The current deleted record is excluded from the stream.  This means that calling the Delete method is more memory- and processor-intensive than other operations in TMemDataset.
+          </p>
+          <p>
+            The value in RecordCount is decremented to reflect  the new number of records in the dataset. The value in FileModified is set to True.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.FileName">TMemDataset.FileModified</link>
+          <link id="#fcl.Db.TDataset.RecordCount">TDataset.RecordCount</link>
+          <link id="#fcl.Db.TDataset.Delete">TDataset.Delete</link>
+        </seealso>
+      </element>
+
+      <element name="TMemDataset.InternalFirst" link="#fcl.Db.TDataset.InternalFirst">
+        <short>
+          Performs actions needed to move to the first record in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+              InternalFirst is an overridden procedure used to perform actions need to move to the first record in the in-memory dataset. InternalFirst implements the virtual method defined in the ancestor class. InternalFirst is used in the implementation of the First method, and simply sets the value in the internal current record number.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.First">TDataset.First</link>
+        </seealso>
+      </element>
+
+      <element name="TMemDataset.InternalGotoBookmark" link="#fcl.Db.TDataset.InternalGotoBookmark">
+        <short>
+          Performs actions need to find the record for the specified Bookmark
+        </short>
+        <descr>
+          <p>
+            InternalGotoBookmark is an overridden procedure used to perform actions needed to locate the specified Bookmark in the records for the dataset. InternalGotoBookmark implements the virtual method specified in the ancestor class.
+          </p>
+          <p>
+            ABookmark contains the bookmark to locate in the method. Bookmark values are an Integer record number in TMemDataset.When ABookmark is a valid record number, it is assigned to the internal current record number for the dataset. RaiseError is called to raise an exception when ABookmark is not a valid record number.
+          </p>
+          <p>
+            InternalGotoBookmark is used in the implementation of methods that perform record navigation.
+          </p>
+        </descr>
+        <seealso></seealso>
+      </element>
+      <element name="TMemDataset.InternalGotoBookmark.ABookmark">
+        <short>Bookmark to locate in the dataset</short>
+      </element>
+
+      <element name="TMemDataset.InternalInitFieldDefs" link="#fcl.Db.TDataset.InternalInitFieldDefs">
+        <short>
+          Performs actions needed to initialize field definitions for the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            InternalInitFieldDefs is an overridden procedure used to read field definitions from the internal stream used to load the in-memory dataset. InternalInitFieldDefs implements the method defined in the ancestor class.
+          </p>
+          <p>
+            InternalInitFieldDefs is used when the Open method is called with a valid value in the FileName property. InternalInitFieldDefs calls ReadFieldDefsFromStream to read values from the stream.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Open">TDataset.Open</link>
+          <link id="TMemDataset.FileName">TMemDataset.FileName</link>
+        </seealso>
+      </element>
+
+      <element name="TMemDataset.InternalInitRecord" link="#fcl.Db.TDataset.InternalInitRecord">
+        <short>
+          Performs actions needed to initialize a record in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            InternalInitRecord is an overridden procedure used to perform actions needed to initialize a record for the in-memory dataset. InternalInitRecord implements the method defined in the ancestor class. InternalInitRecord calls FillChar to fill the specified Buffer with the value #0 using the defined record size.
+          </p>
+          <p>
+            InternalInitRecord is used in the implementation of various methods in TMemDataset, including:
+          </p>
+          <ul>
+            <li>InitRecord</li>
+            <li>Cancel</li>
+            <li>Append</li>
+            <li>Insert</li>
+            <li>ClearFields</li>
+            <li>Resync</li>
+          </ul>
+        </descr>
+        <seealso>
+        </seealso>
+      </element>
+      <element name="TMemDataset.InternalInitRecord.Buffer">
+        <short>Record buffer to initialize in the method</short>
+      </element>
+
+      <element name="TMemDataset.ClearCalcFields" link="#fcl.Db.TDataset.ClearCalcFields">
+        <short>
+          Clears calculated field values
+        </short>
+        <descr>
+          <p>
+            ClearCalcFields is an overridden procedure used to initialize the storage for calculated fields in the record buffer. ClearCalcFields implements the virtual method defined in the ancestor class. ClearCalcFields calls FillChar to store the value #0 at the RecordSize position in Buffer. The number of #0 values written is determined buy the CalcFieldsSize property.
+          </p>
+          <p>
+            ClearCalcFields is used in the InitRecord method.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.RecordSize">
+            TDataset.RecordSize
+          </link>
+          <link id="#fcl.Db.TDataset.CalcFieldsSize">
+            TDataset.CalcFieldsSize
+          </link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.ClearCalcFields.Buffer">
+        <short>Record buffer updated in the method</short>
+      </element>
+
+      <element name="TMemDataset.InternalLast" link="#fcl.Db.TDataset.InternalLast">
+        <short>
+          Performs actions needed to move to the last record in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            InternalLast is an overridden procedure used to perform actions needed to move to the last record in the in-memory dataset. InternalLast implements the virtual method defined in the ancestor class. InternalLast is used in the implementation of the Last method, and simply sets the value in the internal current record number to the value in RecordCount. It is also used in SetCurrentRecord and DoInsertAppend.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.RecNo">TDataset.RecNo</link>
+          <link id="#fcl.Db.TDataset.RecordCount">TDataset.RecordCount</link>
+        </seealso>
+      </element>
+
+      <element name="TMemDataset.InternalOpen" link="#fcl.Db.TDataset.InternalOpen">
+        <short>
+          Performs actions needed to open the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            InternalOpen is an overridden procedure used to perform actions needed to open the in-memory dataset. InternalOpen implements the abstract virtual method defined in the ancestor class. InternalOpen is called from the Open method and when the value in the Active property is changed to True.
+          </p>
+          <p>
+            InternalOpen uses the value in the FileName property to determine if a file stream is needed to read the structure and optional record data for the dataset. When FileName contains a valid file name in the local file system, a TFileStream is created and stored in an internal member. The stream will later be passed to ReadFieldDefsFromStream, LoadDataFromStream, and CheckMarker to load and verify the content in the in-memory dataset. When FileName contains an empty string (''), no file stream is created and values in FieldDefs and record storage must be created at runtime.
+          </p>
+          <p>
+            InternalOpen calls InternalInitFieldDefs to initialize and load field definitions in the dataset. When DefaultFields is True, the CreateFields method is called to create fields for each of the definitions in FieldDefs. The BindFields method is called to enable calculated and lookup fields as well as compute the value in CalcFieldsSize.
+          </p>
+          <p>
+            InternalOpen calls CreateTable to allocate storage for records in the dataset, if record storage has not already been initialized. If FileName contains a valid file name, LoadDataFromStream is called to load record data from the file stream. CheckMarker is called to verify that record data was read and the internal file stream is positioned at the smEOF marker. Record data is not loaded when FileName contains an empty string ('') or does not contain a valid file name on the local file system.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Open">TDataset.Open</link>
+          <link id="#fcl.Db.TDataset.Active">TDataset.Active</link>
+          <link id="#fcl.Db.TDataset.FieldDefs">TDataset.FieldDefs</link>
+          <link id="#fcl.Db.TDataset.Fields">TDataset.Fields</link>
+          <link id="TMemDataset.FileName">TMemDataset.FileName</link>
+        </seealso>
+      </element>
+
+      <element name="TMemDataset.InternalPost" link="#fcl.Db.TDataset.InternalPost">
+        <short>
+          Performs actions needed to post a record in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            InternalPost is an overridden procedure used to perform actions needed to post a record in the in-memory dataset. InternalPost implements the virtual method defined in the ancestor class.
+          </p>
+          <p>
+            InternalPost ensures that the Active property contains True. An exception is raised when Active contains False. The State property must also contain a value that indicates the dataset is being edited, such as dsEdit or dsInsert. No actions are performed in the method when any other value is found in the State property.
+          </p>
+          <p>
+            InternalPost calls the inherited method which ensures that any required Fields have a value in the record. An exception is raised if a required field has a Null value. AutoInc-style fields are excluded from this requirement since their  value cannot be assigned directly. Use the OnNewRecord event handler to assign values for ftAutoInc field types.
+          </p>
+          <p>
+            When State has the value dsEdit, the MDSWriteRecord method is called to write values in ActiveBuffer for the record. When State has the value dsInsert, the InternalAddRecord method is called to initialize the new record for the dataset.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Active">TDataset.Active</link>
+          <link id="#fcl.Db.TDataset.State">TDataset.State</link>
+          <link id="#fcl.Db.TDataset.Fields">TDataset.Fields</link>
+          <link id="#fcl.Db.TDataset.OnNewRecord">TDataset.OnNewRecord</link>
+        </seealso>
+      </element>
+
+      <element name="TMemDataset.InternalSetToRecord" link="#fcl.Db.TDataset.InternalSetToRecord">
+        <short>
+          Performs actions needed to move the dataset to the specified record
+        </short>
+        <descr>
+          <p>
+            InternalSetToRecord is an overridden procedure used to perform actions needed to move the dataset to the specified record. InternalSetToRecord implements the virtual method defined in the ancestor class.
+          </p>
+          <p>
+            InternalSetToRecord gets the Bookmark from the record data in Buffer, and calls InternalGotoBookmark using the Bookmark value. InternalSetToRecord is used in the implementation of the SetCurrentRecord method.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.SetCurrentRecord">TMemDataset.SetCurrentRecord</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.InternalSetToRecord.Buffer">
+        <short>Record buffer examined in the method</short>
+      </element>
+
+      <element name="TMemDataset.IsCursorOpen" link="#fcl.Db.TDataset.IsCursorOpen">
+        <short>
+          Indicates if the cursor for the dataset is open
+        </short>
+        <descr>
+          <p>
+            IsCursorOpen is an overridden Boolean function used to determine if the dataset has been opened by calling the Open method. IsCursorOpen implements the abstract virtual method defined in the ancestor class.
+          </p>
+          <p>
+            IsCursorOpen returns the value from an internal member variable, and is set to True if the Open method has been called for the in-memory dataset. The return value is False when the Close method has been called for the dataset.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Open">TDataset.Open</link>
+          <link id="#fcl.Db.TDataset.Close">TDataset.Close</link>
+          <link id="#fcl.Db.TDataset.Active">TDataset.Active</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.IsCursorOpen.Result">
+        <short>True when the dataset has been opened</short>
+      </element>
+
+      <element name="TMemDataset.SetBookmarkFlag" link="#fcl.Db.TDataset.SetBookmarkFlag">
+        <short>
+          Sets the BookmarkFlag in the specified record buffer
+        </short>
+        <descr>
+          <p>
+            SetBookmarkFlag is used to set the BookmarkFlag in the specified record buffer. SetBookmarkFlag implements the virtual  method defined in the ancestor class. SetBookmarkFlag stores the Bookmarkflag in Value at the required position in the record Buffer.
+          </p>
+          <p>
+            Use GetBookmarkFlag to the BookmarkFlag in a record buffer.
+          </p>
+        </descr>
+        <seealso></seealso>
+      </element>
+      <element name="TMemDataset.SetBookmarkFlag.Buffer">
+        <short>Record buffer updated in the method</short>
+      </element>
+      <element name="TMemDataset.SetBookmarkFlag.Value">
+        <short>BookmarkFlag to assign to the record buffer</short>
+      </element>
+
+      <element name="TMemDataset.SetBookmarkData" link="#fcl.Db.TDataset.SetBookmarkData">
+        <short>
+          Sets the Bookmark data in the specified record buffer
+        </short>
+        <descr>
+          <p>
+            SetBookmarkData is used to set the Bookmark data in the specified record buffer. SetBookmark implements the virtual method defined in the ancestor class.
+          </p>
+          <p>
+            Buffer contains the record buffer to update in the method. Data contains the Bookmark to store in the record buffer. When Data is unassigned (contains <var>Nil</var>), the value 0 is written at the required position in Buffer. Otherwise, an Integer pointer with the value in Data is written in Buffer.
+          </p>
+          <p>
+            SetBookmark is used when records are inserted or appended to the dataset.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Append">TDataset.Append</link>
+          <link id="#fcl.Db.TDataset.AppendRecord">TDataset.AppendRecord</link>
+          <link id="#fcl.Db.TDataset.Insert">TDataset.Insert</link>
+          <link id="#fcl.Db.TDataset.InsertRecord">TDataset.InsertRecord</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.SetBookmarkData.Buffer">
+        <short>Record buffer updated in the method</short>
+      </element>
+      <element name="TMemDataset.SetBookmarkData.Data">
+        <short>Bookmark value to assign to the record buffer</short>
+      </element>
+
+      <element name="TMemDataset.SetFieldData" link="#fcl.Db.TDataset.SetFieldData">
+        <short>
+          Sets the value for a field in the record buffer
+        </short>
+        <descr>
+          <p>
+            SetFieldData is used to set the specified value for the specified field in the record buffer. SetFieldData implements the virtual method defined in the ancestor class.
+          </p>
+          <p>
+            SetFieldData creates a temporary TRecordBuffer instance used to captive the active record buffer by calling MDSGetActiveBuffer. No actions are performed in the method if MDSGetActiveBuffer returns False.
+          </p>
+          <p>
+            SetFieldData uses the specified Field to validate the value in Buffer. If the validated value is <var>Nil</var>, the <var>NULL</var> mask in the record buffer is set. Valid values cause the NULL Mask to be cleared. Terminating #0 values in a string field are omitted in the record buffer. For lookup and calculated fields, the data size for the field is copied to the record buffer.
+          </p>
+          <p>
+            A field change data event is signalled when State contains a value other than dsCalcFields, dsFilter, or dsNewValue.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.ActiveBuffer">TDataset.ActiveBuffer</link>
+          <link id="#fcl.Db.TDataset.Fields">TDataset.Fields</link>
+          <link id="#fcl.Db.TField.Validate">TField.Validate</link>
+          <link id="#fcl.Db.TDataset.State">TDataset.State</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.SetFieldData.Field">
+        <short>Field being updated in the record</short>
+      </element>
+      <element name="TMemDataset.SetFieldData.Buffer">
+        <short>Field value to a store in the record buffer</short>
+      </element>
+
+      <element name="TMemDataset.GetRecordCount" link="#fcl.Db.TDataset.GetRecordCount">
+        <short>
+          Gets the value for the RecordCount property
+        </short>
+        <descr>
+          <p>
+            GetRecordCount is an overridden Integer function used to get the value for the RecordCount property. GetRecordCount reimplements the method defined in the ancestor class. GetRecordCount is the read access specifier for the property.
+          </p>
+          <p>
+            GetRecordCount calls CheckActive to ensure that the dataset has been opened. An exception is raised when the Active property contains False.
+          </p>
+          <p>
+            Use RecordCount to read the value for the property.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.RecordCount">TDataset.RecordCount</link>
+          <link id="#fcl.Db.TDataset.Active">TDataset.Active</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.GetRecordCount.Result">
+        <short>Value for the RecordCount property</short>
+      </element>
+
+      <element name="TMemDataset.SetRecNo" link="#fcl.Db.TDataset.SetRecNo">
+        <short>
+          Sets the value for the RecNo property
+        </short>
+        <descr>
+          <p>
+            SetRecNo is an overridden procedure used to set the value in the RecNo property. SetRecNo is the write access specifier for the property. SetRecNo calls CheckBrowseMode to ensure that the dataset is Active and that Post has been called after changing values in ActiveRecord.
+          </p>
+          <p>
+            Value contains the record number to assign to the property value. Value must be in the range 1..RecordCount-1. The property value is not updated if Value is not in the range required.
+          </p>
+          <p>
+            SetRecNo calls Resync to refresh the active record buffer after the property value has been updated.
+          </p>
+          <p>
+            Use RecNo to read or write the value for the property.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.RecNo">TMemDataset.RecNo</link>
+          <link id="#fcl.Db.TDataset.Resync">TDataset.Resync</link>
+          <link id="#fcl.Db.TDataset.CheckBrowseMode">TDataset.CheckBrowseMode</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.SetRecNo.Value">
+        <short>New value for the RecNo property</short>
+      </element>
+
+      <element name="TMemDataset.GetRecNo" link="#fcl.Db.TDataset.GetRecNo">
+        <short>
+          Gets the value for the RecNo property
+        </short>
+        <descr>
+          <p>
+            GetRecNo is an Integer function used to get the value for the RecNo property. GetRecNo is the read access specifier for the property. GetRecNo calls UpdateCursorPos to ensure the value in ActiveRecord is used in the property value. The return value can contain 0 when there are no records in the dataset, or when the State property contains dsInsert.
+          </p>
+          <p>
+            Use RecNo to read or write values in the property.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.RecNo">TDataset.RecNo</link>
+          <link id="#fcl.Db.TDataset.RecordCount">TDataset.RecordCount</link>
+          <link id="#fcl.Db.TDataset.State">TDataset.State</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.GetRecNo.Result">
+        <short>Value for the RecNo property</short>
+      </element>
+
+      <element name="TMemDataset.SetFilterText" link="TMemDataset.Filter">
+        <short>Silently drops value in the filter text</short>
+        <descr>
+          Sets the value for the Filter property. Silently drops the value in the filter text. Filter is not implemented in TMemDataset.
+        </descr>
+      </element>
+      <element name="TMemDataset.SetFilterText.Value">
+        <short>New value for the Filter property</short>
+      </element>
+
+      <element name="TMemDataset.RaiseError">
+        <short>
+          Raises an exception for an invalid operation in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            RaiseError is a procedure used to raise an exception for an invalid operation in the in-memory dataset. RaiseError creates an instance of MDSError with the message specified in the Fmt and Args property, and includes the following:
+          </p>
+          <ul>
+            <li>Fieldtype of Field "%s" not supported</li>
+            <li>Bookmark %d not found</li>
+            <li>Error in data stream at position %d</li>
+            <li>Wrong data stream marker at position %d. Got %d, expected %d'</li>
+            <li>Filename must not be empty</li>
+          </ul>
+          <p>
+            RaiseError is called when a field definition uses a data type not supported in TMemDataset. The exception will be raised for the following field types:
+          </p>
+          <ul>
+            <li>ftADT</li>
+            <li>ftCursor</li>
+            <li>ftDataSet</li>
+            <li>ftDBaseOle</li>
+            <li>ftFmtMemo</li>
+            <li>ftGraphic</li>
+            <li>ftIDispatch</li>
+            <li>ftInterface</li>
+            <li>ftOraBlob</li>
+            <li>ftOraClob</li>
+            <li>ftParadoxOle</li>
+            <li>ftReference</li>
+            <li>ftTimeStamp</li>
+            <li>ftTypedBinary</li>
+            <li>ftVariant</li>
+            <li>ftUnknown</li>
+          </ul>
+        </descr>
+        <seealso>
+          <link id="MDSError">MDSError</link>
+          <link id="#fcl.Db.TDataset.FieldDefs">TDataset.FieldDefs</link>
+          <link id="#fcl.Db.TField.FieldType">TField.FieldType</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.RaiseError.Fmt">
+        <short>Format string for the error message</short>
+      </element>
+      <element name="TMemDataset.RaiseError.Args">
+        <short>Arguments used in the format string</short>
+      </element>
+
+      <element name="TMemDataset.CheckMarker">
+        <short>
+          Checks for the specified marker in the internal stream for the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            CheckMarker is a procedure used to verify that the specified Marker value is found at the current position in the specified stream. Markers are used to separate field definitions from the record data in the stream. A marker is also used to indicate the end of the stream. CheckMarker is used when loading a from a file or stream in the Open method, or when Active is changed to True.
+          </p>
+          <p>
+            CheckMarker reads a value with the size in MarkerSize from the stream in F. RaiseError is called if a value with the required size cannot be read from the current stream position. If the value is not the same as Marker, RaiseError is called for the error condition.
+          </p>
+        </descr>
+        <seealso>
+          <link id="MarkerSize">MarkerSize</link>
+          <link id="TMemDataset.RaiseError">TMemDataset.RaiseError</link>
+          <link id="#fcl.Db.TDataset.Open">TDataset.Open</link>
+          <link id="#fcl.Db.TDataset.Active">TDataset.Active</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.CheckMarker.F">
+        <short>Stream to examine in the method</short>
+      </element>
+      <element name="TMemDataset.CheckMarker.Marker">
+        <short>Marker expected in the stream</short>
+      </element>
+
+      <element name="TMemDataset.WriteMarker">
+        <short>
+          Writes the specified marker to the internal stream for the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            WriteMarker is a procedure used to write the specified marker to the internal stream for the in-memory dataset. Markers are used to separate field definitions from the record data in the stream. A marker is also used to indicate the end of the stream.  WriteMarker is used in methods which write the content for the in-memory dataset, such as: SaveToStream, SaveFieldDefsToStream, and SaveDataToStream.
+          </p>
+          <p>
+            Marker contains one of the predefined marker constants: smFieldDefs, smData, or smEOF. WriteMarker writes the value in Marker to to the stream in F.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.SaveToStream">
+            TMemDataset.SaveToStream
+          </link>
+          <link id="TMemDataset.SaveFieldDefsToStream">
+            TMemDataset.SaveFieldDefsToStream
+          </link>
+          <link id="TMemDataset.SaveDataToStream">
+            TMemDataset.SaveDataToStream
+          </link>
+          <link id="smData">smData</link>
+          <link id="smEOF">smEOF</link>
+          <link id="smFieldDefs">smFieldDefs</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.WriteMarker.F">
+        <short>Stream used to write the marker value</short>
+      </element>
+      <element name="TMemDataset.WriteMarker.Marker">
+        <short>Marker value written to the stream</short>
+      </element>
+
+      <element name="TMemDataset.ReadFieldDefsFromStream">
+        <short>
+          Reads field definitions from the specified stream
+        </short>
+        <descr>
+          <p>
+            ReadFieldDefsFromStream is used to read field definitions for the in-memory dataset from the specified stream. ReadFieldDefsFromStream is used when Open is called and the FileName property has been specified for the dataset.
+          </p>
+          <p>
+            ReadFieldDefsFromStream calls CheckMarker to ensure the smFieldDefs marker is available at the current position in the stream. An exception is raised when the stream is truncated, or value in does not match the smFieldDefs marker.
+          </p>
+          <p>
+            ReadFieldDefsFromStream clears any existing field definitions in FieldDefs, and loads field definitions from the stream in F. TFieldDef instances are created and added to FieldDefs for the field definitions. ReadFieldDefsFromStream sets the value in the internal TableIsCreated member to False to indicate that storage has not been allocated for the in-memory dataset.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Open">TDataset.Open</link>
+          <link id="#fcl.Db.TDataset.FileName">TDataset.FileName</link>
+          <link id="#fcl.Db.TDataset.FieldDefs">TDataset.FieldDefs</link>
+          <link id="TMemDataset.CheckMarker">TMemDataset.CheckMarker</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.ReadFieldDefsFromStream.F">
+        <short>Stream used to read field definitions for the dataset</short>
+      </element>
+
+      <element name="TMemDataset.SaveFieldDefsToStream">
+        <short>
+          Saves field definitions to the specified stream
+        </short>
+        <descr>
+          <p>
+            SaveFieldDefsToStream is used to save field definitions for the in-memory dataset to the specified stream. SaveFieldDefsToStream is used in the SaveToStream method.
+          </p>
+          <p>
+            SaveFieldDefsToStream writes a marker value that indicates the beginning of field definitions, the number of field definitions, and data for each of the TFieldDef items in FieldDefs. SaveFieldDefsToStream calls WriteMarker to write the smFieldDefs marker value to the stream in F. The number of items in FieldDefs is also written to the steam. Values for each of the TFieldDef items in FieldDefs are written to the stream in the following format:
+          </p>
+          <table>
+            <th>
+              <td>Field Def Item</td>
+              <td>Data Type</td>
+              <td>Origin of Value</td>
+            </th>
+            <tr>
+              <td>Field Def Name Len</td>
+              <td>Integer</td>
+              <td>Length(TFieldDef.Name)</td>
+            </tr>
+            <tr>
+              <td>Field Def Name</td>
+              <td>String</td>
+              <td>TFieldDef.Name</td>
+            </tr>
+            <tr>
+              <td>Field Def Size</td>
+              <td>Integer</td>
+              <td>TFieldDef.Size</td>
+            </tr>
+            <tr>
+              <td>Field Def Data Type</td>
+              <td>Integer</td>
+              <td>Ord(TFieldDef.DataType)</td>
+            </tr>
+            <tr>
+              <td>Field Def Required</td>
+              <td>Integer</td>
+              <td>Ord(TFieldDef.Required)</td>
+            </tr>
+          </table>
+          <p>
+            Values written in the method can be loaded using ReadFieldDefsFromStream.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.SaveToStream"></link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.SaveFieldDefsToStream.F">
+        <short>Stream where field definitions are written</short>
+      </element>
+
+      <element name="TMemDataset.LoadDataFromStream">
+        <short>
+          Loads record data from the specified stream
+        </short>
+        <descr>
+          <p>
+            LoadDataFromStream is used to load record data for the in-memory dataset from the specified stream. F is the TStream descendent used to load the record data for the in-memory dataset.
+          </p>
+          <p>
+            LoadDataFromStream calls CheckMarker to ensure that the smData marker value is present at the current position in the stream. An exception is raised if the stream is truncated, or a value other than smData is read from the stream in F. An Integer value is read from the stream that indicates the size required for record storage in the dataset. The value may be 0 (zero) if the record data has been omitted from the stream.
+          </p>
+          <p>
+            LoadDataFromStream clears any memory allocated in internal storage for record data or blob fields. LoadDataFromStream copies the required number of bytes from F into the internal record storage for the dataset. The value in RecCount is updated to reflect the number of records read from the stream using the RecSize for the dataset. The value in CurrRecNo is set to -1 to indicate that no record is current active in the dataset.
+          </p>
+          <p>
+            Use SaveDataToStream to write record data to a stream.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.SaveDataToStream">TMemDataset.SaveDataToStream</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.LoadDataFromStream.F">
+        <short>Stream used to load record data into the dataset</short>
+      </element>
+
+      <element name="TMemDataset.SaveDataToStream">
+        <short>
+          Saves record data to the specified stream
+        </short>
+        <descr>
+          <p>
+            SaveDataToStream is used to saves record data for the in-memory dataset to the specified stream. F is a TStream descendent used to write the record data for the in-memory dataset. SaveData inidicates if record data is included in the values written to the stream.
+          </p>
+          <p>
+            When SaveData contains True,  the smData marker value is written to the stream followed by an Integer value that represents the size of internal storage allocated for record data. The content of the internal storage is copied to the stream in F, and the FileModified property is set to False.
+          </p>
+          <p>
+            When SaveData is False, the smData marker value is written to the stream followed by the Integer value 0 (zero) to indicate no record data is present.
+          </p>
+          <p>
+            Use LoadDataFromStream to load record data for the in-memory dataset.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.LoadDataFromStream">TMemDataset.LoadDataFromStream</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.SaveDataToStream.F">
+        <short>Stream used to write record data for the dataset</short>
+      </element>
+      <element name="TMemDataset.SaveDataToStream.SaveData">
+        <short>Indicates if record data is included in the stream</short>
+      </element>
+
+      <!-- Visibility: public -->
+      <element name="TMemDataset.Create" link="#fcl.Db.TDataset.Create">
+        <short>
+          Constructor for the class instance
+        </short>
+        <descr>
+          <p>
+            Create is the overridden constructor for the class instance. Create calls the inherited constructor.
+          </p>
+          <p>
+            Create allocates resources required for internal member variables in the class, such as the TMemoryStream that contains the field definitions and record data and the list used to store Blob data. Other internal member variables are set to their default values. Creates sets the default values for the following published properties:
+          </p>
+          <dl>
+            <dt>BookmarkSize</dt>
+            <dd>SizeOf(LongInt)</dd>
+          </dl>
+        </descr>
+        <seealso></seealso>
+      </element>
+      <element name="TMemDataset.Create.AOwner">
+        <short>Owner of the class instance</short>
+      </element>
+
+      <element name="TMemDataset.Destroy" link="#fcl.Db.TDataset.Destroy">
+        <short>
+          Destructor for the class instance
+        </short>
+        <descr>
+          <p>
+            Destroy is the overridden destructor for the class instance. Destroy frees resources allocated to internal member variables in the class. The list used for Blob data is cleared and freed. Destroy calls the inherited destructor, and frees the internal memory stream for the class.
+          </p>
+        </descr>
+        <seealso></seealso>
+      </element>
+
+      <element name="TMemDataset.BookmarkValid" link="#fcl.Db.TDataset.BookmarkValid">
+        <short>
+          Determines if the specified Bookmark is valid
+        </short>
+        <descr>
+          <p>
+            BookmarkValid is an overridden Boolean function used to determine if the specified Bookmark is valid. BookmarkValid implements the virtual method defined in the ancestor class.
+          </p>
+          <p>
+            In TMemDataset, a Bookmark is considered to be valid when it contains an Integer value that represents a record in the in-memory dataset. Bookmarks are zero-based and must be less than the record count for dataset.
+          </p>
+          <p>
+            The return value is False when ABookmark is unassigned (contains <var>Nil</var>), or True when the preceding conditions are satisfied.
+          </p>
+        </descr>
+        <seealso></seealso>
+      </element>
+      <element name="TMemDataset.Result">
+        <short>True if the Bookmark is valid</short>
+      </element>
+      <element name="TMemDataset.BookmarkValid.ABookmark">
+        <short>Bookmark to examine in the method</short>
+      </element>
+
+      <element name="TMemDataset.CompareBookmarks" link="#fcl.Db.TDataset.CompareBookmarks">
+        <short>
+          Gets the relative order for the specified Bookmarks
+        </short>
+        <descr>
+          <p>
+            CompareBookmarks is an overridden LongInt function which determines the relative order for the specified Bookmarks.
+          </p>
+        </descr>
+        <seealso></seealso>
+      </element>
+      <element name="TMemDataset.CompareBookmarks.Result">
+        <short>Relative order for the compared bookmarks</short>
+      </element>
+      <element name="TMemDataset.CompareBookmarks.Bookmark1">
+        <short>First bookmark</short>
+      </element>
+      <element name="TMemDataset.CompareBookmarks.Bookmark2">
+        <short>Second bookmark</short>
+      </element>
+
+      <element name="TMemDataset.CreateBlobStream" link="#fcl.Db.TDataset.CreateBlobStream">
+        <short>
+          Creates a stream used to read or write Blob field data in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            CreateBlobStream is an overridden TStream function which creates a TMDSBlobStream for the specified field with the read/write permissions in Mode. CreateBlobStream is called when the specified Field needs to read or write its value (for TBlobField or descendent field types).
+          </p>
+          <p>
+            Mode indicates the permissions need for the blob stream. When Mode contains bmWrite, the value in the State property must indicate that the editing operation is enabled. An exception is raised using DatabaseErrorFmt if State contains a value other than: dsEdit, dsInsert, dsFilter, or dsCalcFields.
+          </p>
+          <p>
+            Similarly, the Field must allow editing when not in dsSetKey or dsFilter state. An exception is raised using DatabaseErrorFmt if Field has its ReadOnly property set.
+          </p>
+          <p>
+            The return value contains the TMDSBlobStream instance created using Field and Mode as arguments. Please note that the Blob stream is not saved as part of the data in the in-memory dataset; in its dynamically created and freed as needed.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TFieldDef.DataType">TFieldDef.DataType</link>
+          <link id="#fcl.Db.TDataset.State">TDataset.State</link>
+          <link id="#fcl.Db.TField.ReadOnly">TField.ReadOnly</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.CreateBlobStream.Result">
+        <short>Stream created for the Blob field</short>
+      </element>
+      <element name="TMemDataset.CreateBlobStream.Field">
+        <short>Field for the Blob stream</short>
+      </element>
+      <element name="TMemDataset.CreateBlobStream.Mode">
+        <short>Permissions for the Blob stream</short>
+      </element>
+
+      <element name="TMemDataset.Locate" link="#fcl.Db.TDataset.Locate">
+        <short>
+          Locates a record with the specified values in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            Locate is an overridden Boolean function used to locate a record with the specified values in the specified fields. LocateOptions indicates if case-insensitivity or partial keys searches are used in the method. Locate calls the inherited method to ensure that the dataset is bi-directional.
+
+            Locate calls CheckActive to ensure that the dataset has been opened prior to  searching for values in record data. Locate calls MDSLocateRecord to get the return value for the method. When the return value is True, the current record for the dataset is updated and Resync is called to update the active record buffer.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Locate">TDataset.Locate</link>
+          <link id="#fcl.Db.TLocateOption">TLocateOption</link>
+          <link id="#fcl.Db.TLocateOptions">TLocateOptions</link>
+          <link id="#fcl.Db.TDataset.Resync">TDataset.Resync</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.Locate.Result">
+        <short>True if a record is located with the specified values</short>
+      </element>
+      <element name="TMemDataset.Locate.KeyFields">
+        <short>Field names to search in the method</short>
+      </element>
+      <element name="TMemDataset.Locate.KeyValues">
+        <short>Fields values to match in the method</short>
+      </element>
+      <element name="TMemDataset.Locate.Options">
+        <short>Search options for the locate operation</short>
+      </element>
+
+      <element name="TMemDataset.Lookup" link="#fcl.Db.TDataset.Lookup">
+        <short>
+          Searches for a record with the specified values, and returns a list of values
+        </short>
+        <descr>
+          <p>
+            Lookup is an overridden Variant function used to search for the first record that matches the specified values. KeyFields is a comma-delimited list of field names to examine in the method. KeyValues is a variant array with values for the specified field names. ResultFields is a comma-delimited list of field names to include in the return values for the method.
+          </p>
+          <p>
+            Lookup calls MDSLocateRecord to search for the specified values in the record data for the in-memory dataset. If a record is located that matches the search criteria, calculated or lookup fields in the dataset are recalculated. The return value is a variant array with values for the fields specified in ResultFields. The return value is set to Null if a record with the specified search values is not found.
+          </p>
+          <p>
+            Please note that Lookup does not change the active record in the dataset.
+          </p>
+          <p>
+            For example:
+          </p>
+          <code>
+  var AResultVals: Variant;
+  AResultVals := AMemDS.Lookup('lastname, firstname', VarArrayCreate('Franks', 'Peter'), 'lastname, firstname, birthdate');
+        </code>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.Locate">TMemDataset.Locate</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.Lookup.Result">
+        <short>Variant array of return values for the result field names</short>
+      </element>
+      <element name="TMemDataset.Lookup.KeyFields">
+        <short>Field names to lookup in the method</short>
+      </element>
+      <element name="TMemDataset.Lookup.KeyValues">
+        <short>Field values to lookup in the method</short>
+      </element>
+      <element name="TMemDataset.Lookup.ResultFields">
+        <short>Field names to include in the return values</short>
+      </element>
+
+      <element name="TMemDataset.CreateTable">
+        <short>
+          Creates the internal storage for records in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            CreateTable is used to create the internal storage for records in the in-memory dataset. CreateTable calls CheckInactive to ensure that the dataset is not already opened or Active. CreateTable calls Clear to remove any existing record data in the in-memory dataset. Field definitions are retained. CreateTable calls CalcRecordLayout to determine the record size including Bookmark and BookmarkFlag values. Sets the internal TableIsCreated member to True.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Active">TDataset.Active</link>
+          <link id="TMemDataset.Clear">TMemDataset.Clear</link>
+          <link id="#fcl.Db.TDataset.FieldDefs">TDataset.FieldDefs</link>
+          <link id="TMemDataset.CalcRecordLayout">TMemDataset.CalcRecordLayout</link>
+        </seealso>
+      </element>
+
+      <element name="TMemDataset.DataSize">
+        <short>
+          Size of the internal TMemoryStream used in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            DataSize is an Integer function used to get the size of the internal stream in the in-memory dataset.
+          </p>
+        </descr>
+        <seealso></seealso>
+      </element>
+      <element name="TMemDataset.DataSize.Result">
+        <short>Size of the internal stream for the dataset</short>
+      </element>
+
+      <element name="TMemDataset.Clear">
+        <short>
+          Clears the content in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            Clear is an overloaded procedure used to clear record data, Blob streams, and optionally Field definitions in the in-memory dataset. Clear removes any Blob streams allocated for memo fields in the dataset. Clear removes any memory allocated to the internal TMemoryStream used for record data in the dataset. If the dataset is Active, the Resync method is called to refresh values in the active record buffer.
+          </p>
+          <p>
+            ClearDefs indicates if the FieldDefs for the dataset are also cleared. When ClearDefs is True, the Close method is called to deactivate the dataset. All field definitions in FieldDefs are removed. The internal member TableIsCreated is set to False.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Active">TDataset.Active</link>
+          <link id="#fcl.Db.TDataset.Close">TDataset.Close</link>
+          <link id="#fcl.Db.TDataset.FieldDefs">TDataset.FieldDefs</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.Clear.ClearDefs">
+        <short>Use True to remove field definitions in the dataset</short>
+      </element>
+
+      <element name="TMemDataset.SaveToFile">
+        <short>
+          Saves field definitions and optional record data to the specified file name
+        </short>
+        <descr>
+          <p>
+            SaveToFile is an overloaded procedure used to store field definitions and optional record data in the dataset to the specified file name. AFileName is  the file name on the local file system used to store values from the dataset. SaveData indicates if record data is included in the values stored to the file. When SaveData contains False, only the field definitions for the dataset are stored in the file.
+          </p>
+          <p>
+            AFileName must contain a file name for the local file system. SaveToFile calls RaiseError to raise an exception if the value in AFileName is an empty string (''). SaveToFile creates a TFileStream for the specified file name, and calls SaveToStream to store the content from the dataset.
+          </p>
+          <p>
+            SaveToFile reimplements the method defined in the ancestor class.
+          </p>
+        </descr>
+        <seealso></seealso>
+      </element>
+      <element name="TMemDataset.SaveToFile.AFileName">
+        <short>File name used to store the content from the dataset</short>
+      </element>
+      <element name="TMemDataset.SaveToFile.SaveData">
+        <short>True when record data is included in the stored file</short>
+      </element>
+
+      <element name="TMemDataset.SaveToStream">
+        <short>
+          Saves field definitions and optional record data to the specified stream
+        </short>
+        <descr>
+          <p>
+            SaveToStream is used to save field definitions and optional record data for the in-memory dataset to the specified stream. SaveToStream calls SaveFieldDefsToStream to save the field definitions in FieldDefs to the stream specified in F.
+          </p>
+          <p>
+            SaveData indicates if record data is included in the values written to the stream. When SaveData contains True, the SaveDataToStream method is called to save record data to the stream. No record data is written when SaveData is False. SaveToStream calls WriteMarker to write the smEOF marker value that signifies the end of record data in the stream.
+          </p>
+          <p>
+            Use LoadFromStream to load field definitions and record data for the in-memory dataset.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.LoadFromStream">TMemDataset.LoadFromStream</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.SaveToStream.F">
+        <short>Stream used to save field definitions and optional data</short>
+      </element>
+      <element name="TMemDataset.SaveToStream.SaveData">
+        <short>Indicates if record data is saved to the stream</short>
+      </element>
+
+      <element name="TMemDataset.LoadFromStream">
+        <short>
+          Loads the content for the dataset from the specified stream
+        </short>
+        <descr>
+          <p>
+            LoadFromStream is used to load the content for the dataset from the specified stream. F is a TStream descendent that is used to load the field definitions and record data for the in-memory dataset. LoadFromStream calls Close to ensure that the dataset saves its existing content (when FileName has been assigned) and clears any default Fields created when the dataset was opened.
+          </p>
+          <p>
+            LoadFromStream calls ReadFieldDefsFromStream to load field definitions from the stream in F. CreateTable is called to initialize storage for record data in the dataset. LoadDataFromStream is called to load any record data present in the stream. CheckMarker is called to ensure that the stream is positioned on the smEOF marker that signals the end of record data in the stream. An exception is raised if the stream was truncated or does not contain the value smEOF at the current position in the stream. LoadFromStream sets the value in the FileModified property to False.
+          </p>
+          <p>
+            Use SaveToStream to write the field definitions and record data in the dataset to a stream.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.SaveToStream">TMemDataset.SaveToStream</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.LoadFromStream.F">
+        <short>Stream used to load field definitions and record data</short>
+      </element>
+
+      <element name="TMemDataset.LoadFromFile">
+        <short>
+          Loads the content for the dataset from the specified file name
+        </short>
+        <descr>
+          <p>
+            LoadFromFile is used to load the content for the dataset from the specified file name. LoadFromFile creates a TFileStream for the file name specified in AFileName. The file stream is passed to LoadFromStream to load the contents of the file into the in-memory dataset. The file stream is freed prior to exiting from the method.
+          </p>
+          <p>
+            Use SaveToFile to save the contents of an in-memory dataset to a file on the local file system.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.LoadFromStream">TMemDataset.LoadFromStream</link>
+          <link id="TMemDataset.SaveToFile">TMemDataset.SaveToFile</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.LoadFromFile.AFileName">
+        <short>File name with the content loaded in the method</short>
+      </element>
+
+      <element name="TMemDataset.CopyFromDataset">
+        <short>
+          Loads field definitions and optional data from the specified TDataset
+        </short>
+        <descr>
+          <p>
+            CopyFromDataset is used to load field definitions and optional record data from the specified TDataset descendent. Dataset contains the TDataset used as the source for the structure and optional record data loaded in the method. CopyData indicates if record data is loaded in the method. When CopyData contains False, only the structure from Dataset is loaded in method.
+          </p>
+          <p>
+            CopyFromDataset removes any existing field definitions in FieldDefs, and any record data stored in the in-memory dataset. CopyFromDataset uses the Fields in the DataSet argument to determine the new structure for the in-memory dataset. This is done because the visible Fields in the dataset may differ from the actual field definitions. CopyFromDataset creates and adds a TFieldDef instance to FieldsDefs for each of the Fields in DataSet.
+          </p>
+          <p>
+            CopyFromDataset calls CreateTable to allocated record storage for the new field definitions in FieldDefs.
+          </p>
+          <p>
+            When CopyData contains True, record data from the DataSet argument is added to the in-memory dataset. When CopyData contains False,  record data in the DataSet argument is ignored.
+          </p>
+          <p>
+            The Open method is called to activate both datasets. DisableControls is called for both TDatasets to prevent updates during record navigation. All records in DataSet are loaded into the in-memory dataset by calling Append and setting the value for each of the field definitions in the target. Field definitions with the following data types are loaded using the native type for the field:
+          </p>
+          <ul>
+            <li>ftFixedChar</li>
+            <li>ftString</li>
+            <li>ftBoolean</li>
+            <li>ftFloat</li>
+            <li>ftLargeInt</li>
+            <li>ftSmallInt</li>
+            <li>ftInteger</li>
+            <li>ftDate</li>
+            <li>ftTime</li>
+            <li>ftDateTime</li>
+          </ul>
+          <p>
+            All other field values are loaded using their AsString representation.
+          </p>
+          <p>
+            CopyFromDataset calls Post after adding each record in the dataset. If an exception occurs, the Cancel method is called and the exception is re-raised.
+          </p>
+          <p>
+            CopyFromDataset calls the EnableControls method in both datasets when record data has been loaded in the method. Please note that the record position in the DataSet argument is restored after loading record data.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataset.Fields">TDataset.Fields</link>
+          <link id="#fcl.Db.TDataset.FieldDefs">TDataset.FieldDefs</link>
+          <link id="TMemDataset.CreateTable">TMemDataset.CreateTable</link>
+          <link id="#fcl.Db.TDataset.Append">TDataset.Append</link>
+          <link id="#fcl.Db.TDataset.Post">TDataset.Post</link>
+        </seealso>
+      </element>
+      <element name="TMemDataset.CopyFromDataset.DataSet">
+        <short>TDataset with the structure and optional data loaded in the method</short>
+      </element>
+      <element name="TMemDataset.CopyFromDataset.CopyData">
+        <short>True when record data is loaded from the source dataset</short>
+      </element>
+
+      <element name="TMemDataset.FileModified">
+        <short>
+          Indicates if the in-memory dataset has been modified
+        </short>
+        <descr>
+          <p>
+            FileModified is a read-only Boolean property which indicates if the in-memory dataset has been modified. The value in FileModified is updated in methods that write record buffers to the internal memory stream for the dataset, such as:
+          </p>
+          <ul>
+            <li>MDSWriteRecord</li>
+            <li>MDSAppendRecord</li>
+            <li>InternalDelete</li>
+          </ul>
+          <p>
+            The value in FileModified is also updated in methods called when opening or closing the in-memory dataset, such as:
+          </p>
+          <ul>
+            <li>LoadFromStream</li>
+            <li>SaveDataToStream</li>
+            <li>InternalClose</li>
+          </ul>
+        </descr>
+        <seealso></seealso>
+      </element>
+
+      <element name="TMemDataset.Filter" link="#fcl.Db.TDataset.Filter">
+        <short>
+          Filter for the dataset
+        </short>
+        <descr>
+          <remark>
+            Filter is not implemented in TMemDataset. Values assigned to the Filter property are silently discarded. Use OnFilterRecord and Filtered instead.
+          </remark>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.Filtered">TMemDataset.Filtered</link>
+          <link id="TMemDataset.OnFilterRecord">TMemDataset.OnFilterRecord</link>
+        </seealso>
+      </element>
+
+      <element name="TMemDataset.FileName">
+        <short>
+          File name used to read or write field definitions and optional data
+        </short>
+        <descr>
+          <p>
+            FileName is a String property that specifies the file used to load field definitions and optional data when the dataset is opened. When FileName is assigned, and the dataset has been modified, it indicates the file name used to store field definitions and data in the local file system.
+          </p>
+        </descr>
+        <seealso><link id=""></link></seealso>
+      </element>
+
+      <element name="TMemDataset.Filtered" link="#fcl.Db.TDataset.Filtered">
+        <short>
+          Indicates if records in the dataset are filtered using OnFilterRecord
+        </short>
+        <descr>
+          <p>
+            Filtered is a published Boolean property that indicates if records in the dataset are filtered using the OnFilterRecord event handler. Filtered is used methods that retrieve record buffers or perform record searches, and determines if records are visible in the dataset.
+          </p>
+          <p>
+            When Filtered contains True, the MDSFilterRecord method is called to perform filtering for records in the dataset. Unlike the ancestor class, the Filter property is not used in TMemDataset. Values assigned to the Filter property are silently discarded. Use the OnFilterRecord event handler to implement  comparisons need to determine record visibility.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TMemDataset.OnFilterRecord">TMemDataset.OnFilterRecord</link>
+          <link id="#fcl.Db.TDataset.Filter">TDataset.Filter</link>
+        </seealso>
+      </element>
+
+      <!-- Visibility: published -->
+      <element name="TMemDataset.Active" link="#fcl.Db.TDataset.Active">
+        <short>
+          Indicates if the in-memory dataset is Active
+        </short>
+      </element>
+
+      <element name="TMemDataset.FieldDefs" link="#fcl.Db.TDataset.FieldDefs">
+        <short>
+          Field definitions for the in-memory dataset
+        </short>
+      </element>
+
+      <element name="TMemDataset.BeforeOpen" link="#fcl.Db.TDataset.BeforeOpen">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.AfterOpen" link="#fcl.Db.TDataset.AfterOpen">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.BeforeClose" link="#fcl.Db.TDataset.BeforeClose">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.AfterClose" link="#fcl.Db.TDataset.AfterClose">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.BeforeInsert" link="#fcl.Db.TDataset.BeforeInsert">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.AfterInsert" link="#fcl.Db.TDataset.AfterInsert">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.BeforeEdit" link="#fcl.Db.TDataset.BeforeEdit">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.AfterEdit" link="#fcl.Db.TDataset.AfterEdit">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.BeforePost" link="#fcl.Db.TDataset.BeforePost">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.AfterPost" link="#fcl.Db.TDataset.AfterPost">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.BeforeCancel" link="#fcl.Db.TDataset.BeforeCancel">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.AfterCancel" link="#fcl.Db.TDataset.AfterCancel">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.BeforeDelete" link="#fcl.Db.TDataset.BeforeDelete">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.AfterDelete" link="#fcl.Db.TDataset.AfterDelete">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.BeforeScroll" link="#fcl.Db.TDataset.BeforeScroll">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.AfterScroll" link="#fcl.Db.TDataset.AfterScroll">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.OnDeleteError" link="#fcl.Db.TDataset.OnDeleteError">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.OnEditError" link="#fcl.Db.TDataset.OnEditError">
+        <short></short>
+        <descr><p></p></descr>
+        <seealso><link id=""></link></seealso>
+      </element>
+
+      <element name="TMemDataset.OnNewRecord" link="#fcl.Db.TDataset.OnNewRecord">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.OnPostError" link="#fcl.Db.TDataset.OnPostError">
+        <short></short>
+      </element>
+
+      <element name="TMemDataset.OnFilterRecord" link="#fcl.Db.TDataset.OnFilterRecord">
+        <short>
+          Event handler signalled to include or exclude records in the in-memory dataset
+        </short>
+        <descr>
+          <p>
+            OnFilterRecord is a published TFilterRecordEvent property which provides the event handler signalled to include or exclude records in the in-memory dataset. OnFilterRecord provides a way for the application to decide whether a record is visible in the dataset on a record-by-record basis. Applications must assign a procedure to the event handler that performs any comparison needed to determine record visibility. The procedure must set the value in Accept to True to make the record visible in the in-memory dataset.
+          </p>
+          <p>
+            Set the  Filtered property to True to enable the OnFilterRecord event handler during record navigation.
+          </p>
+          <p>
+            OnFilterRecord is used as an alternative filtering mechanism; TMemDataset does not implement the Filter property. Values assigned to the Filter property are silently discarded.
+          </p>
+        </descr>
+        <seealso>
+          <link id="#fcl.Db.TDataSet.OnFilterRecord">TDataSet.OnFilterRecord</link>
+          <link id="#fcl.Db.TFilterRecordEvent">TFilterRecordEvent</link>
+          <link id="#fcl.Db.TDataSet.Filtered">TDataSet.Filtered</link>
+          <link id="#fcl.Db.TDataSet.Resync">TDataSet.Resync</link>
+        </seealso>
+      </element>
+    </module>
+    <!-- memds -->
+  </package>
+</fpdoc-descriptions>
