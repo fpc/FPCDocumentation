@@ -6051,12 +6051,22 @@ In case there is not enough memory, an exception may be raised.
 <element name="TStringStream.Create">  <!-- Constructor -->
 <short>Creates a new stringstream and sets its initial content.</short>
 <descr>
+<p>
 <var>Create</var> creates a new <var>TStringStream</var> instance and
 sets its initial content to <var>Astring</var>. The position is still 0 but
 the size of the stream will equal the length of the string.
+</p>
+<p>
+The <var>Encoding</var> argument specifies the codepage with which the bytes in the string will be interpreted.
+If it is not specified (or Nil) the system default encoding will be used. 
+The correct encoding can be detected from the string by using the <link id="TStringStream.CreateRaw"/> constructor.
+</p>
 </descr>
 <seealso>
 <link id="TStringStream.DataString"/>
+<link id="TStringStream.UnicodeDataString"/>
+<link id="TStringStream.Encoding"/>
+<link id="TStringStream.CreateRaw"/> 
 </seealso>
 </element>
 
@@ -16575,6 +16585,309 @@ actually do anything in Free Pascal.
 <seealso>
 <link id="RegisterClasses"/>
 </seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBits.CopyBits">
+<short>Copy bits from one bits set to another</short>
+<descr>
+<var>CopyBits</var> copies the bits from <var>BitSet</var> to the current Bits. Existing bits will be overwritten. The two sets of bits will be equal after this operation.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TBits.Equals"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TStrings.Create">
+<short>Initializ a new <var>TStrings</var> instance</short>
+<descr>
+<var>Create</var> initializes the codepage variables of a new <var>TStrings</var> instance.
+Note that <var>TStrings</var> is an abstract class, you must always instantiate a descendent such as <link id="TStringList"/>
+</descr>
+<errors>
+Only an EOutOfMemory exception can occur.
+</errors>
+<seealso>
+<link id="TStringList"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStrings.AddPair">
+<short>Add a name-value pair</short>
+<descr>
+<p>
+<var>AddPair</var> adds a <var>Name=Value</var> pair with the <var>AName</var> 
+and <var>AValue</var> parameters, optionally with object <var>AObject</var>. 
+It uses the correct <link id="NameValueSeparator"/> character to do so.
+</p>
+<p>
+<var>AddPair</var> does not test whether <var>aName</var> already exists, so it is possible to add duplicate names.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TStrings.GetNameValue"/>
+<link id="TStrings.NameValueSeparator"/>
+<link id="TStrings.Add"/>
+<link id="TStrings.AddObject"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public --> <element
+name="TStrings.DefaultEncoding"> 
+<short>Default encoding of stringlist</short> 
+<descr>
+<var>DefaultEncoding</var> is the default encoding used by the
+<var>TStrings</var> instance.  It is not the actual encoding, as specified
+by <link id="TStrings.Encoding">Encoding</link>. 
+</descr> 
+<seealso>
+<link id="TStrings.Encoding">Encoding</link>
+</seealso> 
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStrings.Encoding">
+<short>Current encoding of stringlist</short>
+<descr>
+<var>Encoding</var> is the current encoding used by the
+<var>TStrings</var> instance, and which was specified in the constructor.  
+It is not the default encoding, as specified
+by <link id="TStrings.DefaultEncoding">DefaultEncoding</link>. 
+
+</descr>
+<seealso>
+<link id="TStrings.DefaultEncoding">DefaultEncoding</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStrings.AlwaysQuote">
+<short>Always quote strings in DelimitedText</short>
+<descr>
+
+<var>AlwaysQuote</var> tells the stringlist instance to quote strings in
+<link id="TStrings.DelimitedText">DelimitedText</link> .  The default is to
+quote strings only when they have whitespace in them.
+
+</descr>
+<seealso>
+<link id="TStrings.DelimitedText">DelimitedText</link>
+<link id="TStrings.DelimitedText">CommaText</link>
+<link id="TStrings.StrictDelimiter">StrictDelimiter</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStrings.WriteBOM">
+<short>Write BOM when writing stringlist to stream</short>
+<descr>
+<var>WriteBOM</var> signals the stringlist to write a BOM Marker to the stream if the stringlist is written to stream using <link id="TStrings.SaveToStream"/> or <link id="TStrings.SaveToFile"/>
+</descr>
+<seealso>
+<link id="TStrings.SaveToStream"/>
+<link id="TStrings.SaveToFile"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TStringStream.CreateRaw">
+<short>Create stringstream using codepage of string</short>
+<descr>
+<var>CreateRaw</var> will create the stream using the codepage of the string passed on in the constructor. The default constructor uses the default codepage of the system.
+</descr>
+<seealso>
+<link id="TStringStream.Create"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TStringStream.Destroy">
+<short>Free the instance of the stream</short>
+<descr>
+<var>Destroy</var> frees the encoding if it owns it and calls the inherited destructor.
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringStream.ReadUnicodeString">
+<short>Read a unicode string from the stream</short>
+<descr>
+<var>ReadUnicodeString</var> will read a unicodestring and correctly handle the codepage translation if necessary..
+</descr>
+<seealso>
+<link id="TStream.ReadString"/>
+<link id="TStream.ReadAnsiString"/>
+<link id="TStringStream.WriteUnicodeString"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStringStream.WriteUnicodeString">
+<short>Write a unicode string to the stream</short>
+<descr>
+<var>WriteUnicodeString</var> will write a unicodestring and correctly handle the codepage translation if necessary.
+</descr>
+<seealso>
+<link id="TStream.ReadString"/>
+<link id="TStringStream.ReadUnicodeString"/>
+<link id="TStringStream.ReadAnsiString"/>
+<link id="TStringStream.WriteAnsiString"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TStringStream.ReadAnsiString">
+<short>Read an ansistring from the stream</short>
+<descr>
+<var>ReadAnsiString</var> will read an ansistring and correctly handle the codepage translation if necessary..
+</descr>
+<seealso>
+<link id="TStream.ReadString"/>
+<link id="TStringStream.WriteUnicodeString"/>
+<link id="TStringStream.WriteAnsiString"/>
+<link id="TStringStream.ReadUnicodeString"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TStringStream.WriteAnsiString">
+<short>Write an ansistring to the stream</short>
+<descr>
+<var>WriteAnsiString</var> will write an ansistring and correctly handle the codepage translation if necessary.
+</descr>
+<seealso>
+<link id="TStream.ReadString"/>
+<link id="TStringStream.ReadUnicodeString"/>
+<link id="TStringStream.ReadAnsiString"/>
+<link id="TStringStream.WriteUnicodeString"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStringStream.UnicodeDataString">
+<short>Datastring as unicode string</short>
+<descr>
+<var>UnicodeDataString</var> returns the data string as a unicode encoded string.
+</descr>
+<seealso>
+<link id="TStringStream.DataString"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStringStream.OwnsEncoding">
+<short>Does the stream instance owns the encoding</short>
+<descr>
+<var>OwnsEncoding</var> indicates whether the stream instance owns the encoding or not. 
+If it owns the encoding, it will be freed when the stream instance is freed.
+</descr>
+<seealso>
+<link id="TStringStream.Encoding"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStringStream.Encoding">
+<short>Encoding of the string with the data</short>
+<descr>
+<var>Encoding</var> is the encoding of the string which contains the data. 
+If the encoding was not specified (or detected) in the constructor, this is the default system encoding.
+</descr>
+<seealso>
+<link id="TStringStream.OwnsEncoding"/>
+<link id="TStringStream.Create"/>
+<link id="TStringStream.CreateRaw"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFiler.FlushBuffer">
+<short>Flush the buffer</short>
+<descr>
+<var>FlushBuffer</var> flushes the buffer by calling the flushbuffer on the driver. 
+It is provided for Delphi compatibility, and is not used in FPC.
+</descr>
+<seealso>
+<link id="TAbstractObjectReader.FlushBuffer"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractObjectReader.FlushBuffer">
+<short>Flush the buffer</short>
+<descr>
+<var>FlushBuffer</var> flushes the buffer. It is provided for Delphi compatibility, and is not used in FPC.
+</descr>
+<seealso>
+<link id="TFiler.FlushBuffer"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TReader.FlushBuffer">
+<short>Flush the buffer</short>
+<descr>
+<var>FlushBuffer</var> flushes the buffer. It is provided for Delphi compatibility, and is not used in FPC.
+</descr>
+<seealso>
+<link id="TFiler.FlushBuffer"/>
+<link id="TAbstractObjectReader.FlushBuffer"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractObjectWriter.FlushBuffer">
+<short>Flush the buffer</short>:
+<descr>
+<var>FlushBuffer</var> flushes the buffer. It is provided for Delphi compatibility, and is not used in FPC.
+</descr>
+<seealso>
+<link id="TFiler.FlushBuffer"/>
+<link id="TWriter.FlushBuffer"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBinaryObjectWriter.FlushBuffer">
+<short>Flush the buffer</short>:
+<descr>
+<var>FlushBuffer</var> flushes the buffer. It is provided for Delphi compatibility, and is not used in FPC.
+</descr>
+<seealso>
+<link id="TFiler.FlushBuffer"/>
+<link id="TWriter.FlushBuffer"/>
+<link id="TAbstractObjectWriter.FlushBuffer"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TWriter.FlushBuffer">
+<short>Flush the buffer</short>:
+<descr>
+<var>FlushBuffer</var> flushes the buffer. It is provided for Delphi compatibility, and is not used in FPC.
+</descr>
+<seealso>
+<link id="TFiler.FlushBuffer"/>
+<link id="TBinaryObjectWriter.FlushBuffer"/>
+<link id="TAbstractObjectWriter.FlushBuffer"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDataModule.DesignPPI">
+<short>Design Time PPI</short>
+<descr>
+<var>DesignPPI</var> exists for the benefit of graphical designers, to store the PPI at which the module was designed.
+It is not used in FPC itself.
+</descr>
 </element>
 
 <!-- Template for copy&paste:
