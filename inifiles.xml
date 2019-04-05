@@ -29,6 +29,143 @@ compatible.</p>
 <short>Exception and formatting routines</short>
 </element>
 
+<!-- uses unit Visibility: default -->
+<element name="contnrs">
+<short>Hash list</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TIniFileOption.ifoWriteStringBoolean">
+<short>Read/Write booleans as strings instead of 0/1</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.Create.ADefaultEncoding">
+<short>Default encoding to use when writing strings</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.Create.AOwnsEncoding">
+<short>Does the ini file own the encoding (ie. free it when destroyed)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomIniFile.SetBoolStringValues">
+<short>Set the boolean string values to use when writing to file</short>
+<descr>
+<p>
+<var>SetBoolStringValues</var> Sets the strings to recognize as  boolean variable <var>ABoolValue</var> to <var>Values</var>. 
+When reading boolean values, these values are reported as <var>ABoolValue</var> in <link id="TCustomIniFile.ReadBool"/>. 
+The first value in the list is used to write the boolean <var>ABoolValue</var> value.
+</p>
+<p>
+To ensure correct operation, this function should be called with values for both <var>True</var> and <var>False</var>.
+</p>
+<p>
+The string values are ignored if <var>ifoWriteStringBoolean</var> is not in the ini file <link id="TCustomIniFile.Options">options</link>.
+</p>
+</descr>
+<seealso>
+<link id="TCustomIniFile.ReadBool"/>
+<link id="TCustomIniFile.WriteBool"/>
+<link id="TCustomIniFile.BoolTrueStrings"/>
+<link id="TCustomIniFile.BoolFalseStrings"/>
+<link id="TCustomIniFile.Options"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.SetBoolStringValues.ABoolValue">
+<short>Boolean value to set string values for</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomIniFile.SetBoolStringValues.Values">
+<short>String values for the specified boolean value.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomIniFile.Encoding">
+<short>Encoding of the ini file.</short>
+<descr>
+<var>Encoding</var> is the encoding specified in the constructor. It cannot be changed during the lifetime of the instance.
+</descr>
+<seealso>
+<link id="TCustomIniFile.Create"/>
+<link id="TCustomIniFile.OwnsEncoding"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomIniFile.BoolTrueStrings">
+<short>Strings to recognize as boolean <var>True</var> values.</short>
+<descr>
+<p>
+<var>BoolTrueStrings</var> is a list of strings that will be recognized as boolean <var>True</var> value in <link id="TCustomIniFile.ReadBool"/>
+The first string in the list will be used when writing a <var>True</var> boolean value in <link id="TCustomIniFile.WriteBool"/>.
+</p>
+<p>
+The string values are ignored if <var>ifoWriteStringBoolean</var> is not in the ini file <link id="TCustomIniFile.Options">options</link>.
+</p>
+</descr>
+<seealso>
+<link id="TCustomIniFile.SetBoolStringValues"/>
+<link id="TCustomIniFile.BoolFalseStrings"/>
+<link id="TCustomIniFile.ReadBool"/>
+<link id="TCustomIniFile.WriteBool"/>
+<link id="TCustomIniFile.Options"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomIniFile.BoolFalseStrings">
+<short>Strings to recognize as boolean <var>False</var> values.</short>
+<descr>
+<p>
+<var>BoolFalseStrings</var> is a list of strings that will be recognized as boolean <var>False</var> value in <link id="TCustomIniFile.ReadBool"/>
+The first string in the list will be used when writing a <var>False</var> boolean value in <link id="TCustomIniFile.WriteBool"/>.
+</p>
+<p>
+The string values are ignored if <var>ifoWriteStringBoolean</var> is not in the ini file <link id="TCustomIniFile.Options">options</link>.
+</p>
+</descr>
+<seealso>
+<link id="TCustomIniFile.SetBoolStringValues"/>
+<link id="TCustomIniFile.BoolTrueStrings"/>
+<link id="TCustomIniFile.ReadBool"/>
+<link id="TCustomIniFile.WriteBool"/>
+<link id="TCustomIniFile.Options"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomIniFile.OwnsEncoding">
+<short>Does the ini file instance own the encoding ?</short>
+<descr>
+<var>OwnsEncoding</var> indicates whether the encoding is owned by the ini file instance or not.
+If it is owned, it will be freed on destroy. The value of this property is set in the constructor.
+</descr>
+<seealso>
+<link id="TCustomIniFile.Encoding"/>
+<link id="TCustomIniFile.Create"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.Create.ADefaultEncoding">
+<short>Default encoding. If empty, the system encoding is used.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIniFile.Create.AOwnsEncoding">
+<short>Does the ini file instance own the encoding or not ?</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMemIniFile.Create.AOptions">
+<short>Options for the .ini file</short>
+</element>
+
 <!--
   ********************************************************************
     #fcl.IniFiles.TIniFileKey
@@ -368,6 +505,9 @@ compatibility)
 <p>
 Default options for the <link id="TCustomIniFile.Options"/> property can be
 specified in <var>AOptions</var>.
+</p>
+<p>
+A Default string encoding can be specified in <var>aEncoding</var>. If <var>aOwnsEncoding</var> is <var>True</var> the encoding will be freed when the ini file instance is destroyed.
 </p>
 </descr>
 <errors>
