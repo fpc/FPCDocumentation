@@ -437,6 +437,12 @@ It is called automatically when the <var>Active</var> property is set to
 id="TIPCServerComm"/> descendent) and activates the communication channel.
 </p>
 <p>
+The <var>aThreaded</var> property can be used to force or disable threaded mode: 
+in threaded mode, a thread is started that automatically checks for new messages and puts them on a queue.
+If the argument is not specified, then the property <link id="TSimpleIPCServer.Threaded"/> is examined to know 
+whether to start in threaded mode or not.
+</p>
+<p>
 After this method was called, clients can connect and send messages. 
 </p>
 <p>
@@ -452,6 +458,7 @@ If an error occurs a <link id="EIPCError"/> exception may be raised.
 <link id="TSimpleIPC.Active">Active</link>
 <link id="TSimpleIPC.ServerID">ServerID</link>
 <link id="TSimpleIPCServer.StopServer">StopServer</link>
+<link id="TSimpleIPCServer.Threaded"/>
 </seealso>
 </element>
 
@@ -1601,6 +1608,153 @@ id="TIPCMessageOverflowAction.ipcmoaDiscardNew"/></dd>
 <link id="TSimpleIPCServer.PeekMessage"/>
 <link id="TIPCMessageOverflowAction"/>
 </seealso>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Contnrs">
+<short>Hash/object list</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SyncObjs">
+<short>Critical sections</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServerMsg.Create.AStream">
+<short>Stream containing message data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServerMsg.Create.AOwnsStream">
+<short>Does the messag own the stream</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIPCServerMsg.OwnsStream">
+<short>Does the message own the stream</short>
+<descr>
+<var>OwnsStream</var> can be set to true to signal that the message should release the stream when the message is destroyed. 
+The initial value can be specified in the constructor.
+</descr>
+<seealso>
+<link id="TIPCServerMsg.Create"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIPCServerMsg.StringMessage">
+<short>String message sent by client</short>
+<descr>
+<var>StringMessage</var> is the message sent by the client as a string.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSimpleIPCServer.StartServer.AThreaded">
+<short>Should the server run threaded ?</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TSimpleIPCServer.ReadMessage.Result">
+<short>True if a message was read by the server and pushed to the queue</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSimpleIPCServer.Message">
+<short>Last read message</short>
+<descr>
+<var>Message</var> is the last read message (using <link id="TSimpleIPCServer.ReadMessage"/>) from the message queue.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.ReadMessage"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSimpleIPCServer.ThreadExecuting">
+<short>Is the message thread currently executing ?</short>
+<descr>
+<var>ThreadExecuting</var> is true if the server is currently running a message loop in a thread and the thread is in an executing state.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.ThreadError"/>
+<link id="TSimpleIPCServer.StartServer"/>
+<link id="TSimpleIPCServer.OnThreadError"/>
+<link id="TSimpleIPCServer.Threaded"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSimpleIPCServer.ThreadError">
+<short>Last thread error</short>
+<descr>
+<var>ThreadError</var> is the last error reported by the thread (or none if no error was caught).
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.ThreadExecuting"/>
+<link id="TSimpleIPCServer.StartServer"/>
+<link id="TSimpleIPCServer.OnThreadError"/>
+<link id="TSimpleIPCServer.Threaded"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSimpleIPCServer.OnThreadError">
+<short>Triggered when a thread reports an error</short>
+<descr>
+<var>OnThreadError</var> is triggered when the server thread reports an error. 
+The actual error message can be examined in <link id="TSimpleIPCServer.ThreadError"/>
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.ThreadExecuting"/>
+<link id="TSimpleIPCServer.StartServer"/>
+<link id="TSimpleIPCServer.OnThreadError"/>
+<link id="TSimpleIPCServer.ThreadError"/>
+<link id="TSimpleIPCServer.Threaded"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSimpleIPCServer.Threaded">
+<short>Is the server running threaded or not ?</short>
+<descr>
+<var>Threaded</var> indicates whether the server was started in threaded mode or not. 
+It can be set before calling <link id="TSimpleIPCServer.StartServer">StartServer</link>.
+Trying to set it when the server is started will result in an error.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.StartServer">StartServer</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TSimpleIPCServer.SynchronizeEvents">
+<short>Should events be run in the main thread ?</short>
+<descr>
+<var>SynchronizeEvents</var> can be set to <var>True</var> to force execution of events in the main thread, when the server is running in threaded mode.
+If set to <var>False</var>, the events will be triggered in the thread responsible for checking messages.
+It is ignored when the server is not running threaded. It cannot be set when the server is already started.
+</descr>
+<seealso>
+<link id="TSimpleIPCServer.Threaded"/>
+<link id="TSimpleIPCServer.StartServer">StartServer</link>
+</seealso>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrThreadContext">
+<short>Thread context error message.</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrThreadFailure">
+<short>Thread failure message</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrMessageQueueOverflow">
+<short>Too many messages in the message queue</short>
 </element>
 
 </module> <!-- simpleipc -->
