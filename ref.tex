@@ -9484,7 +9484,7 @@ after the end of the \var{For} statement. Note that \var{Break} and
 \var{Continue} are not reserved words and therefore can be overloaded.
 
 \subsection{The \var{For..in..do} statement}
-\index{Statements!For}\index{Statements!Loop}\index{For}\index{For!in}
+\label{se:forin}\index{Statements!For}\index{Statements!Loop}\index{For}\index{For!in}
 \keywordlink{forin}\keywordlink{do}
 As of version 2.4.2, \fpc supports the \var{For..in} loop construction. A
 \var{for..in} loop is used in case one wants to calculate something a fixed number of times
@@ -11432,7 +11432,12 @@ will otherwise completely ignore them.
 \section{Introduction}
 \fpc supports operator overloading. This means that it is possible to
 define the action of some operators on self-defined types, and thus allow
-the use of these types in mathematical expressions.
+the use of these types in mathematical expressions. 
+
+In addition, operator overloading can be used for some special actions 
+that are strictly speaking not operators in the mathematical sense of the word. 
+This is true for the procedures \var{Inc} and \var{Dec} (which are usable as 
+a procedure only) and for implicit and explicit assignment (\var{:=} and typecasting).
 
 Defining the action of an operator is much like the definition of a
 function or procedure, only there are some restrictions on the possible
@@ -11443,6 +11448,9 @@ but it is also not more than that, since the same results can be
 obtained with regular function calls. When using operator overloading,
 it is important to keep in mind that some implicit rules may produce
 some unexpected results. This will be indicated.
+
+
+
 
 \section{Operator declarations}
 \index{operators}
@@ -11891,6 +11899,7 @@ Will not compile, since the if statement needs a boolean check:
 Error: Incompatible types: got "ShortString" expected "Boolean"
 \end{verbatim}
 
+% In Operator
 \section{In operator}
 As of version 2.6 of Free pascal, the \var{In} operator can be overloaded as well.
 The first argument of the in operator must be the operand on the left of the
@@ -12003,6 +12012,77 @@ end;
 
 The compiler will always check the return type to determine the final type of an expression, 
 and assignments will be checked for type safety. 
+
+\section{Inc/Dec operators}
+The \var{Inc} and \var{Dec} procedures are - for optimization purposes - compiler intrinsics. They can be
+overridden in the usual manner by declaring a procedure:
+
+\begin{verbatim}
+procedure Inc(var s : String);
+
+begin
+  Inc(S,'.');
+end;
+
+procedure Inc(var s : String; T : String);
+
+begin
+ S:=S+T;
+end;
+\end{verbatim}
+
+But because they are compiler intrinsics, they can also be implemented as
+operators for custom types:
+\begin{verbatim}
+operator Inc (s,T : String) : z : string;
+
+begin
+  Z:=S+T;
+end;
+\end{verbatim}
+
+\section{The enumerator operator}
+The enumerator operator can be used to define an enumerator for any type. 
+It must return a class that has the same signature as the IEnumerator interface.
+
+The following code will define an enumerator for the Integer type:
+\begin{verbatim}
+Type  
+  TEvenEnumerator = Class  
+    FCurrent : Integer;  
+    FMax : Integer;  
+    Function MoveNext : Boolean;  
+    Property Current : Integer Read FCurrent;  
+  end;  
+ 
+Function TEvenEnumerator.MoveNext : Boolean;  
+ 
+begin  
+  FCurrent:=FCurrent+2;  
+  Result:=FCurrent<=FMax;  
+end;  
+ 
+operator enumerator(i : integer) : TEvenEnumerator;  
+ 
+begin  
+  Result:=TEvenEnumerator.Create;  
+  Result.FMax:=i;  
+end;  
+ 
+var  
+  I : Integer;  
+  m : Integer = 4;  
+ 
+begin  
+  For I in M do  
+    Writeln(i);  
+end.
+\end{verbatim}
+
+The loop will print all nonzero even numbers smaller or equal to the enumerable. (2 and 4 in the case of the example).
+
+More about enumerators and the enumerator operator can be found in the
+\sees{forin}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Programs, Units, Blocks
