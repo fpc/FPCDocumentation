@@ -8341,40 +8341,46 @@ end.
 \chapter{Expressions}
 \label{ch:Expressions}
 \index{Expressions}
-Expressions occur in assignments or in tests. Expressions produce a value
-of a certain type.
-Expressions are built with two components: operators and their operands.
-Usually an operator is binary, i.e. it requires 2 operands. Binary operators
-occur always between the operands (as in \var{X/Y}). Sometimes an
-operator is unary, i.e. it requires only one argument. A unary operator
+Expressions occur in assignment statements or in tests.
+
+Expressions are built of two components: operators and their operands.
+Most operators are binary, i.e. require 2 operands. Binary operators
+occur always between the operands (as in \var{X/Y}). Few
+operators are unary, i.e. require only one operand. A unary operator
 occurs always before the operand, as in \var{-X}.
+
+An expression resolves into a value of a certain type. The resulting 
+type is determined by the types of the values in the expression and 
+the operators in the expression.
 
 When using multiple operands in an expression, the precedence rules of
 \seet{OperatorPrecedence} are used.\index{Operators} 
 \begin{FPCltable}{lll}{Precedence of operators}{OperatorPrecedence}
 Operator & Precedence & Category \\ \hline
-\var{Not, @, unary +, unary -, **} & Highest (first) & Unary operators,
+\var{Not}, unary \var{+}, unary \var{-}, \var{**} \var{@} & Highest (first) & Unary operators,
 power\\
-\var{* / div mod and shl shr as <{}< >{}>} & Second & Multiplying operators\\
-\var{+ - or xor} & Third & Adding operators \\
-\var{= <> < > <= >= in is} & Lowest (Last) & relational operators \\
+\var{*}, \var{/}, \var{div}, \var{mod}, \var{and}, \var{shl}, \var{shr}, \var{<{}<}, \var{>{}>}}
+	& Second & Multiplying operators\\
+\var{+}, \var{-}, \var{or}, \var{xor} & Third & Adding operators \\
+\var{=}, \var{<>}, \var{<}, \var{>}, \var{<=}, \var{>=}, \var{in}, \var{is} & Lowest (Last) & relational operators \\
 \hline
 \end{FPCltable}
+
 When determining the precedence, the compiler uses the following rules:
 \begin{enumerate}
 \item In operations with unequal precedences the operands belong to the
 operator with the highest precedence. For example, in \var{5*3+7}, the
 multiplication is higher in precedence than the addition, so it is
-executed first. The result would be 22.
+evaluated first. The result would be 22.
 \item If parentheses are used in an expression, their contents is evaluated
 first. Thus, \var {5*(3+7)} would result in 50.
 \end{enumerate}
 
 \begin{remark}
 The order in which expressions of the same precedence are evaluated is not
-guaranteed to be left-to-right. In general, no assumptions on which expression
+guaranteed to be left-to-right. In general, no assumptions on which subexpression
 is evaluated first should be made in such a case.
-The compiler will decide which expression to evaluate first based on
+The compiler will decide which subexpression to evaluate first based on
 optimization rules. Thus, in the following expression:
 \begin{verbatim}
   a := g(3) + f(2);
@@ -8388,11 +8394,6 @@ to split up the statement using temporary results:
   e1 := g(3);
   a  := e1 + f(2);
 \end{verbatim}
-\end{remark}
-
-\begin{remark}
-The exponentiation operator (\var{**}) is available for overloading, but is
-not defined on any of the standard Pascal types (floats and/or integers).
 \end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -8728,17 +8729,24 @@ unary arithmetic operators.
 Binary operators are listed in \seet{binaroperators}, unary operators are
 listed in \seet{unaroperators}.
 \begin{FPCltable}{ll}{Binary arithmetic operators}{binaroperators}
-Operator & Operation \\ \hline
-\var{+} & Addition\\
-\var{-} & Subtraction\\
-\var{*} & Multiplication \\
-\var{/} & Division \\
+Operator  & Operation \\ \hline
+\var{+}   & Addition \\
+\var{-}   & Subtraction \\
+\var{*}   & Multiplication \\
+\var{**}  & Exponentiation \\
+\var{/}   & Division \\
 \var{Div} & Integer division \\
 \var{Mod} & Remainder \\ \hline
 \end{FPCltable}
 With the exception of \var{Div} and \var{Mod}, which accept only integer
 expressions as operands, all operators accept real and integer expressions as
 operands.
+
+\begin{remark}
+The exponentiation operator (\var{**}) is available for overloading
+(\seec{operatoroverloading}),
+but is not defined on any of the standard Pascal types (floats and/or integers).
+\end{remark}
 
 For binary operators, the result type will be integer if both operands are
 integer type expressions. If one of the operands is a real type expression,
