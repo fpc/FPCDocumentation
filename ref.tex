@@ -9456,17 +9456,15 @@ types can be used as counters in a loop.
 \begin{itemize}
 \item \fpc always calculates the upper bound before initializing
 the counter variable with the initial value.
-%\end{remark}
-
-%\begin{remark}
 \item It is not allowed to change (i.e. assign a value to) the value of a 
 loop variable inside the loop.
-
 \item The value of the loop variable is undefined after a loop has
 completed or if a loop is not executed at all. If the loop was terminated prematurely with an exception or a
 \var{break} statement, the loop variable retains the value it had when the
 loop was exited.
-
+\item For nested procedures, a loop variable must be a local variable. 
+If you declare a loop variable outside the nested procedure where the loop is, the compiler will
+complain. It is however allowed to use a global variable in a procedure.
 \end{itemize}
 \end{remark}
 
@@ -9486,6 +9484,55 @@ For I:=0 to 100 do
   end;
 \end{verbatim}
 because the loop variable \var{I} cannot be assigned to inside the loop.
+
+The following will also generate an error:
+\begin{verbatim}
+program test;
+
+{$ifdef fpc}
+{$mode delphi}
+{$h+}
+{$endif}
+
+procedure Proc;
+var
+  i: integer;
+  procedure Nested;
+
+  begin
+    for i := 1 to 2 do ;
+  end;
+
+begin
+end;
+
+begin
+end.
+\end{verbatim}
+because the variable \var{I} is not defined in \var{Nested}.
+
+But the following will compile:
+\begin{verbatim}
+program test;
+
+{$ifdef fpc}
+{$mode delphi}
+{$h+}
+{$endif}
+
+var
+  i: integer;
+
+procedure Nested;
+
+begin
+  for i := 1 to 2 do ;
+end;
+
+begin
+end.
+\end{verbatim}
+
 
 If the statement is a compound statement, then the \var{Break} and
 \var{Continue} system routines can be used to jump to the end or just
