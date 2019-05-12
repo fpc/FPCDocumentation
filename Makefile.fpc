@@ -508,7 +508,7 @@ FCLLIBTAR= --descr=libtar.xml --input="$(FPCSRCDIR)/packages/libtar/src/libtar.p
 FCLASCII85= --descr=ascii85.xml --input="$(FCLBASEDIR)/ascii85.pp"
 FCLFPTIMER= --descr=fptimer.xml --input="$(FCLBASEDIR)/fptimer.pp"
 FCLDB= --descr=db.xml --input="$(FCLDBDIR)/base/db.pas"
-FCLSQLTYPES= --descr=db.xml --input="$(FCLDBDIR)/base/sqltypes.pp"
+FCLSQLTYPES= --descr=sqltypes.xml --input="$(FCLDBDIR)/base/sqltypes.pp"
 FCLSQLDB= --descr=sqldb.xml --input="$(FCLDBDIR)/sqldb/sqldb.pp"
 FCLIBCONNECTION=  --descr=ibconnection.xml --input="$(FCLDBDIR)/sqldb/interbase/ibconnection.pp"
 FCLMSSQLCONN=  --descr=mssqlconn.xml --input="$(FCLDBDIR)/sqldb/mssql/mssqlconn.pp"
@@ -678,8 +678,8 @@ RTLUNITS=system objpas types sysutils strutils dateutils strings mouse keyboard 
 RTLXML=$(addsuffix .xml,$(RTLUNITS)) rtl-project.xml
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
 RTLTYPES= --descr=types.xml --input="$(FPCSRCDIR)/rtl/objpas/types.pp $(OSDIRINCLUDES)"
-RTLSTRUTILS= --descr=strutils.xml --input="$(FPCSRCDIR)/packages/rtl-objpas/src/inc/strutils.pp $(OSDIRINCLUDES)"
-RTLSYSUTILS= --descr=sysutils.xml --input="-dFPC_HAS_TYPE_SINGLE -dFPC_HAS_TYPE_DOUBLE -dFPC_HAS_TYPE_EXTENDED -dFPC_HAS_UNICODESTRING $(FPCSRCDIR)/rtl/unix/sysutils.pp -Fi$(FPCSRCDIR)/rtl/objpas/sysutils -Fi$(FPCSRCDIR)/rtl/inc $(OSDIRINCLUDES)"
+RTLSTRUTILS= --descr=strutils.xml --input="-dFPC_LITTLE_ENDIAN $(FPCSRCDIR)/packages/rtl-objpas/src/inc/strutils.pp $(OSDIRINCLUDES)"
+RTLSYSUTILS= --descr=sysutils.xml --input="-dFPC_HAS_TYPE_SINGLE -dFPC_HAS_TYPE_DOUBLE -dFPC_HAS_TYPE_EXTENDED -dFPC_HAS_UNICODESTRING -dFPC_LITTLE_ENDIAN $(FPCSRCDIR)/rtl/unix/sysutils.pp -Fi$(FPCSRCDIR)/rtl/objpas/sysutils -Fi$(FPCSRCDIR)/rtl/inc $(OSDIRINCLUDES)"
 RTLSTRINGS= --descr=strings.xml --input="$(FPCSRCDIR)/rtl/inc/strings.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/inc $(OSDIRINCLUDES)"
 RTLMOUSE= --descr=mouse.xml --input="$(FPCSRCDIR)/packages/rtl-console/src/unix/mouse.pp -Fi$(FPCSRCDIR)/packages/rtl-console/src/inc $(OSDIRINCLUDES)"
 RTLKEYBOARD= --descr=keyboard.xml --input="$(FPCSRCDIR)/packages/rtl-console/src/unix/keyboard.pp -Fi$(FPCSRCDIR)/packages/rtl-console/src/inc $(OSDIRINCLUDES)"
@@ -711,7 +711,7 @@ RTLDYNLIBS= --descr=dynlibs.xml --input="$(FPCSRCDIR)/rtl/inc/dynlibs.pas -Fi$(F
 RTLLINUX= --descr=linux.xml --input="-dclone_implemented $(FPCSRCDIR)/rtl/linux/linux.pp -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/unix $(OSDIRINCLUDES)"
 RTLMATH= --descr=math.xml --input="-dFPDOC_MATH $(FPCSRCDIR)/rtl/objpas/math.pp -Fi$(FPCSRCDIR)/rtl/i386 -dFPC_HAS_TYPE_EXTENDED $(OSDIRINCLUDES)"
 RTLMATRIX= --descr=matrix.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/inc/matrix.pp -Fi$(FPCSRCDIR)/packages/rtl-extra/src/inc $(OSDIRINCLUDES)"
-RTLSYSTEM= --descr=system.xml --input="-Sd -dfpdocsystem -dHASGETHEAPSTATUS -dSUPPORT_DOUBLE $(FPCSRCDIR)/rtl/$(SYSTEMUNITDIR)/system.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/inc -Fi$(FPCSRCDIR)/rtl/i386 -dCPU32 -dHASVARIANT -dFPC_HAS_TYPE_EXTENDED -dHASWIDECHAR $(OSDIRINCLUDES)"
+RTLSYSTEM= --descr=system.xml --input="-Sd -dFPC_LITTLE_ENDIAN  -dfpdocsystem -dHASGETHEAPSTATUS -dSUPPORT_DOUBLE $(FPCSRCDIR)/rtl/$(SYSTEMUNITDIR)/system.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/inc -Fi$(FPCSRCDIR)/rtl/i386 -dCPU32 -dHASVARIANT -dFPC_HAS_TYPE_EXTENDED -dHASWIDECHAR $(OSDIRINCLUDES)"
 RTLOBJPAS= --descr=objpas.xml --input="-dHASINTF $(FPCSRCDIR)/rtl/objpas/objpas.pp $(OSDIRINCLUDES)"
 RTLDATEUTILS= --descr=dateutils.xml --input="$(FPCSRCDIR)/packages/rtl-objpas/src/inc/dateutils.pp -Fi$(FPCSRCDIR)/rtl/objpas $(OSDIRINCLUDES)"
 RTLCLOCALE= --descr=clocale.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/unix/clocale.pp $(OSDIRINCLUDES)"
@@ -730,8 +730,8 @@ RTLCHARACTER= --descr=character.xml --input="$(FPCSRCDIR)/rtl/objpas/character.p
 #
 # Put all together.
 #
-RTLOPTS+= $(RTLSYSTEM) $(RTLOBJPAS) $(RTLTYPES) 
-RTLOPTS+= $(RTLSTRUTILS) $(RTLSYSUTILS) $(RTLSTRINGS) $(RTLMOUSE) $(RTLKEYBOARD)
+RTLOPTS+= $(RTLSYSTEM) $(RTLOBJPAS) $(RTLTYPES) $(RTLSYSUTILS)
+RTLOPTS+= $(RTLSTRUTILS)  $(RTLSTRINGS) $(RTLMOUSE) $(RTLKEYBOARD)
 RTLOPTS+= $(RTLCRT) $(RTLVIDEO) $(RTLDOS) $(RTLSOCKETS) $(RTLOBJECTS)
 RTLOPTS+= $(RTLHEAPTRC) $(RTLMMX) $(RTLIPC) $(RTLPRINTER) $(RTLTYPINFO) 
 RTLOPTS+= $(RTLPORTS) $(RTLGETOPTS) $(RTLEMU387) $(RTLDXELOAD) $(RTLGO32)
