@@ -479,6 +479,9 @@ Note that the return value of this function has changed. The old return
 value was a DWord with a platform dependent error code. To make things
 consistent and cross-platform, a boolean return type was used. 
 </p>
+<p>
+The <var>TimeOut</var> argument can be used to specify a timeout in milliseconds. If omitted, the call will wait indefinitely.
+</p>
 </descr>
 <errors>
 On error, <var>False</var> is returned. No extended error information is
@@ -1688,6 +1691,300 @@ exit code reported by the program.
 <link id="TProcess.Running"/>
 <link id="TProcess.WaitOnExit"/>
 <link id="TProcess.Terminate"/>
+</seealso>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Math">
+<short>Min and Max</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessOption.poPassInput">
+<short>Pass standard input handle on to new process</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessPriority.ppBelowNormal">
+<short>Below normal priority</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessPriority.ppAboveNormal">
+<short>Above normal priority</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TRunCommandEventCode">
+<short>Enumeration for the various stages in a process run cycle</short>
+<descr>
+<var>TRunCommandEventCode</var> is an enumerated type indicating the stage at which a process is 
+during the <link id="TProcess.RunCommandLoop">RunCommandLoop</link> call, 
+reported through the <link id="TProcess.OnRunCommandEvent"/> event handler.
+</descr>
+<seealso>
+<link id="TProcess.OnRunCommandEvent"/> 
+<link id="TProcess.RunCommandLoop"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRunCommandEventCode.RunCommandIdle">
+<short>No data was available for reading</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRunCommandEventCode.RunCommandReadOutputString">
+<short>Output from the command was read as a string</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRunCommandEventCode.RunCommandReadOutputStream">
+<short>Output from the command was read</short>
+</element>
+ 
+<!-- enumeration value Visibility: default -->
+<element name="TRunCommandEventCode.RunCommandFinished">
+<short>The command finished</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRunCommandEventCode.RunCommandException">
+<short>An error happened during reading of the command</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TRunCommandEventCodeSet">
+<short>Set of <var>TRunCommandEventCode</var></short>
+<descr>
+<var>TRunCommandEventCodeSet</var> is a set of <link id="TRunCommandEventCode"/> values.
+</descr>
+<seealso>
+<link id="TRunCommandEventCode"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnRunCommandEvent">
+<short>Event to get feedback while a command is executing</short>
+<descr>
+<var>TOnRunCommandEvent</var> is the event handler prototype for the various events 
+emitted by the <link id="TProcess"/> class during the <link id="TProcess.RunCommandLoop">RunCommandLoop</link> call.
+</descr>
+<seealso>
+<link id="TProcess"/>
+<link id="TProcess.RunCommandLoop">RunCommandLoop</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnRunCommandEvent.Sender">
+<short>The <var>TProcess</var> instance</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnRunCommandEvent.Context">
+<short>Currently unusued, always Nil</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnRunCommandEvent.Status">
+<short>Current status</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnRunCommandEvent.Message">
+<short>Message of exception in case of an exception</short>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TprocessChar">
+<short>Character type used in the process</short>
+<descr>
+<var>TProcessChar</var> is a single-byte character in the single-byte version of TProcess, 
+but is a 2-byte character in the unicode version of <var>TProcess</var>.
+</descr>
+<seealso>
+<link id="TProcess"/>
+<link id="TProcessString"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TProcessString">
+<short>String type used in the process</short>
+<descr>
+<var>TProcessString</var> is a single-byte string in the single-byte version of TProcess, 
+but is a 2-byte (unicode) string in the unicode version of <var>TProcess</var>.
+</descr>
+<seealso>
+<link id="TProcess"/>
+<link id="TProcessChar"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TProcessStrings">
+<short>Special-Purpose stringlist</short>
+<descr>
+<var>TProcessStrings</var> is a simple string list class which, depending on the version (unicode or not) contains unicode strings or single-byte strings: in the latter case it is an alias for the <link id="#classes.TStrings"/> class. 
+</descr>
+<seealso>
+<link id="TProcess"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TProcessStringList">
+<short>Alias for <var>TProcessStrings</var></short>
+<descr>
+<var>TProcessStringList</var> is an alias for <link id="TProcessStrings"/> in unicode code, 
+or an alias for the <link id="#classes.TStringList"/> class in single-byte string mode.
+</descr>
+<seealso>
+<link id="TProcessStrings"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPROCESS.WaitOnExit.Timeout">
+<short>Timeout for wait (in milliseconds)</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TPROCESS.ReadInputStream">
+<short>Read available data from input stream</short>
+<descr>
+<p>
+<var>ReadInputStream</var> reads data from the given input pipe stream <var>p</var> after checking that data is available. 
+It returns <var>True</var> if data was succesfully read from the file handle.
+In the variant with a string data, the data is placed in the string <var>Data</var>, and <var>DataLength</var> is 
+updated with the new length, <var>BytesRead</var> is updated with the amount of bytes read.
+<var>MaxLoop</var> determines how often an attempt at reading data is made.
+</p>
+<p>
+In the variant with a stream, the available data is simply written to the stream.
+</p>
+</descr>
+<errors>
+None.
+</errors>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TPROCESS.ReadInputStream.Result">
+<short>True if data was read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPROCESS.ReadInputStream.p">
+<short>Pipe stream to read data from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPROCESS.ReadInputStream.BytesRead">
+<short>Number of bytes read during the call</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPROCESS.ReadInputStream.DataLength">
+<short>On entry, length of data. Updated with new length when the call ends</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPROCESS.ReadInputStream.Data">
+<short>String data or stream data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPROCESS.ReadInputStream.MaxLoops">
+<short>Number of times to check if data is available</short>
+</element>  
+
+<!-- function Visibility: public -->
+<element name="TPROCESS.RunCommandLoop">
+<short>Execute command and collect output in strings</short>
+<descr>
+<p>
+<var>RunCommandLoop</var> executes the command, and runs a loop to read output of the command: 
+the output of the command is returned in the <var>outputstring</var> parameter, 
+and the error output is returned in the <var>stderrstring</var> string.
+</p>
+<p>
+During collection of data or on error, the <link id="TProcess.OnRunCommandEvent"/> event handler is called during the various stages of the call.
+If it is not explicitly set, a sleep period specified by <link id="TPROCESS.RunCommandSleepTime"/> is interjected between the various read calls.
+</p>
+<p>
+The return value of this call is 1 for error, zero for success.
+</p>
+</descr>
+<seealso>
+<link id="TProcess.OnRunCommandEvent"/>
+<link id="TPROCESS.RunCommandSleepTime"/>
+
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TPROCESS.RunCommandLoop.Result">
+<short>1 on error, 0 on success.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPROCESS.RunCommandLoop.outputstring">
+<short>Standard output as a string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPROCESS.RunCommandLoop.stderrstring">
+<short>Standard error output as a string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPROCESS.RunCommandLoop.anexitstatus">
+<short>Exit status of the process</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPROCESS.OnRunCommandEvent">
+<short>Event handler, called when <var>RunCommandLoop</var> is executing</short>
+<descr>
+<var>OnRunCommandEvent</var> is a progress report callback, 
+called at various stages of the <link id="TProcess.RunCommandLoop"/> call and when an exception occurs.
+</descr> 
+<seealso>
+<link id="TProcess.RunCommandLoop"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPROCESS.RunCommandSleepTime">
+<short>Sleep time between attempts to collect data</short>
+<descr>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TProcessClass">
+<short>Class of <var>TProcess</var></short>
+<seealso>
+<link id="TProcess"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultTProcess">
+<short>Default process class to use</short>
+<descr>
+<var>DefaultTProcess</var> is the process class used by the <link id="RunCommand"/> and <link id="RunCommandInDir"/> calls. 
+You can set it to customize the process class to use during these calls. By default the <var>TProcess</var> class is used.
+</descr>
+<seealso>
+<link id="RunCommand"/>
+<link id="RunCommandInDir"/>
+<link id="TProcess"/>
 </seealso>
 </element>
 
