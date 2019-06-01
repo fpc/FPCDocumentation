@@ -1,16 +1,12 @@
 program gentoc;
 // FPC script to generate a simple overall TOC chm from a bunch of chms
 // for use in the textmode ide.
-// (C) Marco van de Voort 2009 BSD license (no advocacy)
+// (C) Marco van de Voort 2009-2019 BSD license (no advocacy)
 
 {$ifdef fpc}
 {$mode delphi}
 {$else}
 {$apptype console}
-{$endif}
-{$info only works properly with 2.3.1+ of july 2009 or newer }
-{$ifdef ver2_2}
-   Die.
 {$endif}
 
 Uses {$ifdef unix}cthreads, {$endif} chmreader,chmfilewriter,sysutils,classes,dom_html,xmlwrite,htmwrite8859,chmbase,chmwriter,chmsitemap;
@@ -80,24 +76,28 @@ begin
 end;
 
 const   
-    KnownNames : array [0..7] of string = ('ref',
+    NrKnownChms = 9;
+    KnownNames : array [0.. NrKnownChms-1] of string = ('ref',
 					   'prog',
 					   'user',
 					   'rtl',
 					   'fcl',
 					   'lcl',
 					   'fpdoc',
-					   'lazutils'
+					   'lazutils',
+					   'fclres' 
 				          );
-    Descriptions  : array [0..7] of string = (
+    Descriptions  : array [0.. NrKnownChms-1] of string = (
                  'Language reference Manual contents',
                  'Programmer''s guide contents',
                  'User''s guide contents',
-                 'Run-Time Library (RTL) Manual contents',
+                 'Run-Time Library (RTL) Manual contents',                
                  'Free Component Library (FCL) Manual contents',
 		 'Lazarus Component Library (LCL) Manual contents',
 		 'FPDoc Documentation tool contents',
-		 'Lazarus unils library (LazUtils) Manual contents');
+		 'Lazarus unils library (LazUtils) Manual contents',
+		 'Free Component Library Resource Handling contents');
+		 
     Preamble  = '<html><head></head><body><h1> Free Pascal/Lazarus documentation overview</h1><ol>';
     postamble=  '</ol></body></html>';
 
@@ -124,7 +124,7 @@ end;
 procedure  genfile(fn:string;files:TStringList);
 
 var f : text;
-    i,j : integer;
+    i : integer;
     ctxt : TContextClass;
 
 begin
@@ -153,7 +153,6 @@ var chmspath,
     x 	       : TCHMProject;
     f 	       : TFileStream;
     files      : TStringList; 
-    i 	       : integer;
     tocpath,
     tmppath    : String;
 begin
