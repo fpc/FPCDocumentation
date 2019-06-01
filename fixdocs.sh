@@ -6,7 +6,7 @@
 # Needs more errorchecking.
 
 export FPCSRCDIR=/fpc/fpc
-make HTMLFMT=chm html CSSFILE=$FPCSRCDIR/utils/fpdoc/fpdoc.css FPDOC=fpdoc FPCSRCDIR=$FPCSRCDIR |tee buildlog.txt
+make HTMLFMT=chm html CSSFILE=$FPCSRCDIR/utils/fpdoc/fpdoc.css FPDOC=fpdoc FPCSRCDIR=$FPCSRCDIR 2>&1 |tee buildlog.txt
 
 fpc relinkdocs.pp
 fpc compilelatexchm.pp
@@ -38,3 +38,5 @@ cp ref-old/*.css ref
 ./compilelatexchm fpdoc "FPDoc documentation"
  
 ./gentoc . .
+
+rm fpdoc.kwd user.kwd prog.kwd
