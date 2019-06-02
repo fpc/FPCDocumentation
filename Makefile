@@ -2434,7 +2434,7 @@ FCLBUFSTREAM= --descr=bufstream.xml --input="$(FCLBASEDIR)/bufstream.pp"
 FCLBASE64= --descr=base64.xml --input="$(FCLBASEDIR)/base64.pp"
 FCLGETTEXT= --descr=gettext.xml --input="$(FCLBASEDIR)/gettext.pp"
 FCLPOOLEDMM= --descr=pooledmm.xml --input="$(FCLBASEDIR)/pooledmm.pp"
-FCLSTREAMEX= --descr=streamex.xml --input="$(FCLBASEDIR)/streamex.pp"
+FCLSTREAMEX= --descr=streamex.xml --input="-dFPC $(FCLBASEDIR)/streamex.pp"
 FCLINICOL= --descr=inicol.xml --input="$(FCLBASEDIR)/inicol.pp"
 FCLSTREAMCOL= --descr=streamcoll.xml --input="$(FCLBASEDIR)/streamcoll.pp"
 FCLCACHECLS= --descr=cachecls.xml --input="$(FCLBASEDIR)/cachecls.pp"
@@ -2558,35 +2558,35 @@ ifeq ($(HIDEPROTECTED),YES)
 FCLOPTS+= --hide-protected
 endif
 updatefclresxml: fpc_all
-	$(RTLMAKESKEL) $(FCLRESRESOURCE) --output=resource.new.xml
-	$(RTLMAKESKEL) $(FCLRESRESOURCETREE) --output=resourcetree.new.xml
-	$(RTLMAKESKEL) $(FCLRESDATASTREAM) --output=datastream.new.xml
-	$(RTLMAKESKEL) $(FCLRESRESFACTORY) --output=resfactory.new.xml
-	$(RTLMAKESKEL) $(FCLRESRESREADER) --output=resreader.new.xml
-	$(RTLMAKESKEL) $(FCLRESRESWRITER) --output=reswriter.new.xml
-	$(RTLMAKESKEL) $(FCLRESBITMAPRESOURCE) --output=resbitmapresource.new.xml
-	$(RTLMAKESKEL) $(FCLRESACCELLERATORRESOURCE) --output=resaccelleratorresource.new.xml
-	$(RTLMAKESKEL) $(FCLRESGROUPRESOURCE) --output=groupresource.new.xml
-	$(RTLMAKESKEL) $(FCLRESICONRESOURCE) --output=iconresource.new.xml
-	$(RTLMAKESKEL) $(FCLRESGROUPCURSORRESOURCE) --output=groupcursorresource.new.xml
-	$(RTLMAKESKEL) $(FCLRESSTRINGTABLERESOURCE) --output=stringtableresource.new.xml
-	$(RTLMAKESKEL) $(FCLRESVERSIONCONSTS) --output=versionconsts.new.xml
-	$(RTLMAKESKEL) $(FCLRESVERSIONTYPES) --output=versiontypes.new.xml
-	$(RTLMAKESKEL) $(FCLRESVERSIONRESOURCE) --output=versionresource.new.xml
-	$(RTLMAKESKEL) $(FCLRESCOFFTYPES) --output=cofftypes.new.xml
-	$(RTLMAKESKEL) $(FCLRESCOFFREADER) --output=coffreader.new.xml
-	$(RTLMAKESKEL) $(FCLRESCOFFWRITER) --output=coffwriter.new.xml
-	$(RTLMAKESKEL) $(FCLRESWINPEIMAGEREADER) --output=winpeimagereader.new.xml
-	$(RTLMAKESKEL) $(FCLRESELFCONST) --output=elfconst.new.xml
-	$(RTLMAKESKEL) $(FCLRESELFREADER) --output=elfreader.new.xml
-	$(RTLMAKESKEL) $(FCLRESELFWRITER) --output=elfwriter.new.xml
-	$(RTLMAKESKEL) $(FCLRESMACHOTYPES) --output=machotypes.new.xml
-	$(RTLMAKESKEL) $(FCLRESMACHOREADER) --output=machoreader.new.xml
-	$(RTLMAKESKEL) $(FCLRESMACHOWRITER) --output=machowriter.new.xml
-	$(RTLMAKESKEL) $(FCLRESEXTERNALTYPES) --output=externaltypes.new.xml
-	$(RTLMAKESKEL) $(FCLRESEXTERNALREADER) --output=externalreader.new.xml
-	$(RTLMAKESKEL) $(FCLRESEXTERNALWRITER) --output=externalwriter.new.xml
-	$(RTLMAKESKEL) $(FCLRESDFMREADER) --output=dfmreader.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESRESOURCE) --output=resource.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESRESOURCETREE) --output=resourcetree.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESDATASTREAM) --output=resdatastream.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESRESFACTORY) --output=resfactory.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESRESREADER) --output=resreader.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESRESWRITER) --output=reswriter.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESBITMAPRESOURCE) --output=resbitmapresource.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESACCELLERATORRESOURCE) --output=resaccelleratorresource.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESGROUPRESOURCE) --output=groupresource.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESICONRESOURCE) --output=iconresource.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESGROUPCURSORRESOURCE) --output=groupcursorresource.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESSTRINGTABLERESOURCE) --output=stringtableresource.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESVERSIONCONSTS) --output=versionconsts.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESVERSIONTYPES) --output=versiontypes.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESVERSIONRESOURCE) --output=versionresource.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESCOFFTYPES) --output=cofftypes.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESCOFFREADER) --output=coffreader.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESCOFFWRITER) --output=coffwriter.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESWINPEIMAGEREADER) --output=winpeimagereader.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESELFCONST) --output=elfconst.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESELFREADER) --output=elfreader.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESELFWRITER) --output=elfwriter.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESMACHOTYPES) --output=machotypes.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESMACHOREADER) --output=machoreader.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESMACHOWRITER) --output=machowriter.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESEXTERNALTYPES) --output=externaltypes.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESEXTERNALREADER) --output=externalreader.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESEXTERNALWRITER) --output=externalwriter.new.xml
+	$(FCLRESMAKESKEL) $(FCLRESDFMREADER) --output=dfmreader.new.xml
 	./cleanxml $(FCLRESNEWXML)
 RTLOPTS= --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
 ifeq ($(HIDEPROTECTED),YES)
