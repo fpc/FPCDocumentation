@@ -1434,7 +1434,7 @@ a record (name, data type, size, required or not, etc.)
 Field number is set to the incremented current index.</p>
 <p>If the more complicated call is used, with multiple arguments, then after the inherited <var>Create</var> call, the 
 <link id="TFieldDef.name">Name</link>, <link id="TFieldDef.Datatype">datatype</link>, <link id="TFieldDef.Size">size</link>, 
-<link id="TFieldDef.Precision">precision</link>, <link id="TFieldDef.FieldNo">FieldNo</link> and the <link id="TFieldDef.Required">Required</link> 
+<link id="TFieldDef.Precision">precision</link>, <link id="TFieldDef.FieldNo">FieldNo</link>, <link id="TFieldDef.Required">Required</link> and <link id="TFieldDef.CodePage">CodePage</link>
 property are all set according to the passed arguments.</p>
 </descr>
 <errors>
@@ -1447,6 +1447,7 @@ If a duplicate name is passed, then an exception will occur.
 <link id="TFieldDef.Precision">precision</link>
 <link id="TFieldDef.FieldNo">FieldNo</link>
 <link id="TFieldDef.Required">Required</link> 
+<link id="TFieldDef.CodePage">CodePage</link> 
 </seealso>
 </element>
 
@@ -13697,6 +13698,340 @@ some non-blob types as well.
 <seealso>
 <link id="TBlobType"/>
 </seealso>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Collections and lists</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>Formatting and conversions</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Variants">
+<short>Variant support</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="FmtBCD">
+<short>BCD support</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="MaskUtils">
+<short>Mask string support</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFieldDef.Create.ACodePage">
+<short>Codepage for the string field</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFieldDef.CharSize">
+<short>Character size</short>
+<descr>
+<p>
+<var>CharSize</var> is only relevant for for string fields: 
+it indicates the number of bytes used to represent a single character. 
+It is calculated from the <link id="TFieldDef.CodePage"/> property and can have the following values:
+</p>
+<ul>
+<li>1 for single-byte string fields</li>
+<li>2 for UnicodeString fields</li>
+<li>4 for UTF8 strings</li>
+</ul>
+</descr>
+<seealso>
+<link id="TFieldDef.CodePage"/>
+<link id="TFieldDef.Size"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFieldDefs.Add.APrecision">
+<short>Precision</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFieldDefs.Add.AReadOnly">
+<short>Read-only field</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFieldDefs.Add.ACodePage">
+<short>Codepage field</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TField.AsAnsiString">
+<short>Return field contents as an ANSI string</short>
+<descr>
+<var>AsAnsiString</var> returns the field data as an ANSI string (single byte character string). 
+Note that if the field contains unicode data, some characters may get lost when reading.
+</descr>
+<seealso>
+<link id="TField.AsString"/>
+<link id="TField.AsUnicodeString"/>
+<link id="TField.AsUTF8String"/>
+<link id="TField.CodePage"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TField.AsUnicodeString">
+<short>Field contents as a UnicodeString</short>
+<descr>
+<var>AsUnicodeString</var> returns the field data as a Unicode string (double byte character string). 
+If the field contains an AnsiString, the data will be converted to unicode according to the 
+<link id="TField.CodePage">CodePage</link> when reading, and when writing the written data will be converted to single-byte string.
+Note that if the field is an ansistring field, some characters may get lost when writing.
+
+</descr>
+<seealso>
+<link id="TField.AsString"/>
+<link id="TField.AsAnsiString"/>
+<link id="TField.AsUTF8String"/>
+<link id="TField.CodePage"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TField.AsUTF8String">
+<short>Field contents as a UTF8 String</short>
+<descr>
+<var>AsUTF8String</var> returns the field data as a UTF8-Encoded  string (single byte character string). 
+If the field contains an AnsiString, the data will be converted to unicode according to the <link id="TField.CodePage">CodePage</link>. 
+If the field contains a unicode string, the string is UTF-8 encoded.
+When writing the written data will be converted to single-byte string.
+Note that if the field is an ansistring field, some characters may get lost when writing.
+</descr>
+<seealso>
+<link id="TField.AsString"/>
+<link id="TField.AsUnicodeString"/>
+<link id="TField.AsAnsi8String"/>
+<link id="TField.CodePage"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TStringField.CodePage">
+<short>Codepage of the field string data</short>
+<descr>
+<var>CodePage</var> is the code page of the string data in the field. 
+It is determined when the field is initially created from the dataset's data, and cannot be changed while the dataset is active.
+</descr>
+<seealso>
+<link id="TField.AsString"/>
+<link id="TField.AsUnicodeString"/>
+<link id="TField.AsAnsi8String"/>
+<link id="TFieldDef.CodePage"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMemoField.CodePage">
+<short>Codepage of the memo field string data</short>
+<descr>
+<var>CodePage</var> is the code page of the string data in the field. 
+It is determined when the field is initially created from the dataset's data, and cannot be changed while the dataset is active.
+</descr>
+<seealso>
+<link id="TField.AsString"/>
+<link id="TFieldDef.CodePage"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TParam.AsAnsiString">
+<short>Parameter contents as an ANSI string</short>
+<descr>
+<var>AsAnsiString</var> returns the parameter data as an ANSI string (single byte character string). 
+Note that if the parameter contains unicode data, some characters may get lost when reading.
+</descr>
+<seealso>
+<link id="TParam.AsString"/>
+<link id="TParam.AsUnicodeString"/>
+<link id="TParam.AsUTF8String"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TParam.AsUTF8String">
+<short>Parameter contents as an UTF8 string</short>
+<descr>
+<var>AsUTF8String</var> returns the parameter data as an UTF8 string (single byte-encoded unicode string). 
+</descr>
+<seealso>
+<link id="TParam.AsString"/>
+<link id="TParam.AsUnicodeString"/>
+<link id="TParam.AsAnsiString"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TParam.AsUnicodeString">
+<short>Parameter contents as a Unicode string</short>
+<descr>
+<var>AsUTF8String</var> returns the parameter data as a UnicodeString (double byte unicode string). 
+</descr>
+<seealso>
+<link id="TParam.AsString"/>
+<link id="TParam.AsUTF8String"/>
+<link id="TParam.AsAnsiString"/>
+</seealso>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.DB.TDataSetEnumerator
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TDataSetEnumerator">
+<short>Enumerator for <var>TDataset</var> records</short>
+<descr>
+<p>
+<var>TDataSetEnumerator</var> is an enumerator for the records in a dataset.
+It returns the <link id="TDataset.Fields"/> instance. It navigates from the first till the last record in the dataset.
+The following is an example of how this can be used, in conjunction with the field enumerator:
+</p>
+<code>
+var
+  Rec : TFields;
+  Fld : TField;
+  
+begin
+  for Rec in MyDataset do
+    for F in Rec do
+      Writeln(F.Name,' : ',F.AsString);
+</code>
+<p>
+Note that the current record pointer of the dataset is modified as the loop is traversed. 
+If the current record is modified by other code while the loop is running, the result may become unpredictable.
+Similarly, if 2 enumerators are used simultaneously for the same dataset, the results are unpredictable.
+</p>
+</descr>
+<seealso>
+<link id="TDataset"/>
+<link id="TFields"/>
+<link id="TFieldsEnumerator"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TDataSetEnumerator.Create">
+<short>Create a new instance of the dataset enumerator</short>
+<descr>
+<var>Create</var> saves the dataset for later use, and puts the dataset on the firs record.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="TDataset"/>
+<link id="TDataset.First"/>
+<link id="TFieldsEnumerator"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDataSetEnumerator.Create.ADataSet">
+<short>Dataset to enumerate</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TDataSetEnumerator.MoveNext">
+<short>Attempts to navigate to the next record</short>
+<descr>
+<var>MoveNext</var> attempts to navigate to the next record. 
+It returns <var>True</var> if the attempt was successful, <var>False</var> if not (EOF is true).
+</descr>
+<seealso>
+<link id="TDataset.Next"/>
+<link id="TDataset.EOF"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TDataSetEnumerator.MoveNext.Result">
+<short>True if the move to the next record was succesful</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TDataSetEnumerator.Current">
+<short>Current record</short>
+<descr>
+<var>Current</var> always returns <link id="TDataset.Fields"/>.
+</descr>
+<seealso>
+<link id="TDataset.Fields"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="LoginDialogExProc">
+<short>Login dialog callback</short>
+<descr>
+<var>LoginDialogExProc</var> is a procedural variable that can be set to handle login dialogs: 
+if a database connection component needs to collect login data (typically when <var>LoginPrompt</var> is <var>True</var>), 
+then if this callback is set it can e.g. be used to show a dialog used to fetch the data.
+</descr>
+<seealso>
+<link id="TCustomConnection.LoginPrompt"/>
+<link id="TCustomConnection.OnLogin"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="LoginDialogExProc.Result">
+<short>True if the login data was succesfully returned</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="LoginDialogExProc.ADatabaseName">
+<short>Database name to connect to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="LoginDialogExProc.AUserName">
+<short>User name to use for connection</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="LoginDialogExProc.APassword">
+<short>Password to use for connection</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="LoginDialogExProc.UserNameReadOnly">
+<short>Can the user change the name ?</short>
+</element>
+
+<!-- operator Visibility: default -->
+<element name="enumerator(TDataSet):TDataSetEnumerator">
+<short>Operator to return dataset enumerator</short>
+<descr>
+This operator allows to use the <link id="TDataSetEnumerator"/> as an enumerator for a <link id="TDataset"/>
+</descr>
+<seealso>
+<link id="TDataSetEnumerator"/>
+<link id="TDataset"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="enumerator(TDataSet):TDataSetEnumerator.Result">
+<short>The new enumerator</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="enumerator(TDataSet):TDataSetEnumerator.ADataSet">
+<short>The dataset for which to return an enumerator</short>
 </element>
 
 </module> <!-- db -->
