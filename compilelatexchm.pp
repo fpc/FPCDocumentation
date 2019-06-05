@@ -189,6 +189,12 @@ begin
     end;
 end;
 
+function makeforwardslash(const s : string):string;
+
+begin
+  result:=StringReplace(s,'\','/',[rfReplaceAll]);
+end;
+
 procedure print(p:TDomNode;lvl:integer);
 
 var c:TDomNode;
@@ -216,7 +222,7 @@ begin
             writeln(curlevel:5,sc:5,' ',s);
           {$endif}
           cur.addname(s+' '+name);
-          cur.addlocal(prefixpath+href);
+          cur.addlocal(makeforwardslash(prefixpath+href));
           curlevel:=sc;
         end;
         end;
@@ -238,7 +244,7 @@ begin
   Toc := TChmSiteMap.Create(stTOC);
   chsitemap[0]:=TOC.Items.NewItem;
   chsitemap[0].addname('Contents');
-  chsitemap[0].addlocal(prefixpath+prefix+'.html');
+  chsitemap[0].addlocal(makeforwardslash(prefixpath+prefix+'.html'));
   f:=TFileStream.Create(tocfilename,fmcreate);
   sx:=THtmlDocument.create;
   ReadHtmlFile(sx,fn);
@@ -345,14 +351,14 @@ begin
           TmpItem := Index.Items.NewItem;
           TmpItem.addname(t[i]);
           chd:=TStringList(t.objects[i]);
-          tmpitem.addlocal(prefixpath+chd[0]);
+          tmpitem.addlocal(makeforwardslash(prefixpath+chd[0]));
           if chd.count>1 then
             begin
               for j:=0 to chd.count-1 do
                 begin
                   chditem:=TmpItem.Children.NewItem;
                   chditem.addname(searchlabel(chd[j],j+1));
-                  chditem.addlocal(prefixpath+chd[j]);
+                  chditem.addlocal(makeforwardslash(prefixpath+chd[j]));
                 end;
             end;
         end;
