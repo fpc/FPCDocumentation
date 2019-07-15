@@ -8398,7 +8398,16 @@ to split up the statement using temporary results:
 
 A notable exception to this behaviour is the evaluation of boolean expressions: 
 if short-circuit boolean evaluation is enabled (the default) then the
-compiler will evaluate from left to right.
+compiler will evaluate from left to right, but will still respect
+precedence, i.e. in parts with equal precedence the left operand will always
+be evaluated before the right one. Thus, the following example:
+\begin{verbatim}
+  True or True and False
+\end{verbatim}
+will evaluate to \var{True}, because it is equivalent to
+\begin{verbatim}
+  True or (True and False)
+\end{verbatim}
 \end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
