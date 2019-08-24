@@ -10702,8 +10702,69 @@ This is for Delphi compatibility, and the compiler will ignore any resulting ran
 when in mode Delphi.
 \end{remark}
 
-\section{Managed types and reference counts}
-\index{Types!Reference counted}
+\subsection{Untyped parameters}
+\index{Parameters!Untyped}
+Variable, Out and constant parameters can be untyped. In that case the variable has no type
+in the procedure of function, and hence is incompatible with all other
+types: The compiler simply passes the address of the passed variable to the
+routine, so all that is available in the called routine is an address, with
+no type information attached to it. This is also true for const parameters. 
+
+Using an analogy
+\begin{verbatim}
+procedure Something(const Data; Len: cint);
+\end{verbatim}
+Is equivalent to the following C/C++ declaration:
+\begin{verbatim}
+void Something(void* Data; int Len);
+\end{verbatim}
+This means pretty much all that one can do in the routine is use the address operator
+or pass the argument to another function that has also an untyped parameter. 
+
+Inside a routine with an untyped parameter, if the untyped parameter is used in an 
+expression, or a value must be assigned to it a typecast must always be used. 
+
+The following example shows this:
+\begin{verbatim}
+{$mode objfpc}
+uses types;
+
+procedure doit(const d);
+
+begin
+  Writeln('As integer: ',PInteger(@D)^);
+  Writeln('As Byte   : ',PByte(@D)^);
+end;
+
+Var
+  D : Integer;
+
+begin
+  D:=$0FFFFFF0;
+  DoIt(D);
+end.
+\end{verbatim}
+This will write:
+\begin{verbatim}
+As integer: 268435440
+As Byte   : 240
+\end{verbatim}
+
+Note that because an address is needed, no constant expressions can be
+passed to the function or procedure, i.e. given the above definition, 
+the following will not work:
+\begin{verbatim}
+ DoIt($0FFFFFF0);
+\end{verbatim}
+This will result in the following error:
+\begin{verbatim}
+Error: Variable identifier expected
+\end{verbatim}
+
+
+
+\subsection{Managed types and reference counts}
+\index{Parameters!Reference counted}
 Some types (Unicodestring, Ansistring, interfaces, dynamic arrays) are
 treated somewhat specially by the compiler: the data has a reference count
 which is increased or decreased depending on how many reference to the data
