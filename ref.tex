@@ -8360,9 +8360,9 @@ When using multiple operands in an expression, the precedence rules of
 \seet{OperatorPrecedence} are used.\index{Operators}
 \begin{FPCltable}{lll}{Precedence of operators}{OperatorPrecedence}
 Operator & Precedence & Category \\ \hline
-\var{Not}, unary \var{+}, unary \var{-}, \var{**} \var{@} & Highest (first) & Unary operators, power \\
+\var{Not}, unary \var{+}, unary \var{-}, \var{@}, \var{**} & Highest (first) & Unary operators, power \\
 \var{*}, \var{/}, \var{div}, \var{mod}, \var{and}, \var{shl}, \var{shr}, \var{as}, \var{<{}<}, \var{>{}>} & Second & Multiplying operators \\
-\var{+}, \var{-}, \var{or}, \var{xor} & Third & Adding operators \\
+\var{+}, \var{-}, \var{or}, \var{xor}, \var{><} & Third & Adding operators \\
 \var{=}, \var{<>}, \var{<}, \var{>}, \var{<=}, \var{>=}, \var{in}, \var{is} & Lowest (Last) & relational operators \\
 \hline
 \end{FPCltable}
@@ -8372,15 +8372,18 @@ When determining the precedence, the compiler uses the following rules:
 \item In operations with unequal precedences the operands belong to the
 operator with the highest precedence. For example, in \var{5*3+7}, the
 multiplication is higher in precedence than the addition, so it is
-evaluated first. The result would be 22.
+ievaluated first. The result would be 22.
 \item If parentheses are used in an expression, their contents is evaluated
 first. Thus, \var {5*(3+7)} would result in 50.
+\item Otherwise, binary operators of the same precedence are left-associative.
+\var{5 * 3 div 7} will evaluate to 2 and not 0.
 \end{enumerate}
 
 \begin{remark}
 The order in which expressions of the same precedence are evaluated is not
 guaranteed to be left-to-right. In general, no assumptions on which subexpression
-is evaluated first should be made in such a case .
+is evaluated first should be made in such a case.
+
 The compiler will decide which subexpression to evaluate first based on
 optimization rules. Thus, in the following expression:
 \begin{verbatim}
