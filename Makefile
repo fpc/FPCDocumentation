@@ -2468,7 +2468,7 @@ FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream
 	 base64 gettext pooledmm dbugmsg streamex inicol streamcoll cachecls \
 	 eventlog syncobjs custapp blowfish simpleipc inifiles rttiutils uriparser \
 	 daemonapp libtar ascii85 fptimer db avl_tree ibconnection mssqlconn zipper sqldb \
-	 fpjson sqltypes bufdataset
+	 fpjson sqltypes bufdataset fpmimetypes
 FCLUNITS+= ezcgi
 FCLXML=$(addsuffix .xml,$(FCLUNITS))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
@@ -2511,6 +2511,7 @@ FCLMSSQLCONN=  --descr=mssqlconn.xml --input="$(FCLDBDIR)/sqldb/mssql/mssqlconn.
 FCLZIPPER=  --descr=zipper.xml --input="$(FCLZLIBDIR)/zipper.pp"
 FCLJSON= --descr=fpjson.xml --input="$(FCLJSONDIR)/fpjson.pp"
 FCLBUFDATASET= --descr=bufdataset.xml --input="$(FCLDBDIR)/base/bufdataset.pas"
+FCLMIMETYPES= --descr=fpmimetypes.xml --input="$(FCLWEBDIR)/base/fpmimetypes.pp"
 FCLUNITOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLUNITOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
 FCLUNITOPTS+= $(FCLGETTEXT) 
@@ -2521,6 +2522,7 @@ FCLUNITOPTS+= $(FCLCUSTAPP) $(FCLBLOWFISH) $(FCLSIMPLEIPC) $(FCLINIFILES) $(FCLR
 FCLUNITOPTS+= $(FCLAVLTREE) $(FCLURIPARSER) $(FCLDAEMONAPP) $(FCLLIBTAR) $(FCLASCII85)
 FCLUNITOPTS+= $(FCLFPTIMER) $(FCLDB) $(FCLZIPPER) $(FCLSQLTYPES)
 FCLUNITOPTS+= $(FCLSQLDB) $(FCLIBCONNECTION) $(FCLMSSQLCONN) $(FCLJSON) $(FCLBUFDATASET)
+FCLUNITOPTS+= $(FCLMIMETYPES)
 updatefclxml: fpc_all
 	$(FCLMAKESKEL) $(FCLIOSTREAM) --output=iostream.new.xml
 	$(FCLMAKESKEL) $(FCLPIPES) --output=pipes.new.xml
@@ -2553,6 +2555,7 @@ updatefclxml: fpc_all
 	$(FCLMAKESKEL) $(FCLSQLDB) --output=sqldb.new.xml
 	$(FCLMAKESKEL) $(FCLZIPPER) --output=zipper.new.xml
 	$(FCLMAKESKEL) $(FCLJSON) --output=fpjson.new.xml
+	$(FCLMAKESKEL) $(FCLMIMETYPES) --output=fpmimetypes.new.xml
 	./cleanxml $(FCLNEWXML)
 FCLRESUNITS=resource resourcetree resdatastream resfactory resreader reswriter \
 	    bitmapresource acceleratorsresource groupresource groupiconresource \

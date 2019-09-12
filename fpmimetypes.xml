@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    fpmimetypes
+  ====================================================================
+-->
+
+<module name="fpmimetypes">
+<short>Unit to handle mapping of filename extensions to MIME type</short>
+<descr>
+The <file>fpmimetypes</file> unit contains a class which handles mapping of filename extensions to MIME (Multipurpose Internet Mail Extensions) types.
+The <link id="TFPMimeTypes"/> class handles this mapping. A global instance of this class is available through 
+the <link id="MimeTypes"/> function. The list of known mime types can be instantiated through the 
+<link id="TFPMimeTypes.LoadKnownTypes">LoadKnownTypes</link> method, or a file in the standard 
+<file>mime.types</file> format can be loaded through the <link id="TFPMimeTypes.LoadFromFile">LoadFromFile</link> method.
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Stream definitions</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>Exceptions and filename routines</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="contnrs">
+<short>A hash list for fast lookups</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TMimeType">
+<short>Helper class to store a mime type and its associated extensions</short>
+<descr>
+<var>TMimeType</var> is a helper class which stores a MIME type and it's associated extensions. 
+It should not be necessary to create instances of this class manually, the creation is handled 
+entirely through the <link id="TFPMimeTypes"/> class.
+</descr>
+<seealso>
+<link id="TMimeType.MimeType"/>
+<link id="TMimeType.Extensions"/>
+<link id="TFPMimeTypes"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TMimeType.Create">
+<short>Create a new instance of <var>TMimeType</var></short>
+<descr>
+<var>Create</var> initializes a new instance of <var>TMimeType</var> and sets the <link id="TMimeType.MimeType"/>
+<link id="TMimeType.Extensions"/> properties to <var>aMimeType</var> and <var>aExtensions</var>. 
+</descr>
+<seealso>
+<link id="TMimeType.MimeType"/>
+<link id="TMimeType.Extensions"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMimeType.Create.AMimeType">
+<short>MIME type name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMimeType.Create.AExtensions">
+<short>Comma-separated list of extensions.</short>
+</element>
+
+<!-- procedure Visibility: public --> 
+<element name="TMimeType.MergeExtensions"> 
+<short>Merge extensions in the list of extensions</short> 
+<descr> 
+
+<var>MergeExtensions</var> merges the
+comma-separated list of extensions in <var>AExtensions</var> into <link
+id="TMimeType.Extensions"/> in such a way that there are no duplicates. 
+</descr> 
+<seealso> 
+<link id="TMimeType.Extensions"/> 
+</seealso> 
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMimeType.MergeExtensions.AExtensions">
+<short>Semicolon separated list of extensions to merge</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeType.MimeType">
+<short>Mime type name</short>
+<descr>
+<var>MimeType</var> is the lowercase name of the mime type. 
+</descr>
+<seealso>
+<link id="TMimeType.Extensions"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeType.Extensions">
+<short>Semicolon-separated list of extensions associated with <var>MimeType</var></short>
+<descr>
+<var>Extensions</var> is the comma-separated list of extensions that is
+associated with <link id="TMimeType.MimeType">MimeType</link>
+</descr>
+<seealso>
+<link id="TMimeType.MimeType"/> 
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TFPMimeTypes">
+<short>Class to manage list of mime type mappings</short>
+<descr>
+<p>
+<var>TFPMimeTypes</var> manages a list of MIME types.
+</p>
+<p> The list of types can be initialized with
+the OS list of known MIME types through the 
+<link id="TFPMimeTypes.LoadKnownTypes">LoadKnownTypes</link> method, or a file in the standard 
+<file>mime.types</file> format can be loaded through the <link id="TFPMimeTypes.LoadFromFile">LoadFromFile</link> method.
+</p>
+<p>
+The associated mime type of a file extension can be retrieved with <link id="TFPMimeTypes.GetMimeType"/>.
+</p>
+</descr>
+<seealso>
+<link id="TFPMimeTypes.LoadKnownTypes"/>
+<link id="TFPMimeTypes.LoadFromFile"/>
+<link id="TFPMimeTypes.GetMimeType"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TFPMimeTypes.Create">
+<short>Create a new instance of the <var>TFPMimeTypes</var> class</short>
+<descr>
+The <var>Create</var> method sets up the necessary internal structures.
+</descr>
+<seealso>
+<link id="TFPMimeTypes.Destroy"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPMimeTypes.Create.AOwner">
+<short>Owner of this instance</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TFPMimeTypes.Destroy">
+<short>Remove instance from memory</short>
+<descr>
+<var>Destroy</var> destroys the  <var>TFPMimeTypes</var> instance and removes it from memory.
+</descr>
+<seealso>
+<link id="TFPMimeTypes.Create"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPMimeTypes.Clear">
+<short>Clear the list of known <var>MIME</var> types</short>
+<descr>
+<var>Clear</var> clears the list of known mime types.
+</descr>
+<seealso>
+<link id="TFPMimeTypes.LoadKnownTypes"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPMimeTypes.LoadKnownTypes">
+<short>Queries the OS for a list of known MIME types</short>
+<descr>
+<var>LoadKnownTypes</var> uses the default mechanism of the OS to initialize the list of MIME types.
+Under windows, this loads a list of known extensions from the registry (under <var>HKEY_CLASSES_ROOT</var>) 
+and attempts to load a <file>mime.types</file> located next to the application binary. Under unixlike OS-es, 
+the system location for the  <file>mime.types</file> is used to load the <file>mime.types</file> file.
+</descr>
+<seealso>
+<link id="TFPMimeTypes.LoadFromFile"/>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TFPMimeTypes.GetNextExtension">
+<short>Extract an extension from an extension list as returned by GetMimeExtensions</short>
+<descr>
+<var>GetNextExtension</var> is a helper function that extracts adn returns the next extension 
+from the semicolon separated list of extensions <var>E</var> and removes the extension from the list. 
+If there is no more extension, the empty string is return.
+</descr>
+<seealso>
+<link id="TFPMimeTypes.GetMimeExtensions"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPMimeTypes.GetNextExtension.Result">
+<short>Next extension</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPMimeTypes.GetNextExtension.E">
+<short>semicolon separated list of extensions</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPMimeTypes.LoadFromStream">
+<short>Load mime types from a stream in mime.types file format</short>
+<descr>
+<var>LoadFromStream</var> parses the stream for MIME type definitions and extensions and adds them to the list of known MIME types.
+The stream is expected to have the text format of the <file>mime.types</file> as found in unix systems.
+</descr>
+<seealso>
+<link id="TFPMimeTypes.LoadFromFile"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPMimeTypes.LoadFromStream.Stream">
+<short>Stream to load MIME types from.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPMimeTypes.LoadFromFile">
+<short>Load mime types from a file in mime.types file format</short>
+<descr>
+<var>LoadFromFile</var> loads the file <var>aFileName</var> and parses the file for MIME type definitions and extensions and adds them to the list of known MIME types.
+The file is expected to have the text format of the <file>mime.types</file> as found in unix systems.
+</descr>
+<errors>
+if the file <var>aFileName</var> does not exist, an exception is raised.
+</errors>
+<seealso>
+<link id="TFPMimeTypes.LoadFromStream"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPMimeTypes.LoadFromFile.AFileName">
+<short>File to load</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPMimeTypes.AddType">
+<short>Add a MIME type to the list.</short>
+<descr>
+<var>AddType</var> can be used to add <var>AMimeType</var> to the list of known MIME types, and associate a semicolon-separated list of extensions <var>AExtensions</var> with it.
+If <var>AMimeType</var> is already present in the list of MIME types, then the list of extensions in <var>AExtensions</var> is merged with the existing extensions.
+The extensions may not have a dot character prepended to them.
+</descr>
+<seealso>
+<link id="TFPMimeTypes.GetMimeExtensions"/>
+<link id="TFPMimeTypes.GetMimeType"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPMimeTypes.AddType.AMimeType">
+<short>MIME type to add</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPMimeTypes.AddType.AExtensions">
+<short>Semicolon-separated list of extensions to associate with the MIME type</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPMimeTypes.GetMimeExtensions">
+<short>Get the extensions associated with a MIME type</short>
+<descr>
+<var>GetMimeExtensions</var> returns the list of extensions associated with a MIME type (<var>AMimeType</var>). If none are known, an empty string is returned.
+<var>AMimeType</var> is searched case insentively.
+</descr>
+<seealso>
+<link id="TFPMimeTypes.GetMimeType"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPMimeTypes.GetMimeExtensions.Result">
+<short>Semicolon separated list of extensions.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPMimeTypes.GetMimeExtensions.AMimeType">
+<short>MIME type to get extensions from</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPMimeTypes.GetMimeType">
+<short>Get MIME type of an extension</short>
+<descr>
+<var>GetMimeType</var> returns the  MIME type of the extension <var>AExtension</var>. The extension is searched case-insensitive. 
+If no MIME type is found, an empty string is returned. The extension may start with a dot character or not.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPMimeTypes.GetMimeExtensions"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPMimeTypes.GetMimeType.Result">
+<short>MIME type for <var>AExtension</var>, or empty if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPMimeTypes.GetMimeType.AExtension">
+<short>Extension to search for.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPMimeTypes.GetKnownMimeTypes">
+<short>Get a list of all known MIME types</short>
+<descr>
+<var>GetKnownMimeTypes</var> fills <var>AList</var> with the list of known MIME types (one per line) in random order. 
+It clears the list first, and returns the number of entries added to the list.
+</descr>
+<seealso>
+<link id="TFPMimeTypes.GetKnownExtensions"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPMimeTypes.GetKnownMimeTypes.Result">
+<short>Number of known MIME types</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPMimeTypes.GetKnownMimeTypes.AList">
+<short>List to fill</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPMimeTypes.GetKnownExtensions">
+<short>Get a lis of all known extensions</short>
+<descr>
+<var>GetKnownExtensions</var> fills <var>AList</var> with the list of known extensions (one per line) in random order. 
+It clears the list first, and returns the number of entries added to the list. The extensions do not have a dot (.) character prepended.
+</descr>
+<seealso>
+<link id="TFPMimeTypes.GetKnownMimeTypes"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPMimeTypes.GetKnownExtensions.Result">
+<short>Number of extensions added</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPMimeTypes.GetKnownExtensions.AList">
+<short>List to fill</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="MimeTypes">
+<short>Global <var>TFPMimeTypes</var> instance</short>
+<descr>
+<p>
+<var>MimeTypes</var> returns a global instance of the <link id="TFPMimeTypes"/> class. 
+It is not initialized with a list of extensions, so this instance must still be explicitly 
+initialized with <link id="TFPMimeTypes.LoadKnownTypes"/>
+</p>
+<p>
+This function is not thread-safe, so be sure to call it once from the main thread and initialize the resulting list.
+</p>
+</descr>
+<seealso>
+<link id="TFPMimeTypes"/>
+<link id="TFPMimeTypes.LoadKnownTypes"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="MimeTypes.Result">
+<short>A <var>TFPMimeTypes</var> instance.</short>
+</element>
+
+</module> <!-- fpmimetypes -->
+
+</package>
+</fpdoc-descriptions>
