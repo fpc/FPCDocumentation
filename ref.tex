@@ -11000,17 +11000,15 @@ The parameter lists must differ at least in one of its elements type.
 When the compiler encounters a function call, it will look at the function
 parameters to decide which one of the defined functions it should call.
 This can be useful when the same function must be defined for different
-types. For example, in the RTL, the  \var{Dec} procedure could be
- defined as:
+types. 
+
+For example, in a hypothetical RTL, the  \var{Random} procedure could be defined as:
 \begin{verbatim}
-...
-Dec(Var I : Longint;decrement : Longint);
-Dec(Var I : Longint);
-Dec(Var I : Byte;decrement : Longint);
-Dec(Var I : Byte);
-...
+Random(Max : Longint);
+Random(Max : Double);
+Random(Max,Ofsset : Longint);
 \end{verbatim}
-When the compiler encounters a call to the \var{Dec} function, it will first search
+When the compiler encounters a call to the \var{Random} function, it will first search
 which function it should use. It therefore checks the parameters in a
 function call, and looks if there is a function definition which matches the
 specified parameter list. If the compiler finds such a function, a call is
@@ -11032,6 +11030,11 @@ they must be in the same class, i.\,e. the compiler will not look for
 overloaded methods in parent classes if the \var{overload} keyword was not
 specified.
 
+\begin{remark}
+Note that if you redefine (and overload) compiler internal functions, the
+original compiler functions are no longer available. This is for instance
+the case with \var{Inc()} and \var{Dec()}
+\end{remark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % forward declared functions
