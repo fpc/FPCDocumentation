@@ -2093,387 +2093,477 @@ It is assigned by the system in the consutructor.
 
 <!-- interface Visibility: default -->
 <element name="IVarInvokeable">
-<short></short>
+<short>Interface needed for custom variants that need to implement dynamic properties and methods</short>
 <descr>
+<p>
+<var>IVarInvokeable</var> must be implemented by the <link id="TCustomVariantType"/> descendent if the custom variant
+needs to implement dynamic properties and methods.
+</p>
+<p>
+<var>IVarInvokeable</var> has four functions that must be implemented. 
+Any of these functions can be called whenever a custom variant's method is invoked or a property of the variant 
+is read or written using <var>DispInvoke</var>.
+</p>
+<p>
+The <var> TCustomVariantType</var> descendent <link id="TInvokeableVariantType"/> 
+implements the needed DispInvoke to call the <var>IVarInvokeable</var> interface, 
+so you can descend from that type instead when creating a new custom variant type 
+and override the needed functions.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TInvokeableVariantType"/>
+<link id="TCustomVariantType"/>
 </seealso>
 </element>
 
 <!-- function Visibility: default -->
 <element name="IVarInvokeable.DoFunction">
-<short></short>
+<short>Called for methods that return a result (functions)</short>
 <descr>
+<p>
+<var>DoFunction</var> is called whenever a variant method that returns a result needs to be invoked.
+The <var>Dest</var> parameter points to the location where the result of the function must be placed; 
+the result must be a variant value.
+</p>
+<p>
+<var>V</var> is the variant on which the method is being executed. 
+The <var>Name</var> is the name of the function to execute, and 
+<var>Arguments</var> is an array of variant arguments that were passed to the function.
+</p>
+<p>
+The function must return <var>True</var> if the function was executed correctly, <var>False</var> otherwise.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IVarInvokeable.DoProcedure"/>
+<link id="IVarInvokeable.GetProperty"/>
+<link id="IVarInvokeable.SetProperty"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default -->
 <element name="IVarInvokeable.DoFunction.Result">
-<short></short>
+<short>Indicate whether the function was executed correctly</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInvokeable.DoFunction.Dest">
-<short></short>
+<short>On return, contains the result of the function</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInvokeable.DoFunction.V">
-<short></short>
+<short>Variant on which to operate</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInvokeable.DoFunction.Name">
-<short></short>
+<short>Name of the function to execute</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInvokeable.DoFunction.Arguments">
-<short></short>
+<short>Array with arguments passed to the function</short>
 </element>
 
 <!-- function Visibility: default -->
 <element name="IVarInvokeable.DoProcedure">
-<short></short>
+<short>Called for methods that do not return a result (procedures)</short>
 <descr>
+<p>
+<var>DoProcedure</var> is called whenever a variant method that does not return a result needs to be invoked.
+<var>V</var> is the variant on which the method is being executed. 
+The <var>Name</var> is the name of the method to execute, and 
+<var>Arguments</var> is an array of variant arguments that were passed to the method.
+</p>
+<p>
+The function must return <var>True</var> if the procedure was executed correctly, <var>False</var> otherwise.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IVarInvokeable.DoFunction"/>
+<link id="IVarInvokeable.GetProperty"/>
+<link id="IVarInvokeable.SetProperty"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default -->
 <element name="IVarInvokeable.DoProcedure.Result">
-<short></short>
+<short>Indicate whether the function was executed correctly</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInvokeable.DoProcedure.V">
-<short></short>
+<short>Variant on which to operate</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInvokeable.DoProcedure.Name">
-<short></short>
+<short>Name of the procedure to execute</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInvokeable.DoProcedure.Arguments">
-<short></short>
+<short>Array with arguments passed to the procedure</short>
 </element>
 
 <!-- function Visibility: default -->
 <element name="IVarInvokeable.GetProperty">
-<short></short>
+<short>Called when a property must be read</short>
 <descr>
+<p>
+<var>DoFunction</var> is called whenever a variant property is read. <var>Dest</var> must be filled with the value of the property on success.
+<var>V</var> is the variant on which the property is read.
+The <var>Name</var> is the name of the property to read.
+</p>
+<p>
+The function must return <var>True</var> if the property was read correctly, <var>False</var> otherwise.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IVarInvokeable.DoFunction"/>
+<link id="IVarInvokeable.DoProcedure"/>
+<link id="IVarInvokeable.SetProperty"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default -->
 <element name="IVarInvokeable.GetProperty.Result">
-<short></short>
+<short>Indicate whether the property was read correctly</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInvokeable.GetProperty.Dest">
-<short></short>
+<short>On success, contains the value of the property</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInvokeable.GetProperty.V">
-<short></short>
+<short>Variant to read property from</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInvokeable.GetProperty.Name">
-<short></short>
+<short>Name of property to read.</short>
 </element>
 
 <!-- function Visibility: default -->
 <element name="IVarInvokeable.SetProperty">
-<short></short>
+<short>Called when a property must be set</short>
 <descr>
+<p>
+<var>DoFunction</var> is called whenever a variant property is written. <var>Value</var> is filled with the new value of the property.
+<var>V</var> is the variant on which the property is written.
+The <var>Name</var> is the name of the property to write.
+</p>
+<p>
+The function must return <var>True</var> if the property was written correctly, <var>False</var> otherwise.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IVarInvokeable.DoFunction"/>
+<link id="IVarInvokeable.DoProcedure"/>
+<link id="IVarInvokeable.GetProperty"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default -->
 <element name="IVarInvokeable.SetProperty.Result">
-<short></short>
+<short>Indicate whether the property was written correctly</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInvokeable.SetProperty.V">
-<short></short>
+<short>Variant to write property on</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInvokeable.SetProperty.Name">
-<short></short>
+<short>Name of property to write</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInvokeable.SetProperty.Value">
-<short></short>
+<short>Value to set property to.</short>
 </element>
 
 <!-- class Visibility: default -->
 <element name="TInvokeableVariantType">
-<short></short>
+<short><var>TCustomVariantType</var> descendent that implements <var>DispInvoke</var></short>
 <descr>
+<var>TInvokeableVariantType</var> is a <link id="TCustomVariantType"/> descendent which implements the <link id="TCustomVariantType.DispInvoke"/>  method.
+It translates the <var>DispInvoke"</var> method to calls to one or more of the four methods of <link id="IVarInvokeable"/>:
+<link id="IVarInvokeable.DoFunction">DoFunction</link> or 
+<link id="IVarInvokeable.DoProcedure">DoProcedure</link> for method calls (DISPATCH_METHOD) and
+<link id="IVarInvokeable.GetProperty">GetProperty</link> for property reading (DISPATCH_PROPERTYGET) or 
+<link id="IVarInvokeable.SetProperty">SetProperty</link> for property writing (DISPATCH_PROPERTYSET). Other combinations are possible.
+It has empty stubs for these methods, which must be implemented in a descendent that is used to describe a custom variant.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IVarInvokeable.DoFunction"/>
+<link id="IVarInvokeable.DoProcedure"/>
+<link id="IVarInvokeable.GetProperty"/>
+<link id="IVarInvokeable.SetProperty"/>
 </seealso>
 </element>
 
 <!-- function Visibility: public -->
 <element name="TInvokeableVariantType.DoFunction">
-<short></short>
+<short>Empty stub for <var>IVarInvokeable.DoFunction</var>, to be implemented in descendents</short>
 <descr>
+<var>DoFunction</var> is the default implementation of <link id="IVarInvokeable.DoFunction"/>, 
+which always returns <var>False</var>. 
+It must be overridden in descendent classes to implement actual calling of a function.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IVarInvokeable.DoFunction"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default -->
 <element name="TInvokeableVariantType.DoFunction.Result">
-<short></short>
+<short>Always false</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TInvokeableVariantType.DoFunction.Dest">
-<short></short>
+<short>Result of function call</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TInvokeableVariantType.DoFunction.V">
-<short></short>
+<short>Variant on which to operate</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TInvokeableVariantType.DoFunction.Name">
-<short></short>
+<short>Name of function to call</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TInvokeableVariantType.DoFunction.Arguments">
-<short></short>
+<short>Arguments passed to function</short>
 </element>
 
 <!-- function Visibility: public -->
 <element name="TInvokeableVariantType.DoProcedure">
-<short></short>
+<short>Empty stub for <var>IVarInvokeable.DoProcedure</var>, to be implemented in descendents</short>
 <descr>
+<var>DoProcedure</var> is the default implementation of <link id="IVarInvokeable.DoProcedure"/>, 
+which always returns <var>False</var>. 
+It must be overridden in descendent classes to implement actual calling of a procedure.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IVarInvokeable.DoProcedure"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default -->
 <element name="TInvokeableVariantType.DoProcedure.Result">
-<short></short>
+<short>Always false</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TInvokeableVariantType.DoProcedure.V">
-<short></short>
+<short>Variant on which to operate</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TInvokeableVariantType.DoProcedure.Name">
-<short></short>
+<short>Name of procedure to call</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TInvokeableVariantType.DoProcedure.Arguments">
-<short></short>
+<short>Arguments passed to procedure</short>
 </element>
 
 <!-- function Visibility: public -->
 <element name="TInvokeableVariantType.GetProperty">
-<short></short>
+<short>Empty stub for <var>IVarInvokeable.GetProperty</var>, to be implemented in descendents</short>
 <descr>
+<var>GetProperty</var> is the default implementation of <link id="IVarInvokeable.GetProperty"/>, 
+which always returns <var>False</var>. 
+It must be overridden in descendent classes to implement actual reading of a property.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IVarInvokeable.GetProperty"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default -->
 <element name="TInvokeableVariantType.GetProperty.Result">
-<short></short>
+<short>Always false</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TInvokeableVariantType.GetProperty.Dest">
-<short></short>
+<short>Property value</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TInvokeableVariantType.GetProperty.V">
-<short></short>
+<short>Variant on which to operate</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TInvokeableVariantType.GetProperty.Name">
-<short></short>
+<short>Name of property to read</short>
 </element>
 
 <!-- function Visibility: public -->
 <element name="TInvokeableVariantType.SetProperty">
-<short></short>
+<short>Empty stub for <var>IVarInvokeable.SetProperty</var>, to be implemented in descendents</short>
 <descr>
+<var>SetProperty</var> is the default implementation of <link id="IVarInvokeable.SetProperty"/>, 
+which always returns <var>False</var>. 
+It must be overridden in descendent classes to implement actual writing of a property.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IVarInvokeable.SetProperty"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default -->
 <element name="TInvokeableVariantType.SetProperty.Result">
-<short></short>
+<short>Always false</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TInvokeableVariantType.SetProperty.V">
-<short></short>
+<short>Variant on which to operate</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TInvokeableVariantType.SetProperty.Name">
-<short></short>
+<short>Name of property to read</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TInvokeableVariantType.SetProperty.Value">
-<short></short>
+<short>Value to which property must be set</short>
 </element>
 
 <!-- interface Visibility: default -->
 <element name="IVarInstanceReference">
-<short></short>
+<short>Interface for variants that refer to an object</short>
 <descr>
+<p>
+<var>IVarInstanceReference</var> is used to get the instance of an object
+from a custom variant.  It has only one method, <link
+id="IVarInstanceReference.GetInstance">GetInstance</link> which is used to
+retrieve the instance of a variant that contains an object.
+</p>
+<p>
+The <link id="TPublishableVariantType"/> descendent of <link id="TInvokeableVariantType"/> uses this interface to implement reading published properties from the instance.
+</p>
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IVarInstanceReference.GetInstance"/>
 </seealso>
 </element>
 
 <!-- function Visibility: default -->
 <element name="IVarInstanceReference.GetInstance">
-<short></short>
+<short>Return the object instance referenced by the custom variant</short>
 <descr>
+<var>GetInstance</var> must return the object instance referenced by the custom variant <var>V</var>.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TPublishableVariantType"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default -->
 <element name="IVarInstanceReference.GetInstance.Result">
-<short></short>
+<short>Instance referred to by <var>V</var></short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="IVarInstanceReference.GetInstance.V">
-<short></short>
+<short>Custom variant to get instance from</short>
 </element>
 
 <!-- class Visibility: default -->
 <element name="TPublishableVariantType">
-<short></short>
+<short><var>TInvokeableVariantType</var> descendent that implements reading published properties</short>
 <descr>
+<var>TPublishableVariantType</var> implements the <link id="IVarInvokeable.GetProperty"/> and <link id="IVarInvokeable.SetProperty"/>
+methods by getting or setting the published properties of the class instance returned by the <var>IVarInstanceReference</var> interface it implements.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="TInvokeableVariantType"/>
+<link id="IVarInvokeable.GetProperty"/>
+<link id="IVarInvokeable.SetProperty"/>
+<link id="IVarInstanceReference"/>
 </seealso>
 </element>
 
 <!-- function Visibility: public -->
 <element name="TPublishableVariantType.GetProperty">
-<short></short>
+<short>Read the property</short>
 <descr>
+<var>GetProperty</var> implements reading the property by looking for the property in the published properties of the
+instance returned by the <link id="IVarInstanceReference"/> interface, and returning the value as a variant.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IVarInstanceReference"/>
+<link id="IVarInvokeable.GetProperty"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default -->
 <element name="TPublishableVariantType.GetProperty.Result">
-<short></short>
+<short>Always True.</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TPublishableVariantType.GetProperty.Dest">
-<short></short>
+<short>Value of the property</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TPublishableVariantType.GetProperty.V">
-<short></short>
+<short>Variant to get property from.</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TPublishableVariantType.GetProperty.Name">
-<short></short>
+<short>Name of property to read</short>
 </element>
 
 <!-- function Visibility: public -->
 <element name="TPublishableVariantType.SetProperty">
-<short></short>
+<short>Write the property</short>
 <descr>
+<var>SetProperty</var> implements writing the property by looking for the property in the published properties of the
+instance returned by the <link id="IVarInstanceReference"/> interface, and setting the value as a variant.
 </descr>
-<errors>
-</errors>
 <seealso>
+<link id="IVarInstanceReference"/>
+<link id="IVarInvokeable.SetProperty"/>
 </seealso>
 </element>
 
 <!-- function result Visibility: default -->
 <element name="TPublishableVariantType.SetProperty.Result">
-<short></short>
+<short>Always true</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TPublishableVariantType.SetProperty.V">
-<short></short>
+<short>Variant to set property on</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TPublishableVariantType.SetProperty.Name">
-<short></short>
+<short>Name of property to set</short>
 </element>
 
 <!-- argument Visibility: default -->
 <element name="TPublishableVariantType.SetProperty.Value">
-<short></short>
+<short>Value to set property to</short>
 </element>
 
 <!-- function Visibility: default -->
