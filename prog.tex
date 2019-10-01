@@ -2178,6 +2178,11 @@ the command line.
 enabled. This is the same as the command line option \var{-Sd}. Note that
 this also implies \var{\{\$H ON\}} (i.e., in Delphi mode, ansistrings are
 the default).
+\item[DelphiUnicode] Delphi compatibility mode. All object-pascal extensions are
+enabled, and additionally the \var{String} keyword refers to a unicode
+string. 
+\item[ExtendedPascal] Extended pascal mode. Only available in 3.2 and
+higher.
 \item[TP] Turbo pascal compatibility mode. Object pascal extensions are
 disabled, except ansistrings, which remain valid.
 This is the same as the command line option \var{-So}.
@@ -7960,8 +7965,7 @@ parameters when implementing the function or procedure.
 \section{Delphi mode}
 This mode is selected by the \var{{\$MODE DELPHI}} switch. It tries to emulate,
 as closely as possible, the behavior of Delphi 4 till recent versions of Delphi . 
-On the command line,
-this mode is selected by the \var{-Mdelphi} switch.
+On the command line, this mode is selected by the \var{-Mdelphi} switch.
 \begin{enumerate}
 \item You cannot use the address operator to assign procedural variables.
 \item A forward declaration does not have to be repeated exactly the same by the
@@ -7979,6 +7983,15 @@ consequences of this is that the type \var{Integer} is redefined as
 \item Parameters in class methods can have the same names as class
 properties (although it is bad programming practice).
 \end{enumerate}
+
+\section{DelphiUnicode mode}
+This mode is selected by the \var{{\$MODE DELPHIUNICODE}} switch. It tries to emulate,
+as closely as possible, the behavior of Delphi 4 till recent versions of Delphi . 
+On the command line, this mode is selected by the \var{-Mdelphiunicode} switch.
+
+This mode is the same as the delphi mode, except that the \var{String}
+keyword indicates a \var{UnicodeString} instead of an \var{AnisString}
+string.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % GPC Mode
@@ -8072,6 +8085,13 @@ statement.
 \item Mod operation as required by ISO pascal.
 \item Unary minus as required by ISO pascal.
 \end{enumerate}
+
+\section{Extended Pascal mode}
+This mode is selected by the \var{{\$MODE EXTENDEDPASCAL}} switch. It tries to emulate,
+as closely as possible, the behavior of extended pascal. This is basically
+the same as ISO pascal, but refers to the ISO 10206 specification.
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Appendix E
@@ -9129,8 +9149,11 @@ FPC\_OBJFPC & \fpc is in OBJFPC mode, either using compiler switch -Mobjfpc or \
 & using the \var{\$MODE OBJFPC} directive. \\
 FPC\_TP & \fpc is in Turbo Pascal mode, either using compiler switch -Mtp or \\
 & using the \var{\$MODE TP} directive. \\
-FPC\_GPC & \fpc is in GNU Pascal mode, either using compiler switch -SP or \\
-& using the \var{\$MODE GPC} directive. \\
+%FPC\_GPC & \fpc is in GNU Pascal mode, either using compiler switch -SP or \\
+%& using the \var{\$MODE GPC} directive. \\
+FPC\_MACPAS & \fpc is in Mac Pascal mode, either using compiler switch
+-Mmacpas or \\ 
+& using the \var{\$MODE MACPAS} directive. \\
 \hline
 \end{FPCltable}
 
@@ -9188,14 +9211,25 @@ FPUHARD & On Sparc.\\ \hline
 
 \begin{FPCltable}{ll}{Possible defines when compiling using target OS}{FPCOSdefines}
 Target operating system & Defines \\ \hline
+AIX & AIX, UNIX \\
+Amiga & AMIGA \\
+Android & ANDROID \\
 linux & LINUX, UNIX\\
-freebsd & FREEBSD, BSD, UNIX\\
+freebsd & FREEBSD, BSD, UNIX, DRAGONFLY\\
 netbsd & NETBSD, BSD, UNIX\\
+openbsd & OPENBSD, BSD, UNIX\\
 sunos & SUNOS, SOLARIS, UNIX\\
 go32v2 & GO32V2, DPMI\\
 MS-DOS 16 bit real mode & MSDOS  (2.7.1 and higher) \\
+Haiku & HAIKU \\
 os2 & OS2\\
+NETWARE & NETWARE, NETWLIBC \\
+Nintendo DS & NDS \\
 emx & OS2, EMX\\
+Solaris & SOLARIS \\
+WII & WII \\
+Windows (native NT) & NATIVENT \\
+Windows (16-bit) & WIN16 \\
 Windows (all) & WINDOWS\\
 Windows 32-bit & WIN32, MSWINDOWS\\
 Windows 64-bit & WIN64, MSWINDOWS\\
@@ -9206,7 +9240,8 @@ Classic Macintosh & MACOS\\
 PalmOS & PALMOS \\
 BeOS & BEOS, UNIX \\
 QNX RTP & QNX, UNIX \\
-Mac OS X & BSD, DARWIN, UNIX \\ \hline
+Mac OS X & BSD, DARWIN, UNIX, IPHONESYM \\ \hline
+
 \end{FPCltable}
 
 On MS-DOS 16 bit, the memory model used to compile the program is defined in one of 
@@ -9217,6 +9252,67 @@ FPC\_MM\_HUGE.
 The \unix define was added starting from \fpc version 1.0.5. The BSD
 operating systems no longer define LINUX starting with version 1.0.7.
 \end{remark}
+
+\begin{FPCltable}{ll}{Feature defines}{FPCFeaturedefines}
+Define & Feature \\ \hline
+FPC\_HAS\_FEATURE\_HEAP & Dynamic memory management\\
+FPC\_HAS\_FEATURE\_INITFINAL & Initialization and Finalization \\
+FPC\_HAS\_FEATURE\_RTTI & RTTI information \\
+FPC\_HAS\_FEATURE\_CLASSES & Classses \\
+FPC\_HAS\_FEATURE\_EXCEPTIONS & Exception support \\
+FPC\_HAS\_FEATURE\_EXITCODE & Program exit code\\
+FPC\_HAS\_FEATURE\_ANSISTRINGS & AnsiStrings\\
+FPC\_HAS\_FEATURE\_WIDESTRINGS & WideStrings \\
+FPC\_HAS\_FEATURE\_TEXTIO & Text file I/O\\
+FPC\_HAS\_FEATURE\_CONSOLEIO & Console I/O\\
+FPC\_HAS\_FEATURE\_FILEIO & Raw file I/O \\
+FPC\_HAS\_FEATURE\_RANDOM & Random function \\
+FPC\_HAS\_FEATURE\_VARIANTS & Variant support \\
+FPC\_HAS\_FEATURE\_OBJECTS & TP object support \\
+FPC\_HAS\_FEATURE\_DYNARRAYS & Dynamic arrays\\
+FPC\_HAS\_FEATURE\_THREADING & Threading support \\
+FPC\_HAS\_FEATURE\_COMMANDARGS & Command-line argument support \\
+FPC\_HAS\_FEATURE\_PROCESSES & Process execution support \\
+FPC\_HAS\_FEATURE\_STACKCHECK & Stack checking \\
+FPC\_HAS\_FEATURE\_DYNLIBS & Dynamic library loading \\
+FPC\_HAS\_FEATURE\_SOFTFPU & Software FPU emulation \\
+FPC\_HAS\_FEATURE\_OBJECTIVEC1 & Objective C support \\
+FPC\_HAS\_FEATURE\_RESOURCES & Resources support \\
+FPC\_HAS\_FEATURE\_UNICODESTRINGS & Unicode string support \\ \hline
+\end{FPCltable}
+
+\begin{FPCltable}{ll}{Temporary Feature defines}{FPCTempFeaturedefines}
+Define & Feature \\ \hline
+FPC\_HAS\_WINLIKERESOURCES & Windows-like resource \\
+FPC\_HAS\_TYPE\_EXTENDED & Extended floating point type\\
+FPC\_HAS\_TYPE\_DOUBLE & Double floating point type\\
+FPC\_HAS\_TYPE\_SINGLE & Single floating point type\\
+FPC\_HAS\_TYPE\_FLOAT128 & 128-bit floating point type\\
+FPC\_HAS\_INTERNAL\_ABS\_SHORTINT & Internal handling of Abs() for shortint (8-bit) \\
+FPC\_HAS\_INTERNAL\_ABS\_SMALLINT & Internal handling of Abs() for smallint (16-bit) \\
+FPC\_HAS\_INTERNAL\_ABS\_LONG &  Internal handling of Abs() for longint (32-bit)\\
+FPC\_HAS\_INTERNAL\_ABS\_INT64 &  Internal handling of Abs() for int64 (64-bit) \\
+FPC\_HAS\_UNICODESTRING & Unicode string type \\
+FPC\_HAS\_CPSTRING & Codepage string type\\
+FPC\_HAS\_RIP\_RELATIVE & relative addressing \\
+FPC\_HAS\_CEXTENDED & C extended type\\
+FPC\_HAS\_RESSTRINITS & Initialization of resource strings \\
+FPC\_HAS\_INTERNAL\_ROX & Internal ROX command \\
+FPC\_HAS\_LWSYNC & ? \\
+FPC\_HAS\_INTERNAL\_SAR & Internal SAR command \\
+FPC\_HAS\_OPERATOR\_ENUMERATOR & Enumerator operator support \\
+FPC\_HAS\_CONSTREF & Constref keyword support\\
+FPC\_HAS\_MEMBAR & Memory barrier support \\
+FPC\_HAS\_FEATURE\_SUPPORT & HAS\_FEATURE\_ support\\
+FPC\_HAS\_INTERNAL\_BSF & Internal support for BSF\\
+FPC\_HAS\_INTERNAL\_BSR & Internal support for BSR \\
+FPC\_HAS\_FAST\_FMA\_SINGLE & Fast floating point FMA for single floats\\
+FPC\_HAS\_FAST\_FMA\_DOUBLE &  Fast floating point FMA for double floats \\
+FPC\_HAS\_INDIRECT\_ENTRY\_INFORMATION & Indirect entry information support \\
+FPC\_HAS\_DYNAMIC\_PACKAGES & Dynamic packages support \\
+FPC\_HAS\_INDIRECT\_VAR\_ACCESS & Indirect variable access \\
+\end{FPCltable}
+
 
 
 \end{document}
