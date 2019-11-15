@@ -1836,8 +1836,10 @@ else
 override INSTALLPPULINKFILES:=$(subst $(PPUEXT),$(OEXT),$(INSTALLPPUFILES)) $(subst $(PPUEXT),$(LTOEXT),$(INSTALLPPUFILES)) $(addprefix $(STATICLIBPREFIX),$(subst $(PPUEXT),$(STATICLIBEXT),$(INSTALLPPUFILES)))
 endif
 ifneq ($(UNITTARGETDIRPREFIX),)
-override INSTALLPPUFILES:=$(addprefix $(UNITTARGETDIRPREFIX),$(notdir $(INSTALLPPUFILES)))
-override INSTALLPPULINKFILES:=$(wildcard $(addprefix $(UNITTARGETDIRPREFIX),$(notdir $(INSTALLPPULINKFILES))))
+override INSTALLPPUFILENAMES:=$(notdir $(INSTALLPPUFILES))
+override INSTALLPPULINKFILENAMES:=$(notdir $(INSTALLPPULINKFILES))
+override INSTALLPPUFILES=$(addprefix $(UNITTARGETDIRPREFIX),$(INSTALLPPUFILENAMES))
+override INSTALLPPULINKFILES=$(wildcard $(addprefix $(UNITTARGETDIRPREFIX),$(INSTALLPPULINKFILENAMES)))
 endif
 override INSTALL_CREATEPACKAGEFPC=1
 endif
@@ -1996,8 +1998,10 @@ override CLEANPPULINKFILES:=$(subst $(PPUEXT),$(OEXT),$(CLEANPPUFILES)) $(subst 
 ifdef DEBUGSYMEXT
 override CLEANPPULINKFILES+=$(subst $(PPUEXT),$(DEBUGSYMEXT),$(CLEANPPUFILES))
 endif
-override CLEANPPUFILES:=$(addprefix $(UNITTARGETDIRPREFIX),$(CLEANPPUFILES))
-override CLEANPPULINKFILES:=$(wildcard $(addprefix $(UNITTARGETDIRPREFIX),$(CLEANPPULINKFILES)))
+override CLEANPPUFILENAMES:=$(CLEANPPUFILES)
+override CLEANPPUFILES=$(addprefix $(UNITTARGETDIRPREFIX),$(CLEANPPUFILENAMES))
+override CLEANPPULINKFILENAMES:=$(CLEANPPULINKFILES)
+override CLEANPPULINKFILES=$(wildcard $(addprefix $(UNITTARGETDIRPREFIX),$(CLEANPPULINKFILENAMES)))
 endif
 fpc_clean: $(CLEANTARGET)
 ifdef CLEANEXEFILES
@@ -2390,6 +2394,7 @@ clean: fpc_clean
 	-rm -f $(CHK) $(TOC) $(LOG) $(DVI) $(PDF) $(AUX) $(OUT) $(PS) $(HTML) *.i* $(LOT) $(TXT)
 	-rm -f $(notdir $(wildcard styles/*.sty))
 distclean: fpc_distclean clean cleanexamples
+	-rm -f *.haux *.htoc *.hind *.htex *.chk
 	-rm -f *.tar.gz *.zip
 date.inc:
 	@$(ECHO) \\date\{`date +'%B %Y'`\} > date.inc
