@@ -1,6 +1,6 @@
 Program Example19;
 
-{ Program to demonstrate the fdOpen, fdwrite and fdCLose functions. }
+{ Program to demonstrate the fpOpen, fpwrite and fpCLose functions. }
 
 Uses BaseUnix;
 
