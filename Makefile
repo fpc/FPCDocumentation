@@ -2845,19 +2845,19 @@ endif  # USEL2H
 endif  # USEPLASTEX
 endif  # USEHEVEA
 fcl.chk: $(FCLXML) fcl-project.xml
-	$(FPDOC) $(FPDOCOPTS) --project=fcl-project.xml --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLCHMOPTS)
+	$(FPDOC) $(FPDOCOPTS) --content=fcl.xct --project=fcl-project.xml --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst fcl/fpdoc.css
 endif
 	@$(ECHO) '' > fcl.chk
 fclres.chk: $(FCLRESXML)
-	$(FPDOC) $(FPDOCOPTS) $(FCLRESOPTS) --format=$(HTMLFMT) --output=fclres$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLRESCHMOPTS) 
+	$(FPDOC) $(FPDOCOPTS) $(FCLRESOPTS) --content=fclres.xct  --format=$(HTMLFMT) --output=fclres$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLRESCHMOPTS) 
 ifndef CSSFILE
 	cp fpdoc.cst fclres/fpdoc.css
 endif
 	@$(ECHO) '' > fclres.chk
 rtl.chk: $(RTLXML) rtl-project.xml
-	$(FPDOC) $(FPDOCOPTS) --project=rtl-project.xml --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
+	$(FPDOC) --content=rtl.xct  $(FPDOCOPTS) --project=rtl-project.xml --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst rtl/fpdoc.css
 endif
