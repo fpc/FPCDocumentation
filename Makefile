@@ -1836,10 +1836,8 @@ else
 override INSTALLPPULINKFILES:=$(subst $(PPUEXT),$(OEXT),$(INSTALLPPUFILES)) $(subst $(PPUEXT),$(LTOEXT),$(INSTALLPPUFILES)) $(addprefix $(STATICLIBPREFIX),$(subst $(PPUEXT),$(STATICLIBEXT),$(INSTALLPPUFILES)))
 endif
 ifneq ($(UNITTARGETDIRPREFIX),)
-override INSTALLPPUFILENAMES:=$(notdir $(INSTALLPPUFILES))
-override INSTALLPPULINKFILENAMES:=$(notdir $(INSTALLPPULINKFILES))
-override INSTALLPPUFILES=$(addprefix $(UNITTARGETDIRPREFIX),$(INSTALLPPUFILENAMES))
-override INSTALLPPULINKFILES=$(wildcard $(addprefix $(UNITTARGETDIRPREFIX),$(INSTALLPPULINKFILENAMES)))
+override INSTALLPPUFILES:=$(addprefix $(UNITTARGETDIRPREFIX),$(notdir $(INSTALLPPUFILES)))
+override INSTALLPPULINKFILES:=$(wildcard $(addprefix $(UNITTARGETDIRPREFIX),$(notdir $(INSTALLPPULINKFILES))))
 endif
 override INSTALL_CREATEPACKAGEFPC=1
 endif
@@ -1998,10 +1996,8 @@ override CLEANPPULINKFILES:=$(subst $(PPUEXT),$(OEXT),$(CLEANPPUFILES)) $(subst 
 ifdef DEBUGSYMEXT
 override CLEANPPULINKFILES+=$(subst $(PPUEXT),$(DEBUGSYMEXT),$(CLEANPPUFILES))
 endif
-override CLEANPPUFILENAMES:=$(CLEANPPUFILES)
-override CLEANPPUFILES=$(addprefix $(UNITTARGETDIRPREFIX),$(CLEANPPUFILENAMES))
-override CLEANPPULINKFILENAMES:=$(CLEANPPULINKFILES)
-override CLEANPPULINKFILES=$(wildcard $(addprefix $(UNITTARGETDIRPREFIX),$(CLEANPPULINKFILENAMES)))
+override CLEANPPUFILES:=$(addprefix $(UNITTARGETDIRPREFIX),$(CLEANPPUFILES))
+override CLEANPPULINKFILES:=$(wildcard $(addprefix $(UNITTARGETDIRPREFIX),$(CLEANPPULINKFILES)))
 endif
 fpc_clean: $(CLEANTARGET)
 ifdef CLEANEXEFILES
@@ -2844,20 +2840,20 @@ include Makefile.4ht
 endif  # USEL2H
 endif  # USEPLASTEX
 endif  # USEHEVEA
-fcl.chk: $(FCLXML) fcl-project.xml
-	$(FPDOC) $(FPDOCOPTS) --content=fcl.xct --project=fcl-project.xml --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLCHMOPTS)
+fcl.chk: $(FCLXML) fcl-project.xml rtl.chk
+	$(FPDOC) $(FPDOCOPTS) --project=fcl-project.xml --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst fcl/fpdoc.css
 endif
 	@$(ECHO) '' > fcl.chk
 fclres.chk: $(FCLRESXML)
-	$(FPDOC) $(FPDOCOPTS) $(FCLRESOPTS) --content=fclres.xct  --format=$(HTMLFMT) --output=fclres$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLRESCHMOPTS) 
+	$(FPDOC) $(FPDOCOPTS) $(FCLRESOPTS)  --format=$(HTMLFMT) --output=fclres$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLRESCHMOPTS) 
 ifndef CSSFILE
 	cp fpdoc.cst fclres/fpdoc.css
 endif
 	@$(ECHO) '' > fclres.chk
 rtl.chk: $(RTLXML) rtl-project.xml
-	$(FPDOC) --content=rtl.xct  $(FPDOCOPTS) --project=rtl-project.xml --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
+	$(FPDOC) $(FPDOCOPTS) --project=rtl-project.xml --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst rtl/fpdoc.css
 endif
