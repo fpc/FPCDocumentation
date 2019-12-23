@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    nullstream
+  ====================================================================
+-->
+
+<module name="nullstream">
+<short>Unit to implement a null stream</short>
+<descr>
+The <var>nullstream</var> unit implements <link id="TNullStream"/>, a stream which acts more or less as the <var>/dev/null</var> device on unix: 
+all read and write operations will succeed, but the data is discarded on write, or null bytes are read.
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Definition of <var>TStream</var></short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="ENullStreamError">
+<short>Exception for erroneous seeks</short>
+<descr>
+<var>ENullStreamError</var> is the exception raised when <link id="TNullStream.Seek"/> results in an invalid position.
+</descr>
+<seealso>
+<link id="TNullStream.Seek"/> 
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TNullStream">
+<short>Empty data stream</short>
+<descr>
+<var>TNullStream</var> discards any data written to it (but keeps a virtual size) and returns 0 bytes when read from.
+It emulates a <link id="#rtl.Classes.TMemoryStream"/>: When writing to the stream, the size is increased as needed. 
+When reading, the maximum number of returned bytes is limited to the size of the stream.
+</descr>
+<seealso>
+<link id="TNullStream.Read"/>
+<link id="TNullStream.Write"/>
+<link id="#rtl.Classes.TStream.Size"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TNullStream.Read">
+<short>Read null bytes from the stream </short>
+<descr>
+<var>Read</var> reads <var>Count</var> null bytes from the stream. <var>Count</var> can be at most <var>Size</var>. 
+The <var>Buffer</var> will be filled with null bytes, effectively zeroing out the memory.
+The size can be increased using <var>Write</var> or by explicitly setting <var>Size</var>.
+</descr>
+<seealso>
+<link id="TNullStream.Write"/>
+<link id="#rtl.Classes.TStream.Size"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TNullStream.Read.Result">
+<short>Actual number or zero bytes</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TNullStream.Read.Buffer">
+<short>Buffer to zero out.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TNullStream.Read.Count">
+<short>Maximum number of bytes to zero out</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TNullStream.Write">
+<short>Write to stream</short>
+<descr>
+<var>Write</var> simulates a write operation: no data is actually written from <var>Buffer</var>, 
+but the size of the stream is enlarged if the amount of bytes <var>Count</var> and current position 
+in the stream make this necessary.
+</descr>
+<seealso>
+<link id="TNullStream.Read"/>
+<link id="#rtl.Classes.TStream.Size"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TNullStream.Write.Result">
+<short>Always equal to <var>Count</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TNullStream.Write.Buffer">
+<short>Buffer to write data from (ignored)</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TNullStream.Write.Count">
+<short>Max number of bytes to write.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TNullStream.Seek">
+<short>Set current position in the stream</short>
+<descr>
+<var>Seek</var> sets the current position in the stream. It simulates this operation by keeping a "virtual" position.
+See <link id="#rtl.Classes.TStream.Seek"/> for more info about the arguments.
+</descr>
+<errors>
+If the requested operation would cause the position to fall outside of the allowed range (0 to <var>Size</var>) then a <link id="ENullStreamError"/> exception is raised.
+</errors>
+<seealso>
+<link id="TNullStream.Read"/>
+<link id="TNullStream.Write"/>
+<link id="#rtl.Classes.TStream.Seek"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TNullStream.Seek.Result">
+<short>The new position</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TNullStream.Seek.Offset">
+<short>Offset from origin, in bytes.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TNullStream.Seek.Origin">
+<short>Origin of seek operation</short>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TNullStream.Create">
+<short>Create a new instance</short>
+<descr>
+<var>Create</var> initializes the size and position of the stream to zero.
+</descr>
+<seealso>
+<link id="#rtl.Classes.TStream.Position"/>
+<link id="#rtl.Classes.TStream.Size"/>
+</seealso>
+</element>
+
+</module> <!-- nullstream -->
+
+</package>
+</fpdoc-descriptions>
