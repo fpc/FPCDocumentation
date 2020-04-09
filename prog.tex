@@ -1489,6 +1489,19 @@ using the \var{-Co} command line compiler option (see the \userref).
 In Delphi, overflow checking is only switchable at the procedure level. 
 In Free Pascal, the \var{\{\$Q \}} directive can be used at the expression level.
 
+\begin{remark}
+Overflow checking and range checking (see the next section) are basically the same error, 
+except that one is detected by checking the overflow flag of the cpu and the other by 
+explicitly comparing ranges.
+
+On 64 bit cpus, integer arithmetic is performed using 64 bit integers 
+Because by convention in Pascal expressions are evaluated using the native signed integer
+type, on 64 bit cpus integer arithmetic are performed using 64 bit integers. 
+ 
+As a result, overflows cannot occur there when performing 32 bit arithmetic,
+instead a range error will occur when assigning the result to a 32 bit variable.
+\end{remark}
+
 \subsection{\var{\protect\$R} or \var{\protect\$RANGECHECKS} : Range checking}
 
 By default, the compiler doesn't generate code to check the ranges of array
@@ -1510,6 +1523,11 @@ when the call is compiled in \var{\{\$R+\}} mode.
 
 In Delphi, range checking is only switchable at the procedure level. 
 In Free Pascal, the \var{\{\$R \}} directive can be used at the expression level.
+
+\begin{remark}
+See the note on expression evaluation on 64-bit systems and the consequences
+for range checking and overflow checking.
+\end{remark}
 
 \subsection{\var{\protect\$REGION} : Mark start of collapsible region}
 The \var{\$REGION} directive is recognised for Delphi compatibility only.
