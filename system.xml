@@ -2835,7 +2835,7 @@ it can have any value. For <var>AnsiString</var> strings, <var>SetLength</var>
 </p>
 <p>In the case of a dynamic array <var>A</var>, <var>SetLength</var> sets the number
 of elements. The elements are numbered from index 0, so the count runs from
-0 to <var>Len-1</var>. If Zero is specified, the array is cleared.
+0 to <var>Len-1</var>. If Zero is specified, the array is cleared and removed from memory.
 </p>
 <p>
 In case the length is set to a smaller length than the current one, the existing elements
@@ -2849,7 +2849,7 @@ zero-terminated at the correct length.
 <p>
 Note that <var>SetLength</var> is governed by the Copy-On-Write principle for strings
 and dynamic arrays: the reference count after a call to <var>SetLength</var>
-will be 1.
+will be 1 (except when the length is zero, then the array is removed from memory).
 </p>
 <p>
 For multi-dimensional arrays, <var>SetLength</var> can be used to specify all dimensions at once:
@@ -2865,6 +2865,17 @@ end;
 <p>
 This will create a dynamic array with 10 elements, where each element in itself is a dynamic array of 20 elements.
 <var>SetLength</var> will of course always create "rectangular" arrays: all elements will have the same size.
+</p>
+<code>
+Var
+  arr : Array of Integer;
+
+begin  
+  SetLength(arr,0);
+end;  
+</code>
+<p>
+After this, <var>arr</var> is <var>Nil</var>.
 </p>
 </descr>
 <errors>
