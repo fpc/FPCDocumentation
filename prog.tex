@@ -8936,6 +8936,8 @@ when first compiling the RTL, then try the other way.
 
 \section{Compiling using \file{make}}
 
+\subsection{Basic compilation}
+
 When compiling with \var{make} it is necessary to have the above directory
 structure. Compiling the compiler is achieved with the target \var{cycle}.
 
@@ -8965,7 +8967,7 @@ The last two steps are repeated 3 times, until three passes have been made or
 until the generated compiler binary is equal to the binary it was compiled
 with. This process ensures that the compiler binary is correct.
 
-Compiling for another target:
+\subsection{Compiling for another target}
 When compiling the compiler for another target, it is necessary to specify
 the \var{OS\_TARGET} makefile variable. It can be set to the following
 values: \var{win32}, \var{go32v2}, \var{os2} and \var{linux}.
@@ -9004,6 +9006,68 @@ compile process. In general, the makefiles add any needed compiler options
 to the command line, so that the RTL and compiler can be compiled. 
 Additional options (e.g. optimization options) can be specified by passing them in
 \var{OPT}.
+
+\subsection{Installing the new compiler}
+
+To install the newly compiled compiler, the \var{install} target can be
+used:
+\begin{verbatim}
+make install
+\end{verbatim}
+
+This will install the compiler in the default location (what that is depends
+on your platform). If you want to specify the location, you can use the
+\var{INSTALL\_PREFIX} variable:
+\begin{verbatim}
+make install INSTALL_PREFIX=/home/michael/
+\end{verbatim}
+
+\subsection{Speeding up compilation}
+
+The makefile supports compiling in parallel. For this, you can use the  \var{-j N}
+make option, to start \var{N} processes. 
+
+For the packages and utils, the compilation is governed by \var{fpmake}, and make 
+just starts \var{fpmake}. 
+
+The \var{fpmake} process can also compile in parallel, but this needs a separate option 
+\var{-T N}. You need to specify this option in the
+\var{FPMAKEOPT} variable:
+\begin{verbatim}
+make all -j 7 FPMAKEOPT='-T 7'
+\end{verbatim}
+
+The last step of a normal compilation cycle is recompiling the compiler with
+whole program optimization. This can be turned off:
+\begin{verbatim}
+make cycle NOWPOCYCLE=1
+\end{verbatim}
+
+\subsection{Adding debug information}
+By default the compiler, rtl and packages are compiled without debug
+information.  You can force debug information using the \var{OPT} variable:
+\begin{verbatim}
+make all OPT=-gl
+\end{verbatim}
+If you want heaptrc for checking for memory leaks, then add the \var{-glh} option:
+\begin{verbatim}
+make all OPT=-glh
+\end{verbatim}
+
+\subsection{Various other options}
+There are some more options that can be set with special variables. 
+In general they are simply shortcuts and can be replaced with adding
+compiler command-line options to \var{OPT}:
+\begin{description}
+\item[LINKSMART=1] adds \var{-XX} to the compiler command-line options.
+\item[CREATESMART=1] adds \var{-CX} to the compiler command-line options.
+\item[DEBUG=1] adds \var{-gl} and \var{-dDEBUG} to the compiler command-line options.
+\item[RELEASE=1] adds \var{-O1r} or \var{-O2} depending on the CPU, and
+\var{-Ur} and \var{-DRELAASE} to the command-line.
+\item[STRIP=1] adds \var{-Xs} to the command-line.
+\item[OPTIMIZE=1] adds \var{-O2} to the command-line.
+\item[VERBOSE=1] adds \var{-vwni} to the command-line.
+\end{description}
 
 \section{Compiling by hand}
 
