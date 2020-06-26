@@ -109,7 +109,7 @@ begin
     end;
 end;
 
-procedure scannodesections(p:TDomNode;lvl:integer);
+procedure scannodesections(p:TDomNode;lvl:integer;lst:tstringlist);
 
 var c:TDomNode;
     s,title,classnm:domstring;
@@ -149,23 +149,43 @@ begin
          labellist.AddObject(lowercase(scanningfile+'#'+classnm),TStringClass.create(lastsectionheading));
      end;
 
+  if s='img' then
+     begin
+       classnm:=tdomelement(p).attribstrings['src'];
+       if classnm<>'' then
+          lst.add(classnm);
+     end;
   c:=p.FirstChild;
   while assigned(c) do
     begin
-      scannodesections(c,lvl+1);
+      scannodesections(c,lvl+1,lst);
       c:=c.NextSibling;
     end;
 end;
 
 
-procedure scanfileforlabels(fn:string);
+procedure fixpicdoubleslash(fn:string);
+var m,m2: TStringStream;
+    wholefile : string;
+begin
+  m:=TStringStream.create;
+  m.LoadFromFile(fn);
+  wholefile:=stringreplace(m.datastring,'pics//','pics/',[rfReplaceAll]);
+  m.free;
+  m:=TStringStream.create(wholefile);
+  m.SaveToFile(fn);
+  m.free;
+
+end;
+
+procedure scanfileforlabels(fn:string;imglist:tstringlist);
 var sx:THtmlDocument;
 
 begin
   sx:=THtmlDocument.create;
   ReadHtmlFile(sx,fn);
   scanningfile:=extractfilename(fn);
-  scannodesections(sx,0);
+  scannodesections(sx,0,imglist);
   sx.free;
 end;
 
@@ -369,10 +389,78 @@ begin
   end;
 end;
 
+function CopyFile(const SrcFilename, DestFilename: string;
+  {Flags: TCopyFileFlags; }ExceptionOnError: Boolean): boolean;
+var
+  SrcHandle: THandle;
+  DestHandle: THandle;
+  Buffer: array[1..4096] of byte;
+  ReadCount, WriteCount, TryCount: LongInt;
+begin
+  Result:=false;
+  TryCount := 0;
+  While TryCount <> 3 Do Begin
+    SrcHandle := FileOpen(SrcFilename, fmOpenRead or fmShareDenyWrite);
+    if THandle(SrcHandle)=feInvalidHandle then Begin
+      Inc(TryCount);
+      Sleep(10);
+    End
+    Else Begin
+      TryCount := 0;
+      Break;
+    End;
+  End;
+  If TryCount > 0 Then
+  begin
+    if ExceptionOnError then
+      raise EFOpenError.CreateFmt({SFOpenError}'Unable to open file "%s"', [SrcFilename])
+    else
+      exit;
+  end;
+try
+  DestHandle := FileCreate(DestFileName);
+  if (THandle(DestHandle)=feInvalidHandle) then
+  begin
+    if ExceptionOnError then
+      raise EFCreateError.CreateFmt({SFCreateError}'Unable to create file "%s"',[DestFileName])
+    else
+      Exit;
+  end;
+  try
+    repeat
+      ReadCount:=FileRead(SrcHandle,Buffer[1],High(Buffer));
+      if ReadCount<=0 then break;
+      WriteCount:=FileWrite(DestHandle,Buffer[1],ReadCount);
+      if WriteCount<ReadCount then
+      begin
+        if ExceptionOnError then
+          raise EWriteError.CreateFmt({SFCreateError}'Unable to write to file "%s"',[DestFileName])
+        else
+          Exit;
+      end;
+    until false;
+  finally
+    FileClose(DestHandle);
+  end;
+  Result := True;
+finally
+  FileClose(SrcHandle);
+end;
+end;
+
+procedure dupcopyfile(prefix,fn:string);
+begin
+
+  writeln('* copying ',fn ,' to ', prefix,'/',fn);
+  forcedirectories(prefix+'/'+ ExtractFileDir(fn));
+  copyfile(fn,prefix+'/'+ fn,true);
+end;
+
 var x : TCHMProject;
     f : TFileStream;
     i : integer;
-    ext : string;
+    fn,ext : string;
+    imglist : TStringList;
 begin
   if paramcount<2 then
     usage;
@@ -382,6 +470,9 @@ begin
    kwdfile:=paramstr(3);
   if not directoryexists(prefix) then
     usage;
+  imglist :=TStringList.create;
+  imglist.Sorted:=true;
+  imglist.Duplicates:=dupIgnore;
   prefixpath:=includetrailingpathdelimiter(prefix);
 
   labellist :=Tstringlist.create; labellist.sorted:=true; labellist.OwnsObjects:=true;
@@ -397,17 +488,31 @@ begin
   if fileexists(x.TableOfContentsFileName) then deletefile(x.TableOfContentsFileName);
   scandir(prefix,false,x.files);
   flush(output);
+  writeln('Fixing pics//');
+  for i:=0 to x.files.count-1 do
+     fixpicdoubleslash(x.files[i]);
+  writeln('Scanning for images');
   for i:=0 to x.files.count-1 do
    begin
      ext:=(extractfileext(x.files[i]));
      if startstext('.htm',ext) then
        begin
          writeln('scanning ',x.files[i],' for labels');
-         scanfileforlabels(x.files[i]);
+         scanfileforlabels(x.files[i],imglist);
        end
      else
        writeln('Data file ', x.files[i]);
    end;
+  writeln('Copying misplaced pictures');
+  for i:=0 to imglist.Count-1 do
+    begin
+      fn:=StringReplace(imglist[i],'//','/',[rfReplaceAll]);
+      if not startstext(prefix,fn) then
+        dupcopyfile(prefix,fn);
+     x.files.add(prefix+'/'+fn);
+    end;
+
+
   writeln('--- Convert toc html file to toc hhc file');
   readindex(x.defaultpage,x.TableOfContentsFileName);
   writeln('--- Convert kwd file to index');
