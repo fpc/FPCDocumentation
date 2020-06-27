@@ -509,7 +509,9 @@ begin
       fn:=StringReplace(imglist[i],'//','/',[rfReplaceAll]);
       if not startstext(prefix,fn) then
         dupcopyfile(prefix,fn);
-     x.files.add(prefix+'/'+fn);
+      fn:=prefix+'/'+fn;
+      if x.files.IndexOf(fn)<>-1 then
+        x.files.add(fn);
     end;
 
 
