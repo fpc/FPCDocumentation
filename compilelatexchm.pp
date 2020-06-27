@@ -510,10 +510,9 @@ begin
       if not startstext(prefix,fn) then
         dupcopyfile(prefix,fn);
       fn:=prefix+'/'+fn;
-      if x.files.IndexOf(fn)<>-1 then
-        x.files.add(fn);
+      if (x.files.IndexOf(fn)=-1) and (x.otherfiles.IndexOf(fn)=-1) then
+        x.otherfiles.add(fn);
     end;
-
 
   writeln('--- Convert toc html file to toc hhc file');
   readindex(x.defaultpage,x.TableOfContentsFileName);
