@@ -2384,20 +2384,21 @@ tells the compiler to compile \file{myunit} using PIC code.
 
 \subsection{\var{\protect\$POINTERMATH} : Allow use of pointer math}
 
+By default, pointer arithmetic is enabled in FPC/OBJFPC modes and disabled in DELPHI mode. 
+The directive {$POINTERMATH ON/OFF} can be used to toggle pointer arithmetic support. 
+Types declared while {$POINTERMATH ON} is in effect also support pointer arithmetic. 
+
 This boolean directive enables or disables the use of pointer arithmetic in
-expressions involving pointers. When enabled, the
-difference of 2 pointers is a valid integer expression, and an integer value 
+expressions involving pointers. 
+When enabled, the difference of 2 pointers is a valid integer expression, and an integer value 
 can be added to a pointer value.
-By default, POINTERMATH is on.
 
 The following 
 \begin{verbatim}
 {$POINTERMATH OFF}
 unit MyUnit;
 \end{verbatim}
-tells the compiler to give an error whenever pointer math appears in an
-expression.
-
+tells the compiler to give an error whenever pointer math appears in an expression.
 
 \subsection{\var{\protect\$PROFILE} : Profiling}
 
@@ -2551,7 +2552,8 @@ The compiler will issue a warning when it is encountered.
 
 \subsection{\var{\protect\$X} or \var{\protect\$EXTENDEDSYNTAX} : Extended syntax}
 
-Extended syntax allows you to drop the result of a function. This means that
+Extended syntax allows you to drop the result of a function and perform
+pointer arithmetic. This means that
 you can use a function call as if it were a procedure. By default this feature
 is on. You can switch it off using the \var{\{\$X-\}} or
 \var{\{\$EXTENDEDSYNTAX OFF\}}directive.
@@ -2573,11 +2575,27 @@ function for certain side-effects it has, but you don't need the function
 result. In this case you don't need to assign the function result, saving
 you an extra variable.
 
+Similarly, the pointer math wil be disabled:
+\begin{verbatim}
+{$x-}
+var
+  x,p : pointer;
+
+begin
+  p:=pbyte(x)+1;
+  p:=pdouble(x)+4;
+end;
+\end{verbatim}
+will result in an error for both lines:
+\begin{verbatim}
+ex.pp(13,14) Error: Operation "+" not supported for types "PByte" and "ShortInt"                                                            
+ex.pp(15,16) Error: Operation "+" not supported for types "PDouble" and "ShortInt"
+\end{verbatim}
+
 The command line compiler switch \var{-Sa1} has the same effect as the
 \var{\{\$X+\}} directive.
 
 By default, extended syntax is assumed.
-
 
 \subsection{\var{\protect\$Y} or \var{\protect\$REFERENCEINFO} : Insert Browser information}
 
