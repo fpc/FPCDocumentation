@@ -37,12 +37,14 @@ begin
       writeln ('bavail  : ',info.bavail);
       writeln ('files   : ',info.files);
       writeln ('ffree   : ',info.ffree);
-      {$ifdef FreeBSD}
-      writeln ('fsid    : ',info.fsid[0]);
-      {$else}
-      writeln ('fsid    : ',info.fsid[0]);
+{$ifdef FreeBSD}
+      writeln ('fsid : ',info.fsid[0]);
+{$else}
+{$ifndef Darwin}
+      writeln ('fsid : ',info.fsid[0]);
       writeln ('Namelen : ',info.namelen);
-      {$endif}
+{$endif}
+{$endif}
       write ('Type name of file to do fsstat. (q quits) :');
       readln (s)
 
