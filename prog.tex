@@ -1570,12 +1570,13 @@ the location where the instruction was executed
 
 \subsection{\var{\protect\$SCOPEDENUMS} Control use of scoped enumeration types}
 The boolean \var{\$SCOPEDENUMS} directive controls how enumeration type values 
-are inserted in the symbol tables. In its default state (OFF) the
-enumeration values are inserted directly in the symbol table of the current
-scope. If the directive is set to \var{ON} then the values are inserted
-inside a scope with the name of the enumeration type.
+are inserted in the symbol tables. The enumeration values are always
+inserted in a scoped manner. 
 
-Practically this means that the following is the default behavior:
+In its default state (\var{OFF}) the enumeration values are additionally inserted 
+directly in the symbol table of the current scope. That means that the
+following 2 assignments are valid: 
+
 \begin{verbatim}
 {$SCOPEDENUMS OFF}
 Type
@@ -1586,17 +1587,14 @@ Var
 
 begin
   A:=one;
-end.
-\end{verbatim}
-The value \var{one} can be referenced directly. The following will give an
-error:
-\begin{verbatim}
-begin
   A:=TMyEnum.one;
 end.
 \end{verbatim}
-However, if the \var{SCOPEDENUMS} directive is set to \var{ON}, then the
-assignment must be made as follows:
+
+If the directive is set to \var{ON} then the enumeration values are {\em
+not} inserted in the global scope.
+
+This means the assignment must be made as follows:
 \begin{verbatim}
 {$SCOPEDENUMS ON}
 Type
@@ -1607,9 +1605,11 @@ Var
 
 begin
   A:=TMyEnum.one;
+  // The following will give an error
+  // A:=one;
 end.
 \end{verbatim}
-i.e. the value must be prefixed with the type name.
+i.e. in the \var{ON} state of the directive, the value must always be prefixed with the type name.
 
 \subsection{\var{\protect\$SETC} : Define and assign a value to a symbol}
 
