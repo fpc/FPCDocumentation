@@ -6068,17 +6068,32 @@ way of internationalization.
 
 For each unit that is compiled and that contains a resourcestring section,
 the compiler generates a file that has the name of the unit, and an
-extension \file{.rst}. The format of this file is as follows:
+extension \file{.rsj}. The format of this file is a JSON file (in codepage UTF8), 
+structured as follows (formatting added for clarity):
+\begin{verbatim}
+{ "version":1,
+  "strings":[
+    {"hash":53831826,
+     "name":"custapp.serrinvalidoption",
+     "sourcebytes":[73,110,118,97,108,105,100,32,111,112,116,105,
+                    111,110,32,97,116,32,112,111,115,105,116,105,
+                    111,110,32,37,100,58,32,34, 37,115,37],
+      "value":"Invalid option at position %d: \"%s\""
+   }
+  ]
+}
+\end{verbatim}
+The global JSON  object contains 2 elements: a version number and an array
+called \var{strings}. The array contains an element (a JSON object) for every resource string in the
+unit. This JSON object contains the following properties:
 \begin{enumerate}
-\item An empty line.
-\item A line starting with a hash sign (\var{\#}) and the hash value of the
-  string, preceded by the text \var{hash value =}.
-\item A third line, containing the name of the resource string in the format
-\var{unitname.constantname}, all lowercase, followed by an equal sign, and
-the string value, in a format equal to the pascal representation of this
-string. The line may be continued on the next line, in that case it reads as
-a pascal string expression with a plus sign in it.
-\item Another empty line.
+\item \var{hash}: a has value of the string, for fast lookup.
+\item \var{name}: the fully qualified name of the sresource string, in all lowercase letters. 
+The name is composed of the unit name, a dot and the resource string
+identifier.
+\item \var{sourcebytes}: The sourcebytes are the bytes that compose the string as they
+were read from the source file.
+\item \var{value} the value of the resource string, in UTF8.
 \end{enumerate}
 If the unit contains no \var{resourcestring} section, no file is generated.
 
@@ -6103,15 +6118,29 @@ end.
 \end{verbatim}
 Will result in the following resource string file:
 \begin{verbatim}
-
-# hash value = 5048740
-rsdemo.first='First'
-
-
-# hash value = 171989989
-rsdemo.second='A Second very long string that should cover more than 1 li'+
-'ne'
-
+{ 
+  "version":1,
+  "strings":[
+    {"hash":5048740,
+     "name":"rsdemo.first",
+      "sourcebytes":[70,105,114,115,116],
+      "value":
+    "First"
+    },
+    {"hash":171989989,
+     "name":"rsdemo.second",
+     "sourcebytes":[65,32,83,101,99,111,110,100,32,
+                    118,101,114,121,32,108,111,110,
+                    103,32,115,116,114,105,110,103,
+                    32,116,104,97,116,32,115,104,
+                    111,117,108,100,32,99,111,118,
+                    101,114,32,109,111,114,101,32,
+                    116,104,97,110,32,49,32,108,
+                    105,110,101],
+     "value":"A Second very long string that 
+              should cover more than 1 line"}
+  ]
+}
 \end{verbatim}
 The hash value is calculated with the function \var{Hash}. It is present in
 the \file{objpas} unit. The value is the same value that the GNU gettext
