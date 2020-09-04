@@ -6183,84 +6183,47 @@ program, if it contains a \var{resourcestring} section as well. Each
 resourcestring is stored with its name, hash value, default value, and
 the current value, all as \var{AnsiStrings}.
 
-The objpas unit offers methods to retrieve the number of resourcestring
-tables, the number of strings per table, and the above information for each
-string. It also offers a method to set the current value of the strings.
-
-Here are the declarations of all the functions:
+The objpas unit offers 2 methods to set the current value of the strings:
 \begin{verbatim}
-Function ResourceStringTableCount : Longint;
-Function ResourceStringCount(TableIndex: longint): longint;
-Function GetResourceStringName(TableIndex,
-                               StringIndex: Longint): Ansistring;
-Function GetResourceStringHash(TableIndex,
-                               StringIndex: Longint): Longint;
-Function GetResourceStringDefaultValue(TableIndex,
-                               StringIndex: Longint): AnsiString;
-Function GetResourceStringCurrentValue(TableIndex,
-                               StringIndex: Longint): AnsiString;
-Function SetResourceStringValue(TableIndex,
-                                StringIndex : longint;
-                                Value: Ansistring): Boolean;
-Procedure SetResourceStrings (SetFunction: TResourceIterator);
+type
+  TResourceIterator = 
+    Function (Name,Value : AnsiString;  
+              Hash : Longint; 
+              arg:pointer) : AnsiString;
+
+Procedure SetResourceStrings (SetFunction: TResourceIterator;
+                              arg: pointer);
+Procedure SetUnitResourceStrings (UnitName: string;
+                               SetFunction: TResourceIterator;
+                               arg: pointer);
 \end{verbatim}
 Two other function exist, for convenience only:
 \begin{verbatim}
 Function Hash(S: AnsiString): longint;
 Procedure ResetResourceTables;
+Procedure FinalizeResourceTables;
 \end{verbatim}
 Here is a short explanation of what each function does. A more detailed
 explanation of the functions can be found in the \refref.
 \begin{description}
-\item[ResourceStringTableCount] returns the number of resource string tables
-in the program.
-\item[ResourceStringCount] returns the number of resource string entries in
-a given table (tables are denoted by a zero-based index).
-\item[GetResourceStringName] returns the name of a resource string in a
-resource table. This is the name of the unit, a dot (.) and the name of
-the string constant, all in lowercase. The strings are denoted by index,
-also zero-based.
-\item[GetResourceStringHash] returns the hash value of a resource string, as
-calculated by the compiler with the \var{Hash} function.
-\item[GetResourceStringDefaultValue] returns the default value of a resource
-string, i.e. the value that appears in the resource string declaration, and
-that is stored in the binary.
-\item[GetResourceStringCurrentValue] returns the current value of a resource
-string, i.e. the value set by the initialization (the default value), or the
-value set by some previous internationalization routine.
-\item[SetResourceStringValue] sets the current value of a resource string.
-This function must be called to initialize all strings.
 \item[SetResourceStrings] giving this function a callback will cause the
-calback to be called for all resource strings, one by one, and set the value
-of the string to the return value of the callback.
-\end{description}
-Two other functions exist, for convenience only:
-\begin{description}
+calback to be called for all resource strings, one by one. On return of the
+callback the value of the resource string will be set to the return value 
+of the callback. 
+The \var{arg} pointer is passed to the callback (this can be used to pass e.g. an object
+instance).
+\item[SetUnitResourceStrings] Is identical in behaviour to
+\var{SetResourceStrings}, but only calls the callback for the resource
+strings of unit \var{UnitName}.
 \item [Hash] can be used to calculate the hash value of a string. The hash
 value stored in the tables is the result of this function, applied on the
 default value. That value is calculated at compile time by the compiler:
 having the value available can speed up translation operations. 
 \item[ResetResourceTables] will reset all the resource strings to their
 default values. It is called by the initialization code of the objpas unit.
+\item[FinalizeResourceTables] will remove all the resource string values
+(i.e. make them empty)
 \end{description}
-
-Given some \var{Translate} function, the following code would initialize
-all resource strings:
-\begin{verbatim}
-Var I,J : Longint;
-    S : AnsiString;
-
-begin
-  For I:=0 to ResourceStringTableCount-1 do
-    For J:=0 to ResourceStringCount(i)-1 do
-      begin
-      S:=Translate(GetResourceStringDefaultValue(I,J));
-      SetResourceStringValue(I,J,S);
-      end;
-end;
-\end{verbatim}
-Other methods are of course possible, and the \var{Translate} function
-can be implemented in a variety of ways.
 \section{GNU gettext}
 The unit \file{gettext} provides a way to internationalize an application
 with the GNU \file{gettext} utilities. This unit is supplied with  the
