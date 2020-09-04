@@ -8913,6 +8913,7 @@ Operator & Action \\ \hline
 \var{*} & Intersection \\
 \var{$><$} & Symmetric difference \\
 \var{$<=$} & Contains \\
+\var{$>=$} & Left hand side set is a superset of the one on the right \\
 \var{include} & include an element in the set\\
 \var{exclude} & exclude an element from the set\\
 \var{in} & check whether an element is in a set\\ \hline
@@ -8945,6 +8946,10 @@ begin
   Writeln('[',S,']');
 end;
 
+Const
+  WorkWeek = [mon,tue,wed,thu,fri];
+  WeekEnd = [sat,sun];
+
 Var
   W : Days;
 
@@ -8959,6 +8964,10 @@ begin
    PrintDays(W);
    W:=[mon,tue,wed]><[wed,thu,fri]; // equals [mon,tue,thu,fri]
    PrintDays(W);
+   if [mon,tue]<=WorkWeek then
+     Writeln('Must work on monday and tuesday');
+   if Weekend>=[sun] then
+     Writeln('Can rest on sunday');
 end.
 \end{verbatim}
 As can be seen, the union is equivalent to a binary OR, while the
