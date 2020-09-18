@@ -3391,9 +3391,12 @@ Var
   tt : array [1..3] of string[20] = ('ikke', 'gij', 'hij');
   ti : array [1..3] of Longint = (1,2,3);
 \end{verbatim}
-For constant records, each element of the record should be specified, in
-the form \var{Field: Value}, separated by semicolons, and surrounded by round
-brackets.\index{Record!Constant}
+For constant records, each element of the record that you wish to initialize
+must be specified in the form \var{Field: Value}, separated by semicolons, 
+and surrounded by round brackets.\index{Record!Constant}. You can omit
+fields that you don't wish to initialize, in fact you can skip all fields.
+If you skip fields, the compiler will emit a warning.
+
 As an example:
 \begin{verbatim}
 Type
@@ -3402,9 +3405,17 @@ Type
     end;
 Var
   Origin : Point = (X:0.0; Y:0.0);
+  Partial : Point = (X:0.0);
+  Empty : Point = ();
 \end{verbatim}
+The above declarations will result in the following warnings:
+\begin{verbatim}
+iv.pp(7,27) Warning: Some fields coming after "X" were not initialized
+iv.pp(8,20) Warning: Some fields coming after "" were not initialized
+\end{verbatim}
+
 The order of the fields in a constant record needs to be the same as in the type
-declaration, otherwise a compile-time error will occur.
+declaration, otherwise a compile-time error will occur. 
 
 \begin{remark}
 It should be stressed that initialized variables are initialized when they
