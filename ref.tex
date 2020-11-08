@@ -9513,13 +9513,13 @@ value then \var{Statement} will never be executed.
 \end{enumerate}
 After this check, the statement after \var{Do} is executed. After the
 execution of the statement, the control variable is increased or decreased
-with 1, depending on whether \var{To} or \var{Downto} is used.
+by 1, depending on whether \var{To} or \var{Downto} is used.
 The control variable must be an ordinal type, no other
 types can be used as counters in a loop.
 
 \begin{remark}
 \begin{itemize}
-\item \fpc always calculates the upper bound before initializing
+\item \fpc always calculates the upper bound exactly once before initializing
 the counter variable with the initial value.
 \item It is not allowed to change (i.\,e. assign a value to) the value of a
 loop variable inside the loop.
@@ -9530,6 +9530,8 @@ loop was exited.
 \item For nested procedures, a loop variable must be a local variable.
 If you declare a loop variable outside the nested procedure where the loop is, the compiler will
 complain. It is however allowed to use a global variable in a procedure.
+\item The compiler does not expliticly forbid jumping with a \var{GOTO}
+statement, but doing so will result in unpredictable behaviour.
 \end{itemize}
 \end{remark}
 
@@ -9574,7 +9576,8 @@ end;
 begin
 end.
 \end{verbatim}
-because the variable \var{I} is not defined in \var{Nested}.
+because the variable \var{I} is not defined in \var{Nested} and it's not
+a global variable either.
 
 But the following will compile:
 \begin{verbatim}
