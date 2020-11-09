@@ -2321,6 +2321,27 @@ begin
   Writeln('Length ',length(A));
 end.
 \end{verbatim}
+
+\subsubsection{Dynamic array constant expressions}
+As of version 3.2 of the compiler, an array can be constructed using an
+array expression in an explicit assignment or in an initialized variable.
+However, the expression is different. In an assignment statement, it
+resembles a set expression, in an initializd variable, the same syntax as
+for a constant array of fixed length must be used:
+\begin{verbatim}
+Type
+  TIntegerArray = Array of Integer;
+
+var
+  A : TIntegerArray = (1,2,3);
+  B : TIntegerArray;
+
+begin
+  B:=[3,4,5];
+end.
+\end{verbatim}
+
+
 \subsubsection{Packing and unpacking an array}
 Arrays can be packed and bitpacked. Two array types which have the same index
 type and element type, but which are differently packed are not assignment
@@ -5835,7 +5856,9 @@ Error: No matching implementation for interface method
 \end{verbatim}
 
 Normally, the names of the methods that implement an interface, must
-equal the names of the methods in the interface definition.
+equal the names of the methods in the interface definition. The compiler
+will look for matching methods in all visible methods: the methods of the
+class, and in parent classes methods with visibility protected or higher. 
 
 However, it is possible to provide aliases for methods that make up an
 interface: that is, the compiler can be told that a method of an interface
@@ -6259,6 +6282,8 @@ when the generic class is specialized.
     procedure Sort(compare: TCompareFunc);
   end;
 \end{verbatim}
+\item Note that the type parameter names in declaration and implementation must be the
+same.
 \end{enumerate}
 
 Not only generic classes can be defined, but also other types:
@@ -6344,6 +6369,9 @@ As of version 3.0 of Free Pascal, the specialize keyword can also be used in a v
 Var
   P : specialize TList<Pointer>;
 \end{verbatim}
+The \var{specialize} keyword is part of the specialized type, so when using
+fully qualified names, the specialize keyword must be after the unit name
+and parent type names.
 
 The type in the specialize statement must be known, except in another generic type definition.
 Given the two generic class definitions:
@@ -8911,6 +8939,49 @@ is an ansistring.
 The value of the \var{\{\$H\}} switch can be used to control the type of
 constant strings; by default, they are short strings (and thus limited to
 255 characters).
+
+%
+\subsection{Dynamic array operators}
+\index{Operators!Dynamic arrays}
+There is only one dynamic array operator: \var{+}. This operator is
+available in Delphi mode, but must be enabled explicily using the modeswitch
+arrayoperators in objfpc mode:
+\begin{verbatim}
+{$mode objfpc}
+{$modeswitch arrayoperators}
+\end{verbatim}
+When enabled, its action is similar to
+the concation for strings: to concatenate the contents of the two arrays it acts on.
+The array element type must of course be identical for both arrays, i.e. the
+following will work:
+\begin{verbatim}
+{$mode objfpc}
+{$modeswitch arrayoperators}
+var
+  a,b, c : array of byte;
+
+begin
+  a:=[0,1,2];
+  b:=[3,4,5];
+  c:=a+b;
+  writeln('C has ',length(c),' elements');
+\end{verbatim}
+But the following will not work:
+\begin{verbatim}
+{$mode objfpc}
+{$modeswitch arrayoperators}
+
+var
+  b, c : array of byte;
+  a : array of integer;
+
+begin
+  a:=[0,1,2];
+  b:=[3,4,5];
+  c:=a+b;
+  writeln('C has ',length(c),' elements');
+\end{verbatim}
+The compiler will give an error when compiling this code.
 
 %
 \subsection{Set operators}
@@ -11977,7 +12048,9 @@ operator must be overloaded.
 \item[division] To divide two types, the \var{/} division
 operator must be overloaded.
 \item[addition] To add two types, the \var{+} addition
-operator must be overloaded.
+operator must be overloaded. Note that the \var{+} can not be used for
+dynamic arrays, as this is an internal compiler operation for array
+concatenation (see also the modeswitch ARRAYOPERATORS).
 \item[subtraction] To subtract two types, the \var{-} subtraction
 operator must be overloaded.
 \item[exponentiation] To exponentiate two types, the \var{**} exponentiation
