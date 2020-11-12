@@ -1324,6 +1324,39 @@ The following strings are supported:
 \item[REMOVEEMPTYPROCS] remove calls to empty procedures.
 \item[CSE] Use common subexpression elimination
 \item[DFA] Use DFA (Data Flow Analysis).
+\item[AUTOINLINE] Try to automatically inline procedures where appropriate.
+\item[LEVEL1] Level 1 optimizations.
+\item[LEVEL2] Level 2 optimizations.
+\item[LEVEL3] Level 3 optimizations.
+\item[LEVEL4] Level 4 optimizations.
+\item[SCHEDULE] ARM CPU only: perform instruction scheduling. Enabled by default at -O3 and higher. 
+\item[USEEBP] i8086 and i386 CPUs only: use the (E)BP register for register variables when
+it is not used to hold the frame pointer. Enabled by default when using
+level 4 optimizations.
+\item[USERBP] x86-64 CPU only: use the RBP register for register variables when it
+is not used to hold the frame pointer. Enabled by default when using
+level 4 optimizations.
+\item[DEADVALUES] Allow removing expressions whose result is not used, even when this can
+change program behaviour. For example, range check errors can disappear when
+indexing an array and not doing anything with the loaded value, or
+access violations due to invalid pointer dereferences can disappear.\\
+{\em Note:} it does not (and must not) remove expressions that have explicit
+side-effects.  Enabled by default when using level 4 optimizations.
+\item[CONSTPROP]  Perform constant propagation across statements. Enabled by default when using level
+3 optimizations or higher.
+\item[DEADSTORE] Remove stores to variables if the value of that variable is no longer
+used afterwards. This optimization is not enabled by default at any optimisation level.
+Requires DFA (Data Flow Analysis) to be active (otherwise it won't do anything), which itself
+is enabled by default when sing level 3 optimizations or higher.
+\item[FORCENOSTACKFRAME]  ARM and Xtensa CPU only (currently the switch is
+not yet used there). Do not use a separate frame pointer register if a
+procedure/function has no nested pure assembler procedures/functions.
+This requires the compiler to estimate the size of the stack frame in
+advance, and if that estimate is wrong this will result in an internal
+compiler error. For this reason it is not enabled by default at any optimisation level.
+\item[USELOADMODIFYSTORE] Optimise expressions of the form "x := x <op> y" by directly modifying
+the value of x rather than loading, modifying and then storing it. This is
+not enabled by default at any optimisation level.
 \end{description}
 You can disable a certain optimization by prefixing the value with \var{NO}.
 
