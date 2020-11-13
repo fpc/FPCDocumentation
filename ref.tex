@@ -7349,7 +7349,15 @@ end;
 This will allow the code to run as well.
 
 \section{Record operators}
-FPC supports the Delphi syntax for operators on extended records:
+Operator overloading is treated in detail in the chapter on operator overloading \seec{operatoroverloading}.
+However, since Delphi implemented operator overloading as part of advanced
+records, a few words need to be said about it here. 
+
+As can be seen in the syntax diagram for extended records, FPC supports the Delphi syntax for operators on extended
+records. This syntax is available in both \var{ObjFPC} and \var{Delphi} mode.
+
+In \var{objfpc} mode, the operators must be defined with their symbolic
+names, just as regular operator overloads:
 \begin{verbatim}
 {$mode objfpc}
 {$modeswitch advancedrecords}
@@ -7366,24 +7374,86 @@ begin
   Result.im:=A.im+B.im;
 end;
 \end{verbatim}
-The operators work just as they would if they were defined using the regular FPC syntax for operators.
-Note that they have the \var{class} keyword prefixed.
+The operators work just as they would if they were defined using the regular FPC syntax for
+operators, but this syntax is of course limited to record types.
+Note that they have the \var{class} keyword prefixed, and have the record type
+name prepended in the implementation.
 
-In Delphi mode, the names of the operators can also be used, similar to the syntax in Delphi:
+
+As indicated above, in \var{ObjFPC} mode, the operators must be indicated with their symbol names. 
+By contrast, in \var{Delphi} mode, the names of the operators can also be used, similar to the syntax in Delphi:
 \begin{verbatim}
 {$mode delphi}
 Type
-TComplex = record
-Re,Im : Double;
-class operator add(a,b : TComplex) : TComplex;
-end;
+  TComplex = record
+    Re,Im : Double;
+    class operator add(a,b : TComplex) : TComplex;
+  end;
 
 class operator TComplex.add (a,b : TComplex) : TComplex;
 begin
-Result.re:=A.re+B.re;
-Result.im:=A.im+B.im;
+  Result.re:=A.re+B.re;
+  Result.im:=A.im+B.im;
 end;
 \end{verbatim}
+This is of course because the syntax must be compatible with Delphi.
+
+Below is a table that links the symbolic operator names to the plain-text
+name. Note that some FPC operators do not have an equivalent usin a Delphi
+name.
+
+\begin{FPCltable}{cl}{Operator names}{operatornames}
+Symbol & Name \\ \hline
+\var{+} & add or positive \\
+\var{-} & subtract or negative \\
+\var{*} & multiply \\
+\var{/} & divide \\
+\var{**} & (no equivalent) \\
+\var{><} & (no equivalent) \\
+\var{=} & equal \\
+\var{<} & lessthan \\
+\var{<=} & lessthanorequal \\
+\var{>} & greaterthan \\
+\var{>=} & greaterthanorequal \\
+\var{<>} & notequal \\
+\var{:=} & implicit \\
+\var{in} & in \\
+\var{shr} & rightshift \\
+\var{shl} & leftshift \\
+\var{div} & intdivide \\
+\var{mod} & modulus \\
+\var{and} & bitwiseand or logicaland \\
+\var{or} & bitwiseor or logicalor \\
+\var{xor} & bitwisexor \\
+\var{not} & bitwisenot or logicalnot \\
+\end{FPCltable}
+
+For example, the power operator (**) can be used in \var{Delphi} mode using its
+symbolic name:
+\begin{verbatim}
+{$mode delphi}  
+{$modeswitch advancedrecords}  
+ 
+Type  
+  TComplex = record  
+    Re,Im : Double;  
+    class operator **(a,b : TComplex) : TComplex;  
+  end;  
+ 
+class operator TComplex.** (a,b : TComplex) : TComplex;  
+begin  
+  Result.re:=-B.re;  
+  Result.im:=-B.im;  
+end; 
+
+Var
+  a,b : TComplex;
+begin
+  a:=a**b;
+end.
+\end{verbatim}
+More information on operator overloading can be found in the chapter on
+operator overloading \seec{operatoroverloading}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Class helpers
@@ -11803,51 +11873,31 @@ obtained with regular function calls. When using operator overloading,
 it is important to keep in mind that some implicit rules may produce
 some unexpected results. This will be indicated.
 
+There are 2 ways to declare operator overloads. The first way is the
+original way as implemented in Free Pascal, and is the most powerful.
+It is discussed in this chapter. There is also a second way, which can only
+be implemented for Advanced (or extended) records, it is discussed in the
+chapter on extended records.
+
 \section{Operator declarations}
 \index{operators}
 To define the action of an operator is much like defining a function:
 \input{syntax/operator.syn}
 The parameter list for a comparison operator or an arithmetic operator
-must always contain two parameters, with the exception of the unary minus,
-where only one parameter is needed. The result type of the comparison
-operator must be \var{Boolean}.
+must always contain two parameters, with the exception of the unary minus or
+plus, where only one parameter is needed. The result type of the comparison
+operator(s) must be \var{Boolean}.
 
-For Delphi compatibility, the symbolic operator names can also be replaced by a plain-text
-name:
-\begin{FPCltable}{cl}{Operator names}{operatornames}
-Symbol & Name \\ \hline
-\var{+} & add \\
-\var{-} & subtract \\
-\var{*} & multiply \\
-\var{/} & divide \\
-\var{**} & power \\
-\var{><} & symmetricaldifference \\
-\var{=} & equal \\
-\var{<} & lessthan \\
-\var{<=} & lessthanorequal \\
-\var{>} & greaterthan \\
-\var{>=} & greaterthanorequal \\
-\var{<>} & notequal \\
-\var{:=} & assign \\
-\var{in} & in \\
-\var{shr} & rightshift \\
-\var{shl} & leftshift \\
-\var{div} & intdivide \\
-\var{mod} & modulus \\
-\var{and} & bitwiseand or logicaland \\
-\var{or} & bitwiseor or logicalor \\
-\var{xor} & bitwisexor \\
-\var{not} & bitwisenot or logicalnot \\
-\end{FPCltable}
-\begin{remark}
-When compiling in \var{Delphi} mode the names of the operators {\em must} be used,
-not the symbols.
-\end{remark}
+This way of declaring operators is only supported in \var{ObjFPC} and
+\var{FPC} modes.
+
+User-defined simple types can be used for operators, as well as records and arrays.
+It is not possible to define operators on classes.
+
 
 \begin{remark}
-When compiling in \var{Delphi} mode or \var{Objfpc} mode, the result
-identifier may be dropped. The result can then be accessed through
-the standard \var{Result} symbol.
+When compiling in \var{Objfpc} mode, the result identifier may be dropped. 
+The result can then be accessed through the standard \var{Result} symbol.
 
 If the result identifier is dropped and the compiler is not in one
 of these modes, a syntax error will occur.
