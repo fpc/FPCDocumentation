@@ -7453,7 +7453,7 @@ Symbol & Name \\ \hline
 \var{and} & bitwiseand or logicaland \\
 \var{or} & bitwiseor or logicalor \\
 \var{xor} & bitwisexor \\
-%\var{not} & bitwisenot or logicalnot \\
+\var{not} & logicalnot \\
 \end{FPCltable}
 
 For example, the power operator (**) can be used in \var{Delphi} mode using its
@@ -11916,14 +11916,22 @@ must always contain two parameters, with the exception of the unary minus or
 plus, where only one parameter is needed. The result type of the comparison
 operator(s) must be \var{Boolean}.
 
-This way of declaring operators is only supported in \var{ObjFPC} and
-\var{FPC} modes.
+
 
 User-defined simple types can be used for operators, as well as records and arrays.
-It is not possible to define operators on classes. The + and - operators
-cannot be defined on enumerated types, and the + operator cannot be
-overloaded on dynamic arrays, because it is handled internally.
-
+There are some limitations on operator overloading:
+\begin{itemize}
+\item This way of declaring operators is only supported in \var{ObjFPC} and
+\var{FPC} modes.
+\item It is not possible to define operators on classes. 
+\item The + and - operators cannot be defined on enumerated types. 
+\item When the \var{ArrayOperators} modeswitch is in effect:
+\begin{verbatim}
+{$modeSwitch ArrayOperators}
+\end{verbatim} 
+then the + operator cannot be overloaded on dynamic arrays, because it is handled internally
+by the compiler.
+\end{itemize}
 
 \begin{remark}
 When compiling in \var{Objfpc} mode, the result identifier may be dropped. 
