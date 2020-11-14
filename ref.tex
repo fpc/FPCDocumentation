@@ -5482,17 +5482,36 @@ implemented, and they can use the RTTI information in a different way.
 \end{enumerate}
 \end{remark}
 
-\subsection{Overriding properties}
-Properties can be overridden in descendent classes, just like methods. The
-difference is that for properties, the overriding can always be done:
-properties should not be marked ``virtual'' so they can be overridden, they
-are always overridable (in this sense, properties are always ``virtual'').
-The type of the overridden property does not have to be the same as the
+\subsection{Overriding and redeclaring properties}
+Properties can be both overridden and redeclared in descendent classes, just like methods.
+
+The difference is that for properties, only the \var{Stored} and \var{default} (\var{nodefault})
+modifiers can be overridden. For this the property type may not be redeclared:
+\begin{verbatim}
+type
+  TAncestor = class
+  private
+    FP1 : Integer;
+  public
+    property P: integer Read FP1 write FP1;
+  end;
+
+  TP1 = class(TAncestor)
+  public
+    property P default 1;
+  end;
+\end{verbatim}
+\begin{remark}
+\var{TClassA} should set the default value of P to \var{1} in its constructor.
+\end{remark}
+
+If you fully declare a property in the descendant with the same name of a property
+in the ancestor, it is not a {\em property override} but {\em property redeclaration}.
+The type of the redeclared property does not have to be the same as the
 parents class property type.
 
-Since they can be overridden, the keyword ``inherited'' \index{inherited} can
-also be used to refer to the parent definition of the property. For example
-consider the following code:
+The keyword ``inherited'' \index{inherited} can be used to refer to the parent
+definition of the property. For example consider the following code:
 \begin{verbatim}
 type
   TAncestor = class
@@ -5524,7 +5543,7 @@ begin
 end;
 \end{verbatim}
 TClassA redefines \var{P} as a character property instead of an integer
-property, but uses the parents \var{P} property to store the value.
+property, but uses the parent''s \var{P} property to store the value.
 
 Care must be taken when using virtual get/set routines for a property:
 setting the inherited property still observes the normal rules of inheritance
@@ -5562,6 +5581,15 @@ then this must be called explicitly:
 constructor TClassA.Create;
 begin
   inherited SetP1(3);
+end;
+\end{verbatim}
+
+The redeclared ancestor properties are still available from outside
+the descendant object with a cast to the ancestor:
+\begin{verbatim}
+function GetP(const AClassA: TClassA): Integer;
+begin
+  Result := TAncestor(AClassA).P;
 end;
 \end{verbatim}
 
