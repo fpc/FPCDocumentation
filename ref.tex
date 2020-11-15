@@ -5483,10 +5483,14 @@ implemented, and they can use the RTTI information in a different way.
 \end{remark}
 
 \subsection{Overriding and redeclaring properties}
-Properties can be both overridden and redeclared in descendent classes, just like methods.
+Properties can be both overridden and redeclared in descendent classes.
 
-The difference is that for properties, only the \var{Stored} and \var{default} (\var{nodefault})
-modifiers can be overridden. For this the property type may not be redeclared:
+Property {\em redeclaration} takes action if the property type is declared, otherwise it is property {\em override}.
+The only difference is that property {\em override} replaces or extends the inherited modifiers with the new modifiers,
+whereas property {\em redeclaration} hides all inherited modifiers that are not present in the redeclaration.
+The type of the redeclared property does not have to be the same as the parent''s class property type.
+
+The example below demonstrates the difference between property {\em override} and {\em redeclaration}.
 \begin{verbatim}
 type
   TAncestor = class
@@ -5498,17 +5502,26 @@ type
 
   TP1 = class(TAncestor)
   public
+    // property override
     property P default 1;
   end;
+
+  TPReadOnly = class(TAncestor)
+  public
+    // property redeclaration
+    property P: integer Read FP1;
+  end;
 \end{verbatim}
+
+\var{TP1} extends \var{property P} with a default value, \var{TPReadOnly} redeclares \var{property P} as read-only.
+
 \begin{remark}
-\var{TClassA} should set the default value of P to \var{1} in its constructor.
+\var{TP1} should set the default value of \var{P} to \var{1} in its constructor.
 \end{remark}
 
-If you fully declare a property in the descendant with the same name of a property
-in the ancestor, it is not a {\em property override} but {\em property redeclaration}.
-The type of the redeclared property does not have to be the same as the
-parents class property type.
+In case of both property {\em redeclaration} and property {\em override}, the access
+to the getter and setter is always static.
+I.e. property {\em override} acts only on the RTTI of the object and is not to be confused with method override.
 
 The keyword ``inherited'' \index{inherited} can be used to refer to the parent
 definition of the property. For example consider the following code:
@@ -5584,8 +5597,8 @@ begin
 end;
 \end{verbatim}
 
-The redeclared ancestor properties are still available from outside
-the descendant object with a cast to the ancestor:
+The redeclared ancestor properties are also available from inside and outside
+the descendant object with a direct cast to the ancestor:
 \begin{verbatim}
 function GetP(const AClassA: TClassA): Integer;
 begin
