@@ -1345,18 +1345,18 @@ side-effects.  Enabled by default when using level 4 optimizations.
 \item[CONSTPROP]  Perform constant propagation across statements. Enabled by default when using level
 3 optimizations or higher.
 \item[DEADSTORE] Remove stores to variables if the value of that variable is no longer
-used afterwards. This optimization is not enabled by default at any optimisation level.
+used afterwards. This optimization is not enabled by default at any optimization level.
 Requires DFA (Data Flow Analysis) to be active (otherwise it won't do anything), which itself
-is enabled by default when sing level 3 optimizations or higher.
+is enabled by default when using level 3 optimizations or higher.
 \item[FORCENOSTACKFRAME]  ARM and Xtensa CPU only (currently the switch is
 not yet used there). Do not use a separate frame pointer register if a
 procedure/function has no nested pure assembler procedures/functions.
 This requires the compiler to estimate the size of the stack frame in
 advance, and if that estimate is wrong this will result in an internal
-compiler error. For this reason it is not enabled by default at any optimisation level.
-\item[USELOADMODIFYSTORE] Optimise expressions of the form "x := x <op> y" by directly modifying
+compiler error. For this reason it is not enabled by default at any optimization level.
+\item[USELOADMODIFYSTORE] Optimize expressions of the form "x := x <op> y" by directly modifying
 the value of x rather than loading, modifying and then storing it. This is
-not enabled by default at any optimisation level.
+not enabled by default at any optimization level.
 \end{description}
 You can disable a certain optimization by prefixing the value with \var{NO}.
 
@@ -1372,7 +1372,7 @@ Multiple optimizations can be specified with:
 \begin{verbatim}
 {$OPTIMIZATION REGVAR,SIZE,LEVEL2}
 \end{verbatim}
-Dusable loop unrolling with:
+Disable loop unrolling with:
 \begin{verbatim}
 {$OPTIMIZATION NOLOOPUNROLL}
 \end{verbatim}
@@ -7008,10 +7008,10 @@ require a lot of code overhead.
 \label{se:WPO}
 
 \subsection{Overview}
-Traditionally, compilers optimise a program procedure by procedure, or at
-best compilation unit per compilation unit. Whole program optimisation (WPO)
+Traditionally, compilers optimize a program procedure by procedure, or at
+best compilation unit per compilation unit. Whole program optimization (WPO)
 means that the compiler considers all compilation units that make up a
-program or library and optimises them using the combined knowledge of how
+program or library and optimizes them using the combined knowledge of how
 they are used together in this particular case. 
 
 The way WPO generally works is as follows: 
@@ -7035,7 +7035,7 @@ implementation of WPO:
 \item All information necessary to generate a WPO feedback file for a program is
 always stored in the ppu files. This means that it is possible to use a 
 generic RTL for WPO (or, in general, any compiled unit). It does mean that 
-the RTL itself will then not be optimised, the compiled program code and 
+the RTL itself will then not be optimized, the compiled program code and 
 its units can be correctly optimized because the compiler knows everything 
 it has to know about all RTL units.
 \item The generated WPO feedback file is plain text. The idea is that it should
@@ -7079,8 +7079,8 @@ the feedback file generated in the previous step. The compiler will then
 read the information collected about the program during the previous compiler 
 run, and use it during the current compilation of units and/or program/library. 
 
-Units not recompiled during the second pass will obviously not be optimised,
-but they will still work correctly when used together with the optimised
+Units not recompiled during the second pass will obviously not be optimized,
+but they will still work correctly when used together with the optimized
 units and program/library.
 
 \begin{remark}
@@ -7094,12 +7094,12 @@ The \var{-OW} and \var{-Ow} command-line options require a comma-separated list 
 whole-program-optimization options. These are strings, each string denotes
 an option. The following is a list of available options:
 \begin{description}
-\item[all] This enables all available whole program optimisations.
+\item[all] This enables all available whole program optimizations.
 
 \item[devirtcalls] Changes virtual method calls into normal (static) method
 calls when the compiler can determine that a virtual method call will always
 go to the same static method. This makes such code both smaller and faster.
-In general, it is mainly an enabling optimisation for other optimisations,
+In general, it is mainly an enabling optimization for other optimizations,
 because it makes the program easier to analyse due to the fact that it reduces
 indirect control flow. 
 
@@ -7116,7 +7116,7 @@ them via a class instance.
 \end{enumerate}
 
 \item[optvmts]
-This optimisation looks at which class types can be instantiated and which
+This optimization looks at which class types can be instantiated and which
 virtual methods can be called in a program, and based on this information it
 replaces virtual method table (VMT) entries that can never be called with
 references to FPC\_ABSTRACTERROR. This means that such methods, unless they
@@ -7129,25 +7129,25 @@ This option has 2 limitations:
 \item Methods that are published, or getters/setters of published properties, can
 never be optimized in this way, because they can always be referred to and
 called via the RTTI (which the compiler cannot detect). 
-\item Such optimisations are not yet done for virtual class methods.
+\item Such optimizations are not yet done for virtual class methods.
 \end{enumerate}
 
 \item[wsymbolliveness]
-This parameter does not perform any optimisation by itself. It simply tells
+This parameter does not perform any optimization by itself. It simply tells
 the compiler to record which functions/procedures were kept by the linker in
 the final program. During a subsequent wpo pass, the compiler can then
 ignore the removed functions/procedures as far as WPO is concerned (e.g., if
 a particular class type is only constructed in one unused procedure, then
 ignoring this procedure can improve the effectiveness of the previous two
-optimisations). 
+optimizations). 
 
 Again, there are some limitations:
 \begin{enumerate}
-\item This optimisation requires that the nm utility is installed on the system.
+\item This optimization requires that the nm utility is installed on the system.
 For Linux binaries, objdump will also work. In the future, this information
 could also be extracted from the internal linker for the platforms that it
 supports. 
-\item Collecting information for this optimisation (using -OWsymbolliveness)
+\item Collecting information for this optimization (using -OWsymbolliveness)
 requires that smart linking is enabled (-XX) and that symbol stripping is
 disabled (-Xs-). When only using such previously collected information,
 these limitations do not apply.
