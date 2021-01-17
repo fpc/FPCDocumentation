@@ -32,6 +32,8 @@ cp user-old/*.css user
 cp ref-old/*.png ref
 cp ref-old/*.kwd ref
 cp ref-old/*.css ref
+cp -r pics prog/
+cp -r pics user/
 ./compilelatexchm prog "Programmer's Guide"
 ./compilelatexchm user "User's Guide"
 ./compilelatexchm ref "Reference Guide"  ref/ref.kwd
