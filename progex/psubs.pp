@@ -9,7 +9,7 @@ var
   s: PChar;
   FromPos, ToPos: Integer;
 begin
-  s := strnew('Test');
+  s := strnew('TestMe');
   FromPos := 2;
   ToPos := 3;
   WriteLn(SubStr(s, FromPos, ToPos));

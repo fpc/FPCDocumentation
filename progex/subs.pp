@@ -14,9 +14,9 @@ begin
   if (FromPos > 0) and (ToPos >= FromPos) then
   begin
     if Length >= FromPos then
-      SubStr := CString + FromPos - 1;
+      SubStr := CString + FromPos;
     if Length > ToPos then
-    CString[ToPos] := #0;
+    CString[ToPos+1] := #0;
   end;
 end;
 
