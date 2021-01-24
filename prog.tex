@@ -2756,7 +2756,8 @@ will be replaced immediately by \var{expr}. This replacement works
 recursively, meaning that when the compiler expanded one macro, it
 will look at the resulting expression again to see if another replacement
 can be made. This means that care should be taken when using macros, 
-because an infinite loop can occur in this manner.
+because an infinite loop can occur in this manner (recent compiler 
+versions will warn about this).
 
 Here are two examples which illustrate the use of macros:
 \begin{verbatim}
@@ -2780,8 +2781,9 @@ sum          { will be expanded to 'a:=a+b;'
 sum          { Will be infinitely recursively expanded... }
 ...
 \end{verbatim}
-On my system, the last example results in a heap error, causing the compiler
-to exit with a run-time error 203.
+As of version 3.3.1, the compiler will warn about recursive macros, but
+previous versions of the compiler would recursively expand the macros till
+it runs out of memory .
 
 \begin{remark}
 Macros defined in the interface part of a unit are not
