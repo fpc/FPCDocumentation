@@ -11,10 +11,11 @@ interface
 {$endif}
 
 {$define debugoutput}
+{$define useutf8}
 {define printattr}
 {define printchildren}
-uses typinfo,classes,
-     dom,SAX_Html,dom_html,xmlutils,htmwrite8859;
+uses typinfo,classes,gdeque,
+     dom,SAX_Html,dom_html,xmlutils,{$ifdef useutf8}htmwrite{$else}htmwrite8859{$endif};
 
 Type
         TNavButton = (NavNone,NavNext,NavUp,NavTail,NavPrev,NavPrevTail,navfront );
@@ -390,9 +391,55 @@ begin
   end;
 end;
 
+procedure Encode128plus(out ADoc: THTMLDocument; const AFilename: String);
+var
+  f: TStream;
+  m,m2 : TMemoryStream;
+  p : pbyte;
+  i,j,
+  len,lastbyte:integer;
+  s : string;
+begin
+  ADoc := nil;
+  m :=TmemoryStream.create;
+  m2 :=TmemoryStream.create;
+  f := TFileStream.Create(AFilename, fmOpenRead);
+  m.copyfrom(f,f.size);
+  f.free;
+  m.position:=0;
+  p:=m.memory;
+  len:=m.Size;
+
+  // upper iso8859-1 chars have the same value as the corresponding unicode codepoint.
+  j:=0; lastbyte:=0;
+  repeat
+
+    while (j<len) and (p[j]<128) do
+      inc(j);
+    if (j-lastbyte)>0 then
+        m2.WriteBuffer(p[lastbyte],j-lastbyte);
+    if j<len then
+      begin
+        s:='&#'+inttostr(p[j])+';';
+        m2.WriteBuffer(s[1],length(s));
+        inc(j);
+        lastbyte:=j;
+      end;
+  until j>=len;
+  m.free;
+
+  m2.position:=0;
+  try
+    ReadHTMLFile(ADoc, m2);
+  finally
+    m2.Free;
+  end;
+end;
+
+
 procedure THtmlDocFile.read(filenamewithpath,fn: string);
 begin
-  ReadHtmlFile(dom,filenamewithpath);
+  Encode128plus(dom,filenamewithpath);
   filename:=fn;
   findtitle;
   parsetitle;
