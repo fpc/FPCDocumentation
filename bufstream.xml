@@ -9,20 +9,31 @@
 -->
 
 <module name="bufstream">
-<short>Buffered stream</short>
+<short>Implements Buffered streams</short>
 <descr>
 <p>
-<file>BufStream</file> implements two one-way buffered streams: the streams
-store all data from (or for) the source stream in a memory buffer, and only
-flush the buffer when it's full (or refill it when it's empty).
-The buffer size can be specified at creation time. 2 streams are
-implemented: <link id="TReadBufStream"/> which is for reading only, and
-<link id="TWriteBufStream"/> which is for writing only.
+<file>BufStream</file> implements buffered streams. The streams store all
+data from (or for) the source stream in a memory buffer, and only flush the
+buffer when it's full (or refill it when it's empty).
 </p>
 <p>
 Buffered streams can help in speeding up read or write operations,
-especially when a lot of small read/write operations are done: it 
-avoids doing a lot of operating system calls.
+especially when a lot of small read/write operations are done. They
+avoid doing a lot of operating system calls.
+</p>
+<p>
+<link id="TReadBufStream"/> is used for reading only, and allows the buffer
+size to be specified at the time of creation.
+</p>
+<p>
+<link id="TWriteBufStream"/> is used for writing only, and allows the buffer
+size to be specified at the time of creation.
+</p>
+<p>
+<link id="TBufferedFileStream"/> can be used for reading and writing
+depending on the file mode specified at the time of creation. By
+default, it uses an internal buffer with 8 pages using a 4,096 byte page size.
+Both page count and page size are configurable using methods in the class.
 </p>
 </descr>
 
@@ -206,7 +217,8 @@ The stream provides limited forward-seek possibilities.
 <p>
 <var>Seek</var> sets the location in the buffer. Currently, only a forward
 seek is allowed. It is emulated by reading and discarding data. For an
-explanation of the parameters, see <link id="#rtl.classes.tstream.seek">TStream.Seek"</link>
+explanation of the parameters, see
+<link id="#rtl.classes.TStream.Seek">TStream.Seek"</link>.
 </p>
 <p>
 The seek method needs enhancement to enable it to do a full-featured seek.
@@ -355,7 +367,6 @@ An exception may occur if the destination stream has problems writing.
 </seealso>
 </element>
 
-
 <!-- argument Visibility: default -->
 <element name="TBufStream.Create.ASource">
 <short>Source stream to buffer data from</short>
@@ -456,7 +467,357 @@ An exception may occur if the destination stream has problems writing.
 <short>Number of bytes to write to stream</short>
 </element>
 
-</module> <!-- bufstream -->
+<!--
+********************************************************************
+#fcl.bufstream.TBufferedFileStream
+********************************************************************
+-->
 
+<element name="TBufferedFileStream">
+<short>Implements a buffered file stream with a multi-page buffer</short>
+<descr>
+<p>
+  <var>TBufferedFileStream</var> is a <var>TFileStream</var> descendant
+  which implements a buffered file stream. It provides a buffer with multiple
+  pages used for random read / write access in the file stream.
+</p>
+<p>
+  By default, It uses a fixed-size buffer consisting of 8 pages with a 4,096
+  bytes per page. Both page count and page size configurable using methods
+  in the class. The buffer is automatically maintained when the stream size or
+  position is changed, and when reading or writing content to/from the stream.
+</p>
+<p>
+  Pages which have been modified in the buffer are written to the file stream
+  as needed, when the Flush method is called, and when the class instance is
+  freed.
+</p>
+</descr>
+<seealso>
+<link id="#rtl.classes.TFileStream">TFileStream</link>
+<link id="#rtl.classes.THandleStream">THandleStream</link>
+<link id="#rtl.classes.TStream">TStream</link>
+</seealso>
+</element>
+
+<!-- public -->
+<element name="TBufferedFileStream.Create">
+<short>Constructor for the class instance</short>
+<descr>
+<p>
+<var>Create</var> is the constructor for the class instance. Overloaded
+variants are provided to match the constructors used in the ancestor
+class (<var>TFileStream</var>).
+</p>
+<p>
+Create ensures that resources are allocated for the internal buffer. By
+default, the buffer reserves 8 blocks (pages) with 4,096 bytes per block
+(page). Create calls <var>InitializeCache</var> to allocate resources
+needed for the internal buffer.
+</p>
+<p>
+Create calls the inherited constructor using the parameter values passed
+to the method.
+</p>
+<p>
+<var>AFileName</var> is the qualified path to the file where the content
+in the stream is stored.
+</p>
+<p>
+<var>Mode</var> contains the file mode used for the file handle in the
+ancestor class. It uses the following file mode constant values:
+</p>
+<dl>
+<dt>fmCreate</dt>
+<dd>Creates the file it does not already exist.</dd>
+<dt>fmOpenRead</dt>
+<dd>Opens the file for read-only access.</dd>
+<dt>fmOpenWrite</dt>
+<dd>Opens the file for write-only access.</dd>
+<dt>fmOpenReadWrite</dt>
+<dd>Opens the file for read / write access.</dd>
+</dl>
+<p>
+The file mode constants (<b>except for fmCreate</b>) can be
+<b>OR</b>'d with sharing mode constants, including:
+</p>
+<dl>
+<dt>fmShareCompat</dt>
+<dd>Opens the file in DOS-compatibility sharing mode.</dd>
+<dt>fmShareExclusive</dt>
+<dd>Locks the file for exclusive use.</dd>
+<dt>fmShareDenyWrite</dt>
+<dd>Locks the file and denies write access to other processes.</dd>
+<dt>fmShareDenyRead</dt>
+<dd>Locks the file and denies read access to other processes.</dd>
+<dt>fmShareDenyNone</dt>
+<dd>Does not lock the file.</dd>
+</dl>
+<p>
+<var>Rights</var> contains the value used as the file mode on
+UNIX-like file systems. It contains a value representing the read, write,
+execute, sticky-bit, setgid, and setuid flags used on the platform. It is
+ignored for all other platforms, and is significant only when using
+<var>fmCreate</var> in <var>Mode</var>.
+</p>
+<p>
+The <var>Size</var> for the internal buffer is updated to use the length
+of the file stream.
+</p>
+</descr>
+<seealso>
+<link id="TBufferedFileStream.InitializeCache"/>
+<link id="TBufferedFileStream.Size"/>
+<link id="#rtl.classes.TFileStream.Create">TFileStream.Create</link>
+<link id="#rtl.classes.TFileStream.Size">TFileStream.Size</link>
+</seealso>
+</element>
+<element name="TBufferedFileStream.Create.AFileName">
+<short>File name with the content for the buffered file stream</short>
+</element>
+<element name="TBufferedFileStream.Create.Mode">
+<short>File mode used to open the file</short>
+</element>
+<element name="TBufferedFileStream.Create.Rights">
+<short>File rights used to open the file</short>
+</element>
+
+<element name="TBufferedFileStream.Destroy">
+<short>Destructor for the class instance</short>
+<descr>
+<p>
+<var>Destroy</var> is the overridden destructor for the class instance.
+Destroy ensures that memory allocated to pages in the internal buffer
+is freed, and that buffer pages are released. Destroy calls the inherited
+destructor prior to exit.
+</p>
+</descr>
+<seealso>
+<link id="#rtl.classes.TFileStream.Destroy">TFileStream.Destroy</link>
+</seealso>
+</element>
+
+<element name="TBufferedFileStream.Seek">
+<short>Moves the position in the buffer relative to the specified origin</short>
+<descr>
+<p>
+<var>Seek</var> is a method used to change the current position in
+the buffered file stream by the number of bytes in <var>Offset</var>
+relative to the given <var>Origin</var>. Overloaded variants are provided
+which use <var>LongInt</var> or <var>Int64</var>  types for the Offset
+parameter, and <var>Word</var> or <var>TSeekOrigin</var> types for the
+<var>Origin</var> parameter.
+</p>
+<p>
+Seek is overridden to use the size and position in the internal buffer when
+positioning the buffered file stream.
+</p>
+<p>
+The return value contains the actual number of bytes the position was
+moved relative to the Origin. As with <var>TStream</var>, the return value
+may contain -1 if the stream position was not moved.
+</p>
+</descr>
+<seealso>
+<link id="#rtl.classes.THandleStream.Seek">THandleStream.Seek</link>
+<link id="#rtl.classes.TStream.Seek">TStream.Seek</link>
+</seealso>
+</element>
+<element name="TBufferedFileStream.Seek.Result">
+<short>Number of bytes the stream position was moved, or -1 when not moved</short>
+</element>
+<element name="TBufferedFileStream.Seek.Offset">
+<short>Number of bytes to move the stream position relative to its origin</short>
+</element>
+<element name="TBufferedFileStream.Seek.Origin">
+<short>Stream position used as the origin for the relative movement</short>
+</element>
+
+<element name="TBufferedFileStream.Read">
+<short>Reads the specified number of bytes into the Buffer parameter</short>
+<descr>
+<p>
+<var>Read</var> is used to read the specified number of bytes in
+<var>Count</var>, and store the values in the <var>Buffer</var>
+parameter. Read is overridden to use the internal buffer for the
+operation instead directly accessing of the underlying file stream.
+It locates the page in the buffer with the content for the stream
+position.
+</p>
+<p>
+Read maintains the pages in the buffer as needed for the request. This
+includes writing and recycling older buffer pages, locating the position
+in the file stream for a new buffer page, and loading the content for a
+buffer page from the file stream.
+</p>
+<p>
+<var>Buffer</var> is updated with the values copied from the internal
+buffer. The return value contains the actual number of bytes read from
+the internal buffer, or 0 when no content is available in the buffer at the
+current stream position.
+</p>
+<p>
+Use <var>Seek</var> or <var>Position</var> to set the stream position
+(when needed) prior to calling Read.
+</p>
+</descr>
+<errors>
+Read raises an <var>EStreamError</var> exception with the message
+in <var>SErrCacheUnexpectedPageDiscard</var> when a page has been
+unexpectedly discarded in the buffer.
+</errors>
+<seealso>
+<link id="#rtl.classes.THandleStream.Read">THandleStream.Read</link>
+<link id="#rtl.classes.THandleStream.Seek">THandleStream.Seek</link>
+<link id="#rtl.classes.TStream.Read">TStream.Read</link>
+<link id="#rtl.classes.TStream.Seek">TStream.Seek</link>
+<link id="#rtl.classes.TStream.Position">TStream.Position</link>
+<link id="#rtl.classes.EStreamError">EStreamError</link>
+</seealso>
+</element>
+<element name="TBufferedFileStream.Read.Result">
+<short>Number of bytes actually read in the method</short>
+</element>
+<element name="TBufferedFileStream.Read.Buffer">
+<short>Buffer where the values read in the method are stored</short>
+</element>
+<element name="TBufferedFileStream.Read.Count">
+<short>Number of bytes requested for the read operation</short>
+</element>
+
+<element name="TBufferedFileStream.Write">
+<short>Writes the specified number of bytes in Buffer to the internal page buffer(s)</short>
+<descr>
+<p>
+<var>Write</var> is a <var>LongInt</var> function used to write
+byte values in <var>Buffer</var> to the current position in the buffered
+file stream. <var>Count</var> contains the number of bytes requested
+in the write operation.
+</p>
+<p>
+Write is overridden to use the internal buffer in the operation instead of
+the underlying file stream. It locates the page in the buffer with the
+content for the buffered stream position.
+</p>
+<p>
+Write maintains the pages in the buffer as needed for the request. This
+includes recycling older buffer pages, reading values from the stream for
+a new buffer page, and storing the new content in the internal buffer.
+</p>
+<p>
+<var>Buffer</var> contains the values stored in the internal buffer in the
+request. The return value contains the actual number of bytes written, or
+0 if the write could not be performed.
+</p>
+<p>
+Use <var>Seek</var> or <var>Position</var> to set the buffer position
+(when needed) prior to calling Write.
+</p>
+</descr>
+<errors>
+Write raises an <var>EStreamError</var> exception with the message
+in <var>SErrCacheUnexpectedPageDiscard</var> when a page has been
+unexpectedly discarded in the buffer.
+</errors>
+<seealso>
+<link id="TBufferedFileStream.Seek"/>
+<link id="TBufferedFileStream.GetPosition"/>
+<link id="TBufferedFileStream.SetPosition"/>
+<link id="#rtl.classes.THandleStream.Write">THandleStream.Write</link>
+<link id="#rtl.classes.TStream.Write">TStream.Write</link>
+<link id="#rtl.classes.TStream.Position">TStream.Position</link>
+<link id="#rtl.classes.EStreamError">EStreamError</link>
+</seealso>
+</element>
+<element name="TBufferedFileStream.Write.Result">
+<short>Actual number of bytes written in the method</short>
+</element>
+<element name="TBufferedFileStream.Write.Buffer">
+<short>Buffer with the values written in the method</short>
+</element>
+<element name="TBufferedFileStream.Write.Count">
+<short>Number of bytes requested in the write operation</short>
+</element>
+
+<element name="TBufferedFileStream.Flush">
+<short>Flushes modified pages in the buffer to the file stream</short>
+<descr>
+<p>
+<var>Flush</var> is used to store modified pages in the internal
+buffer to the file stream. Flush examines the pages in the buffer to
+determine if any have been modified using <var>Write</var>.
+</p>
+<p>
+When a "dirty" page is found, the inherited <var>Seek</var> method is
+called to position the stream to the location for the modified page. The
+inherited <var>Write</var> method is called to store content in the
+modified page buffer to the stream, and the modified flag for the
+buffer page is reset.
+</p>
+<p>
+Buffer pages which not been modified are not (re-)written to the file
+stream.
+</p>
+</descr>
+<errors>
+Flush raises an <var>EStreamError</var> exception with the message
+in SErrCacheUnableToWriteExpected when the number of bytes written
+for a page does not match the allocated size for the page.
+</errors>
+<seealso>
+<link id="TBufferedFileStream.Write"/>
+<link id="#rtl.classes.THandleStream.Seek">THandleStream.Seek</link>
+<link id="#rtl.classes.THandleStream.Write">THandleStream.Write</link>
+<link id="#rtl.classes.TStream.Seek">TStream.Seek</link>
+<link id="#rtl.classes.TStream.Write">TStream.Write</link>
+<link id="#rtl.classes.EStreamError">EStreamError</link>
+</seealso>
+</element>
+
+<element name="TBufferedFileStream.InitializeCache">
+<short>Re-initializes the internal buffer for the buffered file stream</short>
+<descr>
+<p>
+Re-initializes the internal buffer to use the number of blocks (pages) in
+<var>aCacheBlockCount</var> where each block (page) has the size in
+<var>aCacheBlockSize</var>.
+</p>
+<p>
+<var>InitializeCache</var> checks pages in the internal buffer to see if
+any have been modified, and writes them to the file stream when needed.
+Memory allocated to an existing buffer page is freed, and the page is
+discarded.
+</p>
+<p>
+Values in aCacheBlockCount and aCacheBlockSize are stored internally,
+and the buffer size is updated to use the size from the file stream.
+</p>
+<p>
+InitializeCache re-allocates and zero-fills memory used for each of the
+pages in the buffer prior to exiting from the method.
+</p>
+<p>
+InitializeCache is called from the <var>Create</var> method to allocate
+buffer pages using the default count and size for the class.
+</p>
+<p>
+Use <var>Flush</var> to write modified values in page buffers to the file
+stream without re-initializing the internal buffer.
+</p>
+</descr>
+<seealso>
+<link id="TBufferedFileStream.Flush"/>
+<link id="TBufferedFileStream.Create"/>
+</seealso>
+</element>
+<element name="TBufferedFileStream.InitializeCache.aCacheBlockSize">
+<short>Number of blocks (pages) allocated in the internal buffer</short>
+</element>
+<element name="TBufferedFileStream.InitializeCache.aCacheBlockCount">
+<short>Size for each block (page) allocated in the internal buffer</short>
+</element>
+
+</module>
+<!-- bufstream -->
 </package>
 </fpdoc-descriptions>
