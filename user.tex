@@ -34,10 +34,12 @@
 \ifx\HCode\undefined
 \usepackage{enumitem}
 \fi
+\usepackage{imakeidx}
 %
 % Settings
 %
-\makeindex
+\makeindex[name=msgnr,title=Message index by number,columns=4,options=-s ./index]
+\makeindex[name=msgtxt,title=Message index by text,options=-s ./index]
 %
 % Start of document.
 %
@@ -62,14 +64,14 @@ This is the user's guide for \fpc . It describes the installation and
 use of the \fpc compiler on the different supported platforms.
 It does not attempt to give an exhaustive list of all supported commands,
 nor a definition of the Pascal language. Look at the
-\refref for these things. For a description of the possibilities and the 
+\refref for these things. For a description of the possibilities and the
 inner workings of the compiler, see the
 \progref . In the appendices of this document you will find lists of
 reserved words and compiler error messages (with descriptions).
 
 This document describes the compiler as it is/functions at the time of
-writing. First consult the \file{README} and \file{FAQ} files, distributed 
-with the compiler. The \file{README} and \file{FAQ} files are, in case of 
+writing. First consult the \file{README} and \file{FAQ} files, distributed
+with the compiler. The \file{README} and \file{FAQ} files are, in case of
 conflict with this manual, authoritative.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,14 +98,14 @@ The compiler and Run-Time Library are available for the following operating syst
 \item \linux % (Intel, AMD64, Arm, SPARC, PPC and m68k)
 \item \amiga (version 0.99.5 only)
 \item \windows
-\item Mac OS X and iOS. 
+\item Mac OS X and iOS.
 \item \ostwo (optionally using the EMX package, so it also works on DOS/Windows)
 \item \freebsd
-\item \beos 
+\item \beos
 \item \solaris
-\item \netbsd 
+\item \netbsd
 \item \netware
-\item \openbsd 
+\item \openbsd
 \item MorphOS
 \item Symbian
 \end{itemize}
@@ -118,7 +120,7 @@ degree).
 It also differs from them in the sense that you cannot use compiled units
 from one system for the other, i.e. you cannot use TP compiled units.
 
-Also, there is a text version of an Integrated Development Environment (IDE) 
+Also, there is a text version of an Integrated Development Environment (IDE)
 available for \fpc. Users that prefer a graphical IDE can have a look at the
 Lazarus\footnote{Lazarus homepage at http://http://www.lazarus-ide.org/ }
 or MSEIDE\footnote{MSEIDE+MSEGUI homepage at http://www.msegui.org/ } projects.
@@ -135,8 +137,8 @@ a database framework, image support, web support, XML support and many many more
 \end{enumerate}
 
 Of these you only need the first two, in order to be able to use the compiler.
-In this document, we describe the use of the compiler and utilities. 
-The supported (Object) Pascal Language constructs are described in the \refref, 
+In this document, we describe the use of the compiler and utilities.
+The supported (Object) Pascal Language constructs are described in the \refref,
 and the available routines (units) are described in the RTL and FCL Unit reference guides.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,14 +186,14 @@ Let's get on with something useful.
 \subsection{Hardware requirements}
 The compiler needs at least one of the following processors:
 \begin{enumerate}
-\item An Intel 80386 or higher processor. A coprocessor 
-is not required, although it will slow down your program's performance if you do 
+\item An Intel 80386 or higher processor. A coprocessor
+is not required, although it will slow down your program's performance if you do
 floating point calculations without a coprocessor, since emulation will be used.
-\item An AMD64 or EMT64 processor. 
-\item A PowerPC processor. (32 or 64 bit) 
+\item An AMD64 or EMT64 processor.
+\item A PowerPC processor. (32 or 64 bit)
 \item A SPARC processor
 \item An ARM processor (32 or 64 bit).
-\item Older FPC versions exist for the motorola 68000 processor, 
+\item Older FPC versions exist for the motorola 68000 processor,
 but these are no longer maintained.
 \end{enumerate}
 
@@ -199,7 +201,7 @@ but these are no longer maintained.
 Memory and disk requirements:
 
 The memory and disk requirements vary from platform to platform. One should
-count in the order of 100 megabytes for a basic installation; 2 Gigabytes should 
+count in the order of 100 megabytes for a basic installation; 2 Gigabytes should
 be counted if you want to recompile the compiler and all basic packages.
 
 % Software requirements
@@ -210,7 +212,7 @@ The \dos distribution contains all the files you need to run the compiler
 and compile Pascal programs.
 
 \subsubsection{Under UNIX}
-Under \unix systems (such as \linux) you need to have the following programs 
+Under \unix systems (such as \linux) you need to have the following programs
 installed :
 \begin{enumerate}
 \item \gnu \file{as}, the \gnu assembler.
@@ -232,7 +234,7 @@ programs with the Free Pascal compiler. The EMX extender can be found on:\\
 \var{ftp://hobbes.nmsu.edu/pub/os2/dev/emx/v0.9d}
 
 \subsubsection{Under Mac OS X}
-Mac OS X 10.1 or higher is required, and the developer tools or XCode 
+Mac OS X 10.1 or higher is required, and the developer tools or XCode
 must be installed. The installer contains the necessary instructions.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -264,7 +266,7 @@ compiler distribution.  The distribution zip files for DOS or OS/2 contain an
 installation program \file{INSTALL.EXE}. You must run this program to install
 the compiler.
 
-The screen of the DOS or OS/2 installation program looks like figure 
+The screen of the DOS or OS/2 installation program looks like figure
 \ref{fig:install1}.
 
 \FPCpic{The \dos install program screen}{}{install1}
@@ -287,7 +289,7 @@ It should look something like this :
 \begin{verbatim}
   SET PATH=%PATH%;C:\PP\2.6\BIN\i386-DOS
 \end{verbatim}
-for \dos or 
+for \dos or
 \begin{verbatim}
   SET PATH=%PATH%;C:\PP\2.6\BIN\i386-OS2
 \end{verbatim}
@@ -296,7 +298,7 @@ for \ostwo.
 
 On \ostwo, \fpc installs some libraries from the EMX package if they
 were not yet installed. (The installer will notify you if they should be
-installed). They are located in the 
+installed). They are located in the
 \begin{verbatim}
 C:\PP\DLL
 \end{verbatim}
@@ -332,7 +334,7 @@ If you use the \file{.rpm} format, installation is limited to
 \begin{verbatim}
 rpm -i fpc-X.Y.Z-N.ARCH.rpm
 \end{verbatim}
-Where \var{X.Y.Z} is the version number of the \file{.rpm} file, 
+Where \var{X.Y.Z} is the version number of the \file{.rpm} file,
 and \var{ARCH} is one of the supported architectures (i386, x86\_64 etc.).
 
 If you use Debian, installation is limited to
@@ -342,7 +344,7 @@ dpkg -i fpc-XXX.deb
 Here again, \var{XXX} is the version number of the \file{.deb} file.
 
 You need root access to install these packages. The \file{.tar} file
-allows you to do an installation below your home directory if you 
+allows you to do an installation below your home directory if you
 don't have root permissions.
 
 When downloading the \var{.tar} file, or the separate files,
@@ -387,14 +389,14 @@ as it will attempt to create the directories you specify.
 In principle, you can install it wherever you want, though.
 
 At the end of installation, the installation program will generate a
-configuration file (\file{fpc.cfg}) for the \fpc compiler which 
-reflects the settings that you chose. It will install this file in 
+configuration file (\file{fpc.cfg}) for the \fpc compiler which
+reflects the settings that you chose. It will install this file in
 the \file{/etc} directory or in your home directory (with name
 \file{.fpc.cfg}) if you do not have write permission in the \file{/etc}
-directory. It will make a copy in the directory where you installed the 
+directory. It will make a copy in the directory where you installed the
 libraries.
 
-The compiler will first look for a file \file{.fpc.cfg} in your home 
+The compiler will first look for a file \file{.fpc.cfg} in your home
 directory before looking in the \file{/etc} directory.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -402,7 +404,7 @@ directory before looking in the \file{/etc} directory.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Optional configuration steps}
 On any platform, after installing the compiler you may wish to set
-some environment variables. The \fpc compiler recognizes the 
+some environment variables. The \fpc compiler recognizes the
 following variables :
 
 \begin{itemize}
@@ -425,7 +427,7 @@ Also distributed in \fpc is a README file. It contains the latest
 instructions for installing \fpc, and should always be read first.
 
 Furthermore, platform-specific information and common questions
-are addressed in the \var{FAQ}. It should be read before reporting any 
+are addressed in the \var{FAQ}. It should be read before reporting any
 bug.
 
 
@@ -433,7 +435,7 @@ bug.
 % Testing the compiler
 \section{Testing the compiler}
 
-After the installation is completed and the optional environment variables 
+After the installation is completed and the optional environment variables
 are set as described above, your first program can be compiled.
 
 Included in the \fpc distribution are some demonstration programs,
@@ -466,7 +468,7 @@ This is, of course, assuming that you installed under \verb|C:\PP| or
 \file{/usr/lib/fpc/NNN}, respectively.
 
 If you got no error messages, the compiler has generated an executable
-called \file{hello.exe} under \dos, \ostwo or \windows, or \file{hello} 
+called \file{hello.exe} under \dos, \ostwo or \windows, or \file{hello}
 (no extension) under \unix and most other operating systems.
 
 To execute the program, simply type :
@@ -477,7 +479,7 @@ or
 \begin{verbatim}
   ./hello
 \end{verbatim}
-on Unices (where the current directory usually is not in the PATH). 
+on Unices (where the current directory usually is not in the PATH).
 
 If all went well, you should see the following friendly greeting:
 \begin{verbatim}
@@ -491,7 +493,7 @@ Hello world
 \label{ch:Usage}
 
 Here we describe the essentials to compile a program and a unit.
-For more advanced uses of the compiler, see the section on configuring 
+For more advanced uses of the compiler, see the section on configuring
 the compiler, and the \progref{}.
 
 The examples in this section suppose that you have an \file{fpc.cfg} which
@@ -529,8 +531,8 @@ fpc subdir/foo.pp
 will look for \file{foo.pp} in the subdirectory \file{subdir} of the current
 directory.
 
-Under case sensitive file systems (such as \linux and \unix), the name of this 
-file is case sensitive; under other operating systems (such as \dos, \windowsnt, \ostwo) 
+Under case sensitive file systems (such as \linux and \unix), the name of this
+file is case sensitive; under other operating systems (such as \dos, \windowsnt, \ostwo)
 this is not the case.
 
 % Unit files.
@@ -621,7 +623,7 @@ The following command
 \begin{verbatim}
 fpc -Fu"units/i386-linux/*"
 \end{verbatim}
-will match any directory below the \file{units/i386-linux} directory, 
+will match any directory below the \file{units/i386-linux} directory,
 but will not match the \file{units/i386-linux} directory itself, so
 you should add it manually if you want the compiler to look for files
 in this directory as well:
@@ -629,7 +631,7 @@ in this directory as well:
 fpc -Fu"units/i386-linux" -Fu"units/i386-linux/*"
 \end{verbatim}
 
-Note that (for optimization) the compiler will drop any non-existing paths 
+Note that (for optimization) the compiler will drop any non-existing paths
 from the search path, i.e. the existence of the path (after wildcard and
 environment variable expansion) will be tested.
 
@@ -641,7 +643,7 @@ end, while paths specified on the command-line are added at the beginning.
 
 Imagine the following command-line:
 \begin{verbatim}
-fpc -n -Fu/home @cfg  -Fu/usr foo.pp 
+fpc -n -Fu/home @cfg  -Fu/usr foo.pp
 \end{verbatim}
 Where the file \file{cfg} has the following contents:
 \begin{verbatim}
@@ -656,9 +658,9 @@ Using unit path: /data/FPC/installed/3.1.1/
 \end{verbatim}
 Reverting the order of the files on the command-line :
 \begin{verbatim}
-fpc -n -Fu/usr @cfg  -Fu/home foo.pp 
+fpc -n -Fu/usr @cfg  -Fu/home foo.pp
 \end{verbatim}
-Results in 
+Results in
 \begin{verbatim}
 Using unit path: /usr/
 Using unit path: /home/
@@ -667,9 +669,9 @@ Using unit path: /data/FPC/installed/3.1.1/
 \end{verbatim}
 Moving the position of \var{@cfg} will not change the path:
 \begin{verbatim}
-fpc -n @cfg -Fu/home  -Fu/usr foo.pp 
+fpc -n @cfg -Fu/home  -Fu/usr foo.pp
 \end{verbatim}
-Results in 
+Results in
 \begin{verbatim}
 Using unit path: /home/
 Using unit path: /usr/
@@ -677,14 +679,14 @@ Using unit path: /etc/
 Using unit path: /data/FPC/installed/3.1.1/
 \end{verbatim}
 
-On systems where filenames are case sensitive (such as \unix and \linux), 
+On systems where filenames are case sensitive (such as \unix and \linux),
 the compiler will :
 \begin{enumerate}
 \item Search for the original file name, i.e. preserves case.
 \item Search for the filename all lowercased.
 \item Search for the filename all uppercased.
 \end{enumerate}
-This is necessary, since Pascal is case-independent, and the statements 
+This is necessary, since Pascal is case-independent, and the statements
 \var{Uses Unit1;} or \var{uses unit1;} should have the same effect.
 
 It will do this first with the extension \file{.ppu} (the compiled unit),
@@ -778,7 +780,7 @@ You can add files to the object file search path with the \seeo{Fo} option.
 
 Not all options must be given on the compiler command line. The compiler
 can use a configuration file which can contain the same options as on the
-command line. There can be only one command-line option on each line in 
+command line. There can be only one command-line option on each line in
 the configuration file.
 
 Unless you specify the \seeo{n} option, the compiler will look
@@ -789,7 +791,7 @@ for a configuration file \file{fpc.cfg} in the following places:
 \begin{enumerate}
 \item The current directory.
 \item Your home directory, it looks for \file{.fpc.cfg}.
-\item The directory specified in the environment 
+\item The directory specified in the environment
 variable \var{PPC\_CONFIG\_PATH}.
 \item in the \file{etc} directory above the compiler directory.\\
 For instance, if the compiler is in \file{/usr/local/bin}, it will look in
@@ -852,8 +854,8 @@ could have typed:
   fpc [options] prog
 \end{verbatim}
 
-If all went well, the compiler will produce an executable file. You can execute 
-it straight away; you don't need to do anything else. 
+If all went well, the compiler will produce an executable file. You can execute
+it straight away; you don't need to do anything else.
 
 You will notice that there is also another file in your directory, with
 extension \file{.o}. This contains the object file for your program.
@@ -908,9 +910,9 @@ together in 1 static or shared library (using the \file{ppumove} tool,
 \section{Reducing the size of your program}
 
 When you created your program, it is possible to reduce the size of the
-resulting executable. This is possible, because the compiler leaves a 
-lot of information in the program which, strictly speaking, isn't required 
-for the execution of the program. 
+resulting executable. This is possible, because the compiler leaves a
+lot of information in the program which, strictly speaking, isn't required
+for the execution of the program.
 
 The surplus of information can be removed with a small program
 called \file{strip}.The usage is simple. Just type
@@ -932,9 +934,9 @@ Another technique to reduce the size of a program is to use smartlinking.
 Normally, units (including the system unit) are linked in as a whole.
 It is however possible to compile units such that they can be smartlinked.
 This means that only the functions and procedures that are actually used
-are linked in your program, leaving out any unnecessary code. The compiler 
-will turn on smartlinking with the \seeo{XX} switch. This technique is 
-described in full in the programmers guide. 
+are linked in your program, leaving out any unnecessary code. The compiler
+will turn on smartlinking with the \seeo{XX} switch. This technique is
+described in full in the programmers guide.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Problems
@@ -954,7 +956,7 @@ unit xxx}: This typically happens when
 your unit path isn't set correctly. Remember that the compiler looks for
 units only in the current directory, and in the directory where the compiler
 itself is. If you want it to look somewhere else too, you must explicitly
-tell it to do so using the \seeo{Fu} option. Or you must set up a 
+tell it to do so using the \seeo{Fu} option. Or you must set up a
 configuration file.
 \end{itemize}
 
@@ -1004,7 +1006,7 @@ in the configuration file, and at the same time you can still set some
 specific options when compiling some unit or program. First we list the
 command line options, and then we explain how to specify the command
 line options in the configuration file. When reading this, keep in mind
-that the options are case sensitive. 
+that the options are case sensitive.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1012,7 +1014,7 @@ that the options are case sensitive.
 \section{Using the command line options}
 
 The available options for the current version of the compiler are listed by
-category. Also, see \seec{commandlineoptions} for a listing as generated by 
+category. Also, see \seec{commandlineoptions} for a listing as generated by
 the current compiler.
 
 %
@@ -1024,7 +1026,7 @@ the current compiler.
 \item[-h] Print a list of all options and exit.
 \olabel{h}
 \item[-?] Same as \var{-h}, waiting after each screenfull for the enter key.
-\item[-i] Print copyright and other information. You can supply a qualifier, 
+\item[-i] Print copyright and other information. You can supply a qualifier,
 \olabel{i} as \var{-ixxx} where xxx can be one of the following:
 \begin{description}
 \item[D] : Returns the compiler date.
@@ -1092,7 +1094,7 @@ This option can be specified multiple times.
 
 \end{description}
 %
-% 
+%
 The difference between an error/fatal error/hint/warning/note is the severity:
 \begin{description}
 \item[Fatal] The compiler encountered an error, and can no longer continue
@@ -1117,7 +1119,7 @@ be ignored without too much risk, but warnings should always be checked.
 \item [-exxx] Specify \file{xxx} as the directory containing the
 executables for the programs \file{as} (the assembler) and \var{ld} (the linker).
 \olabel{e}
-\item[-FaXYZ] load units \var{XYZ} after the system unit, but before any other 
+\item[-FaXYZ] load units \var{XYZ} after the system unit, but before any other
 unit is loaded. \var{XYZ} is a comma-separated list of unit names. This can only be used
 for programs, and has the same effect as if \var{XYZ} were inserted as the
 first item in the program's \var{uses} clause.
@@ -1125,8 +1127,8 @@ first item in the program's \var{uses} clause.
 \item[-FCxxx] Set the RC compiler (resource compiler) binary name to \file{xxx}.
 \item[-Fd] Disable the compiler's internal directory cache. By default, the compiler caches the
 names of all files in a directory as soon as it looks for a single file in said directory. This ensures
-that the correct case of all file names is used in the debug information. 
-It also allows to create compiled files with the correct casing when compiling on a case-preserving 
+that the correct case of all file names is used in the debug information.
+It also allows to create compiled files with the correct casing when compiling on a case-preserving
 file systems under an OS that also support case-sensitive file systems.
 Lastly, it can also increase performance. This feature can however cause severe slowdowns
 on networked file systems, especially when compiling trivial programs in directories containing many
@@ -1134,16 +1136,16 @@ files, and such slowdowns can be addressed by disabling the cache using this swi
 \item [-FD] Same as \var{-e}.
 \item [-Fexxx] Write errors, etc. to the file named \file{xxx}.
 \olabel{Fe}
-\item [-FExxx] Write the executable and units to directory \file{xxx} 
+\item [-FExxx] Write the executable and units to directory \file{xxx}
 instead of the current directory. If this option contains a path component
-and is followed by an option \seeo{o}), then the \var{-o} path will override 
+and is followed by an option \seeo{o}), then the \var{-o} path will override
 the \var{-FE} path setting.
 \olabel{FE}
 \item [-Ffxxx] Add \file{xxx} to the framework path (only for Darwin).
 \item [-Fg] ?
 \item [-Fixxx] Add \file{xxx} to the include file search path.
 \olabel{Fi}
-\item [-Flxxx] Add \file{xxx} to the library search path. (This is also 
+\item [-Flxxx] Add \file{xxx} to the library search path. (This is also
 passed to the linker.)
 \olabel{Fl}
 \item[-FLxxx] (\linux only) Use \file{xxx} as the dynamic linker. The default is \file{/lib/ld-linux.so.2}, or
@@ -1170,7 +1172,7 @@ possible directory names found at that location. Note that the location
 itself is not included in the list. See \sees{unitsearching} for more
 information about this option.
 \olabel{Fu}
-\item [-FUxxx] Write units to directory \var{xxx} instead of the current 
+\item [-FUxxx] Write units to directory \var{xxx} instead of the current
 directory. It overrides the \var{-FE} option.
 \item [-Ixxx] \olabel{I} Add \file{xxx} to the include file search path.
 This option has the same effect as \var{-Fi}.
@@ -1198,7 +1200,7 @@ assembler file (nodes are the way the compiler represents statements or parts
 thereof internally). This is primarily intended for debugging
 the code generated by the compiler.
 \item[-ap] \olabel{ap} Use pipes instead of creating temporary assembler
-files.  This may speed up the compiler on \ostwo and \linux. 
+files.  This may speed up the compiler on \ostwo and \linux.
 Only with assemblers (such as \gnu %\file{as}) that support piping, and not
 if the internal assembler is used.
 \item[-ar] \olabel{ar} List register allocation and
@@ -1206,7 +1208,7 @@ release info in the assembler file. This is primarily intended for debugging
 the code generated by the compiler.
 \item[-at] \olabel{at} List information about
 temporary allocations and deallocations in the assembler file.
-\item [-Axxx] \olabel{A} specify what kind of assembler should be generated. 
+\item [-Axxx] \olabel{A} specify what kind of assembler should be generated.
 Here \var{xxx} is one of the following :
 \begin{description}
 \item[default] Use the built-in default.
@@ -1218,7 +1220,7 @@ Here \var{xxx} is one of the following :
 \item[nasmwin32] \windows 32-bit file using Nasm.
 \item[nasmwin64] \windows 64-bit file using Nasm.
 \item[nasmwdosx] \windows 32-bit/DOSX file using Nasm.
-\item[nasmdarwin] Object file using Nasm.darwin Mach-O64 using GNU GAS 
+\item[nasmdarwin] Object file using Nasm.darwin Mach-O64 using GNU GAS
 \item[macho]    Mach-O (Darwin, Intel 32 bit) using internal writer.
 \item[masm] Object file using Masm (Microsoft).
 \item[tasm] Object file using Tasm (Borland).
@@ -1236,7 +1238,7 @@ on classes, objects, procedures, types  and variables in a unit.
 \item[-bl] \olabel{bl} The same as \var{-b} but also generates
 information about local variables, types and procedures.
 \item[-C3] Turn on (or off) IEEE error checking for constants.
-\item[-Caxxx] Set the ABI (Application Binary Interface) to \file{xxx}. 
+\item[-Caxxx] Set the ABI (Application Binary Interface) to \file{xxx}.
 The \var{-i} option gives the possible values  for \file{xxx}.
 \item[-Cb] Generate big-endian code.
 \item[-Cc] Set the default calling convention used by the compiler.
@@ -1247,7 +1249,7 @@ dynamically linkable libraries on \linux.
 \item[-CFNN] Set the minimal floating point precision to \var{NN}. Possible
 values are 32 and 64.
 \item[-Cg] Enable generation of PIC code. This should only be necessary when
-generating libraries on \linux or other Unices. 
+generating libraries on \linux or other Unices.
 \item [-Chxxx] \olabel {Ch} Reserves \var{xxx} bytes heap. \var{xxx} should
 be between 1024 and 67107840.
 \item [-Ci] \olabel{Ci} Generate Input/Output checking code. In case some
@@ -1271,7 +1273,7 @@ if the virtual method table for that object is valid.
 \item [-Csxxx] \olabel{Cs} Set stack size to \var{xxx}.
 \item [-Ct] \olabel{Ct} Generate stack checking code. If your program
 performs a faulty stack operation, a run-rime error will be generated.
-\item [-CTNNN] \olabel{CT} Target specific code generation options: 
+\item [-CTNNN] \olabel{CT} Target specific code generation options:
 \begin{description}
 \item [cld]Emit a CLD instruction before using the x86 string instructions
 \end{description}
@@ -1290,7 +1292,7 @@ to conditionally compile parts of your code.
 \item [-g] \olabel{g} Generate debugging information for debugging with
 \file{gdb}.
 \item [-gc] Generate checks for pointers. This must be used with the
-\var{-gh} command line option. When this options is enabled, it will verify 
+\var{-gh} command line option. When this options is enabled, it will verify
 that all pointer accesses are within the heap.
 %\item [-gd] \olabel{gd} Generate debugging info for \file{dbx}.
 \item [-gg] Same as \var{-g}.
@@ -1310,15 +1312,15 @@ variables at procedure start. This can be used to detect uninitialized
 variables. The t can be specified multiple times
 \item [-gv] Emit info for valgrind. {\em Note:} this will include the \var{cmem}
 unit in your executable, replacing the default memory manager with the C memory
-manager. 
+manager.
 \item [-gw] Emit dwarf debugging info (version 2).
 \item [-gw2] Emit dwarf debugging info (version 2).
 \item [-gw3] Emit dwarf debugging info (version 3).
 \item [-gw4] Emit dwarf debugging info (version 4, experimental).
-\item[-kxxx] Pass \var{xxx} to the linker.  
+\item[-kxxx] Pass \var{xxx} to the linker.
 \item[-Nxxx] Do node tree optimizations. Here xxx is one of
 \begin{description}
-\item[u] Unroll loops   
+\item[u] Unroll loops
 \end{description}
 \item[-Oxxx] \olabel{O} Optimize the compiler's output; \var{xxx} can have one
 of the following values :
@@ -1413,7 +1415,7 @@ Use \var{fpc -i} to get a list of targets supported by the compiler binary.
 of the \var{-d} option.
 \item [-Ur] \olabel{Ur} Generate release unit files. These files will not be
 recompiled, even when the sources are available. This is useful when making
-release distributions. This also overrides the \var{-B} option for release 
+release distributions. This also overrides the \var{-B} option for release
 mode units.
 \item[-W] Set some \windows or \ostwo attributes of the generated binary. It
 can be one or more of the following
@@ -1456,7 +1458,7 @@ cross-compilation, to avoid linking with the host platform's libraries.
  \item \textbf{MXXX} : Set the name of the program entry routine.
 The default is 'main'.
 \item \textbf{m} : Generate linker map file.
-\item \textbf{n} : Use target system native linker instead of GNU ld (Solaris, AIX) 
+\item \textbf{n} : Use target system native linker instead of GNU ld (Solaris, AIX)
 \item \textbf{pXXX} :   First search for the compiler binary in the directory \var{XXX}.  (fpc command only).
 \item \textbf{PXXX} : Prepend binutils names with  \var{XXX} for cross-compiling.
 \item \textbf{rXXX} : Set library path to \var{XXX}.
@@ -1488,11 +1490,11 @@ than the \var{objfpc} mode, since some \fpc extensions are switched off.
 \item[fpc] Free Pascal dialect (default).
 %\item[gpc] Try to be gpc compatible.
 \item[macpas] Try to be compatible with Macintosh Pascal dialects.
-\item[objfpc] Switch on some Delphi extensions. This is different from 
+\item[objfpc] Switch on some Delphi extensions. This is different from
 Delphi mode, because some \fpc constructs are still available.
 \item[tp] Try to be TP/BP 7.0 compatible. This means no function overloading
 etc.
-\item[ISO] In this mode, the compiler complies with the requirements of level 
+\item[ISO] In this mode, the compiler complies with the requirements of level
 0 and level 1 of ISO/IEC 7185.
 \end{description}
 \item[-Mfeature] \olabel{M} Select language feature \var{feature}.
@@ -1539,26 +1541,26 @@ This is the default style.
 \item [intel] \var{asm} blocks contain Intel-style assembler.
 \item [default] Use the default assembler for the specified target.
 \item [direct] \var{asm} blocks should be copied as is in the assembler,
-only replacing certain variables. 
+only replacing certain variables.
 \end{description}
-\item [-S2] \olabel{Stwo} Switch on Delphi 2 extensions (\var{objfpc} mode). 
+\item [-S2] \olabel{Stwo} Switch on Delphi 2 extensions (\var{objfpc} mode).
 Deprecated, use \var{-Mobjfpc} instead.
-\item [-Sa] \olabel{Sa} Include assert statements in compiled code. Omitting 
+\item [-Sa] \olabel{Sa} Include assert statements in compiled code. Omitting
 this option will cause assert statements to be ignored.
 \item [-Sc] \olabel{Sc} Support C-style operators, i.e. \var{*=, +=, /= and
 -=}.
 \item [-Sd] \olabel{Sd} Try to be Delphi compatible. Deprecated, use
-\var{-Mdelphi} instead. 
+\var{-Mdelphi} instead.
 \item [-SeN] \olabel{Se} The compiler stops after the N-th error. Normally,
 the compiler tries to continue compiling after an error, until 50 errors are
 reached, or a fatal error is reached, and then it stops. With this switch,
 the compiler will stop after the N-th error (if N is omitted, a default of 1
 is assumed). Instead of a number, one of \var{n}, \var{h} or \var{w} can also be
-specified. 
-In that case the compiler will consider notes, hints or warnings as errors and 
+specified.
+In that case the compiler will consider notes, hints or warnings as errors and
 stop when one is encountered.
 \item[-Sf] Enable certain features in compiler and RTL. This allows for
-finer control over available language features than the mode switch. 
+finer control over available language features than the mode switch.
 Possible values are:
 \begin{description}
 \item[HEAP] Allow heap memory.
@@ -1629,7 +1631,7 @@ compiler to define only some very basic types.
 \label{se:configfile}
 Using the configuration file \file{fpc.cfg} is an alternative to command
 line options. When a configuration file is found, it is read, and the lines
-in it are treated as if you had typed them as options on the command line: 
+in it are treated as if you had typed them as options on the command line:
 Specify one option on each line of the configuration file. They are treated
 before the options that you type on the command line.
 
@@ -1640,7 +1642,7 @@ The algorithm to determine which file is used as a configuration file
 is described in \ref{searchconfig} on page \pageref{searchconfig}.
 
 When the compiler has finished reading the configuration file, it continues
-to treat the command line options. 
+to treat the command line options.
 
 One of the command line options allows you to specify a second configuration
 file: Specifying \file{@foo} on the command line will open file \file{foo},
@@ -1662,11 +1664,11 @@ It understands the following directives, which you should place starting on the 
 \item [\#INCLUDE]
 \item [\#SECTION]
 \end{description}
-They work the same way as their \{\$...\}  counterparts in Pascal source code. 
-All the default defines used to compile source code are also defined while 
-processing the configuration file. For example, if the target compiler is an 
-intel 80x86 compatible linux platform, both \var{cpu86} and \var{linux} will be 
-defined while interpreting the configuration file. For the possible default 
+They work the same way as their \{\$...\}  counterparts in Pascal source code.
+All the default defines used to compile source code are also defined while
+processing the configuration file. For example, if the target compiler is an
+intel 80x86 compatible linux platform, both \var{cpu86} and \var{linux} will be
+defined while interpreting the configuration file. For the possible default
 defines when compiling, consult Appendix G of the \progref.
 
 What follows is a description of the different directives.
@@ -1830,17 +1832,17 @@ always exists, i.e. lines following \var{\#SECTION COMMON} are always read.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Variable substitution in paths
 \section{Variable substitution in paths}
-To avoid having to edit your configuration files too often, the compiler allows 
+To avoid having to edit your configuration files too often, the compiler allows
 you to insert some variables in the paths that you specify for the compiler.
 They are specified as follows:
 \begin{verbatim}
 $VARNAME
 \end{verbatim}
-The above will be replaced with the value of the variable \var{VARNAME}. 
+The above will be replaced with the value of the variable \var{VARNAME}.
 
-Normally, only a set of compiler-defined variable names are recognized. 
-In addition to these compiler-defined variable names, the following 
-notation can be used 
+Normally, only a set of compiler-defined variable names are recognized.
+In addition to these compiler-defined variable names, the following
+notation can be used
 \begin{verbatim}
 $ENVVAR$
 \end{verbatim}
@@ -1862,14 +1864,14 @@ Additionally, under windows the following special variables are recognized:
 \item[LOCAL\_APPDATA]  Usually the directory "Local settings/Application Data" under the user's home directory.
 \item[APPDATA] Usually the directory "Application Data" under the user's home directory.
 \item[COMMON\_APPDATA] Usually the directory "Application Data" under the 'All users' directory.
-\item[PERSONAL] Usually the "My documents" directory of the user. 
+\item[PERSONAL] Usually the "My documents" directory of the user.
 \item[PROGRAM\_FILES] Usually "program files" directory on the system drive
 \item[PROGRAM\_FILES\_COMMON] Usually the "Common files" directory under the program files directory.
 \item[PROFILE] The user's home directory.
 \end{description}
 The values of these can vary based on the installation, they are fetched from the operating system.
 
-If none of the pre-defines variable names were matched, and the template name ends on \$, 
+If none of the pre-defines variable names were matched, and the template name ends on \$,
 then the environment variable with the same name is used:
 \begin{verbatim}
 -Fu$HOME$/FPC/currentversion/
@@ -1924,7 +1926,7 @@ only features supported by the original compiler are supported. Currently,
 5 modes are supported:
 \begin{description}
 \item[FPC] This is the original \fpc compiler mode: here all language
-constructs except classes, interfaces and exceptions are supported. 
+constructs except classes, interfaces and exceptions are supported.
 Objects are supported in this mode. This is the default mode of the
 compiler.
 \item[OBJFPC] This is the same mode as \var{FPC} mode, but it also includes
@@ -1933,17 +1935,17 @@ classes, interfaces and exceptions.
 to mimic the Turbo Pascal compiler as closely as possible. Obviously, only
 32-bit or 64-bit code can be compiled.
 \item[DELPHI] Delphi compatibility mode. In this mode, the compiler tries
-to resemble the Delphi compiler as best as it can: Most Delphi 7 and above 
-features are implemented. 
+to resemble the Delphi compiler as best as it can: Most Delphi 7 and above
+features are implemented.
 \item[DELPHIUNICODE] Delphi compatibility mode. In this mode, the compiler tries
 to resemble the Delphi compiler as best as it can: All Delphi 2009 and above features are
 implemented.  In this mode, string equals a unicode string.
 \item[MACPAS] the Mac Pascal compatibility mode. In this mode, the compiler
 attempts to allow all constructs that are implemented in Mac pascal. In
 particular, it attempts to compile the universal interfaces.
-\item[ISO] Standard Pascal, ISO 7185 mode. In this mode, the compiler complies 
+\item[ISO] Standard Pascal, ISO 7185 mode. In this mode, the compiler complies
 with the requirements of level 0 and level 1 of ISO/IEC 7185.
-\item[ExtendedPascal] Standard Extended Pascal, ISO 10206 mode. In this mode, the compiler complies 
+\item[ExtendedPascal] Standard Extended Pascal, ISO 10206 mode. In this mode, the compiler complies
 with the requirements of level 0 and level 1 of ISO/IEC 10206.
 \end{description}
 
@@ -1951,13 +1953,13 @@ The compiler mode can be set on a per-unit basis: each unit can have its
 own compiler mode, and it is possible to use units which have been compiled
 in different modes intertwined. The mode can be set in one of 2 ways:
 \begin{enumerate}
-\item On the command line, with the -M switch. 
-\item In the source file, with the \var{\{\$MODE \}} directive. 
+\item On the command line, with the -M switch.
+\item In the source file, with the \var{\{\$MODE \}} directive.
 \end{enumerate}
 Both ways take the name of the mode as an argument. If the unit or program
 source file does not specify a mode, the mode specified on the command-line
 is used. If the source file specifies a mode, then it overrides the mode
-given on the command-line. 
+given on the command-line.
 
 Thus compiling a unit with the \var{-M} switch as follows:
 \begin{verbatim}
@@ -1976,11 +1978,11 @@ Note that the \var{\{\$MODE \}} directive is a global directive, i.e. it is
 valid for the whole unit; Only one directive can be specified.
 
 The mode has no influence on the availability of units: all available
-units can be used, independent of the mode that is used to compile 
+units can be used, independent of the mode that is used to compile
 the current unit or program.
 
 \section{Turbo Pascal}
-\fpc was originally designed to resemble Turbo Pascal as closely as possible. 
+\fpc was originally designed to resemble Turbo Pascal as closely as possible.
 There are, of course, restrictions. Some of these are due to the fact that
 Turbo Pascal was developed  for 16-bit architectures whereas  \fpc is
 a 32-bit/64-bit compiler. Other restrictions result from the fact that \fpc works
@@ -1992,7 +1994,7 @@ Pascal, you will have no problems porting from Turbo Pascal, or even Delphi, to
 supported. This is even more so if you use the \var{-Mtp} or \var{-MObjfpc}
 switches.
 
-In the following sections we will list the Turbo Pascal and Delphi 
+In the following sections we will list the Turbo Pascal and Delphi
 constructs which are not supported in \fpc, and we will list in what
 ways \fpc extends Turbo Pascal.
 
@@ -2006,13 +2008,13 @@ which are not supported by \fpc. Where possible, we indicate the reason.
 \item Duplicate case labels are permitted in Turbo Pascal, but not
 in \fpc. This is actually a bug in Turbo Pascal, and so
 support for it will not be implemented in Free Pascal.
-\item In \tp, parameter lists of previously defined functions and 
-procedures did not have to match exactly. In Free Pascal, they must. 
+\item In \tp, parameter lists of previously defined functions and
+procedures did not have to match exactly. In Free Pascal, they must.
 The reason for this is the function overloading mechanism of
 \fpc. However, the \seeo{M} option overcomes this restriction.
 \item The Turbo Pascal variables \var{MEM, MEMW, MEML} and \var{PORT} for memory and port
 access are not available in the system unit. This is due to the operating system. Under
-\dos, both the system and the extender unit (\file {GO32}) implement the mem constuct. 
+\dos, both the system and the extender unit (\file {GO32}) implement the mem constuct.
 Under \linux, the \file{ports} unit implements such a construct for the
 \var{Ports} variable.
 \item Turbo Pascal allows you to create procedure and variable names
@@ -2024,8 +2026,8 @@ Using the \var{-Mtp} switch will solve this problem if
 you want to compile Turbo Pascal code that uses these words
 (\seec{reserved} for a list of all reserved words).
 
-\item The Turbo Pascal reserved words \var{FAR, NEAR} are ignored. 
-This is because their purpose was limited to a 16-bit environment 
+\item The Turbo Pascal reserved words \var{FAR, NEAR} are ignored.
+This is because their purpose was limited to a 16-bit environment
 and \fpc is a 32-bit/64-bit compiler.
 \item The Turbo Pascal \var{INTERRUPT} directive will work only on the \fpc \dos target.
 Other operating systems do not allow handling of interrupts by user
@@ -2033,11 +2035,11 @@ programs.
 \item By default the \fpc compiler uses  \var{AT\&T} assembler syntax.
 This is mainly because \fpc uses \gnu \var{as}. However, other assembler
 forms are available. For more information, see the \progref.
-\item Turbo Pascal's Turbo Vision is available in \fpc under the name of 
+\item Turbo Pascal's Turbo Vision is available in \fpc under the name of
 FreeVision, which should be almost 100\% compatible with Turbo Vision.
 \item Turbo Pascal's 'overlay' unit is not available. It also isn't necessary, since
 \fpc is a 32/64-bit compiler, so program size shouldn't be an issue.
-%\item Turbo Pascal has fewer reserved words than Free Pascal. 
+%\item Turbo Pascal has fewer reserved words than Free Pascal.
 %(see appendix \ref{ch:reserved} for a list of all reserved words.)
 \item The command line parameters of the compiler are different.
 \item Compiler switches and directives are mostly the same, but some extra
@@ -2054,10 +2056,10 @@ information.
 opened with \var{Rewrite}. In order to be able to read from it, it should
 be reset with \var{Reset}.
 \item Turbo Pascal destructors allowed parameters. This is not
-permitted in Free Pascal: by default, in \fpc, Destructors cannot have parameters. 
+permitted in Free Pascal: by default, in \fpc, Destructors cannot have parameters.
 This restriction can be removed by using the \var{-So} switch.
 \item Turbo Pascal permits more than one destructor for an object. In \fpc,
-there can be only one destructor. This restriction can also be removed by 
+there can be only one destructor. This restriction can also be removed by
 using the \var{-So} switch.
 \item The order in which expressions are evaluated is not necessarily the
 same. In the following expression:
@@ -2237,12 +2239,12 @@ begin
 The \var{MemAvail} and \var{MaxAvail} functions are no longer available in
 \fpc as of version 2.0. The reason for this incompatibility follows:
 
-On modern operating systems, \footnote{The DOS extender GO32V2 falls under this 
-definition of "modern" because it can use paged memory and run in 
+On modern operating systems, \footnote{The DOS extender GO32V2 falls under this
+definition of "modern" because it can use paged memory and run in
 multitasked environments.} the idea of "Available Free Memory" is not valid for an
 application.
 The reasons are:
-\begin{enumerate} 
+\begin{enumerate}
 \item One processor cycle after an application asked the OS how much memory is free,
 another application may have allocated everything.
 \item It is not clear what "free memory" means: does it include swap memory,
@@ -2251,7 +2253,7 @@ modern OS'es), does it include memory allocated to other applications but
 which can be swapped out, etc.
 \end{enumerate}
 
-Therefore, programs using \var{MemAvail} and \var{MaxAvail} functions 
+Therefore, programs using \var{MemAvail} and \var{MaxAvail} functions
 should be rewritten so they no longer use these functions, because
 it does not make sense any more on modern OS'es. There are 3 possibilities:
 \begin{enumerate}
@@ -2259,7 +2261,7 @@ it does not make sense any more on modern OS'es. There are 3 possibilities:
 \item Set the global variable "ReturnNilIfGrowHeapFails" to \var{True}
 and check after each allocation whether the pointer is different from
 \var{Nil}.
-\item Don't care and declare a dummy function called \var{MaxAvail} 
+\item Don't care and declare a dummy function called \var{MaxAvail}
 which always returns \var{High(LongInt)} (or some other constant).
 \end{enumerate}
 
@@ -2277,8 +2279,8 @@ the \file{Dos} unit also for go32v2 executables. The system unit contains the
 boolean variable \var{LFNsupport}. If it is set to \var{True} then all
 system unit functions and \file{Dos} unit functions will use long file names
 if they are available. This should be so on \windows 95 and 98, but
-not on \windows NT or \windows 2000. The system unit will check this 
-by calling \dos function \var{71A0h} and checking whether long filenames 
+not on \windows NT or \windows 2000. The system unit will check this
+by calling \dos function \var{71A0h} and checking whether long filenames
 are supported on the \file{C:} drive.
 
 It is possible to disable the long filename support by setting the
@@ -2287,10 +2289,10 @@ to compile programs that need long filenames as native \windows applications.
 
 \section{Porting Delphi code}
 
-Porting Delphi code should be quite painless. The \var{Delphi} mode of the 
-compiler tries to mimic Delphi as closely as possible. 
-This mode can be enabled using the \var{-Mdelphi} command line switch, 
-or by inserting the following code in the sources before the \var{unit} 
+Porting Delphi code should be quite painless. The \var{Delphi} mode of the
+compiler tries to mimic Delphi as closely as possible.
+This mode can be enabled using the \var{-Mdelphi} command line switch,
+or by inserting the following code in the sources before the \var{unit}
 or \var{program} clause:
 \begin{verbatim}
 {$IFDEF FPC}
@@ -2299,33 +2301,33 @@ or \var{program} clause:
 \end{verbatim}
 This ensures that the code will still compile with both Delphi and FPC.
 
-Nevertheless, there are some things that will not work. 
-Delphi compatibility is relatively complete up to Delphi 7. 
-New constructs in higher versions of Delphi 
+Nevertheless, there are some things that will not work.
+Delphi compatibility is relatively complete up to Delphi 7.
+New constructs in higher versions of Delphi
 (notably, the versions that work with .NET) are not supported.
 
 \subsection{Missing language constructs}
 At the level of language compatibility, FPC is very compatible with Delphi:
-it can compile most of FreeCLX, the free Widget library that was shipped 
+it can compile most of FreeCLX, the free Widget library that was shipped
 with Delphi 6, Delphi 7 and Kylix.
 
 Currently, the only missing language constructs are:
 \begin{enumerate}
 \item \var{Dynamic} methods are actually the same as \var{virtual}.
-\item \var{Const} for a parameter to a procedure does not necessarily 
+\item \var{Const} for a parameter to a procedure does not necessarily
 mean that the variable or value is passed by reference.
 \item Packages are not supported.
 \end{enumerate}
 
-There are some inline assembler constructs which are not supported, 
-and since \fpc is designed to be platform independent, it is quite 
+There are some inline assembler constructs which are not supported,
+and since \fpc is designed to be platform independent, it is quite
 unlikely that these constructs will be supported in the future.
 
-Note that the \var{-Mobjfpc} mode switch is to a large degree Delphi 
+Note that the \var{-Mobjfpc} mode switch is to a large degree Delphi
 compatible, but is more strict than Delphi. The most notable differences
 are:
 \begin{enumerate}
-\item Parameters or local variables of methods cannot have the same 
+\item Parameters or local variables of methods cannot have the same
 names as properties of the class in which they are implemented.
 \item The address operator is needed when assigning procedural variables (or event handlers).
 \item AnsiStrings are not switched on by default.
@@ -2336,10 +2338,10 @@ overload is called. This may result in different results.
 \end{enumerate}
 
 \subsection{Missing calls / API incompatibilities}
-Delphi is heavily bound to Windows. Because of this, it introduced a lot of 
+Delphi is heavily bound to Windows. Because of this, it introduced a lot of
 Windows-isms in the API (e.g. file searching and opening, loading libraries).
 
-\fpc was designed to be portable, so things that are very Windows 
+\fpc was designed to be portable, so things that are very Windows
 specific are missing, although the \fpc team tries to minimize this.
 The following are the main points that should be considered:
 
@@ -2349,33 +2351,33 @@ you must explicitly enable the GUI application type for Windows:
 \begin{verbatim}
 {$APPTYPE GUI}
 \end{verbatim}
-\item The \file{Windows} unit provides access to most of the core 
-Win32 API. Some calls may have different parameter lists: instead 
-of declaring a parameter as passed by reference (var), a pointer 
-is used (as in C). For most cases, \fpc provides overloaded versions 
+\item The \file{Windows} unit provides access to most of the core
+Win32 API. Some calls may have different parameter lists: instead
+of declaring a parameter as passed by reference (var), a pointer
+is used (as in C). For most cases, \fpc provides overloaded versions
 of such calls.
-\item Widestrings. Widestring management is not automatic in \fpc, 
-since various platforms have different ways of dealing with widestring 
-encodings and Multi-Byte Character Sets. 
+\item Widestrings. Widestring management is not automatic in \fpc,
+since various platforms have different ways of dealing with widestring
+encodings and Multi-Byte Character Sets.
 FPC supports Widestrings, but may not use the same encoding as on Windows.
 
 Note that in order to have correct widestring management, you need to
 include the \file{cwstring} unit on Unix/\linux platforms: This unit
 initializes the widestring manager with the necessary callbacks which
 use the C library to implement all needed widestring functionality.
-\item Threads: At this moment, \fpc does not offer native thread 
-management on all platforms; on Unix, linking to the C library is 
-needed to provide thread management in an FPC application. 
-This means that a \file{cthreads} unit must be included to enable 
+\item Threads: At this moment, \fpc does not offer native thread
+management on all platforms; on Unix, linking to the C library is
+needed to provide thread management in an FPC application.
+This means that a \file{cthreads} unit must be included to enable
 threads.
-\item A much-quoted example is the \var{SetLastOSError} call. 
+\item A much-quoted example is the \var{SetLastOSError} call.
 This is not supported, and will never be supported.
 \item Filename Case sensitivity: Pascal is a case-insensitive language,
 so the uses clause should also be case insensitive. Free Pascal ensures
-case insensitive filenames by also searching for a lowercase version 
+case insensitive filenames by also searching for a lowercase version
 of the file. Kylix does not do this, so this could create problems
 if two differently cased versions of the same filename are in the path.
-\item RTTI is NOT stored in the same way as for Delphi. The format is mostly compatible, but may differ. This should not be a problem if the API of the TypeInfo unit 
+\item RTTI is NOT stored in the same way as for Delphi. The format is mostly compatible, but may differ. This should not be a problem if the API of the TypeInfo unit
 is used and no direct access to the RTTI information is attempted.
 \item By default, sets are of different size than in Delphi, but set size
 can be specified using directives or command line switches.
@@ -2385,11 +2387,11 @@ line switches.
 \item In general, one should not make assumptions about the internal
 structure of complex types such as records, objects, classes and their
 associated structure. For example, the VMT table layout is different, the
-alignment of fields in a record may be different, etc. 
+alignment of fields in a record may be different, etc.
 \item The same is true for basic types: on other processors the high and low
 bytes of a word or integer may not be at the same location as on an Intel
 processor (the endianness is different).
-\item Names of local variables and method arguments are not allowed to 
+\item Names of local variables and method arguments are not allowed to
 match the name of a property or field of the class: this is bad practise,
 as there can be confusion as to which of the two is meant.
 \end{itemize}
@@ -2402,22 +2404,22 @@ Switching on Dephi compatibility mode has the following effect:
 some basic types: \var{Integer} is 32-bit for instance.
 \item The address operator (@) is no longer needed to set event handlers
 (i.e. assign to procedural variables or properties).
-\item Names of local variables and method parameters in classes can match 
+\item Names of local variables and method parameters in classes can match
 the name of properties or field of the class.
-\item The \var{String} keyword implies \var{AnsiString} by default. 
+\item The \var{String} keyword implies \var{AnsiString} by default.
 \item Operator overloading is switched off.
 \end{enumerate}
 
 \subsection{Best practices for porting}
 
-When encountering differences in Delphi/FPC calls, the best thing to 
-do is not to insert IFDEF statements whenever a difference is 
-encountered, but to create a separate unit which is only used 
-when compiling with FPC. The missing/incompatible calls can 
-then be implemented in that unit. This will keep the code more 
+When encountering differences in Delphi/FPC calls, the best thing to
+do is not to insert IFDEF statements whenever a difference is
+encountered, but to create a separate unit which is only used
+when compiling with FPC. The missing/incompatible calls can
+then be implemented in that unit. This will keep the code more
 readable and easier to maintain.
 
-If a language construct difference is found, then the \fpc team 
+If a language construct difference is found, then the \fpc team
 should be contacted and a bug should be reported.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2426,27 +2428,27 @@ should be contacted and a bug should be reported.
 
 \section{Writing portable code}
 
-\fpc is designed to be cross-platform. This means that the basic RTL 
-units are usable on all platforms, and the compiler behaves the same 
-on all platforms (as far as possible).  The Object Pascal 
+\fpc is designed to be cross-platform. This means that the basic RTL
+units are usable on all platforms, and the compiler behaves the same
+on all platforms (as far as possible).  The Object Pascal
 language is the same on all platforms. Nevertheless, FPC comes with a
-lot of units that are not portable, but provide access to all 
+lot of units that are not portable, but provide access to all
 possibilities that a platform provides.
 
 The following are some guidelines to consider when writing portable code:
 \begin{itemize}
-\item Avoid system-specific units. The system unit, the objects and 
-classes units and the SysUtils unit are guaranteed to work on all 
-systems. So is the DOS unit, but that is deprecated. 
-\item Avoid direct hardware access. Limited, console-like hardware 
-access is available for most platforms in the Video, Mouse and  
+\item Avoid system-specific units. The system unit, the objects and
+classes units and the SysUtils unit are guaranteed to work on all
+systems. So is the DOS unit, but that is deprecated.
+\item Avoid direct hardware access. Limited, console-like hardware
+access is available for most platforms in the Video, Mouse and
 Keyboard units.
-\item Do not use hard-coded filename conventions. 
+\item Do not use hard-coded filename conventions.
 See below for more information on this.
 \item Make no assumptions on the internal representation of types. Various
 processors store information in different ways ('endianness').
-\item If system-specific functionality is needed, it is best to 
-separate this out in a single unit. Porting efforts will then be 
+\item If system-specific functionality is needed, it is best to
+separate this out in a single unit. Porting efforts will then be
 limited to re-implementing this unit for the new platform.
 \item Don't use assembler, unless you have to. Assembler is processor
 specific. Some instructions will not work even on the same processor family.
@@ -2461,7 +2463,7 @@ The system unit contains some constants which describe file access on a system:
 \item[AllFilesMask] a file mask that will return all files in a directory.
 This is \var{*} on Unix-like platforms, and \var{*.*} on dos and windows
 like platforms.
-\item[LineEnding] A character or string which describes the end-of-line marker 
+\item[LineEnding] A character or string which describes the end-of-line marker
 used on the current platform. Commonly, this is one of \#10, \#13\#10 or \#13.
 \item[LFNSupport] A boolean that indicates whether the system supports long filenames
 (i.e. is not limited to MS-DOS 8.3 filenames).
@@ -2474,20 +2476,20 @@ is used to separate the drive indication from the path.
 \item[FileNameCaseSensitive] A boolean that indicates whether filenames are handled case sensitively.
 \item[FileNameCasePreserving] A boolean that indicates whether case in filenames is preserved on creation or rename.
 \item[UnusedHandle] A value used to indicate an unused/invalid file handle.
-\item[StdInputHandle] The value of the standard input file handle. 
+\item[StdInputHandle] The value of the standard input file handle.
 This is not always 0 (zero), as is commonly the case on Unices.
-\item[StdOutputHandle] The value of the standard output file handle. 
+\item[StdOutputHandle] The value of the standard output file handle.
 This is not always 1, as is commonly the case on Unices.
-\item[StdErrorHandle] The value of the standard diagnostics output file handle. 
+\item[StdErrorHandle] The value of the standard diagnostics output file handle.
 This is not always 2, as is commonly the case on Unices.
 \item[CtrlZMarksEOF] A boolean that indicates whether the \#26 character marks the end of a file
 (an old MS-DOS convention).
 \end{description}
 
 To ease writing portable file system code, the Free Pascal file routines in
-the system unit and \file{sysutils} unit treat the common directory separator 
-characters (/ and $\backslash$) as equivalent. That means that if you use / on a \windows 
-system, it will be transformed to a backslash, and vice versa. 
+the system unit and \file{sysutils} unit treat the common directory separator
+characters (/ and $\backslash$) as equivalent. That means that if you use / on a \windows
+system, it will be transformed to a backslash, and vice versa.
 
 This feature is controlled by 2 (pre-initialized) variables in the system unit:
 \begin{description}
@@ -2545,22 +2547,22 @@ detail in the appendices of the \progref.
 \section{fpdoc - Pascal Unit documenter}
 
 \file{fpdoc} is a program which generates fully cross-referenced
-documentation for a unit. It generates documentation for each 
-identifier found in the unit's interface section. The generated 
+documentation for a unit. It generates documentation for each
+identifier found in the unit's interface section. The generated
 documentation can be in many formats, for instance HTML, RTF, Text, man
-page and LaTeX. 
+page and LaTeX.
 Unlike other documentation tools, the documentation can be in a separate
 file (in XML format), so the sources aren't cluttered with documentation.
 Its companion program \file{makeskel} creates an empty XML file with
-entries for all identifiers, or it can update an existing XML file, 
+entries for all identifiers, or it can update an existing XML file,
 adding entries for new identifiers.
 
 \file{fpdoc} and \file{makeskel} are described in the \fpdocref.
 
 \section{h2pas - C header to Pascal Unit converter}
-\file{h2pas} attempts to convert a C header file to a Pascal unit. 
+\file{h2pas} attempts to convert a C header file to a Pascal unit.
 It can handle most C constructs that one finds in a C header file,
-and attempts to translate them to their Pascal counterparts. 
+and attempts to translate them to their Pascal counterparts.
 
 See below (constructs) for a full description of what the translator can handle.
 The unit with Pascal declarations can then be used to access code written in C.
@@ -2575,20 +2577,20 @@ The output of  \file{h2pas} can be controlled with the following options:
 
 \begin{description}
 \item[-d] Use \var{external;} for all procedure and function declarations.
-\item[-D] Use \var{external libname name 'func\_name'} for function and 
+\item[-D] Use \var{external libname name 'func\_name'} for function and
 procedure declarations.
-\item[-e] Emit a series of constants instead of an enumeration type for the 
-C \var{enum} construct. 
+\item[-e] Emit a series of constants instead of an enumeration type for the
+C \var{enum} construct.
 \item[-i] Create an include file instead of a unit (omits the unit header).
-\item[-l] \textbf{libname} specify the library name for external function 
+\item[-l] \textbf{libname} specify the library name for external function
 declarations.
-\item[-o] \textbf{outfile} Specify the output file name. Default is the input file name with 
+\item[-o] \textbf{outfile} Specify the output file name. Default is the input file name with
 the extension replaced by \file{.pp}
 \item[-p] Use the letter \var{P} in front of pointer type parameters instead of \^.
 \item[-s] Strip comments from the input file. By default comments are converted
 to comments, but they may be displaced, since a comment is handled by the
 scanner.
-\item[-t] Prepend typedef type names with the letter \var{T} (used to follow 
+\item[-t] Prepend typedef type names with the letter \var{T} (used to follow
 Borland's convention that all types should be defined with T).
 \item[-v] Replace pointer parameters with call by reference parameters.
 Use with care because some calls can expect a \var{Nil} pointer.
@@ -2600,24 +2602,24 @@ Use with care because some calls can expect a \var{Nil} pointer.
 The following C declarations and statements are recognized:
 
 \begin{description}
-\item[defines] 
+\item[defines]
 Defines are changed into Pascal constants if they are simple defines.
 Macros are changed - wherever possible - to functions; however the arguments
-are all integers, so these must be changed manually. Simple expressions 
-in define statements are recognized, as are most arithmetic operators: 
-addition, subtraction, multiplication, division, logical operators, 
+are all integers, so these must be changed manually. Simple expressions
+in define statements are recognized, as are most arithmetic operators:
+addition, subtraction, multiplication, division, logical operators,
 comparison operators, shift operators. The C construct ( A ? B : C)
 is also recognized and translated to a Pascal construct with an IF
 statement. (This is buggy, however).
 
 \item[preprocessor statements]
 The conditional preprocessing commands are recognized and translated into
-equivalent Pascal compiler directives. The special 
+equivalent Pascal compiler directives. The special
 \begin{verbatim}
 #ifdef __cplusplus
 \end{verbatim}
 is also recognized and removed.
-\item[typedef] A typedef statement is changed into a Pascal type statement. 
+\item[typedef] A typedef statement is changed into a Pascal type statement.
 The following basic types are recognized:
 \begin{itemize}
 \item \var{char} changed to \var{char}.
@@ -2625,7 +2627,7 @@ The following basic types are recognized:
 \item \var{int} changed to \var{longint}.
 \item \var{long} changed to \var{longint}.
 \item \var{long int} changed to \var{longint}.
-\item \var{short} changed to \var{integer}. 
+\item \var{short} changed to \var{integer}.
 \item \var{unsigned} changed to \var{cardinal}.
 \item \var{unsigned char} changed to \var{byte}.
 \item \var{unsigned int} changed to \var{cardinal}.
@@ -2637,16 +2639,16 @@ These types are also changed if they appear in the arguments of a function
 or procedure.
 \item[functions and procedures]
 Functions and procedures are translated as well. Pointer types may be
-changed to call by reference arguments (using the \var{var} argument) 
-by using the \var{-p} command line argument. Functions that have a 
+changed to call by reference arguments (using the \var{var} argument)
+by using the \var{-p} command line argument. Functions that have a
 variable number of arguments are changed to a function with a \var{cvar}
 modifier. (This used to be the \var{array of const} argument.)
 \item[specifiers]
-The \var{extern} specifier is recognized; however it is ignored. 
+The \var{extern} specifier is recognized; however it is ignored.
 The \var{packed} specifier is also recognised and changed with the
-\var{PACKRECORDS} directive. The \var{const} specifier is also 
+\var{PACKRECORDS} directive. The \var{const} specifier is also
 recognized, but is ignored.
-\item[modifiers] 
+\item[modifiers]
 If the \var{-w} option is specified, then the following modifiers are recognized:
 \begin{verbatim}
 STDCALL
@@ -2658,7 +2660,7 @@ APIENTRY
 WINGDIAPI
 \end{verbatim}
 as defined in the win32 headers. If additionally the \var{-x}
-option is specified then the  
+option is specified then the
 \begin{verbatim}
 SYS_TRAP
 \end{verbatim}
@@ -2667,35 +2669,35 @@ specifier is also recognized.
 Enum constructs are changed into enumeration types. Bear in mind that, in C,
 enumeration types can have values assigned to them. Free Pascal also allows
 this to a certain degree. If you know that values are assigned to enums, it
-is best to use the \var{-e} option to change the enumerations to a series of 
+is best to use the \var{-e} option to change the enumerations to a series of
 integer  constants.
 
-\item[unions] Unions are changed to variant records. 
+\item[unions] Unions are changed to variant records.
 \item[structs] Structs are changed to Pascal records, with C packing.
 \end{description}
 
 \section{h2paspp - preprocessor for h2pas}
 \var{h2paspp} can be used as a simple preprocessor for \file{h2pas}. It
-removes some of the constructs that h2pas has difficulties with. 
-\file{h2paspp} reads one or more C header files and preprocesses them, writing the result 
-to files with the same name as the originals as it goes along. 
-It does not accept all preprocessed tokens of C, but takes care of the following 
+removes some of the constructs that h2pas has difficulties with.
+\file{h2paspp} reads one or more C header files and preprocesses them, writing the result
+to files with the same name as the originals as it goes along.
+It does not accept all preprocessed tokens of C, but takes care of the following
 preprocessor directives:
 
 \begin{description}
 \item [\#define symbol] Defines the new symbol \var{symbol}. Note that macros are not supported.
 \item [\#if symbol] The text following this directive is included if \var{symbol} is defined.
-\item [\#ifdef symbol] The text following this directive is included if \var{symbol} is defined. 
+\item [\#ifdef symbol] The text following this directive is included if \var{symbol} is defined.
 \item [\#ifndef symbol] The text following this directive is included if \var{symbol} is not defined.
-\item [\#include filename] Include directives are removed, unless the \var{-I} option was given, 
+\item [\#include filename] Include directives are removed, unless the \var{-I} option was given,
 in which case the include file is included and written to the output file.
 \item[\#undef symbol] The symbol \var{symbol} is undefined.
 \end{description}
 
 \subsection{Usage}
-\file{h2paspp} accepts one or more filenames and preprocessed them. 
-It will read the input, and write the output to a file with the same name 
-unless the \var{-o} option is given, in which case the file is written 
+\file{h2paspp} accepts one or more filenames and preprocessed them.
+It will read the input, and write the output to a file with the same name
+unless the \var{-o} option is given, in which case the file is written
 to the specified file. Note that only one output filename can be given.
 
 
@@ -2705,7 +2707,7 @@ to the specified file. Note that only one output filename can be given.
 \item[-dsymbol] Define the symbol \var{symbol} before processing is started.
 \item[-h] Emit a small helptext.
 \item[-I] Include include files instead of dropping the include statement.
-\item[-ooutfile] If this option is given, the output will be written to a 
+\item[-ooutfile] If this option is given, the output will be written to a
 file named \file{outfile}. Note that only one output file can be given.
 \end{description}
 
@@ -2841,7 +2843,7 @@ Some options modify the behavior of ptop:
   the internal defaults then. A config file is not required, the program can
   operate without one. See also -g.
 \item[-i ident] Set the number of indent spaces used for BEGIN END; and other blocks.
-\item[-b bufsize] Set the streaming buffersize to bufsize. The default is 255; 
+\item[-b bufsize] Set the streaming buffersize to bufsize. The default is 255;
 0 is considered non-valid and ignored.
 \item[-v] Be verbose. Currently only outputs the number of lines read/written and some error messages.
 \item[-g \file{ptop.cfg}] Write \file{ptop} configuration defaults to the file
@@ -2872,7 +2874,7 @@ If one of the options is "dindonkey" (see further below), a second line
 
 [keyword]=otherkeyword1,otherkeyword2,otherkeyword3,...
 
-As you can see the block contains two types of identifiers: keywords 
+As you can see the block contains two types of identifiers: keywords
 (keyword and otherkeyword1..3 in above example) and options, (option1..3 above).
 
 \var{Keywords} are the built-in valid Pascal structure-identifiers like BEGIN, END, CASE, IF,
@@ -2927,7 +2929,7 @@ capital        &     Capitalizes keyword: 1st letter\\
 The option "dindonkey" given in table \seet{ptopoptions} requires some
 further explanation. "dindonkey" is a contraction of "DeINDent ON
 associated KEYword". When it is present as an option in the first
-line, then a second, square-bracketed, line is required. 
+line, then a second, square-bracketed, line is required.
 A de-indent will be performed when any of the other keywords listed
 in the second line are encountered in the source.
 
@@ -3048,10 +3050,10 @@ under the chapter about resource strings.
 \section{unitdiff program}
 
 \subsection{Synopsis}
-\file{unitdiff} shows the differences between two unit interface sections. 
+\file{unitdiff} shows the differences between two unit interface sections.
 \begin{verbatim}
-unitdiff [--disable-arguments] [--disable-private] [--disable-protected] 
-[--help] [--lang=language] [--list] [--output=filename] [--sparse] 
+unitdiff [--disable-arguments] [--disable-private] [--disable-protected]
+[--help] [--lang=language] [--list] [--output=filename] [--sparse]
 file1 file2
 \end{verbatim}
 
@@ -3069,7 +3071,7 @@ The regular usage is to invoke \file{unitdiff} with two arguments:
 unitdiff input1 input2
 \end{verbatim}
 Invoked like this, it will show the difference in interface between the two
-units, or list the available identifiers in both units. The output of 
+units, or list the available identifiers in both units. The output of
 \file{unitdiff} will go to standard output by default.
 
 \subsection{Options}
@@ -3077,15 +3079,15 @@ Most of the \file{unitdiff} options are not required. Defaults will be used in m
 cases.
 
 \begin{description}
-\item[--disable-arguments] Do not check the arguments of functions 
+\item[--disable-arguments] Do not check the arguments of functions
 and procedures. The default action is to check them.
 \item[--disable-private] Do not check private fields or methods of
 classes. The default action is to check them.
 \item[--disable-protected] Do not check protected fields or methods of
 classes. The default action is to check them.
 \item[--help] Emit a short help text and exit.
-\item[--lang=language] Set the language for the output file. This will mainly 
-set the strings used for the headers in various parts of the documentation files 
+\item[--lang=language] Set the language for the output file. This will mainly
+set the strings used for the headers in various parts of the documentation files
 (by default they're in English). Currently, valid options are:
 \begin{itemize}
 \item \var{de}: German.
@@ -3093,12 +3095,12 @@ set the strings used for the headers in various parts of the documentation files
 \item \var{nl}: Dutch.
 \end{itemize}
 \item[--list] Display just the list of available identifiers for the unit
-or units. If only one unit is specified on the command line, this option 
+or units. If only one unit is specified on the command line, this option
 is automatically assumed.
 \item[--output=filename] Specify where the output should go. The default
 action is to send the output is sent to standard output (the screen).
 \item[--sparse] Turn on sparse mode. Output only the identifier names.
-Do not output types or type descriptions. By default, type descriptions 
+Do not output types or type descriptions. By default, type descriptions
 are also written.
 \end{description}
 
@@ -3110,7 +3112,7 @@ are also written.
 
 Here we list the units that come with the \fpc distribution. Since there is
 a difference in the supplied units per operating system, we first describe
-the generic ones, then describe those which are operating system specific. 
+the generic ones, then describe those which are operating system specific.
 
 %
 % Common units
@@ -3123,10 +3125,10 @@ is also given.
 
 \begin{description}
 \item[charset] A unit to provide mapping of character sets.
-\item[cmem] Using this unit replaces the Free Pascal memory manager with the 
+\item[cmem] Using this unit replaces the Free Pascal memory manager with the
 memory manager of the C library.
 \item[crt] This unit is similar to the unit of the same name of
-Turbo Pascal. It implements writing to the console in color, moving the 
+Turbo Pascal. It implements writing to the console in color, moving the
 text cursor around and reading from the keyboard.
 \item[dos] This unit provides basic routines for accessing the operating
 system. This includes file searching, environment variables access,
@@ -3134,26 +3136,26 @@ getting the operating system version, getting and setting the
 system time. It is to note that some of these routines are duplicated
 in functionality in the \var{sysutils} unit.
 \item[dynlibs] Provides cross-platform access to loading dynamical libraries.
-%\item[errors] returns 
+%\item[errors] returns
 \item[getopts] This unit gives you the \gnu \var{getopts} command line
 arguments handling mechanism. It also supports long options.
 \item[graph] \emph{This unit is deprecated}. This unit provides basic graphics handling, with routines to
 draw lines on the screen, display text etc. It provides the same functions
-as the Turbo Pascal unit. 
+as the Turbo Pascal unit.
 \item[heaptrc] a unit which debugs the heap usage. When the program exits, it outputs a summary of the used memory, and dumps a summary of unreleased memory blocks (if any).
 You should not include this unit directly, instead use the \var{-gh} command-line switch.
 \item[keyboard] provides basic keyboard handling routines in a platform independent way,
 and supports writing custom drivers.
-\item[macpas] This unit implements several functions available only in MACPAS mode. 
+\item[macpas] This unit implements several functions available only in MACPAS mode.
 This unit should not be included; it's automatically included when the MACPAS mode is used.
 \item[math] This unit contains common mathematical routines (trigonometric
 functions, logarithms, etc.) as well as more complex ones (summations of arrays,
 normalization functions, etc.).
 \item[matrix] A unit providing matrix manipulation routines.
 \item[mmx] This unit provides support for \var{mmx} extensions in your
-code. 
+code.
 \item[mouse] Provides basic mouse handling routines in a platform independent way,
-and supports writing custom drivers. 
+and supports writing custom drivers.
 \item [objects]  This unit provides the base object for standard Turbo Pascal
 objects. It also implements File and Memory stream objects, as well as sorted
 and non-sorted collections, and string streams.
@@ -3161,20 +3163,20 @@ and non-sorted collections, and string streams.
 unit explicitly; it is automatically loaded if you request Delphi mode.
 \item[printer]  This unit provides all you need for rudimentary access
 to the printer using standard I/O routines.
-\item[sockets] This gives the programmer access to sockets and TCP/IP 
+\item[sockets] This gives the programmer access to sockets and TCP/IP
 programming.
 \item[strings] This unit provides basic string handling routines for the
 \var{pchar} type, comparable to similar routines in standard \var{C}
 libraries.
 \item[system] This unit is available for all supported platforms. It includes
-among others, basic file I/O routines, memory management routines, all compiler 
-helper routines, and directory services routines. 
-\item[strutils] Offers a lot of extended string handling routines. 
-\item[dateutils] Offers a lot of extended date/time handling routines for 
-almost any date and time math. 
+among others, basic file I/O routines, memory management routines, all compiler
+helper routines, and directory services routines.
+\item[strutils] Offers a lot of extended string handling routines.
+\item[dateutils] Offers a lot of extended date/time handling routines for
+almost any date and time math.
 \item[sysutils] Is an alternative implementation of the sysutils unit of
 Delphi. It includes file I/O access routines which takes care of file
-locking, date and string handling routines, file search, date and string 
+locking, date and string handling routines, file search, date and string
 conversion routines.
 \item[typinfo] Provides functions to access runtime Type Information, just
 like Delphi.
@@ -3211,7 +3213,7 @@ unit, so code for Delphi is easily ported to \fpc.
 \item[winsock] Provides access to the \windows sockets API Winsock.
 \item[Jedi windows header translations] The units containing the Jedi
 translations of the Windows API headers is also distributed with Free
-Pascal. The names of these units start with \file{jw}, followed by the 
+Pascal. The names of these units start with \file{jw}, followed by the
 name of the particular API.
 \end{description}
 
@@ -3220,14 +3222,14 @@ name of the particular API.
 %
 \section{Under Linux and BSD-like platforms}
 \begin{description}
-\item[baseunix] Basic Unix operations, basically a subset of the POSIX specification. 
+\item[baseunix] Basic Unix operations, basically a subset of the POSIX specification.
 Using this unit should ensure portability across most unix systems.
 \item[clocale] This unit initializes the internationalization settings in
 the \file{sysutils} unit with settings obtained through the C library.
 \item[cthreads] This unit should be specified as the first or second
 unit in the uses clause of your program: it will use the Posix threads
 implementation to enable threads in your FPC program.
-\item[cwstring] If widestring routines are used, then this unit should 
+\item[cwstring] If widestring routines are used, then this unit should
 be inserted as one of the first units in the uses clause of your program:
 it will initialize the widestring manager in the system unit with routines
 that use C library functions to handle Widestring conversions and other
@@ -3235,7 +3237,7 @@ widestring operations.
 \item[errors] Returns a string describing an operating system error code.
 \item[Libc] This is the interface to GLibc on a linux I386 system. It will
 {\em not} work for other platforms, and is in general provided for Kylix
-compatibility. 
+compatibility.
 \item[ports] This implements the various \var{port[]} constructs. These are
 provided for compatibility only, and it is not recommended to use them
 extensively. Programs using this construct must be run as root or setuid
@@ -3263,8 +3265,8 @@ I/O.
 
 \section{Unit availability}
 
-Standard unit availability for each of the supported platforms 
-is given in the FAQ / Knowledge base. 
+Standard unit availability for each of the supported platforms
+is given in the FAQ / Knowledge base.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Debugging
@@ -3301,8 +3303,8 @@ option on the command line, as follows:
 \begin{verbatim}
 fpc -g hello.pp
 \end{verbatim}
-This will incorporate debugging information in the executable generated 
-from your program source. You will notice that the size of the executable 
+This will incorporate debugging information in the executable generated
+from your program source. You will notice that the size of the executable
 increases substantially because of this\footnote{A good reason not to include debug
 information in an executable you plan to distribute.}.
 
@@ -3384,7 +3386,7 @@ debugging your program:
 \item [file\ ] Load a new program into the debugger.
 \item [directory\ ] Add a new directory to the search path for source
 files.\\
-\begin{remark} 
+\begin{remark}
 My copy of gdb needs '.' to be added explicitly to the search
 path, otherwise it doesn't find the sources.
 \end{remark}
@@ -3399,7 +3401,7 @@ read or written.
 In appendix {\ref{ch:GdbIniFile}} a sample init file for
 \var{gdb} is presented. It produces good results when debugging \fpc programs.
 
-For more information, refer to the \var{gdb} User Manual, or use the 
+For more information, refer to the \var{gdb} User Manual, or use the
 \var{'help'} function in \var{gdb}.
 
 The text mode IDE and Lazarus both use GDB as a debugging backend. It may
@@ -3474,7 +3476,7 @@ You can compile your programs with profiling support. For this, you just
 have to use the compiler switch \var{-pg}. The compiler will insert the
 necessary stuff for profiling.
 
-When you have done this, you can run your program as you would normally 
+When you have done this, you can run your program as you would normally
 run it:
 \begin{verbatim}
 yourexe
@@ -3501,8 +3503,8 @@ For more information on the \gnu profiler \var{gprof}, see its manual.
 unit for the memory manager that analyses the memory allocation/deallocation
 and prints a memory usage report after the program exits.
 
-The unit that does this is called \file{heaptrc}. 
-Do not include this unit in your uses clause directly. 
+The unit that does this is called \file{heaptrc}.
+Do not include this unit in your uses clause directly.
 Instead, supply the \var{-gh} switch to the compiler, and it will include
 the unit automatically for you, in the correct place.
 
@@ -3635,7 +3637,7 @@ complete. At this point, only assembler errors are not in the list.
 For an explanation of how to control the messages, \sees{feedbackoptions}.
 
 % Message file is generated with msg2inc.
-\ifx\HCode\undefined 
+\ifx\HCode\undefined
 \setlist[description]{style=unboxed}
 \fi
 \input {messages.inc}
@@ -3672,7 +3674,7 @@ This fatal error is reported when an internal error is detected
 by the constant parser. Normally this error should never occur.
 
 \item [Invalid numeric value]
-This warning is emitted when a conversion from octal, binary 
+This warning is emitted when a conversion from octal, binary
 or hexadecimal to decimal is outside of the supported range.
 
 \item [Escape sequence ignored]
@@ -3694,7 +3696,7 @@ value you are using is out of bounds, either with the opcode or with
 the constant declaration used.
 
 \item [Non-label pattern contains @]
-This only applied to the m68k and Intel styled assembler. 
+This only applied to the m68k and Intel styled assembler.
 This is reported when you try to use a non-label identifier with an '@' prefix.
 \item [Internal error in Findtype()]
 \item [Internal Error in ConcatOpcode()]
@@ -3727,7 +3729,7 @@ These warnings occur when a floating point constant is declared in
 a base other than decimal. No conversion can be done on these formats.
 You should use a decimal representation instead.
 \item [Identifier supposed external]
-This warning occurs when a symbol is not found in the symbol table. 
+This warning occurs when a symbol is not found in the symbol table.
 It is therefore considered external.
 \item [Functions with void return value can't return any value in asm code]
 Only routines with a return value can have a return value set.
@@ -3819,7 +3821,7 @@ MMX assembler code can only be compiled using GAS v2.8.1 or later.
 \item [NEAR ignored]
 \item [FAR ignored]
 \label{FarIgnored}
-\var{NEAR} and \var{FAR} are ignored in the Intel assemblers, but 
+\var{NEAR} and \var{FAR} are ignored in the Intel assemblers, but
 are still accepted for compatibility with the 16-bit code model.
 
 \item [Invalid size for MOVSX/MOVZX]
@@ -3909,8 +3911,8 @@ a slash.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Run-time errors}
 
-Applications generated  by \fpc might generate run-time errors when certain 
-abnormal conditions are detected in the application. This appendix lists the 
+Applications generated  by \fpc might generate run-time errors when certain
+abnormal conditions are detected in the application. This appendix lists the
 possible run-time errors and gives information on why they might be produced.
 
 \begin{description}
@@ -3922,8 +3924,8 @@ Reported when trying to erase, rename or open a non-existent
 file.
 
 \item [3  Path not found]
-Reported by the directory handling routines when a path does not 
-exist or is invalid. Also reported when trying to access a 
+Reported by the directory handling routines when a path does not
+exist or is invalid. Also reported when trying to access a
 non-existent file.
 
 \item [4  Too many open files]
@@ -3939,12 +3941,12 @@ be caused by one of several reasons:
 \item Trying to open for writing a file which is
 read-only, or which is actually a directory.
 \item File is currently locked or used by another process.
-\item Trying to create a new file, or directory while a 
+\item Trying to create a new file, or directory while a
 file or directory of the same name already exists.
 \item Trying to read from a file which was opened in write-only mode.
 \item Trying to write from a file which was opened in read-only mode.
 \item Trying to remove a directory or file while it is not possible.
-\item No permission to access the file or directory.        
+\item No permission to access the file or directory.
 \end{itemize}
 
 \item [6  Invalid file handle]
@@ -3956,7 +3958,7 @@ Reported when a reset or rewrite is called with an invalid \var{FileMode}
 value.
 
 \item [15  Invalid drive number]
-The number given to the \var{Getdir} or \var{ChDir} function specifies a 
+The number given to the \var{Getdir} or \var{ChDir} function specifies a
 non-existent disk.
 
 \item [16  Cannot remove current directory]
@@ -3974,17 +3976,17 @@ to read past the end of a file.
 Reported when the disk is full, and you're trying to write to it.
 
 \item [102  File not assigned]
-This is reported by \var{Reset}, \var{Rewrite}, \var{Append}, 
+This is reported by \var{Reset}, \var{Rewrite}, \var{Append},
 \var{Rename} and \var{Erase}, if you call
 them with an unassigned file as a parameter.
 
 \item [103  File not open]
 Reported by the following functions : \var{Close, Read, Write, Seek,
-EOf, FilePos, FileSize, Flush, BlockRead,} and \var{BlockWrite} if the 
+EOf, FilePos, FileSize, Flush, BlockRead,} and \var{BlockWrite} if the
 file is not open.
 
 \item [104  File not open for input]
-Reported by \var{Read, BlockRead, Eof, Eoln, SeekEof} or \var{SeekEoln} if 
+Reported by \var{Read, BlockRead, Eof, Eoln, SeekEof} or \var{SeekEoln} if
 the file is not opened with \var{Reset}.
 
 \item [105  File not open for output]
@@ -4031,13 +4033,13 @@ error in the following cases:
 instance an enumerated type).
 \end{enumerate}
 \item [202  Stack overflow error]
-The stack has grown beyond its maximum size (in which case the size of 
-local variables should be reduced to avoid this error), or the stack has 
+The stack has grown beyond its maximum size (in which case the size of
+local variables should be reduced to avoid this error), or the stack has
 become corrupt. This error is only reported when stack checking is enabled.
 \item [203  Heap overflow error]
 The heap has grown beyond its boundaries. This is caused when trying to allocate
 memory explicitly with \var{New}, \var{GetMem} or \var{ReallocMem}, or when
-a class or object instance is created and no memory is left. Please note 
+a class or object instance is created and no memory is left. Please note
 that, by default, \fpc provides a growing heap, i.e. the heap will
 try to allocate more memory if needed. However, if the heap has reached the
 maximum size allowed by the operating system or hardware, then you will get
@@ -4046,9 +4048,9 @@ this error.
 You will get this in several cases:
 \begin{itemize}
 \item if you call \var{Dispose} or \var{Freemem} with an invalid pointer
-\item in case \var{New} or \var{GetMem} is called, and there is no more memory 
-available. The behavior in this case depends on the setting of 
-\var{ReturnNilIfGrowHeapFails}. If it is \var{True}, then \var{Nil} is returned. 
+\item in case \var{New} or \var{GetMem} is called, and there is no more memory
+available. The behavior in this case depends on the setting of
+\var{ReturnNilIfGrowHeapFails}. If it is \var{True}, then \var{Nil} is returned.
 if \var{False}, then runerror 204 is raised.
 \end{itemize}
 \item [205  Floating point overflow]
@@ -4119,7 +4121,7 @@ which is not an array.
 This error occurs when a variant array index is out of bounds.
 
 \item [227 Assertion failed error]
-An assertion failed, and no \var{AssertErrorProc} procedural variable was 
+An assertion failed, and no \var{AssertErrorProc} procedural variable was
 installed.
 
 \item [229 Safecall error check]
@@ -4199,7 +4201,7 @@ locations can be used:
 \begin{verbatim}
 http://svn.freepascal.org/svn/fpc/trunk/
 \end{verbatim}
-This repository contains the latest sources of the compiler, RTL and packages. 
+This repository contains the latest sources of the compiler, RTL and packages.
 This is the active development branch.
 
 The documentation and all examples from the documentation are in the
@@ -4217,11 +4219,11 @@ contains all scripts, demos and other files needed to construct a new
 release of Free Pascal.
 
 Free Pascal maintains a fixes branch, which is used to create new releases
-after a major version change. The branches are located in 
+after a major version change. The branches are located in
 \begin{verbatim}
 http://svn.freepascal.org/svn/fpc/branches/fpc_X_Y
 \end{verbatim}
-Where X and Y make up the major release number of Free Pascal. 
+Where X and Y make up the major release number of Free Pascal.
 For instance, the fixes used to make the 2.6.x versions of Free Pascal are
 available in
 \begin{verbatim}
@@ -4247,7 +4249,7 @@ and also of the fixes branch:
 \begin{verbatim}
 ftp://ftp.freepascal.org/pub/fpc/snapshot/fixes/source/fpc.zip
 \end{verbatim}
-The creation of the zip files is an automated process, and so these files 
+The creation of the zip files is an automated process, and so these files
 are created every day.
 
 \section{Downloading a snapshot}
@@ -4272,5 +4274,9 @@ ftp://ftp.freepascal.org/pub/fpc/snapshot/fixes/
 respectively.
 
 The FTP site is mirrored, it may be faster to use a mirror.
+
+\printindex[msgnr]
+
+\printindex[msgtxt]
 
 \end{document}
