@@ -2570,7 +2570,8 @@ clean: fpc_clean
 	-rm -f preamble.inc date.inc messages.inc rtl.inc
 	-rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref *.kwd *.xct *.chm *.ipf
 	-rm -rf $(DOCS)
-	-rm -f $(CHK) $(TOC) $(LOG) $(DVI) $(PDF) $(AUX) $(OUT) $(PS) $(HTML) *.i* $(LOT) $(TXT)
+	-rm -f *.ilg *.ind *.idx
+	-rm -f $(CHK) $(TOC) $(LOG) $(DVI) $(PDF) $(AUX) $(OUT) $(PS) $(HTML) $(LOT) $(TXT)
 	-rm -f $(notdir $(wildcard styles/*.sty))
 distclean: fpc_distclean clean cleanexamples
 	-rm -f *.haux *.htoc *.hind *.htex *.chk
