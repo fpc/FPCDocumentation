@@ -2513,7 +2513,8 @@ Uses strings;
 \end{verbatim}
 
 will add the directories \file{../units} and \file{../i386/units} to the unit
-path of the compiler. The compiler will look for the file \file{strings.ppu}
+path of the compiler: these directories are relative to the unit file in
+which the directive appears. The compiler will look for the file \file{strings.ppu}
 in both these directories, and will link the first found file in the
 program. This directive is equivalent to the \var{-Fu} command line switch.
 
@@ -2526,7 +2527,18 @@ of the locations where the files reside. If you are not sure, it is better
 practice to use makefiles and makefile variables.
 
 Note that this switch does not propagate to other units, i.e. its scope
-is limited to the current unit.
+is limited to the current unit (this is in line with the fact that the paths
+are relative to the current unit.)
+
+The \var{uses} clause construct \var{uses a in 'sub/a.pp'} is relative to the 
+current working directory of the compiler. By adding a directive to your
+program:
+\begin{verbatim}
+{$UNITPATH sub}
+
+uses a in 'sub/a.pp';
+\end{verbatim}
+you will make sure the compiler will always find the sources.
 
 \subsection{\var{\protect\$VARPROPSETTER} : Enable use of var/out/constref
 parameters for property setters.}
