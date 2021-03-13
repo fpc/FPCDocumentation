@@ -1773,6 +1773,39 @@ behaviour, but it may adversely affect performance.
 </seealso>
 </element>
 
+<element name="TIniFile.WriteBOM">
+<short>
+Indicates if a Byte Order Mark (BOM) is written at the start of the .INI file
+</short>
+<descr>
+<p>
+<var>WriteBOM</var> is a <var>Boolean</var> property which indicates if a
+<b>Byte Order Mark</b> (<b>BOM</b>) is written at the start of the .INI file.
+The default value for the property is <b>False</b>, and causes the BOM to
+be omitted when storing the .INI file content.
+</p>
+<p>
+Setting a new value for the property can cause the sections and section
+values to be re-written to the <var>FileName</var> or <var>Stream</var>
+where the .INI file content is stored. When <var>CacheUpdates</var> is
+<b>False</b>, the <var>UpdateFile</var> method is called to re-write the
+values in the storage. When CacheUpdates is <b>True</b>, the <var>Dirty</var>
+property is set to <b>True</b> and the action is deferred until the class
+instance is freed or update caching is disabled.
+</p>
+<p>
+The property value is used in the <var>UpdatFile</var> method, and is
+assigned to the <var>WriteBOM</var> property in the <var>TStrings</var>
+instance used to write the content for the .INI file.
+</p>
+</descr>
+<link id="TIniFile.CacheUpdates"/>
+<link id="TIniFile.UpdateFile"/>
+<link id="TIniFile.Stream"/>
+<link id="TCustomIniFile.FileName"/>
+<link id="#rtl.classes.TStrings.WriteBOM">TStrings.WriteBOM</link>
+</element>
+
 <!--
   ********************************************************************
     #fcl.IniFiles.TMemIniFile
@@ -1957,7 +1990,6 @@ If no enough memory is available, an exception may be raised.
 <var>Destroy</var>.
 </descr>
 <seealso>
-<link id="THashedStringList.Create"/>
 </seealso>
 </element>
 
@@ -2025,7 +2057,7 @@ quotes are not stripped (this is Delphi and Windows compatible).
 
 <!-- function Visibility: public -->
 <element name="TCustomIniFile.ReadInt64">
-<short>Read Int64 value</short>
+<short>Read an Int64 value</short>
 <descr>
 <p>
 <var>ReadInt64</var> reads a signed 64-bit integer value from the ini file.
@@ -2038,12 +2070,13 @@ If the value is not found at the specified <var>Section</var>,
 <var>Default</var> value is returned instead.
 </p>
 <p>
-This function is needed because <link id="ReadInteger"/> only reads at most a 32-bit value.
+This function is needed because <link id="TCustomIniFile.ReadInteger">ReadInteger</link>
+reads at most a 32-bit value.
 </p>
 </descr>
 <seealso>
-<link id="ReadInteger"/>
-<link id="WriteInt64"/>
+<link id="TCustomIniFile.ReadInteger"/>
+<link id="TCustomIniFile.WriteInt64"/>
 </seealso>
 </element>
 
@@ -2069,14 +2102,14 @@ This function is needed because <link id="ReadInteger"/> only reads at most a 32
 
 <!-- procedure Visibility: public -->
 <element name="TCustomIniFile.WriteInt64">
-<short>Write a Int64 value.</short>
+<short>Write an Int64 value.</short>
 <descr>
 <var>WriteInt64</var> writes <var>Value</var> as a signed 64-bit integer value
 to section <var>Section</var>, key <var>Ident</var>. 
 </descr>
 <seealso>
-<link id="WriteInteger"/>
-<link id="ReadInt64"/>
+<link id="TCustomIniFile.WriteInteger"/>
+<link id="TCustomIniFile.ReadInt64"/>
 </seealso>
 </element>
 
@@ -2300,15 +2333,21 @@ when an existing value is added (<var>False</var>).
 <descr>
 <p>
 <var>TIniFileOption</var> enumerates the possible options when creating a
-new <link id="TCustomIniFileoption"/> instance.
+new <link id="TCustomIniFile">TCustomIniFile</link> instance.
 </p>
 <dl>
-<dt>ifoStripComments</dt><dd><printshort id="TIniFileOption.ifoStripComments"/></dd>
-<dt>ifoStripInvalid</dt><dd><printshort id="TIniFileOption.ifoStripInvalid"/></dd>
-<dt>ifoEscapeLineFeeds</dt><dd><printshort id="TIniFileOption.ifoEscapeLineFeeds"/></dd>
-<dt>ifoCaseSensitive</dt><dd><printshort id="TIniFileOption.ifoCaseSensitive"/></dd>
-<dt>ifoStripQuotes</dt><dd><printshort id="TIniFileOption.ifoStripQuotes"/></dd>
-<dt>ifoFormatSettingsActive</dt><dd><printshort id="TIniFileOption.ifoFormatSettingsActive"/></dd>
+<dt>ifoStripComments</dt>
+<dd><printshort id="TIniFileOption.ifoStripComments"/></dd>
+<dt>ifoStripInvalid</dt>
+<dd><printshort id="TIniFileOption.ifoStripInvalid"/></dd>
+<dt>ifoEscapeLineFeeds</dt>
+<dd><printshort id="TIniFileOption.ifoEscapeLineFeeds"/></dd>
+<dt>ifoCaseSensitive</dt>
+<dd><printshort id="TIniFileOption.ifoCaseSensitive"/></dd>
+<dt>ifoStripQuotes</dt>
+<dd><printshort id="TIniFileOption.ifoStripQuotes"/></dd>
+<dt>ifoFormatSettingsActive</dt>
+<dd><printshort id="TIniFileOption.ifoFormatSettingsActive"/></dd>
 </dl>
 </descr>
 <seealso>
@@ -2424,7 +2463,7 @@ value of this field will be used to read values in
 <link id="TCustomIniFile.ReadFloat"/> 
 or when writing values in 
 <link id="TCustomIniFile.WriteDateTime"/>, 
-<link id="TCustomIniFile.WrireDate"/>,
+<link id="TCustomIniFile.WriteDate"/>,
 <link id="TCustomIniFile.WriteTime"/> 
 and 
 <link id="TCustomIniFile.WriteFloat"/>.
@@ -2436,7 +2475,7 @@ and
 <link id="TCustomIniFile.ReadTime"/> 
 <link id="TCustomIniFile.ReadFloat"/> 
 <link id="TCustomIniFile.WriteDateTime"/>
-<link id="TCustomIniFile.WrireDate"/>
+<link id="TCustomIniFile.WriteDate"/>
 <link id="TCustomIniFile.WriteTime"/> 
 <link id="TCustomIniFile.WriteFloat"/>
 </seealso>
