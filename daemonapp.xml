@@ -22,17 +22,18 @@ The unit consists of 3 separate classes which cooperate tightly:
 <dl>
 <dt>TDaemon</dt><dd>This is a class that implements the daemon's
 functionality. One or more descendents of this class can be implemented and
-instantiated in a single daemon application. For more information, see <link
-id="TDaemon"/>.</dd>
-<dt>TDaemonApplication</dt><dd>This is  the actual daemon application class. 
-A global instance of this class is instantiated. It handles the command-line
-arguments, and instantiates the various daemons. For more information, see
+instantiated in a single daemon application. For more information, see
+<link id="TDaemon"/>.</dd>
+<dt>TDaemonApplication</dt>
+<dd>This is the actual daemon application class. A global instance of this
+class is instantiated. It handles the command-line arguments, and instantiates
+the various daemons. For more information, see
 <link id="TDaemonApplication"/>.</dd>
-<dt>TDaemonDef</dt><dd>This class defines the daemon in the operation
-system. The <var>TDaemonApplication</var> class has a collection of
+<dt>TDaemonDef</dt>
+<dd>This class defines the daemon in the operation system. The
+<var>TDaemonApplication</var> class has a collection of
 <var>TDaemonDef</var> instances, which it uses to start the various daemons.
-For more information, see <link id="TDaemonDef"/>.
-</dd>
+For more information, see <link id="TDaemonDef"/>.</dd>
 </dl>
 <p>
 As can be seen, a single application can implement one ore more daemons
@@ -40,7 +41,8 @@ As can be seen, a single application can implement one ore more daemons
 by the application class.
 </p>
 <p>
-The classes take care of logging through the <link id="#fcl.eventlog.teventlog">TEventLog</link> class.
+The classes take care of logging through the
+<link id="#fcl.eventlog.TEventLog">TEventLog</link> class.
 </p>
 <p>
 Many options are needed only to make the application behave as a windows
@@ -48,13 +50,6 @@ service application on windows. These options are ignored in UNIX-like
 environment. The documentation will mention this.
 </p>
 </descr>
-
-<topic name="Architecture">
-<short>Daemon application architecture</short>
-<descr>
-<p>[Still needs to be completed]</p>
-</descr>
-</topic>
 
 <!-- unresolved type reference Visibility: default -->
 <element name="Custapp">
@@ -310,6 +305,15 @@ it gets from the operating system, by calling the appropriate methods.
 <short>The daemon is paused: running but not active.</short>
 </element>
 
+<element name="TCustomDaemon.CheckControlMessages">
+  <short/>
+  <descr/>
+  <seealso/>
+</element>
+<element name="TCustomDaemon.CheckControlMessages.Wait">
+  <short/>
+</element>
+
 <!-- procedure Visibility: public -->
 <element name="TCustomDaemon.LogMessage">
 <short>Log a message to the system log</short>
@@ -472,6 +476,32 @@ handler is executed with this prototype.
 <!-- argument Visibility: default -->
 <element name="TCustomControlCodeEvent.Handled">
 <short>Was the control code handled ?</short>
+</element>
+
+<element name="TCustomControlCodeEvEvent">
+  <short/>
+  <descr>
+  <p>
+  TCustomControlCodeEvEvent is the type used for the OnControlCodeEvent
+  property in TDaemon.
+  </p>
+  </descr>
+  <seealso/>
+</element>
+<element name="TCustomControlCodeEvEvent.Sender">
+  <short>Daemon instance for the event notification</short>
+</element>
+<element name="TCustomControlCodeEvEvent.ACode">
+  <short>Control code sent to the daemon</short>
+</element>
+<element name="TCustomControlCodeEvEvent.AEventType">
+  <short>Event type for the notification</short>
+</element>
+<element name="TCustomControlCodeEvEvent.AEventData">
+  <short>Pointer to the arbitrary data for the notification</short>
+</element>
+<element name="TCustomControlCodeEvEvent.Handled">
+  <short>True if the control code and event type were handled</short>
 </element>
 
 <!--
@@ -721,6 +751,12 @@ If the daemon has not handled the control code, it should set the
 </seealso>
 </element>
 
+<element name="TDaemon.OnControlCodeEvent">
+<short/>
+<descr/>
+<seealso/>
+</element>
+
 <!-- constructor Visibility: public -->
 <element name="TDaemonController.Create">
 <short>Create a new instance of the <var>TDaemonController</var> class</short>
@@ -849,7 +885,7 @@ log.
 If an error occurs, an error message is sent to the system log.
 </errors>
 <seealso>
-<link id="TDaemon.ReportStatus"/>
+<link id="TCustomDaemon.ReportStatus"/>
 <link id="TDaemonController.LastStatus"/>
 </seealso>
 </element>
@@ -1114,6 +1150,48 @@ the items are of type <link id="TDependency"/>.
 <short>Zero based index of the dependency</short>
 </element>
 
+<element name="TWinControlCode">
+  <short/>
+  <descr/>
+  <seealso/>
+</element>
+<element name="TWinControlCode.wccNetBindChange">
+  <short/>
+</element>
+<element name="TWinControlCode.wccParamChange">
+  <short/>
+</element>
+<element name="TWinControlCode.wccPreShutdown">
+  <short/>
+</element>
+<element name="TWinControlCode.wccShutdown">
+  <short/>
+</element>
+<element name="TWinControlCode.wccHardwareProfileChange">
+  <short/>
+</element>
+<element name="TWinControlCode.wccPowerEvent">
+  <short/>
+</element>
+<element name="TWinControlCode.wccSessionChange">
+  <short/>
+</element>
+<element name="TWinControlCode.wccTimeChange">
+  <short/>
+</element>
+<element name="TWinControlCode.wccTriggerEvent">
+  <short/>
+</element>
+<element name="TWinControlCode.wccUserModeReboot">
+  <short/>
+</element>
+
+<element name="TWinControlCodes">
+  <short/>
+  <descr/>
+  <seealso/>
+</element>
+
 <!--
   ********************************************************************
     #fcl.daemonapp.TWinBindings
@@ -1178,7 +1256,7 @@ are copied from <var>Source</var> to the <var>TWinBindings</var> instance.
 <short>Service specific error code</short>
 <descr>
 <var>ErrCode</var> contains a service specific error code that is reported with 
-<link id="TDaemon.ReportStatus"/> to the windows service manager. If it is zero,
+<link id="TCustomDaemon.ReportStatus"/> to the windows service manager. If it is zero,
 then the contents of <link id="TWinBindings.Win32ErrCode">Win32ErrCode</link>
 are reported. If it is nonzero, then the windows-errorcode is set to 
 <var>ERROR_SERVICE_SPECIFIC_ERROR</var>.
@@ -1193,7 +1271,7 @@ are reported. If it is nonzero, then the windows-errorcode is set to
 <short>General windows error code</short>
 <descr>
 <var>Win32ErrCode</var> is a general windows service error code that can be
-reported with <link id="TDaemon.ReportStatus"/> to the windows service manager.
+reported with <link id="TCustomDaemon.ReportStatus"/> to the windows service manager.
 It is sent if <link id="TWinBindings.ErrCode">ErrCode</link> is zero.
 </descr>
 <seealso>
@@ -1298,7 +1376,7 @@ to this time to report the next status.
 </p>
 </descr>
 <seealso>
-<link id="TDaemon.ReportStatus"/>
+<link id="TCustomDaemon.ReportStatus"/>
 </seealso>
 </element>
 
@@ -1344,6 +1422,12 @@ service manager how to behave when the service fails to start during system star
 This property is only used during installation of the service.
 </p>
 </descr>
+</element>
+
+<element name="TWinBindings.AcceptedCodes">
+  <short/>
+  <descr/>
+  <seealso/>
 </element>
 
 <!-- constructor Visibility: public -->
@@ -1402,16 +1486,18 @@ when the service is in operation at runtime.
 <element name="TDaemonDef.DaemonClassName">
 <short>Name of the <var>TDaemon</var> class to use for this daemon</short>
 <descr>
-<var>DaemonClassName</var> is the name of the <var>TDaemon</var> class that
+<var>DaemonClassName</var> is the name of the <var>TCustomDaemon</var> class that
 will be used whenever the service is needed. The name is used to look up the
 class pointer registered in the daemon mapper, when <link
-id="TCustomDaemonApplication.CreateDaemonInstance"/> creates an instance of
+id="TCustomDaemonApplication"/> creates an instance of
 the daemon.
 </descr>
 <seealso>
 <link id="TDaemonDef.Instance"/>
 <link id="TDaemonDef.DaemonClass"/>
 <link id="RegisterDaemonClass"/>
+<link id="TCustomDaemon"/>
+<link id="TCustomDaemonApplication"/>
 </seealso>
 </element>
 
@@ -1496,7 +1582,7 @@ reports also to the system log. This can be used to track the progress of
 the daemon.
 </descr>
 <seealso>
-<link id="TDaemon.ReportStatus"/>
+<link id="TCustomDaemon.ReportStatus"/>
 </seealso>
 </element>
 
@@ -1999,13 +2085,17 @@ it returns at once.
 <element name="TDaemonThread.StopDaemon">
 <short>Stops the daemon</short>
 <descr>
-<var>StopDaemon</var> attempts to stop the daemon using its <link
-id="TDaemon.Stop"/> method, and terminates the thread.
+<var>StopDaemon</var> attempts to stop the <var>Daemon</var> by calling
+methods in the <var>TCustomDaemon</var> instance. StopDaemon also
+terminates the thread. The return value is True if the Daemon was successfully
+stopped in the method.
 </descr>
 <seealso>
-<link id="TDaemon.Stop"/>
+<link id="TDaemonThread.Daemon"/>
 <link id="TDaemonThread.PauseDaemon"/>
 <link id="TDaemonThread.ShutDownDaemon"/>
+<link id="TCustomDaemon"/>
+<link id="#rtl.classes.TThread.Terminate">TThread.Terminate</link>
 </seealso>
 </element>
 
@@ -2019,16 +2109,17 @@ id="TDaemon.Stop"/> method, and terminates the thread.
 <short>Pause the daemon</short>
 <descr>
 <p>
-<var>PauseDaemon</var> attempts to stop the daemon using its 
-<link id="TDaemon.Pause"/> method, and suspends the thread.
-It returns <var>True</var> if the attempt was successful.
+<var>PauseDaemon</var> attempts to pause the <var>Daemon</var> by calling
+methods in the <link id="TCustomDaemon"/> instance, and calling <var>Suspend</var>
+to suspend the thread. It returns <var>True</var> if the attempt was successful.
 </p>
 </descr>
 <seealso>
-<link id="TDaemon.Pause"/>
 <link id="TDaemonThread.StopDaemon"/>
 <link id="TDaemonThread.ContinueDaemon"/>
 <link id="TDaemonThread.ShutDownDaemon"/>
+<link id="TCustomDaemon"/>
+<link id="#rtl.classes.TThread.Suspend">TThread.Suspend</link>
 </seealso>
 </element>
 
@@ -2041,15 +2132,16 @@ It returns <var>True</var> if the attempt was successful.
 <element name="TDaemonThread.ContinueDaemon">
 <short>Continue the daemon</short>
 <descr>
-<var>ContinueDaemon</var> attempts to stop the daemon using its
-<link id="TDaemon.Continue"/> method. It returns <var>True</var>
-if the attempt was successful.
+<var>ContinueDaemon</var> attempts to restart the <var>Daemon</var>
+by calling methods in the <link id="TCustomDaemon"/> instance. It returns
+<var>True</var> if the attempt was successful.
 </descr>
 <seealso>
-<link id="TDaemon.Continue"/>
+<link id="TDaemonThread.Daemon"/>
 <link id="TDaemonThread.StopDaemon"/>
 <link id="TDaemonThread.PauseDaemon"/>
 <link id="TDaemonThread.ShutDownDaemon"/>
+<link id="TCustomDaemon"/>
 </seealso>
 </element>
 
@@ -2062,34 +2154,35 @@ if the attempt was successful.
 <element name="TDaemonThread.ShutDownDaemon">
 <short>Shut down daemon</short>
 <descr>
-<var>ShutDownDaemon</var> shuts down the daemon. This happens normally only
-when the system is shut down and the daemon didn't respond to the stop
-request. The return result is the result of the <link id="TDaemon.Shutdown"/>
-function. The thread is terminated by this method.
+<var>ShutDownDaemon</var> shuts down the <var>Daemon</var> for the thread.
+This happens normally only when the system is shut down and the daemon didn't
+respond to the stop request. The return valuie is the result from the method in the
+<link id="TCustomDaemon"/> instance. The thread is terminated in this method.
 </descr>
 <seealso>
-<link id="TDaemon.Shutdown"/>
 <link id="TDaemonThread.StopDaemon"/>
 <link id="TDaemonThread.PauseDaemon"/>
 <link id="TDaemonThread.ContinueDaemon"/>
+<link id="TCustomDaemon"/>
+<link id="#rtl.classes.TThread.Terminate">TThread.Terminate</link>
 </seealso>
 </element>
 
 <!-- function result Visibility: default -->
 <element name="TDaemonThread.ShutDownDaemon.Result">
-<short>The result of <var>TDaemon.Shutdown</var></short>
+<short>The result from the <var>Daemon</var> method</short>
 </element>
 
 <!-- function Visibility: public -->
 <element name="TDaemonThread.InterrogateDaemon">
 <short>Report the daemon status</short>
 <descr>
-<var>InterrogateDaemon</var> simply calls <link id="TDaemon.ReportStatus"/>
+<var>InterrogateDaemon</var> simply calls <link id="TCustomDaemon.ReportStatus"/>
 for the daemon that is running in this thread. It always returns
 <var>True</var>.
 </descr>
 <seealso>
-<link id="TDaemon.ReportStatus"/>
+<link id="TCustomDaemon.ReportStatus"/>
 </seealso>
 </element>
 
@@ -2152,6 +2245,15 @@ maps.
 <link id="#fcl.custapp.TCustomApplication">TCustomApplication</link>
 <link id="TCustomDaemonMapperClass"/>
 </seealso>
+</element>
+
+<element name="TCustomDaemonApplication.Create">
+<short>Constructor for the class instance</short>
+<descr/>
+<seealso/>
+</element>
+<element name="TCustomDaemonApplication.Create.AOwner">
+<short>Owner of the class instance</short>
 </element>
 
 <!-- procedure Visibility: public -->
@@ -2358,6 +2460,21 @@ is called.
 <link id="TCustomDaemonApplication.RunDaemons">RunDaemons</link>
 <link id="TCustomDaemonApplication.UnInstallDaemons">UnInstallDaemons</link>
 </seealso>
+</element>
+
+<element name="TCustomDaemonApplication.AutoRegisterMessageFile">
+<short>Automatically register the message file</short>
+<descr>
+<p><var>AutoRegisterMessageFile</var> can be set to <var>True</var> to automatically 
+register the service binary as the source of resource strings for the event viewer.
+</p>
+<p> 
+The event log mechanism uses several resource strings in the <file>fclel.res</file> file.
+These resource strings must be registered in the windows event viewer. 
+Setting this property to <var>True</var> takes case of this registration when the program is started.
+</p>
+</descr>
+<seealso/>
 </element>
 
 <!-- "class of" type Visibility: default -->
@@ -2671,19 +2788,6 @@ options on standard output.
 </descr>  
 </element>
 
-
-<element name="TCustomDaemonApplication.Log">             
-<short>Log a message to the system event log.</short>
-<descr>   
-<var>Log</var> logs <var>Msg</var> to the system event log with event type
-<var>EventType</var>.
-</descr>  
-<seealso> 
-<link id="TCustomDaemonApplication.EventLog">EventLog</link>
-</seealso>
-</element>
-
-
 <element name="TCustomDaemonApplication.OnRun">             
 <short>Event executed when the daemon is run.</short>
 <descr>   
@@ -2697,22 +2801,17 @@ appropriate options (one of install, uninstall or run) was given.
 </seealso>
 </element>
 
-
 <element name="TCustomDaemonApplication.EventLog">             
 <short>Event logger instance</short>
 <descr>   
-<var>EventLog</var> is the <link id="#fcl.eventlog.TEventLog">TEventLog</link>  instance 
-which is used to log events to the system log with the <link
-id="TCustomDaemonApplication.Log">Log</link> method. It is created when the
-application instance is created, and destroyed when the application is
-destroyed.
+<var>EventLog</var> is the <link id="#fcl.eventlog.TEventLog">TEventLog</link>
+instance which is used to log events to the system log. It is created when the
+application instance is created, and destroyed when the application is destroyed.
 </descr>  
 <seealso> 
 <link id="#fcl.eventlog.TEventLog">TEventLog</link>
-<link id="TCustomDaemonApplication.Log">Log</link>
 </seealso>
 </element>
-
 
 </module> <!-- daemonapp -->
 </package>
