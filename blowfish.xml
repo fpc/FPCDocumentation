@@ -388,7 +388,7 @@ mechanism can be used to write the remaining bytes.
 </p>
 </descr>
 <seealso>
-<link id="TBlowFishEncryptStream.Read"/>
+<link id="TBlowFishEncryptStream.Flush"/>
 </seealso>
 </element>
 
@@ -496,13 +496,50 @@ the <link id="TBlowFishEncryptStream"/> stream must be used.
 </seealso>
 </element>
 
+<element name="TBlowFishDeCryptStream.Create">
+<short>Constructor for the class instance</short>
+<descr>
+<p>
+<var>Create</var> is the overridden constructor for the class instance.
+It calls the inherited constructor on entry using the values in <var>AKey</var>,
+<var>AKeySize</var>, and <var>Dest</var> as arguments.
+</p>
+<p>
+Create sets the value in an internal member to the current position in Dest.
+It acts as the relative origin for the TStream instance, and is used in the
+<var>Seek</var> method.
+</p>
+</descr>
+<seealso>
+<link id="TBlowFishDeCryptStream.Read"/>
+<link id="TBlowFishDeCryptStream.Seek"/>
+<link id="TBlowFishEnCryptStream.Write"/>
+</seealso>
+</element>
+<element name="TBlowFishDeCryptStream.Create.AKey">
+<short>
+Key used to decrypt values in Dest. Must match the key used to encrypt
+the stream content in TBlowFishEnCryptStream.
+</short>
+</element>
+<element name="TBlowFishDeCryptStream.Create.AKeySize">
+<short>
+Number of bytes in the Key.
+</short>
+</element>
+<element name="TBlowFishDeCryptStream.Create.Dest">
+<short>
+Stream instance with the values decrypted in the class instance.
+</short>
+</element>
+
 <!-- function Visibility: public -->
 <element name="TBlowFishDeCryptStream.Read">
 <short>Read data from the stream</short>
 <descr>
 <var>Read</var> reads <var>Count</var> bytes from the source stream,
 decrypts them using the key provided when the <var>TBlowFishDeCryptStream</var> 
-instance was created, and writes the decrypted data to <var>Buffer</var>
+instance was created, and writes the decrypted data to <var>Buffer</var>.
 </descr>
 <seealso>
 <link id="TBlowFishStream.Create">Create</link>
@@ -523,37 +560,6 @@ instance was created, and writes the decrypted data to <var>Buffer</var>
 <!-- argument Visibility: default -->
 <element name="TBlowFishDeCryptStream.Read.Count">
 <short>Number of bytes to read from the stream</short>
-</element>
-
-<!-- function Visibility: public -->
-<element name="TBlowFishDeCryptStream.Write">
-<short>Write data to the stream</short>
-<descr>
-<var>Write</var> will raise an <var>EBlowFishError</var> exception:
-<var>TBlowFishDecryptStream</var> is a write-only stream.
-</descr>
-<errors>
-Calling this function always results in an <link id="EBlowFishError"/>
-exception.
-</errors>
-<seealso>
-<link id="TBlowFishDecryptStream.Read"/>
-</seealso>
-</element>
-
-<!-- function result Visibility: default -->
-<element name="TBlowFishDeCryptStream.Write.Result">
-<short>Number of bytes actually written.</short>
-</element>
-
-<!-- argument Visibility: default -->
-<element name="TBlowFishDeCryptStream.Write.Buffer">
-<short>Buffer with data to be written.</short>
-</element>
-
-<!-- argument Visibility: default -->
-<element name="TBlowFishDeCryptStream.Write.Count">
-<short>Number of bytes to write</short>
 </element>
 
 <!-- function Visibility: public -->
