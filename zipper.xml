@@ -4,14 +4,32 @@
     <module name="zipper">
       <short>Unit implementing zip/unzip compression/decompression functionality</short>
       <descr>
-        <file>zipper</file> implements zip compression/decompression compatible with the popular .ZIP format. The zip file format is documented at 
+        <p>
+          <file>zipper</file> implements zip compression/decompression compatible with the popular .ZIP format. The zip file format is documented at:
+        </p>
+        <p>
+           <url href="http://www.pkware.com/documents/casestudies/APPNOTE.TXT">
+             http://www.pkware.com/documents/casestudies/APPNOTE.TXT</url>.
+        </p>
+         <p>
+           The Pascal conversion of the standard zlib library was implemented by Jacques Nomssi Nzali. It is used in the FCL to implement the <var>TCompressionStream</var> class.
+         </p>
+      </descr>
         
-        <url href="http://www.pkware.com/documents/casestudies/APPNOTE.TXT">http://www.pkware.com/documents/casestudies/APPNOTE.TXT</url>. The Pascal conversion of the standard zlib library was implemented by Jacques Nomssi Nzali. It is used in the FCL to implement the 
+      <!-- unresolved references -->
+      <element name="BaseUnix"/>
+      <element name="SysUtils"/>
+      <element name="Classes"/>
+      <element name="ZStream"/>
         
-        <link name="TCompressionStream"/> class.
-</descr>
       <element name="END_OF_CENTRAL_DIR_SIGNATURE">
         <short>Marker specifying end of directory within zip file</short>
+      </element>
+      <element name="ZIP64_END_OF_CENTRAL_DIR_SIGNATURE">
+        <short>Marker specifying end of the directory within a 64-bit zip file</short>
+      </element>
+      <element name="ZIP64_END_OF_CENTRAL_DIR_LOCATOR_SIGNATURE">
+        <short/>
       </element>
       <element name="LOCAL_FILE_HEADER_SIGNATURE">
         <short>Marker specifying a file entry within the zip file</short>
@@ -22,6 +40,91 @@
         <descr>Denotes beginning of a file entry inside the zip directory. A file header follows this marker.
 </descr>
       </element>
+      <element name="ZIP64_HEADER_ID">
+        <short/>
+      </element>
+      <element name="INFOZIP_UNICODE_PATH_ID">
+        <short/>
+      </element>
+      <element name="EFS_LANGUAGE_ENCODING_FLAG">
+        <short>
+          Language encoding flag (EFS). When set the file name  and comment fields must use UTF-8 encoding.
+        </short>
+      </element>
+
+      <element name="OS_FAT">
+        <short>MS-DOS and OS/2 (FAT/VFAT/FAT32)</short>
+      </element>
+      <element name="OS_UNIX">
+        <short>UNIX-like platforms</short>
+      </element>
+      <element name="OS_OS2">
+        <short>OS/2 HPFS</short>
+      </element>
+      <element name="OS_NTFS">
+        <short>NTFS</short>
+      </element>
+      <element name="OS_VFAT">
+        <short>VFAT</short>
+      </element>
+      <element name="OS_OSX">
+        <short>Mac OSX</short>
+      </element>
+      <element name="UNIX_MASK">
+        <short>Unix permission mask</short>
+      </element>
+      <element name="UNIX_FIFO">
+        <short>Unix FIFO file type</short>
+      </element>
+      <element name="UNIX_CHAR">
+        <short>Unix character device</short>
+      </element>
+      <element name="UNIX_DIR">
+        <short>Unix directory</short>
+      </element>
+      <element name="UNIX_BLK">
+        <short>Unix block device</short>
+      </element>
+      <element name="UNIX_FILE">
+        <short>Unix regular file</short>
+      </element>
+      <element name="UNIX_LINK">
+        <short>Unix symbolic link</short>
+      </element>
+      <element name="UNIX_SOCK">
+        <short>Unix sockets</short>
+      </element>
+      <element name="UNIX_RUSR">
+        <short>Unix user read permission</short>
+      </element>
+      <element name="UNIX_WUSR">
+        <short>Unix user write permission</short>
+      </element>
+      <element name="UNIX_XUSR">
+        <short>Unix user execute permission</short>
+      </element>
+      <element name="UNIX_RGRP">
+        <short>Unix group read permission</short>
+      </element>
+      <element name="UNIX_WGRP">
+        <short>Unix group write permission</short>
+      </element>
+      <element name="UNIX_XGRP">
+        <short>Unix group execute permission</short>
+      </element>
+      <element name="UNIX_ROTH">
+        <short>Unix other users read permission</short>
+      </element>
+      <element name="UNIX_WOTH">
+        <short>Unix other users write permission</short>
+      </element>
+      <element name="UNIX_XOTH">
+        <short>Unix other users execute permission</short>
+      </element>
+      <element name="UNIX_DEFAULT">
+        <short>Unix default attributes</short>
+      </element>
+
       <element name="Local_File_Header_Type">
         <short>Record structure containing local file header</short>
       </element>
@@ -33,8 +136,9 @@
       </element>
       <element name="Local_File_Header_Type.Bit_Flag">
         <short>General purpose bit flag</short>
-        <seealso>Please see zip format documentation for details.
-</seealso>
+        <descr>
+          Please see zip format documentation for details.
+        </descr>
       </element>
       <element name="Local_File_Header_Type.Compress_Method">
         <short>Compression method</short>
@@ -61,13 +165,90 @@
       </element>
       <element name="Local_File_Header_Type.Extra_Field_Length">
         <short>Extra field length</short>
-        <descr>Length of extra field in local file header. An extra field contains program-specific information and should be ignored if the extra field is not supported.
+        <descr>
+          <p>Length of extra field in local file header. An extra field contains program-specific information and should be ignored if the extra field is not supported.</p>
 </descr>
       </element>
+
+      <element name="Extensible_Data_Field_Header_Type">
+        <short>Extra fields marker</short>
+        <descr>
+          Beginning of extra field. Occurs after the local file header and after the central directory header.
+        </descr>
+        <seealso/>
+      </element>
+
+      <element name="Extensible_Data_Field_Header_Type.Header_ID">
+        <short>Extra field header ID</short>
+        <descr>
+          <p>
+            $0001 (ZIP64_HEADER_ID) Zip64 extended information extra field.
+            $0009 OS/2: extended attributes.
+            $000a NTFS: (Win32 really).
+            $000d UNIX: uid, gid etc.
+          </p>
+        </descr>
+        <seealso/>
+      </element>
+
+      <element name="Extensible_Data_Field_Header_Type.Data_Size">
+        <short>Extra field data size</short>
+        <descr>
+          <p>
+            Size of following field data.
+            Field data should follow the extensible header type information.
+          </p>
+        </descr>
+        <seealso/>
+      </element>
+
+      <element name="Zip64_Extended_Info_Field_Type ">
+        <short>Extra field data type</short>
+        <descr>
+          <p>
+            Packed Record occurs after Extensible_Data_Field_Header_Type.
+            Overrides the Local and Central Directory data.
+            Stored in extra field.
+          </p>
+        </descr>
+        <seealso/>
+      </element>
+
+      <element name="Zip64_Extended_Info_Field_Type.Original_Size">
+        <short>Unompressed file size</short>
+        <descr>
+          Uncompressed file size.
+        </descr>
+        <seealso/>
+      </element>
+
+      <element name="Zip64_Extended_Info_Field_Type.Compressed_Size">
+        <short>Compressed data size</short>
+        <descr>
+          Compressed data size.
+        </descr>
+        <seealso/>
+      </element>
+
+      <element name="Zip64_Extended_Info_Field_Type.Relative_Hdr_Offset">
+        <short>Offset to the local header record.</short>
+        <descr>
+          Offset to the local header record.
+        </descr>
+        <seealso/>
+      </element>
+
+      <element name="Zip64_Extended_Info_Field_Type.Disk_Start_Number">
+        <short> Disk number where this file starts.</short>
+        <descr>
+          Disk number where this file starts.
+        </descr>
+        <seealso/>
+      </element>
+
       <element name="Central_File_Header_Type">
         <short>Record structure containing central file header</short>
-        <descr>This record contains the structure for a file header within the central directory.
-</descr>
+        <descr>This record contains the structure for a file header within the central directory.</descr>
       </element>
       <element name="Central_File_Header_Type.Signature">
         <short>Central file header signature</short>
@@ -80,13 +261,13 @@
       </element>
       <element name="Central_File_Header_Type.Bit_Flag">
         <short>Central file general purpose bit flag</short>
-        <descr>General purpose flag for a file entry in the central directory.
+        <descr>
+          General purpose flag for a file entry in the central directory.
 </descr>
       </element>
       <element name="Central_File_Header_Type.Compress_Method">
         <short>Compression method</short>
-        <descr>Method used to compress the file
-</descr>
+        <descr>Method used to compress the file</descr>
       </element>
       <element name="Central_File_Header_Type.Last_Mod_Time">
         <short>File last modification time</short>
@@ -108,13 +289,11 @@
       </element>
       <element name="Central_File_Header_Type.Extra_Field_Length">
         <short>Extra field length</short>
-        <descr>Length of extra field (or 0 if none). An extra field contains program-specific information and should be ignored if the extra field is not supported.
-</descr>
+        <descr>Length of extra field (or 0 if none). An extra field contains program-specific information and should be ignored if the extra field is not supported.</descr>
       </element>
       <element name="Central_File_Header_Type.File_Comment_Length">
         <short>File comment length</short>
-        <descr>Length of file comment (or 0 if none).
-</descr>
+        <descr>Length of file comment (or 0 if none).</descr>
       </element>
       <element name="Central_File_Header_Type.Starting_Disk_Num">
         <short>Starting disk number</short>
@@ -128,9 +307,14 @@
       <element name="Central_File_Header_Type.Local_Header_Offset">
         <short>Relative offset of local header</short>
       </element>
+
       <element name="End_of_Central_Dir_Type">
         <short>Record storing end of central directory information</short>
-        <descr>The end of central directory is placed at the end of the zip file. Note that the end of central directory record is distinct from the Zip64 end of central directory record and zip64 end of central directory locator, which precede the end of central directory, if implemented.</descr>
+        <descr>
+        <p>
+            The end of central directory is placed at the end of the zip file. Note that the end of central directory record is distinct from the Zip64 end of central directory record and zip64 end of central directory locator, which precede the end of central directory, if implemented.
+        </p>
+        </descr>
       </element>
       <element name="End_of_Central_Dir_Type.Signature">
         <short>End of central directory signature</short>
@@ -155,14 +339,76 @@
       </element>
       <element name="End_of_Central_Dir_Type.ZipFile_Comment_Length">
         <short>Length of the zip comment field</short>
-        <descr>Denotes the length of the comment for the entire zip file (or 0 if no comment)
+        <descr>
+          Denotes the length of the comment for the entire zip file (or 0 if no comment).
 </descr>
       </element>
+
+      <element name="Zip64_End_of_Central_Dir_type">
+        <short>Record at end of central directory</short>
+        <descr>This record appears at the end of the central directory</descr>.
+        <seealso/>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_type.Signature">
+        <short>Signature</short>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_type.Record_Size">
+        <short>This record size</short>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_type.Version_Made_By">
+        <short>Version of generating software</short>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_type.Extract_Version_Reqd">
+        <short>Minimum extract version required</short>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_type.Disk_Number">
+        <short>Number of this disk</short>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_type.Central_Dir_Start_Disk">
+        <short>Start disk of central directory</short>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_type.Entries_This_Disk">
+        <short>Number of entries on this disk</short>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_type.Total_Entries">
+        <short>Total entries in archive</short>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_type.Central_Dir_Size">
+        <short>Central directory size</short>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_type.Start_Disk_Offset">
+        <short>Offset to start disk</short>
+      </element>
+
+      <element name="Zip64_End_of_Central_Dir_Locator_type">
+        <short>Locator type</short>
+        <descr>
+          Comes after the Zip64_End_of_Central_Dir_type.
+        </descr>
+        <seealso/>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_Locator_type.Signature">
+        <short></short>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_Locator_type.Zip64_EOCD_Start_Disk">
+        <short>
+          Starting disk number for Zip64 End of Central Directory record.
+        </short>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_Locator_type.Central_Dir_Zip64_EOCD_Offset">
+        <short>Offset of Zip64 End of Central Directory record</short>
+      </element>
+      <element name="Zip64_End_of_Central_Dir_Locator_type.Total_Disks">
+        <short>
+          Total number of disks (contained in zip).
+        </short>
+      </element>
+
       <element name="Crc_32_Tab">
         <short>Table used in calculating CRC-32</short>
-        <descr>Table used in determining CRC-32 values. There are various CRC-32 algorithms in use; please refer to the ZIP file format specifications for details.
-</descr>
+        <descr>Table used in determining CRC-32 values. There are various CRC-32 algorithms in use; please refer to the ZIP file format specifications for details.</descr>
       </element>
+
       <element name="TProgressEvent">
         <short>Event procedure for capturing compression/decompression progress</short>
       </element>
@@ -172,6 +418,37 @@
       <element name="TProgressEvent.Pct">
         <short>Percentage completed</short>
       </element>
+
+      <element name="TProgressEventEx">
+        <short>
+          Specifies an event handler signalled to indicate compression/decompression progress
+        </short>
+        <descr>
+          <p>
+            <var>TProgressEventEx</var> is an object procedure which implements an event handler signalled to indicate compression/decompression progress. It is very similar to <var>TProgressEvent</var>, but provides separate values for the cumulative number of bytes handled and the total number of bytes to be processed.
+          </p>
+          <p>
+            TProgressEventEx is the type used to implement the <var>OnProgressEx</var> property in <var>TDeCompressor</var> and <var>TUnZipper</var>.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TDeCompressor.OnProgressEx"/>
+          <link id="TInflater.Decompress"/>
+          <link id="TUnZipper.OnProgressEx"/>
+          <link id="TUnZipper.UnZipAllFiles"/>
+          <link id="TProgressEvent"/>
+        </seealso>
+      </element>
+      <element name="TProgressEventEx.Sender">
+        <short>Object for the event notification</short>
+      </element>
+      <element name="TProgressEventEx.ATotPos">
+        <short>Cumulative number of bytes handled in the caller</short>
+      </element>
+      <element name="TProgressEventEx.ATotSize">
+        <short>Total number of bytes to be processed in the caller</short>
+      </element>
+
       <element name="TOnEndOfFileEvent">
         <short>Event procedure for an end of file (de)compression event</short>
       </element>
@@ -181,6 +458,7 @@
       <element name="TOnEndOfFileEvent.Ratio">
         <short>Ratio of total operation (compression/decompression) that is completed</short>
       </element>
+
       <element name="TOnStartFileEvent">
         <short>Event procedure for a start of file (de)compression event</short>
       </element>
@@ -190,6 +468,7 @@
       <element name="TOnStartFileEvent.AFileName">
         <short>File name of file to be processed</short>
       </element>
+
       <element name="TCompressor">
         <short>Compressor object</short>
         <descr>This object compresses a stream into a compressed zip stream.</descr>
@@ -216,7 +495,7 @@
         <short>Updates running CRC32 value</short>
       </element>
       <element name="TCompressor.Create">
-        <short>Creates a <link name="TCompressor"/> object</short>
+        <short>Creates a <link id="TCompressor"/> object</short>
       </element>
       <element name="TCompressor.Create.AInFile">
         <short>Input file that will be compressed</short>
@@ -236,20 +515,73 @@
       <element name="TCompressor.ZipID.Result">
         <short>Identifier for type of compression</short>
       </element>
+
+      <element name="TCompressor.ZipVersionReqd">
+        <short>ZIP version required in the method</short>
+        <descr>
+          Abstract virtual class function. Must be implemented in a descendent class.
+        </descr>
+        <seealso/>
+      </element>
+      <element name="TCompressor.ZipVersionReqd.Result">
+        <short>Word type with the required ZIP version</short>
+      </element>
+
+      <element name="TCompressor.ZipBitFlag">
+        <short>Current bit</short>
+        <descr>
+          Abstract virtual function. Must be implemented in a descendent class.
+        </descr>
+        <seealso/>
+      </element>
+      <element name="TCompressor.ZipBitFlag.Result">
+        <short>Current bit</short>
+      </element>
+
+      <element name="TCompressor.Terminate">
+        <short>Halts the compressor by setting the Terminated property to True</short>
+        <descr/>
+        <seealso/>
+      </element>
+
       <element name="TCompressor.BufferSize">
-        <short>Size of buffer used for compression</short>
+        <short>Size of the buffer used for compression</short>
+        <descr>
+          <p>
+            <var>BufferSize</var> is a read-only <var>LongWord</var> property with the size of the buffer used for compression. The property is set to the value passed as an argument to the <var>Create</var> constructor.
+          </p>
+          <p>
+            BufferSize is used in the <var>Compress</var> method (in descendent classes) to allocate a pointer to a memory block with the required size. It also determines  the read size used when processing an input file or stream.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TCompressor.Create"/>
+          <link id="TShrinker.Compress"/>
+          <link id="TDeflater.Compress"/>
+        </seealso>
       </element>
+
       <element name="TCompressor.OnPercent">
-        <short>Reference to OnPercent event handler</short>
+        <short>Threshold percentage which triggers an OnProgress update</short>
       </element>
+
       <element name="TCompressor.OnProgress">
-        <short>Reference to OnProgress event handler</short>
+        <short>
+          Event handler signalled to indicate the completion percentage for the compressor
+        </short>
       </element>
+
       <element name="TCompressor.Crc32Val">
         <short>Running CRC32 value</short>
-        <descr>Running CRC32 value used when writing zip header
-</descr>
+        <descr>Running CRC32 value used when writing zip header.</descr>
       </element>
+
+      <element name="TCompressor.Terminated">
+        <short>Set to True when the Terminate method is called</short>
+        <descr/>
+        <seealso/>
+      </element>
+
       <element name="TDeCompressor">
         <short>Decompressor object</short>
         <descr>This object decompresses a compressed zip stream.</descr>
@@ -262,8 +594,7 @@
       </element>
       <element name="TDeCompressor.FCrc32Val">
         <short>Running CRC32 value</short>
-        <descr>CRC32 value; used for checking zip file integrity
-</descr>
+        <descr>CRC32 value; used for checking zip file integrity.</descr>
       </element>
       <element name="TDeCompressor.FBufferSize">
         <short>Buffer size</short>
@@ -292,6 +623,13 @@
       <element name="TDeCompressor.DeCompress">
         <short>Decompress zip stream</short>
       </element>
+
+      <element name="TDeCompressor.Terminate">
+        <short>Halts decompression and sets Terminated to True</short>
+        <descr/>
+        <seealso/>
+      </element>
+
       <element name="TDeCompressor.ZipID">
         <short>Identifier for type of compression</short>
       </element>
@@ -307,35 +645,523 @@
       <element name="TDeCompressor.OnProgress">
         <short>Event handler for OnProgress procedure</short>
       </element>
+
+      <element name="TDeCompressor.OnProgressEx">
+        <short>
+          Event handler signalled to indicate progress using processed and total byte counts
+        </short>
+        <descr/>
+        <seealso/>
+      </element>
+
       <element name="TDeCompressor.Crc32Val">
         <short>Running CRC32 value used for verifying zip file integrity</short>
       </element>
+
+      <element name="TDeCompressor.Terminated">
+        <short>Set to True when the Terminate method is called</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TABLESIZE">
+        <short>Size for the code table used in LZW compression</short>
+      </element>
+
+      <element name="FIRSTENTRY">
+        <short>Offset of First entry in table</short>
+      </element>
+
+      <element name="CodeRec">
+        <short>Small LZW compression helper type</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="CodeRec.Child">
+        <short>Child reference</short>
+      </element>
+      <element name="CodeRec.Sibling">
+        <short>Sibling reference</short>
+      </element>
+      <element name="CodeRec.Suffix">
+        <short>Suffix data</short>
+      </element>
+
+      <element name="CodeArray">
+        <short>Array of <var>CodeRec</var></short>
+        <descr>Array definition for <link id="CodeRec"/> </descr>
+        <seealso><link id="CodeRec"/></seealso>
+      </element>
+
+      <element name="TablePtr">
+        <short>Pointer to <var>CodeArray</var></short>
+        <descr>Pointer to  <link id="CodeArray"/> </descr>
+        <seealso><link id="CodeArray"/></seealso>
+      </element>
+
+      <element name="FreeListPtr">
+        <short>Pointer to <var>FreeListArray</var></short>
+        <descr>Pointer to  <link id="FreeListArray"/> </descr>
+        <seealso><link id="FreeListArray"/> </seealso>
+      </element>
+
+      <element name="FreeListArray">
+        <short>Array of words</short>
+        <descr>Helper type in decoding the zip file.</descr>
+        <seealso><link id="FreeListPtr"/></seealso>
+      </element>
+
+      <element name="BufPtr">
+        <short>Implement the output buffer in TShrinker</short>
+        <descr>
+          <p>
+            Alias for the PByte type. Used to implement the output buffer in TShrinker.
+          </p>
+        </descr>
+        <seealso/>
+      </element>
+
       <element name="TShrinker">
         <short>Child of <link id="TCompressor">TCompressor</link> that implements the Shrink compression method</short>
+        <descr>
+          TShrinker implements the LZW lossless data compression algorithm created by Abraham Lempel, Jacob Ziv, and Terry Welch also known as "shrink" compression.
+        </descr>
       </element>
+
+      <element name="TShrinker.Create">
+        <short>Constructor for the class instance</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TShrinker.Create.AInFile">
+        <short>Stream with the input processed in the class instance</short>
+      </element>
+      <element name="TShrinker.Create.AOutFile">
+        <short>Stream where the compressed values are written</short>
+      </element>
+      <element name="TShrinker.Create.ABufSize">
+        <short>Size of the buffer used to read and process values from the input stream</short>
+      </element>
+
+      <element name="TShrinker.Destroy">
+        <short>Destructor for the class instance</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TShrinker.Compress">
+        <short>Compresses input values using LZW (shrink) compression</short>
+        <descr>
+          <p>
+            Initializes the code table used for LZW compression. Processes buffer-size chunks from the input stream and calls the private Shrink method to generate values written to the output stream.
+          </p>
+        </descr>
+        <seealso/>
+      </element>
+
+      <element name="TShrinker.ZipID">
+        <short>Return Zip algorithm ID</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TShrinker.ZipID.Result">
+        <short>always 1</short>
+      </element>
+
+      <element name="TShrinker.ZipVersionReqd">
+        <short>Minimum zip algorithm required</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TShrinker.ZipVersionReqd.Result">
+        <short>Always 10 </short>
+      </element>
+
+      <element name="TShrinker.ZipBitFlag">
+        <short>Zip bitness flag</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TShrinker.ZipBitFlag.Result">
+        <short>Always 0 </short>
+      </element>
+
       <element name="TDeflater">
         <short>Child of <link id="TCompressor">TCompressor</link> that implements the Deflate compression method</short>
       </element>
+
+      <element name="TDeflater.Create">
+        <short>Constructor for the class instance</short>
+        <descr>
+          <p>
+            <var>Create</var> is the overridden constructor for the class instance, and calls the inherited method on entry. Create sets the default value for the <var>CompressionLevel</var> property to <var>clNone</var>.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TDeflater.CompressionLevel"/>
+          <link id="TCompressor.Create"/>
+        </seealso>
+      </element>
+      <element name="TDeflater.Create.AInFile">
+        <short>Stream with the input values compressed in the class instance</short>
+      </element>
+      <element name="TDeflater.Create.AOutFile">
+        <short>
+          Stream with the output values after compression using the Deflate algorithm
+        </short>
+      </element>
+      <element name="TDeflater.Create.ABufSize">
+        <short>Buffer size used to read and process values from the input stream</short>
+      </element>
+
+      <element name="TDeflater.Compress">
+        <short>Performs compression using the Deflate algorithm</short>
+        <descr>
+          <p>
+            Creates a temporary TCompressionStream instance using the compression level specified in the CompressLevel property. Compress signals the OnProgress event handler (when assigned) when the number of bytes representing the OnPercent threshold are  processed in the method.
+          </p>
+        </descr>
+        <seealso/>
+      </element>
+
+      <element name="TDeflater.ZipID">
+        <short>Zip algorithm ID</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TDeflater.ZipID.Result">
+        <short>Always 8 </short>
+      </element>
+
+      <element name="TDeflater.ZipVersionReqd">
+        <short>Required version</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TDeflater.ZipVersionReqd.Result">
+        <short>Always 20</short>
+      </element>
+
+      <element name="TDeflater.ZipBitFlag">
+        <short>Bitness flag</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TDeflater.ZipBitFlag.Result">
+        <short>Depends on compression level</short>
+      </element>
+
+      <element name="TDeflater.CompressionLevel">
+        <short>Indicates the compression level applied in the Compress method</short>
+        <descr>
+          <p>
+            <var>CompressionLevel</var> is a <var>TCompressionLevel</var> property which Indicates the compression level applied in the <var>Compress</var> method.  Values include:
+          </p>
+          <dl>
+            <dt>clNone</dt>
+            <dd>Do not use compression, just copy data.</dd>
+            <dt>clFastest</dt>
+            <dd>Use the fast (but less) compression. </dd>
+            <dt>clDefault</dt>
+            <dd>Use the default compression.  dd</dd>
+            <dt>clMax</dt>
+            <dd>Use the maximum compression.</dd>
+          </dl>
+        </descr>
+        <seealso>
+          <link id="TDeflater.Compress"/>
+          <link id="#fcl.zstream.TCompressionLevel">TCompressionLevel</link>
+        </seealso>
+      </element>
+
       <element name="TInflater">
         <short>Child of <link id="TDeCompressor">TDeCompressor</link> that implements the Inflate decompression method</short>
       </element>
+
+      <element name="TInflater.Create">
+        <short>Constructor for the class instance</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TInflater.Create.AInFile">
+        <short>Stream with the compressed content processed in the class instance</short>
+      </element>
+      <element name="TInflater.Create.AOutFile">
+        <short>Stream where the de-compressed content is stored</short>
+      </element>
+      <element name="TInflater.Create.ABufSize">
+        <short>Buffer size used to read and process compressed content</short>
+      </element>
+
+      <element name="TInflater.DeCompress">
+        <short>Removes compression applied using the deflate algorithm</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TInflater.ZipID">
+        <short>Zip algorithm ID</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TInflater.ZipID.Result">
+        <short>Always 8</short>
+      </element>
+
+      <element name="TZipFileEntry">
+        <short>Represents a file or directory added to a .ZIP file</short>
+        <descr>
+          <p>
+            <var>TZipFileEntry</var> is a <var>TCollectionItem</var> descendant which represents a file or directory added to a .ZIP file archive. TZipFileEntry is the type used for items in the <var>Entries</var> property in the <var>TZipFileEntries</var> collection.
+          </p>
+          <p>
+            TZipFileEntry provides properties with metadata for the file or directory, including:
+          </p>
+          <dl>
+            <dt>ArchiveFileName</dt>
+            <dd>Name of the file or directory in the .ZIP archive.</dd>
+            <dt>UTF8ArchiveFileName</dt>
+            <dd>Name of the file or directory in the .ZIP archive using UTF-8 encoding.</dd>
+            <dt>DiskFileName</dt>
+            <dd>Name of the file or directory on the local file system.</dd>
+            <dt>UTF8DiskFileName</dt>
+            <dd>Name of the file or directory using UTF-8 encoding.</dd>
+            <dt>Size</dt>
+            <dd>Size of the compressed file or directory in the .ZIP archive.</dd>
+            <dt>DateTime</dt>
+            <dd>The timestamp for file or directory in the .ZIP archive.</dd>
+            <dt>OS</dt>
+            <dd>
+              Indicates the operating system device type / file system where the file or directory originated.
+            </dd>
+            <dt>Attributes</dt>
+            <dd>File attributes for the entry.</dd>
+            <dt>CompressionLevel</dt>
+            <dd>Compression level applied to the content in the .ZIP archive.</dd>
+            <dt>Stream</dt>
+            <dd>TStream instance with the content for the entry.</dd>
+          </dl>
+          <p>
+            Use <var>IsDirectory</var> to determine if the entry represents a directory.
+          </p>
+          <p>
+            Use <var>IsLink</var> to determine if the entry is a symbolic link on the local file system.
+          </p>
+        </descr>
+        <seealso/>
+      </element>
+
+      <element name="TZipFileEntry.Create">
+        <short>Constructor for the class instance</short>
+        <descr>
+          <p>
+            <var>Create</var> is the overridden constructor for the class instance. Create sets the default values for properties, including:
+          </p>
+          <dl>
+            <dt>DateTime</dt>
+            <dd>Sets to the current date and time for the local computer.</dd>
+            <dt>OS</dt>
+            <dd>Set to OS_UNIX for UNIX-like environments, or OS_VFAT for all others.</dd>
+            <dt>Attributes</dt>
+            <dd>Set to 0 (no attributes).</dd>
+            <dt>CompressionLevel</dt>
+            <dd>Set to clDefault.</dd>
+          </dl>
+          <p>
+            Create calls the inherited constructor prior to exiting from the method.
+          </p>
+        </descr>
+        <seealso/>
+      </element>
+      <element name="TZipFileEntry.Create.ACollection">
+        <short>Collection which owns the class instance</short>
+      </element>
+
+      <element name="TZipFileEntry.IsDirectory">
+        <short>True if the entry is a directory on the local file system</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TZipFileEntry.IsDirectory.Result">
+        <short>True if the entry is a directory on the local file system</short>
+      </element>
+
+      <element name="TZipFileEntry.IsLink">
+        <short>True if the directory is a symbolic link on the local file system</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TZipFileEntry.IsLink.Result">
+        <short>True if the directory is a symbolic link on the local file system</short>
+      </element>
+
+      <element name="TZipFileEntry.Assign">
+        <short>Copies property values from the specified persistent object</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TZipFileEntry.Assign.Source">
+        <short>Persistent object with the values copied in the method</short>
+      </element>
+
+      <element name="TZipFileEntry.Stream">
+        <short>Stream with the content for the entry</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipFileEntry.ArchiveFileName">
+        <short>Name of the file or directory in the .ZIP archive</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipFileEntry. UTF8ArchiveFileName">
+        <short>Name of the file or directory in the .ZIP archive using UTF-8 encoding</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipFileEntry.DiskFileName">
+        <short>Name of the file or directory on the local file system</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipFileEntry.UTF8DiskFileName">
+        <short>
+          Name of the file or directory on the local file system using UTF-8 encoding
+        </short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipFileEntry.Size">
+        <short>Size of the compressed content for the file or directory</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipFileEntry.DateTime">
+        <short>Timestamp for the file or directory in the .ZIP archive</short>
+        <descr/>
+        <seealso/>
+      </element>
+
       <element name="TZipFileEntry.OS">
         <short>Indication of operating system/file system</short>
         <descr>Currently either OS_UNIX (if UNIX is defined) or OS_FAT.</descr>
       </element>
-      <element name="TZipFileEntries">
-        <short>Files in the zip archive</short>
+
+      <element name="TZipFileEntry.Attributes">
+        <short>File attributes for the file or directory</short>
+        <descr/>
+        <seealso/>
       </element>
+
+      <element name="TZipFileEntry.CompressionLevel">
+        <short>Compression level applied to the content stored in the .ZIP archive</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipFileEntries">
+        <short>
+          Collection used to store information about files and directories in the .zip archive
+        </short>
+        <descr>
+          <p>
+            <var>TZipFileEntries</var> is a <var>TCollection</var> descendant which provides support for using <var>TZipFileEntry</var> instances as the Items in the collection. It provides an indexed <var>Entries</var> property used to access the TZipFileEntry instances in the collection, and serves as the default property for enumerator access.
+          </p>
+          <p>
+            TZipFileEntries is the type used to implement the <var>Entries</var> property in <var>TZipper</var>.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TZipFileEntries.Entries"/>
+          <link id="TZipFileEntry"/>
+          <link id="TZipper.Entries"/>
+          <link id="TUnZipper.Entries"/>
+          <link id="TFullZipFileEntries"/>
+        </seealso>
+      </element>
+
       <element name="TZipFileEntries.AddFileEntry">
         <short>Adds file to zip directory</short>
-        <descr>Adds a file to the list of files that will be written out in the zip file.</descr>
+        <descr>
+          <p>
+            <var>AddFileEntry</var> adds a file or directory to the list of entries that will be written out in the .zip file. AddFileEntry calls the <var>Add</var> method to create the new collection item, and casts it the <var>TZipFileEntry</var> type used in <var>TZipFileEntries</var>.
+          </p>
+          <p>
+            Values passed as arguments to the overloaded variants are stored in the corresponding properties in the TZipFileEntry instance.
+          </p>
+          <p>
+            The return value is the TZipFileEntry instance added to the collection.
+          </p>
+        </descr>
+      </element>
+      <element name="TZipFileEntries.AddFileEntry.Result">
+        <short>Collection item added in the method</short>
       </element>
       <element name="TZipFileEntries.AddFileEntry.AStream">
-        <short>Adds a zip file entry from a stream</short>
+        <short>Stream with the content for the zip file entry</short>
       </element>
+      <element name="TZipFileEntries.AddFileEntry.ADiskFileName">
+        <short>Name of the file or directory on the local file system</short>
+      </element>
+      <element name="TZipFileEntries.AddFileEntry.AArchiveFileName">
+        <short>Name used for the file or directory in the .ZIP archive</short>
+      </element>
+
+      <element name="TZipFileEntries.AddFileEntries">
+        <short>Adds TZipFileEntry instances in the collection for the file names in List</short>
+        <descr>
+          <p>
+            <var>AddFileEntries</var> is a method used to add a list of files names to the collection. <var>List</var> contains the file names added in the method. AddFileEntries iterates over the string values in List, and calls the <var>AddFileEntry</var> method to create new items in the collection.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TZipFileEntries.AddFileEntry"/>
+        </seealso>
+      </element>
+      <element name="TZipFileEntries.AddFileEntries.List">
+        <short>TStrings instance with the list of file names added to the collection</short>
+      </element>
+
       <element name="TZipFileEntries.Entries">
         <short>Entries (files) in the zip archive</short>
+        <descr>
+          <p>
+            <var>Entries</var> is an indexed <var>TZipFileEntry</var> property which provides indexed access to the <var>Items</var> in the collection by their ordinal position. The item values are cast to the <var>TZipFileEntry</var> type used in <var>TZipFileEntries</var>.
+          </p>
+          <p>
+            Entries is the default property in TZipFileEntries, and allows an enumerator to be used to access the TZipFileEntry values in the collection.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TZipFileEntry"/>
+          <link id="#rtl.classes.TCollection.Items">TCollection.Items</link>
+        </seealso>
       </element>
+
+      <element name="TZipper">
+        <short>Creates a .ZIP archive file</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.Create">
+        <short>Constructor for the class instance</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.Destroy">
+        <short>Destructor for the class instance</short>
+        <descr/>
+        <seealso/>
+      </element>
+
       <element name="TZipper.ZipAllFiles">
         <short>Zips all files in object and writes zip to disk</short>
         <descr>
@@ -359,11 +1185,303 @@ end.
 </code>
         </descr>
       </element>
+
+      <element name="TZipper.SaveToFile">
+        <short>Saves the archive to a file with a new name</short>
+        <descr>
+          Saves a .ZIP file with a new name.
+        </descr>
+        <seealso/>
+      </element>
+      <element name="TZipper.SaveToFile.AFileName">
+        <short>The filename to save to</short>
+      </element>
+
+      <element name="TZipper.SaveToStream">
+        <short>Save the archive to a stream </short>
+        <descr>
+        </descr>
+        <seealso/>
+      </element>
+      <element name="TZipper.SaveToStream.AStream">
+        <short>Stream to save the archive to</short>
+      </element>
+
+      <element name="TZipper.ZipFile">
+        <short>Zip one file to a zip file</short>
+        <descr>
+           Zips the specified files into a zip with the name in AFileName.
+        </descr>
+        <seealso><link id="TZipper.ZipFiles">ZipFiles</link></seealso>
+      </element>
+      <element name="TZipper.ZipFile.aFileToBeZipped">
+        <short>File on disk that must be zipped</short>
+      </element>
+      <element name="TZipper.ZipFile.AZipFileName">
+        <short>The filename of the zip archive file</short>
+      </element>
+
+      <element name="TZipper.ZipFiles">
+        <short>Zip multiple files into an archive</short>
+        <descr/>
+        <seealso><link id="TZipper.ZipFile">ZipFile</link></seealso>
+      </element>
+      <element name="TZipper.ZipFiles.AZipFileName">
+        <short>Zip archive filename</short>
+      </element>
+      <element name="TZipper.ZipFiles.FileList">
+        <short>Filenames to be zipped</short>
+      </element>
+      <element name="TZipper.ZipFiles.aFileList">
+        <short>Filenames to be zipped</short>
+      </element>
+      <element name="TZipper.ZipFiles.Entries">
+        <short>Entries to add to file</short>
+      </element>
+
+      <element name="TZipper.Zip">
+        <short>
+          Convenience method used to create a .zip file with the given name containing the  specified file(s)
+        </short>
+        <descr>
+          <p>
+            Zip is a class procedure used to create a .zip file with the name specified in AZipFileName. Overloaded variants are provided that allow one or more file names to be specified using the <var>AFileToBeZipped</var> or <var>AFileList</var> arguments.
+          </p>
+          <p>
+            For example:
+          </p>
+<code>
+var
+  SZip, SFile: RawByteString;
+
+  SZip := '/usr/tmp/docbook5-catalog.zip';
+  SFile := '/usr/share/xml/docbook/schema/sch/5.0/catalog.xml'
+
+  TZipper.Zip(SZip, SFile);
+  </code>
+        </descr>
+        <seealso>
+          <link id="TUnzipper.Unzip"/>
+        </seealso>
+      </element>
+      <element name="TZipper.Zip.AZipFileName">
+        <short>Name for the .zip file created in the method</short>
+      </element>
+      <element name="TZipper.Zip.AFileToBeZipped">
+        <short>Name of the file added to the .zip file</short>
+      </element>
+      <element name="TZipper.Zip.AFileList">
+        <short>Contains file names added to the .zip file</short>
+      </element>
+
+      <element name="TZipper.Clear">
+        <short>Removes all values in the Entries and Files properties</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.Terminate">
+        <short>
+          Halts an assigned compressor in the class instance, and sets Terminated to True
+        </short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.BufferSize">
+        <short>Buffer size used when reading and processing files</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.OnPercent">
+        <short>
+          Threshold percentage which triggers progress notifications when processing files
+        </short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.OnProgress">
+        <short>Event handler signalled to show a percent complete progress notifications</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.OnStartFile">
+        <short>Event handler signalled when compression for a file is started</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.OnEndFile">
+        <short>Event handler signalled when compression for a file has been completed</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.FileName">
+        <short>
+          Name of the .ZIP archive file where the compressed files and directories are stored
+        </short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.FileComment">
+        <short>Comment stored in the .ZIP archive file</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.Files">
+        <short>Provides access to the list of files and directories in the archive</short>
+        <descr>
+          <p>
+            Deprecated. Use the Entries property to call its <var>AddFileEntry</var> or
+            <var>AddFileEntries</var> methods instead.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TZipper.Entries"/>
+          <link id="TZipperFileEntries.AddFileEntry"/>
+          <link id="TZipperFileEntries.AddFileEntries"/>
+        </seealso>
+      </element>
+
+      <element name="TZipper.InMemSize">
+        <short>Total memory used for the compressed content in the .ZIP file</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.Entries">
+        <short>Collection with the TZipFileEntry instances in the .ZIP archive</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.Terminated">
+        <short>True if the Terminate method has been called</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TZipper.UseLanguageEncoding">
+        <short>Use language encoding</short>
+        <descr>
+           EFS/language encoding using UTF-8.
+        </descr>
+        <seealso/>
+      </element>
+
+      <element name="TFullZipFileEntry">
+        <short>Extended zip file entry</short>
+        <descr>
+          <p>
+            <var>TFullZipFileEntry</var> is a <var>TZipFileEntry</var> descendant which provides additional information about files in a .ZIP archive. TFullZipFileEntry extends the ancestor class to include properties like:
+          </p>
+          <dl>
+            <dt>BitFlags</dt>
+            <dd>General purpose bit flag from the Local Header in the .ZIP archive file.</dd>
+            <dt>CompressMethod</dt>
+            <dd>Compression method for the file.</dd>
+            <dt>CompressedSize</dt>
+            <dd>Size after applying the compression method and level.</dd>
+            <dt>CRC32</dt>
+            <dd>32-bit CRC value for the file.</dd>
+          </dl>
+        </descr>
+        <seealso/>
+      </element>
+
+      <element name="TFullZipFileEntry.BitFlags">
+        <short>General purpose bit flag from the Local Header in the .ZIP archive file</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TFullZipFileEntry.CompressMethod">
+        <short>Compression method for the file</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TFullZipFileEntry.CompressedSize">
+        <short>Size after applying the compression method and level</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TFullZipFileEntry.CRC32">
+        <short>32-bit CRC value for the file</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TOnCustomStreamEvent">
+        <short>Specifies an event handler signalled for stream actions in TUnZipper</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TOnCustomStreamEvent.Sender">
+        <short>TUnZipper object instance for the notification</short>
+      </element>
+      <element name="TOnCustomStreamEvent.AStream">
+        <short>TStream instance for the notification</short>
+      </element>
+      <element name="TOnCustomStreamEvent.AItem">
+        <short>File entry for the notification</short>
+      </element>
+
+      <element name="TCustomInputStreamEvent">
+        <short>Specifies an event handler signalled for actions to an input stream</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TCustomInputStreamEvent.Sender">
+        <short>TUnZipper object instance for the notification</short>
+      </element>
+      <element name="TCustomInputStreamEvent.AStream">
+        <short>TStream instance for the notification</short>
+      </element>
+
+      <element name="TFullZipFileEntries">
+        <short>Collection of TFullZipFileEntry items</short>
+        <descr/>
+        <seealso><link id="TFullZipFileEntry"/></seealso>
+      </element>
+
+      <element name="TFullZipFileEntries.FullEntries">
+        <short>Array access to all entries</short>
+        <descr/>
+        <seealso><link id="TFullZipFileEntry"/></seealso>
+      </element>
+
+      <element name="TUnZipper">
+        <short>Extracts and decompresses files and directories in a .ZIP archive file</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TUnZipper.Create">
+        <short>Constructor for the class instance</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TUnZipper.Destroy">
+        <short>Destructor for the class instance</short>
+        <descr/>
+        <seealso/>
+      </element>
+
       <element name="TUnZipper.UnZipAllFiles">
         <short>Unzips all files in a zip file, writing them to disk</short>
         <descr>
-          <p>This procedure unzips all files in a <link name="TZipper"/> object and writes the unzipped files to disk.</p>
+          <p>This procedure unzips all files in a <link id="TZipper"/> object and writes the unzipped files to disk.</p>
           <p>The example below unzips the files into "C:\windows\temp":</p>
+
           <code>uses
   Zipper;
 var
@@ -381,43 +1499,233 @@ end.
 </code>
         </descr>
       </element>
-      <element name="TUnZipper.UnZipFiles">
-        <short>Unzips specified files</short>
+      <element name="TUnZipper.UnZipAllFiles.AZipFileName">
+        <short>Name of the .zip file unzipped in the method</short>
       </element>
-      <element name="TUnZipper.UnZipFiles.AFileName">
-        <short>Name of zip file to unzip</short>
+
+      <element name="TUnZipper.UnZipFile">
+        <short>Unzips a single file found in the specified .ZIP archive</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TUnZipper.UnZipFile.AZipFileName">
+        <short>Name of the .ZIP archive file</short>
+      </element>
+      <element name="TUnZipper.UnZipFile.aExtractFileName">
+        <short>Name of the file to unzip in the method</short>
+      </element>
+
+      <element name="TUnZipper.UnZipFiles">
+        <short>Unzips the specified files in a .ZIP archive file</short>
+        <descr/>
+        <seealso/>
+      </element>
+      <element name="TUnZipper.UnZipFiles.AZipFileName">
+        <short>Name of the .ZIP file to unzip</short>
       </element>
       <element name="TUnZipper.UnZipFiles.FileList">
-        <short>Stringlist containing list of one or multiple files to be unzipped</short>
+        <short>Stringlist containing one or more files to be unzipped</short>
       </element>
-      <element name="TUnZipper.UnZipAllFiles.AFileName">
-        <short>Name of zip file to unzip</short>
+      <element name="TUnZipper.UnZipFiles.aFileList">
+        <short>Stringlist containing one or more files to be unzipped</short>
       </element>
+
+      <element name="TUnZipper.Unzip">
+        <short>Unzips the specified .ZIP archive file</short>
+        <descr>
+          <p>
+            <var>UnZip</var> is an overloaded class method used to unzip one or more files in the specified .ZIP archive file. Overloaded variants are provided which allow the file or files to be specified using <var>RawByteString</var>, <var>Array</var>, or <var>TStrings</var> data types.
+          </p>
+          <p>
+            UnZip is a convenience method, and does not require an instance of the class. It uses the default options to perform the unzip operation.
+          </p>
+        </descr>
+        <seealso/>
+      </element>
+      <element name="TUnZipper.Unzip.AZipFileName">
+        <short>Name of the .ZIP archive file</short>
+      </element>
+      <element name="TUnZipper.Unzip.aExtractFileName">
+        <short>Name of a file or directory entry to extract in the method</short>
+      </element>
+      <element name="TUnZipper.Unzip.aFileList">
+        <short>List of file names to unzip in the method</short>
+      </element>
+
       <element name="TUnZipper.Clear">
         <short>Removes all entries and files from object</short>
+        <descr/>
+        <seealso/>
       </element>
+
       <element name="TUnZipper.Examine">
         <short>Opens zip file and reads the directory entries (list of zipped files)</short>
+        <descr/>
+        <seealso/>
       </element>
+
+      <element name="TUnZipper.Terminate">
+        <short>Sets the value in Terminated to True</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TUnZipper.BufferSize">
+        <short>Size of the buffer used to read and decompress entries in the .ZIP file</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TUnZipper.OnOpenInputStream">
+        <short>Event handler signalled when the input stream for the .ZIP file is opened</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TUnZipper.OnCloseInputStream">
+        <short>Event handler signalled when the input stream for the .ZIP file is closed</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TUnZipper.OnCreateStream">
+        <short>Event handler signalled when an output stream is created</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TUnZipper.OnDoneStream">
+        <short>Event handler signalled when an output stream is closed</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TUnZipper.OnPercent">
+        <short>Threshold percentage which triggers a progress notification</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TUnZipper.OnProgress">
+        <short>Progress event handler used when decompressing files</short>
+        <descr/>
+        <seealso/>
+      </element>
+
+      <element name="TUnZipper.OnProgressEx">
+        <short>Extended progress event handler used when decompressing files</short>
+        <descr/>
+        <seealso/>
+      </element>
+
       <element name="TUnZipper.OnStartFile">
         <short>Callback procedure that will be called before unzipping a file</short>
+        <descr/>
+        <seealso/>
       </element>
+
       <element name="TUnZipper.OnEndFile">
         <short>Callback procedure that will be called after unzipping a file</short>
+        <descr/>
+        <seealso/>
       </element>
+
       <element name="TUnZipper.FileName">
-        <short>Zip file to be unzipped/processed</short>
+        <short>Path and file name for the .zip file to be unzipped / processed</short>
+        <descr/>
+        <seealso/>
       </element>
+
       <element name="TUnZipper.OutputPath">
         <short>Path where archive files will be unzipped</short>
+        <descr/>
+        <seealso/>
       </element>
+
+      <element name="TUnZipper.FileComment">
+        <short>Comment stored in the .ZIP archive file</short>
+        <descr/>
+        <seealso/>
+      </element>
+
       <element name="TUnZipper.Files">
-        <short>Files in zip file (deprecated)</short>
-        <descr>List of files that should be compressed in the zip file. Note: deprecated. Use Entries.AddFileEntry(FileName) or Entries.AddFileEntries(List) instead.</descr>
+        <short>Files in the zip file (deprecated)</short>
+        <descr>List of files that should be compressed in the zip file. Deprecated. Use Entries.AddFileEntry(FileName) or Entries.AddFileEntries(List) instead.</descr>
+        <seealso/>
       </element>
+
+      <element name="TUnZipper.Entries">
+        <short>
+          Collection with TFullZipFileEntry instances for files and directories stored in the .ZIP archive
+        </short>
+        <descr>
+          <p>
+            <var>Entries</var> is a read-only <var>TFullZipFileEntries</var> property, and the collection representing the items stored in the .ZIP archive file. Entries contains <var>TFullZipFileEntry</var> instances which represent the files or directories present in the .ZIP file.
+          </p>
+          <p>
+            Values in the Entries collection are created and stored when file directory in the .ZIP file is read. This can occur when the <var>Examine</var> method is called, or when extracting one or more files using the <var>UnZipAllFiles</var> / <var>UnZipFiles</var> / <var>UnZipFile</var> methods.
+          </p>
+          <p>
+            The items in the Entries collection are removed when the <var>Clear</var> method is called.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TUnZipper.Examine"/>
+          <link id="TUnZipper.Clear"/>
+          <link id="TUnZipper.UnZipAllFiles"/>
+          <link id="TUnZipper.UnZipFiles"/>
+          <link id="TUnZipper.UnZipFile"/>
+          <link id="TUnZipper.UnZip"/>
+          <link id="TFullZipFileEntries"/>
+          <link id="TFullZipFileEntry"/>
+        </seealso>
+      </element>
+
+      <element name="TUnZipper.UseUTF8">
+        <short>
+          Indicates that the UTF-8-encoded names are used when locating and unzipping entries in the archive
+        </short>
+        <descr>
+          <p>
+            <var>UseUTF8</var> is a <var>Boolean</var> property which indicates if UTF-8-encoded names are used when locating and unzipping items stored in the .ZIP archive.
+          </p>
+          <p>
+            Each <var>TZipFileEntry</var> instance stored in the <var>Entries</var> collection has both UTF-8-encoded and RawByteString (same as AnsiString with no code page) variants of file or directory names. Set UseUTF8 to <b>True</b> to use the UTF-8-encoded version. The default value is <b>False</b>, and causes the <var>RawByteString</var> version to be used.
+          </p>
+          <p>
+            UseUTF8 is used when methods like <var>UnZipAllFiles</var>, <var>UnZipFiles</var>, and <var>UnZipFile</var> are called.
+          </p>
+        </descr>
+        <seealso>
+          <link id="TUnZipper.Entries"/>
+          <link id="TUnZipper.UnZipAllFiles"/>
+          <link id="TUnZipper.UnZipFiles"/>
+          <link id="TUnZipper.UnZipFile"/>
+          <link id="TZipFileEntries"/>
+          <link id="TZipFileEntry"/>
+        </seealso>
+      </element>
+
+      <element name="TUnZipper.Flat">
+        <short>Extracts files to a single directory</short>
+        <descr>
+          <p>
+            Enables flat extraction; like -j (also called junk paths) when using the unzip command-line utility. Directory structure(s) in the .zip file are not recreated, and files are extracted to the same directory.
+          </p>
+        </descr>
+        <seealso/>
+      </element>
+
+      <element name="TUnZipper.Terminated">
+        <short>True if the Terminate method has been called</short>
+        <descr/>
+        <seealso/>
+      </element>
+
       <element name="EZipError">
-        <short>Exception specific to the zipper unit</short>
+        <short>Exception raised for errors in TZipper and TUnZipper</short>
       </element>
+
     </module>
   </package>
 </fpdoc-descriptions>
