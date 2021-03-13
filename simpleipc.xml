@@ -609,13 +609,12 @@ This property will contain valid data only after a successful call to
 <descr>
 <var>InstanceID</var> is the unique identifier for this server 
 communication channel endpoint, and will be appended to the 
-<link id="TSimpleIPCServer.ServerID">ServerID</link> property 
+<link id="TSimpleIPC.ServerID">ServerID</link> property
 to form the unique server endpoint which a client should use.
 </descr>
 <seealso>
-<link id="TSimpleIPCServer.ServerID">ServerID</link>
-<link id="TSimpleIPCServer.GlobalID">Global</link>
-
+<link id="TSimpleIPC.ServerID">ServerID</link>
+<link id="TSimpleIPCServer.Global">Global</link>
 </seealso>
 </element>
 
@@ -630,7 +629,7 @@ a unique identification of the current process is appended to the
 <var>ServerID</var> name.
 </descr>
 <seealso>
-<link id="TSimpleIPCServer.ServerID">ServerID</link>
+<link id="TSimpleIPC.ServerID">ServerID</link>
 <link id="TSimpleIPCServer.InstanceID">InstanceID</link>
 </seealso>
 </element>
@@ -786,15 +785,14 @@ then an exception may be raised.
 <element name="TIPCClientComm.ServerRunning">
 <short>Check if the server is running.</short>
 <descr>
-<var>ServerRunning</var> returns <var>True</var> if the server endpoint of
+<var>ServerRunning</var> returns <var>True</var> if the server endpoint for
 the communication channel can be found, or <var>False</var> if not. The
-server endpoint should be obtained from the <var>ServerID</var> and
-<var>InstanceID</var> properties of the owning <link id="TSimpleIPCClient"/>
-component.
+server endpoint is obtained from the <var>ServerID</var>  property in the owning
+<link id="TSimpleIPCClient"/> component.
 </descr>
 <seealso>
-<link id="TSimpleIPCClient.InstanceID"/>
-<link id="TSimpleIPCClient.ServerID"/>
+<link id="TSimpleIPC.ServerID">ServerID</link>
+<link id="TSimpleIPCServer.InstanceID">InstanceID</link>
 </seealso>
 </element>
 
@@ -853,11 +851,10 @@ to decide which kind of communication channel to set up.
 <p>
 <var>TSimpleIPCClient</var> is the client side of the simple IPC
 communication protocol. The client program should create a
-<var>TSimpleIPCClient</var> instance, set its <link
-id="TSimpleIPC.ServerID">ServerID</link> property to the unique name for the
-server it wants to send messages to, and then set the <link id="TSimpleIPC.ServerID">Active</link>
-property to <var>True</var> (or call <link
-id="TSimpleIPCClient.StartServer">Connect</link>).
+<var>TSimpleIPCClient</var> instance, set its <var>ServerID</var>
+property to the unique name for the server it wants to send
+messages to, and then set the <var>Active</var> property to
+<var>True</var>.
 </p>
 <p>
 After the connection with the server was established, messages can be sent
@@ -918,7 +915,7 @@ instead or the <var>FreeAndNil</var> procedure in <file>SysUtils</file>.
 <p>
 <var>Connect</var> connects to the server indicated in the <link
 id="TSimpleIPC.ServerID">ServerID</link> and <link
-id="TSimpleIPCClient.InstanceID">InstanceID</link> properties. <var>Connect</var> is called
+id="TSimpleIPCServer.InstanceID">InstanceID</link> properties. <var>Connect</var> is called
 automatically if the <link id="TSimpleIPC.Active">Active</link> property is
 set to <var>True</var>.
 </p>
@@ -979,7 +976,7 @@ raised.
 <descr>
 <var>ServerRunning</var> verifies if the server indicated in the <link
 id="TSimpleIPC.ServerID">ServerID</link> and <link
-id="TSimpleIPCClient.InstanceID">InstanceID</link> properties is running.
+id="TSimpleIPCServer.InstanceID">InstanceID</link> properties is running.
 It returns <var>True</var> if the server communication endpoint can be
 reached, <var>False</var> otherwise. This function can be called before
 a connection is made.
@@ -1561,7 +1558,8 @@ blocked when stopping, because it needs to wait for the thread to stop.
 <short>Event called when a new message has arrived, and the queue is full</short>
 <descr>
 <var>OnMessageError</var> is called whenever the message queue is full and a
-new message arrives on the server, and <link id="maxaction"/> is <var>ipcmoaError</var>.
+new message arrives on the server, and<link id="TIPCServerMsgQueue.MaxAction">MaxAction</link>
+is<var>ipcmoaError</var>.
 </descr>
 <seealso>
 </seealso>
