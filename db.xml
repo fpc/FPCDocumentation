@@ -1615,6 +1615,30 @@ in a <var>Required</var> property of <var>True</var>.
 </seealso>
 </element>
 
+<element name="TFieldDef.Codepage">
+<short>System code page for the values in string and wide string field types</short>
+<descr>
+<p>
+Codepage is a read-only TSystemCodePage property with the system code page used
+for values in the field. The value in CodePage is assigned in the overloaded constructor
+which includes a TSystemCodePage argument. CodePage is relevant for string or wide
+string field types, and uses the following values:
+</p>
+<dl>
+  <dt>ftString, ftFixedChar, ftMemo</dt>
+  <dd>Uses the value passed in the argument. The default value is 0.</dd>
+  <dt>ftWideString, ftFixedWideChar, ftWideMemo</dt>
+  <dd>Use the value in the CP_UTF16 constant.</dd>
+  <dt>Other non-string field types</dt>
+  <dd>Uses the value 0 in Codepage.</dd>
+</dl>
+</descr>
+<seealso>
+<link id="TFieldDef.Create"/>
+<link id="TFieldDef.DataType"/>
+</seealso>
+</element>
+
 <!-- property Visibility: published
      Declaration: Attributes : TFieldAttributes -->
 <element name="TFieldDef.Attributes">
@@ -11608,6 +11632,55 @@ The <var>ParamType</var> property is usually set by the database engine that cre
 </seealso>
 </element>
 
+<element name="TSQLParseOption">
+<short>Represents SQL parser options available to the TParams collection</short>
+<descr>
+TSQLParseOption is an enumerated type with values that represent SQL parser
+options available for use in the <var>TParams</var> collection. Value(s) from
+TSQLParseOption are stored in the <var>TSQLParseOptions</var> set type, and
+passed as an argument to the <var>TParams.ParseSQL</var> method. When a
+value from the enumeration is included in the set, the feature or behavior is
+enabled while parsing the SQL statement.
+</descr>
+<seealso>
+  <link id="TParams.ParseSQL"/>
+  <link id="TSQLParseOptions"/>
+</seealso>
+</element>
+<element name="TSQLParseOption.spoCreate">
+<short>Indicates existing parameters are cleared and re-created, not updated</short>
+</element>
+<element name="TSQLParseOption.spoEscapeSlash">
+<short>Causes the Slash character ('/') to be escaped</short>
+</element>
+<element name="TSQLParseOption.spoEscapeRepeat">
+<short>Causes an escaped character to be repeated</short>
+</element>
+<element name="TSQLParseOption.spoUseMacro">
+<short>Enables macro expansion in a SQL statement</short>
+</element>
+
+<element name="TSQLParseOptions">
+<short>Set type used to store value(s) from the TSQLParseOption enumeration</short>
+<descr>
+<p>
+<var>TSQLParseOptions</var> is a set type used to store zero or more values
+from the <var>TSQLParseOption</var> enumeration. TSQLParseOptions is used
+in the <var>TParams.ParseSQL</var> method to indicate the options enabled
+when the SQL statement is parsed. The set type can be passed as an argument to
+the method.
+</p>
+<p>
+See <link id="TSQLParseOption"/> for information about the enumeration values and their
+meanings.
+</p>
+</descr>
+<seealso>
+  <link id="TParams.ParseSQL"/>
+  <link id="TSQLParseOption"/>
+</seealso>
+</element>
+
 <!-- property Visibility: published
      Declaration: Size : Integer -->
 <element name="TParam.Size">
@@ -11944,6 +12017,14 @@ The function returns the SQL statement with the parameter names replaced by plac
      Declaration: ReplaceString: String -->
 <element name="TParams.ParseSQL.ReplaceString">
 <short>Placeholder string.</short>
+</element>
+
+<element name="TParams.ParseSQL.Options">
+  <short>Contains the parser options enabled when parsing the SQL statement</short>
+</element>
+
+<element name="TParams.ParseSQL.MacroChar">
+  <short>Character which triggers expansion of a named macro in the SQL statement</short>
 </element>
 
 <!-- procedure Visibility: public
