@@ -135,6 +135,139 @@ id="TFPCustomTimer.StopTimer">StopTimer</link> event is called.
 </seealso>
 </element>
 
+<element name="TFPCustomTimer.Enabled">
+<short>Starts or stops the timer</short>
+<descr>
+<p>
+<var>Enabled</var> controls whether the timer can become Active. Setting
+<var>Enabled</var> to <var>True</var> will start the timer (by calling <link
+id="TFPCustomTimer.StartTimer">StartTimer</link>). Setting it to
+<var>False</var> will stop the timer (by calling
+<link id="TFPCustomTimer.StopTimer">StopTimer</link>).
+</p>
+<p>
+Use the <var>Interval</var> property to set the elapsed time before the
+<var>OnTimer</var> event is signalled. Assign the <var>OnTimer</var>,
+<var>OnStartTimer</var>, and <var>OnStopTimer</var> event handlers
+prior to setting Enabled to True.
+</p>
+</descr>
+<seealso>
+<link id="TFPCustomTimer.StartTimer"/>
+<link id="TFPCustomTimer.StopTimer"/>
+<link id="TFPTimer.OnTimer"/>
+<link id="TFPTimer.OnStartTimer"/>
+<link id="TFPTimer.OnStopTimer"/>
+<link id="TFPTimer.Interval"/>
+</seealso>
+</element>
+
+<element name="TFPCustomTimer.Interval">
+<short>Timer tick interval in milliseconds.</short>
+<descr>
+<p>
+<var>Interval</var> specifies the timer interval in milliseconds. Every
+<var>Interval</var> milliseconds, the <var>OnTimer</var> event handler
+will be called.
+</p>
+<p>
+Please note that the number of milliseconds in Interval is a minimum value.
+Under high system load, the timer tick may occur later than expected.
+</p>
+</descr>
+<seealso>
+<link id="TFPCustomTimer.OnTimer"/>
+<link id="TFPCustomTimer.Enabled"/>
+</seealso>
+</element>
+
+<element name="TFPCustomTimer.UseTimerThread">
+<short>Indicates if a thread is used to execute the timer event</short>
+<descr>
+<p>
+When set to <b>False</b>, a threaded timer calls the
+<var>Thread.Synchronize</var> method to execute the <var>OnTimer</var>
+event handler in the context of the main thread for the application. When Set to
+<b>True</b>, a threaded timer can simply call its <var>Timer</var> method
+without synchronizing to the main thread. The latter implies that GUI updates are
+not performed in the OnTimer event.
+</p>
+</descr>
+<seealso>
+  <link id="DefaultTimerDriverClass"/>
+  <link id="TFPTimerDriverClass"/>
+</seealso>
+</element>
+
+<element name="TFPCustomTimer.OnTimer">
+<short>Event handler signalled when the Interval for the timer has elapsed</short>
+<descr>
+<p>
+<var>OnTimer</var> is a <var>TNotifyEvent</var> property with the event handler
+signalled when the Interval for the timer has elapsed.  An object procedure must
+be assigned to perform the actions needed when the timer interval has elapsed.
+</p>
+<p>
+Use the <var>OnStartTimer</var> and <var>OnStopTimer</var> event handlers to
+perform actions needed when the timer is started or stopped.
+</p>
+<p>
+Assign event handler routines to the properties before setting <var>Enabled</var>
+to <b>True</b>.
+</p>
+</descr>
+<seealso>
+<link id="TFPCustomTimer.Interval"/>
+<link id="TFPCustomTimer.Enabled"/>
+<link id="TFPCustomTimer.OnStartTimer"/>
+<link id="TFPCustomTimer.OnStopTimer"/>
+</seealso>
+</element>
+
+<element name="TFPCustomTimer.OnStartTimer">
+<short>Event handler signalled when the timer is started</short>
+<descr>
+<p>
+<var>OnStartTimer</var> is signalled when the <var>StartTimer</var> method
+is called to activate a timer. It occurs after the timer instance is initialized for
+the timer driver, and the Active property is set to <b>True</b>.
+</p>
+<p>
+Assign an object procedure to the handler to perform any actions needed when
+the timer is started. The handler routine must be assigned before setting
+<var>Enabled</var> to <b>True</b>.
+</p>
+</descr>
+<seealso>
+  <link id="TFPCustomTimer.StartTimer"/>
+  <link id="TFPCustomTimer.Enabled"/>
+  <link id="TFPCustomTimer.OnStopTimer"/>
+  <link id="TFPCustomTimer.OnTimer"/>
+</seealso>
+</element>
+
+<element name="TFPCustomTimer.OnStopTimer">
+<short>Event handler signalled when the timer is stopped</short>
+<descr>
+<p>
+<var>OnStopTimer</var> is signalled when the <var>StopTimer</var> method
+is called to deactivate a timer. It occurs after the timer instance is updated in
+the timer driver, and the Active property is set to <b>False</b>.
+</p>
+<p>
+Assign an object procedure to the handler to perform any actions needed when
+the timer is stopped. The handler routine must be assigned before setting
+<var>Enabled</var> to <b>True</b>.
+</p>
+</descr>
+<seealso>
+  <link id="TFPCustomTimer.StopTimer"/>
+  <link id="TFPCustomTimer.Enabled"/>
+  <link id="TFPCustomTimer.OnStartTimer"/>
+  <link id="TFPCustomTimer.OnTimer"/>
+</seealso>
+</element>
+
 <!-- class Visibility: default -->
 <element name="TFPTimer">
 <short>Timer class with published properties</short>
@@ -195,6 +328,8 @@ load, the timer tick may arrive later.
 </seealso>
 </element>
 
+<element name="TFPTimer.UseTimerThread" link="#fcl.fptimer.TFPCustomTimer.UseTimerThread"/>
+
 <!-- property Visibility: published -->
 <element name="TFPTimer.OnTimer">
 <short>Event called on each timer tick.</short>
@@ -209,9 +344,12 @@ timer fires.
 </seealso>
 </element>
 
+<element name="TFPTimer.OnStartTimer" link="#fcl.fptimer.TFPCustomTimer.OnStartTimer"/>
+<element name="TFPTimer.OnStopTimer" link="#fcl.fptimer.TFPCustomTimer.OnStopTimer"/>
+
 <!-- constructor Visibility: public -->
 <element name="TFPTimerDriver.Create">
-<short>Create new driver instance</short>
+<short>Creates a new driver instance</short>
 <descr>
 <var>Create</var> should be overridden by descendents of
 <var>TFPTimerDriver</var> to do additional initialization of the timer
@@ -272,6 +410,12 @@ whenever a timer tick occurs.
 <link id="TFPTimerDriver.StartTimer"/>
 <link id="TFPTimerDriver.StopTimer"/>
 </seealso>
+</element>
+
+<element name="TFPTimerDriver.TimerStarted">
+  <short>True when the timer driver has called its StartTimer method</short>
+  <descr/>
+  <seealso/>
 </element>
 
 <!-- "class of" type Visibility: default -->
