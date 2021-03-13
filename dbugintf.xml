@@ -86,6 +86,27 @@ message to be sent. By default, an informational message is sent.
 <short>Error message</short>
 </element>
 
+<element name="TErrorLevel ">
+<short>Array type with Integer values representing debug error levels</short>
+<descr>
+<p>
+<var>TErrorLevel</var> is an <var>Array</var> type with <var>Integer</var>
+values representing debug error levels. Elements in the array are accessed
+using the values from the <var>TDebugLevel</var> enumeration. The value
+in each element is the debug message type constant for the error level.
+</p>
+<p>
+TErrorLevel is the type used for the <var>ErrorLevel</var> constant in the
+implementation for the <file>dbugintf.pp</file> unit. For example:
+</p>
+<code>
+var
+  ErrorLevel: TErrorLevel = (dmtInformation, dmtWarning, dmtError);
+</code>
+</descr>
+<seealso/>
+</element>
+
 <!-- procedure Visibility: default -->
 <element name="SendBoolean">
 <short>Send the value of a boolean variable</short>
@@ -450,6 +471,9 @@ On error, <var>False</var> is returned.
 <element name="StartDebugServer.Result">
 <short>True if started successfully, false otherwise</short>
 </element>
+<element name="StartDebugServer.aLogFilename">
+<short>Log file for the debug server</short>
+</element>
 
 <!-- procedure Visibility: default -->
 <element name="InitDebugClient">
@@ -480,6 +504,22 @@ None.
 Whenever a call encounters an exception, the exception message is stored in
 this variable.
 </descr>
+
+<!-- function result Visibility: default -->
+<element name="InitDebugClient.Result">
+<short>True if the client was successfully started.</short>
+</element>
+<element name="InitDebugClient.ShowPID">
+<short>True to display the Process ID in debug messages</short>
+</element>
+<element name="InitDebugClient.ServerLogFilename">
+<short>Log file name where the debug server writes log messages</short>
+</element>
+
+<element name="FreeDebugClient;">
+  <short/>
+  <descr/>
+  <seealso/>
 </element>
 
 <!-- resource string Visibility: default -->
@@ -550,13 +590,19 @@ None.
 <short>True if sending debug messages is currently enabled.</short>
 </element>
 
-<!-- function result Visibility: default -->
-<element name="InitDebugClient.Result">
-<short>True if the client was successfully started.</short>
-</element>
-
 <element name="SServerStartFailed">
 <short>String used to display an error message when the start of the debug server failed</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DebugServerExe">
+  <short>Name of default debug server executable</short>
+<descr>
+    <var>DefaultDebugServerExe</var> is the filename for the default debug server executable.
+</descr>
+<seealso>
+    <link id="DefaultDebugServer"/>
+</seealso>
 </element>
 
 <!-- constant Visibility: default -->
@@ -566,18 +612,7 @@ None.
 <var>DefaultDebugServer</var> is the name at which the default debug server can be reached.
 </descr>
 <seealso>
-<link id="DefaultDebugServerExe"/>
-</seealso>
-</element>
-
-<!-- variable Visibility: default -->
-<element name="DebugServerExe">
-<short>Name of default debug server executable</short>
-<descr>
-<var>DefaultDebugServerExe</var> is the filename for default debug server executable.
-</descr>
-<seealso>
-<link id="DefaultDebugServer"/>
+<link id="DebugServerExe"/>
 </seealso>
 </element>
 
