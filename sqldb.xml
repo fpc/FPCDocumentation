@@ -2101,7 +2101,7 @@ if persistent fields were created, the providerflags of the fields are not updat
 </descr>
 <seealso>
 <link id="TSQLQuery.UpdateMode"/>
-<link id="TCustomBufDataset.Unidirectional"/>
+<link id="#fcl.bufdataset.TCustomBufDataset.Unidirectional"/>
 <link id="#fcl.db.TField.ProviderFlags">TField.ProviderFlags</link>
 <link id="#fcl.db.TProviderFlag">pfInKey</link>
 <link id="UpdateSQLs"/>
@@ -3511,7 +3511,7 @@ id="TSQLStatement.Database">Database</link> property to an existing connection c
 <link id="TSQLStatement.Transaction">Transaction</link> property. After setting the <link
 id="TSQLStatement.SQL">SQL</link>
 property and filling <link id="TSQLStatement.Params">Params</link>, the SQL statement can be executed
-with the <link id="Execute"/> method.
+with the <link id="TCustomSQLStatement.Execute">Execute</link> method.
 </p>
 <p>
 <var>TCustomSQLStatement</var> is a parent class. Many of the properties are
@@ -3525,7 +3525,7 @@ should be instantiated instead of the <var>TCustomSQLStatement</var> class.
 <link id="TSQLQuery"/>
 <link id="TSQLStatement.Transaction"/>
 <link id="TSQLStatement.Params"/>
-<link id="Execute"/>
+<link id="TCustomSQLStatement.Execute"/>
 <link id="TSQLStatement.Database"/>
 <link id="TSQLConnection.ExecuteDirect"/>
 </seealso>
@@ -3566,7 +3566,7 @@ their initial values.
 <link id="TSQLStatement.Params"/>
 <link id="TSQLStatement.ParamCheck"/>
 <link id="TSQLStatement.ParseSQL"/>
-<link id="Destroy"/>
+<link id="TSQLStatement.Destroy"/>
 </seealso>
 </element>
 
@@ -3594,7 +3594,7 @@ instance and its properties.
 <short>Prepare the statement for execution</short>
 <descr>
 <var>Prepare</var> prepares the SQL statement for execution. It is called
-automatically if <link id="Execute"/> is called and the statement was not yet
+automatically if <link id="TCustomSQLStatement.Execute">Execute</link> is called and the statement was not yet
 prepared. Depending on the database engine, it will also allocate the necessary
 resources on the database server.
 </descr>
@@ -3606,7 +3606,7 @@ An exception is raised if there is no <link id="TSQLStatement.SQL">SQL</link> st
 <link id="TSQLStatement.SQL"/>
 <link id="TSQLStatement.Database"/>
 <link id="TSQLStatement.Transaction"/>
-<link id="Execute"/>
+<link id="TCustomSQLStatement.Execute"/>
 </seealso>
 </element>
 
@@ -3614,7 +3614,7 @@ An exception is raised if there is no <link id="TSQLStatement.SQL">SQL</link> st
 <element name="TCustomSQLStatement.Execute">
 <short>Execute the SQL statement.</short>
 <descr>
-<var>Execute</var> executes the <link id="SQL"/> statement on the database.
+<var>Execute</var> executes the <link id="TSQLStatement.SQL">SQL</link> statement on the database.
 If necessary, it will first open the connection and start a transaction,
 followed by a call to <var>Prepare</var>.
 </descr>
@@ -3652,7 +3652,7 @@ properly) then an exception is raised.
 <link id="TSQLStatement.SQL"/>
 <link id="TSQLStatement.Database"/>
 <link id="TSQLStatement.Transaction"/>
-<link id="Prepare"/>
+<link id="TCustomSQLStatement.Prepare"/>
 </seealso>
 </element>
 
@@ -3686,11 +3686,11 @@ If no parameter with the given name is found, an exception is raised.
 <element name="TCustomSQLStatement.RowsAffected">
 <short>Number of rows affected by the SQL statement.</short>
 <descr>
-<var>RowsAffected</var> is set to the number of affected rows after <link id="Execute"/> was called.
+<var>RowsAffected</var> is set to the number of affected rows after <link id="TCustomSQLStatement.Execute">Execute</link> was called.
 Not all databases may support this.
 </descr>
 <seealso>
-<link id="Execute"/>
+<link id="TCustomSQLStatement.Execute"/>
 </seealso>
 </element>
 
@@ -3703,14 +3703,14 @@ Not all databases may support this.
 <element name="TCustomSQLStatement.Prepared">
 <short>Is the statement prepared or not</short>
 <descr>
-<var>Prepared</var> equals <var>True</var> if <link id="Prepare"/> was
+<var>Prepared</var> equals <var>True</var> if <link id="TCustomSQLStatement.Prepare">Prepare</link> was
 called (implicitly or explicitly), it returns <var>False</var> if not.
 It can be set to <var>True</var> or <var>False</var> to call <link
-id="Prepare"/> or <link id="UnPrepare"/>, respectively.
+id="TCustomSQLStatement.Prepare">Prepare</link> or <link id="TCustomSQLStatement.UnPrepare">UnPrepare</link>, respectively.
 </descr>
 <seealso>
-<link id="Prepare"/>
-<link id="UnPrepare"/>
+<link id="TCustomSQLStatement.Prepare"/>
+<link id="TCustomSQLStatement.UnPrepare"/>
 </seealso>
 </element>
 
@@ -3737,12 +3737,12 @@ which simply publishes the protected properties of that component.
 <short>Database instance to execute statement on.</short>
 <descr>
 <var>Database</var> must be set to an instance of a <link id="TSQLConnection"/>
-descendent. It must be set, together with <link id="Transaction"/> in order to be able to call <link
+descendent. It must be set, together with <link id="TSQLStatement.Transaction">Transaction</link> in order to be able to call <link
 id="TCustomSQLStatement.Prepare">Prepare</link> or <link
 id="TCustomSQLStatement.Execute">Execute</link>.
 </descr>
 <seealso>
-<link id="Transaction"/>
+<link id="TSQLStatement.Transaction">Transaction</link>
 <link id="TCustomSQLStatement.Prepare">Prepare</link>
 <link id="TCustomSQLStatement.Execute">Execute</link>
 </seealso>
@@ -3777,7 +3777,7 @@ parameter check. The default value <var>True</var> indicates that the SQL
 statement should be checked for parameter names (in the form
 <var>:ParamName</var>), and corresponding <link
 id="#fcl.db.TParam">TParam</link> instances should be added to the <link
-id="Params">Params</link> property.
+id="TSQLStatement.Params">Params</link> property.
 </p>
 <p>
 When executing some DDL statements, e.g. a "create procedure" SQL
@@ -3787,7 +3787,7 @@ to <var>TParam</var> instances.
 </descr>
 <seealso>
 <link id="#fcl.db.TParam">TParam</link>
-<link id="Params"/>
+<link id="TSQLStatement.Params"/>
 <link id="TSQLQuery.ParamCheck"/>
 </seealso>
 </element>
@@ -3796,14 +3796,14 @@ to <var>TParam</var> instances.
 <element name="TSQLStatement.Params">
 <short>List of parameters.</short>
 <descr>
-<var>Params</var> contains an item for each of the parameters in the <link id="SQL"/>
+<var>Params</var> contains an item for each of the parameters in the <link id="TSQLStatement.SQL">SQL</link>
 statement (in the form <var>:ParamName</var>). The collection is filled
-automatically if the <link id="ParamCheck"/> property is <var>True</var>.
+automatically if the <link id="TSQLStatement.ParamCheck">ParamCheck</link> property is <var>True</var>.
 </descr>
 <seealso>
-<link id="SQL"/>
-<link id="ParamCheck"/>
-<link id="ParseSQL"/>
+<link id="TSQLStatement.SQL">SQL</link>
+<link id="TSQLStatement.ParamCheck">ParamCheck</link>
+<link id="TSQLStatement.ParseSQL">ParseSQL</link>
 </seealso>
 </element>
 
@@ -3812,13 +3812,13 @@ automatically if the <link id="ParamCheck"/> property is <var>True</var>.
 <short>Parse the SQL statement</short>
 <descr>
 <var>ParseSQL</var> can be set to <var>False</var> to disable parsing of the
-<link id="SQL"/> property when it is set. The default behaviour
+<link id="TSQLStatement.SQL">SQL</link> property when it is set. The default behaviour
 (<var>ParseSQL=True</var>) is to parse the statement
 and detect what kind of SQL statement it is.
 </descr>
 <seealso>
-<link id="SQL"/>
-<link id="ParamCheck"/>
+<link id="TSQLStatement.SQL">SQL</link>
+<link id="TSQLStatement.ParamCheck">ParamCheck</link>
 </seealso>
 </element>
 
@@ -3832,11 +3832,11 @@ statement that returns a result set. This is the statement that will be
 passed on to the database engine when <link id="TCustomSQLStatement.Prepare">Prepare</link> is called.
 </p>
 <p>
-If <link id="ParamCheck"/> equals <var>True</var> (the default), the SQL statement can contain
+If <link id="TSQLStatement.ParamCheck">ParamCheck</link> equals <var>True</var> (the default), the SQL statement can contain
 parameter names where literal values can occur, in the form <var>:ParamName</var>.
 Keywords or table names cannot be specified as parameters.
 If the underlying database engine supports it, the parameter support of
-the database will be used to transfer the values from the <link id="Params"/> collection. If not, it will be emulated.
+the database will be used to transfer the values from the <link id="TSQLStatement.Params">Params</link> collection. If not, it will be emulated.
 The <var>Params</var> collection is automatically populated when the SQL statement is set.
 </p>
 <p>
@@ -3848,9 +3848,9 @@ wrong in such a case.
 </p>
 </descr>
 <seealso>
-<link id="ParseSQL"/>
-<link id="CheckParams"/>
-<link id="Params"/>
+<link id="TSQLStatement.ParseSQL">ParseSQL</link>
+<link id="TSQLStatement.CheckParams">CheckParams</link>
+<link id="TSQLStatement.Params">Params</link>
 <link id="TCustomSQLStatement.Prepare">Prepare</link>
 <link id="TCustomSQLStatement.RowsAffected">RowsAffected</link>
 </seealso>
@@ -3861,12 +3861,12 @@ wrong in such a case.
 <short>The transaction in which the SQL statement should be executed.</short>
 <descr>
 <var>Transaction</var> should be set to a transaction connected to the
-instance of the database set in the <link id="Database"/> property. This
+instance of the database set in the <link id="TSQLStatement.Database">Database</link> property. This
 must be set before <link id="TCustomSQLStatement.Prepare">Prepare</link> is
 called.
 </descr>
 <seealso>
-<link id="Database"/>
+<link id="TSQLStatement.Database">Database</link>
 <link id="TCustomSQLStatement.Prepare">Prepare</link>
 <link id="TSQLTransaction"/>
 </seealso>
@@ -3882,7 +3882,7 @@ parameter check. The default value <var>True</var> indicates that the SQL
 statement should be checked for parameter names (in the form
 <var>:ParamName</var>), and corresponding <link
 id="#fcl.db.TParam">TParam</link> instances should be added to the <link
-id="Params">Params</link> property.
+id="TSQLQuery.Params">Params</link> property.
 </p>
 <p>
 When executing some DDL statements, e.g. a "create procedure" SQL
@@ -3892,8 +3892,8 @@ to <var>TParam</var> instances.
 </descr>
 <seealso>
 <link id="#fcl.db.TParam">TParam</link>
-<link id="Params"/>
-<link id="TSQLStatement.ParamCheck"/>
+<link id="TSQLQuery.Params">Params</link>
+<link id="TSQLQuery.ParamCheck">ParamCheck</link>
 </seealso>
 </element>
 
@@ -4155,7 +4155,7 @@ SQL command. To this end, it will partially parse the statement.
 <errors>
 </errors>
 <seealso>
-<link id="TStatementInfo"/>
+<link id="TSQLStatementInfo"/>
 </seealso>
 </element>
 
@@ -4182,14 +4182,14 @@ made. Default behaviour is for <var>TSQLQuery</var> to implicitly open the
 connection as needed.</dd>
 <dt>scoApplyUpdatesChecksRowsAffected</dt><dd>When set, whenever an update
 SQL Statement is executed during ApplyOptions of a dataset, the
-<link id="TSQLStatement.RowsAffected"/>  is checked and must be equal to 1.
+<link id="TCustomSQLStatement.RowsAffected">RowsAffected</link>  is checked and must be equal to 1.
 </dd>
 </dl>
 </descr>
 <seealso>
-<link id="TSQLQuery.ApplyUpdates"/>
-<link id="TSQLStatement.RowsAffected"/>
-<link id="TSQLQuery.RowsAffected"/>
+<link id="TCustomSQLQuery.ApplyUpdates"/>
+<link id="TCustomSQLStatement.RowsAffected"/>
+<link id="TCustomSQLQuery.RowsAffected"/>
 </seealso>
 </element>
 
@@ -4275,7 +4275,6 @@ the behaviour of an <link id="TSQLQuery"/> instance.
 </descr>
 <seealso>
 <link id="TSQLQueryOptions"/>
-<link id="TCustomSQLQuery.Options"/>
 </seealso>
 </element>
 
@@ -4769,14 +4768,13 @@ The collection is not cleared.
 database engine supports them:  Not all database types support sequences.
 </p>
 <p>
-This call is a convenience call, a simple wrapper around <link id="GetObjectNames"/>.
+This call is a convenience call, a simple wrapper used to call the <var>GetDBInfo</var> method.
 </p>
 </descr>
 <errors>
 None.
 </errors>
 <seealso>
-<link id="GetObjectNames"/>
 </seealso>
 </element>
 
@@ -4913,7 +4911,7 @@ of the dataset it is attached to.
 If the dataset is not attached to a connected database, an exception will be raised.
 </errors>
 <seealso>
-<link id="GetNextValue"/>
+<link id="TSQLSequence.GetNextValue"/>
 <link id="TSQLSequence.FieldName"/>
 <link id="TSQLSequence.SequenceName"/>
 <link id="TSQLSequence.IncrementBy"/>
@@ -4949,13 +4947,13 @@ If the dataset is not attached to a connected database, an exception will be rai
 <short>Field to apply sequence to</short>
 <descr>
 <var>FieldName</var> is the name of the field <var>TSQLSequence</var> will apply the new value to
-when <link id="Apply"/> is called. It must be a valid fieldname of the dataset
+when <link id="TSQLSequence.Apply">Apply</link> is called. It must be a valid fieldname of the dataset
 that owns the <var>TSQLSequence</var> instance.
 </descr>
 <seealso>
-<link id="TSQLSequence.Apply"/>
-<link id="TSQLSequence.SequenceName"/>
-<link id="TSQLSequence.IncrementBy"/>
+<link id="TSQLSequence.Apply">Apply</link>
+<link id="TSQLSequence.SequenceName">SequenceName</link>
+<link id="TSQLSequence.IncrementBy">IncrementBy</link>
 </seealso>
 </element>
 
@@ -5110,10 +5108,10 @@ string delimiter for stored procedures.
 <element name="stSchemata">
 <short>Alias for <var>sqlTypes.stSchemata</var></short>
 <descr>
-<var>stSchemata</var> is a convenience alias for <link id="sqlTypes.stSchemata"/>
+<var>stSchemata</var> is a convenience alias for <link id="#fcl.sqlTypes.stSchemata"/>.
 </descr>
 <seealso>
-<link id="sqlTypes.stSchemata"/>
+<link id="#fcl.sqlTypes.stSchemata"/>
 </seealso>
 </element>
 
@@ -5153,6 +5151,185 @@ For multiline statements, the last line of the statement is counted as the curre
 <seealso>
 <link id="TSQLScript.Transaction"/>
 </seealso>
+</element>
+
+<element name="DefaultMacroChar">
+  <short>Default character to use as a macro delimiter</short>
+  <descr>
+  <var>DefaultMacroChar</var> is the default macro delimiter to use in <link id="TSQLQuery"/>
+  </descr>
+  <seealso>
+  <link id="TSQLQuery"/>
+  <link id="TSQLQuery.Macros"/>
+  </seealso>
+  
+</element>
+
+<element name="TConnOption.sqSequences">
+  <short>Are sequences supported.</short>
+</element>
+
+<element name="TCustomSQLQuery.MacroByName">
+  <short>Convenience for Macros.ParamByName</short>
+  <descr>
+  <var>MacroByName</var> checks <link id="TCustomSQLQuery.Macros">Macros</link> 
+  for the macro named <var>aParamName</var> and returns the requested macro.
+  </descr>
+  <errors>
+  If no macro is found, an exception is raised.
+  </errors>
+  <seealso>
+  <link id="#fcl.db.TParams.ParamByName"/>
+  </seealso>
+</element>
+
+<element name="TCustomSQLQuery.MacroByName.Result">
+  <short>The requested macro definition</short>
+</element>
+
+<element name="TCustomSQLQuery.MacroByName.AParamName">
+  <short>The name of the macro to search</short>
+</element>
+
+<element name="TCustomSQLQuery.MacroChar">
+  <short>Macro delimiter character</short>
+  <descr>
+  <var>MacroChar</var> is the macro delimiter character. A macro is delimited by this character on both sides: start and end.
+  The default is the % (percent) sign.
+  </descr>
+  <seealso/>
+</element>
+
+<element name="TCustomSQLQuery.MacroCheck">
+  <short>Check for macros in the SQL statement.</short>
+  <descr>
+  <var>MacroCheck</var> is the macro equivalent of <link id="TCustomSQLQuery.ParamCheck">ParamCheck</link>: 
+  if set to <var>True</var>, it instructs the query component to check the SQL statement text for macros and add them to the <link id="TCustomSQLQuery.Macros">Macros</link> collection.
+  </descr>
+  <seealso>
+  <link id="TCustomSQLQuery.ParamCheck">ParamCheck</link>
+  <link id="TCustomSQLQuery.Macros">Macros</link>  
+  </seealso>
+</element>
+
+<element name="TCustomSQLQuery.Macros">
+  <short>Set of macros for this SQL statement.</short>
+  <descr>
+  <var>Macros</var> is a collection of named macro values. 
+  In difference with <link id="TCustomSQLQuery.Params">Params</link> the macro value is always replaced textually in the 
+  SQL statement before it is sent to the SQL engine. 
+  This allows you to parametrize parts of the SQL statement that the SQL engine will not let you parametrize: the table name, 
+  the order by clause or an IN clause in a SQL select statement. Macros are resolved before parameters are resolved.
+  </descr>
+  <seealso>
+  <link id="TCustomSQLQuery.Params">Params</link>
+  </seealso>
+</element>
+
+<element name="TCustomSQLStatement.MacroCheck">
+  <short>Check for macros in the SQL statement.</short>
+  <descr>
+  <var>MacroCheck</var> is the macro equivalent of <link id="TCustomSQLStatement.ParamCheck">ParamCheck</link>: 
+  if set to <var>True</var>, it instructs the query component to check the SQL statement text for macros and 
+  add them to the <link id="TCustomSQLStatement.Macros">Macros</link> property.
+  </descr>
+  <seealso>
+  <link id="TCustomSQLStatement.ParamCheck">ParamCheck</link>
+  <link id="TCustomSQLStatement.Macros">Macros</link>  
+  </seealso>
+</element>
+
+<element name="TCustomSQLStatement.Macros">
+ <short>Set of macros for this SQL statement.</short>
+  <descr>
+  <var>Macros</var> is a collection of named macro values. 
+  In difference with <link id="TCustomSQLStatement.Params">Params</link> the macro value is always replaced textually in the 
+  SQL statement before it is sent to the SQL engine. 
+  This allows you to parametrize parts of the SQL statement that the SQL engine will not let you parametrize: the table name, 
+  the order by clause or an IN clause in a SQL select statement. Macros are resolved before parameters are resolved.
+  </descr>
+  <seealso>
+  <link id="TCustomSQLStatement.Params">Params</link>
+  </seealso>
+</element>
+
+<element name="TSQLConnection.Port">
+  <short>Port the SQL engine is listening on</short>
+  <descr>
+  <var>Port</var> sets the TCP/IP port the SQL engine is listening on. 
+  This property is only used for connections using the TCP/IP protocol, and must be set before the connection is activated.
+  </descr>
+  <seealso/>
+</element>
+
+<element name="TSQLCursor.FDirect">
+  <short>Is the statement executed directly ?</short>
+  <descr><var>FDirect</var> is for internal use only.</descr>
+  <seealso/>
+</element>
+
+<element name="TSQLQuery.MacroChar">
+  <short>Macro delimiter character</short>
+  <descr>
+  <var>MacroChar</var> is the macro delimiter character. A macro is delimited by this character on both sides: start and end.
+  The default is the % (percent) sign.
+  </descr>
+  <seealso/>
+</element>
+
+<element name="TSQLQuery.MacroCheck">
+  <short>Check for macros in the SQL statement.</short>
+  <descr>
+  <var>MacroC heck</var> is the macro equivalent of <link id="TSQLQuery.ParamCheck">ParamCheck</link>: 
+  if set to <var>True</var>, it instructs the query component to check the SQL statement text for macros 
+  and add them to the <link id="TSQLQuery.Macros">Macros</link> collection.
+   </descr>
+  <seealso>
+  <link id="TSQLQuery.ParamCheck">ParamCheck</link>
+  <link id="TSQLQuery.Macros">Macros</link>  
+  </seealso>
+</element>
+
+<element name="TSQLQuery.Macros">
+  <short>Set of macros for this SQL statement.</short>
+  <descr>
+  <var>Macros</var> is a collection of named macro values. 
+  In difference with <link id="TSQLQuery.Params">Params</link> the macro value is always replaced textually in the 
+  SQL statement before it is sent to the SQL engine. 
+  This allows you to parametrize parts of the SQL statement that the SQL engine will not let you parametrize: the table name, 
+  the order by clause or an IN clause in a SQL select statement. Macros are resolved before parameters are resolved.
+  </descr>
+  <seealso>
+  <link id="TSQLQuery.Params">Params</link>
+  </seealso>
+</element>
+
+
+<element name="TSQLStatement.MacroCheck">
+  <short>Check for macros in the SQL statement.</short>
+  <descr>
+  <var>MacroCheck</var> is the macro equivalent of <link id="TSQLStatement.ParamCheck">ParamCheck</link>: 
+  if set to <var>True</var>, it instructs the query component to check the SQL statement text for macros 
+  and add them to the <link id="TSQLStatement.Macros">Macros</link> collection.
+  </descr>
+  <seealso>
+  <link id="TSQLStatement.ParamCheck">ParamCheck</link>
+  <link id="TSQLStatement.Macros">Macros</link>  
+  </seealso>
+</element>
+
+<element name="TSQLStatement.Macros">
+ <short>Set of macros for this SQL statement.</short>
+  <descr>
+  <var>Macros</var> is a collection of named macro values. 
+  In difference with <link id="TSQLStatement.Params">Params</link> the macro value is always replaced textually in the 
+  SQL statement before it is sent to the SQL engine. 
+  This allows you to parametrize parts of the SQL statement that the SQL engine will not let you parametrize: the table name, 
+  the order by clause or an IN clause in a SQL select statement. Macros are resolved before parameters are resolved.
+  </descr>
+  <seealso>
+  <link id="TSQLStatement.Params">Params</link>
+  </seealso>
 </element>
 
 </module>
