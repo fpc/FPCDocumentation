@@ -102,6 +102,18 @@ options are supported on all platforms.
 <short>Do not follow processes started by this process (Win32 only)</short>
 </element>
 
+<!-- enumeration value Visibility: default -->
+<element name="TProcessOption.poDetached">
+<short>Runs a process using the DETACHED_PROCESS creation flag on Windows</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TProcessOption.poRunIdle">
+<short>
+Signals an event handler to wait for output in the run loop for a process.
+</short>
+</element>
+
 <!-- enumeration type Visibility: default -->
 <element name="TShowWindowOptions">
 <short>Description of the main window of the new process.</short>
@@ -257,7 +269,7 @@ to do)</short>
 </element>
 
 <!-- set type Visibility: default -->
-<element name="TstartUpoptions">
+<element name="TStartupOptions">
 <short>Set of <link id="#fcl.process.TStartupOption">TStartUpOption</link>.</short>
 </element>
 
@@ -1334,6 +1346,11 @@ only process-global things should be performed in this event handler.
 </seealso>
 </element>
 
+<!-- argument Visibility: default -->
+<element name="TProcessForkEvent.Sender">
+<short><var>TProcess</var> instance that caused the fork.</short>
+</element>
+
 <!-- property Visibility: published -->
 <element name="TProcess.Executable">
 <short>Executable name. Supersedes <var>CommandLine</var> and <var>ApplicationName</var>.</short>
@@ -1627,6 +1644,12 @@ On error, <var>False</var> is returned.
 <short>Options to use when running the command</short>
 </element>
 
+<element name="RunCommandIndir.SWOptions">
+<short>
+Show window options for the process. Default value is swoNone.
+</short>
+</element>
+
 <!-- argument Visibility: default -->
 <element name="RunCommand.Options">
 <short>Options to use when running the command</short>
@@ -1671,7 +1694,7 @@ separate command-line arguments. This version of the function is deprecated.
 
 <!-- argument Visibility: default -->
 <element name="RunCommand.cmdline">
-<short>Filename of binary to start and command-line arguments, separated by whitespace.</short>
+<short>Qualified path to the binary to start, and command-line arguments separated by whitespace.</short>
 </element>
 
 <!-- argument Visibility: default -->
@@ -1679,15 +1702,36 @@ separate command-line arguments. This version of the function is deprecated.
 <short><var>TProcess</var> instance that caused the fork.</short>
 </element>
 
+<!-- argument Visibility: default -->
+<element name="RunCommand.Options">
+<short>
+Process options enabled in the run loop for the command.
+</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RunCommand.SWOptions">
+<short>
+Show window options for the process. Default value is swoNone.
+</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Math">
+<short>Min and Max</short>
+</element>
+
 <!-- property Visibility: public -->
 <element name="TProcess.ExitCode">
 <short>Exit code of the process</short>
 <descr>
+<p>
 <var>ExitCode</var> is the actual exit code of the process. On UNIX, this may differ
 from the <link id="ExitStatus"/> value if the process was terminated by a
 signal: in that case <var>ExitStatus</var> is the raw exit status as
 reported by one of the UNIX <var>Wait</var> command, and <var>ExitCode</var> is the
 exit code reported by the program.
+</p>
 </descr>
 <seealso>
 <link id="TProcess.ExitStatus"/>
@@ -1841,8 +1885,11 @@ but is a 2-byte (unicode) string in the unicode version of <var>TProcess</var>.
 <element name="TProcessStringList">
 <short>Alias for <var>TProcessStrings</var></short>
 <descr>
+<p>
 <var>TProcessStringList</var> is an alias for <link id="TProcessStrings"/> in unicode code, 
-or an alias for the <link id="#classes.TStringList"/> class in single-byte string mode.
+or an alias for the <link id="#rtl.classes.TStringList">TStringList</link> class in single-byte
+string mode.
+</p>
 </descr>
 <seealso>
 <link id="TProcessStrings"/>
@@ -1924,7 +1971,6 @@ The return value of this call is 1 for error, zero for success.
 <seealso>
 <link id="TProcess.OnRunCommandEvent"/>
 <link id="TProcess.RunCommandSleepTime"/>
-
 </seealso>
 </element>
 
