@@ -9,5 +9,5 @@ Var S : Longint;
 begin
   Writeln ('Output of ls -l *.pp');
   S:=fpSystem ('ls -l *.pp');
-  Writeln ('Command exited wwith status : ',S);
+  Writeln ('Command exited with status : ',S);
 end.
