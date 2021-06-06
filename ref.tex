@@ -11202,53 +11202,29 @@ The following small program demonstrates the reference counts used in strings:
 {$mode objfpc}
 {$H+}
 
-// Auxiliary function to extract reference count.
-function SRefCount(P : Pointer) : integer;
-
-Type
-  PAnsiRec = ^TAnsiRec;
-  TAnsiRec = Record
-    CodePage    : TSystemCodePage;
-    ElementSize : Word;
-  {$ifdef CPU64}
-  { align fields  }
-    Dummy       : DWord;
-  {$endif CPU64}
-    Ref         : SizeInt;
-    Len         : SizeInt;
-  end;
-
-
-begin
-  if P=Nil then
-    Result:=0
-  else
-    Result:=PAnsiRec(P-SizeOf(TAnsiRec))^.Ref;
-end;
-
 Procedure ByVar(Var S : string);
 
 begin
-  Writeln('By var, ref count : ',SRefCount(Pointer(S)));
+  Writeln('By var, ref count : ',StringRefCount(S));
 end;
 
 Procedure ByConst(Const S : string);
 
 begin
-  Writeln('Const, ref count : ',SRefCount(Pointer(S)));
+  Writeln('Const, ref count : ',StringRefCount(S));
 end;
 
 Procedure ByVal(S : string);
 
 begin
-  Writeln('Value, ref count : ',SRefCount(Pointer(S)));
+  Writeln('Value, ref count : ',StringRefCount(S));
 end;
 
 Function FunctionResult(Var S : String) : String;
 
 begin
-  Writeln('Function argument, ref count : ',SRefCount(Pointer(S)));
-  Writeln('Function result, ref count : ',SRefCount(Pointer(Result)));
+  Writeln('Function argument, ref count : ',StringRefCount(S));
+  Writeln('Function result, ref count : ',StringRefCount(Result));
 end;
 
 Var
@@ -11256,17 +11232,17 @@ Var
 
 begin
   S:='Some string';
-  Writeln('Constant       : ',SrefCount(Pointer(S)));
+  Writeln('Constant       : ',StringRefCount(S));
   UniqueString(S);
-  Writeln('Unique         : ',SRefCount(Pointer(S)));
+  Writeln('Unique         : ',StringRefCount(S));
   T:=S;
-  Writeln('After Assign   : ',SRefCount(Pointer(S)));
+  Writeln('After Assign   : ',StringRefCount(S));
   ByVar(S);
   ByConst(S);
   ByVal(S);
   UniqueString(S);
   T:=FunctionResult(S);
-  Writeln('After function : ',SRefCount(Pointer(S)));
+  Writeln('After function : ',StringRefCount(S));
 end.
 \end{verbatim}
 
