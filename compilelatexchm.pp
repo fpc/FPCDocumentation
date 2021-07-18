@@ -483,8 +483,8 @@ begin
   x.OutputFilename:=prefix+'.chm';
   x.Defaultpage:=prefixpath+prefix+'.html';
   x.Title:=description;
-  x.IndexFileName:=prefixpath+'default.hhk';
-  x.TableOfContentsFileName:=prefixpath+'default.hhc';
+  x.IndexFileName:=prefix+'/'+'default.hhk';
+  x.TableOfContentsFileName:=prefix+'/'+'default.hhc';
   if fileexists(x.TableOfContentsFileName) then deletefile(x.TableOfContentsFileName);
   scandir(prefix,false,x.files);
   flush(output);
