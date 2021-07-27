@@ -1781,7 +1781,8 @@ debuginfo:
 	echo $(DVI)
 .PHONY: clean dvi help html ps psdist htmldist htmdist htdist pdfdist \
 	txtdist htm txt pdf refex alldist messages onechap gtk \
-	user ref prog rtl updatexml updatefclxml updatertlxml updatefclresxml
+	user ref prog rtl updatexml updatefclxml updatertlxml updatefclresxml \
+	examples
 $(DVIDIR):
 	mkdir -p $(DVIDIR)
 $(PDFDIR):
@@ -1838,7 +1839,7 @@ help:
 	@echo ' psdist        : ps, and archive result.'
 	@echo ' pdfdist       : pdf, and archive result.'
 clean: fpc_clean
-	-rm -f tex/preamble.inc tex/date.inc tex/messages.inc rtl.inc fcl.inc
+	-rm -f tex/preamble.inc tex/date.inc tex/messages.inc tex/rtl.inc tex/fcl.inc
 	-rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref *.kwd *.xct *.chm *.ipf
 	-rm -rf $(DOCS)
 	-rm -f *.ilg *.ind *.idx
@@ -1851,8 +1852,8 @@ tex/date.inc:
 	@$(ECHO) \\date\{`date +'%B %Y'`\} > tex/date.inc
 $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT):
 	$(MAKE) -C $(FPCSRCDIR)/compiler/utils msg2inc$(EXEEXT)
-messages.inc: $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT) $(FPCSRCDIR)/compiler/msg/errore.msg
-	$(FPCSRCDIR)/compiler/utils/msg2inc -TE $(FPCSRCDIR)/compiler/msg/errore.msg messages.inc
+tex/messages.inc: $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT) $(FPCSRCDIR)/compiler/msg/errore.msg
+	$(FPCSRCDIR)/compiler/utils/msg2inc -TE $(FPCSRCDIR)/compiler/msg/errore.msg tex/messages.inc
 ifdef inUnix
 USE_UNIX_ECHO=1
 else
@@ -1929,7 +1930,7 @@ FCLUNITS+= ezcgi
 FCLXML=$(addprefix xml/, $(addsuffix .xml,$(FCLUNITS)))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEDIR)/iostream.pp"
-FCLSTREAMIO= --descr=streamio.xml --input="$(FCLBASEDIR)/streamio.pp"
+FCLSTREAMIO= --descr=streamio.xml --input="$(FCLBASEDIR)/streamio.ppll"
 FCLCONTNRS= --descr=contnrs.xml --input="$(FCLBASEDIR)/contnrs.pp"
 FCLIDEA= --descr=idea.xml --input="$(FCLBASEDIR)/idea.pp"
 FCLBUFSTREAM= --descr=bufstream.xml --input="$(FCLBASEDIR)/bufstream.pp"
@@ -2224,12 +2225,12 @@ updatertlxml: fpc_all
 	$(RTLMAKESKEL) $(RTLFGL) --output=fgl.new.xml
 	$(RTLMAKESKEL) $(RTLCHARACTER) --output=character.new.xml
 	./cleanxml $(RTLNEWXML)
-rtl.inc: $(RTLXML)
-	$(FPDOC)  $(FPDOCOPTS) --output=rtl.inc --project=xml/rtl-project.xml --format=latex
-fcl.inc: $(FCLXML)
-	$(FPDOC) $(FPDOCOPTS) --output=fcl.inc --project=xml/fcl-project.xml --format=latex
-fclres.inc: $(FCLRESXML)
-	$(FPDOC) $(FPDOCOPTS) --output=fclres.inc $(FCLRESOPTS) --format=latex
+tex/rtl.inc: $(RTLXML)
+	$(FPDOC)  $(FPDOCOPTS) --output=tex/rtl.inc --project=xml/rtl-project.xml --format=latex
+tex/fcl.inc: $(FCLXML)
+	$(FPDOC) $(FPDOCOPTS) --output=tex/fcl.inc --project=xml/fcl-project.xml --format=latex
+tex/fclres.inc: $(FCLRESXML)
+	$(FPDOC) $(FPDOCOPTS) --output=tex/fclres.inc $(FCLRESOPTS) --format=latex
 RTFFILES = $(addsuffix .rtf,$(RTFS))
 rtf: $(RTFFILES)
 dest/rtf/rtl.rtf: $(RTLXML)
@@ -2240,7 +2241,7 @@ dest/rtf/fclres.rtf: $(FCLXML)
 	$(FPDOC) $(FPDOCOPTS) --output=dest/rtf/fclres.rtf $(FCLRESOPTS) --format=rtf
 dist/dvi/ref.dvi: ref.tex $(INCLUDES)
 dist/dvi/prog.dvi: prog.tex $(INCLUDES)
-dist/dvi/user.dvi: user.tex $(INCLUDES) messages.inc comphelp.inc
+dist/dvi/user.dvi: user.tex $(INCLUDES) tex/messages.inc tex/comphelp.inc
 dist/dvi/fpdoc.dvi: fpdoc.tex $(INCLUDES)
 dist/dvi/fcl.dvi: fcl.tex fcl.inc $(INCLUDES)
 dist/dvi/fclres.dvi: fclres.tex fclres.inc $(INCLUDES)
@@ -2248,7 +2249,7 @@ dist/dvi/chart.dvi: chart.tex
 dist/dvi/onechap.dvi: onechap.tex $(INCLUDES)
 dist/dvi/rtl.dvi: rtl.tex rtl.inc $(INCLUDES)
 dist/pdf/ref.pdf: ref.tex $(INCLUDES)
-dist/pdf/user.pdf: user.tex $(INCLUDES) messages.inc comphelp.inc
+dist/pdf/user.pdf: user.tex $(INCLUDES) tex/messages.inc tex/comphelp.inc
 dist/pdf/prog.pdf: prog.tex $(INCLUDES)
 dist/pdf/onechap.pdf: onechap.tex $(INCLUDES)
 dist/pdf/fpdoc.pdf: fpdoc.tex $(INCLUDES)
@@ -2389,55 +2390,55 @@ dvidist: dvizip
 htmldist: htmlzip htmltar
 alldist: dvidist psdist txtdist pdfdist htmldist
 examples:
-	$(MAKE) -C crtex
-	$(MAKE) -C dosex
-	$(MAKE) -C optex
-	$(MAKE) -C mathex
-	$(MAKE) -C printex
-	$(MAKE) -C progex
-	$(MAKE) -C refex
-	$(MAKE) -C stringex
-	$(MAKE) -C objectex
-	$(MAKE) -C sysutex
-	$(MAKE) -C typinfex
-	$(MAKE) -C kbdex
+	$(MAKE) -C examples/crtex
+	$(MAKE) -C examples/dosex
+	$(MAKE) -C examples/optex
+	$(MAKE) -C examples/mathex
+	$(MAKE) -C examples/printex
+	$(MAKE) -C examples/progex
+	$(MAKE) -C examples/refex
+	$(MAKE) -C examples/stringex
+	$(MAKE) -C examples/objectex
+	$(MAKE) -C examples/sysutex
+	$(MAKE) -C examples/typinfex
+	$(MAKE) -C examples/kbdex
 cleanexamples:
-	$(MAKE) -C crtex clean
-	$(MAKE) -C dosex clean
-	$(MAKE) -C optex clean
-	$(MAKE) -C mathex clean
-	$(MAKE) -C printex clean
-	$(MAKE) -C progex clean
-	$(MAKE) -C refex clean
-	$(MAKE) -C stringex clean
-	$(MAKE) -C objectex clean
-	$(MAKE) -C sysutex clean
-	$(MAKE) -C typinfex clean
-	$(MAKE) -C kbdex clean
-	$(MAKE) -C go32ex clean
-	$(MAKE) -C mouseex clean
-	$(MAKE) -C linuxex clean
-	$(MAKE) -C sockex clean
-	$(MAKE) -C ipcex clean
+	$(MAKE) -C examples/crtex clean
+	$(MAKE) -C examples/dosex clean
+	$(MAKE) -C examples/optex clean
+	$(MAKE) -C examples/mathex clean
+	$(MAKE) -C examples/printex clean
+	$(MAKE) -C examples/progex clean
+	$(MAKE) -C examples/refex clean
+	$(MAKE) -C examples/stringex clean
+	$(MAKE) -C examples/objectex clean
+	$(MAKE) -C examples/sysutex clean
+	$(MAKE) -C examples/typinfex clean
+	$(MAKE) -C examples/kbdex clean
+	$(MAKE) -C examples/go32ex clean
+	$(MAKE) -C examples/mouseex clean
+	$(MAKE) -C examples/linuxex clean
+	$(MAKE) -C examples/sockex clean
+	$(MAKE) -C examples/ipcex clean
 dosexamples: examples
-	$(MAKE) -C go32ex
-	$(MAKE) -C mouseex
+	$(MAKE) -C examples/go32ex
+	$(MAKE) -C examples/mouseex
 linuxexamples: examples
-	$(MAKE) -C linuxex
-	$(MAKE) -C sockex
-	$(MAKE) -C ipcex
+	$(MAKE) -C examples/linuxex
+	$(MAKE) -C examples/sockex
+	$(MAKE) -C examples/ipcex
 execute:
-	$(MAKE) -C dosex all
-	$(MAKE) -C dosex execute
-	$(MAKE) -C refex all
-	$(MAKE) -C refex execute
-	$(MAKE) -C mathex all
-	$(MAKE) -C mathex execute
-	$(MAKE) -C stringex all
-	$(MAKE) -C stringex execute
-	$(MAKE) -C objectex all
-	$(MAKE) -C objectex execute
-	$(MAKE) -C sysutex all
-	$(MAKE) -C sysutex execute
-	$(MAKE) -C typinfex all
-	$(MAKE) -C typinfex execute
+	$(MAKE) -C examples/dosex all
+	$(MAKE) -C examples/dosex execute
+	$(MAKE) -C examples/refex all
+	$(MAKE) -C examples/refex execute
+	$(MAKE) -C examples/mathex all
+	$(MAKE) -C examples/mathex execute
+	$(MAKE) -C examples/stringex all
+	$(MAKE) -C examples/stringex execute
+	$(MAKE) -C examples/objectex all
+	$(MAKE) -C examples/objectex execute
+	$(MAKE) -C examples/sysutex all
+	$(MAKE) -C examples/sysutex execute
+	$(MAKE) -C examples/typinfex all
+	$(MAKE) -C examples/typinfex execute
