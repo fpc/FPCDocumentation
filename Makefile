@@ -1662,7 +1662,7 @@ endif
 ifndef ASCIIMODE
 ASCIIMODE=NO
 endif
-TEXINPUTS:=$(VPATH):.:
+TEXINPUTS:=$(VPATH):.:examples:
 export TEXINPUTS
 ifndef HTMLFMT
   HTMLFMT=html
@@ -1862,20 +1862,20 @@ else
 USE_UNIX_ECHO=
 endif
 endif
-comphelp.inc:
+tex/comphelp.inc:
 ifdef USE_UNIX_ECHO
-	$(ECHO) % Automatically generated Unix version. Do not edit > comphelp.inc
-	$(ECHO) -n "\\begin{verbatim}" >> comphelp.inc
-	$(FPC) -h | sed 's;\\;\\\\;g' >> comphelp.inc
-	$(ECHO) "\\end{verbatim}" >> comphelp.inc
+	$(ECHO) % Automatically generated Unix version. Do not edit > tex/comphelp.inc
+	$(ECHO) -n "\\begin{verbatim}" >> tex/comphelp.inc
+	$(FPC) -h | sed 's;\\;\\\\;g' >> tex/comphelp.inc
+	$(ECHO) "\\end{verbatim}" >> tex/comphelp.inc
 else
-	$(ECHO) "% Automatically generated Win version. Do not edit" > comphelp.inc
-	$(ECHO) -n '\' >> comphelp.inc
-	$(ECHO) 'begin{verbatim}' >> comphelp.inc
-	$(FPC) -h >>comphelp.inc
-	$(ECHO) '\end{verbatim}' >> comphelp.inc
+	$(ECHO) "% Automatically generated Win version. Do not edit" > tex/comphelp.inc
+	$(ECHO) -n '\' >> tex/comphelp.inc
+	$(ECHO) 'begin{verbatim}' >> tex/comphelp.inc
+	$(FPC) -h >> tex/comphelp.inc
+	$(ECHO) '\end{verbatim}' >> tex/comphelp.inc
 endif
-INCLUDES=date.inc
+INCLUDES=tex/date.inc
 SYSTEMUNITDIR=$(OS_SOURCE)
 ifneq ($(findstring bsd,$(OS_SOURCE)),)
 override SYSTEMUNITDIR=bsd
@@ -2225,19 +2225,19 @@ updatertlxml: fpc_all
 	$(RTLMAKESKEL) $(RTLCHARACTER) --output=character.new.xml
 	./cleanxml $(RTLNEWXML)
 rtl.inc: $(RTLXML)
-	$(FPDOC)  $(FPDOCOPTS) --output=rtl.inc --project=rtl-project.xml --format=latex
+	$(FPDOC)  $(FPDOCOPTS) --output=rtl.inc --project=xml/rtl-project.xml --format=latex
 fcl.inc: $(FCLXML)
-	$(FPDOC) $(FPDOCOPTS) --output=fcl.inc --project=fcl-project.xml --format=latex
+	$(FPDOC) $(FPDOCOPTS) --output=fcl.inc --project=xml/fcl-project.xml --format=latex
 fclres.inc: $(FCLRESXML)
 	$(FPDOC) $(FPDOCOPTS) --output=fclres.inc $(FCLRESOPTS) --format=latex
 RTFFILES = $(addsuffix .rtf,$(RTFS))
 rtf: $(RTFFILES)
-rtl.rtf: $(RTLXML)
-	$(FPDOC) $(FPDOCOPTS) --output=rtl.rtf --project=rtl-project.xml --format=rtf
-fcl.rtf: $(FCLXML)
-	$(FPDOC) $(FPDOCOPTS) --output=fcl.rtf --project=fcl-project.xml --format=rtf
-fclres.rtf: $(FCLXML)
-	$(FPDOC) $(FPDOCOPTS) --output=fclres.rtf $(FCLRESOPTS) --format=rtf
+dest/rtf/rtl.rtf: $(RTLXML)
+	$(FPDOC) $(FPDOCOPTS) --output=dest/rtf/rtl.rtf --project=xml/rtl-project.xml --format=rtf
+dest/rtf/fcl.rtf: $(FCLXML)
+	$(FPDOC) $(FPDOCOPTS) --output=dest/rtf/fcl.rtf --project=xml/fcl-project.xml --format=rtf
+dest/rtf/fclres.rtf: $(FCLXML)
+	$(FPDOC) $(FPDOCOPTS) --output=dest/rtf/fclres.rtf $(FCLRESOPTS) --format=rtf
 dist/dvi/ref.dvi: ref.tex $(INCLUDES)
 dist/dvi/prog.dvi: prog.tex $(INCLUDES)
 dist/dvi/user.dvi: user.tex $(INCLUDES) messages.inc comphelp.inc
