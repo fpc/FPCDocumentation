@@ -1845,11 +1845,12 @@ help:
 	@echo ' psdist        : ps, and archive result.'
 	@echo ' pdfdist       : pdf, and archive result.'
 clean: fpc_clean
-	-rm -f tex/preamble.inc tex/date.inc tex/messages.inc tex/rtl.inc tex/fcl.inc tex/comphelp.inc
+	-rm -f tex/preamble.inc tex/date.inc tex/messages.inc tex/rtl.inc tex/fcl.inc tex/comphelp.inc tex/fclres.inc
 	-rm -f xml/*.xct
 	-rm -f -r dist
 	-rm -f $(notdir $(wildcard styles/*.sty))
 distclean: fpc_distclean clean cleanexamples
+	-rm *.zip *.gz
 tex/date.inc:
 	@$(ECHO) \\date\{`date +'%B %Y'`\} > tex/date.inc
 $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT):
