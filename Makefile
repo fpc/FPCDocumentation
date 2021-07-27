@@ -330,13 +330,14 @@ endif
 endif
 override PACKAGE_NAME=fpdocs
 override PACKAGE_VERSION=3.2.0
-SEARCHFPCSRCPATH=../fpcsrc ../fpc ..
+VPATH=src:tex
+SEARCHFPCSRCPATH=../fpcsrc ../fpc .. src
 FPCSRCDIR:=$(patsubst %/compiler,%,$(firstword $(strip $(wildcard $(addsuffix /compiler,$(SEARCHFPCSRCPATH))))))
 ifeq ($(FULL_TARGET),x86_64-linux)
-override TARGET_PROGRAMS+=cleanxml relinkdocs
+override TARGET_PROGRAMS+=src/cleanxml src/relinkdocs
 endif
 ifeq ($(FULL_TARGET),x86_64-linux)
-override TARGET_UNITS+=relinkhtml
+override TARGET_UNITS+=src/relinkhtml
 endif
 ifdef REQUIRE_UNITSDIR
 override UNITSDIR+=$(REQUIRE_UNITSDIR)
@@ -1630,7 +1631,6 @@ makefiles: fpc_makefiles
 ifneq ($(wildcard fpcmake.loc),)
 include fpcmake.loc
 endif
-VPATH = tex
 ifndef DOCS
 DOCS = user rtl ref prog fpdoc chart fcl fclres
 endif
@@ -1682,11 +1682,11 @@ FPDOCOPTS+= --macro=FPCDIR=$(FPCSRCDIR)  --macro=XMLDIR=xml/ --examples-dir=exam
 else
 FPDOCOPTS=--macro=FPCDIR=$(FPCSRCDIR) --macro=XMLDIR=xml/ --examples-dir=examples
 endif
-FCLOPTS= --package=fcl --warn-no-node --descr=fcl.xml --content=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX) $(FCLUNITOPTS)
+FCLOPTS= --package=fcl --warn-no-node --descr=xml/fcl.xml --content=xml/fcl.xct --import=xml/rtl.xct,$(RTLLINKPREFIX) $(FCLUNITOPTS)
 ifeq ($(HIDEPROTECTED),YES)
 FCLOPTS+= --hide-protected
 endif
-FCLRESOPTS= --package=fcl-res --warn-no-node --content=fclres.xct --import=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX) $(FCLRESUNITOPTS)
+FCLRESOPTS= --package=fcl-res --warn-no-node --content=xml/fclres.xct --import=xml/fcl.xct --import=xml/rtl.xct,$(RTLLINKPREFIX) $(FCLRESUNITOPTS)
 ifeq ($(HIDEPROTECTED),YES)
 FCLOPTS+= --hide-protected
 endif
@@ -1783,10 +1783,16 @@ debuginfo:
 	txtdist htm txt pdf refex alldist messages onechap gtk \
 	user ref prog rtl updatexml updatefclxml updatertlxml updatefclresxml \
 	examples
-$(DVIDIR):
+$(DVIDIR)/:
 	mkdir -p $(DVIDIR)
-$(PDFDIR):
+$(PDFDIR)/:
 	mkdir -p $(PDFDIR)
+$(TXTDIR)/:
+	mkdir -p $(TXTDIR)
+$(PSDIR)/:
+	mkdir -p $(PSDIR)
+$(HTMLDIR)/:
+	mkdir -p $(HTMLDIR)
 .SUFFIXES: .dvi .tex .ps .txt .pdf
 VPATH=tex
 TEXOUTPUTS=$(addprefix $(basename $@).,aux idx ilg ind log out toc tmp xref 4ht) 
@@ -1808,13 +1814,13 @@ define run-pdflatex =
 	-$(MAKEINDEX) $(PDFDIR)/$*.idx
 	$(PDFLATEX) -output-directory=$(PDFDIR) $< $(LATEXPOSTOPT)
 endef
-$(TXT): $(TXTDIR)/%.txt: $(DVIDIR)/%.dvi 
+$(TXT): $(TXTDIR)/%.txt: $(DVIDIR)/%.dvi    | $(TXTDIR)/
 	$(DVITXT) -o $@ $<
-$(PS): $(PSDIR)/%.ps: $(DVIDIR)/%.dvi
+$(PS): $(PSDIR)/%.ps: $(DVIDIR)/%.dvi | $(PSDIR)/
 	$(DVIPS) $< -o $@
-$(DVI) : $(DVIDIR)/%.dvi: %.tex
+$(DVI) : $(DVIDIR)/%.dvi: %.tex $(DVIDIR)/
 	$(run-latex)
-$(PDF) : $(PDFDIR)/%.pdf: %.tex
+$(PDF) : $(PDFDIR)/%.pdf: %.tex  | $(PDFDIR)/
 	$(run-pdflatex)
 help:
 	@echo 'Possible targets :'
@@ -1839,15 +1845,11 @@ help:
 	@echo ' psdist        : ps, and archive result.'
 	@echo ' pdfdist       : pdf, and archive result.'
 clean: fpc_clean
-	-rm -f tex/preamble.inc tex/date.inc tex/messages.inc tex/rtl.inc tex/fcl.inc
-	-rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref *.kwd *.xct *.chm *.ipf
-	-rm -rf $(DOCS)
-	-rm -f *.ilg *.ind *.idx
-	-rm -f $(CHK) $(TOC) $(LOG) $(DVI) $(PDF) $(AUX) $(OUT) $(PS) $(HTML) $(LOT) $(TXT)
+	-rm -f tex/preamble.inc tex/date.inc tex/messages.inc tex/rtl.inc tex/fcl.inc tex/comphelp.inc
+	-rm -f xml/*.xct
+	-rm -f -r dist
 	-rm -f $(notdir $(wildcard styles/*.sty))
 distclean: fpc_distclean clean cleanexamples
-	-rm -f *.haux *.htoc *.hind *.htex *.chk
-	-rm -f *.tar.gz *.zip
 tex/date.inc:
 	@$(ECHO) \\date\{`date +'%B %Y'`\} > tex/date.inc
 $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT):
@@ -2059,7 +2061,7 @@ FCLRESUNITOPTS+= $(FCLRESCOFFREADER) $(FCLRESCOFFWRITER) $(FCLRESWINPEIMAGEREADE
 FCLRESUNITOPTS+= $(FCLRESELFREADER) $(FCLRESELFWRITER) $(FCLRESMACHOTYPES) $(FCLRESMACHOREADER) 
 FCLRESUNITOPTS+= $(FCLRESMACHOWRITER) $(FCLRESEXTERNALTYPES) $(FCLRESEXTERNALREADER) $(FCLRESEXTERNALWRITER) 
 FCLRESUNITOPTS+= $(FCLRESDFMREADER)
-FCLRESOPTS=$(FPDOCOPTS) --package=fcl-res --warn-no-node --content=fclres.xct --import=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX) $(FCLRESUNITOPTS)
+FCLRESOPTS=$(FPDOCOPTS) --package=fcl-res --warn-no-node --content=xml/fclres.xct --import=xml/fcl.xct --import=xml/rtl.xct,$(RTLLINKPREFIX) $(FCLRESUNITOPTS)
 ifeq ($(HIDEPROTECTED),YES)
 FCLOPTS+= --hide-protected
 endif
@@ -2094,7 +2096,7 @@ updatefclresxml: fpc_all
 	$(FCLRESMAKESKEL) $(FCLRESEXTERNALWRITER) --output=externalwriter.new.xml
 	$(FCLRESMAKESKEL) $(FCLRESDFMREADER) --output=dfmreader.new.xml
 	./cleanxml $(FCLRESNEWXML)
-RTLOPTS= --warn-no-node --package=rtl --descr=rtl.xml --content=rtl.xct
+RTLOPTS= --warn-no-node --package=rtl --descr=xml/rtl.xml --content=xml/rtl.xct
 ifeq ($(HIDEPROTECTED),YES)
 RTLOPTS+= --hide-protected
 endif
@@ -2296,19 +2298,19 @@ include Makefile.4ht
 endif  # USEL2H
 endif  # USEPLASTEX
 endif  # USEHEVEA
-$(HTMLDIR)/fcl.chk: $(FCLXML) xml/fcl-project.xml $(HTMLDIR)/rtl.chk
+$(HTMLDIR)/fcl.chk: $(FCLXML) xml/fcl-project.xml $(HTMLDIR)/rtl.chk | $(HTMLDIR)/
 	$(FPDOC) $(FPDOCOPTS) --project=xml/fcl-project.xml --format=$(HTMLFMT) --output=$(HTMLDIR)/fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst $(HTMLDIR)/fcl/fpdoc.css
 endif
 	@$(ECHO) '' > $(HTMLDIR)/fcl.chk
-$(HTMLDIR)/fclres.chk: $(FCLRESXML)
+$(HTMLDIR)/fclres.chk: $(FCLRESXML) | $(HTMLDIR)/
 	$(FPDOC) $(FPDOCOPTS) $(FCLRESOPTS)  --format=$(HTMLFMT) --output=$(HTMLDIR)/fclres$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLRESCHMOPTS) 
 ifndef CSSFILE
 	cp fpdoc.cst $(HTMLDIR)/fclres/fpdoc.css
 endif
 	@$(ECHO) '' > $(HTMLDIR)/fclres.chk
-$(HTMLDIR)/rtl.chk: $(RTLXML) xml/rtl-project.xml
+$(HTMLDIR)/rtl.chk: $(RTLXML) xml/rtl-project.xml | $(HTMLDIR)/
 	$(FPDOC) $(FPDOCOPTS) --project=xml/rtl-project.xml --format=$(HTMLFMT) --output=$(HTMLDIR)/rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst $(HTMLDIR)/rtl/fpdoc.css
@@ -2320,7 +2322,7 @@ $(HTMLDIR)/onechap.chk: $(INCLUDES) onechap.tex
 $(HTMLDIR)/ref.chk: $(INCLUDES) ref.tex
 $(HTMLDIR)/fpdoc.chk: $(INCLUDES) fpdoc.tex
 $(HTMLDIR)/chart.chk: $(INCLUDES) chart.tex
-html: fpc_all comphelp.inc $(INCLUDES) $(CHK)
+html: fpc_all comphelp.inc $(INCLUDES) $(CHK) | $(HTMLDIR)/
 chm: 
 	$(MAKE) html HTMLFMT=chm
 ipf:
