@@ -39,6 +39,8 @@ FPCSRCDIR:=$(patsubst %/compiler,%,$(firstword $(strip $(wildcard $(addsuffix /c
 # so a make html and make install goes quickly
 #INSTALLDEBUG=1
 
+VPATH = tex
+
 # Which docs to build by default
 ifndef DOCS
 DOCS = user rtl ref prog fpdoc chart fcl fclres
@@ -83,6 +85,10 @@ ifndef ASCIIMODE
 ASCIIMODE=NO
 endif
 
+TEXINPUTS:=$(VPATH):.:
+export TEXINPUTS
+
+
 ifndef HTMLFMT
   HTMLFMT=html
 endif
@@ -100,9 +106,9 @@ HIDEPROTECTED=YES
 endif
 
 ifdef FPDOCOPTS
-FPDOCOPTS+= --macro=FPCDIR=$(FPCSRCDIR)
+FPDOCOPTS+= --macro=FPCDIR=$(FPCSRCDIR)  --macro=XMLDIR=xml/ --examples-dir=examples
 else
-FPDOCOPTS=--macro=FPCDIR=$(FPCSRCDIR)
+FPDOCOPTS=--macro=FPCDIR=$(FPCSRCDIR) --macro=XMLDIR=xml/ --examples-dir=examples
 endif
 
 FCLOPTS= --package=fcl --warn-no-node --descr=fcl.xml --content=fcl.xct --import=rtl.xct,$(RTLLINKPREFIX) $(FCLUNITOPTS)
@@ -228,22 +234,31 @@ endif # USEPLASTEX
 export TMP=/tmp
 #
 
+DISTDIR=dist
+PDFDIR:=$(DISTDIR)/pdf
+PSDIR:=$(DISTDIR)/ps
+DVIDIR:=$(DISTDIR)/dvi
+TXTDIR:=$(DISTDIR)/txt
+HTMLDIR:=$(DISTDIR)/html
 
-PS = $(addsuffix .ps, $(DOCS))
-DVI = $(addsuffix .dvi, $(DOCS))
-TXT = $(addsuffix .txt, $(DOCS))
-PDF = $(addsuffix .pdf, $(DOCS))
+PS = $(addprefix $(PSDIR)/, $(addsuffix .ps, $(DOCS)))
+DVI = $(addprefix $(DVIDIR)/, $(addsuffix .dvi, $(DOCS)))
+TXT = $(addprefix $(TXTDIR)/, $(addsuffix .txt, $(DOCS)))
+PDF = $(addprefix $(PDFDIR)/, $(addsuffix .pdf, $(DOCS)))
 TOC = $(addsuffix .toc, $(DOCS))
 AUX = $(addsuffix .aux, $(DOCS))
 LOG = $(addsuffix .log, $(DOCS))
 LOT = $(addsuffix .lot, $(DOCS))
 OUT = $(addsuffix .out, $(DOCS))
 # Html files are build in a directory
-HTML = $(DOCS)
+HTML = $(addprefix $(HTMLDIR)/, $(DOCS))
 CHM = $(addsuffix .chm, $(DOCS))
-CHK = $(addsuffix .chk, $(DOCS))
+CHK = $(addprefix $(HTMLDIR)/, $(addsuffix .chk, $(DOCS)))
 IPF = $(addsuffix .ipf, $(DOCS))
 
+debuginfo:
+	echo $(PDF)
+	echo $(DVI)
 
 #####################################################################
 # Conversion from types
@@ -253,49 +268,51 @@ IPF = $(addsuffix .ipf, $(DOCS))
         txtdist htm txt pdf refex alldist messages onechap gtk \
         user ref prog rtl updatexml updatefclxml updatertlxml updatefclresxml
 
+$(DVIDIR):
+	mkdir -p $(DVIDIR)
+
+$(PDFDIR):
+	mkdir -p $(PDFDIR)
+
 .SUFFIXES: .dvi .tex .ps .txt .pdf
 
 # default show help
 
-.dvi.ps:
-        $(DVIPS) $<
+VPATH=tex
 
-.tex.dvi:
-        -rm -f $*.aux $*.idx  $*.ilg  $*.ind  $*.log  $*.out  $*.toc $*.tmp $*.xref $*.4ht
-        cp -f preamble.$(PREAMBLETYPE) preamble.inc
-        $(LATEX) $*
-        -$(MAKEINDEX) $*.idx
-        $(LATEX) $*
-        -$(MAKEINDEX) $*.idx
-        $(LATEX) $*
+TEXOUTPUTS=$(addprefix $(basename $@).,aux idx ilg ind log out toc tmp xref 4ht) 
 
-ifndef USEELINKS
-.dvi.txt:
-        $(DVITXT) -o $*.txt  $*.dvi
-else
-include Makefile.txt
-endif
+define run-latex =
+        -rm -f $(TEXOUTPUTS)
+	cp -f tex/preamble.$(PREAMBLETYPE) tex/preamble.inc
+	$(LATEX) -output-directory=$(DVIDIR) $<
+	-$(MAKEINDEX) $(DVIDIR)/$*.idx
+	$(LATEX) -output-directory=$(DVIDIR) $<
+	-$(MAKEINDEX) $(DVIDIR)/$*.idx
+	$(LATEX) -output-directory=$(DVIDIR) $<
+endef
 
-.tex.pdf:
-        -rm -f $*.aux $*.idx  $*.ilg  $*.ind  $*.log  $*.out  $*.toc $*.tmp $*.xref $*.4ht
-        cp -f preamble.$(PREAMBLETYPE) preamble.inc
-        $(PDFLATEX) $* $(LATEXPOSTOPT)
-        -$(MAKEINDEX) $*.idx
-        $(PDFLATEX) $* $(LATEXPOSTOPT)
-        -$(MAKEINDEX) $*.idx
-        $(PDFLATEX) $* $(LATEXPOSTOPT)
+define run-pdflatex = 
+	-rm -f $(TEXOUTPUTS)
+	cp -f tex/preamble.$(PREAMBLETYPE) tex/preamble.inc
+	$(PDFLATEX) -output-directory=$(PDFDIR) $< $(LATEXPOSTOPT)
+	-$(MAKEINDEX) $(PDFDIR)/$*.idx
+	$(PDFLATEX) -output-directory=$(PDFDIR) $< $(LATEXPOSTOPT)
+	-$(MAKEINDEX) $(PDFDIR)/$*.idx
+	$(PDFLATEX) -output-directory=$(PDFDIR) $< $(LATEXPOSTOPT)
+endef
 
-ifndef USEELINKS
-$(TXT) : %.txt: %.dvi
-else
-$(TXT) : %.txt: %.tex
-endif
+$(TXT): $(TXTDIR)/%.txt: $(DVIDIR)/%.dvi 
+	$(DVITXT) -o $@ $<
 
-$(DVI) : %.dvi: %.tex
+$(PS): $(PSDIR)/%.ps: $(DVIDIR)/%.dvi
+        $(DVIPS) $< -o $@
 
-$(PDF) : %.pdf: %.tex
+$(DVI) : $(DVIDIR)/%.dvi: %.tex
+	$(run-latex)
 
-
+$(PDF) : $(PDFDIR)/%.pdf: %.tex
+	$(run-pdflatex)
 #####################################################################
 # Targets
 #####################################################################
@@ -324,7 +341,7 @@ help:
         @echo ' pdfdist       : pdf, and archive result.'
 
 clean: fpc_clean
-        -rm -f preamble.inc date.inc messages.inc rtl.inc
+        -rm -f tex/preamble.inc tex/date.inc tex/messages.inc rtl.inc fcl.inc
         -rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref *.kwd *.xct *.chm *.ipf
         -rm -rf $(DOCS)
 	-rm -f *.ilg *.ind *.idx
@@ -342,8 +359,8 @@ distclean: fpc_distclean clean cleanexamples
 
 # the following assumes "gdate" in the path on windwows
 
-date.inc:
-	@$(ECHO) \\date\{`date +'%B %Y'`\} > date.inc
+tex/date.inc:
+	@$(ECHO) \\date\{`date +'%B %Y'`\} > tex/date.inc
 
 $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT):
 	$(MAKE) -C $(FPCSRCDIR)/compiler/utils msg2inc$(EXEEXT)
@@ -475,7 +492,7 @@ FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream
          fpjson sqltypes bufdataset fpmimetypes
 FCLUNITS+= ezcgi
 
-FCLXML=$(addsuffix .xml,$(FCLUNITS))
+FCLXML=$(addprefix xml/, $(addsuffix .xml,$(FCLUNITS)))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
 # Separate arguments for all FCL units.
 FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEDIR)/iostream.pp"
@@ -681,7 +698,7 @@ RTLUNITS=system objpas types sysutils strutils dateutils strings mouse keyboard 
          collation_ja collation_ko collation_ru collation_sv collation_zh charset windirs \
          cp1250 cp1251 cp1252 cp1253 cp1254 cp1255 cp1256 cp1257 cp1258 cp437 cp646 cp850 \
          cp852 cp856 cp866 cp874 cp8859_1 cp8859_2 cp8859_5 cpall sharemem unixcp
-RTLXML=$(addsuffix .xml,$(RTLUNITS)) rtl-project.xml
+RTLXML=$(addprefix xml/, $(addsuffix .xml,$(RTLUNITS))) xml/rtl-project.xml
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
 RTLTYPES= --descr=types.xml --input="$(FPCSRCDIR)/rtl/objpas/types.pp $(OSDIRINCLUDES)"
 RTLSTRUTILS= --descr=strutils.xml --input="-dFPC_LITTLE_ENDIAN $(FPCSRCDIR)/packages/rtl-objpas/src/inc/strutils.pp $(OSDIRINCLUDES)"
@@ -836,44 +853,43 @@ fclres.rtf: $(FCLXML)
 # DVI files
 #####################################################################
 
-ref.dvi: ref.tex $(INCLUDES)
+dist/dvi/ref.dvi: ref.tex $(INCLUDES)
 
-prog.dvi: prog.tex $(INCLUDES)
+dist/dvi/prog.dvi: prog.tex $(INCLUDES)
 
-user.dvi: user.tex $(INCLUDES) messages.inc comphelp.inc
+dist/dvi/user.dvi: user.tex $(INCLUDES) messages.inc comphelp.inc
 
-fpdoc.dvi: fpdoc.tex $(INCLUDES)
+dist/dvi/fpdoc.dvi: fpdoc.tex $(INCLUDES)
 
-fcl.dvi: fcl.tex fcl.inc $(INCLUDES)
+dist/dvi/fcl.dvi: fcl.tex fcl.inc $(INCLUDES)
 
-fclres.dvi: fclres.tex fclres.inc $(INCLUDES)
+dist/dvi/fclres.dvi: fclres.tex fclres.inc $(INCLUDES)
 
-chart.dvi: chart.tex
+dist/dvi/chart.dvi: chart.tex
 
+dist/dvi/onechap.dvi: onechap.tex $(INCLUDES)
 
-ref.pdf: ref.tex $(INCLUDES)
+dist/dvi/rtl.dvi: rtl.tex rtl.inc $(INCLUDES)
 
-user.pdf: user.tex $(INCLUDES) messages.inc comphelp.inc
+dist/pdf/ref.pdf: ref.tex $(INCLUDES)
 
-prog.pdf: prog.tex $(INCLUDES)
+dist/pdf/user.pdf: user.tex $(INCLUDES) messages.inc comphelp.inc
 
-onechap.pdf: onechap.tex $(INCLUDES)
+dist/pdf/prog.pdf: prog.tex $(INCLUDES)
 
-onechap.dvi: onechap.tex $(INCLUDES)
+dist/pdf/onechap.pdf: onechap.tex $(INCLUDES)
 
-fpdoc.pdf: fpdoc.tex $(INCLUDES)
+dist/pdf/fpdoc.pdf: fpdoc.tex $(INCLUDES)
 
-fcl.pdf: fcl.tex fcl.inc $(INCLUDES)
+dist/pdf/fcl.pdf: fcl.tex fcl.inc $(INCLUDES)
 
-fclres.pdf: fclres.tex fclres.inc $(INCLUDES)
+dist/pdf/fclres.pdf: fclres.tex fclres.inc $(INCLUDES)
 
-chart.pdf: chart.tex
+dist/pdf/chart.pdf: chart.tex
 
-rtl.dvi: rtl.tex rtl.inc $(INCLUDES)
+dist/pdf/rtl.pdf: rtl.tex rtl.inc $(INCLUDES)
 
-rtl.pdf: rtl.tex rtl.inc $(INCLUDES)
-
-dvi : $(DVI)
+dvi: $(DVI)
 
 ifndef USEELINKS
 txt : dvi $(TXT)
@@ -898,11 +914,11 @@ user.txt: messages.inc
 txt : fpc_all comphelp.inc $(INCLUDES) $(TXT)
 endif
 
-ps : dvi $(PS)
+ps: dvi $(PS)
 
-pdf : $(PDF)
+pdf: $(PDF)
 
-all : dvi ps pdf txt html
+all: dvi ps pdf txt html
 
 
 #######################################################################
@@ -935,33 +951,33 @@ endif  # USEL2H
 endif  # USEPLASTEX
 endif  # USEHEVEA
 
-fcl.chk: $(FCLXML) fcl-project.xml rtl.chk
-        $(FPDOC) $(FPDOCOPTS) --project=fcl-project.xml --format=$(HTMLFMT) --output=fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLCHMOPTS)
+$(HTMLDIR)/fcl.chk: $(FCLXML) xml/fcl-project.xml $(HTMLDIR)/rtl.chk
+        $(FPDOC) $(FPDOCOPTS) --project=xml/fcl-project.xml --format=$(HTMLFMT) --output=$(HTMLDIR)/fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLCHMOPTS)
 ifndef CSSFILE
-        cp fpdoc.cst fcl/fpdoc.css
+        cp fpdoc.cst $(HTMLDIR)/fcl/fpdoc.css
 endif
-        @$(ECHO) '' > fcl.chk
+        @$(ECHO) '' > $(HTMLDIR)/fcl.chk
 
-fclres.chk: $(FCLRESXML)
-        $(FPDOC) $(FPDOCOPTS) $(FCLRESOPTS)  --format=$(HTMLFMT) --output=fclres$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLRESCHMOPTS) 
+$(HTMLDIR)/fclres.chk: $(FCLRESXML)
+        $(FPDOC) $(FPDOCOPTS) $(FCLRESOPTS)  --format=$(HTMLFMT) --output=$(HTMLDIR)/fclres$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLRESCHMOPTS) 
 ifndef CSSFILE
-        cp fpdoc.cst fclres/fpdoc.css
+        cp fpdoc.cst $(HTMLDIR)/fclres/fpdoc.css
 endif
-        @$(ECHO) '' > fclres.chk
+        @$(ECHO) '' > $(HTMLDIR)/fclres.chk
 
-rtl.chk: $(RTLXML) rtl-project.xml
-        $(FPDOC) $(FPDOCOPTS) --project=rtl-project.xml --format=$(HTMLFMT) --output=rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
+$(HTMLDIR)/rtl.chk: $(RTLXML) xml/rtl-project.xml
+        $(FPDOC) $(FPDOCOPTS) --project=xml/rtl-project.xml --format=$(HTMLFMT) --output=$(HTMLDIR)/rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
 ifndef CSSFILE
-        cp fpdoc.cst rtl/fpdoc.css
+        cp fpdoc.cst $(HTMLDIR)/rtl/fpdoc.css
 endif
-        @$(ECHO) '' > rtl.chk
+        @$(ECHO) '' > $(HTMLDIR)/rtl.chk
 
-user.chk: $(INCLUDES) user.tex messages.inc
-prog.chk: $(INCLUDES) prog.tex
-onechap.chk: $(INCLUDES) onechap.tex
-ref.chk: $(INCLUDES) ref.tex
-fpdoc.chk: $(INCLUDES) fpdoc.tex
-chart.chk: $(INCLUDES) chart.tex
+$(HTMLDIR)/user.chk: $(INCLUDES) user.tex messages.inc
+$(HTMLDIR)/prog.chk: $(INCLUDES) prog.tex
+$(HTMLDIR)/onechap.chk: $(INCLUDES) onechap.tex
+$(HTMLDIR)/ref.chk: $(INCLUDES) ref.tex
+$(HTMLDIR)/fpdoc.chk: $(INCLUDES) fpdoc.tex
+$(HTMLDIR)/chart.chk: $(INCLUDES) chart.tex
 
 html: fpc_all comphelp.inc $(INCLUDES) $(CHK)
 

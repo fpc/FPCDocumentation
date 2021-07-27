@@ -5,24 +5,23 @@
 HTFONTS=/usr/share/texmf/tex/generic/tex4ht/ht-fonts/
 TEXEXTS=.4ct .aux .dvi .xref .4tc .idx .log .tmp .lg .idv
 	
-%.chk: %.tex
-	rm -rf $(basename $<)
+$(HTMLDIR)/%.chk: %.tex
+	rm -rf $(basename $@)
 	rm -f $(addprefix $(basename $<),$(TEXEXTS))
 	cp -f preamble.ts4 preamble.inc
-	$(LATEX) $<
-	$(LATEX) $<
-	$(LATEX) $<
-	$(GINSTALL) -d $(basename $<) -m755
+	$(GINSTALL) -d $(basename $@) -m755
+	$(LATEX) -output-directory=$(HTMLDIR)/$(basename $(notdir $<)) $<
+	$(LATEX) -output-directory=$(HTMLDIR)/$(basename $(notdir $<)) $<
+	$(LATEX) -output-directory=$(HTMLDIR)/$(basename $(notdir $<)) $<
 ifdef inUnix	
-	for ext in $(TEXEXTS); do [ -f $(basename $<)$$ext ] && mv $(basename $<)$$ext $(basename $<); done || true
-	cp -f -r ./pics/ $(basename $<)/pics/
+#	for ext in $(TEXEXTS); do [ -f $(basename $<)$$ext ] && mv $(basename $<)$$ext $(basename $<); done || true
+	cp -f -r ./pics/ $(basename $@)/pics/
 else
-	mkdir $(basename $<)
-	for /D %%i in ($(TEXEXTS)) do if exist $(basename $<)%%i xcopy $(basename $<)%%i $(basename $<) 
-	cp -f -r ./pics $(basename $<)/pics
+#	mkdir $(basename $<)
+#	for /D %%i in ($(TEXEXTS)) do if exist $(basename $<)%%i xcopy $(basename $<)%%i $(basename $<) 
+	cp -f -r ./pics $(basename $@)/pics
 endif
-	cd $(basename $<) && tex4ht $<  && t4ht $< -m644
-	rm -f -r $(basename $<)/pics
-	rm -f $(addprefix $(basename $<)/$(basename $<),$(TEXEXTS))
-	-cp $(basename $<).kwd $(basename $<)
+	cd $(basename $@) && tex4ht $(basename $(notdir $<))  && t4ht $(basename $(notdir $<)) -m644
+#	rm -f -r $(basename $@)/pics
+	rm -f $(addprefix $(basename $@)/$(basename $(notdir $<)),$(TEXEXTS))
 	touch $@
