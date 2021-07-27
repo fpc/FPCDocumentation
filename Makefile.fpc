@@ -341,7 +341,7 @@ help:
         @echo ' pdfdist       : pdf, and archive result.'
 
 clean: fpc_clean
-        -rm -f tex/preamble.inc tex/date.inc tex/messages.inc rtl.inc fcl.inc
+        -rm -f tex/preamble.inc tex/date.inc tex/messages.inc tex/rtl.inc tex/fcl.inc
         -rm -f *.4tc *.4ct *.css *.lg *.tmp *.xref *.kwd *.xct *.chm *.ipf
         -rm -rf $(DOCS)
 	-rm -f *.ilg *.ind *.idx
@@ -366,8 +366,8 @@ $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT):
 	$(MAKE) -C $(FPCSRCDIR)/compiler/utils msg2inc$(EXEEXT)
 #        $(MAKE) -C $(FPCSRCDIR)/compiler msg2inc
 
-messages.inc: $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT) $(FPCSRCDIR)/compiler/msg/errore.msg
-        $(FPCSRCDIR)/compiler/utils/msg2inc -TE $(FPCSRCDIR)/compiler/msg/errore.msg messages.inc
+tex/messages.inc: $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT) $(FPCSRCDIR)/compiler/msg/errore.msg
+        $(FPCSRCDIR)/compiler/utils/msg2inc -TE $(FPCSRCDIR)/compiler/msg/errore.msg tex/messages.inc
 
 ifdef inUnix
 USE_UNIX_ECHO=1
@@ -857,7 +857,7 @@ dist/dvi/ref.dvi: ref.tex $(INCLUDES)
 
 dist/dvi/prog.dvi: prog.tex $(INCLUDES)
 
-dist/dvi/user.dvi: user.tex $(INCLUDES) messages.inc comphelp.inc
+dist/dvi/user.dvi: user.tex $(INCLUDES) tex/messages.inc tex/comphelp.inc
 
 dist/dvi/fpdoc.dvi: fpdoc.tex $(INCLUDES)
 
@@ -873,7 +873,7 @@ dist/dvi/rtl.dvi: rtl.tex rtl.inc $(INCLUDES)
 
 dist/pdf/ref.pdf: ref.tex $(INCLUDES)
 
-dist/pdf/user.pdf: user.tex $(INCLUDES) messages.inc comphelp.inc
+dist/pdf/user.pdf: user.tex $(INCLUDES) tex/messages.inc tex/comphelp.inc
 
 dist/pdf/prog.pdf: prog.tex $(INCLUDES)
 
