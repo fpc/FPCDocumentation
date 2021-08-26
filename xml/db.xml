@@ -6493,26 +6493,34 @@ Providing an index outside the allowed range will result in an <var>EListError</
 <!-- alias type Visibility: default
      Declaration: TBookmark = Pointer -->
 <element name="TBookmark">
-<short>Bookmark type (deprecated)</short>
+<short>Bookmark type</short>
 <descr>
 <var>TBookMark</var> is the type used by the <link id="TDataset.SetBookMark"/> method. 
-It is an opaque type, and should not be used any more, it is superseded by the <link id="TBookmarkStr"/> type.
+It is of type <var>TBytes</var>, the contents of the buffer is determined by the actual <var>TDataset</var> descendent.
 </descr>
 <seealso>
-<link id="TBookmarkStr"/>
+<link id="TDataset.GotoBookMark"/>
+<link id="TDataset.GetBookMark"/>
+<link id="TDataset.Bookmark"/>
 </seealso>
 </element>
 
 <!-- alias type Visibility: default
      Declaration: TBookmarkStr = String -->
 <element name="TBookmarkStr">
-<short>Bookmark type</short>
+<short>Bookmark as string type - deprecated</short>
 <descr>
-<var>TBookmarkStr</var> is the type used by the <link id="TDataset.Bookmark"/> property. 
+<p>
+<var>TBookmarkStr</var> was the type used by the <link id="TDataset.Bookmark"/> property in earlier versions of FPC. 
 It can be used as a string, but should in fact be considered an opaque type.
+</p>
+</p>
+This type is deprecated, and no longer usable, use the <link id="TBookmark"/> type instead.
+</p>
 </descr>
 <seealso>
 <link id="TDataset.Bookmark"/>
+<link id="TBookmark"/>
 </seealso>
 </element>
 
@@ -8478,25 +8486,25 @@ This is often used when scanning all records, like this:
 </p>
 <code>
 Var
-  B : TBookmarkStr;
+  B : TBookmark;
   
 begin
   With MyDataset do
     begin
-	B:=Bookmark;
+    B:=Bookmark;
     DisableControls;
-	try
-	  First;
-	  While Not EOF do
-	    begin
-		DoSomething;
-		Next;
-		end;
-	finally
-	  EnableControls;
-	  Bookmark:=B;
-	end;
-	end;	
+    try
+      First;
+      While Not EOF do
+        begin
+        DoSomething;
+        Next;
+        end;
+    finally
+      EnableControls;
+      Bookmark:=B;
+    end;
+    end;	
 </code>
 <p>
 At the end of this code, the dataset will be positioned on the same record as when the code
