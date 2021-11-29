@@ -10757,13 +10757,17 @@ of zero (0)). This initialization is normally done by the caller.
 
 
 %
-\subsection{Constant parameters}\index{Parameters!Constant}\keywordlink{const}
+\subsection{Constant
+parameters}\index{Parameters!Constant}\keywordlink{const}\keywordlink{constref}
 In addition to variable parameters and value parameters \fpc also supports
-Constant parameters. A constant parameter can be specified as follows:
+constant parameters. A constant parameter can be specified as follows:
 \input{syntax/paramcon.syn}
-Specifying a parameter as Constant is giving the compiler a hint that the
-contents of the parameter will not be changed by the called routine. This
-allows the compiler to perform optimizations which it could not do otherwise,
+Specifying a parameter as constant using \var{const} or \var{constref} is giving the compiler a hint that the
+contents of the parameter will not be changed by the called routine.
+\var{constref} additionally tells the compiler the value should be passed by
+reference (just as a \var{var} parameter).
+
+This allows the compiler to perform optimizations which it could not do otherwise,
 and also to perform certain checks on the code inside the routine: namely,
 it can forbid assignments to the parameter.
 Furthermore a const parameter cannot be passed on to another
@@ -10772,11 +10776,12 @@ well.
 The main use for this is reducing the stack size, hence improving
 performance, and still retaining the semantics of passing by value...
 
+
 \begin{remark}
-Contrary to Delphi, no assumptions should be made about how const parameters
-are passed to the underlying routine. In particular, the assumption that
-parameters with large size are passed by reference is not correct. For this
-the \var{constref} parameter type should be used, which is available as of
+Contrary to earlier versions of Delphi, no assumptions should be made about 
+how \var{const} parameters are passed to the underlying routine. 
+In particular, the assumption that parameters with large size are passed by reference is not correct. 
+For this the \var{constref} parameter type should be used, which is available as of
 version 2.5.1 of the compiler.
 
 An exception is the \var{stdcall} calling convention: for compatibility with
