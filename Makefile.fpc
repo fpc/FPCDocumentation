@@ -705,7 +705,8 @@ RTLUNITS=system objpas types sysutils strutils dateutils strings mouse keyboard 
          unicodeducet cp895 cp932 cp936 cp949 cp950 collation_de collation_es collation_fr_ca \
          collation_ja collation_ko collation_ru collation_sv collation_zh charset windirs \
          cp1250 cp1251 cp1252 cp1253 cp1254 cp1255 cp1256 cp1257 cp1258 cp437 cp646 cp850 \
-         cp852 cp856 cp866 cp874 cp8859_1 cp8859_2 cp8859_5 cpall sharemem unixcp
+         cp852 cp856 cp866 cp874 cp8859_1 cp8859_2 cp8859_5 cpall sharemem unixcp \
+         system.uitypes
 RTLXML=$(addprefix xml/, $(addsuffix .xml,$(RTLUNITS))) xml/rtl-project.xml
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
 RTLTYPES= --descr=types.xml --input="$(FPCSRCDIR)/rtl/objpas/types.pp $(OSDIRINCLUDES)"
@@ -757,6 +758,7 @@ RTLFPWIDESTRING= --descr=fpwidestring.xml --input="$(FPCSRCDIR)/rtl/objpas/fpwid
 RTLERRORS= --descr=errors.xml --input="$(FPCSRCDIR)/rtl/unix/errors.pp -Fi$(FPCSRCDIR)/rtl/linux/  $(OSDIRINCLUDES)"
 RTLFGL= --descr=fgl.xml --input="$(FPCSRCDIR)/rtl/objpas/fgl.pp  $(OSDIRINCLUDES)"
 RTLCHARACTER= --descr=character.xml --input="$(FPCSRCDIR)/rtl/objpas/character.pas  $(OSDIRINCLUDES)"
+RTLUITYPES= --descr=system.uitypes.xml --input="$(FPCSRCDIR)/rtl-objpas/src/inc/system.uitypes.pp  $(OSDIRINCLUDES)"
 
 #
 # Put all together.
@@ -771,7 +773,7 @@ RTLOPTS+= $(RTLUNIX) $(RTLCLASSES) $(RTLUNIXUTIL) $(RTLX86) $(RTLDYNLIBS)
 RTLOPTS+= $(RTLLINUX) $(RTLMATH) $(RTLMATRIX) 
 RTLOPTS+= $(RTLDATEUTILS) $(RTLWINCRT) $(RTLCLOCALE) $(RTLCTHREADS) $(RTLCMEM)
 RTLOPTS+= $(RTLCWSTRING) $(RTLEXEINFO) $(RTLLINEINFO) $(RTLLNFODWRF) $(RTLCTYPES)
-RTLOPTS+= $(RTLFPWIDESTRING) $(RTLERRORS) $(RTLFGL) $(RTLCHARACTER)
+RTLOPTS+= $(RTLFPWIDESTRING) $(RTLERRORS) $(RTLFGL) $(RTLCHARACTER) $(RTLUITYPES)
 endif 
 
 updatexml: updatefclxml updatertlxml updatefclresxml
@@ -824,6 +826,7 @@ updatertlxml: fpc_all
         $(RTLMAKESKEL) $(RTLERRORS) --output=errors.new.xml 
         $(RTLMAKESKEL) $(RTLFGL) --output=fgl.new.xml
         $(RTLMAKESKEL) $(RTLCHARACTER) --output=character.new.xml
+        $(RTLMAKESKEL) $(RTLUITYPES) --output=system.uitypes.new.xml
 
 	./cleanxml $(RTLNEWXML)
 
