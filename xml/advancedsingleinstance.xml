@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    AdvancedSingleInstance
+  ====================================================================
+-->
+
+<module name="AdvancedSingleInstance">
+<short>Implement SingleInstance using files</short>
+<descr>
+The <var>AdvancedSingleInstance</var> unit contains an implementation of the <link id="#fcl.singleinstance.TBaseSingleInstance">TBaseSingleInstance</link> class, based on functionality found in the <link id="#fcl.AdvcancedIPC">AdvcancedIPC</link> unit.
+The class is called <link id="TAdvancedSingleInstance"/>
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Stringlist and streams</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>Exception support</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="AdvancedIPC">
+<short>IPC using files</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="singleinstance">
+<short>Base class <var>TBaseSingleInstance</var></short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TSingleInstanceReceivedCustomMessage">
+<short>Callback for <var>OnServerReceivedCustomRequest</var> event</short>
+<descr>
+<var>TSingleInstanceReceivedCustomMessage</var> is the signature of the <link id="TAdvancedSingleInstance.OnServerReceivedCustomRequest"/> event. 
+It carries the information received when the server receives a custom message.
+</descr>
+<seealso>
+<link id="TAdvancedSingleInstance.OnServerReceivedCustomRequest"/>  
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSingleInstanceReceivedCustomMessage.Sender">
+<short>Normally the <var>TAdvancedSingleInstance</var> instance.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSingleInstanceReceivedCustomMessage.MsgID">
+<short>Message ID as sent by the client</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSingleInstanceReceivedCustomMessage.MsgType">
+<short>Type of message as sent by the client</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSingleInstanceReceivedCustomMessage.MsgData">
+<short>Payload message of the data</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TAdvancedSingleInstance">
+<short>Single Application instance class using file communication</short>
+<descr>
+  <var>TAdvancedSingleInstance</var> is a <link id="singleinstance.TBaseSingleInstance">TBaseSingleInstance</link> descendent. 
+  It implements the required functionality using the IPC mechanism of the <link id="advancedipc"/> unit: 
+  it uses files to communicate. This ensures the mechanism works on all platforms.
+</descr>
+<seealso>
+<link id="singleinstance.TBaseSingleInstance">TBaseSingleInstance</link>  
+<link id="advancedipc"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TAdvancedSingleInstance.Create">
+<short>Create a new instance of <var>TAdvancedSingleInstance</var></short>
+<descr>
+  <var>Create</var> calls the inherited constructor, and then constructs the <link id="TAdvancedSingleInstanceID">ID</link> property which identifies the application.
+</descr>
+<seealso>
+<link id="TAdvancedSingleInstanceID">ID</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAdvancedSingleInstance.Create.aOwner">
+<short>Owner of the component.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAdvancedSingleInstance.Start">
+<short>Start IPC communication and check the type of the application instance </short>
+<descr>
+<var>Start</var> implements the abstract <link id="TBaseSingleInstance.Start"/> call. 
+It initiates the IPC mechanism.
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.Start"/>  
+<link id="TAdvancedSingleInstance.Stop"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAdvancedSingleInstance.Start.Result">
+<short>The instance type</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAdvancedSingleInstance.Stop">
+<short>End IPC communication</short>
+<descr>
+<var>Start</var> implements the abstract <link id="TBaseSingleInstance.Stop"/> call. 
+It terminates the IPC mechanism.
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.Stop"/>  
+<link id="TAdvancedSingleInstance.Start"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAdvancedSingleInstance.ServerCheckMessages">
+<short>Check for incoming messages for the server</short>
+<descr>
+<var>ServerCheckMessages</var> implements <link id="TAdvancedSingleInstance.ServerCheckMessages"/> 
+and checks if there are any messages in the message queue using the API of <link id="advancedIPC"/>. 
+If there are messages, it fires the  <link id="#fcl.singleinstance.TBaseSingleIstance.OnServerReceivedParams">OnServerReceivedParams</link> event.
+</descr>
+<seealso>
+<link id="TAdvancedSingleInstance.ServerCheckMessages"/>   
+<link id="TAdvancedSingleInstance.Start"/>
+<link id="TAdvancedSingleInstance.Stop"/>
+<link id="#fcl.singleinstance.TBaseSingleIstance.OnServerReceivedParams">OnServerReceivedParams</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAdvancedSingleInstance.ClientPostParams">
+<short>Post client command-line parameters to the server</short>
+<descr>
+<var>ClientPostParams</var> implements <link id="TAdvancedSingleInstance.ClientPostParams"/>.
+It sends the command-line parameters using <link id="TAdvancedSingleInstance.ClientPostCustomRequest">ClientPostCustomRequest</link>.
+</descr>
+<errors>
+If this application instance is not a client instance, then a <link id="ESingleInstance"/> exception is raised.
+</errors>
+<seealso>
+<link id="TAdvancedSingleInstance.ClientPostParams"/>  
+<link id="TAdvancedSingleInstance.ClientPostCustomRequest">ClientPostCustomRequest</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAdvancedSingleInstance.ClientPostCustomRequest">
+<short>Send a custom message to the server</short>
+<descr>
+<var>ClientPostCustomRequest></var> sends the data in <var>aStream</var> to the server instance  using message type <var>aMsgType</var>. 
+It returns the message id.
+</descr>
+<errors>
+If this application instance is not a client instance, then a <link id="ESingleInstance"/> exception is raised.
+</errors>
+<seealso>
+<link id="TAdvancedSingleInstance.ClientSendCustomRequest"/>
+<link id="TAdvancedSingleInstance.ServerPostCustomResponse"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAdvancedSingleInstance.ClientPostCustomRequest.Result">
+<short>Message ID of the posted message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAdvancedSingleInstance.ClientPostCustomRequest.aMsgType">
+<short>Message type to send</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAdvancedSingleInstance.ClientPostCustomRequest.aStream">
+<short>Message payload as a stream</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAdvancedSingleInstance.ClientSendCustomRequest">
+<short>ClientSendCustomRequest</short>
+<descr>
+<var>ClientPostCustomRequest></var> sends the data in <var>aStream</var> to the server instance using message type <var>aMsgType</var>. 
+It returns <var>True</var> if the message was sent successfully. It returns the message id in <var>outRequestID</var>, if supplied.
+</descr>
+<errors>
+If this application instance is not a client instance, then a <link id="ESingleInstance"/> exception is raised.
+</errors>
+<seealso>
+<link id="TAdvancedSingleInstance.ClientPostCustomRequest"/>
+<link id="TAdvancedSingleInstance.ServerPostCustomResponse"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAdvancedSingleInstance.ClientSendCustomRequest.Result">
+<short><var>True</var> if the message was sent successfully, <var>False</var> otherwise.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAdvancedSingleInstance.ClientSendCustomRequest.aMsgType">
+<short>Message type</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAdvancedSingleInstance.ClientSendCustomRequest.aStream">
+<short>Message payload</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAdvancedSingleInstance.ClientSendCustomRequest.outRequestID">
+<short>On return, contains the message ID</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAdvancedSingleInstance.ServerPostCustomResponse">
+<short>Post a server response to the client</short>
+<descr>
+<var>ClientPostCustomRequest></var> sends the data in <var>aStream</var> to the client instance using message type <var>aMsgType</var>, 
+in response to client message <var>aRequestID</var>. 
+The client can check for the response using <link id="TAdvancedSingleInstance.ClientPeekCustomResponse"/>
+</descr>
+<errors>
+If this application instance is not a server instance, then a <link id="ESingleInstance"/> exception is raised.
+</errors>
+<seealso>
+<link id="TAdvancedSingleInstance.ClientPostCustomRequest"/>
+<link id="TAdvancedSingleInstance.ClientSendCustomRequest"/>
+<link id="TAdvancedSingleInstance.ClientPeekCustomResponse"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAdvancedSingleInstance.ServerPostCustomResponse.aRequestID">
+<short>Client request ID to respond to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAdvancedSingleInstance.ServerPostCustomResponse.aMsgType">
+<short>Message type for the message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAdvancedSingleInstance.ServerPostCustomResponse.aStream">
+<short>Message payload</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TAdvancedSingleInstance.ClientPeekCustomResponse">
+<short>Check whether the server posted a response</short>
+<descr>
+<var>ClientPeekCustomResponse</var> checks if the server posted any responses. 
+It returns <var>True</var> if there was a message, and returns the message type in <var>outMesgType</var>, 
+the payload is read into the stream <var>aStream</var>. 
+The message timeout <link id="TBaseSingleInstance.TimeoutMessages">TimeoutMessages</link> is observed: if no message arrived before the timeout expires the call will return <var>False</var>.
+</descr>
+<errors>
+If this application instance is not a client instance, then a <link id="ESingleInstance"/> exception is raised.
+The <var>aStream</var> must be non-nil, or an access violation will occur.
+</errors>
+<seealso>
+<link id="TBaseSingleInstance.TimeoutMessages">TimeoutMessages</link>
+<link id="TAdvancedSingleInstance.ServerPostCustomResponse"/>  
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TAdvancedSingleInstance.ClientPeekCustomResponse.Result">
+<short><var>True</var> if a message was received, <var>False</var> otherwise.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAdvancedSingleInstance.ClientPeekCustomResponse.aStream">
+<short>The stream in which to read the message.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAdvancedSingleInstance.ClientPeekCustomResponse.outMsgType">
+<short>The type of the received message</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TAdvancedSingleInstance.ID">
+<short>The ID of this instance.</short>
+<descr>
+<var>ID</var> is the unique ID for this application instance.
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.ID"/>  
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TAdvancedSingleInstance.Global">
+<short>Is the instance global (for all users) or local (for the current user)</short>
+<descr>
+<var>Global</var> indicates whether the instance is global (for all users) or local (for the current user only). 
+This must be set before <link id="TAdvancedSingleInstance.Start">Start</link> is called.
+</descr>
+<seealso>
+<link id="TAdvancedSingleInstance.Start">Start</link>  
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TAdvancedSingleInstance.OnServerReceivedCustomRequest">
+<short>Server event truggered when a custom request is received.</short>
+<descr>
+<var>OnServerReceivedCustomRequest</var> is triggered when a custom request (i.e. not a command-line parameters request) is received by the server.
+</descr>
+<seealso>
+<link id="TSingleInstanceReceivedCustomMessage"/>
+</seealso>
+</element>
+
+</module> <!-- AdvancedSingleInstance -->
+
+</package>
+</fpdoc-descriptions>
