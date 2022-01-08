@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    singleinstance
+  ====================================================================
+-->
+
+<module name="singleinstance">
+<short>Unit to run only a single instance in your application</short>
+<descr>
+<p><var>Singleinstance</var> contains the basic abstract definition of a class <link id="TBaseSingleInstance"/> that, 
+when instantiated, will make sure only 1 instance of your application will be running. It is an abstract instance, 
+you need to instantiate a descendent such as can be found in the <link id="advancedsingleinstance"/> unit.
+</p>
+<p>
+In this document, the first started instance of an application is called the <var>Server</var>, any application started later is called a <var>Client</var> application.
+</p>
+<p>
+The single instance functionality also provides a mechanism to communicate parameters from the client to the server. 
+For example, an editor started a second time may wish to pass any filenames to be opened to the server instance.
+</p>
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>Exception support</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Stringlist support</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TBaseSingleInstance">
+<short>Abstract class for single application instance.</short>
+<descr>
+<var>TBaseSingleInstance</var> is the abstract parent for classes that allow you to control the instances if your application.
+You must never instantiate <var>TBaseSingleInstance</var> directly, instead, use for example the <link id="#fcl.advancedsingleinstance.TAdvancedSingleInstance">TAdvancedSingleInstance</link> class. 
+</descr>
+<errors>
+Instantiating and using this class will result in abstract errors.
+</errors>
+<seealso>
+<link id="#fcl.advancedsingleinstance.TAdvancedSingleInstance">TAdvancedSingleInstance</link>
+<link id="#fcl.advancedsingleinstance">advancedsingleinstance</link>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TSingleInstanceStart">
+<short>Result type for the <link id="TBaseSingleInstance.Start"/> call.</short>
+<descr>
+<p><var>TSingleInstanceStart</var> is used to determine which kind of application the currently running application is.</p>
+<dl>
+<dt>siServer</dt><dd><printshort id="TSingleInstanceStart.siServer"/></dd>
+<dt>siClient</dt><dd><printshort id="TSingleInstanceStart.siClient"/></dd>
+<dt>siNotResponding</dt><dd><printshort id="TSingleInstanceStart.siNotResponding"/></dd>
+</dl>
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.Start"/>
+<link id="TBaseSingleInstance.StartResult"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSingleInstanceStart.siServer">
+<short>The current instance is the server (first started)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSingleInstanceStart.siClient">
+<short>The current instance is the client (another instance was started earlier)</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSingleInstanceStart.siNotResponding">
+<short>The first instance is not responding</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TSingleInstanceParamsEvent">
+<short>Callback type for the <var>TBaseSingleInstance.OnServerReceivedParams</var> event.</short>
+<descr>
+<p>
+This callback type is the signature of the <link id="TBaseSingleInstance.OnServerReceivedParams"/> 
+event in case the server receives parameters from a newly started client.
+</p>
+<dl>
+<dt>Sender</dt><dd><printshort id="TSingleInstanceParamsEvent.Sender"/></dd>
+<dt>Params</dt><dd><printshort id="TSingleInstanceParamsEvent.Params"/></dd>
+</dl>
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.OnServerReceivedParams"/>   
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSingleInstanceParamsEvent.Sender">
+<short>The <var>TBaseSingleInstance</var> which fired the event.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSingleInstanceParamsEvent.Params">
+<short>The client-provided parameters received by <var>TBaseSingleInstance</var>.</short>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TBaseSingleInstance.Create">
+<short>Create a new instance of the <var>TBaseSingleInstance</var> class</short>
+<descr>
+<var>Create</var> calls the inherited constructor and then initializes some properties 
+<link id="TBaseSingleInstance.TimeOutMessages">TimeOutMessages</link> and <link id="TBaseSingleInstance.TimeOutWaitForInstances">TimeOutWaitForInstances</link>
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.Destroy"/>
+<link id="TBaseSingleInstance.TimeOutMessages">TimeOutMessages</link>
+<link id="TBaseSingleInstance.TimeOutWaitForInstances">TimeOutWaitForInstances</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBaseSingleInstance.Create.aOwner">
+<short>Owner of the new instance</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TBaseSingleInstance.Destroy">
+<short>Stop waiting and destroy the instance</short>
+<descr>
+<var>Destroy</var> calls <link id="TBaseSingleInstance.Stop">Stop</link> and calls the inherited destructor.
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.Stop">Stop</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TBaseSingleInstance.Start">
+<short>Check if another instance of the application is running</short>
+<descr>
+<p><var>Start</var> will check if another instance is running. 
+It returns the result of the check, and the result is also stored in <link id="TBaseSingleInstance.StartResult">StartResult</link>
+</p>
+<dl>
+<dt>siServer</dt><dd><printshort id="TSingleInstanceStart.siServer"/></dd>
+<dt>siClient</dt><dd><printshort id="TSingleInstanceStart.siClient"/></dd>
+<dt>siNotResponding</dt><dd><printshort id="TSingleInstanceStart.siNotResponding"/></dd>
+</dl>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TBaseSingleInstance.StartResult">StartResult</link>
+<link id="TSingleInstanceStart"/>  
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TBaseSingleInstance.Start.Result">
+<short>The result of the startup check</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBaseSingleInstance.Stop">
+<short>Stop the current instance</short>
+<descr>
+<var>Stop</var> will disable the communication mechanism that ensures only a single instance is running.
+After it has been called in the server application, if another application calls <link id="TBaseSingleInstance.Start">Start</link>, 
+then it will become the server (i.e. the result is <var>siServer</var>). If it is called in a client application, there is no effect.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TBaseSingleInstance.Start">Start</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBaseSingleInstance.ServerCheckMessages">
+<short>Check for messages from a client application</short>
+<descr>
+<var>ServerCheckMessages</var> must be called at regular intervals by the server application to see if 
+any client application sent messages (using <link id="TBaseSingleInstance.ClientPostParams"/>).
+This is part of themechanism to communicate parameters from the client to the server.  
+If there are any messages, then the <link id="TBaseSingleInstance.OnServerReceivedParams">OnServerReceivedParams</link> event will be triggered once 
+for any client that sent parameters.
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.ClientPostParams"/>  
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBaseSingleInstance.ClientPostParams">
+<short>Send parameters to the server.</short>
+<descr>
+<var>ClientPostParams</var> must be called to send the client command-line parameters to the server application.
+The mechanism used to send these parameters depends on the used descendent of the <link id="TBaseSingleInstance"/> class.
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.ServerCheckMessages"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBaseSingleInstance.TimeOutMessages">
+<short>Timeout when waiting for messages</short>
+<descr>
+<var>TimeOutMessages</var> is the timeout (in milliseconds) used by <link id="TBaseSingleInstance.ServerCheckMessages">ServerCheckMessages</link> 
+when checking for messages sent by client applications.
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.ServerCheckMessages">ServerCheckMessages</link>   
+<link id="TBaseSingleInstance.TimeOutWaitForInstances">TimeOutWaitForInstances</link>link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBaseSingleInstance.TimeOutWaitForInstances">
+<short>Timeout when trying to contact server instance</short>
+<descr>
+<var>TimeOutMessages</var> is the timeout (in milliseconds) used by <link id="TBaseSingleInstance.Start">Start</link> 
+call when checking for another instance of the application.
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.Start">Start</link>   
+<link id="TBaseSingleInstance.TimeOutMessages">TimeOutMessages</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBaseSingleInstance.OnServerReceivedParams">
+<short>Event triggered during <var>ServerCheckMessages</var></short>
+<descr>
+<var>OnServerReceivedParams</var> is the event triggered when <link id="TBaseSingleInstance.ServerCheckMessages">ServerCheckMessages</link> 
+is called, and a client sent a message to the server. The <var>Params</var> parameter contains the commandline parameters that the client sent, one per string in the list.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBaseSingleInstance.StartResult">
+<short>Contains the result of the last <var>Start</var> call</short>
+<descr>
+<var>StartResult</var>  contains the result of the last <link id="TBaseSingleInstance.Start">Start</link> call.
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.Start">Start</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBaseSingleInstance.IsServer">
+<short>Is this application the server instance ?</short>
+<descr>
+  <var>IsServer</var> is a convenience property, it is <var>True</var> if <link id="TBaseSingleInstance.StartResult">StartResult</link> equals <var>siServer</var>.
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.IsClient">IsClient</link>  
+<link id="TBaseSingleInstance.Start">Start</link>  
+<link id="TBaseSingleInstance.StartResult">StartResult</link>  
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBaseSingleInstance.IsClient">
+<short>Is this application the client instance ?</short>
+<descr>
+  <var>IsClient</var> is a convenience property, it is <var>True</var> if <link id="TBaseSingleInstance.StartResult">StartResult</link> equals <var>siClient</var>.
+</descr>
+<seealso>
+<link id="TBaseSingleInstance.IsServer">IsServer</link>  
+<link id="TBaseSingleInstance.Start">Start</link>  
+<link id="TBaseSingleInstance.StartResult">StartResult</link>  
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TBaseSingleInstanceClass">
+<short>class of <var>TBaseSingleInstance</var></short>
+<descr>
+<var>TBaseSingleInstanceClass</var>  is the class of <link id="TBaseSingleInstance"/>. It is also the type of the  <link id="DefaultSingleInstanceClass"/> variable.
+</descr>
+<seealso>
+<link id="TBaseSingleInstance"/>  
+<link id="DefaultSingleInstanceClass"/>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="ESingleInstance">
+<short>Exception raised in case of errors</short>
+<descr>
+<var>ESingleInstance</var> is used to report errors in the single instance implementation(s).
+</descr>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultSingleInstanceClass">
+<short>Class to instantiate when creating a <var>TBaseSingleInstance</var> instance </short>
+<descr>
+<var>DefaultSingleInstanceClass</var> can be set to a class that implements the abstract methods of <link id="TBaseSingleInstance"/>.
+It can be used by applications to instantiate a class without referring directly to that class.
+</descr>
+<seealso>
+<link id="TBaseSingleInstance"/>  
+</seealso>
+</element>
+
+</module> <!-- singleinstance -->
+
+</package>
+</fpdoc-descriptions>
