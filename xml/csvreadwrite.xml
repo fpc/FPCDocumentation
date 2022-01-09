@@ -1,0 +1,642 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    csvreadwrite
+  ====================================================================
+-->
+
+<module name="csvreadwrite">
+<short>Unit to read and write a CSV file</short>
+<descr>
+The  <file>csvreadwrite</file> unit contains a class <link id="TCSVParser"/> which allows you to read a CSV file, 
+and <link id="TCSVBuilder"/> which allows you to create a CSV file.
+In both classes, it offers options to handle various kinds of CSV formats.
+These classes are used in the <link id="#fcl.csvdocument.TCSVDocument">TCSVDocument</link> class 
+(a class that offers a matrix-like representation of the CVS data) to read and write the CSV file.
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Stream and stringlist</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>Exceptions and string routines</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="strutils">
+<short>String routines</short>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TCSVChar">
+<short>Basic character</short>
+<descr>
+<var>TCSVChar</var>  is an alias type for the basic character used in the CSV file. 
+It is used in <link id="TCSVChar"/> and it's descendents to define the character type read from file.
+</descr>
+<seealso>
+<link id="TCSVChar"/>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TCSVHandler">
+<short>Base class for CSV reading and writing classes.</short>
+<descr>
+<p>
+<var>TCSVHandler</var> is the base class for class <link id="TCSVParser"/> which allows you to read a CSV file, 
+and class <link id="TCSVBuilder"/> which allows you to write a CSV file. It defines some common properties for 
+these classes, mainly to describe the formatting of the CSV file, such as the <link id="TCSVHandler.Delimiter">Delimiter</link> 
+or <link id="TCSVHandler.QuoteChar">QuoteChar</link> and <link id="TCSVHandler.LineEnding">LineEnding</link> properties.
+</p>
+<p>
+Normally you will not create an instance of <var>TCSVHandler</var>, 
+instead you will create a <var>TCSVParser</var> or <var>TCSVBuilder</var> instance.</p>
+</descr>
+<seealso>
+<link id="TCSVParser"/>  
+<link id="TCSVBuilder"/>
+<link id="TCSVHandler.Delimiter">Delimiter</link> 
+<link id="TCSVHandler.QuoteChar">QuoteChar</link>
+<link id="TCSVHandler.LineEnding">LineEnding</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCSVHandler.Create">
+<short>Create an instance of <var>TCSVHandler</var></short>
+<descr>
+<var>Create</var> calls the inherited constructor and initializes various properties such as 
+<link id="TCSVHandler.Delimiter">Delimiter</link>, 
+<link id="TCSVHandler.QuoteChar">QuoteChar</link> and
+<link id="TCSVHandler.LineEnding">LineEnding</link> to their initial values.
+</descr>
+<seealso>
+<link id="TCSVHandler.Delimiter">Delimiter</link>
+<link id="TCSVHandler.QuoteChar">QuoteChar</link>
+<link id="TCSVHandler.LineEnding">LineEnding</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVHandler.Assign">
+<short>Assign properties from another <var>TCSVHandler</var> instance</short>
+<descr>
+<var>Assign</var> overrides <link id="#rtl.classes.tpersistent.assign">TPersistent.Assign</link> 
+to copy all <var>TCSVHandler</var> properties from the <var>aSource</var> instance to the current instance.
+It calls <link id="TCSVHandler.AssignCSVProperties">AssignCSVProperties</link> to do the actual copying.
+</descr>
+<seealso>
+<link id="#rtl.classes.tpersistent.assign">TPersistent.Assign</link>  
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVHandler.Assign.ASource">
+<short>Source instance to copy properties from</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVHandler.AssignCSVProperties">
+<short>Assign properties from another <var>TCSVHandler</var> instance</short>
+<descr>
+<var>AssignCSVProperties</var> is called by  <link id="TCSVHandler.assign">Assign</link> 
+to copy all <var>TCSVHandler</var> properties from the <var>aSource</var> instance to the current instance.
+</descr>
+<seealso>
+<link id="TCSVHandler.assign">Assign</link>   
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVHandler.AssignCSVProperties.ASource">
+<short>Source to copy properties from</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVHandler.Delimiter">
+<short>Field delimiter character</short>
+<descr>
+<var>Delimiter</var> is the field delimiter character. By default, it is the comma (<var>,</var>).
+Values that contain a delimiter character must be quoted by the character specified in <link id="TCSVHandler.QuoteChar">QuoteChar</link>.
+</descr>
+<seealso>
+<link id="TCSVHandler.QuoteChar">QuoteChar</link>
+<link id="TCSVHandler.LineEnding">LineEnding</link>  
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVHandler.QuoteChar">
+<short>Character to quote values</short>
+<descr>
+<var>QuoteChar</var> specifies the character to use when quoting values. Between the quote characters, field delimiter (as set in <link id="TCSVHandler.Delimiter">Delimiter</link>)
+or line ending (as set in <link id="TCSVHandler.LineEnding">LineEnding</link>) characters lose their special meaning and are considered part of the value.
+The default quote character is the double quote (<var>"</var>).
+</descr>
+<seealso>
+<link id="TCSVHandler.Delimiter">Delimiter</link>
+<link id="TCSVHandler.LineEnding">LineEnding</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVHandler.LineEnding">
+<short>Line ending character</short>
+<descr>
+<var>LineEnding</var> specifies the line-ending character. 
+It is initialized with the current system's line ending character - one of CR, CR/LF or LF.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVHandler.IgnoreOuterWhitespace">
+<short>Ignore whitespace between delimiters and field data</short>
+<descr>
+<var>IgnoreOuterWhitespace</var> can be set to <var>True</var> to let the parser ignore any whitespace between 
+the value of a field and the delimiter characters <link id="TCSVHandler.Delimiter">Delimiter</link> when reading data.
+The default is <var>False</var>
+</descr>
+<seealso>
+<link id="TCSVHandler.Delimiter">Delimiter</link>  
+<link id="TCSVHandler.QuoteOuterWhitespace">QuoteOuterWhitespace</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVHandler.QuoteOuterWhitespace">
+<short>Write quotes when outer whitespace is found in a value</short>
+<descr>
+<var>QuoteOuterWhitespace</var> can be set to <var>True</var> to let the parser quote values that have whitespace at the beginning or the end of the value.
+If set to <var>False</var>, there will be whitespace between the value of a field and the delimiter characters <link id="TCSVHandler.Delimiter">Delimiter</link>,
+which can alter the value when reading data depending on the setting of <link id="TCSVHandler.IgnoreOuterWhitespace">IgnoreOuterWhitespace</link>.
+The default is <var>True</var>.
+</descr>
+<seealso>
+<link id="TCSVHandler.Delimiter">Delimiter</link>  
+<link id="TCSVHandler.IgnoreOuterWhitespace">IgnoreOuterWhitespace</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVHandler.EqualColCountPerRow">
+<short>Ensure every row has an equal amount of columns.</short>
+<descr>
+<var>EqualColCountPerRow</var> must be set to report an equal amount of columns for every row when reading and writing.
+Empty columns will be reported or added for every row where the number of columns is less than the maximal amount of columns.
+This property is not used in the <link id="TCSVParser"/> or <link id="TCSVBuilder"/> classes. 
+It is used in the <link id="csvdocument.TCSVDocument">TCSVDocument</link> class.
+The default is <var>True</var>.  
+</descr>
+<seealso>
+<link id="TCSVParser"/>
+<link id="TCSVBuilder"/>  
+<link id="csvdocument.TCSVDocument">TCSVDocument</link>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TCSVByteOrderMark">
+<short>BOM marker types</short>
+<descr>
+<p><var>TCSVByteOrderMark</var> is the type of the <link id="TCSVParser.BOM"/> property. It can have the following values</p>
+<dl>
+<dt>bomNone</dt><dd><printshort id="TCSVByteOrderMark.bomNone"/></dd>
+<dt>bomUTF8</dt><dd><printshort id="TCSVByteOrderMark.bomUTF8"/></dd>
+<dt>bomUTF16LE</dt><dd><printshort id="TCSVByteOrderMark.bomUTF16LE"/></dd>
+<dt>bomUTF16BE</dt><dd><printshort id="TCSVByteOrderMark.bomUTF16BE"/></dd>
+</dl>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCSVByteOrderMark.bomNone">
+<short>No BOM marker was read</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCSVByteOrderMark.bomUTF8">
+<short>The UTF8 BOM marker was read</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCSVByteOrderMark.bomUTF16LE">
+<short>The UTF16 little-endian BOM Marker was read</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCSVByteOrderMark.bomUTF16BE">
+<short>The UTF16 big-endian BOM Marker was read</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TCSVParser">
+<short>Class to parse a CSV file</short>
+<descr>
+<var>TCSVParser</var> can be used to read a CSV file. 
+To use it, the stream or string containing the CSV data must be specified with <link id="TCSVParser.SetSource">SetSource</link>, 
+after which <link id="TCSVParser.ParseNextCell">ParseNextCell</link> can be called till it returns false. 
+The current cell value after <var>ParseNextCell</var> returns <var>True</var> is available in <link id="TCSVParser.CurrentCellText">CurrentCellText</link>.
+By tracking <link id="TCSVParser.CurrentRow">CurrentRow</link>, <link id="TCSVParser.CurrentCol">CurrentCol</link> and  <link id="TCSVParser.MaxColCount">MaxColCount</link>,
+the structure of the CSV file can be determined.
+</descr>
+<seealso>
+<link id="TCSVParser.SetSource">SetSource</link>  
+<link id="TCSVParser.ParseNextCell">ParseNextCell</link>
+<link id="TCSVParser.CurrentCellText">CurrentCellText</link>
+<link id="TCSVParser.CurrentRow">CurrentRow</link>
+<link id="TCSVParser.CurrentCol">CurrentCol</link>
+<link id="TCSVParser.MaxColCount">MaxColCount</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCSVParser.Create">
+<short>Create a new instance of <var>TCSVParser</var></short>
+<descr>
+<var>TCSVParser</var> calls the inherited constructor and initializes some internal structures.
+</descr>
+<seealso>
+<link id="TCSVHandler.Create"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCSVParser.Destroy">
+<short>Free the <var>TCSVParser</var> instance</short>
+<descr>
+<var>TCSVParser</var> clears the internal data and calls the inherited destructor.
+</descr>
+<seealso>
+<link id="TCSVParser.Create"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVParser.SetSource">
+<short>Set the CSV source data</short>
+<descr>
+<var>SetSource</var>  sets the source of the CSV data to <var>aStream</var> (a stream) or <var>aString</var> (a string). 
+It calls <link id="TCSVParser.ResetParser">ResetParser</link> to reset the parser state.
+The stream is by default not owned by the parser, i.e. you must free it after it has been used. 
+If <link id="TCSVParser.FreeStream"/> is <var>True</var>, then the stream will be freed by the parser 
+class when it is destroyed, or when a new stream is set.
+</descr>
+<seealso>
+<link id="TCSVParser.FreeStream">FreeStream</link>  
+<link id="TCSVParser.ResetParser">ResetParser</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVParser.SetSource.AStream">
+<short>The stream to read CSV data from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVParser.SetSource.AString">
+<short>A string to read CSV data from</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVParser.ResetParser">
+<short>Reset the parser to its initial state</short>
+<descr>
+<var>ResetParser</var> resets the parser to its initial state: 
+<link id="TCSVParser.CurrentRow">CurrentRow</link>,
+<link id="TCSVParser.CurrentCol">CurrentCol</link> and
+<link id="TCSVParser.MaxColCount">MaxColCount</link> are all set to zero, and the output is cleared.
+The stream is put at position zero and if <link id="TCSVParser.DetectBOM">DetectBOM</link> is <var>True</var>,
+the <link id="TCSVParser.BOM">BOM</link> marker is read.
+</descr>
+<seealso>
+<link id="TCSVParser.SetSource">SetSource</link>  
+<link id="TCSVParser.CurrentRow">CurrentRow</link>
+<link id="TCSVParser.CurrentCol">CurrentCol</link>
+<link id="TCSVParser.MaxColCount">MaxColCount</link>
+<link id="TCSVParser.BOM">BOM</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCSVParser.ParseNextCell">
+<short>Parse the next cell</short>
+<descr>
+<var>ParseNextCell</var> attempts to read the next field in the CSV data, moving to the next row if necessary.
+It returns <var>True</var> if a cell was read successfully, <var>False</var> if no more CSV data is available 
+- when the stream has reached EOF. It takes into account the <link id="TCSVHandler.Delimiter">Delimiter</link>, 
+<link id="TCSVHandler.QuoteChar">QuoteChar</link>  and <link id="TCSVHandler.LineEnding">LineEnding</link> 
+properties to determine the field boundaries.
+When it has returned <var>True</var>, the properties
+<link id="TCSVParser.CurrentRow">CurrentRow</link>,
+<link id="TCSVParser.CurrentCol">CurrentCol</link>,
+<link id="TCSVParser.MaxColCount">MaxColCount</link> and
+<link id="TCSVParser.CurrentCellText">CurrentCellText</link> can be used to determine what field was read and what the contents of the field were.
+</descr>
+<seealso>
+<link id="TCSVParser.CurrentRow">CurrentRow</link>
+<link id="TCSVParser.CurrentCol">CurrentCol</link>
+<link id="TCSVParser.MaxColCount">MaxColCount</link>
+<link id="TCSVParser.CurrentCellText">CurrentCellText</link>
+<link id="TCSVHandler.Delimiter">Delimiter</link> 
+<link id="TCSVHandler.QuoteChar">QuoteChar</link>
+<link id="TCSVHandler.LineEnding">LineEnding</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCSVParser.ParseNextCell.Result">
+<short><var>True</var> if a cell was read, <var>False</var> if no more CSV data is available.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVParser.CurrentRow">
+<short>Row (zero based) of the current field.</short>
+<descr>
+<var>CurrentRow</var> contains the row number (zero based) of the current field (cell) in the CSV file. 
+This value is only valid after <var>ParseNextCell</var> returns <var>True</var>.
+</descr>
+<seealso>
+<link id="TCSVParser.ParseNextCell">ParseNextCell</link>
+<link id="TCSVParser.CurrentCol">CurrentCol</link>
+<link id="TCSVParser.MaxColCount">MaxColCount</link>
+<link id="TCSVParser.CurrentCellText">CurrentCellText</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVParser.CurrentCol">
+<short>Column (zero based) of the current field.</short>
+<descr>
+<var>CurrentCol</var> contains the column number (zero based) of the current field (cell) in the CSV file. 
+This value is only valid after <var>ParseNextCell</var> returns <var>True</var>.
+</descr>
+<seealso>
+<link id="TCSVParser.CurrentRow">CurrentRow</link>
+<link id="TCSVParser.ParseNextCell">ParseNextCell</link>
+<link id="TCSVParser.MaxColCount">MaxColCount</link>
+<link id="TCSVParser.CurrentCellText">CurrentCellText</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVParser.CurrentCellText">
+<short>Current field value</short>
+<descr>
+<var>CurrentCellText</var> contains the value of the current field (cell) in the CSV file. 
+This value is only valid after <var>ParseNextCell</var> returns <var>True</var>.
+The value has already been processed according to the <link id="TCSVHandler.QuoteOuterWhitespace">QuoteOuterWhitespace</link> property.
+</descr>
+<seealso>
+<link id="TCSVParser.CurrentRow">CurrentRow</link>
+<link id="TCSVParser.CurrentCol">CurrentCol</link>
+<link id="TCSVParser.MaxColCount">MaxColCount</link>
+<link id="TCSVParser.ParseNextCell">ParseNextCell</link>
+<link id="TCSVHandler.QuoteOuterWhitespace">QuoteOuterWhitespace</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVParser.MaxColCount">
+<short>Return the maximum column count encountered till now</short>
+<descr>
+<var>MaxColCount</var> contains the maximum column count encoutered till now.
+This value will be updated as <link id="TCSVParser.ParseNextCell">ParseNextCell</link> is called, 
+and consequently the final value is only available after <var>ParseNextValue</var> returned <var>False</var>.
+</descr>
+<seealso>
+<link id="TCSVParser.CurrentRow">CurrentRow</link>
+<link id="TCSVParser.CurrentCol">CurrentCol</link>
+<link id="TCSVParser.CurrentCellText">CurrentCellText</link>
+<link id="TCSVParser.ParseNextCell">ParseNextCell</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVParser.FreeStream">
+<short>Does the parser free the stream when done ?</short>
+<descr>
+<var>FreeStream</var> determines whether the parser frees the stream when done or not.
+The stream is by default not owned by the parser, i.e. you must free it after it has been used. 
+If <var>FreeStream</var>is <var>True</var>, then the stream will be freed by the parser 
+class when it is destroyed, or when a new stream is set using <link id="TCSVParser.SetSource">SetSource</link>
+</descr>
+<seealso>
+<link id="TCSVParser.SetSource">SetSource</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVParser.BOM">
+<short>type of BOM marker found at the start of the data </short>
+<descr>
+<var>BOM</var> indicates what Byte Order Marker was found at the beginning of the data. 
+The value is updated as soon as the CSV is set using <link id="TCSVParser.SetSource"/> and <link id="TCSVParser.DetectBOM">DetectBOM</link> is <var>True</var>. 
+For a list of possible values, see <link id="TCSVByteOrderMark"/>.
+</descr>
+<seealso>
+<link id="TCSVByteOrderMark"/>
+<link id="TCSVParser.SetSource"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVParser.DetectBOM">
+<short>Must the parser attempt to read the BOM marker ?</short>
+<descr>
+<var>DetectBOM</var> can be set to <var>True</var> if you want the CSV parser to attempt to detect a BOM marker.
+If set to <var>True</var>, then <link id="TCSVParser.ResetParser">ResetParser</link> will attempt to read the BOM marker when the CSV data is set using <link id="TCSVParser.SetSource">SetSource</link>
+The result of the detection is available the in <link id="TCSVParser.BOM">BOM</link> property) after the source data is set.
+It follows that <var>DetectBOM</var>  must be set before calling <link id="TCSVParser.SetSource">SetSource</link>.
+</descr>
+<seealso>
+<link id="TCSVParser.SetSource">SetSource</link>
+<link id="TCSVParser.ResetParser">ResetParser</link>
+<link id="TCSVParser.BOM">BOM</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TCSVBuilder">
+<short>Class to write a CSV file</short>
+<descr>
+<var>TCSVBuilder</var> can be used to correctly write a CSV file. To use it, optionally set a stream to which the CSV file will be written using <link id="TCSVBuilder.SetOutput">SetOutput</link>, 
+call <link id="TCSVBuilder.AppendCell">AppendCell</link> for each cell you wish to write, and call <link id="TCSVBuilder.AppendRow">AppendRow</link> when you want to start a new line.
+If you didn't specify an output stream, the output is available in <link id="TCSVBuilder.DefaultOutput">DefaultOutput</link> or <link id="TCSVBuilder.DefaultOutputAsString">DefaultOutputAsString</link>.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCSVBuilder.SetOutput">SetOutput</link>
+<link id="TCSVBuilder.AppendCell">AppendCell</link>
+<link id="TCSVBuilder.AppendRow">AppendRow</link>
+<link id="TCSVBuilder.DefaultOutput">DefaultOutput</link>
+<link id="TCSVBuilder.DefaultOutputAsString">DefaultOutputAsString</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCSVBuilder.Create">
+<short>Create a new instance of <var>TCSVBuilder</var></short>
+<descr>
+<var>Create</var> calls the inherited constructor and initializes the default output.
+</descr>
+<seealso>
+<link id="TCSVBuilder.DefaultOutput">DefaultOutput</link>
+<link id="TCSVBuilder.DefaultOutputAsString">DefaultOutputAsString</link>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCSVBuilder.Destroy">
+<short>Free a <var>TCSVBuilder</var> instance</short>
+<descr>
+<var>Destroy</var>  cleans up the default output and calls the inherited constructor.
+</descr>
+<seealso>
+<link id="TCSVBuilder.DefaultOutput">DefaultOutput</link>
+<link id="TCSVBuilder.DefaultOutputAsString">DefaultOutputAsString</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVBuilder.SetOutput">
+<short>Set the output stream to write to.</short>
+<descr>
+<var>SetOutput</var> can be used to set the output stream to <var>aStream</var>. 
+The use of this is optional, as the output is available by default in 
+<link id="TCSVBuilder.DefaultOutput">DefaultOutput</link> or
+<link id="TCSVBuilder.DefaultOutputAsString">DefaultOutputAsString</link>.
+Calling <var>SetOutpu</var> will result in resetting the inner state of 
+the builder using <link id="TCSVBuilder.ResetBuilder">ResetBuilder</link>
+, so it must not be called if you already wrote some data.
+</descr>
+<seealso>
+<link id="TCSVBuilder.DefaultOutput">DefaultOutput</link>
+<link id="TCSVBuilder.DefaultOutputAsString">DefaultOutputAsString</link>
+<link id="TCSVBuilder.ResetBuilder">ResetBuilder</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVBuilder.SetOutput.AStream">
+<short>Stream to write to</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVBuilder.ResetBuilder">
+<short>Reset values</short>
+<descr>
+<var>ResetBuilder</var> resets the builder state to the initial state, at the beginning of the stream.
+It is called when <link id="TCSVBuilder.SetOutput">SetOutput</link> is called.
+</descr>
+<seealso>
+<link id="TCSVBuilder.SetOutput">SetOutput</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVBuilder.AppendCell">
+<short>Append a cell to the output.</short>
+<descr>
+<var>AppendCell</var> appends a cell with content <var>AValue</var> to the output; 
+It will quote the value using <link id="TCSVHandler.QuoteChar">QuoteChar</link>
+if necessary, and append the necessary  <link id="TCSVHandler.Delimiter">Delimiter</link> characters.
+It will not move to the next line, for this <link id="TCSVBuilder.AppendRow">AppendRow</link> must be called. 
+</descr>
+<seealso>
+<link id="TCSVHandler.QuoteChar">QuoteChar</link>
+<link id="TCSVHandler.Delimiter">Delimiter</link>
+<link id="TCSVBuilder.AppendRow">AppendRow</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVBuilder.AppendCell.AValue">
+<short>Value to write to the cell.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVBuilder.AppendRow">
+<short>Append a new row</short>
+<descr>
+<var>AppendRow</var> moves the cell pointer to the new row, i.e. 
+it appends a <link id="TCSVHandler.LineEnding">LineEnding</link> character.
+<!--
+If <link id="TCSVHandler.EqualColCountPerRow">EqualColCountPerRow</link> is <var>True</var>, then it will first append as much empty cells as needed so the 
+column count of the current row equals the maximum column count. It does this by callink <link id="TCSVBuilder.AppendCell">AppendCell</link> with an empty value.
+-->
+</descr>
+<seealso>
+<link id="TCSVHandler.LineEnding">LineENding</link>
+<link id="TCSVBuilder.AppendCell">AppendCell</link>
+<link id="TCSVHandler.EqualColCountPerRow">EqualColCountPerRow</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVBuilder.DefaultOutput">
+<short>Default output as stream</short>
+<descr>
+<var>DefaultOutput</var> is a stream to which the output is written if no output 
+stream was specified with the <link id="TCSVBuilder.SetOutput">SetOutput</link> call. 
+</descr>
+<seealso>
+<link id="TCSVBuilder.SetOutput">SetOutput</link>
+<link id="TCSVBuilder.DefaultOutputAsString">DefaultOutputAsString</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVBuilder.DefaultOutputAsString">
+<short>Default output as string value</short>
+<descr>
+<var>DefaultOutput</var> is a string to which the output is written if no output 
+stream was specified with the <link id="TCSVBuilder.SetOutput">SetOutput</link> call. 
+It is basically the contents of the <link id="TCSVBuilder.DefaultOutput">DefaultOutput</link> property as a string.
+</descr>
+<seealso>
+<link id="TCSVBuilder.SetOutput">SetOutput</link>
+<link id="TCSVBuilder.DefaultOutput">DefaultOutput</link>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ChangeLineEndings">
+<short>Change the line endings in a string</short>
+<descr>
+<var>ChangeLineEndings</var> is a utility function which changes the line ending characters 
+<var>CR</var>, <var>CR/LF</var> and <var>LF</var> in <var>Astring</var> to the specified line ending <var>aLineEnding</var>. 
+It returns the transformed string.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ChangeLineEndings.Result">
+<short><var>aString</var> with all possible line ending characters replaced with <var>aLineEnding</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ChangeLineEndings.AString">
+<short>The string to tranform</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ChangeLineEndings.ALineEnding">
+<short>LineEnding to use in the returned string</short>
+</element>
+
+</module> <!-- csvreadwrite -->
+
+</package>
+</fpdoc-descriptions>
