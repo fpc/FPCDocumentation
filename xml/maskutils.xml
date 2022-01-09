@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    MaskUtils
+  ====================================================================
+-->
+
+<module name="MaskUtils">
+<short>Text mask utilities</short>
+<descr>
+This unit provides routines to work with edit masks.  For this, it provied
+<link id="FormatMaskText"/>, <link id="FormatMaskInput"/> and <link id="MaskDoFormatText"/> functions, 
+as well as the underlying <link id="TMaskUtils"/> class.
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>String routines</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="FormatMaskText">
+<short>Format a text according to a given mask</short>
+<descr>
+<var>FormatMaskText</var> formats <var>aValue</var> according to the mask placeholders found in <var>EditMask</var> and returns the resulting string. 
+It replaces space characters in the format mask with the actual space character. 
+This function uses an <link id="TMaskUtils"/> instance to do the actual work.
+</descr>
+<errors>
+None.
+</errors>
+<seealso>
+<link id="FormatMaskInput"/>
+<link id="MaskDoFormatText"/>
+<link id="TMaskUtils"/>
+<link id="TMaskUtils.ApplyMaskToText"/>
+<link id="TMaskUtils.GetTextWithoutSpaceChar"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="FormatMaskText.Result">
+<short>The formatted text</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="FormatMaskText.EditMask">
+<short>Edit mask to apply</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="FormatMaskText.AValue">
+<short>Value to apply edit mask to</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="FormatMaskInput">
+<short>Return an input mask text based on the edit mask</short>
+<descr>
+<var>FormatMaskInput</var> returns a text which corresponds to an empty value for <var>EditMask</var>. 
+This can e.g. be displayed in an edit box, when the user has not yet typed anything. 
+</descr>
+<seealso>
+<link id="FormatMaskText"/>
+<link id="MaskDoFormatText"/>
+<link id="TMaskUtils"/>
+<link id="TMaskUtils.InputMask"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="FormatMaskInput.Result">
+<short>The empty input text</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="FormatMaskInput.EditMask">
+<short>The edit mask for which the input text must be constructed</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="MaskDoFormatText">
+<short>Return an input mask text without literals or space char </short>
+<descr>
+<var>MaskDoFormatText</var> formats the <var>aValue</var> string using <var>EditMask</var>, but enforces the 2d (space char is <var>aSpaceChar</var>) 
+and 3d (force use of literals) fields of <var>EditMask</var>.
+</descr>
+<seealso>
+<link id="FormatMaskInput"/>
+<link id="FormatMaskText"/>
+<link id="TMaskUtils"/>
+<link id="TMaskUtils.InputMask"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="MaskDoFormatText.Result">
+<short>The formatted text</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="MaskDoFormatText.EditMask">
+<short>Edit mask to apply</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="MaskDoFormatText.AValue">
+<short>Value on which to apply the edit mask</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="MaskDoFormatText.ASpaceChar">
+<short>Space character to use in the edit mask</short>
+</element>
+
+<!-- "type" alias type Visibility: default -->
+<element name="TEditMask">
+<short>String alias type</short>  
+<descr>
+<var>TEditMask</var> is a string type with different RTTI, this is used to enable registering special property handlers in an IDE.
+</descr>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TMaskeditTrimType">
+<short>How to trim an output string</short>
+<descr>
+<p>
+<var>TMaskeditTrimType</var>  is used when calculating output strings. 
+It is an internal type for the <link id="TMAskUtils"/> class.
+</p>
+<dl>
+<dt>metTrimLeft</dt><dd><printshort id="TMaskeditTrimType.metTrimLeft"/></dd>  
+<dt>metTrimRight</dt><dd><printshort id="TMaskeditTrimType.metTrimRight"/></dd>  
+</dl>
+</descr>
+<seealso>
+<link id="TMaskUtils"/>  
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TMaskeditTrimType.metTrimLeft">
+<short>Trimm on the left (start) of the string</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TMaskeditTrimType.metTrimRight">
+<short>Trim on the right (end) of the string</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="tMaskedType">
+<short>Type describing special mask characters</short>
+<descr>
+<p>
+<var>tMaskedType</var> is used internally in <link id="TMaskUtils"/> to describe the mask characters.
+</p>
+<dl>
+<dt>Char_start</dt><dd><printshort id="tMaskedType.Char_Start"/></dd>
+<dt>Char_Number</dt><dd><printshort id="tMaskedType.Char_Number"/></dd>
+<dt>Char_NumberFixed</dt><dd><printshort id="tMaskedType.Char_NumberFixed"/></dd>
+<dt>Char_NumberPlusMin</dt><dd><printshort id="tMaskedType.Char_NumberPlusMin"/></dd>
+<dt>Char_Letter</dt><dd><printshort id="tMaskedType.Char_Letter"/></dd>
+<dt>Char_LetterFixed</dt><dd><printshort id="tMaskedType.Char_LetterFixed"/></dd>
+<dt>Char_LetterUpCase</dt><dd><printshort id="tMaskedType.Char_LetterUpCase"/></dd>
+<dt>Char_LetterDownCase</dt><dd><printshort id="tMaskedType.Char_LetterDownCase"/></dd>
+<dt>Char_LetterFixedUpCase</dt><dd><printshort id="tMaskedType.Char_LetterFixedUpCase"/></dd>
+<dt>Char_LetterFixedUpCase</dt><dd><printshort id="tMaskedType.Char_LetterFixedUpCase"/></dd>
+<dt>Char_LetterFixedDownCase</dt><dd><printshort id="tMaskedType.Char_LetterFixedDownCase"/></dd>
+<dt>Char_AlphaNum</dt><dd><printshort id="tMaskedType.Char_AlphaNum"/></dd>
+<dt>Char_AlphaNumFixed</dt><dd><printshort id="tMaskedType.Char_AlphaNumFixed"/></dd>
+<dt>Char_AlphaNumUpCase</dt><dd><printshort id="tMaskedType.Char_AlphaNumUpCase"/></dd>
+<dt>Char_AlphaNumDownCase</dt><dd><printshort id="tMaskedType.Char_AlphaNumDownCase"/></dd>
+<dt>Char_AlphaNumFixedUpCase</dt><dd><printshort id="tMaskedType.Char_AlphaNumFixedUpCase"/></dd>
+<dt>Char_AlphaNumFixedDownCase</dt><dd><printshort id="tMaskedType.Char_AlphaNumFixedDownCase"/></dd>
+<dt>Char_All</dt><dd><printshort id="tMaskedType.Char_All"/></dd>
+<dt>Char_AllFixed</dt><dd><printshort id="tMaskedType.Char_AllFixed"/></dd>
+<dt>Char_AllUpCase</dt><dd><printshort id="tMaskedType.Char_AllUpCase"/></dd>
+<dt>Char_AllDownCase</dt><dd><printshort id="tMaskedType.Char_AllDownCase"/></dd>
+<dt>Char_AllFixedUpCase</dt><dd><printshort id="tMaskedType.Char_AllFixedUpCase"/></dd>
+<dt>Char_AllFixedDownCase</dt><dd><printshort id="tMaskedType.Char_AllFixedDownCase"/></dd>
+<dt>Char_HourSeparator</dt><dd><printshort id="tMaskedType.Char_HourSeparator"/></dd>
+<dt>Char_DateSeparator</dt><dd><printshort id="tMaskedType.Char_DateSeparator"/></dd>
+</dl>
+</descr>
+<seealso>
+<link id="TMaskUtils"/>  
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_Start">
+<short>Sentinel value: start of enumerate</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_Number">
+<short>Numerical character or space</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_NumberFixed">
+<short>Numerical character</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_NumberPlusMin">
+<short>Numerical character, plus or minus or space</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_Letter">
+<short>One of A-Z, a-z or a space</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_LetterFixed">
+<short>One of A-Z, a-z</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_LetterUpCase">
+<short>One of A-Z or space</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_LetterDownCase">
+<short>One of a-z or space</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_LetterFixedUpCase">
+<short>One of A-Z</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_LetterFixedDownCase">
+<short>One of a-z</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_AlphaNum">
+<short>One of A-Z, a-z, 0-9 or space</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_AlphaNumFixed">
+<short>One of A-Z, a-z, 0-9</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_AlphaNumUpCase">
+<short>One of A-Z, 0-9 or space</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_AlphaNumDownCase">
+<short>One of a-z, 0-9 or space</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_AlphaNumFixedUpCase">
+<short>One of A-Z, 0-9</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_AlphaNumFixedDownCase">
+<short>One of a-z, 0-9</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_All">
+<short>Any ASCII or space</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_AllFixed">
+<short>Any ASCII character</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_AllUpCase">
+<short>Any uppercase character</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_AllDownCase">
+<short>Any lowercase character</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_AllFixedUpCase">
+<short>Any uppercase character, no space</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_AllFixedDownCase">
+<short>Any lowercase character, no space</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_HourSeparator">
+<short>The system locale hour separator</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_DateSeparator">
+<short>The system locale date separator</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="tMaskedType.Char_Stop">
+<short>Sentinel value: end of enumerate</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TMaskUtils">
+<short>Class to manipulate and work with  edit masks</short>
+<descr>
+<p>
+<var>TEditMask</var> can be used to work with edit masks. It is used in the <link id="FormatMaskInput"/>,
+<link id="FormatMaskText"/> and <link id="MaskDoFormatText"/> calls to do the actual work.
+</p>
+<p>
+In general, the work is done by setting the <link id="TMaskUtils.Mask">Mask</link> and
+<link id="TMaskUtils.Value">Values</link>  properties, and reading the 
+<link id="TMaskUtils.Mask">InputMask</link> property or calling one of 
+<link id="TMaskUtils.ValidateInput">ValidateInput</link> 
+or <link id="TMaskUtils.TryValidateInput">TryValidateInput</link>.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TMaskUtils.Mask">Mask</link>  
+<link id="TMaskUtils.Value">Values</link>
+<link id="TMaskUtils.Mask">InputMask</link>
+<link id="TMaskUtils.ValidateInput">ValidateInput</link> 
+<link id="TMaskUtils.TryValidateInput">TryValidateInput</link>
+</seealso>
+</element>
+
+
+<!-- function Visibility: public -->
+<element name="TMaskUtils.ValidateInput">
+<short>Check that the <var>Value</var> text is valid for the given mask</short>
+<descr>
+<var>ValidateInput</var> checks that the text in <link id="TMaskUtils.Value">Value</link> satisfies the given mask in <link id="TMaskUtils.Mask">Mask</link> 
+and returns the value with the mask applied to it. If <var>Value</var> does not satisfy the mask, an exception is raised. 
+If you don't want an exception, use <link id="TMaskUtils.TryValidateInput">TryValidateInput</link> instead.
+</descr>
+<errors>
+If <var>Value</var> does not satisfy the mask, an <link id="Exception"/> is raised.  
+</errors>
+<seealso>
+<link id="TMaskUtils.TryValidateInput">TryValidateInput</link>
+<link id="TMaskUtils.Value">Value</link>  
+<link id="TMaskUtils.Mask">Mask</link>
+<link id="Exception"/>  
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TMaskUtils.ValidateInput.Result">
+<short>Value with the editmask applied.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMaskUtils.TryValidateInput">
+<short></short>
+<descr>
+<var>TryValidateInput</var> checks that the text in <link id="TMaskUtils.Value">Value</link> satisfies the given mask in <link id="TMaskUtils.Mask">Mask</link>
+and returns <var>True</var> if it does, <var>False</var> otherwise. It returns <var>Value</var> with the mask applied to it in <var>ValidatedString</var>. 
+</descr>
+<seealso>
+<link id="TMaskUtils.ValidateInput">ValidateInput</link>
+<link id="TMaskUtils.Value">Value</link>  
+<link id="TMaskUtils.Mask">Mask</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TMaskUtils.TryValidateInput.Result">
+<short><var>True</var> if <var>Value</var> satisfies <var>Mask</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMaskUtils.TryValidateInput.ValidatedString">
+<short><var>Value</var> with <var>Mask</var> applied to it.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMaskUtils.Mask">
+<short>The edit mask to use</short>
+<descr>
+<var>Mask</var> is the edit mask which must be used when validating <link id="TMaskUtils.Value">Value</link>.
+</descr>
+<seealso>
+<link id="TMaskUtils.Value">Value</link>
+<link id="TMaskUtils.InputMask">InputMask</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMaskUtils.Value">
+<short>(input) String value to validate </short>
+<descr>
+<var>Value</var> is the string value which is being validated with <link id="TMaskUtils.Mask">Mask</link>.
+</descr>
+<seealso>
+<link id="TMaskUtils.Mask">Mask</link>
+<link id="TMaskUtils.InputMask">InputMask</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMaskUtils.InputMask">
+<short>Text to be used as input mask</short>
+<descr>
+<var>InputMask</var> is a text that can be used as text in an edit value when there is no input: this is the input mask.
+</descr>
+<seealso>
+<link id="TMaskUtils.Mask">Mask</link>
+<link id="TMaskUtils.Value">Value</link>
+</seealso>
+</element>
+
+</module> <!-- MaskUtils -->
+
+</package>
+</fpdoc-descriptions>
