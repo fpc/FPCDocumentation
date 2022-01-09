@@ -351,6 +351,7 @@ override PACKAGE_VERSION=3.2.0
 VPATH=src:tex
 SEARCHFPCSRCPATH=../fpcsrc ../fpc .. src
 FPCSRCDIR:=$(patsubst %/compiler,%,$(firstword $(strip $(wildcard $(addsuffix /compiler,$(SEARCHFPCSRCPATH))))))
+$(if $(filter extra-prereqs,${.FEATURES}),,$(error Feature extra-prereqs not supported by used Make - newer Make needed))
 ifeq ($(FULL_TARGET),i386-linux)
 override TARGET_PROGRAMS+=src/cleanxml src/relinkdocs
 endif
