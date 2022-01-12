@@ -58,7 +58,7 @@ SRCBATCHEXT=.bat
 endif
 endif
 ifdef COMSPEC
-ifneq ($(filter $(OS_SOURCE),$(OSNeedsComspecToRunBatch)),)
+ifneq ($(findstring $(OS_SOURCE),$(OSNeedsComspecToRunBatch)),)
 ifndef RUNBATCH
 RUNBATCH=$(COMSPEC) /C
 endif
@@ -213,11 +213,11 @@ $(error When compiling for arm-freertos, a sub-architecture (e.g. SUBARCH=armv6m
 endif
 override FPCOPT+=-Cp$(SUBARCH)
 endif
-ifneq ($(filter $(OS_SOURCE),$(LIMIT83fs)),)
+ifneq ($(findstring $(OS_SOURCE),$(LIMIT83fs)),)
 TARGETSUFFIX=$(OS_TARGET)
 SOURCESUFFIX=$(OS_SOURCE)
 else
-ifneq ($(filter $(OS_TARGET),$(LIMIT83fs)),)
+ifneq ($(findstring $(OS_TARGET),$(LIMIT83fs)),)
 TARGETSUFFIX=$(OS_TARGET)
 else
 TARGETSUFFIX=$(FULL_TARGET)
@@ -228,11 +228,11 @@ ifneq ($(FULL_TARGET),$(FULL_SOURCE))
 CROSSCOMPILE=1
 endif
 ifeq ($(findstring makefile,$(MAKECMDGOALS)),)
-ifeq ($(filter $(FULL_TARGET),$(MAKEFILETARGETS)),)
+ifeq ($(findstring $(FULL_TARGET),$(MAKEFILETARGETS)),)
 $(error The Makefile doesn't support target $(FULL_TARGET), please run fpcmake first)
 endif
 endif
-ifneq ($(filter $(OS_TARGET),$(BSDs)),)
+ifneq ($(findstring $(OS_TARGET),$(BSDs)),)
 BSDhier=1
 endif
 ifeq ($(OS_TARGET),linux)
@@ -286,8 +286,8 @@ endif
 ifndef CROSSBINDIR
 CROSSBINDIR:=$(wildcard $(FPCDIR)/bin/$(TARGETSUFFIX))
 endif
-ifneq ($(filter $(OS_TARGET),darwin iphonesim ios),)
-ifneq ($(filter $(OS_SOURCE),darwin ios),)
+ifneq ($(findstring $(OS_TARGET),darwin iphonesim ios),)
+ifneq ($(findstring $(OS_SOURCE),darwin ios),)
 DARWIN2DARWIN=1
 endif
 endif
@@ -351,7 +351,6 @@ override PACKAGE_VERSION=3.2.0
 VPATH=src:tex
 SEARCHFPCSRCPATH=../fpcsrc ../fpc .. src
 FPCSRCDIR:=$(patsubst %/compiler,%,$(firstword $(strip $(wildcard $(addsuffix /compiler,$(SEARCHFPCSRCPATH))))))
-$(if $(filter extra-prereqs,${.FEATURES}),,$(error Feature extra-prereqs not supported by used Make - newer Make needed))
 ifeq ($(FULL_TARGET),i386-linux)
 override TARGET_PROGRAMS+=src/cleanxml src/relinkdocs
 endif
@@ -995,11 +994,11 @@ ifdef REQUIRE_PACKAGESDIR
 override PACKAGESDIR+=$(REQUIRE_PACKAGESDIR)
 endif
 ifdef ZIPINSTALL
-ifneq ($(filter $(OS_TARGET),$(UNIXs)),)
+ifneq ($(findstring $(OS_TARGET),$(UNIXs)),)
 UNIXHier=1
 endif
 else
-ifneq ($(filter $(OS_SOURCE),$(UNIXs)),)
+ifneq ($(findstring $(OS_SOURCE),$(UNIXs)),)
 UNIXHier=1
 endif
 endif
@@ -1187,7 +1186,7 @@ endif
 ifeq ($(OS_SOURCE),linux)
 ifndef GCCLIBDIR
 ifeq ($(CPU_TARGET),i386)
-ifneq ($(filter x86_64,$(shell uname -a)),)
+ifneq ($(findstring x86_64,$(shell uname -a)),)
 ifeq ($(BINUTILSPREFIX),)
 GCCLIBDIR:=$(shell dirname `gcc -m32 -print-libgcc-file-name`)
 else
@@ -1210,11 +1209,11 @@ CROSSGCCOPT=-m64
 endif
 endif
 ifeq ($(CPU_TARGET),sparc)
-ifneq ($(filter sparc64,$(shell uname -a)),)
+ifneq ($(findstring sparc64,$(shell uname -a)),)
 ifeq ($(BINUTILSPREFIX),)
 GCCLIBDIR:=$(shell dirname `gcc -m32 -print-libgcc-file-name`)
 else
-ifneq ($(filter $(FPCFPMAKE_CPU_OPT),mips mipsel),)
+ifneq ($(findstring $(FPCFPMAKE_CPU_OPT),mips mipsel),)
 CROSSGCCOPT=-mabi=32
 else
 CROSSGCCOPT=-m32
@@ -1228,19 +1227,19 @@ FPCFPMAKE_CPU_TARGET=$(shell $(FPCFPMAKE) -iTP)
 ifeq ($(CPU_TARGET),$(FPCFPMAKE_CPU_TARGET))
 FPCMAKEGCCLIBDIR:=$(GCCLIBDIR)
 else
-ifneq ($(filter $(FPCFPMAKE_CPU_TARGET),aarch64 powerpc64 riscv64 sparc64 x86_64),)
+ifneq ($(findstring $(FPCFPMAKE_CPU_TARGET),aarch64 powerpc64 riscv64 sparc64 x86_64),)
 FPCMAKE_CROSSGCCOPT=-m64
 else
-ifneq ($(filter $(FPCFPMAKE_CPU_OPT),mips64 mips64el),)
+ifneq ($(findstring $(FPCFPMAKE_CPU_OPT),mips64 mips64el),)
 FPCMAKE_CROSSGCCOPT=-mabi=64
 else
-ifneq ($(filter $(FPCFPMAKE_CPU_OPT),mips mipsel),)
+ifneq ($(findstring $(FPCFPMAKE_CPU_OPT),mips mipsel),)
 FPCMAKE_CROSSGCCOPT=-mabi=32
 else
-ifeq ($(FPCFPMAKE_CPU_OPT),riscv64)
+ifneq ($(findstring $(FPCFPMAKE_CPU_OPT),riscv64),)
 FPCMAKE_CROSSGCCOPT=-mabi=lp64
 else
-ifeq ($(FPCFPMAKE_CPU_OPT),riscv32)
+ifneq ($(findstring $(FPCFPMAKE_CPU_OPT),riscv32),)
 FPCMAKE_CROSSGCCOPT=-mabi=ilp32
 else
 FPCMAKE_CROSSGCCOPT=-m32
@@ -1419,7 +1418,7 @@ DEBUGSYMEXT=.xcoff
 SHORTSUFFIX=mac
 IMPORTLIBPREFIX=imp
 endif
-ifneq ($(filter $(OS_TARGET),darwin iphonesim ios),)
+ifneq ($(findstring $(OS_TARGET),darwin iphonesim ios),)
 BATCHEXT=.sh
 EXEEXT=
 HASSHAREDLIB=1
@@ -1498,7 +1497,7 @@ endif
 ifeq ($(OS_TARGET),wasi)
 EXEEXT=.wasm
 endif
-ifneq ($(filter $(OS_SOURCE),$(LIMIT83fs)),)
+ifneq ($(findstring $(OS_SOURCE),$(LIMIT83fs)),)
 FPCMADE=fpcmade.$(SHORTSUFFIX)
 ZIPSUFFIX=$(SHORTSUFFIX)
 ZIPCROSSPREFIX=
@@ -1859,8 +1858,8 @@ ifdef SYSROOTPATH
 override FPCOPT+=-XR$(SYSROOTPATH)
 else
 ifeq ($(OS_TARGET),$(OS_SOURCE))
-ifeq ($(OS_TARGET),darwin)
-ifeq ($(CPU_TARGET),aarch64)
+ifneq ($(findstring $(OS_TARGET),darwin),)
+ifneq ($(findstring $(CPU_TARGET),aarch64),)
 ifneq ($(wildcard /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk),)
 override FPCOPT+=-XR/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
 endif
@@ -1871,8 +1870,8 @@ endif
 ifdef CREATESHARED
 override FPCOPT+=-Cg
 endif
-ifneq ($(filter $(OS_TARGET),dragonfly freebsd openbsd netbsd linux solaris),)
-ifneq ($(filter $(CPU_TARGET),x86_64 mips mipsel riscv64 powerpc64),)
+ifneq ($(findstring $(OS_TARGET),dragonfly freebsd openbsd netbsd linux solaris),)
+ifneq ($(findstring $(CPU_TARGET),x86_64 mips mipsel riscv64),)
 override FPCOPT+=-Cg
 endif
 endif
@@ -1915,10 +1914,10 @@ ifdef ACROSSCOMPILE
 override FPCOPT+=$(CROSSOPT)
 endif
 override COMPILER:=$(strip $(FPC) $(FPCOPT))
-ifneq (,$(filter -sh,$(COMPILER)))
+ifneq (,$(findstring -sh ,$(COMPILER)))
 UseEXECPPAS=1
 endif
-ifneq (,$(filter -s,$(COMPILER)))
+ifneq (,$(findstring -s ,$(COMPILER)))
 ifeq ($(FULL_SOURCE),$(FULL_TARGET))
 UseEXECPPAS=1
 endif
