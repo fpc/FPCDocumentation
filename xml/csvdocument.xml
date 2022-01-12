@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    csvdocument
+  ====================================================================
+-->
+
+<module name="csvdocument">
+<short>Unit presenting a CSV file as a 2-dimensional array.</short>
+<descr>
+The <var>CSVDocument</var> unit offers the <link id="TCSVDocument"/>
+class which can be used to read, manipulate and write the contents of a CSV file.
+It uses the methods of the <link id="#fcl.csvreadwrite.TCSVParser"/> and
+<link id="#fcl.csvreadwrite.TCSVBuilder"/> units to read and write the actual file.
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Streams and stringlists.</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>String and file utilities.</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Contnrs">
+<short>Object lists.</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="csvreadwrite">
+<short><var>TCSVBuilder</var> and <var>TCSVParser</var> classes.</short>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TCSVChar">
+<short>Alias for the <var>csvreadwrite.TCSVChar</var> type.</short>
+<descr>
+<var>TCSVChar</var> is a backwards-compatibility alias for <link id="#fcl.csvreadwrite.TCSVChar">csvreadwrite.TCSVChar</link>
+</descr>
+<seealso>
+  <link id="#fcl.csvreadwrite.TCSVChar">csvreadwrite.TCSVChar</link>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TCSVParser">
+<short>Alias for the <var>csvreadwrite.TCSVParser</var> type.</short>
+<descr>
+<var>TCSVParser</var> is a backwards-compatibility alias for <link id="#fcl.csvreadwrite.TCSVParser">csvreadwrite.TCSVParser</link>
+</descr>
+<seealso>
+<link id="#fcl.csvreadwrite.TCSVParser">csvreadwrite.TCSVParser</link>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TCSVBuilder">
+<short>Alias for the <var>csvreadwrite.TCSVBuilder</var> type.</short>
+<descr>
+<var>TCSVBuilder</var> is a backwards-compatibility alias for <link id="#fcl.csvreadwrite.TCSVParser">csvreadwrite.TCSVParser</link>
+</descr>
+<seealso>
+<link id="#fcl.csvreadwrite.TCSVParser">csvreadwrite.TCSVParser</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TCSVDocument">
+<short>Class representing a CSV document in memory.</short>
+<descr>
+<var>TCSVDocument</var> can be used to read a CSV file in memory using e.g.
+<link id="TCSVDOcument.LoadFromFile">LoadFromFile</link>, manipulate the contents using the <link id="TCSVDocument.Cells">Cells</link> property.
+Additional rows can be added using <link id="TCSVDocument.AddRow">AddRow</link>,
+additional cells can be added using <link id="TCSVDOcument.AddCell">AddCell</link>.
+After all is done, the <link id="TCSVDocument.SaveToFile">SaveToFile</link> method can be used to save the new content to file. The various properties introduced in
+<link id="csvreadwrite.TCSVHandler"/> can be used to configure the format of the CSV file.
+</descr>
+<seealso>
+<link id="TCSVDOcument.LoadFromFile">LoadFromFile</link>
+<link id="TCSVDocument.Cells">Cells</link>
+<link id="TCSVDocument.AddRow">AddRow</link>
+<link id="TCSVDOcument.AddCell">AddCell</link>
+<link id="TCSVDocument.SaveToFile">SaveToFile</link>
+<link id="csvreadwrite.TCSVHandler"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCSVDocument.Create">
+<short>Create a new instance of <var>TCSVDocument</var>.</short>
+<descr>
+<var>Create</var> calls the inherited constructor and then initializes the data structures for the CSV cells.
+</descr>
+<seealso>
+<link id="TCSVDocument.Cells">Cells</link>
+<link id="TCSVDocument.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCSVDocument.Destroy">
+<short>Remove the <var>TCSVDocument</var> instance from memory.</short>
+<descr>
+<var>Destroy</var> cleans up the data structures for the CSV cells and calls the inherited destructor.
+</descr>
+<seealso>
+<link id="TCSVDocument.Cells">Cells</link>
+<link id="TCSVDocument.Create">Create</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.LoadFromFile">
+<short>Load a CSV file into the document.</short>
+<descr>
+<p>
+  <var>LoadFromFile</var> creates a file stream using <var>aFileName</var> and calls
+<link id="TCSVDocument.LoadFromStream">LoadFromStream</link> to read the contents of the file.
+</p>
+<p>
+The file is read using an internal buffer for efficiency. The size of the buffer can be specified in bytes using
+<var>ABufferSize</var>. If the size is not specified, a default buffer size is used.
+</p>
+</descr>
+<errors>
+If the file does not exist, an exception will be raised.
+</errors>
+<seealso>
+<link id="TCSVDocument.LoadFromStream">LoadFromStream</link>
+<link id="TCSVDocument.SaveToStream">SaveToStream</link>
+<link id="TCSVDocument.SaveToFile">SaveToFile</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.LoadFromFile.AFilename">
+<short>Filename to read CSV data from.</short>
+</element>
+
+<element name="TCSVDocument.LoadFromFile.ABufferSize">
+<short>Buffer size to use when reading CSV data from file.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.LoadFromStream">
+<short>Load CSV data from a stream.</short>
+<descr>
+<var>LoadFromStream</var> loads the CSV data from the <var>aStream</var> stream.
+It uses the settings introduced in <link id="#fcl.csvreadwrite.TCSVHandler">TCSVHandler</link> when determining fields and rows.
+If <link id="#fcl.csvreadwrite.TCSVHandler.EqualColCountPerRow"> EqualColCountPerRow</link>
+is <var>True</var> then it will add empty cells after reading the CSV data, so all rows have an equal count of columns..
+</descr>
+<seealso>
+<link id="#fcl.csvreadwrite.TCSVHandler.EqualColCountPerRow"> EqualColCountPerRow</link>
+<link id="TCSVDocument.SaveToStream">SaveToStream</link>
+<link id="TCSVDocument.SaveToFile">SaveToFile</link>
+<link id="TCSVDocument.LoadFromFile">LoadFromFile</link>
+<link id="#fcl.csvreadwrite.TCSVHandler">TCSVHandler</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.LoadFromStream.AStream">
+<short>Stream to read CSV data from.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.SaveToFile">
+<short>Save to file on disk.</short>
+<descr>
+<var>SaveToFile</var> creates a file stream from <var>aFileName</var> and
+calls <link id="TCSVDocument.SaveToStream">SaveToStream</link> to actually write the CSV data to the file.
+</descr>
+<errors>
+If the file cannot be created or cannot be written to, an exception will be raised.
+</errors>
+<seealso>
+<link id="TCSVDocument.SaveToStream">SaveToStream</link>
+<link id="TCSVDocument.LoadFromStream">LoadFromStream</link>
+<link id="TCSVDocument.LoadFromFile">LoadFromFile</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.SaveToFile.AFilename">
+<short>File to write the CSV data to.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.SaveToStream">
+<short>Save the CSV data to stream.</short>
+<descr>
+<var>SaveToStream</var> saves the CSV data to the <var>aStream</var> stream.
+It uses the settings introduced in <link id="#fcl.csvreadwrite.TCSVHandler">TCSVHandler</link> to apply the correct formatting to fields and rows.
+If <link id="#fcl.csvreadwrite.TCSVHandler.EqualColCountPerRow"> EqualColCountPerRow</link>
+is <var>True</var> then it will add empty cells prior to writing, so all rows in the file have an equal count of columns.
+</descr>
+<errors>
+If the stream cannot  be written to, an exception will be raised.
+</errors>
+<seealso>
+<link id="#fcl.csvreadwrite.TCSVHandler.EqualColCountPerRow">EqualColCountPerRow</link>
+<link id="TCSVDocument.SaveToFile">SaveToFile</link>
+<link id="TCSVDocument.LoadFromStream">LoadFromStream</link>
+<link id="TCSVDocument.LoadFromFile">LoadFromFile</link>
+<link id="#fcl.csvreadwrite.TCSVHandler">TCSVHandler</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.SaveToStream.AStream">
+<short>Stream to write CSV data to.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.AddRow">
+<short>Add a new row to the CSV Data.</short>
+<descr>
+<var>AddRow</var> appends a new row to collection of rows, and adds 1 cell to this new row with contents <var>aFirstCell</var>.
+If <var>aFirstCell</var> is not specified, then an empty cell is added.
+</descr>
+<seealso>
+<link id="TCSVDocument.AddCell">AddCell</link>
+<link id="TCSVDocument.InsertRow">InsertRow</link>
+<link id="TCSVDocument.InsertCell">InsertCell</link>
+<link id="TCSVDocument.RemoveRow">RemoveRow</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.AddRow.AFirstCell">
+<short>Contents of first cell of the new row</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.AddCell">
+<short>Add a new cell to a row.</short>
+<descr>
+<p>
+<var>AddCell</var> adds a new cell at the end of row <var>aRow</var> (zero based) with value <var>aValue</var>.
+If <var>aValue</var> is not specified, then an empty cell is added.
+</p>
+<p>
+If a non-existing row is specified, rows are added till <var>aRow</var> is reached.
+</p></descr>
+<seealso>
+<link id="TCSVDocument.AddRow">AddRow</link>
+<link id="TCSVDocument.InsertRow">InsertRow</link>
+<link id="TCSVDocument.InsertCell">InsertCell</link>
+<link id="TCSVDocument.RemoveCell">RemoveCell</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.AddCell.ARow">
+<short>Row (zero-based) to add cell to.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.AddCell.AValue">
+<short>Value for newly added cell.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.InsertRow">
+<short>Insert row before row number <var>aRow</var>.</short>
+<descr>
+<p>
+<var>InsertRow</var> inserts a new empty row before
+row number <var>aRow</var>, and adds a cell to the new row with contents <var>aFirstCell</var>.
+</p>
+<p>
+If a non-existing row is specified, the row is simply appended after the last row.
+</p>
+</descr>
+<seealso>
+<link id="TCSVDocument.AddRow">AddRow</link>
+<link id="TCSVDocument.AddCell">AddCell</link>
+<link id="TCSVDocument.InsertCell">InsertCell</link>
+<link id="TCSVDocument.RemoveRow">RemoveRow</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.InsertRow.ARow">
+<short>Row (zero based) before which to insert the new row.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.InsertRow.AFirstCell">
+<short>Contents of the first cell of the new row.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.InsertCell">
+<short>Insert cell at specified position.</short>
+<descr>
+<p>
+<var>InsertCell</var> inserts a new cell before cell <var>aCol</var> (zero based)
+in row <var>aRow</var> (zero based) with value <var>aValue</var>.
+If <var>aValue</var> is not specified, then an empty cell is inserted.
+</p>
+<p>
+If a non-existing column is specified, the cell is appended at the end of the row.
+</p>
+<p>
+If a non-existing row is specified, rows are added till <var>aRow</var> is reached.
+</p></descr>
+<seealso>
+<link id="TCSVDocument.AddRow">AddRow</link>
+<link id="TCSVDocument.InsertRow">InsertRow</link>
+<link id="TCSVDocument.AddCell">AddCell</link>
+<link id="TCSVDocument.RemoveCell">RemoveCell</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.InsertCell.ACol">
+<short>Column number (zero based) before which to insert new cell.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.InsertCell.ARow">
+<short>Row number (zero based) at which to insert new cell.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.InsertCell.AValue">
+<short>Value for the newly inserted cell</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.RemoveRow">
+<short>Remove a row.</short>
+<descr>
+<var>RemoveRow</var> removes row number <var>aRow</var> (zero-based) from the list of rows.
+If a non-existing row index is given, no row is removed.
+</descr>
+<seealso>
+<link id="TCSVDocument.AddRow">AddRow</link>
+<link id="TCSVDocument.RemoveCell">RemoveCell</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.RemoveRow.ARow">
+<short>Row index (zero based) of row to remove.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.RemoveCell">
+<short>Remove a cell at a particular row.</short>
+<descr>
+<var>RemoveCell</var> removes the cell at index <var>aCol</var> (zero-based) in row <var>aRow</var> (zero-based).
+If either of <var>aCol</var> or <var>aRow</var> are invalid, nothing is removed.
+</descr>
+<seealso>
+<link id="TCSVDocument.AddCell">AddCell</link>
+<link id="TCSVDocument.RemoveRow">RemoveRow</link>
+<link id="TCSVDOcument.HasCell">HasCell</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.RemoveCell.ACol">
+<short>Column index (zero based) of cell to remove.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.RemoveCell.ARow">
+<short>Row index (zero based) of row to remove cell from.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCSVDocument.HasRow">
+<short>Test if a row exists.</short>
+<descr>
+<var>HasRow</var> returns <var>True</var> if <var>aRow</var> is a valid row index,
+i.e. is larger than or equal to 0 (zero) and is strictly less than <link id="TCSVDOcument.RowCount">RowCount</link>.
+</descr>
+<seealso>
+<link id="TCSVDocument.RowCount">RowCount</link>
+<link id="TCSVDocument.HasCell">HasCell</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCSVDocument.HasRow.Result">
+<short><var>True</var> if the specified row exists.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.HasRow.ARow">
+<short>Row index (zero based) to test for. </short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCSVDocument.HasCell">
+<short>Test if a cell exists.</short>
+<descr>
+<var>HasCell</var> returns <var>True</var> if <var>aRow</var> is a valid row index,
+(i.e. is larger than or equal to 0 (zero) and is strictly less than <link id="TCSVDOcument.RowCount">RowCount</link>)
+and <var>aCol</var> is a valid column index for that row, i.e. is larger than or equal to 0 (zero) and is
+strictly less than <link id="TCSVDOcument.ColCount">ColCount[aRow]</link>) .
+</descr>
+<seealso>
+<link id="TCSVDocument.RowCount">RowCount</link>
+<link id="TCSVDocument.HasRow">HasRow</link>
+<link id="TCSVDocument.ColCount">ColCount</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCSVDocument.HasCell.Result">
+<short><var>True</var> if the cell at <var>aCol</var>,<var>aRow</var> exists.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.HasCell.ACol">
+<short>Column to test in row <var>aRow</var>.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.HasCell.ARow">
+<short>Row to text.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCSVDocument.IndexOfCol">
+<short>Test whether a value exists at a given row.</short>
+<descr>
+<var>IndexOfCol</var> returns the index of the first cell with given value <var>aString</var> in row <var>aRow</var>.
+It returns <var>-1</var> if row <var>aRow</var> does not exist, or if the value does not appear in the given row.
+</descr>
+<seealso>
+<link id="TCSVDocument.Cells">Cells</link>
+<link id="TCSVDocument.IndexOfRow">IndexOfRow</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCSVDocument.IndexOfCol.Result">
+<short>Index of the first cell with value <var>aString</var> at row <var>aRow</var>.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.IndexOfCol.AString">
+<short>String to search for.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.IndexOfCol.ARow">
+<short>Row to search in.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCSVDocument.IndexOfRow">
+<short>Test whether a value exists at a given column.</short>
+<descr>
+<var>IndexOfRow</var> returns the index of the first row with given value <var>aString</var> in column <var>aCol</var>.
+It returns <var>-1</var> if no such row exists.
+</descr>
+<seealso>
+<link id="TCSVDocument.IndexOfCol">IndexOfCol</link>
+<link id="TCSVDocument.Cells">Cells</link>
+  </seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCSVDocument.IndexOfRow.Result">
+<short>Index of the first row with value <var>aString</var> at column <var>aCol</var>.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.IndexOfRow.AString">
+<short>Value to search for.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.IndexOfRow.ACol">
+<short>Column to search in.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.Clear">
+<short>Remove all rows.</short>
+<descr>
+<var>Clear</var> removes all rows from the document.
+</descr>
+<seealso>
+<link id="TCSVDocument.AddRow">AddRow</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.CloneRow">
+<short>Duplicate a row.</short>
+<descr>
+<var>CloneRow</var> will insert a row at <var>aInsertPos</var> and duplicate all cells of row <var>aRow</var> in the new row.
+</descr>
+<seealso>
+<link id="TCSVDocument.AddRow">AddRow</link>
+<link id="TCSVDocument.InsertRow">InsertRow</link>
+<link id="TCSVDocument.ExchangeRows">ExchangeRows</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.CloneRow.ARow">
+<short>Source row index.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.CloneRow.AInsertPos">
+<short>Target row index.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.ExchangeRows">
+<short>Exchange positions of 2 rows.</short>
+<descr>
+<var>ExchangeRows</var> takes 2 rows with positions <var>aRow1</var> and <var>aRow2</var>, and exchanges them.
+if either of the row indexes does not exist, no action is performed.
+</descr>
+<seealso>
+<link id="TCSVDocument.AddRow">AddRow</link>
+<link id="TCSVDocument.InsertRow">InsertRow</link>
+<link id="TCSVDocument.CloneRow">CloneRow</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.ExchangeRows.ARow1">
+<short>First row index</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCSVDocument.ExchangeRows.ARow2">
+<short>Second row index</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.UnifyEmbeddedLineEndings">
+<short>Ensures all values have the same line ending/</short>
+<descr>
+<var>UnifyEmbeddedLineEndings</var> forces the line endings in all cell values to match the <link id="TCSVHandler.LineEnding">LineEnding</link>  setting.
+Cell values that do not have a line-endings in them are left untouched. 
+</descr>
+<seealso>
+<link id="TCSVHandler.LineEnding">LineEnding</link>  
+<link id="ChangeLineEndings">ChangeLineEndings</link>  
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCSVDocument.RemoveTrailingEmptyCells">
+<short>Remove empty cells at the end of each row.</short>
+<descr>
+<var>RemoveTrailingEmptyCells</var> traverses all rows, and removes all empty cells at the end of the row. The first cell of a row is never removed.
+</descr>
+<seealso>
+<link id="TCSVDocument.RemoveCell">RemoveCell</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVDocument.Cells">
+<short>Array access to all cells.</short>
+<descr>
+<var>Cells</var> provides read and write access to all the cells in the document using <var>aCol</var> and <var>aRow</var> (both zero-based) as the column and row indexes. 
+If no cell data exists at the location, then reading the value will result in an empty string, and writing will add empty rows and cells so a cell exists at the given position.
+</descr>
+<seealso>
+<link id="TCSVDocument.AddCell">AddCell</link>
+<link id="TCSVDocument.AddRow">AddRow</link>
+<link id="TCSVDocument.ColCount">ColCount</link>
+<link id="TCSVDocument.RowCount">RowCount</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCSVDocument.Cells.ACol">
+<short>Column in the given row.</short>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCSVDocument.Cells.ARow">
+<short>Row index (zero based) of the cell value</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVDocument.RowCount">
+<short>Number of available rows</short>
+<descr>
+<var>RowCount</var> returns the number of available rows. Valid row indexes are therefor in the range 0 to <var>RowCount-1</var>.
+</descr>
+<seealso>
+<link id="TCSVDocument.ColCount">ColCount</link>
+<link id="TCSVDocument.Cells">Cells</link>
+</seealso>
+
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVDocument.ColCount">
+<short>Return the column count for a given row.</short>
+<descr>
+<var>ColCount</var> returns the number of available cells in the indicated row (<var>aRow</var>, zero-based). 
+Valid column indexes are therefor in the range 0 to <var>RowCount[aRow]-1</var>.
+</descr>
+<seealso>
+<link id="TCSVDocument.RowCount">RowCount</link>
+<link id="TCSVDocument.Cells">Cells</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCSVDocument.ColCount.ARow">
+<short>Row for which to return column count</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVDocument.MaxColCount">
+<short>Maximum column count</short>
+<descr>
+<var>MaxColCount</var> scans all rows and returns the largest available <link id="TCSVDocument.ColCount">ColCount</link> value.
+</descr>
+<seealso>
+<link id="TCSVDocument.RowCount">RowCount</link>
+<link id="TCSVDocument.Cells">Cells</link>
+<link id="TCSVDocument.ColCount">ColCount</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCSVDocument.CSVText">
+<short>Return the CSV Document as a single CSV text</short>
+<descr>
+<var>CSVText</var> calculates the contents of the CSV file as it would be when written using <link id="TCSVDocument.SaveToFile">SaveToFile</link> and returns the resulting string.
+</descr>
+<seealso>
+<link id="TCSVDocument.SaveToFile">SaveToFile</link>
+<link id="TCSVDocument.SaveToStream">SaveToStream</link>
+</seealso>
+</element>
+
+</module> <!-- csvdocument -->
+
+</package>
+</fpdoc-descriptions>
