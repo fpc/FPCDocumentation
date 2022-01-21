@@ -3120,7 +3120,7 @@ numerical or enumerated type. The actual declaration of <var>Str</var> is not
 according to pascal syntax, and should be
 </p>
 <code>
-procedure Str(var X: TNumericType[:NumPlaces[:Decimals]];var S: String)
+procedure Str(const X: TNumericType[:NumPlaces[:Decimals]];var S: String)
 </code>
 <p>
 Where the optional <var>NumPlaces</var> and <var>Decimals</var> specifiers control the
@@ -3134,29 +3134,29 @@ representation of the declared enumeration value. That means that the following 
 </p>
 <code>
 Type
-  TMyEnum = (OnE);
+  TMyEnum = (One,Two);
 
 Var
   S : String;
 begin
-  Str(one, s); 
+  Str(One,S); 
   Writeln(S);
 end.        
 </code>
 <p>
-This will write <var>OnE</var> on the screen, which is consistent with the
+This will write <var>One</var> on the screen, which is consistent with the
 following - equivalent - program:
 </p>
 <code>
 Type
-  TMyEnum = (OnE);
+  TMyEnum = (One,Two);
      
 Var
   S : String;
   E : TMyEnum;
 begin
-  E:=one;
-  Str(E,s);
+  E:=One;
+  Str(E,S);
   Writeln(S);
 end.   
 </code>
@@ -3167,13 +3167,13 @@ following program will have the same output:
 <code>
 {$SCOPEDENUMS+}
 Type  
-  TMyEnum = (OnE);
+  TMyEnum = (One,Two);
   
 Var
   S : String;
   
 begin
-  Str(one, s);
+  Str(One,S);
   Writeln(S); 
 end.          
 </code>
