@@ -12,16 +12,74 @@
 
 <element name="SysUtils">
 <short>Various calls.</short>
-<descr/>
-<errors/>
-<seealso/>
 </element>
+
+
+<!-- array type Visibility: default -->
+<element name="TRawByteStringArray">
+<short>Array of <var>RawByteString</var></short>
+<descr>
+<var>TRawByteStringArray</var> defines a dynamic array of <var>RawByteString</var>.
+It is used in the <var>RawByteString</var> version of the <link id="SplitCommandLine"/> function.
+</descr>
+<seealso>
+<link id="TUnicodeStringArray"/>
+<link id="SplitCommandLine"/>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TUnicodeStringArray">
+<short></short>
+<descr>
+<var>TUnicodeStringArray</var> defines a dynamic array of <var>UnicodeString</var>.
+It is used in the <var>UnicodeString</var> version of the <link id="SplitCommandLine"/> function.
+</descr>
+<seealso>
+<link id="TRawByteStringArray"/>
+<link id="SplitCommandLine"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="SplitCommandLine">
+<short>Split commandline in a series of separate arguments</short>
+<descr>
+<p>
+<var>SplitCommandline</var> parses <var>S</var> into words separated by whitespace, and returns a list of separate words (command-line arguments):
+When parsing it takes into account quoting with single (') or double quote (") characters:
+a word that contains whitespace can be enclosed in a quote character and will be considered a single word.
+</p>
+<p>You can call this function with a <var>UnicodeString</var> or a <var>RawByteString</var>,
+the resulting array will have the same type of elements.
+</p>
+<p>
+for example:
+</p>
+<pre>
+first "second argument" 'third argument'
+</pre>
+<p>
+Will result in an array of 3 elements
+</p>
+<ul>
+<li><var>first</var></li>
+<li><var>second argument</var></li>
+<li><var>thirs argument</var></li>
+</ul>
+</descr>
+<seealso>
+<link id="TRawByteStringArray"/>
+<link id="TUnicodeStringArray"/>
+</seealso>
+</element>
+
 
 
 <element name="AnsiResemblesText">
 <short>Check whether 2 strings resemble each other.</short>
 <descr>
-<var>AnsiResemblesText</var> will check whether <link id="AnsiResemblesProc"/> is set. 
+<var>AnsiResemblesText</var> will check whether <link id="AnsiResemblesProc"/> is set.
 If it is not set, <var>False</var> is returned. If it is set, <var>AText</var> and <var>AOtherText</var> are passed to it and it's result is returned.</descr>
 <errors>None.</errors>
 <seealso>
@@ -252,9 +310,9 @@ The check is performed case-insensitive. Basically, it checks whether the positi
 <descr>
 <p>
 <var>AnsiIndexStr</var>
- matches <var>AText</var> against each string in <var>AValues</var>. 
+ matches <var>AText</var> against each string in <var>AValues</var>.
 If a match is found, it returns <var>True</var>, otherwise <var>False</var> is returned.
-The strings are matched ignoring case. 
+The strings are matched ignoring case.
 </p>
 <p>This function simply calls <link id="AnsiIndexText"/> and checks whether it returns -1 or not.
 </p>
@@ -283,8 +341,8 @@ The strings are matched ignoring case.
 <element name="AnsiIndexText">
 <short>Searches, case insensitive, for a string in an array of strings.</short>
 <descr>
-<var>AnsiIndexText</var>  matches <var>AText</var>  against each string in <var>AValues</var>. 
-If a match is found, the corresponding index (zero-based) in the <var>AValues</var>  array is returned. 
+<var>AnsiIndexText</var>  matches <var>AText</var>  against each string in <var>AValues</var>.
+If a match is found, the corresponding index (zero-based) in the <var>AValues</var>  array is returned.
 If no match is found, -1 is returned. The strings are matched ignoring case.</descr>
 <errors>None</errors>
 <seealso>
@@ -497,9 +555,9 @@ The check is performed case-sensitive. Basically, it checks whether the position
 <descr>
 <p>
 <var>AnsiMatchStr</var>
- matches <var>AText</var> against each string in <var>AValues</var>. 
+ matches <var>AText</var> against each string in <var>AValues</var>.
 If a match is found, it returns <var>True</var>, otherwise <var>False</var> is returned.
-The strings are matched observing case. 
+The strings are matched observing case.
 </p>
 <p>This function simply calls <link id="AnsiIndexStr"/> and checks whether it returns -1 or not.
 </p>
@@ -537,8 +595,8 @@ The strings are matched observing case.
 <element name="AnsiIndexStr">
 <short>Searches, observing case, for a string in an array of strings.</short>
 <descr>
-<var>AnsiIndexStr</var> matches <var>AText</var> against each string in <var>AValues</var>. 
-If a match is found, the corresponding index (zero-based) in the <var>AValues</var> array is returned. 
+<var>AnsiIndexStr</var> matches <var>AText</var> against each string in <var>AValues</var>.
+If a match is found, the corresponding index (zero-based) in the <var>AValues</var> array is returned.
 If no match is found, -1 is returned.
 The strings are matched observing case.</descr>
 <errors>None.</errors>
@@ -580,7 +638,7 @@ The strings are matched observing case.</descr>
 <p>
 <var>DupeString</var>
  returns a string consisting of <var>ACount</var> concatenations of <var>AText</var>.
-Thus 
+Thus
 </p>
 <pre>DupeString('1234567890',3);
 </pre>
@@ -651,7 +709,7 @@ Thus
 <descr>
 <p>
 <var>AnsiReverseString</var>
- returns a string with all characters of <var>AText</var> in reverse order. 
+ returns a string with all characters of <var>AText</var> in reverse order.
 </p>
 <p>if the result of this function equals <var>AText</var>, <var>AText</var> is called an anagram.</p>
 </descr>
@@ -680,7 +738,7 @@ Thus
 <short>Replace part of a string with another string.</short>
 <descr>
 <var>StuffString</var>
- returns a copy of <var>AText</var> with the segment starting at <var>AStart</var> with length <var>ALength</var>, replaced with the string <var>ASubText</var>. 
+ returns a copy of <var>AText</var> with the segment starting at <var>AStart</var> with length <var>ALength</var>, replaced with the string <var>ASubText</var>.
 Basically it deletes the segment of <var>Atext</var> and inserts the new text in it's place.</descr>
 <errors>No checking on the validity of the AStart and ALength parameters is done. Providing invalid values may result in access violation errors.</errors>
 <seealso>
@@ -1191,7 +1249,7 @@ If <var>ACount</var> is zero or negative, no characters will be copied. The char
 <var>LeftBStr</var>
  returns a string containing the leftmost <var>AByteCount</var>
  bytes from the string <var>AText</var>
-. 
+.
 If <var>AByteCount</var>
  is larger than the length (in bytes) of <var>AText</var>
 , only as many bytes as available are returned.</descr>
@@ -1235,7 +1293,7 @@ If <var>AByteCount</var>
 <var>LeftStr</var>
  returns a string containing the leftmost <var>ACount</var>
  characters from the string <var>AText</var>
-. 
+.
 If <var>ACount</var>
  is larger than the length (in characters) of <var>AText</var>
 , only as many characters as available are returned.</descr>
@@ -1323,7 +1381,7 @@ If <var>ACount</var>
 <p>
 <var>MidStr</var>
  returns a string containing the first <var>ACount</var> bytes from the string <var>AText</var>
-starting at position <var>AStart</var>. If <var>AStart+ACount</var> is larger than the length (in characters) of 
+starting at position <var>AStart</var>. If <var>AStart+ACount</var> is larger than the length (in characters) of
 <var>AText</var>, only as many characters as available are returned.
 If <var>AStart</var> is less than 1 or larger than the length of <var>AText</var>, then no characters are returned.
 </p>
@@ -1489,9 +1547,9 @@ If <var>AStart</var> is less than 1 or larger than the length of <var>AText</var
 <descr>
 <p>
 <var>SearchBuf</var>
- searches the buffer <var>Buf</var> for the occurrence of <var>SearchString</var>. 
-At must <var>Buflen</var> characters are searched, and the search is started at <var>SelStart</var>+<var>SelLength</var>. 
-If a match is found, a pointer to the position of the match is returned. 
+ searches the buffer <var>Buf</var> for the occurrence of <var>SearchString</var>.
+At must <var>Buflen</var> characters are searched, and the search is started at <var>SelStart</var>+<var>SelLength</var>.
+If a match is found, a pointer to the position of the match is returned.
 The parameter <link id="TStringSearchOption">Options</link> specifies how the search is conducted. It is a set of the following options:
 </p>
 <table>
@@ -1652,7 +1710,7 @@ The parameter <link id="TStringSearchOption">Options</link> specifies how the se
 <short>Search for the occurrence of a character in a string, starting at a certain position.</short>
 <descr>
 <var>PosEx</var>
- returns the position of the first occurrence of the character <var>C</var> or the substring 
+ returns the position of the first occurrence of the character <var>C</var> or the substring
 <var>SubStr</var> in the string <var>S</var>, starting the search at position <var>Offset</var> (default 1).
 If <var>C</var> or <var>SubStr</var> does not occur in <var>S</var> after the given <var>Offset</var>, zero is returned.
 The position Offset is also searched.</descr>
@@ -1741,9 +1799,9 @@ The position Offset is also searched.</descr>
 <short>Compute the soundex of a string</short>
 <descr>
 <p>
-<var>Soundex</var> computes a soundex code for <var>AText</var>. 
+<var>Soundex</var> computes a soundex code for <var>AText</var>.
 The resulting code will at most have <var>ALength</var> characters.
-The soundex code is computed according to the US system of soundex computing, which may result in 
+The soundex code is computed according to the US system of soundex computing, which may result in
 inaccurate results in other languages.
 </p>
 <p>
@@ -1827,8 +1885,8 @@ and converts the code to an integer value.</descr>
 <short>Decodes the integer representation of a soundex code and returns the original soundex code.</short>
 <descr>
 <var>DecodeSoundexInt</var>
- converts the integer value <var>AValue</var> to a soundex string. 
-It performs the reverse operation of the <link id="SoundexInt"/>  function. 
+ converts the integer value <var>AValue</var> to a soundex string.
+It performs the reverse operation of the <link id="SoundexInt"/>  function.
 The result is the soundex string corresponding to <var>AValue</var>.
 .</descr>
 <errors>None.</errors>
@@ -1854,13 +1912,13 @@ The result is the soundex string corresponding to <var>AValue</var>.
 <short>Calculate a word-sized soundex value</short>
 <descr>
 <p>
-<var>SoundexInt</var> computes the <link id="Soundex"/> code (with length 4) 
+<var>SoundexInt</var> computes the <link id="Soundex"/> code (with length 4)
 of <var>AText</var>, and converts the code to a word-sized value.
 </p>
 <p>
 <var>AText</var> may not contain null characters.
 </p>
-</descr> 
+</descr>
 <errors>None.</errors>
 <seealso>
 <link id="Soundex"/>
@@ -1887,7 +1945,7 @@ of <var>AText</var>, and converts the code to a word-sized value.
 <descr>
 <var>DecodeSoundexWord</var>
  converts the integer value <var>AValue</var>
-  to a soundex string. 
+  to a soundex string.
 It performs the reverse operation of the <link id="SoundexWord"/>
   function.
 The result is the soundex string corresponding to <var>AValue</var>
@@ -2046,7 +2104,7 @@ equal, and <var>False</var> if they are not.</descr>
 <descr>
 <var>SoundexCompare</var>
  computes the soundex codes of <var>AText</var> and <var>AOther</var> and feeds these to <var>CompareText</var>.
-It will return -1 if the soundex code of <var>AText</var> is less than the soundex code of <var>AOther</var>, 0 if they are equal, 
+It will return -1 if the soundex code of <var>AText</var> is less than the soundex code of <var>AOther</var>, 0 if they are equal,
 and 1 if the code of <var>AOther</var> is larger than the code of <var>AText</var>.</descr>
 <errors>None.</errors>
 <seealso>
@@ -2087,7 +2145,7 @@ and 1 if the code of <var>AOther</var> is larger than the code of <var>AText</va
 <short>Default AnsiResemblesText implementation.</short>
 <descr>
 <var>SoundexProc</var>
- is the standard implementation for the <link id="AnsiResemblesText"/> procedure: 
+ is the standard implementation for the <link id="AnsiResemblesText"/> procedure:
 By default, <var>AnsiResemblesProc</var> is set to this function.
 It compares the soundex codes of <var>AOther</var> and <var>AText</var> and returns <var>True</var> if they are equal, or <var>False</var> if they are not.</descr>
 <errors>None.</errors>
@@ -2159,8 +2217,8 @@ It compares the soundex codes of <var>AOther</var> and <var>AText</var> and retu
 
 <element name="AnsiResemblesProc">
 <short>Procedural variable, called when checking 2 strings for resemblances in <link id="AnsiResemblesText"/></short>
-<descr>This procedural variable is standard set to <link id="SoundexProc"/> but can be overriden with a user-defined algorithm. 
-This algorithm should return <var>True</var> if <var>AText</var> resembles <var>AOtherText</var>, or <var>False</var> otherwise. 
+<descr>This procedural variable is standard set to <link id="SoundexProc"/> but can be overriden with a user-defined algorithm.
+This algorithm should return <var>True</var> if <var>AText</var> resembles <var>AOtherText</var>, or <var>False</var> otherwise.
 The standard routine compares the soundexes of the two strings and returns <var>True</var> if they are equal.</descr>
 <errors>None</errors>
 <seealso>
@@ -2174,7 +2232,7 @@ The standard routine compares the soundexes of the two strings and returns <var>
 <short>Check whether a string is empty, disregarding whitespace characters</short>
 <descr>
 <var>IsEmptyStr</var>
- returns <var>True</var> if the string <var>S</var> only contains characters whitespace characters, all characters in <var>EmptyChars</var> are considered whitespace characters. 
+ returns <var>True</var> if the string <var>S</var> only contains characters whitespace characters, all characters in <var>EmptyChars</var> are considered whitespace characters.
 If a character not present in <var>EmptyChars</var> is found in <var>S</var>, <var>False</var> is returned.</descr>
 <errors>None.</errors>
 <seealso>
@@ -2354,7 +2412,7 @@ If a character not present in <var>EmptyChars</var> is found in <var>S</var>, <v
 <element name="NPos">
 <short>Returns the position of the N-th occurrence of a substring in a string.</short>
 <descr>
-<var>NPos</var> checks <var>S</var> for the position of the <var>N</var>-th occurrence of <var>C</var>. 
+<var>NPos</var> checks <var>S</var> for the position of the <var>N</var>-th occurrence of <var>C</var>.
 If <var>C</var> occurs less than <var>N</var> times in <var>S</var>, or does not occur in <var>S</var> at all, 0 is returned.
 If <var>N</var> is less than 1, zero is returned.</descr>
 <errors>None.</errors>
@@ -2403,7 +2461,7 @@ If <var>N</var> is less than 1, zero is returned.</descr>
 <var>AddChar</var> adds characters (<var>C</var>) to the left of S
 till the length <var>N</var> is reached, and returns the resulting string.
 If the length of <var>S</var> is already equal to or larger than <var>N</var>,
-then no characters are added. The resulting string can be thought of as a 
+then no characters are added. The resulting string can be thought of as a
 right-aligned version of <var>S</var>, with length <var>N</var>.</descr>
 <errors>None</errors>
 <seealso>
@@ -2580,7 +2638,7 @@ The resulting string is <var>S</var>, left-justified on length <var>Len</var>.</
 <short>Pad the string to a certain length, so the string is centered.</short>
 <descr>
 <var>PadCenter</var>
- add spaces to the left and right of the string <var>S</var> till the result reaches length <var>Len</var>. 
+ add spaces to the left and right of the string <var>S</var> till the result reaches length <var>Len</var>.
 If the number of spaces to add is odd, then the extra space will be added at the end.
 If the string <var>S</var> has length equal to or larger than <var>Len</var>, no spaces are added, and the string <var>S</var> is returned as-is.</descr>
 <errors>None.</errors>
@@ -2622,8 +2680,8 @@ If the string <var>S</var> has length equal to or larger than <var>Len</var>, no
 <descr>
 <p>
 <var>Copy2Symb</var>
- determines the position of the first occurrence of <var>Symb</var> in the string <var>S</var> 
-and returns all characters up to this position. The <var>Symb</var> character itself is not included in the result string. The string <var>S</var> is left untouched. 
+ determines the position of the first occurrence of <var>Symb</var> in the string <var>S</var>
+and returns all characters up to this position. The <var>Symb</var> character itself is not included in the result string. The string <var>S</var> is left untouched.
 If <var>Symb</var> does not appear in <var>S</var>, then the whole of <var>S</var> is returned.
 </p>
 </descr>
@@ -2664,7 +2722,7 @@ If <var>Symb</var> does not appear in <var>S</var>, then the whole of <var>S</va
 <descr>
 <p>
 <var>Copy2SymbDel</var>
-  determines the position of the first occurrence of <var>Symb</var> in the string <var>S</var> 
+  determines the position of the first occurrence of <var>Symb</var> in the string <var>S</var>
 and returns all characters up to this position. The <var>Symb</var> character itself is not included in the result string.
 All returned characters and the <var>Symb</var> character, are deleted from the string <var>S</var>, after which it is right-trimmed.
 If <var>Symb</var> does not appear in <var>S</var>, then the whole of <var>S</var> is returned, and <var>S</var> itself is emptied.
@@ -2743,7 +2801,7 @@ If there is no space in <var>S</var>, then the whole string <var>S</var> is retu
 <descr>
 <p>
 <var>Copy2SpaceDel</var>
- determines the position of the first space in the string <var>S</var> 
+ determines the position of the first space in the string <var>S</var>
 and returns all characters up to this position. The space character itself is not included in the result string.
 All returned characters, including the space, are deleted from the string <var>S</var>, after which it is right-trimmed.
 If there is no space in <var>S</var>, then the whole string <var>S</var> is returned, and <var>S</var> itself is emptied.
@@ -2780,7 +2838,7 @@ If there is no space in <var>S</var>, then the whole string <var>S</var> is retu
 <descr>
 <var>AnsiProperCase</var>
  converts <var>S</var> to an all lowercase string, but capitalizes the first letter of every word in the string, and returns the resulting string.
-When searching for words, the characters in <var>WordDelimiters</var> are used to determine the boundaries of words. 
+When searching for words, the characters in <var>WordDelimiters</var> are used to determine the boundaries of words.
 The constant <link id="StdWordDelims"/> can be used for this.</descr>
 <errors/>
 <seealso/>
@@ -2816,7 +2874,7 @@ The constant <link id="StdWordDelims"/> can be used for this.</descr>
 <descr>
 <p>
 <var>WordCount</var>
- returns the number of words in the string <var>S</var>. 
+ returns the number of words in the string <var>S</var>.
 A word is a non-empty string of characters bounded by one of the characters in <var>WordDelims</var>.
 </p>
 <p>The predefined <link id="StdWordDelims"/> constant can be used for the <var>WordDelims</var> argument.
@@ -2915,13 +2973,13 @@ If <var>N</var>  is out of range, zero is returned.
 <descr>
 <p>
 <var>ExtractWord</var>
-extracts the <var>N</var>-th word from the string <var>S</var>. 
-The set of characters in <var>WordDelims</var> are used to mark word boundaries. 
+extracts the <var>N</var>-th word from the string <var>S</var>.
+The set of characters in <var>WordDelims</var> are used to mark word boundaries.
 A word is defined as any non-empty sequence of characters which are not present in <var>WordDelims</var>:
 if a character is not in <var>WordDelims</var>, it is considered as part of a word.
 If an <var>N</var>-th word cannot be found, an empty string is returned.
 </p>
-<p>Unlike <link id="ExtractDelimited"/>, an empty string is not a valid return value, i.e. is not a word. 
+<p>Unlike <link id="ExtractDelimited"/>, an empty string is not a valid return value, i.e. is not a word.
 If an empty string is returned, the index <var>N</var> was out of range.
 </p>
 <p>The predefined constant <link id="StdWordDelims"/> can be used for the <var>WordDelims</var> argument.
@@ -2977,9 +3035,9 @@ If an empty string is returned, the index <var>N</var> was out of range.
 <p>
 <var>ExtractWordPos</var>
  extracts the <var>N</var>-th word from the string <var>S</var>
-and returns the position of this word in <var>Pos</var>. 
+and returns the position of this word in <var>Pos</var>.
 The set of characters in <var>WordDelims</var>
- are used to mark word boundaries. 
+ are used to mark word boundaries.
 A word is defined as any non-empty sequence of characters which are not present in <var>WordDelims</var>
 :
 if a character is not in <var>WordDelims</var>
@@ -2987,8 +3045,8 @@ if a character is not in <var>WordDelims</var>
 If an <var>N</var>
 -th word cannot be found, an empty string is returned and <var>Pos</var> is zero.
 </p>
-<p>Unlike <link id="ExtractDelimited"/>, an empty string is not a valid return value, i.e. is not a word. 
-If an empty string is returned, the index <var>N</var> was out of range. 
+<p>Unlike <link id="ExtractDelimited"/>, an empty string is not a valid return value, i.e. is not a word.
+If an empty string is returned, the index <var>N</var> was out of range.
 </p>
 <p>The predefined constant <link id="StdWordDelims"/> can be used for the <var>WordDelims</var> argument.
 </p>
@@ -3050,8 +3108,8 @@ If an empty string is returned, the index <var>N</var> was out of range.
 <p>
 <var>ExtractDelimited</var>
  extracts the <var>N</var>-th part from the string <var>S</var>.
-The set of characters in <var>Delims</var> are used to mark part boundaries. 
-When a delimiter is encountered, a new part is started and the old part is ended. 
+The set of characters in <var>Delims</var> are used to mark part boundaries.
+When a delimiter is encountered, a new part is started and the old part is ended.
 Another way of stating this is that any (possibly empty) series of characters not in <var>Delims</var>,
 situated between 2 characters in <var>Delims</var>, it is considered as piece of a part.
 This means that if 2 delimiter characters appear next to each other, there is an empty part between it.
@@ -3059,7 +3117,7 @@ If an <var>N</var>-th part cannot be found, an empty string is returned. However
 unlike <link id="ExtractWord"/>, an empty string is a valid return value, i.e. a part can be empty.
 </p>
 <p>The predefined constant <link id="StdWordDelims"/> can be used for the <var>Delims</var> argument.
-The predefined constant <link id="Brackets"/> would be better suited the <var>Delims</var> argument 
+The predefined constant <link id="Brackets"/> would be better suited the <var>Delims</var> argument
 e.g. in case factors in a  mathematical expression are searched.
 </p>
 </descr>
@@ -3109,7 +3167,7 @@ e.g. in case factors in a  mathematical expression are searched.
 <descr>
 <p>
 <var>ExtractSubStr</var>
- returns all characters from <var>S</var> starting at position <var>Pos</var> till the first character in <var>Delims</var>, 
+ returns all characters from <var>S</var> starting at position <var>Pos</var> till the first character in <var>Delims</var>,
 or till the end of <var>S</var> is reached.
 The delimiter character is not included in the result.
 <var>Pos</var> is then updated to point to the next first non-delimiter character in <var>S</var>.
@@ -3164,9 +3222,9 @@ If <var>Pos</var> is larger than the Length of <var>S</var>, an empty string is 
 <descr>
 <p>
 <var>IsWordPresent</var>
- checks for the presence of the word <var>W</var> in the string <var>S</var>. 
+ checks for the presence of the word <var>W</var> in the string <var>S</var>.
 Words are delimited by the characters found in <var>WordDelims</var>.
-The function returns <var>True</var> if a match is found, <var>False</var> otherwise. 
+The function returns <var>True</var> if a match is found, <var>False</var> otherwise.
 The search is performed case sensitive.
 </p>
 <p>This function is equivalent to the <link id="SearchBuf"/> function with the <var>soWholeWords</var> option specified.
@@ -3254,12 +3312,12 @@ Currently, the only valid wildcards is the "?" character.</descr>
 <short>Check whether a string matches a wildcard search expression.</short>
 <descr>
 <p>
-<var>IsWild</var> checks <var>InputStr</var> for the presence of the <var>Wilds</var> string. 
+<var>IsWild</var> checks <var>InputStr</var> for the presence of the <var>Wilds</var> string.
 <var>Wilds</var> may contain "?" and "*" wildcard characters, which have their usual meaning:
 "*" matches any series of characters, possibly empty. "?" matches any single character.
 The function returns <var>True</var> if a string is found that matches <var>Wilds</var>, <var>False</var> otherwise.
 </p>
-<p>If <var>IgnoreCase</var> is <var>True</var>, the non-wildcard characters are matched case insensitively. 
+<p>If <var>IgnoreCase</var> is <var>True</var>, the non-wildcard characters are matched case insensitively.
 If it is <var>False</var>, case is observed when searching.
 </p>
 </descr>
@@ -3310,9 +3368,9 @@ If it is <var>False</var>, case is observed when searching.
 <p>
 <var>XorString</var>
  encodes the string <var>Src</var> by XOR-ing each character in <var>Source</var> with the corresponding character in <var>Key</var>, repeating <var>Key</var> as often as necessary.
-The resulting string may contain unreadable characters and may even contain null characters. 
-For this reason it may be a better idea to use the <link id="XorEncode"/> function instead, 
-which will representing each resulting ASCII code as a hexadecimal number (of length 2). 
+The resulting string may contain unreadable characters and may even contain null characters.
+For this reason it may be a better idea to use the <link id="XorEncode"/> function instead,
+which will representing each resulting ASCII code as a hexadecimal number (of length 2).
 </p>
 <p>Feeding the result again to <var>XorString</var> with the same <var>Key</var>, will result in the original string <var>Src</var>.
 </p>
@@ -3354,7 +3412,7 @@ which will representing each resulting ASCII code as a hexadecimal number (of le
 <descr>
 <p>
 <var>XorEncode</var>
- encodes the string <var>Source</var> by XOR-ing each character in <var>Source</var> with the corresponding character in <var>Key</var> (repeating <var>Key</var> as often as necessary) and representing the resulting ASCII code as a hexadecimal number (of length 2). The result is therefore twice as long as the original string, and every 2 bytes represent an ASCII code. 
+ encodes the string <var>Source</var> by XOR-ing each character in <var>Source</var> with the corresponding character in <var>Key</var> (repeating <var>Key</var> as often as necessary) and representing the resulting ASCII code as a hexadecimal number (of length 2). The result is therefore twice as long as the original string, and every 2 bytes represent an ASCII code.
 </p>
 <p>Feeding the resulting string with the same key <var>Key</var> to the <link id="XorDecode"/> function will result in the original <var>Source</var> string.
 </p>
@@ -3437,9 +3495,9 @@ If a different key is used than the key used to encode the string, the result wi
 <descr>
 <p>
 <var>GetCmdLineArg</var>
- returns the value for the <var>Switch</var> option on the command-line, if any is given. 
+ returns the value for the <var>Switch</var> option on the command-line, if any is given.
 Command-line arguments are considered switches if they start with one of the characters in the <var>SwitchChars</var> set.
-The value is the command-line argument following the switch command-line argument. 
+The value is the command-line argument following the switch command-line argument.
 </p>
 <p>Gnu-style (long) Options of the form switch=value are not supported.
 </p>
@@ -3514,8 +3572,8 @@ The string <var>S</var> should contain a valid integer number, i.e. no digital n
 <short>Converts a hexadecimal string to a decimal value</short>
 <descr>
 <var>Hex2Dec</var>
- converts the hexadecimal value in the string <var>S</var> to its decimal value. 
-Unlike the standard <var>Val</var>or <var>StrToInt</var> functions, there need not be a $ sign in 
+ converts the hexadecimal value in the string <var>S</var> to its decimal value.
+Unlike the standard <var>Val</var>or <var>StrToInt</var> functions, there need not be a $ sign in
 front of the hexadecimal value to indicate that it is indeed a hexadecimal value.</descr>
 <errors>If <var>S</var> does not contain a valid hexadecimal value, an <var>EConvertError</var> exception will be raised.</errors>
 <seealso>
@@ -3546,7 +3604,7 @@ front of the hexadecimal value to indicate that it is indeed a hexadecimal value
 <element name="Dec2Numb">
 <short>Convert a decimal number to a string representation, using given a base.</short>
 <descr>
-<var>Dec2Numb</var> converts <var>N</var> to its representation using base <var>Base</var>. 
+<var>Dec2Numb</var> converts <var>N</var> to its representation using base <var>Base</var>.
 <var>N</var> must be a positive integer.
 The resulting string is left-padded with zeroes till it has length <var>Len</var>.
 <var>Base</var> must be in the range 2-36 to be meaningful, but no checking on this is performed.</descr>
@@ -3594,8 +3652,8 @@ is out of range, the resulting string will contain unreadable (non-alphanumeric)
 <short>Converts a string representation of a number to its numerical value, given a certain base.</short>
 <descr>
 <var>Numb2Dec</var>
- converts the number in string <var>S</var> to a decimal value. 
-It assumes the number is represented using <var>Base</var> as the base. 
+ converts the number in string <var>S</var> to a decimal value.
+It assumes the number is represented using <var>Base</var> as the base.
 No checking is performed to see whether <var>S</var> contains a valid number using base <var>Base</var>.</descr>
 <var>S</var> must be the representation of a positive integer.
 <errors>None.</errors>
@@ -3775,7 +3833,7 @@ On error, a <link id="sysutils.EConvertError">EConvertError</link> exception is 
 
 <element name="TStringSeachOption">
 <short>Possible options for <link id="SearchBuf"/>   call.</short>
-<descr>There is an typo error in the original Borland StrUtils unit. 
+<descr>There is an typo error in the original Borland StrUtils unit.
 This type just refers to the correct <link id="TStringSearchOption"/> and is provided for compatibility only.</descr>
 <errors/>
 <seealso/>
@@ -3795,7 +3853,7 @@ This type just refers to the correct <link id="TStringSearchOption"/> and is pro
 <short>Convert a binary buffer to a hexadecimal string</short>
 <descr>
 <p>
-<var>BinToHex</var> converts the byte values in <var>BinValue</var> 
+<var>BinToHex</var> converts the byte values in <var>BinValue</var>
 to a string consisting of 2-charachter hexadecimal strings in
 <var>HexValue</var>.
 <var>BufSize</var> specifies the length of <var>BinValue</var>, which means
@@ -3821,7 +3879,7 @@ may follow.
 <short>Convert a hexadecimal string to a binary buffer</short>
 <descr>
 <var>HexToBin</var> scans the hexadecimal string representation in
-<var>HexValue</var> and transforms every 2 character hexadecimal 
+<var>HexValue</var> and transforms every 2 character hexadecimal
 number to a byte and stores it in <var>BinValue</var>. The buffer size is
 the size of the binary buffer. Scanning will stop if the size of the binary
 buffer is reached or when an invalid character is encountered. The return
@@ -3843,7 +3901,7 @@ may follow.
 <var>RPos</var> looks in <var>S</var> for the character <var>C</var> or the string
 <var>SubStr</var>. It starts looking at the end of the string, and searches
 towards the beginning of the string. If a match is found, it returns the
-position of the match. 
+position of the match.
 </descr>
 <seealso>
 <link id="RPosEx"/>
@@ -3856,8 +3914,8 @@ position of the match.
 <descr>
 <var>RPos</var> looks in <var>S</var> for the character <var>C</var> or the string
 <var>SubStr</var>. It starts looking at position <var>Offs</var> (counted
-from the start of the string), and searches towards the beginning of the string. 
-If a match is found, it returns the position of the match. 
+from the start of the string), and searches towards the beginning of the string.
+If a match is found, it returns the position of the match.
 </descr>
 <seealso>
 <link id="RPos"/>
@@ -3869,8 +3927,8 @@ If a match is found, it returns the position of the match.
 <element name="PosSet">
 <short>Return the position in a string of any character out of a set of characters</short>
 <descr>
-<var>PosSet</var> returns the position in <var>s</var> of the first found character which is 
-in the set <var>c</var>. If none of the characters in <var>c</var> is found in <var>s</var>, 
+<var>PosSet</var> returns the position in <var>s</var> of the first found character which is
+in the set <var>c</var>. If none of the characters in <var>c</var> is found in <var>s</var>,
 then <var>0</var> is returned.
 </descr>
 <errors>
@@ -3890,7 +3948,7 @@ None.
 <short>Return the position in a string of any character out of a set of characters, starting at a certain position</short>
 <descr>
 <var>PosSetEx</var> returns the position in <var>s</var> of the first found character which is
-in the set <var>c</var>, and starts searching at character position <var>Count</var>. 
+in the set <var>c</var>, and starts searching at character position <var>Count</var>.
 If none of the characters in <var>c</var> is found in <var>s</var>,
 then <var>0</var> is returned.
 </descr>
@@ -3930,7 +3988,7 @@ None.
 <element name="RemoveTrailingChars">
 <short>Remove any trailing characters in a set from a string</short>
 <descr>
-<var>RemoveTrailingChars</var> removes any trailing characters from <var>S</var> that appear in the set <var>CSet</var>, 
+<var>RemoveTrailingChars</var> removes any trailing characters from <var>S</var> that appear in the set <var>CSet</var>,
 i.e. it starts with the last character and works its way to the start of the string.
 It stops removing characters as soon as a character not in <var>CSet</var> is encountered.
 This is similar in behaviour to <link id="#rtl.sysutils.TrimRight">TrimRight</link> which used whitespace as the set.
@@ -3950,8 +4008,8 @@ This is similar in behaviour to <link id="#rtl.sysutils.TrimRight">TrimRight</li
 <short>Remove any trailing or leading characters in a set from a string</short>
 <descr>
 <var>RemovePadChars</var> removes any leading trailing characters from <var>S</var> that appear in the set <var>CSet</var>,
-i.e. it starts with the last character and works its way to the start of the string, and it stops removing characters as 
-soon as a character not in <var>CSet</var> is encountered. Then the same procedure is repeated starting from the beginning 
+i.e. it starts with the last character and works its way to the start of the string, and it stops removing characters as
+soon as a character not in <var>CSet</var> is encountered. Then the same procedure is repeated starting from the beginning
 of the string. This is similar in behaviour to <link id="#rtl.sysutils.Trim">Trim</link> which used whitespace as the set.
 </descr>
 <errors>
@@ -3972,7 +4030,7 @@ None.
 <element name="TrimLeftSet">
 <short>Remove any leading characters in a set from a string and returns the result</short>
 <descr>
-<var>TrimLeftSet</var> performs the same action as <link id="RemoveLeadingChars"/>, but 
+<var>TrimLeftSet</var> performs the same action as <link id="RemoveLeadingChars"/>, but
 returns the resulting string.
 </descr>
 <errors>
@@ -4071,7 +4129,7 @@ raised.
 <element name="ReplaceStr">
 <short>Replace strings case-sensitively</short>
 <descr>
-<var>ReplaceStr</var> is a utility function that scans <var>AText</var> and 
+<var>ReplaceStr</var> is a utility function that scans <var>AText</var> and
 replaces all occurrences of <var>AFromText</var> with <var>AToText</var> and
 returns the resulting string.
 It simply calls <link id="#rtl.sysutils.StringReplace">StringReplace</link>
@@ -4087,13 +4145,13 @@ with the appropriate options.
 <element name="ReplaceText">
 <short>Replace strings case-insensitively</short>
 <descr>
-<var>ReplaceText</var> is a utility function that scans <var>AText</var> and 
+<var>ReplaceText</var> is a utility function that scans <var>AText</var> and
 replaces all occurrences of <var>AFromText</var> (case insensitive) with
 <var>AToText</var>and returns the resulting string.
-It simply calls <link id="#rtl.sysutils.StringReplace">StringReplace</link>  
-with the appropriate options. 
-</descr>  
-<seealso> 
+It simply calls <link id="#rtl.sysutils.StringReplace">StringReplace</link>
+with the appropriate options.
+</descr>
+<seealso>
 <link id="#rtl.sysutils.StringReplace">StringReplace</link>
 <link id="ReplaceText"/>
 </seealso>
@@ -4109,7 +4167,7 @@ to decide how to react to invalid roman numerals.
 </p>
 <dl>
 <dt>rcsStrict</dt>
-<dd>Strict adherence to roman numerals. 
+<dd>Strict adherence to roman numerals.
 Up to 3 consecutive identical letters. No negative numbers. Ordering must be correct.
 </dd>
 <dt>rcsRelaxed</dt>
@@ -4169,7 +4227,7 @@ conversion succeeds, then <var>True</var> is returned, or else <var>False</var>.
 <descr>
 <var>RomanToInt</var> converts the roman numeral in <var>S</var> to
 an integer and returns the integer value. The strictness of
-the conversion algorithm is determined by <var>Strictness</var>. 
+the conversion algorithm is determined by <var>Strictness</var>.
 If the conversion fails, <var>ADefault</var> is returned.
 </descr>
 <seealso>
@@ -4185,9 +4243,9 @@ If the conversion fails, <var>ADefault</var> is returned.
 <short>Check whether a string occurs in an array of strings, observing case.</short>
 <descr>
 <p>
-<var>MatchStr</var>  matches <var>AText</var> against each Unicode string in <var>AValues</var>. 
+<var>MatchStr</var>  matches <var>AText</var> against each Unicode string in <var>AValues</var>.
 If a match is found, it returns <var>True</var>, otherwise <var>False</var> is returned.
-The strings are matched observing case. 
+The strings are matched observing case.
 </p>
 <p>This function simply calls <link id="IndexStr"/> and checks whether it returns -1 or not.
 </p>
@@ -4202,8 +4260,8 @@ The strings are matched observing case.
 <element name="IndexStr">
 <short>Searches, observing case, for a string in an array of strings.</short>
 <descr>
-<var>IndexStr</var> matches <var>AText</var> against each Unicode string in <var>AValues</var>. 
-If a match is found, the corresponding index (zero-based) in the <var>AValues</var> array is returned. 
+<var>IndexStr</var> matches <var>AText</var> against each Unicode string in <var>AValues</var>.
+If a match is found, the corresponding index (zero-based) in the <var>AValues</var> array is returned.
 If no match is found, -1 is returned. The strings are matched observing case.
 </descr>
 <errors>None.</errors>
@@ -4259,7 +4317,7 @@ specified, the defaults from the system unit will be used.
 <element name="FindMatchesBoyerMooreCaseSensitive">
 <short>Find case-sensitive matches of a string using a Boyer-Moore algorithm</short>
 <descr>
-<var>FindMatchesBoyerMooreCaseSensitive</var> finds occurrences of <var>OldPattern</var> 
+<var>FindMatchesBoyerMooreCaseSensitive</var> finds occurrences of <var>OldPattern</var>
 (with length <var>OldPatternSize</var>) in <var>S</var> (with length <var>SSize</var>).
 The search is performed case-sensitively, and all (zero based) positions are
 reported in <var>aMatches</var>. If <var>aMatchAll</var> is <var>True</var>,
@@ -4279,7 +4337,7 @@ None.
 <element name="FindMatchesBoyerMooreCaseInSensitive">
 <short>Find case-insensitive matches of a string using a Boyer-Moore algorithm</short>
 <descr>
-<var>FindMatchesBoyerMooreCaseInSensitive</var> finds occurrences of <var>OldPattern</var> 
+<var>FindMatchesBoyerMooreCaseInSensitive</var> finds occurrences of <var>OldPattern</var>
 (with length <var>OldPatternSize</var>) in <var>S</var> (with length <var>SSize</var>).
 The search is performed case-insensitively, and all (zero based) positions are
 reported in <var>aMatches</var>. If <var>aMatchAll</var> is <var>True</var>,
@@ -4361,8 +4419,8 @@ None.
 <element name="StartsText">
 <short>Check whether one text starts with another</short>
 <descr>
-<var>StarsText</var> checks whether <var>aText</var> starts with <var>aSubText</var>  and returns <var>True</var> if it does. 
-i.e. it returns true if the first characters of <var>aText</var> are <var>aSubText</var>. 
+<var>StarsText</var> checks whether <var>aText</var> starts with <var>aSubText</var>  and returns <var>True</var> if it does.
+i.e. it returns true if the first characters of <var>aText</var> are <var>aSubText</var>.
 It follows that the length of <var>aText</var> must be at least the length of <var>aSubText</var>.
 The comparison is made case-insensitive. If you wish to compare case-sensitively, use <link id="StartsStr"/> instead.
 </descr>
@@ -4377,8 +4435,8 @@ The comparison is made case-insensitive. If you wish to compare case-sensitively
 <element name="EndsText">
 <short>Check whether one text ends with another</short>
 <descr>
-<var>StarsText</var> checks whether <var>aText</var> ends with <var>aSubText</var>  and returns <var>True</var> if it does. 
-i.e. it returns true if the last characters of <var>aText</var> are <var>aSubText</var>. 
+<var>StarsText</var> checks whether <var>aText</var> ends with <var>aSubText</var>  and returns <var>True</var> if it does.
+i.e. it returns true if the last characters of <var>aText</var> are <var>aSubText</var>.
 It follows that the length of <var>aText</var> must be at least the length of <var>aSubText</var>.
 The comparison is made case-insensitive. If you wish to compare case-sensitively, use <link id="EndsStr"/> instead.
 </descr>
@@ -4393,8 +4451,8 @@ The comparison is made case-insensitive. If you wish to compare case-sensitively
 <element name="StartsStr">
 <short>Check whether one string starts with another</short>
 <descr>
-<var>StarsText</var> checks whether <var>aText</var> starts with <var>aSubText</var>  and returns <var>True</var> if it does. 
-i.e. it returns true if the first characters of <var>aText</var> are <var>aSubText</var>. 
+<var>StarsText</var> checks whether <var>aText</var> starts with <var>aSubText</var>  and returns <var>True</var> if it does.
+i.e. it returns true if the first characters of <var>aText</var> are <var>aSubText</var>.
 It follows that the length of <var>aText</var> must be at least the length of <var>aSubText</var>.
 The comparison is made case-sensitive. If you wish to compare case-insentively, use <link id="StartsText"/> instead.
 </descr>
@@ -4409,8 +4467,8 @@ The comparison is made case-sensitive. If you wish to compare case-insentively, 
 <element name="EndsStr">
 <short>Check whether one string ends with another</short>
 <descr>
-<var>StarsText</var> checks whether <var>aText</var> ends with <var>aSubText</var>  and returns <var>True</var> if it does. 
-i.e. it returns true if the last characters of <var>aText</var> are <var>aSubText</var>. 
+<var>StarsText</var> checks whether <var>aText</var> ends with <var>aSubText</var>  and returns <var>True</var> if it does.
+i.e. it returns true if the last characters of <var>aText</var> are <var>aSubText</var>.
 It follows that the length of <var>aText</var> must be at least the length of <var>aSubText</var>.
 The comparison is made case-sensitive. If you wish to compare case-insensitively, use <link id="EndsText"/> instead.
 </descr>
@@ -4425,12 +4483,12 @@ The comparison is made case-sensitive. If you wish to compare case-insensitively
 <element name="MatchText">
 <short>Check if a string is in a list of values</short>
 <descr>
-<var>MatchText</var> returns <var>True</var> if <var>aText</var> equals one of the strings in <var>aValues</var>. 
+<var>MatchText</var> returns <var>True</var> if <var>aText</var> equals one of the strings in <var>aValues</var>.
 The comparison is done case insensitively. If you wish to compare case sensitively, use <link id="MatchStr"/> instead.
 </descr>
 <seealso>
-<link id="MatchStr"/> 
-<link id="AnsiMatchText"/> 
+<link id="MatchStr"/>
+<link id="AnsiMatchText"/>
 <link id="IndexText"/>
 </seealso>
 </element>
@@ -4444,9 +4502,9 @@ The comparison is done case insensitively. If you wish to compare case sensitive
 The comparison is done case insensitively. If you wish to compare case sensitively, use <link id="IndexStr"/> instead.
 </descr>
 <seealso>
-<link id="IndexStr"/> 
-<link id="MatchText"/> 
-<link id="AnsiIndexText"/> 
+<link id="IndexStr"/>
+<link id="MatchText"/>
+<link id="AnsiIndexText"/>
 </seealso>
 </element>
 
@@ -4476,7 +4534,7 @@ This is the (unicode string) operator equivalent of <link id="IndexStr"/>
 <element name="Hex2Dec64">
 <short>Convert hexadecimal value to 64-bit integer</short>
 <descr>
-<var>Hex2Dec64</var> converts the hexadecimal number in S to a 64-bit value and returns the result. 
+<var>Hex2Dec64</var> converts the hexadecimal number in S to a 64-bit value and returns the result.
 It is equivalent  to <var>StrToInt('$'+S)</var>.
 </descr>
 <seealso>
@@ -4527,7 +4585,7 @@ It is equivalent  to <var>StrToInt('$'+S)</var>.
 <short>Split a string in words</short>
 <descr>
 <p>
-<var>SplitString</var> will split the string (<var>S</var>) using the characters in <var>Delimiters</var> as separator characters. 
+<var>SplitString</var> will split the string (<var>S</var>) using the characters in <var>Delimiters</var> as separator characters.
 The result contains all words separated by one of the characters in  <var>Delimiters</var>.
 </p>
 <p>
