@@ -14,7 +14,7 @@
 <p>
 The <file>BaseUnix</file> unit was implemented by Marco Van de Voort.
 It contains basic Unix functionality. It supersedes the Linux unit of
-version 1.0.X of the compiler, but only implements a cleaned up, portable 
+version 1.0.X of the compiler, but only implements a cleaned up, portable
 subset of that unit.
 </p>
 <p>
@@ -1371,6 +1371,113 @@ Pointer to the long double type <link id="clongdouble"/>
 <short>File (<link id="#rtl.baseunix.stat"/> record) mode: FIFO</short>
 </element>
 
+
+<!-- record type Visibility: default -->
+<element name="tfpxreg">
+<short>Record describing 16-byte floating point register in signal handler.</short>
+</element>
+<element name="tfpxreg.significand">
+<short>Decimal part of floating point value</short>
+</element>
+<element name="tfpxreg.exponent">
+<short>Exponent of floating point value</short>
+</element>
+<!-- variable Visibility: default -->
+<element name="tfpxreg.padding">
+<short>Padding variable</short>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="txmmreg">
+<short>Record describing 16-byte MMX register in signal handler.</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="txmmreg.element">
+<short>Words in the register</short>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="tfpx_sw_bytes">
+<short>Extended state information in signal handler</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpx_sw_bytes.magic1">
+<short>Extended context area (of size <var>extended_size</var>) present if equal to $46505853U </short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpx_sw_bytes.extended_size">
+<short>Size of extended context area</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpx_sw_bytes.xfeatures">
+<short>Feature bit mask</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpx_sw_bytes.xstate_size">
+<short>Size of extended state</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpx_sw_bytes.padding">
+<short>Padding bytes</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpstate.magic">
+<short>Describes type of content</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpstate.fxsr_env">
+<short>FXSR FPU environment (Ignored)</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpstate.mxcsr">
+<short>FXSR FPU environment</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpstate.reserved">
+<short>Reserved bytes</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpstate.fxsr_st">
+<short>FXSR FPU reg data (ignored)</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpstate.xmmreg">
+<short>First 8 XMM registers</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpstate.padding">
+<short>Padding bytes</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpstate.padding2">
+<short>Padding bytes</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpstate.sw_reserved">
+<short>Reserved bytes</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="tfpstate.padding1">
+<short>Padding bytes</short>
+</element>
+
+
 <element name="SigActionHandler">
 <short>Callback prototype for a <link id="#rtl.baseunix.SigActionRec"/> record.</short>
 <descr>
@@ -2147,31 +2254,31 @@ not be available on all platforms.
 <short>Record describing floating point unit in signal handler.</short>
 </element>
 <element name="tfpstate.cw">
-<short></short>
+<short>FPU state CW (legacy)</short>
 </element>
 <element name="tfpstate.sw">
-<short></short>
+<short>FPU state SW (legacy)</short>
 </element>
 <element name="tfpstate.tag">
-<short></short>
+<short>FPU state tag (legacy)</short>
 </element>
 <element name="tfpstate.ipoff">
-<short></short>
+<short>FPU state ipoff (legacy)</short>
 </element>
 <element name="tfpstate.cssel">
-<short></short>
+<short>FPU state cssel (legacy)</short>
 </element>
 <element name="tfpstate.dataoff">
-<short></short>
+<short>FPU state dataoff (legacy)</short>
 </element>
 <element name="tfpstate.datasel">
-<short></short>
+<short>FPU state dataoff (legacy)</short>
 </element>
 <element name="tfpstate.st">
-<short></short>
+<short>FPU state ST (legacy)</short>
 </element>
 <element name="tfpstate.status">
-<short></short>
+<short>FPU state status (legacy)</short>
 </element>
 
 <!-- array type Visibility: default -->
@@ -2379,7 +2486,7 @@ None
 <element name="FpUmask">
 <short>Set file creation mask.</short>
 <descr>
-<var>fpUmask</var> changes the file creation mask for the current user to 
+<var>fpUmask</var> changes the file creation mask for the current user to
 <var>cmask</var>. The current mask is returned.
 </descr>
 <seealso>
@@ -2574,8 +2681,8 @@ symbolic link, i.e. a symbolic link, whose expansion points to itself.</dd>
 the <var>times</var> record contains 2 fields, <var>actime</var>, and <var>modtime</var>,
 both of type Longint. They should be filled with an epoch-like time,
 specifying, respectively, the last access time, and the last modification
-time. 
-For some file system (most notably, FAT), these times are the same. 
+time.
+For some file system (most notably, FAT), these times are the same.
 </descr>
 <errors>
 <p>
@@ -2587,7 +2694,7 @@ On error, -1 is returned. Extended error information can be retrieved with
 <dd>One of the directories in <var>Path</var> has no
 search (=execute) permission.</dd>
 <dt>sys_enoent</dt>
-<dd>A directory entry in <var>Path</var> does 
+<dd>A directory entry in <var>Path</var> does
 not exist or is a symbolic link pointing to a non-existent directory.
 </dd>
 </dl>
@@ -2609,7 +2716,7 @@ Other errors may occur, but aren't documented.
 <p>
 <var>FpPipe</var> creates a pipe, i.e. two file objects, one for input,
 one for output. The file handles are returned in the array <var>fildes</var>.
-The input handle is in the 0-th element of the array, the output handle is 
+The input handle is in the 0-th element of the array, the output handle is
 in the 1-st element.
 </p>
 <p>
@@ -2643,14 +2750,14 @@ In case the function fails, the following return values are possible:
 <var>FpDup</var>  returns a file descriptor that is a duplicate of the file
 descriptor <var>fildes</var>.
 </p>
-<p>The second and third forms make <var>NewFile</var> an exact copy of <var>OldFile</var>, 
+<p>The second and third forms make <var>NewFile</var> an exact copy of <var>OldFile</var>,
 after having flushed the buffer of <var>OldFile</var> in case it is a Text file
-or untyped file. 
+or untyped file.
 Due to the buffering mechanism of Pascal, these calls do not have the same functionality
-as the <var>dup</var> call in C. The internal Pascal buffers are not the same 
-after this call, but when the buffers are flushed (e.g. after output), 
+as the <var>dup</var> call in C. The internal Pascal buffers are not the same
+after this call, but when the buffers are flushed (e.g. after output),
 the output is sent to the same file.
-Doing an lseek will, however, work as in C, i.e. doing a lseek will change 
+Doing an lseek will, however, work as in C, i.e. doing a lseek will change
 the file position in both files.
 </p>
 <p>
@@ -2680,7 +2787,7 @@ A negative value can be one of the following error codes:
 <p>
 Makes <var>fildes2</var> or <var>NewFile</var> an exact copy of
 <var>fildes</var> or <var>OldFile</var>, after having flushed the
-buffer of <var>OldFile</var> in the case of text or untyped files. 
+buffer of <var>OldFile</var> in the case of text or untyped files.
 </p>
 <p>
 After a call to fdup2, the 2 file descriptors point to the same physical
@@ -2688,11 +2795,11 @@ device (a file, socket, or a terminal).
 </p>
 <p>
 <var>NewFile</var> can be an assigned file. If <var>newfile</var> or
-<var>fildes</var> was open, it is closed first. 
-Due to the buffering mechanism of Pascal, this has not the same functionality 
-as the <var>dup2</var> call in C. The internal Pascal buffers are not the same 
-after this call, but when the buffers are flushed (e.g. after output), the output 
-is sent to the same file. Doing an lseek will, however, work as in C, i.e. doing 
+<var>fildes</var> was open, it is closed first.
+Due to the buffering mechanism of Pascal, this has not the same functionality
+as the <var>dup2</var> call in C. The internal Pascal buffers are not the same
+after this call, but when the buffers are flushed (e.g. after output), the output
+is sent to the same file. Doing an lseek will, however, work as in C, i.e. doing
 a lseek will change the file position in both files.
 </p>
 <p>
@@ -2721,7 +2828,7 @@ In case of error, the following error codes can be reported:
 <descr>
 <p>
 <var>fpTimes</var> stores the execution time of the current process and
-child processes in <var>buffer</var>. 
+child processes in <var>buffer</var>.
 </p>
 <p>
 The return value (on Linux) is the number of clock ticks since boot time. On
@@ -2740,8 +2847,8 @@ error, -1 is returned, and extended error information can be retrieved with
 <descr>
 <p>
 <var>FpAlarm</var> schedules an alarm signal to be delivered to your process in
-<var>Seconds</var> seconds. When <var>Seconds</var> seconds have elapsed, 
-the system will send a <var>SIGALRM</var> signal to the current process.  
+<var>Seconds</var> seconds. When <var>Seconds</var> seconds have elapsed,
+the system will send a <var>SIGALRM</var> signal to the current process.
 If <var>Seconds</var> is zero, then no new alarm will
 be set. Whatever the value of <var>Seconds</var>, any previous alarm is cancelled.
 </p>
@@ -2763,7 +2870,7 @@ indicates an error.
 <short>Wait for a signal to arrive</short>
 <descr>
 <p>
-<var>FpPause</var> puts the process to sleep and waits until the application 
+<var>FpPause</var> puts the process to sleep and waits until the application
 receives  a signal. If a signal handler is installed for the received
 signal, the handler will be called and after that pause will return
 control to the process.
@@ -2785,7 +2892,7 @@ For an example, see <link id="fpAlarm"/>.
 in <var>seconds</var> has passed, then the function returns. If the
 call was interrupted (e.g. by some signal) then the function may
 return earlier, and the return value is the remaining time till the
-end of the intended period. 
+end of the intended period.
 </p>
 <p>
 If the function returns without error, the return value is zero.
@@ -3068,7 +3175,7 @@ The function returns 0 if successful, -1 otherwise.
 </descr>
 <errors>
 <p>
-On error, -1 is returned. Use <link id="fpGetErrno"/> for extended error information. 
+On error, -1 is returned. Use <link id="fpGetErrno"/> for extended error information.
 </p>
 <dl>
 <dt>sys_ebadf</dt><dd><var>Fd</var> has a bad file descriptor.</dd>
@@ -3237,9 +3344,9 @@ the <link id="#rtl.linux.Clone"/> call.</dd>
 The exit status of the process that caused <var>fpWaitPID</var> is reported
 in <var>stat_loc</var> or <var>Status</var>.
 </p>
-<p> 
+<p>
 Upon return, it returns the process id of the process that exited, 0 if no
-process exited, or -1 in case of failure. 
+process exited, or -1 in case of failure.
 </p>
 <p>
 For an example, see <link id="fpFork"/>.
@@ -3260,9 +3367,9 @@ Extended error information can be retrieved using <link id="fpgetErrno"/>.
 <short>Wait for a child to exit.</short>
 <descr>
 <p>
-<var>fpWait</var> suspends the current process and 
-waits for any child to exit or stop due to a signal. 
-It reports the exit status of the exited child 
+<var>fpWait</var> suspends the current process and
+waits for any child to exit or stop due to a signal.
+It reports the exit status of the exited child
 in <var>stat_loc</var>.
 </p>
 <p>
@@ -3360,7 +3467,7 @@ Extended error information can be retrieved using <link id="fpGetErrno"/>.
 <short>Open a directory for reading</short>
 <descr>
 <var>FpOpenDir</var> opens the directory  <var>DirName</var>, and returns a
-<var>pdir</var> pointer to a <link id="Dir"/> record, which can be used to 
+<var>pdir</var> pointer to a <link id="Dir"/> record, which can be used to
 read the directory  structure. If the directory cannot be opened, <var>nil
 </var> is returned.
 </descr>
@@ -3552,12 +3659,12 @@ Extended error information can be retrieved using <link id="fpGetErrno"/>.
 </p>
 <dl>
 <dt>sys_eaccess</dt>
-<dd>You have no write access right in the directory containing <var>Path</var>, 
-or you have no search permission in one of the directory components of 
+<dd>You have no write access right in the directory containing <var>Path</var>,
+or you have no search permission in one of the directory components of
 <var>Path</var>.</dd>
 <dt>sys_eperm</dt>
-<dd>The directory containing pathname has the sticky-bit set and the process's 
-effective uid is neither the uid of the file to be deleted nor that of the 
+<dd>The directory containing pathname has the sticky-bit set and the process's
+effective uid is neither the uid of the file to be deleted nor that of the
 directory containing it.</dd>
 <dt>sys_enoent</dt><dd>A component of the path doesn't exist.</dd>
 <dt>sys_enotdir</dt><dd>A directory component of the path is not a directory.</dd>
@@ -3606,7 +3713,7 @@ Extended error information can be retrieved using <link id="fpGetErrno"/>.
 another partition (device). Any existing file on the new location will be replaced.
 </p>
 <p>
-If the operation fails, then the <var>Old</var> file will be preserved. 
+If the operation fails, then the <var>Old</var> file will be preserved.
 </p>
 <p>
 The function returns zero on success, a nonzero value indicates failure.
@@ -3700,8 +3807,8 @@ Extended error information can be retrieved using <link id="fpGetErrno"/>.
 <descr>
 <p>
 <var>FpFStat</var> gets information about the file specified in
-<var>Path</var>, and stores it in  <var>Info</var>, which is of 
-type <link id="stat"/>. 
+<var>Path</var>, and stores it in  <var>Info</var>, which is of
+type <link id="stat"/>.
 The function returns zero if the call was successful,
 a nonzero return value indicates failure.
 </p>
@@ -3726,7 +3833,7 @@ Extended error information can be retrieved using <link id="fpGetErrno"/>.
 <short>Check file access</short>
 <descr>
 <p>
-<var>FpAccess</var> tests user's access rights on the specified file. 
+<var>FpAccess</var> tests user's access rights on the specified file.
 <var>Mode</var> is a mask existing of one or more of the following:
 </p>
 <dl>
@@ -3737,7 +3844,7 @@ Extended error information can be retrieved using <link id="fpGetErrno"/>.
 </dl>
 <p>
 The test is done with the real user ID, instead of the effective user ID.
-If the user has the requested rights, zero is returned. If access is denied, 
+If the user has the requested rights, zero is returned. If access is denied,
 or an error occurred, a nonzero value is returned.
 </p>
 </descr>
@@ -3800,7 +3907,7 @@ Extended error information can be retrieved using <link id="fpGetErrno"/>.
 <descr>
 <p>
 <var>FpdRead</var> reads at most <var>nbytes</var> bytes from the file descriptor
-<var>fd</var>, and stores them in <var>buf</var>. 
+<var>fd</var>, and stores them in <var>buf</var>.
 </p>
 <p>
 The function returns the number of bytes actually read, or -1 if
@@ -3927,7 +4034,7 @@ Extended error information can be retrieved using <link id="fpGetErrno"/>.
 <short>Install signal handler</short>
 <descr>
 <p>
-<var>FPSigaction</var> changes the action to take upon receipt of a signal. 
+<var>FPSigaction</var> changes the action to take upon receipt of a signal.
 <var>Act</var> and
 <var>Oact</var> are pointers to a <link id="SigActionRec"/> record.
 <var>Sig</var> specifies the signal, and can be any signal except
@@ -3994,12 +4101,12 @@ corresponding element in the array to 1. The other elements in the array
 must be set to zero. Three arrays are passed : The entries in <var>readfds</var>
 are checked to see if the following read operation will block. The entries
 in <var>writefds</var> are checked to see if the following write operation
-will block, while entries in <var>exceptfds</var> are checked to see if an 
+will block, while entries in <var>exceptfds</var> are checked to see if an
 exception occurred on them.
 </p>
 <p>
 You can use the functions <link id="fpFD_ZERO"/>, <link id="fpFD_Clr"/>,
-<link id="fpFD_Set"/> or <link id="fpFD_IsSet"/> to manipulate the individual 
+<link id="fpFD_Set"/> or <link id="fpFD_IsSet"/> to manipulate the individual
 elements of a set.
 </p>
 <p>
@@ -4054,7 +4161,7 @@ Extended error information can be retrieved using <link id="fpGetErrno"/>.
 <seealso>
 <link id="fpFD_ZERO"/>
 <link id="fpFD_Clr"/>
-<link id="fpFD_Set"/> 
+<link id="fpFD_Set"/>
 <link id="fpFD_IsSet"/>
 </seealso>
 <example file="bunixex/ex33"/>
@@ -4067,9 +4174,9 @@ Extended error information can be retrieved using <link id="fpGetErrno"/>.
 This is a general interface to the Unix/ Linux ioctl call.
 It performs various operations on the file descriptor <var>Handle</var>.
 <var>Ndx</var> describes the operation to perform.
-<var>Data</var> points to data needed for the <var>Ndx</var> function. 
+<var>Data</var> points to data needed for the <var>Ndx</var> function.
 The structure of this data is function-dependent, so we don't elaborate on
-this here. 
+this here.
 For more information on this, see various manual pages under Linux.
 </descr>
 <errors>
@@ -4087,7 +4194,7 @@ Extended error information can be retrieved using <link id="fpGetErrno"/>.
 in <var>req</var> has passed. Then the function returns. If the
 call was interrupted (e.g. by some signal) then the function may
 return earlier, and <var>rem</var> will contain the remaining time till the
-end of the intended period. In this case the return value will be 
+end of the intended period. In this case the return value will be
 -1, and <var>ErrNo</var> will be set to <var>EINTR</var>
 </p>
 <p>
@@ -4134,8 +4241,8 @@ specified in <var>Path</var>.
 the <var>times</var> record contains 2 fields, <var>actime</var>, and <var>modtime</var>,
 both of type <var>time_t</var> (commonly a longint). They should be filled with an epoch-like time,
 specifying, respectively, the last access time, and the last modification
-time. 
-For some file systems (most notably, FAT), these times are the same. 
+time.
+For some file systems (most notably, FAT), these times are the same.
 </p>
 <p>
 The function returns zero on success, a nonzero return value indicates
@@ -4151,7 +4258,7 @@ Extended error information can be retrieved using <link id="fpGetErrno"/>.
 <dd>One of the directories in <var>Path</var> has no
 search (=execute) permission.</dd>
 <dt>sys_enoent</dt>
-<dd>A directory entry in <var>Path</var> does 
+<dd>A directory entry in <var>Path</var> does
 not exist or is a symbolic link pointing to a non-existent directory.
 </dd>
 </dl>
@@ -4174,7 +4281,7 @@ Other errors may occur, but aren't documented.
 <descr>
 <p>
 <var>FPSignal</var> installs a new signal handler (specified by
-<var>Handler</var>) for signal <var>SigNum</var>. 
+<var>Handler</var>) for signal <var>SigNum</var>.
 </p>
 <p>
 This call has a subset of the functionality provided by the <link id="FpSigAction"/> call.
@@ -4216,7 +4323,7 @@ None.
 </errors>
 <seealso>
 <link id="FpSelect"/>
-<link id="FpFD_ZERO"/> 
+<link id="FpFD_ZERO"/>
 <link id="FpFD_Clr"/>
 <link id="FpFD_IsSet"/>
 </seealso>
@@ -4250,7 +4357,7 @@ None.
 <short>Clear all file descriptors in set</short>
 <descr>
 <p>
-<var>FpFD_ZERO</var> clears all the file descriptors in the file descriptor 
+<var>FpFD_ZERO</var> clears all the file descriptors in the file descriptor
 set <var>nset</var>.
 </p>
 <p>
@@ -4425,7 +4532,7 @@ character device file. If so it returns <var>True</var>.
 </descr>
 <seealso>
 <link id="FpFStat"/>
-<link id="FpS_ISLNK"/> 
+<link id="FpS_ISLNK"/>
 <link id="FpS_ISREG"/>
 <link id="FpS_ISDIR"/>
 <link id="FpS_ISBLK"/>
@@ -4443,7 +4550,7 @@ block device file. If so it returns <var>True</var>.
 </descr>
 <seealso>
 <link id="FpFStat"/>
-<link id="FpS_ISLNK"/> 
+<link id="FpS_ISLNK"/>
 <link id="FpS_ISREG"/>
 <link id="FpS_ISDIR"/>
 <link id="FpS_ISCHR"/>
@@ -4461,7 +4568,7 @@ regular file. If so it returns <var>True</var>
 </descr>
 <seealso>
 <link id="FpFStat"/>
-<link id="FpS_ISFIFO"/> 
+<link id="FpS_ISFIFO"/>
 <link id="FpS_ISLNK"/>
 <link id="FpS_ISCHR"/>
 <link id="FpS_ISBLK"/>
@@ -4497,7 +4604,7 @@ symbolic link. If so it returns <var>True</var>
 </descr>
 <seealso>
 <link id="FpFStat"/>
-<link id="FpS_ISFIFO"/> 
+<link id="FpS_ISFIFO"/>
 <link id="FpS_ISREG"/>
 <link id="FpS_ISCHR"/>
 <link id="FpS_ISBLK"/>
@@ -4516,7 +4623,7 @@ socket. If so it returns <var>True</var>.
 </descr>
 <seealso>
 <link id="FpFStat"/>
-<link id="FpS_ISFIFO"/> 
+<link id="FpS_ISFIFO"/>
 <link id="FpS_ISLNK"/>
 <link id="FpS_ISCHR"/>
 <link id="FpS_ISBLK"/>
@@ -4692,11 +4799,11 @@ error.
 </descr>
 <errors>
 <p>
-On error, -1 is returned and extended error information is returned by the <link id="fpGetErrno">FpGetErrno</link> function. 
+On error, -1 is returned and extended error information is returned by the <link id="fpGetErrno">FpGetErrno</link> function.
 </p>
 <dl>
 <dt>Sys_EBADF</dt>
-<dd><var>fd</var> is not a valid file descriptor and 
+<dd><var>fd</var> is not a valid file descriptor and
 <var>MAP_ANONYMOUS</var> was not specified.</dd>
 <dt>Sys_EACCES</dt>
 <dd><var>MAP_PRIVATE</var> was specified, but <var>fd</var> is not open for
@@ -4725,7 +4832,7 @@ by fd is open for writing.</dd>
 <short>Unmap previously mapped memory block</short>
 <descr>
 <p>
-<var>FpMUnMap</var> unmaps the memory block of size <var>Len</var>, pointed to by 
+<var>FpMUnMap</var> unmaps the memory block of size <var>Len</var>, pointed to by
 <var>Adr</var>, which was previously allocated with <link id="FpMMap"/>.
 </p>
 <p>
@@ -4736,8 +4843,8 @@ For an example, see <link id="FpMMap"/>.
 </p>
 </descr>
 <errors>
-In case of error the function returns a nonzero value, 
-extended error information is returned by the <link id="fpGetErrno">FpGetErrno</link> function. 
+In case of error the function returns a nonzero value,
+extended error information is returned by the <link id="fpGetErrno">FpGetErrno</link> function.
 See <link id="FpMMap"/> for possible error values.
 </errors>
 <seealso>
@@ -4785,12 +4892,12 @@ Only the superuser can specify a negative <var>N</var>, i.e. increase the rate a
 which the process is run.
 </p>
 <p>
-If the function is successful, zero is returned. On error, a nonzero value is returned. 
+If the function is successful, zero is returned. On error, a nonzero value is returned.
 </p>
 </descr>
 <errors>
 <p>
-Extended error information is returned by the <link id="fpGetErrno">FpGetErrno</link> function. 
+Extended error information is returned by the <link id="fpGetErrno">FpGetErrno</link> function.
 </p>
 <dl>
 <dt>sys_eperm</dt><dd>A non-superuser tried to specify a negative <var>N</var>, i.e.
@@ -4894,7 +5001,7 @@ user ID match the effective user ID of the caller.</dd>
 <descr>
 <p>
 <var>SymLink</var> makes <var>NewName</var> point to the file in
-<var>OldName</var>, which doesn't necessarily exist. The two files 
+<var>OldName</var>, which doesn't necessarily exist. The two files
 DO NOT have the same inode number. This is known as a 'soft' link.
 </p>
 <p>The permissions of the link are irrelevant, as they are not used when
@@ -4996,12 +5103,12 @@ function.
 <short>Set kernel time</short>
 <descr>
 <p>
-<var>FpSetTimeOfDay</var> sets the kernel time to the number of seconds since 00:00, 
-January 1 1970, GMT specified in the <var>tp</var> record. This time NOT corrected 
-any way, not taking into account timezones, daylight savings time and so on. 
+<var>FpSetTimeOfDay</var> sets the kernel time to the number of seconds since 00:00,
+January 1 1970, GMT specified in the <var>tp</var> record. This time NOT corrected
+any way, not taking into account timezones, daylight savings time and so on.
 </p>
 <p>
-It is simply a wrapper to the kernel system call. 
+It is simply a wrapper to the kernel system call.
 </p>
 </descr>
 <seealso>
@@ -5363,7 +5470,7 @@ It is simply a wrapper to the kernel system call.
 <element name="SA_ONSTACK">
 <short>Call  the  signal  handler on an alternate signal stack</short>
 <descr>
-<var>SA_ONSTACK</var> is used in the <link id="fpsigaction"/> to indicate the signal handler 
+<var>SA_ONSTACK</var> is used in the <link id="fpsigaction"/> to indicate the signal handler
 must be called on an alternate signal stack provided by <file>sigaltstack</file>(2)
 If an alternate stack is not available, the  default stack will be used.
 </descr>
@@ -5660,7 +5767,7 @@ It is not used in this unit, but is provided for completeness.
 <descr>
 <p>
 <var>FpPRead</var> reads <var>nbytes</var> bytes from file descriptor <var>fd</var> into buffer <var>buf</var>
-starting at offset <var>offset</var>. <var>Offset</var> is measured from the start of the file. This function 
+starting at offset <var>offset</var>. <var>Offset</var> is measured from the start of the file. This function
 can only be used on files, not on pipes or sockets (i.e. any seekable file descriptor).
 </p>
 <p>
@@ -5682,7 +5789,7 @@ On error, -1 is returned.
 <descr>
 <var>FpReadV</var> reads data from file descriptor <var>fd</var> and writes it
 into <var>iovcnt</var> buffers described by the <link id="TIOVec">tiovec</link>
-buffers pointed to by <var>iov</var>. It works like <link id="fpRead"/> only on 
+buffers pointed to by <var>iov</var>. It works like <link id="fpRead"/> only on
 multiple buffers.
 </descr>
 <errors>
@@ -5740,7 +5847,7 @@ On error, -1 is returned.
 <element name="errno">
 <short>Error code of last operation.</short>
 <descr>
-<var>Errno</var> contains the error code of the last operation. 
+<var>Errno</var> contains the error code of the last operation.
 It is thread-safe, meaning that it is the last operation of the current thread.
 </descr>
 <seealso>
@@ -5751,9 +5858,9 @@ It is thread-safe, meaning that it is the last operation of the current thread.
 <element name="CreateShellArgV">
 <short>Create a null-terminated array of strings from a command-line string</short>
 <descr>
-<var>CreateShellArgV</var> creates a command-line string for executing a shell command 
+<var>CreateShellArgV</var> creates a command-line string for executing a shell command
 using 'sh -c'. The result is a null-terminated array of null-terminated strings
-suitable for use in <link id="fpExecv"/> and friends. 
+suitable for use in <link id="fpExecv"/> and friends.
 </descr>
 <errors>
 If no more memory is available, a heap error may occur.
@@ -5768,7 +5875,7 @@ If no more memory is available, a heap error may occur.
 <element name="FreeShellArgV">
 <short>Free the result of a <link id="#rtl.baseunix.CreateShellArgV">CreateShellArgV</link> function</short>
 <descr>
-<var>FreeShellArgV</var> frees the memory pointed to by <var>P</var>, which was allocated by a call to 
+<var>FreeShellArgV</var> frees the memory pointed to by <var>P</var>, which was allocated by a call to
 <link id="CreateShellArgV"/>.
 </descr>
 <errors>
@@ -6137,7 +6244,7 @@ various actions.
 <p>
 <var>fpPoll</var> waits for events on file descriptors.  <var>fds</var>
 points to an array of <var>tpollfd</var> records, each of these records
-describes a file descriptor on which to wait for events. The number of 
+describes a file descriptor on which to wait for events. The number of
 file descriptors is given by <var>nfds</var>. <var>>timeout</var> specifies
 the maximum time (in milliseconds) to wait for events.
 </p>
@@ -6159,7 +6266,7 @@ records will contain the events for the file descriptor it described.
 <p>
 <var>FpGetRLimit</var> gets the resource limits for the current process:
 <var>resource</var> determines the resource of which the kernel should
-return the limits (one of the many <var>RLIMIT_*</var> constants). 
+return the limits (one of the many <var>RLIMIT_*</var> constants).
 <var>rlim</var> should point to a <link id="#rtl.baseunix.TRLimit">TRLimit</link> record
 and on success will contain the resource limits.
 </p>
@@ -6183,9 +6290,9 @@ the error code.
 <p>
 <var>FpGetRLimit</var> sets the resource limits for the current process:
 <var>resource</var> determines the resource of which the kernel should
-set the limits (one of the many <var>RLIMIT_*</var> constants). 
+set the limits (one of the many <var>RLIMIT_*</var> constants).
 <var>rlim</var> should point to a <link
-id="#rtl.baseunix.TRLimit">TRLimit</link> record 
+id="#rtl.baseunix.TRLimit">TRLimit</link> record
 which contains the new limits for the resource indicated in
 <var>resource</var>.
 </p>
@@ -6196,7 +6303,7 @@ The function returns zero if the resource limits were successfully set.
 <errors>
 On error, -1 is returned and <link id="fpgeterrno"/> can be used to retrieve
 the error code.
-</errors> 
+</errors>
 <seealso>
 <link id="FpGetRLimit"/>
 </seealso>
@@ -6384,7 +6491,7 @@ with  <var>fpGetErrno</var>.
 <seealso>
 <link id="FpGetpgrp"/>
 <link id="FpGetpid"/>
-<link id="FpGetPpid"/>       
+<link id="FpGetPpid"/>
 </seealso>
 </element>
 
@@ -6564,9 +6671,77 @@ with  <var>fpGetErrno</var>.
 </element>
 
 <!-- constant Visibility: default -->
+<element name="AT_SYMLINK_NOFOLLOW">
+<short>Do not dereference symbolic links.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="AT_SYMLINK_FOLLOW">
+<short>Dereference symbolic links</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="AT_NO_AUTOMOUNT">
+<short>Do not auto mount filesystem if the base dir is a mount point.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="AT_EMPTY_PATH">
+<short>Create link to old directy if path is empty</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="AT_STATX_SYNC_TYPE">
+<short>Type of synchronisation required from <var>statx</var></short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="AT_STATX_SYNC_AS_STAT">
+<short>Behave as <var>fpStat</var></short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="AT_STATX_FORCE_SYNC">
+<short>Force the attributes to be synchronized with the server (if any)</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="AT_STATX_DONT_SYNC">
+<short>Do not synchronize the attributes with the server (if any)</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="AT_RECURSIVE">
+<short>Recurse subdirectories when applying changes </short>
+</element>
+
+
+<!-- constant Visibility: default -->
 <element name="clone_flags_fork">
 <short>Request fork behaviour for clone call</short>
 </element>
+
+
+<!-- function Visibility: default -->
+<element name="Fpmprotect">
+<short>Set memory protection</short>
+<descr>
+<p>
+<var>fpmprotect</var> sets memory protection on a certain block of memory.
+The memory block to protect starts at <var>adr</var> and has size <var>len</var>.
+The <var>prot</var> argument specifies the kind of protection to apply, and is a bit-wise OR-ed combination of the following:
+</p>
+<dl>
+<dt>PROT_NONE</dt><dd>Memory cannot be accessed</dd>
+<dt>PROT_READ</dt><dd>Memory can be read</dd>
+<dt>PROT_WRITE</dt><dd>Memory can be written</dd>
+<dt>PROT_EXEC</dt><dd>Memory can be executed</dd>
+<dt>PROT_SEM</dt><dd>Memory can be used for atomic operations</dd>
+<dt>PROT_SAO</dt><dd>Memory must have strong access order (powerPC only).</dd>
+</dl>
+</descr>
+</element>
+
 
 </module> <!-- BaseUnix -->
 </package>

@@ -36,20 +36,20 @@ other streams, to provide base64 encoding and decoding on-the-fly...
 <element name="TBase64DecodingMode">
 <short>Decoding mode for stream</short>
 <descr>
-<p><var>TBase64DecodingMode</var> determines the decoding algorithm used by 
+<p><var>TBase64DecodingMode</var> determines the decoding algorithm used by
 <link id="TBase64DecodingStream"/>. There are 2 modes:
 </p>
 <dl>
-<dt>bdmStrict</dt><dd>Strict mode, which follows RFC3548 and rejects any characters 
+<dt>bdmStrict</dt><dd>Strict mode, which follows RFC3548 and rejects any characters
 outside of base64 alphabet. In this mode only up to two '=' characters are
 accepted at the end. It requires the input to have a Size being a multiple
 of 4, otherwise an <link id="EBase64DecodingException"/> exception is
 raised.</dd>
-<dt>bdmMime</dt><dd>MIME mode, which follows RFC2045 and ignores any characters 
+<dt>bdmMime</dt><dd>MIME mode, which follows RFC2045 and ignores any characters
 outside of base64 alphabet. In this mode any '=' is seen as the end of
 string, it handles apparently truncated input streams gracefully.
 </dd>
-</dl>                  
+</dl>
 </descr>
 </element>
 
@@ -99,7 +99,7 @@ encoded, and subsequently written to the destination stream.
 </p>
 <p>
 The <var>TBase64EncodingStream</var> stream is a write-only stream.
-Obviously it is also not seekable. It is meant to be included in  
+Obviously it is also not seekable. It is meant to be included in
 a chain of streams.
 </p>
 <p>
@@ -108,7 +108,7 @@ the output stream does not yet contain all output: input must be a multiple
 of 3. In order to be sure that the output contains all encoded bytes, the
 <link id="TBase64EncodingStream.Flush">Flush</link> method can be used. The
 destructor will automatically call <var>Flush</var>, so all data is written
-to the destination stream when the decodes is destroyed.  
+to the destination stream when the decodes is destroyed.
 </p>
 </descr>
 <seealso>
@@ -183,9 +183,9 @@ If there is an error writing to the destination stream, an error may occur.
 <element name="TBase64EncodingStream.Seek">
 <short>Position the stream</short>
 <descr>
-<var>Seek</var> always raises an <var>EStreamError</var> 
-exception unless the arguments it received it don't change 
-the current file pointer position. The encryption stream is 
+<var>Seek</var> always raises an <var>EStreamError</var>
+exception unless the arguments it received it don't change
+the current file pointer position. The encryption stream is
 not seekable.
 </descr>
 <errors>
@@ -224,7 +224,7 @@ An <var>EStreamError</var> error is raised.
 <descr>
 <p>
 <var>TBase64DecodingStream</var> can be used to read data from a stream (the
-source stream) that contains Base64 encoded data. The data is read and 
+source stream) that contains Base64 encoded data. The data is read and
 decoded on-the-fly.
 </p>
 <p>
@@ -261,6 +261,12 @@ decoding will be done. If omitted, <var>bdmMIME</var> is used.
 <short>Source stream from which to read encoded data</short>
 </element>
 
+<!-- argument Visibility: default -->
+<element name="TBase64DecodingStream.Create.AMode">
+<short>Mode in which to decode. Defaults to <var>bdmMIME</var>.</short>
+</element>
+
+
 <!-- procedure Visibility: public -->
 <element name="TBase64DecodingStream.Reset">
 <short>Reset the stream</short>
@@ -284,7 +290,7 @@ None.
 <p>
 <var>Read</var> reads encrypted data from the source stream
 and stores this data in <var>Buffer</var>. At most <var>Count</var> bytes
-will be stored in the buffer, but more bytes will be read from 
+will be stored in the buffer, but more bytes will be read from
 the source stream: the encoding algorithm multiplies the number of bytes.
 </p>
 <p>
@@ -321,14 +327,14 @@ occur.
 <short>Set stream position.</short>
 <descr>
 <p>
-<var>Seek</var> sets the position of the stream. In the 
+<var>Seek</var> sets the position of the stream. In the
 <var>TBase64DecodingStream</var> class, the <var>seek</var>
 operation is forward only, it does not support backward seeks.
-The forward seek is emulated by reading and discarding data 
+The forward seek is emulated by reading and discarding data
 till the desired position is reached.
 </p>
 <p>
-For an explanation of the parameters, see 
+For an explanation of the parameters, see
 <link id="#rtl.classes.TStream.Seek">TStream.Seek</link>
 </p>
 </descr>
@@ -375,9 +381,9 @@ string.</short>
 64 encoded data) returns the decoded data as a string. It uses a <link
 id="TBase64DecodingStream"/> to do this. The <var>Strict</var> parameter is
 passed on to the constructor as <var>bdmStrict</var> or <var>bdmMIME</var>
-</descr> 
+</descr>
 <seealso>
-<link id="DecodeStringBase64"/>    
+<link id="DecodeStringBase64"/>
 <link id="TBase64DecodingStream"/>
 </seealso>
 </element>
