@@ -13,8 +13,8 @@
 <descr>
 <p>
 The JSON unit implements JSON support for Free Pascal. It contains the data
-structures (<link id="TJSONData"/> and descendent objects) to treat JSON data 
-and output JSON as a string <link id="TJSONData.AsJSON"/>. The generated JSON 
+structures (<link id="TJSONData"/> and descendent objects) to treat JSON data
+and output JSON as a string <link id="TJSONData.AsJSON"/>. The generated JSON
 can be formatted in several ways <link id="TJSONData.FormatJSON"/>.
 </p>
 <p>
@@ -42,7 +42,7 @@ it is freed as well.
 <code>
 Var
   O : TJSONObject;
-  
+
 begin
   O:=TJSONObject.Create(['Age',44,
                          'Firstname','Michael',
@@ -51,8 +51,8 @@ begin
   Write('Welcome ',O.Strings['Firstname'],', ');
   Writeln(O.Get('Lastname','')); // empty default.
   Writeln(', your current age is ',O.Integers('Age']);
-  O.Free;                       
-end;  
+  O.Free;
+end;
 </code>
 <p>
 The <var>TJSONArray</var> and <var>TJSONObject</var> classes offer methods
@@ -65,17 +65,17 @@ Currently the JSON support only allows the use of UTF-8 data.
 Parsing incoming JSON and constructing the JSON data structures is not implemented in
 the <var>fpJSON</var> unit. For this, the <file>jsonscanner</file> unit must
 be included in the program unit clause. This sets several callback hooks
-(using <link id="SetJSONParserHandler"/> and then the <link id="GetJSON"/> 
+(using <link id="SetJSONParserHandler"/> and then the <link id="GetJSON"/>
 function can then be used to transform a string or stream to JSON data
 structures:
 </p>
 <code>
 uses fpjson, jsonparser;
 
-Var   
+Var
   D,E : TJSONData;
-      
-begin 
+
+begin
   D:=GetJSON('{ "Children" : ['+
              '  { "Age" : 23, '+
              '    "Names" : { "LastName" : "Rodriquez",'+
@@ -85,18 +85,18 @@ begin
              '                "FirstName" : "Maria" }}'+
              '  ]}');
   E:=D.FindPath('Children[1].Names.FirstName');
-  Writeln(E.AsJSON);   
+  Writeln(E.AsJSON);
   D.Free;
-end.  
+end.
 </code>
 <p>will print "Maria".</p>
 <p>
-The FPJSON code does not use hardcoded class names when creating the JSON: 
-it uses the various <link id="CreateJSON"/> functions to create the data. 
-These functions use a registry of classes, so it is possible to create 
-descendents of the classes in the <var>fpjson</var> unit and have these 
-used for construction of JSON Data structures. The 
-<link id="GetJSONInstanceType"/> and 
+The FPJSON code does not use hardcoded class names when creating the JSON:
+it uses the various <link id="CreateJSON"/> functions to create the data.
+These functions use a registry of classes, so it is possible to create
+descendents of the classes in the <var>fpjson</var> unit and have these
+used for construction of JSON Data structures. The
+<link id="GetJSONInstanceType"/> and
 <link id="SetJSONInstanceType"/> functions can be used to get or set the classes that must be used.
 the default parser used by <link id="GetJSON"/> will also use these functions.
 </p>
@@ -350,7 +350,7 @@ instantiated.
 <link id="TJSONIntegerNumber.Create"/>
 <link id="TJSONString.Create"/>
 <link id="TJSONBoolean.Create"/>
-<link id="TJSONArray.Create"/> 
+<link id="TJSONArray.Create"/>
 <link id="TJSONObject.Create"/>
 </seealso>
 </element>
@@ -360,8 +360,8 @@ instantiated.
 <short>The native JSON data type represented by this object</short>
 <descr>
 <var>JSONType</var> indicates the JSON data type that this object will be
-written as, or the JSON data type that instantiated this object. 
-In <var>TJSONData</var>, this function returns <var>jtUnknown</var>. 
+written as, or the JSON data type that instantiated this object.
+In <var>TJSONData</var>, this function returns <var>jtUnknown</var>.
 Descendents override this method to return the correct data type.
 </descr>
 <seealso>
@@ -554,7 +554,7 @@ conversion fails, an <var>EConvertError</var> exception is raised.
 <p>
 For <link id="TJSONFloatNumber"/> this will return the native value.
 </p>
-<p> 
+<p>
 For complex values, reading or writing this property will always result in an
 <var>EConvertError</var> exception.
 </p>
@@ -577,13 +577,13 @@ For complex values, reading or writing this property will always result in an
 <p>
 <var>AsInteger</var> allows access to the raw value as a 32-bit integer value.
 When reading, it attempts to convert the native value of the data to a 32-bit integer
-value.  When writing, it attempts to transform the 32-bit integer value to 
+value.  When writing, it attempts to transform the 32-bit integer value to
 a native value. If either conversion fails, an <var>EConvertError</var> exception is raised.
 </p>
 <p>
 For <link id="TJSONIntegerNumber"/> this will return the native value.
 </p>
-<p> 
+<p>
 For complex values, reading or writing this property will always result in an
 <var>EConvertError</var> exception.
 </p>
@@ -606,14 +606,14 @@ For complex values, reading or writing this property will always result in an
 <p>
 <var>AsInt64</var> allows access to the raw value as a 64-bit integer value.
 When reading, it attempts to convert the native value of the data to a
-64-bit integer value.  When writing, it attempts to transform the 64-bit 
-integer value to a native value. 
-If either conversion fails, an <var>EConvertError</var> exception is raised.           
+64-bit integer value.  When writing, it attempts to transform the 64-bit
+integer value to a native value.
+If either conversion fails, an <var>EConvertError</var> exception is raised.
 </p>
 <p>
 For <link id="TJSONInt64Number"/> this will return the native value.
 </p>
-<p> 
+<p>
 For complex values, reading or writing this property will always result in an
 <var>EConvertError</var> exception.
 </p>
@@ -638,13 +638,13 @@ For complex values, reading or writing this property will always result in an
 When reading, it attempts to convert the native value of the data to a
 boolean value.  When writing, it attempts to transform the boolean value to a native value.
 For numbers this means that non-zero numbers result in <var>True</var>, a zero results
-in <var>False</var>. 
+in <var>False</var>.
 If either conversion fails, an <var>EConvertError</var> exception is raised.
 </p>
 <p>
 For <link id="TJSONBoolean"/> this will return the native value.
 </p>
-<p> 
+<p>
 For complex values, reading or writing this property will always result in
 an <var>EConvertError</var> exception.
 </p>
@@ -903,10 +903,10 @@ floating-point value.
 <!-- class Visibility: default -->
 <element name="TJSONIntegerNumber">
 <short>Class to represent 32-bit integer JSON data.</short>
-<descr> 
+<descr>
 <var>TJSONIntegerNumber</var> must be used whenever 32-bit integer data must
 be represented. For 64-bit integer data, <link id="TJSONInt64Number"/> must be used.
-</descr>  
+</descr>
 <seealso>
 <link id="TJSONFloatNumber"/>
 <link id="TJSONInt64Number"/>
@@ -987,11 +987,11 @@ value to 0.
 <!-- class Visibility: default -->
 <element name="TJSONInt64Number">
 <short>Class to represent 64-bit integer JSON data.</short>
-<descr> 
+<descr>
 <var>TJSONInt64Number</var> must be used whenever 64-bit integer data must
 be represented. For 32-bit integer data, <link id="TJSONIntegerNumber"/> must
 be used.
-</descr>  
+</descr>
 <seealso>
 <link id="TJSONFloatNumber"/>
 <link id="TJSONIntegerNumber"/>
@@ -1001,7 +1001,7 @@ be used.
 <!-- constructor Visibility: public -->
 <element name="TJSONInt64Number.Create">
 <short>Create a new instance of 64-bit integer JSON data</short>
-<descr>   
+<descr>
 <var>Create</var> instantiates a new 64-bit integer JSON data and
 initializes the value with <var>AValue</var>.
 </descr>
@@ -1036,8 +1036,8 @@ initializes the value with <var>AValue</var>.
 
 <!-- procedure Visibility: public -->
 <element name="TJSONInt64Number.Clear">
-<short>Clear value</short>  
-<descr>   
+<short>Clear value</short>
+<descr>
 <var>Clear</var> is overridden by <var>TJSONInt64Number</var> to set the value to 0.
 </descr>
 <seealso>
@@ -1071,11 +1071,11 @@ initializes the value with <var>AValue</var>.
 <!-- class Visibility: default -->
 <element name="TJSONString">
 <short>Class to represent string JSON data.</short>
-<descr>  
-<var>TJSONString</var> must be used whenever string data must be represented. 
-Currently the implementation uses an ANSI string to hold the data. 
+<descr>
+<var>TJSONString</var> must be used whenever string data must be represented.
+Currently the implementation uses an ANSI string to hold the data.
 This means that to correctly hold Unicode data, a UTF-8 encoding must be used.
-</descr>  
+</descr>
 <seealso>
 <link id="TJSONFloatNumber"/>
 <link id="TJSONIntegerNumber"/>
@@ -1092,7 +1092,7 @@ This means that to correctly hold Unicode data, a UTF-8 encoding must be used.
 <short>Create a new instance of string JSON data</short>
 <descr>
 <var>Create</var> instantiates a new string JSON data and initializes the value with <var>AValue</var>.
-Currently the implementation uses an ANSI string to hold the data. 
+Currently the implementation uses an ANSI string to hold the data.
 This means that to correctly hold Unicode data, a UTF-8 encoding must be used.
 </descr>
 <seealso>
@@ -1101,7 +1101,7 @@ This means that to correctly hold Unicode data, a UTF-8 encoding must be used.
 <link id="TJSONInt64Number.Create"/>
 <link id="TJSONBoolean.Create"/>
 <link id="TJSONArray.Create"/>
-<link id="TJSONObject.Create"/>   
+<link id="TJSONObject.Create"/>
 </seealso>
 </element>
 
@@ -1145,7 +1145,7 @@ value to the empty string ''.
 <var>Clone</var> overrides <link id="TJSONData.Clone"/> and creates an instance of the same class with the same
 string value.
 </descr>
-<seealso> 
+<seealso>
 <link id="TJSONData.Clone"/>
 </seealso>
 </element>
@@ -1164,19 +1164,19 @@ string value.
 <!-- class Visibility: default -->
 <element name="TJSONBoolean">
 <short>Class to represent boolean JSON data.</short>
-<descr>  
+<descr>
 <var>TJSONBoolean</var> must be used whenever boolean data must be
 represented. It has limited functionality to convert the value from or to integer or
 floating point data.
-</descr>  
-<seealso> 
+</descr>
+<seealso>
 <link id="TJSONFloatNumber"/>
 <link id="TJSONIntegerNumber"/>
-<link id="TJSONInt64Number"/>  
+<link id="TJSONInt64Number"/>
 <link id="TJSONBoolean"/>
-<link id="TJSONNull"/>   
-<link id="TJSONArray"/>  
-<link id="TJSONObject"/> 
+<link id="TJSONNull"/>
+<link id="TJSONArray"/>
+<link id="TJSONObject"/>
 </seealso>
 </element>
 
@@ -1186,7 +1186,7 @@ floating point data.
 <descr>
 <var>Create</var> instantiates a new boolean JSON data and initializes the
 value with <var>AValue</var>.
-</descr> 
+</descr>
 <seealso>
 <link id="TJSONIntegerNumber.Create"/>
 <link id="TJSONFloatNumber.Create"/>
@@ -1237,7 +1237,7 @@ value to <var>False</var>.
 <var>Clone</var> overrides <link id="TJSONData.Clone"/> and creates an instance of the same class with the same
 boolean value.
 </descr>
-<seealso> 
+<seealso>
 <link id="TJSONData.Clone"/>
 </seealso>
 </element>
@@ -1256,18 +1256,18 @@ boolean value.
 <!-- class Visibility: default -->
 <element name="TJSONNull">
 <short>Class to represent boolean JSON data.</short>
-<descr>  
+<descr>
 <var>TJSONNull</var> must be used whenever a <var>null</var> value must be
 represented.
-</descr> 
+</descr>
 <seealso>
 <link id="TJSONFloatNumber"/>
 <link id="TJSONIntegerNumber"/>
-<link id="TJSONInt64Number"/>  
+<link id="TJSONInt64Number"/>
 <link id="TJSONBoolean"/>
-<link id="TJSONString"/>   
-<link id="TJSONArray"/>  
-<link id="TJSONObject"/> 
+<link id="TJSONString"/>
+<link id="TJSONArray"/>
+<link id="TJSONObject"/>
 </seealso>
 </element>
 
@@ -1304,7 +1304,7 @@ represented.
 <descr>
 <var>Clone</var> overrides <link id="TJSONData.Clone"/> and creates an instance of the same class.
 </descr>
-<seealso> 
+<seealso>
 <link id="TJSONData.Clone"/>
 </seealso>
 </element>
@@ -1362,7 +1362,7 @@ valid JSON data type. It is similar to a <link
 id="#fcl.contnrs.TObjectList">TObjectList</link> in that the memory
 management is automatic: the array grows and shrinks to accommodate the
 number of element in it. The elements in the array are owned by the array,
-so they should not be freed. 
+so they should not be freed.
 </p>
 <p>
 The array can be created empty or can be created with a series of values
@@ -1370,8 +1370,8 @@ that will be converted to JSON objects and added to the initial JSON array.
 </p>
 <p>
 The items in the array are available as raw JSON objects in the <link
-id="TJSONData.Items"/> property. The data can also be accessed (read-write) 
-as native Pascal types through the <link id="Integers"/>, <link id="Floats"/>, 
+id="TJSONData.Items"/> property. The data can also be accessed (read-write)
+as native Pascal types through the <link id="Integers"/>, <link id="Floats"/>,
 <link id="Booleans"/> etc. array properties.  The actual JSON types are available
 in the <link id="Types"/> array.
 </p>
@@ -1395,17 +1395,17 @@ with the <link id="Delete"/> method.
 <p>
 <var>Create</var> creates a new JSON array instance, and initializes the
 data with <var>Elements</var>. The elements are converted to various <link
-id="TJSONData"/> instances, instances of <var>TJSONData</var> are 
-inserted in the array as-is. 
+id="TJSONData"/> instances, instances of <var>TJSONData</var> are
+inserted in the array as-is.
 </p>
 <p>
 The data type of the inserted objects is determined from the type of data
-passed to it, with a natural mapping. A <var>Nil</var> pointer will be 
+passed to it, with a natural mapping. A <var>Nil</var> pointer will be
 inserted as a <var>TJSONNull</var> value.
 </p>
 </descr>
 <errors>
-If an invalid class or not recognized data type (pointer) is inserted in the 
+If an invalid class or not recognized data type (pointer) is inserted in the
 elements array, an <var>EConvertError</var> exception will be raised.
 </errors>
 <seealso>
@@ -1495,7 +1495,7 @@ callback returned <var>False</var> in the <var>Continue</var> parameter.
 <short>Return index of JSONData instance in array</short>
 <descr>
 <var>IndexOf</var> compares all elements in the array with <var>Obj</var>
-and returns the index of the element instance that equals <var>Obj</var>. 
+and returns the index of the element instance that equals <var>Obj</var>.
 The actual instances are compared, not the JSON value. If none of the
 elements match, the function returns -1.
 </descr>
@@ -1682,7 +1682,7 @@ pascal values to JSON values.
 </p>
 <p>Note that when inserting a <link
 id="TJSONData"/> instance to the array, it is owned by the array.
-<var>Index</var> must be a value between 0 and <var>Count-1</var>. 
+<var>Index</var> must be a value between 0 and <var>Count-1</var>.
 </p>
 </descr>
 <errors>
@@ -1830,7 +1830,7 @@ Items[Index].IsNull
 </descr>
 <seealso>
 <link id="TJSONData.JSONType"/>
-<link id="TJSONData.Items"/>   
+<link id="TJSONData.Items"/>
 <link id="TJSONData.IsNull"/>
 <link id="TJSONArray.Types"/>
 </seealso>
@@ -1888,7 +1888,7 @@ Items[Index].AsInt64
 </code>
 <p>
 When writing, it will check if an 64-bit integer JSON value is located at the given
-location, and replace it with the new value. If a non-64-bit-integer JSON value is 
+location, and replace it with the new value. If a non-64-bit-integer JSON value is
 there, it is replaced with the written int64 value.
 </p>
 </descr>
@@ -1922,7 +1922,7 @@ Items[Index].AsString
 </code>
 <p>
 When writing, it will check if a string JSON value is located at the given
-location, and replace it with the new value. If a non-string value is 
+location, and replace it with the new value. If a non-string value is
 there, it is replaced with the written string value.
 </p>
 </descr>
@@ -1932,8 +1932,8 @@ there, it is replaced with the written string value.
 <link id="TJSONArray.Types"/>
 <link id="TJSONArray.Integers"/>
 <link id="TJSONArray.QWords"/>
-<link id="TJSONArray.Floats"/>  
-<link id="TJSONArray.Int64s"/> 
+<link id="TJSONArray.Floats"/>
+<link id="TJSONArray.Int64s"/>
 <link id="TJSONArray.Booleans"/>
 </seealso>
 </element>
@@ -1965,8 +1965,8 @@ numerical value is there, it is replaced with the written floating point value.
 <link id="TJSONData.IsNull"/>
 <link id="TJSONArray.Types"/>
 <link id="TJSONArray.Integers"/>
-<link id="TJSONArray.Strings"/>  
-<link id="TJSONArray.Int64s"/>  
+<link id="TJSONArray.Strings"/>
+<link id="TJSONArray.Int64s"/>
 <link id="TJSONArray.QWords"/>
 <link id="TJSONArray.Booleans"/>
 </seealso>
@@ -1990,7 +1990,7 @@ Items[Index].AsBoolean
 </code>
 <p>
 When writing, it will check if a boolean JSON value is located at the given
-location, and replace it with the new value. If a non-boolean value is there, 
+location, and replace it with the new value. If a non-boolean value is there,
 it is replaced with the written boolean value.
 </p>
 </descr>
@@ -1999,8 +1999,8 @@ it is replaced with the written boolean value.
 <link id="TJSONData.IsNull"/>
 <link id="TJSONArray.Types"/>
 <link id="TJSONArray.Integers"/>
-<link id="TJSONArray.Strings"/> 
-<link id="TJSONArray.Int64s"/>  
+<link id="TJSONArray.Strings"/>
+<link id="TJSONArray.Int64s"/>
 <link id="TJSONArray.QWords"/>
 <link id="TJSONArray.Floats"/>
 </seealso>
@@ -2033,8 +2033,8 @@ by the array.
 <link id="TJSONData.IsNull"/>
 <link id="TJSONArray.Types"/>
 <link id="TJSONArray.Integers"/>
-<link id="TJSONArray.Strings"/> 
-<link id="TJSONArray.Int64s"/>  
+<link id="TJSONArray.Strings"/>
+<link id="TJSONArray.Int64s"/>
 <link id="TJSONArray.QWords"/>
 <link id="TJSONArray.Floats"/>
 <link id="TJSONArray.Objects"/>
@@ -2068,11 +2068,11 @@ by the array.
 <link id="TJSONData.IsNull"/>
 <link id="TJSONArray.Types"/>
 <link id="TJSONArray.Integers"/>
-<link id="TJSONArray.Strings"/> 
-<link id="TJSONArray.Int64s"/>  
+<link id="TJSONArray.Strings"/>
+<link id="TJSONArray.Int64s"/>
 <link id="TJSONArray.QWords"/>
-<link id="TJSONArray.Floats"/>  
-<link id="TJSONArray.Arrays"/> 
+<link id="TJSONArray.Floats"/>
+<link id="TJSONArray.Arrays"/>
 </seealso>
 </element>
 
@@ -2085,13 +2085,13 @@ by the array.
 <element name="TJSONObjectIterator">
 <short>Iterator callback for <var>TJSONObject.Iterate</var></short>
 <descr>
-<var>TJSONObjectIterator</var> is the procedural callback used by 
+<var>TJSONObjectIterator</var> is the procedural callback used by
 <link id="TJSONObject.Iterate"/> to iterate over the values. <var>Item</var> is the
-current item in the iteration, and <var>AName</var> it's name. 
-<var>Data</var> is the data passed on when  calling <var>Iterate</var>. 
+current item in the iteration, and <var>AName</var> it's name.
+<var>Data</var> is the data passed on when  calling <var>Iterate</var>.
 The <var>Continue</var> parameter can be set to
 <var>false</var> to stop the iteration loop.
-</descr> 
+</descr>
 <seealso>
 <link id="TJSONObject.Iterate"/>
 </seealso>
@@ -2131,21 +2131,21 @@ The <var>Continue</var> parameter can be set to
 <var>TJSONObject</var> is the class that must be used to represent a JSON
 object literal. It can be compared to a dictionary class or a list class in
 which the list index is a string value, or indeed a proper class with an
-arbitrary number of properties. The elements can be of any valid JSON data type. 
+arbitrary number of properties. The elements can be of any valid JSON data type.
 The memory management is automatic: the object grows and shrinks to accommodate the
 number of elements (properties) in it. The elements in the array are owned by the
-object, so they should not be freed. 
+object, so they should not be freed.
 </p>
-<p> 
+<p>
 The object can be created empty or can be created with a series of named values
 that will be converted to JSON objects and added to the initial JSON array.
 </p>
-<p> 
+<p>
 The items in the object are available with a numerical index as raw JSON objects in the <link
-id="TJSONData.Items"/> and with their names in the  <link id="Elements"/> property. 
+id="TJSONData.Items"/> and with their names in the  <link id="Elements"/> property.
 The data can also be accessed (read-write) as native Pascal types through the <link id="Integers"/>, <link
 id="Floats"/>, <link id="Booleans"/> etc. array properties, using their name
-as a key. The actual JSON types are available in the <link id="Types"/> array. 
+as a key. The actual JSON types are available in the <link id="Types"/> array.
 </p>
 <p>Elements can be added to the array using the various forms of the
 <link id="Add"/> method. Elements can be deleted with the <link id="Delete"/> method.
@@ -2154,7 +2154,7 @@ as a key. The actual JSON types are available in the <link id="Types"/> array.
 <seealso>
 <link id="Types"/>
 <link id="Integers"/>
-<link id="Floats"/>  
+<link id="Floats"/>
 <link id="TJSONData.Items"/>
 </seealso>
 </element>
@@ -2167,24 +2167,24 @@ as a key. The actual JSON types are available in the <link id="Types"/> array.
 <var>Create</var> creates a new JSON object instance, and initializes the
 data with <var>Elements</var>. Elements is an array containing an even
 number of items, alternating a name and a value. The names must be strings,
-and the values are converted to various <link id="TJSONData"/> instances. 
+and the values are converted to various <link id="TJSONData"/> instances.
 If a value is an instance of <var>TJSONData</var>, it is added to the object
-array as-is. 
+array as-is.
 </p>
 <p>
 The data type of the inserted objects is determined from the type of data
-passed to it, with a natural mapping. A <var>Nil</var> pointer will be 
+passed to it, with a natural mapping. A <var>Nil</var> pointer will be
 inserted as a <var>TJSONNull</var> value. The following gives an example:
 </p>
 <code>
 Var
   O : TJSONObject;
-    
+
 begin
   O:=TJSONObject.Create(['Age',44,
                         'Firstname','Michael',
                         'Lastname','Van Canneyt']);
-                                                        
+
 </code>
 </descr>
 <errors>
@@ -2195,7 +2195,7 @@ An <var>EConvertError</var> exception is raised in one of the following cases:
 <li>If an odd number of arguments is passed</li>
 <li>an item where a name is expected does not contain a string</li>
 <li>A value contains an invalid class</li>
-<li>A value of a not recognized data type (pointer) is inserted in the 
+<li>A value of a not recognized data type (pointer) is inserted in the
 elements</li>
 </ol>
 </errors>
@@ -2288,8 +2288,8 @@ callback returned <var>False</var> in the <var>Continue</var> parameter.
 <short>Return index of JSONData instance in object</short>
 <descr>
 <var>IndexOf</var> compares all elements in the object with <var>Obj</var>
-and returns the index (in the <link id="TJSONData.Items"/> property) 
-of the element instance that equals <var>Obj</var>.  
+and returns the index (in the <link id="TJSONData.Items"/> property)
+of the element instance that equals <var>Obj</var>.
 The actual instances are compared, not the JSON value. If none of the
 elements match, the function returns -1.
 </descr>
@@ -2546,7 +2546,7 @@ values, and removes it if it exists. The item is freed.
 <short>Extract an element from the object</short>
 <descr>
 <var>Extract</var> removes the element at position <var>Index</var> or with the
-<var>AName</var> from the list, just as <link id="Delete"/> does. In difference 
+<var>AName</var> from the list, just as <link id="Delete"/> does. In difference
 with <var>Delete</var>, it does not free the object instance. Instead,
 it returns the extracted element. The result is <var>Nil</var> if a
 non-existing name is specified.
@@ -2624,7 +2624,7 @@ exception is raised.
 <short>Types of values in the object.</short>
 <descr>
 <var>Types</var> allows to retrieve the JSON types of the elements in
-the object by name. If a non-existent name is specified, an <link id="EJSON"/>   
+the object by name. If a non-existent name is specified, an <link id="EJSON"/>
 exception is raised.
 </descr>
 <seealso>
@@ -2654,19 +2654,19 @@ exception is raised.
 <var>Nulls</var> allows to retrieve or set the NULL values in
 the object by name. If a non-existent name is specified, an <link
 id="EJSON"/> exception is raised when reading. When writing, any existing
-value is replaced by a <var>null</var> value. 
+value is replaced by a <var>null</var> value.
 </descr>
 <seealso>
 <link id="TJSONData.Items"/>
 <link id="TJSONObject.Names"/>
 <link id="Elements"/>
 <link id="Integers"/>
-<link id="Int64s"/>  
+<link id="Int64s"/>
 <link id="Booleans"/>
-<link id="Strings"/> 
+<link id="Strings"/>
 <link id="Floats"/>
 <link id="Arrays"/>
-<link id="Types"/>  
+<link id="Types"/>
 <link id="Objects"/>
 </seealso>
 </element>
@@ -2739,7 +2739,7 @@ value is replaced by the specified integer value.
 <short>Named access to int64 values</short>
 <descr>
 <var>Int64s</var> allows to retrieve or set the int64 values in
-the object by name. If a non-existent name is specified, an <link  
+the object by name. If a non-existent name is specified, an <link
 id="EJSON"/> exception is raised when reading. When writing, any existing
 value is replaced by the specified int64 value.
 </descr>
@@ -2768,10 +2768,10 @@ value is replaced by the specified int64 value.
 <short>Named access to string values</short>
 <descr>
 <var>Strings</var> allows to retrieve or set the string values in
-the object by name. If a non-existent name is specified, an <link  
+the object by name. If a non-existent name is specified, an <link
 id="EJSON"/> exception is raised when reading. When writing, any existing
 value is replaced by the specified string value.
-</descr> 
+</descr>
 <seealso>
 <link id="TJSONData.Items">Items</link>
 <link id="TJSONObject.Names">Names</link>
@@ -2801,7 +2801,7 @@ value is replaced by the specified string value.
 the object by name. If a non-existent name is specified, an <link
 id="EJSON"/> exception is raised when reading. When writing, any existing
 value is replaced by the specified boolean value.
-</descr> 
+</descr>
 <seealso>
 <link id="TJSONData.Items">Items</link>
 <link id="TJSONObject.Names">Names</link>
@@ -2827,10 +2827,10 @@ value is replaced by the specified boolean value.
 <short>Named access to JSON array values</short>
 <descr>
 <var>Arrays</var> allows to retrieve or set the JSON array values in
-the object by name. If a non-existent name is specified, an <link  
+the object by name. If a non-existent name is specified, an <link
 id="EJSON"/> exception is raised when reading. When writing, any existing
 value is replaced by the specified JSON array.
-</descr> 
+</descr>
 <seealso>
 <link id="TJSONData.Items">Items</link>
 <link id="TJSONObject.Names">Names</link>
@@ -2856,10 +2856,10 @@ value is replaced by the specified JSON array.
 <short>Named access to JSON object values</short>
 <descr>
 <var>Objects</var> allows to retrieve or set the JSON object values in
-the object by name. If a non-existent name is specified, an <link   
+the object by name. If a non-existent name is specified, an <link
 id="EJSON"/> exception is raised when reading. When writing, any existing
 value is replaced by the specified JSON object.
-</descr> 
+</descr>
 <seealso>
 <link id="TJSONData.Items"/>
 <link id="TJSONObject.Names">Names</link>
@@ -2936,10 +2936,10 @@ If set to <var>False</var> <var>/</var> will also be escaped, although this is s
 <var>JSONStringToString</var> examines the string <var>S</var> and replaces
 any special characters by an escaped string, as in the JSON specification.
 The following escaped characters are recognized:
-</p> 
+</p>
 <pre>
 \\ \" \/ \b \t \n \f \r \u000X
-</pre>   
+</pre>
 </descr>
 <seealso>
 <link id="StringToJSONString"/>
@@ -3080,7 +3080,7 @@ It contains 3 elements which are available in the loop: key, keynum
 <short>JSON enumerator</short>
 <descr>
 <p>
-<var>TBaseJSONEnumerator</var> is the base type for the JSON enumerators. 
+<var>TBaseJSONEnumerator</var> is the base type for the JSON enumerators.
 It should not be used directly, instead use the enumerator support of Object
 pascal to loop over values in JSON data.
 </p>
@@ -3117,8 +3117,8 @@ describes the key and value of a JSON value. The key can be string-based
 <short>Move to next value in array/object</short>
 <descr>
 <var>MoveNext</var> attempts to move to the next value. This will return
-<var>True</var> if the move was successful, or <var>False</var> if not. 
-When <var>True</var> is returned, then 
+<var>True</var> if the move was successful, or <var>False</var> if not.
+When <var>True</var> is returned, then
 </descr>
 <errors>
 </errors>
@@ -3195,72 +3195,72 @@ element as D:
 <code>
 Var
   D,E : TJSONData;
-  
+
 begin
   D:=TJSONIntegerNumber.Create(123);
   E:=D.FindPath('');
-end.  
+end.
 </code>
 <p>
 The following code will not return anything:
 </p>
 <code>
-Var   
+Var
   D,E : TJSONData;
-    
+
 begin
   D:=TJSONIntegerNumber.Create(123);
   E:=D.FindPath('a');
-end.  
+end.
 </code>
 <p>
 The following code will return the third element from the array:
 </p>
 <code>
-Var   
+Var
   D,E : TJSONData;
-      
+
 begin
   D:=TJSONArray.Create([1,2,3,4,5]);
   E:=D.FindPath('[2]');
   Writeln(E.AsJSON);
-end.  
+end.
 </code>
 <p>The output of this program is 3.</p>
 <p>The following code returns the element <var>Age</var> from the object:</p>
 <code>
-Var   
+Var
   D,E : TJSONData;
-  
+
 begin
-  D:=TJSONObject.Create(['Age',23, 
+  D:=TJSONObject.Create(['Age',23,
                          'Lastame','Rodriguez',
                          'FirstName','Roberto']);
   E:=D.FindPath('Age');
-  Writeln(E.AsJSON);   
+  Writeln(E.AsJSON);
 end.
 </code>
 <p>The code will print 23.</p>
 <p>Obviously, this can be combined:</p>
 <code>
-Var   
+Var
   D,E : TJSONData;
-        
-begin 
+
+begin
   D:=TJSONObject.Create(['Age',23,
                          'Names', TJSONObject.Create([
                              'LastName','Rodriguez',
                              'FirstName','Roberto'])]);
   E:=D.FindPath('Names.LastName');
-  Writeln(E.AsJSON);   
+  Writeln(E.AsJSON);
 end.
 </code>
 <p>And mixed:</p>
 <code>
-var   
+var
   D,E : TJSONData;
-        
-begin 
+
+begin
   D:=TJSONObject.Create(['Children',
        TJSONArray.Create([
          TJSONObject.Create(['Age',23,
@@ -3273,11 +3273,11 @@ begin
                                    'LastName','Rodriguez',
                                    'FirstName','Maria'])
         ])
-      ]) 
+      ])
      ]);
   E:=D.FindPath('Children[1].Names.FirstName');
   Writeln(E.AsJSON);
-end.  
+end.
 </code>
 </descr>
 <seealso>
@@ -3327,7 +3327,7 @@ An <link id="EJSON"/> exception is raised if the path does not exist.
 <element name="TJSONFloatNumberClass">
 <short>Class of <var>TJSONFloatNumber</var></short>
 <descr>
-<var>TJSONFloatNumberClass</var> is the class type of <link id="TJSONFloatNumber"/>. 
+<var>TJSONFloatNumberClass</var> is the class type of <link id="TJSONFloatNumber"/>.
 It is used in the factory methods.
 </descr>
 <seealso>
@@ -3432,7 +3432,7 @@ and stores their index in the <var>KeyNum</var> member of <link id="TJSONEnum"/>
 <descr>
 <var>TJSONArrayClass</var> is the class type of <link
 id="TJSONArray"/>. It is used in the factory methods.
-</descr> 
+</descr>
 <seealso>
 <link id="TJSONArray"/>
 <link id="SetJSONInstanceType"/>
@@ -3450,7 +3450,7 @@ and stores their name in the <var>Key</var> and index in the <var>KeyNum</var>
 members of <link id="TJSONEnum"/>.
 </descr>
 <seealso>
-<link id="TJSONEnum"/> 
+<link id="TJSONEnum"/>
 <link id="TJSONData.GetEnumerator"/>
 </seealso>
 </element>
@@ -3463,10 +3463,10 @@ members of <link id="TJSONEnum"/>.
 <!-- "class of" type Visibility: default -->
 <element name="TJSONObject">
 <short>Class of <var>TJSONObject</var></short>
-<descr>  
+<descr>
 <var>TJSONObjectClass</var> is the class type of <link
 id="TJSONObject"/>. It is used in the factory methods.
-</descr> 
+</descr>
 <seealso>
 <link id="TJSONObject"/>
 <link id="SetJSONInstanceType"/>
@@ -3523,11 +3523,11 @@ id="SetJSONInstanceType"/> method, the actual types can be retrieved with
 <var>SetJSONInstanceType</var> can be used to register descendents of the
 <link id="TJSONData"/> class, one for each possible kind of data. The class
 type used to instantiate data of type <var>AType</var> is passed in
-<var>AClass</var>. 
+<var>AClass</var>.
 </p>
 <p>
 The JSON parser will use the registered types to instantiate JSON Data
-instanced: when the parser encounters a value of type <var>AType</var>, 
+instanced: when the parser encounters a value of type <var>AType</var>,
 it will instantiate a class of type <var>AClass</var>.
 By default, the classes in the <var>fpJSON</var> unit are used.
 </p>
@@ -3565,20 +3565,20 @@ If <var>AClass</var> is not suitable to contain data of type
 <short>JSON factory: Get the JSONData class types to use</short>
 <descr>
 <p>
-<var>GetJSONInstanceType</var> can be used to retrieve the registered 
-descendents of the <link id="TJSONData"/> class, one for each possible 
-kind of data. The result is the class type used to instantiate data of 
+<var>GetJSONInstanceType</var> can be used to retrieve the registered
+descendents of the <link id="TJSONData"/> class, one for each possible
+kind of data. The result is the class type used to instantiate data of
 type <var>AType</var>.
 </p>
 <p>
-The JSON parser and the <link id="CreateJSON"/> function will use the 
+The JSON parser and the <link id="CreateJSON"/> function will use the
 registered types to instantiate JSON Data. When the parser encounters a value of type <var>AType</var>,
 it will instantiate a class of the type returned by this function.
 By default, the classes in the <var>fpJSON</var> unit are returned.
 </p>
 </descr>
 <seealso>
-<link id="CreateJSON"/> 
+<link id="CreateJSON"/>
 <link id="TJSONData"/>
 <link id="GetJSON"/>
 </seealso>
@@ -3600,7 +3600,7 @@ By default, the classes in the <var>fpJSON</var> unit are returned.
 <descr>
 <p>
 <var>CreateJSON</var> will create a JSON Data item depending on the type of
-data passed to it, and will use the classes returned by <link id="GetJSONInstanceType"/> 
+data passed to it, and will use the classes returned by <link id="GetJSONInstanceType"/>
 to do so. The classes to be used can be set using the <link id="SetJSONInstanceType"/>.
 </p>
 <p>
@@ -3672,11 +3672,11 @@ For the <var>Data</var> array the same type conversion rules as for the
 <errors>
 if one of the elements in <var>Data</var> cannot be converted to a JSON
 structure, an exception will be raised.
-</errors> 
+</errors>
 <seealso>
 <link id="GetJSONInstanceType"/>
-<link id="SetJSONInstanceType"/> 
-<link id="GetJSON"/>  
+<link id="SetJSONInstanceType"/>
+<link id="GetJSON"/>
 <link id="CreateJSON"/>
 <link id="TJSONObject"/>
 </seealso>
@@ -3702,8 +3702,8 @@ stream that contains a valid JSON data representation) and converts it to
 native JSON objects. The stream must be positioned on the start of the JSON.
 </p>
 <p>
-The <var>fpJSON</var> unit does not contain a JSON parser. 
-The <var>jsonparser</var> unit does contain a JSON parser, 
+The <var>fpJSON</var> unit does not contain a JSON parser.
+The <var>jsonparser</var> unit does contain a JSON parser,
 and must be included once in the project to be able to parse JSON. The
 <var>jsonparser</var> unit uses the <link id="SetJSONParserHandler"/> call
 to set a callback that is used by <var>GetJSON</var> to parse the data.
@@ -3720,7 +3720,7 @@ JSON data.
 </errors>
 <seealso>
 <link id="GetJSONParserHandler"/>
-<link id="SetJSONParserHandler"/> 
+<link id="SetJSONParserHandler"/>
 <link id="TJSONData"/>
 </seealso>
 </element>
@@ -3747,14 +3747,14 @@ JSON data.
 <p>
 <var>SetJSONParserHandler</var> can be used to set the JSON parser handler
 callback. The <var>fpJSON</var> unit does not contain a JSON parser in
-itself: it contains simply the data structure and the ability to write JSON. 
+itself: it contains simply the data structure and the ability to write JSON.
 The parsing must be done using a separate unit, and is invoked through a
 callback. <var>SetJSONParserHandler</var> must be used to set this callback.
 </p>
 <p>
-The <var>jsonparser</var> unit does contain a JSON parser, and must be included 
-once in the project to be able to parse JSON. The <var>jsonparser</var> unit 
-uses the <var>SetJSONParserHandler</var> call to set the callback that is used 
+The <var>jsonparser</var> unit does contain a JSON parser, and must be included
+once in the project to be able to parse JSON. The <var>jsonparser</var> unit
+uses the <var>SetJSONParserHandler</var> call to set the callback that is used
 by <var>GetJSON</var> to parse the data. This is done once at the
 initialization of that unit, so it is sufficient to include the unit in the
 uses clause of the program.
@@ -3763,8 +3763,8 @@ uses clause of the program.
 The function returns the previously registered callback.
 </p>
 <p>
-This handler uses a stream as input. 
-For speed reasons you can also register handler that converts a string to JSON data. 
+This handler uses a stream as input.
+For speed reasons you can also register handler that converts a string to JSON data.
 This is done with the <link id="SetJSONStringParserHandler"/> call.
 </p>
 </descr>
@@ -3786,12 +3786,12 @@ This is done with the <link id="SetJSONStringParserHandler"/> call.
 <short>Get the current JSON parser handler</short>
 <descr>
 <p>
-<var>GetJSONParserHandler</var> can be used to get the current value of the 
-JSON parser handler callback. 
+<var>GetJSONParserHandler</var> can be used to get the current value of the
+JSON parser handler callback.
 </p>
 <p>
-The <var>fpJSON</var> unit does not contain a JSON parser in itself: it contains 
-simply the data structure and the ability to write JSON. The parsing must be done 
+The <var>fpJSON</var> unit does not contain a JSON parser in itself: it contains
+simply the data structure and the ability to write JSON. The parsing must be done
 using a separate unit.
 </p>
 </descr>
@@ -3838,7 +3838,7 @@ id="TJSONData.FormatJSON"/> behave as <link id="TJSONData.AsJSON"/> with
 <short>Constant to format JSON with minimal whitespace and unquoted property names</short>
 <descr>
 <var>AsCompressedJSON</var> can be used to let <link
-id="TJSONData.FormatJSON">FormatJSON</link> behave as <link id="TJSONData.AsJSON"/> 
+id="TJSONData.FormatJSON">FormatJSON</link> behave as <link id="TJSONData.AsJSON"/>
 with <var>TJSONData.CompressedJSON</var> equal to <var>True</var> and
 <var>TJSONData.UnquotedMemberNames</var> equal to <var>True</var>.
 </descr>
@@ -3872,7 +3872,7 @@ output will contain no whitespace.
 <short>Fast, memory efficient dump of JSON in stream</short>
 <descr>
 <var>DumpJSON</var> writes the data as a JSON string to the stream <var>S</var>.
-No intermediate strings are created, making this a more fast and memory efficient 
+No intermediate strings are created, making this a more fast and memory efficient
 operation than creating a string with <link id="TJSONData.AsJSON"/> and writing it to
 stream.
 </descr>
@@ -3897,14 +3897,14 @@ None.
 <p>
 <var>AsQWord</var> allows access to the raw value as a 64-bit unsigned integer value.
 When reading, it attempts to convert the native value of the data to a
-64-bit unsigned integer value.  When writing, it attempts to transform the 64-bit 
-unsigned integer value to a native value. 
-If either conversion fails, an <var>EConvertError</var> exception is raised.           
+64-bit unsigned integer value.  When writing, it attempts to transform the 64-bit
+unsigned integer value to a native value.
+If either conversion fails, an <var>EConvertError</var> exception is raised.
 </p>
 <p>
 For <link id="TJSONQwordNumber"/> this will return the native value.
 </p>
-<p> 
+<p>
 For complex values, reading or writing this property will always result in an
 <var>EConvertError</var> exception.
 </p>
@@ -3935,12 +3935,12 @@ For complex values, reading or writing this property will always result in an
 <!-- class Visibility: default -->
 <element name="TJSONQWordNumber">
 <short>Class to represent 64-bit unsigned integer JSON data.</short>
-<descr> 
+<descr>
 <var>TJSONQWordNumber</var> must be used whenever 64-bit unsigned integer data must
 be represented. For 32-bit integer data, <link id="TJSONIntegerNumber"/> must
 be used.For 64-bit signed integer data, <link id="TJSONInt64Number"/> must
 be used.
-</descr>  
+</descr>
 <seealso>
 <link id="TJSONFloatNumber"/>
 <link id="TJSONIntegerNumber"/>
@@ -3951,7 +3951,7 @@ be used.
 <!-- constructor Visibility: public -->
 <element name="TJSONQWordNumber.Create">
 <short>Create a new instance of 64-bit unsigned integer JSON data</short>
-<descr>   
+<descr>
 <var>Create</var> instantiates a new 64-bit unsigned integer JSON data and
 initializes the value with <var>AValue</var>.
 </descr>
@@ -4040,7 +4040,7 @@ Items[Index].AsQWord
 </code>
 <p>
 When writing, it will check if an 64-bit unsigned integer JSON value is located at the given
-location, and replace it with the new value. If a non-64-bit unsigned integer JSON value is 
+location, and replace it with the new value. If a non-64-bit unsigned integer JSON value is
 there, it is replaced with the written QWord value.
 </p>
 </descr>
@@ -4081,7 +4081,7 @@ It is used in <link id="CreateJSONArray"/>.
 <p>
 <var>UnquotedMemberNames</var> can be set to let <var>AsJSON</var> write the
 member names of a JSON object without quotes (<var>True</var>) or with quotes
-(<var>False</var>) around the member names. 
+(<var>False</var>) around the member names.
 </p>
 <p>When the value is <var>False</var>, JSON is written as:</p>
 <pre>
@@ -4113,7 +4113,7 @@ engine, the unquoted values are usually also accepted.
 <short>Named access to QWord values</short>
 <descr>
 <var>QWords</var> allows to retrieve or set the QWord values in
-the object by name. If a non-existent name is specified, an <link  
+the object by name. If a non-existent name is specified, an <link
 id="EJSON"/> exception is raised when reading. When writing, any existing
 value is replaced by the specified QWord value.
 </descr>
@@ -4204,11 +4204,11 @@ have a non-null single value, i.e., all types except array or object or null.
 <short>Set constant with JSON types of structured values</short>
 <descr>
 <var>StructuredJSONTypes</var> is a set constant designating the JSON types that
-contain multiple values: array or object.           
+contain multiple values: array or object.
 </descr>
 <seealso>
 <link id="ActualValueJSONTypes"/>
-<link id="ValueJSONTypes"/>      
+<link id="ValueJSONTypes"/>
 </seealso>
 </element>
 
@@ -4259,7 +4259,7 @@ Items[Index].AsUnicodeString
 </code>
 <p>
 When writing, it will check if a UNicodeStrings JSON value is located at the given
-location, and replace it with the new value. If a non-string value is 
+location, and replace it with the new value. If a non-string value is
 there, it is replaced with the written Unicode string value.
 </p>
 </descr>
@@ -4269,8 +4269,8 @@ there, it is replaced with the written Unicode string value.
 <link id="TJSONArray.Types"/>
 <link id="TJSONArray.Integers"/>
 <link id="TJSONArray.QWords"/>
-<link id="TJSONArray.Floats"/>  
-<link id="TJSONArray.Int64s"/> 
+<link id="TJSONArray.Floats"/>
+<link id="TJSONArray.Int64s"/>
 <link id="TJSONArray.Booleans"/>
 <link id="TJSONArray.Strings"/>
 </seealso>
@@ -4286,10 +4286,10 @@ there, it is replaced with the written Unicode string value.
 <short>Named access to Unicode string values</short>
 <descr>
 <var>Strings</var> allows to retrieve or set the Unicode string values in
-the object by name. If a non-existent name is specified, an <link  
+the object by name. If a non-existent name is specified, an <link
 id="EJSON"/> exception is raised when reading. When writing, any existing
 value is replaced by the specified UnicodeString value.
-</descr> 
+</descr>
 <seealso>
 <link id="TJSONData.Items">Items</link>
 <link id="TJSONObject.Names">Names</link>
@@ -4395,15 +4395,15 @@ If set to <var>False</var> <var>/</var> will also be escaped, although this is s
   <short>Install a JSON string to JSON Data conversion callback</short>
   <descr>
  <p>
-  <var>SetJSONStringParserHandler</var> has the same functionality as <link id="SetJSONParserHandler"/>. 
+  <var>SetJSONStringParserHandler</var> has the same functionality as <link id="SetJSONParserHandler"/>.
   It sets a callback that will be used by the <link id="GetJSON"/> call to convert a string value to JSON data.
   If no such callback is installed, the string will be converted to a stream,
   and the handler set by <link id="SetJSONParserHandler"/> will be used instead.
-  Setting this handler prevents a conversion from a string to a stream. 
+  Setting this handler prevents a conversion from a string to a stream.
  </p>
  <p>
  The function returns the previously installed handler, if any.
- </p> 
+ </p>
 </descr>
  <seealso>
   <link id="GetJSONStringParserHandler"/>
@@ -4474,7 +4474,7 @@ Items[Index].AsLargeInt
 </code>
 <p>
 When writing, it will check if an Largeint integer JSON value is located at the given
-location, and replace it with the new value. If a non-large-integer JSON value is 
+location, and replace it with the new value. If a non-large-integer JSON value is
 there, it is replaced with the written value.
 </p>
 </descr>
@@ -4516,7 +4516,7 @@ Items[Index].AsLargeInt
 </code>
 <p>
 When writing, it will check if an Largeint integer JSON value is located at the given
-location, and replace it with the new value. If a non-large-integer JSON value is 
+location, and replace it with the new value. If a non-large-integer JSON value is
 there, it is replaced with the written value.
 </p>
 </descr>
@@ -4532,9 +4532,12 @@ there, it is replaced with the written value.
 <link id="TJSONObject.QWords"/>
 </seealso>
 </element>
-<element name="TJSONObject.LargeInts.Index">
+
+
+<element name="TJSONObject.LargeInts.AName">
   <short>Name-based index to largeint array</short>
 </element>
+
 
 </module> <!-- fpjson -->
 
