@@ -918,20 +918,20 @@ e.\,g. in for loops.
 
 \subsubsection{Integers}
 \index{Types!Integer}
-\keywordlink{Integer}    
+\keywordlink{Integer}
 \keywordlink{Shortint}
-\keywordlink{SmallInt}   
+\keywordlink{SmallInt}
 \keywordlink{Longint}
 \keywordlink{Longword}
 \keywordlink{Int64}
-\keywordlink{Byte}	 
+\keywordlink{Byte}
 \keywordlink{Word}
-\keywordlink{Cardinal}   
+\keywordlink{Cardinal}
 \keywordlink{QWord}
 \keywordlink{ByteBool}
 \keywordlink{WordBool}
 \keywordlink{LongBool}
-\keywordlink{QWordBool}   
+\keywordlink{QWordBool}
 A list of predefined integer types is presented in \seet{integerstyp}.
 
 %\index{Keyword!Integer}
@@ -1212,7 +1212,7 @@ Some of the predefined \var{integer} types are defined as subrange types:
 Type
   Longint  = $80000000..$7fffffff;
   Integer  = -32768..32767;
-  shortint = -128..127;  
+  shortint = -128..127;
   byte     = 0..255;
   Word     = 0..65535;
 \end{verbatim}
@@ -1231,7 +1231,7 @@ Type
 A character type is also an ordinal type: characters are ordered, can be
 counted. There are 2 character types:
 \begin{description}
-\item[AnsiChar] This is a 1-byte character. 
+\item[AnsiChar] This is a 1-byte character.
 The interpretation of the character depends on the codepage.
 \item[WideChar] This is a 2-byte character. The interpretation of the
 character depends on the codepage.
@@ -1270,12 +1270,12 @@ The currency type is a fixed-point real data type which is internally used
 as an 64-bit integer type (automatically scaled with a factor 10000), this
 minimizes rounding errors. This type should be used with care: when used in
 expressions using e.g. multiplication, the evaluation of the expression may
-go wrong (losing precision) if intermediate results fall outside the currency range. 
+go wrong (losing precision) if intermediate results fall outside the currency range.
 
 Note that not all float types are available on all platforms. The
 \var{single} float type is the only one guaranteed to be available on all
-platforms that have floating point support (so e.g. AVR does not have it). 
-The \var{double} type is available on all platforms with coprocessor, 
+platforms that have floating point support (so e.g. AVR does not have it).
+The \var{double} type is available on all platforms with coprocessor,
 and the \var{extended} type is available on all Intel x86 processors,
 except on the Windows 64-bit platform.  More details on availability can be
 found in the \progref.
@@ -3455,7 +3455,7 @@ Var
   ti : array [1..3] of Longint = (1,2,3);
 \end{verbatim}
 For constant records, each element of the record that you wish to initialize
-must be specified in the form \var{Field: Value}, separated by semicolons, 
+must be specified in the form \var{Field: Value}, separated by semicolons,
 and surrounded by round brackets.\index{Record!Constant}. You can omit
 fields that you don't wish to initialize, in fact you can skip all fields.
 If you skip fields, the compiler will emit a warning.
@@ -3478,7 +3478,7 @@ iv.pp(8,20) Warning: Some fields coming after "" were not initialized
 \end{verbatim}
 
 The order of the fields in a constant record needs to be the same as in the type
-declaration, otherwise a compile-time error will occur. 
+declaration, otherwise a compile-time error will occur.
 
 \begin{remark}
 It should be stressed that initialized variables are initialized when they
@@ -3655,59 +3655,8 @@ end;
 
 end.
 \end{verbatim}
-The read/write specifiers can be hidden by declaring them in another unit
-which must be in the \var{uses} clause of the unit. This can be used to hide
-the read/write access specifiers for programmers, just as if they were in a
-\var{private} section of a class (discussed below). For the previous
-example, this could look as follows:
-\begin{verbatim}
-{$mode objfpc}
-unit testrw;
+The read/write specifiers must be in the same unit as the unit which declared the property.
 
-Interface
-
-Function GetMyInt : Integer;
-Procedure SetMyInt(Value : Integer);
-
-Implementation
-
-Uses sysutils;
-
-Var
-  FMyInt : Integer;
-
-Function GetMyInt : Integer;
-
-begin
-  Result:=FMyInt;
-end;
-
-Procedure SetMyInt(Value : Integer);
-
-begin
-  If ((Value mod 2)=1) then
-    Raise Exception.Create('Only even values are allowed');
-  FMyInt:=Value;
-end;
-
-end.
-\end{verbatim}
-The unit \file{testprop} would then look like:
-\begin{verbatim}
-{$mode objfpc}
-unit testprop;
-
-Interface
-
-uses testrw;
-
-Property
-  MyProp : Integer Read GetMyInt Write SetMyInt;
-
-Implementation
-
-end.
-\end{verbatim}
 More information about properties can be found in \seec{Classes}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3798,27 +3747,27 @@ Similarly, the \var{\{\$PackRecords \}} directive acts on objects as well.
 
 An object can be declared as sealed. In that case, it is not possible to declare a descendent
 object. The compiler will return an error if it encounters a declaration of a descendent:
-\begin{verbatim} 
-Type  
-  TMyClass = object Sealed  
-    x : integer;  
-  end;  
- 
-  TMyClass2 = object(TMyClass)  
-    Y : Integer;  
-  end;  
- 
-begin  
+\begin{verbatim}
+Type
+  TMyClass = object Sealed
+    x : integer;
+  end;
+
+  TMyClass2 = object(TMyClass)
+    Y : Integer;
+  end;
+
+begin
 end.
-\end{verbatim} 
+\end{verbatim}
 
 This will result in the following error:
-\begin{verbatim} 
+\begin{verbatim}
 Error: Cannot create a descendant of the sealed class "TMyClass"
-\end{verbatim} 
+\end{verbatim}
 
-An abstract class is a class that cannot be used directly. 
-Instead, a descendent class must always be used. 
+An abstract class is a class that cannot be used directly.
+Instead, a descendent class must always be used.
 However, for Delphi compatibility, the compiler ignores this directive.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -5962,7 +5911,7 @@ Error: No matching implementation for interface method
 Normally, the names of the methods that implement an interface, must
 equal the names of the methods in the interface definition. The compiler
 will look for matching methods in all visible methods: the methods of the
-class, and in parent classes methods with visibility protected or higher. 
+class, and in parent classes methods with visibility protected or higher.
 
 However, it is possible to provide aliases for methods that make up an
 interface: that is, the compiler can be told that a method of an interface
@@ -6320,7 +6269,7 @@ containers and classes. For example the \file{fgl} unit.
 A generic type definition is much like a type definition, with the exception that it contains a list of placeholders for types,
 as can be seen in the following syntax diagram:
 \input{syntax/generic.syn}
-\index{generic}\index{Type!Generics}\keywordlink{generic} 
+\index{generic}\index{Type!Generics}\keywordlink{generic}
 For classes, objects, procedural types and extended records, the generic
 type declaration should be followed by a type implementation.
 It is the same as a normal class implementation with a single exception,
@@ -6464,7 +6413,7 @@ placeholders filled in with actual type definitions.
 This can be done in any \var{Type} definition block. The specialized type
 looks as follows:
 \input{syntax/specialize.syn}
-\index{specialize}\index{Type!Specializing}\keywordlink{specialize} 
+\index{specialize}\index{Type!Specializing}\keywordlink{specialize}
 Which is a very simple definition. Given the declaration of \var{TList} in
 the previous section, the following would be a valid type definition:
 \begin{verbatim}
@@ -7348,7 +7297,7 @@ This will allow the code to run as well.
 \section{Record operators}
 Operator overloading is treated in detail in the chapter on operator overloading \seec{operatoroverloading}.
 However, since Delphi implemented operator overloading as part of advanced
-records, a few words need to be said about it here. 
+records, a few words need to be said about it here.
 
 As can be seen in the syntax diagram for extended records, FPC supports the Delphi syntax for operators on extended
 records. This syntax is available in both \var{ObjFPC} and \var{Delphi} mode.
@@ -7377,7 +7326,7 @@ Note that they have the \var{class} keyword prefixed, and have the record type
 name prepended in the implementation.
 
 
-As indicated above, in \var{ObjFPC} mode, the operators must be indicated with their symbol names. 
+As indicated above, in \var{ObjFPC} mode, the operators must be indicated with their symbol names.
 By contrast, in \var{Delphi} mode, the names of the operators can also be used, similar to the syntax in Delphi:
 \begin{verbatim}
 {$mode delphi}
@@ -7428,20 +7377,20 @@ Symbol & Name \\ \hline
 For example, the power operator (**) can be used in \var{Delphi} mode using its
 symbolic name:
 \begin{verbatim}
-{$mode delphi}  
-{$modeswitch advancedrecords}  
- 
-Type  
-  TComplex = record  
-    Re,Im : Double;  
-    class operator **(a,b : TComplex) : TComplex;  
-  end;  
- 
-class operator TComplex.** (a,b : TComplex) : TComplex;  
-begin  
-  Result.re:=-B.re;  
-  Result.im:=-B.im;  
-end; 
+{$mode delphi}
+{$modeswitch advancedrecords}
+
+Type
+  TComplex = record
+    Re,Im : Double;
+    class operator **(a,b : TComplex) : TComplex;
+  end;
+
+class operator TComplex.** (a,b : TComplex) : TComplex;
+begin
+  Result.re:=-B.re;
+  Result.im:=-B.im;
+end;
 
 Var
   a,b : TComplex;
@@ -8528,7 +8477,7 @@ to split up the statement using temporary results:
   a  := e1 + f(2);
 \end{verbatim}
 
-A notable exception to this behavior is the evaluation of boolean expressions: 
+A notable exception to this behavior is the evaluation of boolean expressions:
 if short-circuit boolean evaluation is enabled (the default) then the
 compiler will evaluate from left to right, but will still respect
 precedence, i.\,e. in parts with equal precedence the left operand will always
@@ -9491,7 +9440,7 @@ value, program flow continues after the final \var{end}.
 
 The case statements can be compound statements (i.\,e. a \var{Begin..End}
 block), but for the else case multiple statements are allowed (as can be
-seen in the syntax diagram). You may enclose them in an extra \var{Begin..End} 
+seen in the syntax diagram). You may enclose them in an extra \var{Begin..End}
 block, but it is not necessary.
 
 \begin{remark}
@@ -9668,14 +9617,14 @@ types can be used as counters in a loop.
 the counter variable with the initial value.
 \item It is not allowed to change (i.\,e. assign a value to) the value of a
 loop variable inside the loop.
-\item The value of the loop variable is undefined after a loop has completed or if a loop is not executed at all. 
-However, if the loop was terminated prematurely with an exception or a \var{break} or \var{goto} statement, 
+\item The value of the loop variable is undefined after a loop has completed or if a loop is not executed at all.
+However, if the loop was terminated prematurely with an exception or a \var{break} or \var{goto} statement,
 the loop variable retains the value it had when the loop was exited.
 \item For nested procedures, a loop variable must be a local variable.
 If you declare a loop variable outside the nested procedure where the loop is, the compiler will
 complain. It is however allowed to use a global variable in a procedure.
-\item The compiler does not expliticly forbid jumping with a \var{goto} statement into a for loop block, 
-but doing so will result in unpredictable behaviour. 
+\item The compiler does not expliticly forbid jumping with a \var{goto} statement into a for loop block,
+but doing so will result in unpredictable behaviour.
 \end{itemize}
 \end{remark}
 
@@ -9750,7 +9699,7 @@ If the statement is a compound statement, then the \var{Break} and
 \var{Continue} system routines can be used to jump to the end or just
 after the end of the \var{For} block statement: in the case of
 \var{Continue}, this means that the for loop condition is again evaluated.
-In the case of nested loops, only the innermost loop is considered. 
+In the case of nested loops, only the innermost loop is considered.
 Note that \var{Break} and \var{Continue} are not reserved words and therefore can be overloaded.
 
 \subsection{The \var{For..in..do} statement}
@@ -10204,7 +10153,7 @@ a terminating semicolon, but it is allowed.
 
 The \var{Break} and \var{Continue} system routines can be used to jump to
 the end or just after the end of the \var{repeat .. until} statement.
-In the case of \var{Continue}, this has the effect of immediatly checking the 
+In the case of \var{Continue}, this has the effect of immediatly checking the
 loop condition, bypassing all code between \var{Continue} and the \var{until}
 keyword. In the case of nested loops, only the innermost loop is considered.
 Note that \var{Break} and \var{Continue} are not reserved words and
@@ -10244,7 +10193,7 @@ They correspond to the example loops for the \var{repeat} statements.
 If the statement is a compound statement, then  the \var{Break} and
 \var{Continue} reserved words can be used to jump to the end or just
 after the end of the \var{While} block. In the case of \var{Continue},
-this has the effect of immediatly checking the loop condition, 
+this has the effect of immediatly checking the loop condition,
 bypassing all code between \var{Continue} and the end of the loop block.
 In the case of nested loops, only the innermost loop is considered.
 Note that \var{Break} and \var{Continue} are not reserved words and
@@ -10666,9 +10615,9 @@ performance, and still retaining the semantics of passing by value...
 
 
 \begin{remark}
-Contrary to earlier versions of Delphi, no assumptions should be made about 
-how \var{const} parameters are passed to the underlying routine. 
-In particular, the assumption that parameters with large size are passed by reference is not correct. 
+Contrary to earlier versions of Delphi, no assumptions should be made about
+how \var{const} parameters are passed to the underlying routine.
+In particular, the assumption that parameters with large size are passed by reference is not correct.
 For this the \var{constref} parameter type should be used, which is available as of
 version 2.5.1 of the compiler.
 
@@ -10920,7 +10869,7 @@ Variable, Out and constant parameters can be untyped. In that case the variable 
 in the procedure of function, and hence is incompatible with all other
 types: The compiler simply passes the address of the passed variable to the
 routine, so all that is available in the called routine is an address, with
-no type information attached to it. This is also true for const parameters. 
+no type information attached to it. This is also true for const parameters.
 
 Using an analogy
 \begin{verbatim}
@@ -10931,10 +10880,10 @@ Is equivalent to the following C/C++ declaration:
 void Something(void* Data; int Len);
 \end{verbatim}
 This means pretty much all that one can do in the routine is use the address operator
-or pass the argument to another function that has also an untyped parameter. 
+or pass the argument to another function that has also an untyped parameter.
 
-Inside a routine with an untyped parameter, if the untyped parameter is used in an 
-expression, or a value must be assigned to it a typecast must always be used. 
+Inside a routine with an untyped parameter, if the untyped parameter is used in an
+expression, or a value must be assigned to it a typecast must always be used.
 
 The following example shows this:
 \begin{verbatim}
@@ -10963,7 +10912,7 @@ As Byte   : 240
 \end{verbatim}
 
 Note that because an address is needed, no constant expressions can be
-passed to the function or procedure, i.\,e. given the above definition, 
+passed to the function or procedure, i.\,e. given the above definition,
 the following will not work:
 \begin{verbatim}
  DoIt($0FFFFFF0);
@@ -11172,7 +11121,7 @@ The parameter lists must differ at least in one of its elements type.
 When the compiler encounters a function call, it will look at the function
 parameters to decide which one of the defined functions it should call.
 This can be useful when the same function must be defined for different
-types. 
+types.
 
 For example, in a hypothetical RTL, the  \var{Random} procedure could be defined as:
 \begin{verbatim}
@@ -11761,7 +11710,7 @@ section on the calling mechanism and the chapter on linking.
 The \var{SYS\_ABI\_Default} modifier is used to indicate that the compiler must
 use the x86-64-specific calling convention that conforms to the System V AMD64
 ABI
-This is the default calling convention all x86-64 platforms except Win64, 
+This is the default calling convention all x86-64 platforms except Win64,
 and is only supported on x86-64.
 
 
@@ -11880,18 +11829,18 @@ There are some limitations on operator overloading:
 \begin{itemize}
 \item This way of declaring operators is only supported in \var{ObjFPC} and
 \var{FPC} modes.
-\item It is not possible to define operators on classes. 
-\item The + and - operators cannot be defined on enumerated types. 
+\item It is not possible to define operators on classes.
+\item The + and - operators cannot be defined on enumerated types.
 \item When the \var{ArrayOperators} modeswitch is in effect:
 \begin{verbatim}
 {$modeSwitch ArrayOperators}
-\end{verbatim} 
+\end{verbatim}
 then the + operator cannot be overloaded on dynamic arrays, because it is handled internally
 by the compiler.
 \end{itemize}
 
 \begin{remark}
-When compiling in \var{Objfpc} mode, the result identifier may be dropped. 
+When compiling in \var{Objfpc} mode, the result identifier may be dropped.
 The result can then be accessed through the standard \var{Result} symbol.
 
 If the result identifier is dropped and the compiler is not in one
