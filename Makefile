@@ -2710,46 +2710,46 @@ FCLUNITS=iostream pipes streamio process dbugintf contnrs zstream idea bufstream
 FCLUNITS+= ezcgi
 FCLXML=$(addprefix xml/, $(addsuffix .xml,$(FCLUNITS)))
 FCLNEWXML=$(addsuffix .new.xml,$(FCLUNITS))
-FCLIOSTREAM= --descr=iostream.xml --input="-S2 $(FCLBASEDIR)/iostream.pp"
-FCLSTREAMIO= --descr=streamio.xml --input="$(FCLBASEDIR)/streamio.ppll"
-FCLCONTNRS= --descr=contnrs.xml --input="$(FCLBASEDIR)/contnrs.pp"
-FCLIDEA= --descr=idea.xml --input="$(FCLBASEDIR)/idea.pp"
-FCLBUFSTREAM= --descr=bufstream.xml --input="$(FCLBASEDIR)/bufstream.pp"
-FCLBASE64= --descr=base64.xml --input="$(FCLBASEDIR)/base64.pp"
-FCLGETTEXT= --descr=gettext.xml --input="$(FCLBASEDIR)/gettext.pp"
-FCLPOOLEDMM= --descr=pooledmm.xml --input="$(FCLBASEDIR)/pooledmm.pp"
-FCLSTREAMEX= --descr=streamex.xml --input="-dFPC $(FCLBASEDIR)/streamex.pp"
-FCLINICOL= --descr=inicol.xml --input="$(FCLBASEDIR)/inicol.pp"
-FCLSTREAMCOL= --descr=streamcoll.xml --input="$(FCLBASEDIR)/streamcoll.pp"
-FCLCACHECLS= --descr=cachecls.xml --input="$(FCLBASEDIR)/cachecls.pp"
-FCLEVENTLOG= --descr=eventlog.xml --input="$(FCLBASEDIR)/eventlog.pp"
-FCLSYNCOBJS= --descr=syncobjs.xml --input="$(FCLBASEDIR)/syncobjs.pp"
-FCLCUSTAPP= --descr=custapp.xml --input="$(FCLBASEDIR)/custapp.pp"
-FCLBLOWFISH= --descr=blowfish.xml --input="$(FCLBASEDIR)/blowfish.pp"
-FCLINIFILES= --descr=inifiles.xml --input="$(FCLBASEDIR)/inifiles.pp"
-FCLRTTIUTILS= --descr=rttiutils.xml --input="$(FCLBASEDIR)/rttiutils.pp"
-FCLAVLTREE= --descr=avl_tree.xml --input="$(FCLBASEDIR)/avl_tree.pp"
-FCLPROCESS= --descr=process.xml --input="$(FCLPROCESSDIR)/process.pp"
-FCLPIPES= --descr=pipes.xml --input="$(FCLPROCESSDIR)/pipes.pp"
-FCLDBUGINTF= --descr=dbugintf.xml --input="$(FCLPROCESSDIR)/dbugintf.pp" 
-FCLDBUGMSG= --descr=dbugmsg.xml --input="$(FCLPROCESSDIR)/dbugmsg.pp"
-FCLSIMPLEIPC= --descr=simpleipc.xml --input="$(FCLPROCESSDIR)/simpleipc.pp"
-FCLEZCGI= --descr=ezcgi.xml --input="$(FCLWEBDIR)/base/ezcgi.pp"
-FCLURIPARSER= --descr=uriparser.xml --input="$(FCLBASEDIR)/uriparser.pp"
-FCLZSTREAM= --descr=zstream.xml --input="$(FCLZLIBDIR)/zstream.pp"
-FCLDAEMONAPP= --descr=daemonapp.xml --input="$(DAEMONDIR)/daemonapp.pp"
-FCLLIBTAR= --descr=libtar.xml --input="$(FPCSRCDIR)/packages/libtar/src/libtar.pp"
-FCLASCII85= --descr=ascii85.xml --input="$(FCLBASEDIR)/ascii85.pp"
-FCLFPTIMER= --descr=fptimer.xml --input="$(FCLBASEDIR)/fptimer.pp"
-FCLDB= --descr=db.xml --input="$(FCLDBDIR)/base/db.pas"
-FCLSQLTYPES= --descr=sqltypes.xml --input="$(FCLDBDIR)/base/sqltypes.pp"
-FCLSQLDB= --descr=sqldb.xml --input="$(FCLDBDIR)/sqldb/sqldb.pp"
-FCLIBCONNECTION=  --descr=ibconnection.xml --input="$(FCLDBDIR)/sqldb/interbase/ibconnection.pp"
-FCLMSSQLCONN=  --descr=mssqlconn.xml --input="$(FCLDBDIR)/sqldb/mssql/mssqlconn.pp"
-FCLZIPPER=  --descr=zipper.xml --input="$(FCLZLIBDIR)/zipper.pp"
-FCLJSON= --descr=fpjson.xml --input="$(FCLJSONDIR)/fpjson.pp"
-FCLBUFDATASET= --descr=bufdataset.xml --input="$(FCLDBDIR)/base/bufdataset.pas"
-FCLMIMETYPES= --descr=fpmimetypes.xml --input="$(FCLWEBDIR)/base/fpmimetypes.pp"
+FCLIOSTREAM= --descr=xml/iostream.xml --input="-S2 $(FCLBASEDIR)/iostream.pp"
+FCLSTREAMIO= --descr=xml/streamio.xml --input="$(FCLBASEDIR)/streamio.ppll"
+FCLCONTNRS= --descr=xml/contnrs.xml --input="$(FCLBASEDIR)/contnrs.pp"
+FCLIDEA= --descr=xml/idea.xml --input="$(FCLBASEDIR)/idea.pp"
+FCLBUFSTREAM= --descr=xml/bufstream.xml --input="$(FCLBASEDIR)/bufstream.pp"
+FCLBASE64= --descr=xml/base64.xml --input="$(FCLBASEDIR)/base64.pp"
+FCLGETTEXT= --descr=xml/gettext.xml --input="$(FCLBASEDIR)/gettext.pp"
+FCLPOOLEDMM= --descr=xml/pooledmm.xml --input="$(FCLBASEDIR)/pooledmm.pp"
+FCLSTREAMEX= --descr=xml/streamex.xml --input="-dFPC $(FCLBASEDIR)/streamex.pp"
+FCLINICOL= --descr=xml/inicol.xml --input="$(FCLBASEDIR)/inicol.pp"
+FCLSTREAMCOL= --descr=xml/streamcoll.xml --input="$(FCLBASEDIR)/streamcoll.pp"
+FCLCACHECLS= --descr=xml/cachecls.xml --input="$(FCLBASEDIR)/cachecls.pp"
+FCLEVENTLOG= --descr=xml/eventlog.xml --input="$(FCLBASEDIR)/eventlog.pp"
+FCLSYNCOBJS= --descr=xml/syncobjs.xml --input="$(FCLBASEDIR)/syncobjs.pp"
+FCLCUSTAPP= --descr=xml/custapp.xml --input="$(FCLBASEDIR)/custapp.pp"
+FCLBLOWFISH= --descr=xml/blowfish.xml --input="$(FCLBASEDIR)/blowfish.pp"
+FCLINIFILES= --descr=xml/inifiles.xml --input="$(FCLBASEDIR)/inifiles.pp"
+FCLRTTIUTILS= --descr=xml/rttiutils.xml --input="$(FCLBASEDIR)/rttiutils.pp"
+FCLAVLTREE= --descr=xml/avl_tree.xml --input="$(FCLBASEDIR)/avl_tree.pp"
+FCLPROCESS= --descr=xml/process.xml --input="$(FCLPROCESSDIR)/process.pp"
+FCLPIPES= --descr=xml/pipes.xml --input="$(FCLPROCESSDIR)/pipes.pp"
+FCLDBUGINTF= --descr=xml/dbugintf.xml --input="$(FCLPROCESSDIR)/dbugintf.pp" 
+FCLDBUGMSG= --descr=xml/dbugmsg.xml --input="$(FCLPROCESSDIR)/dbugmsg.pp"
+FCLSIMPLEIPC= --descr=xml/simpleipc.xml --input="$(FCLPROCESSDIR)/simpleipc.pp"
+FCLEZCGI= --descr=xml/ezcgi.xml --input="$(FCLWEBDIR)/base/ezcgi.pp"
+FCLURIPARSER= --descr=xml/uriparser.xml --input="$(FCLBASEDIR)/uriparser.pp"
+FCLZSTREAM= --descr=xml/zstream.xml --input="$(FCLZLIBDIR)/zstream.pp"
+FCLDAEMONAPP= --descr=xml/daemonapp.xml --input="$(DAEMONDIR)/daemonapp.pp"
+FCLLIBTAR= --descr=xml/libtar.xml --input="$(FPCSRCDIR)/packages/libtar/src/libtar.pp"
+FCLASCII85= --descr=xml/ascii85.xml --input="$(FCLBASEDIR)/ascii85.pp"
+FCLFPTIMER= --descr=xml/fptimer.xml --input="$(FCLBASEDIR)/fptimer.pp"
+FCLDB= --descr=xml/db.xml --input="$(FCLDBDIR)/base/db.pas"
+FCLSQLTYPES= --descr=xml/sqltypes.xml --input="$(FCLDBDIR)/base/sqltypes.pp"
+FCLSQLDB= --descr=xml/sqldb.xml --input="$(FCLDBDIR)/sqldb/sqldb.pp"
+FCLIBCONNECTION=  --descr=xml/ibconnection.xml --input="$(FCLDBDIR)/sqldb/interbase/ibconnection.pp"
+FCLMSSQLCONN=  --descr=xml/mssqlconn.xml --input="$(FCLDBDIR)/sqldb/mssql/mssqlconn.pp"
+FCLZIPPER=  --descr=xml/zipper.xml --input="$(FCLZLIBDIR)/zipper.pp"
+FCLJSON= --descr=xml/fpjson.xml --input="$(FCLJSONDIR)/fpjson.pp"
+FCLBUFDATASET= --descr=xml/bufdataset.xml --input="$(FCLDBDIR)/base/bufdataset.pas"
+FCLMIMETYPES= --descr=xml/fpmimetypes.xml --input="$(FCLWEBDIR)/base/fpmimetypes.pp"
 FCLUNITOPTS+= $(FCLIOSTREAM) $(FCLPIPES) $(FCLSTREAMIO) $(FCLPROCESS) $(FCLDBUGINTF)
 FCLUNITOPTS+= $(FCLCONTNRS) $(FCLZSTREAM) $(FCLIDEA) $(FCLBUFSTREAM) $(FCLBASE64) 
 FCLUNITOPTS+= $(FCLGETTEXT) 
@@ -2803,35 +2803,35 @@ FCLRESUNITS=resource resourcetree resdatastream resfactory resreader reswriter \
 	    externaltypes externalreader externalwriter dfmreader
 FCLRESXML=$(addprefix $(FCLRESDIR)/xml/,$(addsuffix .xml,$(FCLRESUNITS)))
 FCLRESNEWXML=$(addsuffix .new.xml,$(FCLRESUNITS))
-FCLRESRESOURCE= --input=$(FCLRESDIR)/src/resource.pp --descr=$(FCLRESDIR)/xml/resource.xml 
-FCLRESRESOURCETREE=  --input=$(FCLRESDIR)/src/resourcetree.pp --descr=$(FCLRESDIR)/xml/resourcetree.xml 
-FCLRESDATASTREAM=--input=$(FCLRESDIR)/src/resdatastream.pp --descr=$(FCLRESDIR)/xml/resdatastream.xml 
-FCLRESRESFACTORY=--input=$(FCLRESDIR)/src/resfactory.pp --descr=$(FCLRESDIR)/xml/resfactory.xml 
-FCLRESRESREADER=--input=$(FCLRESDIR)/src/resreader.pp --descr=$(FCLRESDIR)/xml/resreader.xml 
-FCLRESRESWRITER=--input=$(FCLRESDIR)/src/reswriter.pp --descr=$(FCLRESDIR)/xml/reswriter.xml 
-FCLRESBITMAPRESOURCE=--input=$(FCLRESDIR)/src/bitmapresource.pp --descr=$(FCLRESDIR)/xml/bitmapresource.xml 
-FCLRESACCELLERATORRESOURCE=--input=$(FCLRESDIR)/src/acceleratorsresource.pp --descr=$(FCLRESDIR)/xml/acceleratorsresource.xml 
-FCLRESGROUPRESOURCE=--input=$(FCLRESDIR)/src/groupresource.pp --descr=$(FCLRESDIR)/xml/groupresource.xml 
-FCLRESICONRESOURCE=--input=$(FCLRESDIR)/src/groupiconresource.pp --descr=$(FCLRESDIR)/xml/groupiconresource.xml 
-FCLRESGROUPCURSORRESOURCE=--input=$(FCLRESDIR)/src/groupcursorresource.pp --descr=$(FCLRESDIR)/xml/groupcursorresource.xml 
-FCLRESSTRINGTABLERESOURCE=--input=$(FCLRESDIR)/src/stringtableresource.pp --descr=$(FCLRESDIR)/xml/stringtableresource.xml 
-FCLRESVERSIONCONSTS=--input=$(FCLRESDIR)/src/versionconsts.pp --descr=$(FCLRESDIR)/xml/versionconsts.xml 
-FCLRESVERSIONTYPES=--input=$(FCLRESDIR)/src/versiontypes.pp --descr=$(FCLRESDIR)/xml/versiontypes.xml 
-FCLRESVERSIONRESOURCE=--input=$(FCLRESDIR)/src/versionresource.pp --descr=$(FCLRESDIR)/xml/versionresource.xml 
-FCLRESCOFFTYPES=--input=$(FCLRESDIR)/src/cofftypes.pp --descr=$(FCLRESDIR)/xml/cofftypes.xml 
-FCLRESCOFFREADER=--input=$(FCLRESDIR)/src/coffreader.pp --descr=$(FCLRESDIR)/xml/coffreader.xml 
-FCLRESCOFFWRITER=--input=$(FCLRESDIR)/src/coffwriter.pp --descr=$(FCLRESDIR)/xml/coffwriter.xml 
-FCLRESWINPEIMAGEREADER=--input=$(FCLRESDIR)/src/winpeimagereader.pp --descr=$(FCLRESDIR)/xml/winpeimagereader.xml 
-FCLRESELFCONST=--input=$(FCLRESDIR)/src/elfconsts.pp --descr=$(FCLRESDIR)/xml/elfconsts.xml 
-FCLRESELFREADER=--input=$(FCLRESDIR)/src/elfreader.pp --descr=$(FCLRESDIR)/xml/elfreader.xml 
-FCLRESELFWRITER=--input=$(FCLRESDIR)/src/elfwriter.pp --descr=$(FCLRESDIR)/xml/elfwriter.xml 
-FCLRESMACHOTYPES=--input=$(FCLRESDIR)/src/machotypes.pp --descr=$(FCLRESDIR)/xml/machotypes.xml 
-FCLRESMACHOREADER=--input=$(FCLRESDIR)/src/machoreader.pp --descr=$(FCLRESDIR)/xml/machoreader.xml 
-FCLRESMACHOWRITER=--input=$(FCLRESDIR)/src/machowriter.pp --descr=$(FCLRESDIR)/xml/machowriter.xml 
-FCLRESEXTERNALTYPES=--input=$(FCLRESDIR)/src/externaltypes.pp --descr=$(FCLRESDIR)/xml/externaltypes.xml 
-FCLRESEXTERNALREADER=--input=$(FCLRESDIR)/src/externalreader.pp --descr=$(FCLRESDIR)/xml/externalreader.xml 
-FCLRESEXTERNALWRITER=--input=$(FCLRESDIR)/src/externalwriter.pp --descr=$(FCLRESDIR)/xml/externalwriter.xml 
-FCLRESDFMREADER=--input=$(FCLRESDIR)/src/dfmreader.pp --descr=$(FCLRESDIR)/xml/dfmreader.xml
+FCLRESRESOURCE= --input=$(FCLRESDIR)/src/resource.pp --descr=xml/$(FCLRESDIR)/xml/resource.xml 
+FCLRESRESOURCETREE=  --input=$(FCLRESDIR)/src/resourcetree.pp --descr=xml/$(FCLRESDIR)/xml/resourcetree.xml 
+FCLRESDATASTREAM=--input=$(FCLRESDIR)/src/resdatastream.pp --descr=xml/$(FCLRESDIR)/xml/resdatastream.xml 
+FCLRESRESFACTORY=--input=$(FCLRESDIR)/src/resfactory.pp --descr=xml/$(FCLRESDIR)/xml/resfactory.xml 
+FCLRESRESREADER=--input=$(FCLRESDIR)/src/resreader.pp --descr=xml/$(FCLRESDIR)/xml/resreader.xml 
+FCLRESRESWRITER=--input=$(FCLRESDIR)/src/reswriter.pp --descr=xml/$(FCLRESDIR)/xml/reswriter.xml 
+FCLRESBITMAPRESOURCE=--input=$(FCLRESDIR)/src/bitmapresource.pp --descr=xml/$(FCLRESDIR)/xml/bitmapresource.xml 
+FCLRESACCELLERATORRESOURCE=--input=$(FCLRESDIR)/src/acceleratorsresource.pp --descr=xml/$(FCLRESDIR)/xml/acceleratorsresource.xml 
+FCLRESGROUPRESOURCE=--input=$(FCLRESDIR)/src/groupresource.pp --descr=xml/$(FCLRESDIR)/xml/groupresource.xml 
+FCLRESICONRESOURCE=--input=$(FCLRESDIR)/src/groupiconresource.pp --descr=xml/$(FCLRESDIR)/xml/groupiconresource.xml 
+FCLRESGROUPCURSORRESOURCE=--input=$(FCLRESDIR)/src/groupcursorresource.pp --descr=xml/$(FCLRESDIR)/xml/groupcursorresource.xml 
+FCLRESSTRINGTABLERESOURCE=--input=$(FCLRESDIR)/src/stringtableresource.pp --descr=xml/$(FCLRESDIR)/xml/stringtableresource.xml 
+FCLRESVERSIONCONSTS=--input=$(FCLRESDIR)/src/versionconsts.pp --descr=xml/$(FCLRESDIR)/xml/versionconsts.xml 
+FCLRESVERSIONTYPES=--input=$(FCLRESDIR)/src/versiontypes.pp --descr=xml/$(FCLRESDIR)/xml/versiontypes.xml 
+FCLRESVERSIONRESOURCE=--input=$(FCLRESDIR)/src/versionresource.pp --descr=xml/$(FCLRESDIR)/xml/versionresource.xml 
+FCLRESCOFFTYPES=--input=$(FCLRESDIR)/src/cofftypes.pp --descr=xml/$(FCLRESDIR)/xml/cofftypes.xml 
+FCLRESCOFFREADER=--input=$(FCLRESDIR)/src/coffreader.pp --descr=xml/$(FCLRESDIR)/xml/coffreader.xml 
+FCLRESCOFFWRITER=--input=$(FCLRESDIR)/src/coffwriter.pp --descr=xml/$(FCLRESDIR)/xml/coffwriter.xml 
+FCLRESWINPEIMAGEREADER=--input=$(FCLRESDIR)/src/winpeimagereader.pp --descr=xml/$(FCLRESDIR)/xml/winpeimagereader.xml 
+FCLRESELFCONST=--input=$(FCLRESDIR)/src/elfconsts.pp --descr=xml/$(FCLRESDIR)/xml/elfconsts.xml 
+FCLRESELFREADER=--input=$(FCLRESDIR)/src/elfreader.pp --descr=xml/$(FCLRESDIR)/xml/elfreader.xml 
+FCLRESELFWRITER=--input=$(FCLRESDIR)/src/elfwriter.pp --descr=xml/$(FCLRESDIR)/xml/elfwriter.xml 
+FCLRESMACHOTYPES=--input=$(FCLRESDIR)/src/machotypes.pp --descr=xml/$(FCLRESDIR)/xml/machotypes.xml 
+FCLRESMACHOREADER=--input=$(FCLRESDIR)/src/machoreader.pp --descr=xml/$(FCLRESDIR)/xml/machoreader.xml 
+FCLRESMACHOWRITER=--input=$(FCLRESDIR)/src/machowriter.pp --descr=xml/$(FCLRESDIR)/xml/machowriter.xml 
+FCLRESEXTERNALTYPES=--input=$(FCLRESDIR)/src/externaltypes.pp --descr=xml/$(FCLRESDIR)/xml/externaltypes.xml 
+FCLRESEXTERNALREADER=--input=$(FCLRESDIR)/src/externalreader.pp --descr=xml/$(FCLRESDIR)/xml/externalreader.xml 
+FCLRESEXTERNALWRITER=--input=$(FCLRESDIR)/src/externalwriter.pp --descr=xml/$(FCLRESDIR)/xml/externalwriter.xml 
+FCLRESDFMREADER=--input=$(FCLRESDIR)/src/dfmreader.pp --descr=xml/$(FCLRESDIR)/xml/dfmreader.xml
 FCLRESUNITOPTS=$(FCLRESRESOURCE) $(FCLRESRESOURCETREE) $(FCLRESDATASTREAM) $(FCLRESRESFACTORY) 
 FCLRESUNITOPTS+= $(FCLRESRESREADER) $(FCLRESRESWRITER) $(FCLRESBITMAPRESOURCE) $(FCLRESACCELLERATORRESOURCE)
 FCLRESUNITOPTS+= $(FCLRESGROUPRESOURCE) $(FCLRESICONRESOURCE) $(FCLRESGROUPCURSORRESOURCE) $(FCLRESSTRINGTABLERESOURCE) 
@@ -2896,56 +2896,56 @@ RTLUNITS=system objpas types sysutils strutils dateutils strings mouse keyboard 
 	 system.uitypes
 RTLXML=$(addprefix xml/, $(addsuffix .xml,$(RTLUNITS))) xml/rtl-project.xml
 RTLNEWXML=$(addsuffix .new.xml,$(RTLUNITS))
-RTLTYPES= --descr=types.xml --input="$(FPCSRCDIR)/rtl/objpas/types.pp $(OSDIRINCLUDES)"
-RTLSTRUTILS= --descr=strutils.xml --input="-dFPC_LITTLE_ENDIAN $(FPCSRCDIR)/packages/rtl-objpas/src/inc/strutils.pp $(OSDIRINCLUDES)"
-RTLSYSUTILS= --descr=sysutils.xml --input="-dFPC_HAS_TYPE_SINGLE -dFPC_HAS_TYPE_DOUBLE -dFPC_HAS_TYPE_EXTENDED -dFPC_HAS_UNICODESTRING -dFPC_LITTLE_ENDIAN $(FPCSRCDIR)/rtl/unix/sysutils.pp -Fi$(FPCSRCDIR)/rtl/objpas/sysutils -Fi$(FPCSRCDIR)/rtl/inc $(OSDIRINCLUDES)"
-RTLSTRINGS= --descr=strings.xml --input="$(FPCSRCDIR)/rtl/inc/strings.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/inc $(OSDIRINCLUDES)"
-RTLMOUSE= --descr=mouse.xml --input="$(FPCSRCDIR)/packages/rtl-console/src/unix/mouse.pp -Fi$(FPCSRCDIR)/packages/rtl-console/src/inc $(OSDIRINCLUDES)"
-RTLKEYBOARD= --descr=keyboard.xml --input="$(FPCSRCDIR)/packages/rtl-console/src/unix/keyboard.pp -Fi$(FPCSRCDIR)/packages/rtl-console/src/inc $(OSDIRINCLUDES)"
-RTLCRT= --descr=crt.xml --input="$(FPCSRCDIR)/packages/rtl-console/src/unix/crt.pp -Fi$(FPCSRCDIR)/packages/rtl-console/src/inc $(OSDIRINCLUDES)"
-RTLVIDEO= --descr=video.xml --input="$(FPCSRCDIR)/packages/rtl-console/src/unix/video.pp -Fi$(FPCSRCDIR)/packages/rtl-console/src/inc $(OSDIRINCLUDES)"
-RTLDOS= --descr=dos.xml --input="$(FPCSRCDIR)/rtl/unix/dos.pp -Fi$(FPCSRCDIR)/rtl/inc -dcpui386 $(OSDIRINCLUDES)"
-RTLSOCKETS= --descr=sockets.xml --input="-dver1_0 $(FPCSRCDIR)/packages/rtl-extra/src/unix/sockets.pp -Fi$(FPCSRCDIR)/packages/rtl-extra/src/inc -Fi$(FPCSRCDIR)/packages/rtl-extra/src/$(OS_SOURCE) $(OSDIRINCLUDES)"
-RTLOBJECTS= --descr=objects.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/inc/objects.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
-RTLHEAPTRC= --descr=heaptrc.xml --input="$(FPCSRCDIR)/rtl/inc/heaptrc.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
-RTLMMX= --descr=mmx.xml --input="$(FPCSRCDIR)/rtl/i386/mmx.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
-RTLIPC= --descr=ipc.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/unix/ipc.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
-RTLPRINTER= --descr=printer.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/unix/printer.pp -Fi$(FPCSRCDIR)/packages/rtl-extra/src/$(OS_SOURCE) -Fi$(FPCSRCDIR)/packages/rtl-extra/src/inc $(OSDIRINCLUDES)"
-RTLTYPINFO= --descr=typinfo.xml --input="$(FPCSRCDIR)/rtl/objpas/typinfo.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
-RTLPORTS= --descr=ports.xml --input="$(FPCSRCDIR)/rtl/unix/ports.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
-RTLGETOPTS= --descr=getopts.xml --input="$(FPCSRCDIR)/rtl/inc/getopts.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
-RTLEMU387= --descr=emu387.xml --input="$(FPCSRCDIR)/rtl/go32v2/emu387.pp -Fi$(FPCSRCDIR)/rtl/i386 $(OSDIRINCLUDES)"
-RTLDXELOAD= --descr=dxeload.xml --input="$(FPCSRCDIR)/rtl/go32v2/dxeload.pp -Fi$(FPCSRCDIR)/rtl/i386 $(OSDIRINCLUDES)"
-RTLGO32= --descr=go32.xml --input="$(FPCSRCDIR)/rtl/go32v2/go32.pp -Fi$(FPCSRCDIR)/rtl/i386 $(OSDIRINCLUDES)"
-RTLGPM= --descr=gpm.xml --input="-dVER1_0 $(FPCSRCDIR)/packages/rtl-extra/src/unix/gpm.pp -Fi$(FPCSRCDIR)/rtl/i386 $(OSDIRINCLUDES)"
-RTLGRAPH= --descr=graph.xml --input="$(GRAPHDIR)/unix/graph.pp -Fi$(GRAPHDIR)/inc $(OSDIRINCLUDES)"
-RTLWINCRT= --descr=wincrt.xml --input="$(GRAPHDIR)/win32/wincrt.pp"
-RTLUNIXTYPE= --descr=unixtype.xml --input="-dcpu64 $(FPCSRCDIR)/rtl/unix/unixtype.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 $(OSDIRINCLUDES)"
-RTLBASEUNIX= --descr=baseunix.xml --input="-dcpu64 $(FPCSRCDIR)/rtl/unix/baseunix.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 $(OSDIRINCLUDES)"
-RTLUNIX= --descr=unix.xml  --input="-dcpu64 $(FPCSRCDIR)/rtl/unix/unix.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 $(OSDIRINCLUDES)"
-RTLCLASSES= --descr=classes.xml --input="$(FPCSRCDIR)/rtl/$(CLASSESUNITDIR)/classes.pp -Fi$(FPCSRCDIR)/rtl/objpas/classes $(OSDIRINCLUDES) -dfpdocsystem"
-RTLUNIXUTIL= --descr=unixutil.xml --input="-dcpu64 $(FPCSRCDIR)/rtl/unix/unixutil.pp $(OSDIRINCLUDES)"
-RTLX86= --descr=x86.xml --input="$(FPCSRCDIR)/rtl/unix/x86.pp $(OSDIRINCLUDES)"
-RTLDYNLIBS= --descr=dynlibs.xml --input="$(FPCSRCDIR)/rtl/inc/dynlibs.pas -Fi$(FPCSRCDIR)/rtl/unix  -Fi$(FPCSRCDIR)/rtl/linux $(OSDIRINCLUDES)"
-RTLLINUX= --descr=linux.xml --input="-dclone_implemented $(FPCSRCDIR)/rtl/linux/linux.pp -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/unix $(OSDIRINCLUDES)"
-RTLMATH= --descr=math.xml --input="-dFPDOC_MATH $(FPCSRCDIR)/rtl/objpas/math.pp -Fi$(FPCSRCDIR)/rtl/i386 -dFPC_HAS_TYPE_EXTENDED $(OSDIRINCLUDES)"
-RTLMATRIX= --descr=matrix.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/inc/matrix.pp -Fi$(FPCSRCDIR)/packages/rtl-extra/src/inc $(OSDIRINCLUDES)"
-RTLSYSTEM= --descr=system.xml --input="-Sd -dFPC_LITTLE_ENDIAN  -dfpdocsystem -dHASGETHEAPSTATUS -dSUPPORT_DOUBLE $(FPCSRCDIR)/rtl/$(SYSTEMUNITDIR)/system.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/inc -Fi$(FPCSRCDIR)/rtl/i386 -dCPU32 -dHASVARIANT -dFPC_HAS_TYPE_EXTENDED -dHASWIDECHAR $(OSDIRINCLUDES)"
-RTLOBJPAS= --descr=objpas.xml --input="-dHASINTF $(FPCSRCDIR)/rtl/objpas/objpas.pp $(OSDIRINCLUDES)"
-RTLDATEUTILS= --descr=dateutils.xml --input="$(FPCSRCDIR)/packages/rtl-objpas/src/inc/dateutils.pp -Fi$(FPCSRCDIR)/rtl/objpas $(OSDIRINCLUDES)"
-RTLCLOCALE= --descr=clocale.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/unix/clocale.pp $(OSDIRINCLUDES)"
-RTLCTHREADS= --descr=cthreads.xml --input="$(FPCSRCDIR)/rtl/unix/cthreads.pp $(OSDIRINCLUDES)"
-RTLCMEM= --descr=cmem.xml --input="$(FPCSRCDIR)/rtl/inc/cmem.pp $(OSDIRINCLUDES)"
-RTLCWSTRING= --descr=cwstring.xml --input="$(FPCSRCDIR)/rtl/unix/cwstring.pp $(OSDIRINCLUDES)"
-RTLEXEINFO= --descr=exeinfo.xml --input="$(FPCSRCDIR)/rtl/inc/exeinfo.pp $(OSDIRINCLUDES)"
-RTLLINEINFO= --descr=lineinfo.xml --input="$(FPCSRCDIR)/rtl/inc/lineinfo.pp $(OSDIRINCLUDES)"
-RTLLNFODWRF= --descr=lnfodwrf.xml --input="$(FPCSRCDIR)/rtl/inc/lnfodwrf.pp $(OSDIRINCLUDES)"
-RTLCTYPES= --descr=ctypes.xml --input="$(FPCSRCDIR)/rtl/inc/ctypes.pp -Fi$(FPCSRCDIR)/rtl/unix $(OSDIRINCLUDES)"
-RTLFPWIDESTRING= --descr=fpwidestring.xml --input="$(FPCSRCDIR)/rtl/objpas/fpwidestring.pp -Fi$(FPCSRCDIR)/rtl/inc -Fi$(FPCSRCDIR)/rtl/linux $(OSDIRINCLUDES)"
-RTLERRORS= --descr=errors.xml --input="$(FPCSRCDIR)/rtl/unix/errors.pp -Fi$(FPCSRCDIR)/rtl/linux/  $(OSDIRINCLUDES)"
-RTLFGL= --descr=fgl.xml --input="$(FPCSRCDIR)/rtl/objpas/fgl.pp  $(OSDIRINCLUDES)"
-RTLCHARACTER= --descr=character.xml --input="$(FPCSRCDIR)/rtl/objpas/character.pas  $(OSDIRINCLUDES)"
-RTLUITYPES= --descr=system.uitypes.xml --input="$(FPCSRCDIR)/rtl-objpas/src/inc/system.uitypes.pp  $(OSDIRINCLUDES)"
+RTLTYPES= --descr=xml/types.xml --input="$(FPCSRCDIR)/rtl/objpas/types.pp $(OSDIRINCLUDES)"
+RTLSTRUTILS= --descr=xml/strutils.xml --input="-dFPC_LITTLE_ENDIAN $(FPCSRCDIR)/packages/rtl-objpas/src/inc/strutils.pp $(OSDIRINCLUDES)"
+RTLSYSUTILS= --descr=xml/sysutils.xml --input="-dFPC_HAS_TYPE_SINGLE -dFPC_HAS_TYPE_DOUBLE -dFPC_HAS_TYPE_EXTENDED -dFPC_HAS_UNICODESTRING -dFPC_LITTLE_ENDIAN $(FPCSRCDIR)/rtl/unix/sysutils.pp -Fi$(FPCSRCDIR)/rtl/objpas/sysutils -Fi$(FPCSRCDIR)/rtl/inc $(OSDIRINCLUDES)"
+RTLSTRINGS= --descr=xml/strings.xml --input="$(FPCSRCDIR)/rtl/inc/strings.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/inc $(OSDIRINCLUDES)"
+RTLMOUSE= --descr=xml/mouse.xml --input="$(FPCSRCDIR)/packages/rtl-console/src/unix/mouse.pp -Fi$(FPCSRCDIR)/packages/rtl-console/src/inc $(OSDIRINCLUDES)"
+RTLKEYBOARD= --descr=xml/keyboard.xml --input="$(FPCSRCDIR)/packages/rtl-console/src/unix/keyboard.pp -Fi$(FPCSRCDIR)/packages/rtl-console/src/inc $(OSDIRINCLUDES)"
+RTLCRT= --descr=xml/crt.xml --input="$(FPCSRCDIR)/packages/rtl-console/src/unix/crt.pp -Fi$(FPCSRCDIR)/packages/rtl-console/src/inc $(OSDIRINCLUDES)"
+RTLVIDEO= --descr=xml/video.xml --input="$(FPCSRCDIR)/packages/rtl-console/src/unix/video.pp -Fi$(FPCSRCDIR)/packages/rtl-console/src/inc $(OSDIRINCLUDES)"
+RTLDOS= --descr=xml/dos.xml --input="$(FPCSRCDIR)/rtl/unix/dos.pp -Fi$(FPCSRCDIR)/rtl/inc -dcpui386 $(OSDIRINCLUDES)"
+RTLSOCKETS= --descr=xml/sockets.xml --input="-dver1_0 $(FPCSRCDIR)/packages/rtl-extra/src/unix/sockets.pp -Fi$(FPCSRCDIR)/packages/rtl-extra/src/inc -Fi$(FPCSRCDIR)/packages/rtl-extra/src/$(OS_SOURCE) $(OSDIRINCLUDES)"
+RTLOBJECTS= --descr=xml/objects.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/inc/objects.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
+RTLHEAPTRC= --descr=xml/heaptrc.xml --input="$(FPCSRCDIR)/rtl/inc/heaptrc.pp -Fi$(FPCSRCDIR)/rtl/i386 -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
+RTLMMX= --descr=xml/mmx.xml --input="$(FPCSRCDIR)/rtl/i386/mmx.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
+RTLIPC= --descr=xml/ipc.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/unix/ipc.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
+RTLPRINTER= --descr=xml/printer.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/unix/printer.pp -Fi$(FPCSRCDIR)/packages/rtl-extra/src/$(OS_SOURCE) -Fi$(FPCSRCDIR)/packages/rtl-extra/src/inc $(OSDIRINCLUDES)"
+RTLTYPINFO= --descr=xml/typinfo.xml --input="$(FPCSRCDIR)/rtl/objpas/typinfo.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
+RTLPORTS= --descr=xml/ports.xml --input="$(FPCSRCDIR)/rtl/unix/ports.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
+RTLGETOPTS= --descr=xml/getopts.xml --input="$(FPCSRCDIR)/rtl/inc/getopts.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) $(OSDIRINCLUDES)"
+RTLEMU387= --descr=xml/emu387.xml --input="$(FPCSRCDIR)/rtl/go32v2/emu387.pp -Fi$(FPCSRCDIR)/rtl/i386 $(OSDIRINCLUDES)"
+RTLDXELOAD= --descr=xml/dxeload.xml --input="$(FPCSRCDIR)/rtl/go32v2/dxeload.pp -Fi$(FPCSRCDIR)/rtl/i386 $(OSDIRINCLUDES)"
+RTLGO32= --descr=xml/go32.xml --input="$(FPCSRCDIR)/rtl/go32v2/go32.pp -Fi$(FPCSRCDIR)/rtl/i386 $(OSDIRINCLUDES)"
+RTLGPM= --descr=xml/gpm.xml --input="-dVER1_0 $(FPCSRCDIR)/packages/rtl-extra/src/unix/gpm.pp -Fi$(FPCSRCDIR)/rtl/i386 $(OSDIRINCLUDES)"
+RTLGRAPH= --descr=xml/graph.xml --input="$(GRAPHDIR)/unix/graph.pp -Fi$(GRAPHDIR)/inc $(OSDIRINCLUDES)"
+RTLWINCRT= --descr=xml/wincrt.xml --input="$(GRAPHDIR)/win32/wincrt.pp"
+RTLUNIXTYPE= --descr=xml/unixtype.xml --input="-dcpu64 $(FPCSRCDIR)/rtl/unix/unixtype.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 $(OSDIRINCLUDES)"
+RTLBASEUNIX= --descr=xml/baseunix.xml --input="-dcpu64 $(FPCSRCDIR)/rtl/unix/baseunix.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 $(OSDIRINCLUDES)"
+RTLUNIX= --descr=xml/unix.xml  --input="-dcpu64 $(FPCSRCDIR)/rtl/unix/unix.pp -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/linux/i386 $(OSDIRINCLUDES)"
+RTLCLASSES= --descr=xml/classes.xml --input="$(FPCSRCDIR)/rtl/$(CLASSESUNITDIR)/classes.pp -Fi$(FPCSRCDIR)/rtl/objpas/classes $(OSDIRINCLUDES) -dfpdocsystem"
+RTLUNIXUTIL= --descr=xml/unixutil.xml --input="-dcpu64 $(FPCSRCDIR)/rtl/unix/unixutil.pp $(OSDIRINCLUDES)"
+RTLX86= --descr=xml/x86.xml --input="$(FPCSRCDIR)/rtl/unix/x86.pp $(OSDIRINCLUDES)"
+RTLDYNLIBS= --descr=xml/dynlibs.xml --input="$(FPCSRCDIR)/rtl/inc/dynlibs.pas -Fi$(FPCSRCDIR)/rtl/unix  -Fi$(FPCSRCDIR)/rtl/linux $(OSDIRINCLUDES)"
+RTLLINUX= --descr=xml/linux.xml --input="-dclone_implemented $(FPCSRCDIR)/rtl/linux/linux.pp -Fi$(FPCSRCDIR)/rtl/linux -Fi$(FPCSRCDIR)/rtl/unix $(OSDIRINCLUDES)"
+RTLMATH= --descr=xml/math.xml --input="-dFPDOC_MATH $(FPCSRCDIR)/rtl/objpas/math.pp -Fi$(FPCSRCDIR)/rtl/i386 -dFPC_HAS_TYPE_EXTENDED $(OSDIRINCLUDES)"
+RTLMATRIX= --descr=xml/matrix.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/inc/matrix.pp -Fi$(FPCSRCDIR)/packages/rtl-extra/src/inc $(OSDIRINCLUDES)"
+RTLSYSTEM= --descr=xml/system.xml --input="-Sd -dFPC_LITTLE_ENDIAN  -dfpdocsystem -dHASGETHEAPSTATUS -dSUPPORT_DOUBLE $(FPCSRCDIR)/rtl/$(SYSTEMUNITDIR)/system.pp -Fi$(FPCSRCDIR)/rtl/$(OS_SOURCE) -Fi$(FPCSRCDIR)/rtl/unix -Fi$(FPCSRCDIR)/rtl/inc -Fi$(FPCSRCDIR)/rtl/i386 -dCPU32 -dHASVARIANT -dFPC_HAS_TYPE_EXTENDED -dHASWIDECHAR $(OSDIRINCLUDES)"
+RTLOBJPAS= --descr=xml/objpas.xml --input="-dHASINTF $(FPCSRCDIR)/rtl/objpas/objpas.pp $(OSDIRINCLUDES)"
+RTLDATEUTILS= --descr=xml/dateutils.xml --input="$(FPCSRCDIR)/packages/rtl-objpas/src/inc/dateutils.pp -Fi$(FPCSRCDIR)/rtl/objpas $(OSDIRINCLUDES)"
+RTLCLOCALE= --descr=xml/clocale.xml --input="$(FPCSRCDIR)/packages/rtl-extra/src/unix/clocale.pp $(OSDIRINCLUDES)"
+RTLCTHREADS= --descr=xml/cthreads.xml --input="$(FPCSRCDIR)/rtl/unix/cthreads.pp $(OSDIRINCLUDES)"
+RTLCMEM= --descr=xml/cmem.xml --input="$(FPCSRCDIR)/rtl/inc/cmem.pp $(OSDIRINCLUDES)"
+RTLCWSTRING= --descr=xml/cwstring.xml --input="$(FPCSRCDIR)/rtl/unix/cwstring.pp $(OSDIRINCLUDES)"
+RTLEXEINFO= --descr=xml/exeinfo.xml --input="$(FPCSRCDIR)/rtl/inc/exeinfo.pp $(OSDIRINCLUDES)"
+RTLLINEINFO= --descr=xml/lineinfo.xml --input="$(FPCSRCDIR)/rtl/inc/lineinfo.pp $(OSDIRINCLUDES)"
+RTLLNFODWRF= --descr=xml/lnfodwrf.xml --input="$(FPCSRCDIR)/rtl/inc/lnfodwrf.pp $(OSDIRINCLUDES)"
+RTLCTYPES= --descr=xml/ctypes.xml --input="$(FPCSRCDIR)/rtl/inc/ctypes.pp -Fi$(FPCSRCDIR)/rtl/unix $(OSDIRINCLUDES)"
+RTLFPWIDESTRING= --descr=xml/fpwidestring.xml --input="$(FPCSRCDIR)/rtl/objpas/fpwidestring.pp -Fi$(FPCSRCDIR)/rtl/inc -Fi$(FPCSRCDIR)/rtl/linux $(OSDIRINCLUDES)"
+RTLERRORS= --descr=xml/errors.xml --input="$(FPCSRCDIR)/rtl/unix/errors.pp -Fi$(FPCSRCDIR)/rtl/linux/  $(OSDIRINCLUDES)"
+RTLFGL= --descr=xml/fgl.xml --input="$(FPCSRCDIR)/rtl/objpas/fgl.pp  $(OSDIRINCLUDES)"
+RTLCHARACTER= --descr=xml/character.xml --input="$(FPCSRCDIR)/rtl/objpas/character.pas  $(OSDIRINCLUDES)"
+RTLUITYPES= --descr=xml/system.uitypes.xml --input="$(FPCSRCDIR)/rtl-objpas/src/inc/system.uitypes.pp  $(OSDIRINCLUDES)"
 RTLOPTS+= $(RTLSYSTEM) $(RTLOBJPAS) $(RTLTYPES) $(RTLSYSUTILS)
 RTLOPTS+= $(RTLSTRUTILS)  $(RTLSTRINGS) $(RTLMOUSE) $(RTLKEYBOARD)
 RTLOPTS+= $(RTLCRT) $(RTLVIDEO) $(RTLDOS) $(RTLSOCKETS) $(RTLOBJECTS)
