@@ -3170,8 +3170,12 @@ Var
   A : MyInteger;
   B : Integer;
 \end{verbatim}
-Will actually have the same type from the point of view of the compiler
-(namely: \var{Integer}).
+Will actually have the exact same type from the point of view of the compiler
+(namely: \var{Integer}). The definition of \var{A} is identical to
+\begin{verbatim}
+Var
+  A : Integer;
+\end{verbatim}
 
 The above presents a way to make types platform independent, by only using the
 alias types, and then defining these types for each platform individually.
@@ -4737,6 +4741,43 @@ declarations in objects:
 \input{syntax/cmethods.syn}
 The only differences are the \var{override}, \var{reintroduce} and
 \var{message} directives.
+
+\subsection{Implementation}
+Method implementations for classes ar no different than for objects:
+the implementation is specified using the \var{ClassName.MethodName} identifier:
+\begin{verbatim}
+Type
+   TMyClass  = class
+     Procedure DoIt;
+   end;
+
+procedure TMyClass.DoIt;
+
+begin
+  // Do something nice
+end;
+\end{verbatim}
+
+Note: Because the compiler considers a type alias to be the same type as the aliased type,
+type aliases can currently be used when writing the implementation of a method:
+\begin{verbatim}
+Interface
+
+Type
+   TSomeReallyAnnoyingIncrediblyLongClassName = Class
+     Procedure DoSomething;
+   end;
+
+implementation
+
+Type
+   T1 = TSomeReallyAnnoyingUltraLongClassName;
+
+procedure T1.DoSomething;
+
+begin
+end;
+\end{verbatim}
 
 \subsection{Invocation}
 Method invocation for classes is no different than for objects. The
