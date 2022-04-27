@@ -1,0 +1,2605 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fpdoc-descriptions>
+<package name="rtl">
+<module name="syshelpers">
+
+<short>Type helpers for customizable boolean, binary and hexadecimal string representation.</short>
+<descr>Convert boolean value to string, and ordinary value to binary or hexadecimal string using localized custom formatting.
+</descr>
+
+<element name="classes">
+<short/>
+</element>
+
+<element name="sysutils">
+<short/>
+</element>
+
+<element name="TStringCaseFormat">
+<short>Used as letters case option in conversion to strings.</short>
+<seealso>
+<link id="TBooleanSysHelper.ToString"/>
+</seealso>
+</element>
+
+<element name="TStringCaseFormat.scfUnchangedCase">
+<short>Option to leave case as it is in result string during conversion.</short>
+</element>
+
+<element name="TStringCaseFormat.scfLowerCase">
+<short>Option to convert result string to lower case.</short>
+</element>
+
+<element name="TStringCaseFormat.scfUpperCase">
+<short>Option to convert result string to upper case.</short>
+</element>
+
+<element name="TBitFormatSettings">
+<short>Record type holding strings for boolean to string conversion.</short>
+<seealso>
+<link id="TBinFormatSettings"/>
+<link id="THexFormatSettings"/>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBitFormatSettings.BitTrueString">
+<short>String used for boolean TRUE value.</short>
+<descr>
+Default value is 'True'.
+</descr>
+<seealso>
+<link id="TBitFormatSettings.BitFalseString"/>
+</seealso>
+</element>
+
+<element name="TBitFormatSettings.BitFalseString">
+<short>String used for boolean FALSE value.</short>
+<descr>
+Default value is 'False'.
+</descr>
+<seealso>
+<link id="TBitFormatSettings.BitTrueString"/>
+</seealso>
+</element>
+
+<element name="TBitFormatSettings.BitOnString">
+<short>String used for boolean ON value.</short>
+<descr>
+Default value is 'On'.
+</descr>
+<seealso>
+<link id="TBitFormatSettings.BitOffString"/>
+</seealso>
+</element>
+
+<element name="TBitFormatSettings.BitOffString">
+<short>String used for boolean OFF value.</short>
+<descr>
+Default value is 'Off'.
+</descr>
+<seealso>
+<link id="TBitFormatSettings.BitOnString"/>
+</seealso>
+</element>
+
+<element name="TBitFormatSettings.BitOneString">
+<short>String used for boolean ONE value.</short>
+<descr>
+Default value is '1'.
+</descr>
+<seealso>
+<link id="TBitFormatSettings.BitZeroString"/>
+</seealso>
+</element>
+
+<element name="TBitFormatSettings.BitZeroString">
+<short>String used for boolean ZERO value.</short>
+<descr>
+Default value is '0'.
+</descr>
+<seealso>
+<link id="TBitFormatSettings.BitOneString"/>
+</seealso>
+</element>
+
+<element name="TBitFormatSettings.Initialize(TBitFormatSettings)">
+<short>Populate record with default values.</short>
+<descr>
+After instance creation record strings are populated with 'True' 'False', 'On' 'Off' and '1' '0' default values.
+</descr>
+</element>
+
+<element name="TBitFormatSettings.Initialize(TBitFormatSettings).Result">
+<short/>
+</element>
+
+<element name="TBitFormatSettings.Initialize(TBitFormatSettings).aNewSettings">
+<short/>
+</element>
+
+<element name="TBitFormatSettings.CopyToDefaultBoolStrings">
+<short>Changes default boolean to string text outputs in sysutils.</short>
+<descr>
+Strings from the record are copied to TrueBoolStrs[] and FalseBoolStrs[] in sysutils, so all boolean to string conversion functions in sysutils will use theose new strings. For example SomeBooleanValue.ToString, BoolToStr(SomeBooleanValue, true) and TryStrToBool(SomeTrueOrFalseStr, SomeBoolOutVar). Beware that by default in console mode functions UpperCase() and LowerCase() work only for ASCII strings. Consequence is that TryStrToBool() which internally uses UpperCase() might fail when used on unicode boolean strings. This means that if you put unicode string 'Истина' into DefaultBitFormatSettings.BitTrueString, result of TryStrToBool('ИСТИна', SomeBoolOutVar) will be false in console application and true (which is expected) in LCL (GUI) application. There is no such issue in LCL (GUI) applications since UpperCase() used there does a proper unicode conversion.
+</descr>
+<seealso>
+<link id="sysutils.UpperCase"/>
+<link id="sysutils.TryStrToBool"/>
+</seealso>
+</element>
+
+<element name="TBitFormatSettings.CopyToDefaultBitFormatSettings">
+<short>Changes default boolean to string text outputs in syshelpers.</short>
+<descr>
+Record is copied to DefaultBitFormatSettings and all boolean to string conversion functions in syshelpers will use those new strings. 
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+<link id="TBooleanSysHelper.ToString"/>
+<link id="TBooleanSysHelper.ToTrueFalseString"/>
+<link id="TBooleanSysHelper.ToOneZeroString"/>
+<link id="TBooleanSysHelper.ToOnOffString"/>
+<link id="TBoolean8SysHelper.ToString"/>
+<link id="TBoolean8SysHelper.ToTrueFalseString"/>
+<link id="TBoolean8SysHelper.ToOneZeroString"/>
+<link id="TBoolean8SysHelper.ToOnOffString"/>
+<link id="TBoolean16SysHelper.ToString"/>
+<link id="TBoolean16SysHelper.ToTrueFalseString"/>
+<link id="TBoolean16SysHelper.ToOneZeroString"/>
+<link id="TBoolean16SysHelper.ToOnOffString"/>
+<link id="TBoolean32SysHelper.ToString"/>
+<link id="TBoolean32SysHelper.ToTrueFalseString"/>
+<link id="TBoolean32SysHelper.ToOneZeroString"/>
+<link id="TBoolean32SysHelper.ToOnOffString"/>
+<link id="TBoolean64SysHelper.ToString"/>
+<link id="TBoolean64SysHelper.ToTrueFalseString"/>
+<link id="TBoolean64SysHelper.ToOneZeroString"/>
+<link id="TBoolean64SysHelper.ToOnOffString"/>
+<link id="TByteBoolSysHelper.ToString"/>
+<link id="TByteBoolSysHelper.ToTrueFalseString"/>
+<link id="TByteBoolSysHelper.ToOneZeroString"/>
+<link id="TByteBoolSysHelper.ToOnOffString"/>
+<link id="TWordBoolSysHelper.ToString"/>
+<link id="TWordBoolSysHelper.ToTrueFalseString"/>
+<link id="TWordBoolSysHelper.ToOneZeroString"/>
+<link id="TWordBoolSysHelper.ToOnOffString"/>
+<link id="TLongBoolSysHelper.ToString"/>
+<link id="TLongBoolSysHelper.ToTrueFalseString"/>
+<link id="TLongBoolSysHelper.ToOneZeroString"/>
+<link id="TLongBoolSysHelper.ToOnOffString"/>
+<link id="TQWordBoolSysHelper.ToString"/>
+<link id="TQWordBoolSysHelper.ToTrueFalseString"/>
+<link id="TQWordBoolSysHelper.ToOneZeroString"/>
+<link id="TQWordBoolSysHelper.ToOnOffString"/>
+</seealso>
+</element>
+
+<element name="TBinFormatSettings">
+<short>Record type holding strings used for ordinal to binary string conversion.</short>
+<seealso>
+<link id="TBitFormatSettings"/>
+<link id="THexFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBinFormatSettings.BinPrefixString">
+<short>Prefix string at the beginning of binary string representation.</short>
+</element>
+
+<element name="TBinFormatSettings.BinSufixString">
+<short>Sufix string at the end of binary string representation.</short>
+</element>
+
+<element name="TBinFormatSettings.BinNibbleSeparator">
+<short>Separator string between nibbles (half bytes) in binary string representation.</short>
+</element>
+
+<element name="TBinFormatSettings.BinByteSeparator">
+<short>Separator string between bytes in binary string representation.</short>
+</element>
+
+<element name="TBinFormatSettings.BinWordSeparator">
+<short>Separator string between words in binary string representation.</short>
+</element>
+
+<element name="TBinFormatSettings.BinDwordSeparator">
+<short>Separator string between double words in binary string representation.</short>
+</element>
+
+<element name="TBinFormatSettings.Initialize(TBinFormatSettings)">
+<short>Populate record with default values.</short>
+<descr>
+After instance creation record strings are populated with default empty values.
+</descr>
+</element>
+
+<element name="TBinFormatSettings.Initialize(TBinFormatSettings).Result">
+<short/>
+</element>
+
+<element name="TBinFormatSettings.Initialize(TBinFormatSettings).aNewSettings">
+<short/>
+</element>
+
+<element name="TBinFormatSettings.CopyToDefaultBinFormatSettings">
+<short>Changes default ordinal to binary string text outputs in syshelpers.</short>
+<descr>
+Record is copied to DefaultBinFormatSettings and all ordinal to binary string conversion functions in syshelpers will use those new strings. 
+</descr>
+</element>
+
+<element name="THexFormatSettings">
+<short>Record type holding strings used for ordinal to hexadecimal string conversion.</short>
+<seealso>
+<link id="TBitFormatSettings"/>
+<link id="TBinFormatSettings"/>
+<link id="DefaultHexFormatSettings"/>
+</seealso>
+</element>
+
+<element name="THexFormatSettings.HexPrefixString">
+<short>Prefix string at the beginning of hexadecimal string representation.</short>
+</element>
+
+<element name="THexFormatSettings.HexSufixString">
+<short>Sufix string at the end of hexadecimal string representation.</short>
+</element>
+
+<element name="THexFormatSettings.HexNibbleSeparator">
+<short>Separator string between nibbles (half bytes) in hexadecimal string representation.</short>
+</element>
+
+<element name="THexFormatSettings.HexByteSeparator">
+<short>Separator string between bytes in hexadecimal string representation.</short>
+</element>
+
+<element name="THexFormatSettings.HexWordSeparator">
+<short>Separator string between words in hexadecimal string representation.</short>
+</element>
+
+<element name="THexFormatSettings.HexDwordSeparator">
+<short>Separator string between double words in hexadecimal string representation.</short>
+</element>
+
+<element name="THexFormatSettings.Initialize(THexFormatSettings)">
+<short>Populate record with default values.</short>
+<descr>
+After instance creation record strings are populated with default empty values.
+</descr>
+</element>
+
+<element name="THexFormatSettings.Initialize(THexFormatSettings).Result">
+<short/>
+</element>
+
+<element name="THexFormatSettings.Initialize(THexFormatSettings).aNewSettings">
+<short/>
+</element>
+
+<element name="THexFormatSettings.CopyToDefaultHexFormatSettings">
+<short>Changes default ordinal to hexadecimal string text outputs in syshelpers.</short>
+<descr>
+Record is copied to DefaultHexFormatSettings and all ordinal to hexadecimal string conversion functions in syshelpers will use those new strings. 
+</descr>
+</element>
+
+<element name="DefaultBitFormatSettings">
+<short>Global boolean to string conversion defaults.</short>
+<seealso>
+<link id="DefaultBinFormatSettings"/>
+<link id="DefaultHexFormatSettings"/>
+<link id="BitOnString"/>
+<link id="BitOffString"/>
+<link id="BitTrueString"/>
+<link id="BitFalseString"/>
+<link id="BitOneString"/>
+<link id="BitZeroString"/>
+</seealso>
+</element>
+
+<element name="DefaultBinFormatSettings">
+<short>Global ordinal to binary string conversion defaults.</short>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+<link id="DefaultHexFormatSettings"/>
+<link id="BinPrefixString"/>
+<link id="BinSufixString"/>
+<link id="BinNibbleSeparator"/>
+<link id="BinByteSeparator"/>
+<link id="BinWordSeparator"/>
+<link id="BinDwordSeparator"/>
+</seealso>
+</element>
+
+<element name="DefaultHexFormatSettings">
+<short>Global ordinal to hexadecimal string conversion defaults.</short>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+<link id="HexPrefixString"/>
+<link id="HexSufixString"/>
+<link id="HexNibbleSeparator"/>
+<link id="HexByteSeparator"/>
+<link id="HexWordSeparator"/>
+<link id="HexDwordSeparator"/>
+</seealso>
+</element>
+
+<element name="BitOnString">
+<short>Global boolean to ON conversion string.</short>
+<descr>
+Shortcut for DefaultBitFormatSettings.BitOnString. Default value is 'On'.
+Used in ToOnOffString() helper functions for boolean representation.
+</descr>
+<seealso>
+<link id="BitOffString"/>
+<link id="DefaultBitFormatSettings"/>
+<link id="TBoolean16SysHelper.ToOnOffString"/>
+<link id="TBoolean32SysHelper.ToOnOffString"/>
+<link id="TBoolean64SysHelper.ToOnOffString"/>
+<link id="TBoolean8SysHelper.ToOnOffString"/>
+<link id="TBooleanSysHelper.ToOnOffString"/>
+<link id="TByteBoolSysHelper.ToOnOffString"/>
+<link id="TLongBoolSysHelper.ToOnOffString"/>
+<link id="TQWordBoolSysHelper.ToOnOffString"/>
+<link id="TWordBoolSysHelper.ToOnOffString"/>
+</seealso>
+</element>
+
+<element name="BitOffString">
+<short>Global boolean to OFF conversion string.</short>
+<descr>
+Shortcut for DefaultBitFormatSettings.BitOffString.
+Default value is 'Off'.
+Used in ToOnOffString() helper functions for boolean representation.
+</descr>
+<seealso>
+<link id="BitOnString"/>
+<link id="DefaultBitFormatSettings"/>
+<link id="TBoolean16SysHelper.ToOnOffString"/>
+<link id="TBoolean32SysHelper.ToOnOffString"/>
+<link id="TBoolean64SysHelper.ToOnOffString"/>
+<link id="TBoolean8SysHelper.ToOnOffString"/>
+<link id="TBooleanSysHelper.ToOnOffString"/>
+<link id="TByteBoolSysHelper.ToOnOffString"/>
+<link id="TLongBoolSysHelper.ToOnOffString"/>
+<link id="TQWordBoolSysHelper.ToOnOffString"/>
+<link id="TWordBoolSysHelper.ToOnOffString"/>
+</seealso>
+</element>
+
+<element name="BitTrueString">
+<short>Global boolean to TRUE conversion string.</short>
+<descr>
+Shortcut for DefaultBitFormatSettings.BitTrueString.
+Default value is 'True'.
+Used in ToString() helper functions for boolean representation.
+Used in ToTrueFalseString() helper functions for boolean representation.
+</descr>
+<seealso>
+<link id="BitFalseString"/>
+<link id="DefaultBitFormatSettings"/>
+<link id="TBoolean16SysHelper.ToTrueFalseString"/>
+<link id="TBoolean32SysHelper.ToTrueFalseString"/>
+<link id="TBoolean64SysHelper.ToTrueFalseString"/>
+<link id="TBoolean8SysHelper.ToTrueFalseString"/>
+<link id="TBooleanSysHelper.ToTrueFalseString"/>
+<link id="TByteBoolSysHelper.ToTrueFalseString"/>
+<link id="TLongBoolSysHelper.ToTrueFalseString"/>
+<link id="TQWordBoolSysHelper.ToTrueFalseString"/>
+<link id="TWordBoolSysHelper.ToTrueFalseString"/>
+<link id="TBoolean16SysHelper.ToString"/>
+<link id="TBoolean32SysHelper.ToString"/>
+<link id="TBoolean64SysHelper.ToString"/>
+<link id="TBoolean8SysHelper.ToString"/>
+<link id="TBooleanSysHelper.ToString"/>
+<link id="TByteBoolSysHelper.ToString"/>
+<link id="TLongBoolSysHelper.ToString"/>
+<link id="TQWordBoolSysHelper.ToString"/>
+<link id="TWordBoolSysHelper.ToString"/>
+</seealso>
+</element>
+
+<element name="BitFalseString">
+<short>Global boolean to FALSE conversion string.</short>
+<descr>
+Shortcut for DefaultBitFormatSettings.BitFalseString.
+Default value is 'False'.
+Used in ToString() helper functions for boolean representation.
+Used in ToTrueFalseString() helper functions for boolean representation.
+</descr>
+<seealso>
+<link id="BitTrueString"/>
+<link id="DefaultBitFormatSettings"/>
+<link id="TBoolean16SysHelper.ToTrueFalseString"/>
+<link id="TBoolean32SysHelper.ToTrueFalseString"/>
+<link id="TBoolean64SysHelper.ToTrueFalseString"/>
+<link id="TBoolean8SysHelper.ToTrueFalseString"/>
+<link id="TBooleanSysHelper.ToTrueFalseString"/>
+<link id="TByteBoolSysHelper.ToTrueFalseString"/>
+<link id="TLongBoolSysHelper.ToTrueFalseString"/>
+<link id="TQWordBoolSysHelper.ToTrueFalseString"/>
+<link id="TWordBoolSysHelper.ToTrueFalseString"/>
+<link id="TBoolean16SysHelper.ToString"/>
+<link id="TBoolean32SysHelper.ToString"/>
+<link id="TBoolean64SysHelper.ToString"/>
+<link id="TBoolean8SysHelper.ToString"/>
+<link id="TBooleanSysHelper.ToString"/>
+<link id="TByteBoolSysHelper.ToString"/>
+<link id="TLongBoolSysHelper.ToString"/>
+<link id="TQWordBoolSysHelper.ToString"/>
+<link id="TWordBoolSysHelper.ToString"/>
+</seealso>
+</element>
+
+<element name="BitOneString">
+<short>Global boolean to ONE conversion string.</short>
+<descr>
+Shortcut for DefaultBitFormatSettings.BitOneString.
+Default value is '1'.
+Used in ToOneZeroString() helper functions for boolean representation.
+Used in ToBinString() helper functions for representation of individual bits.
+</descr>
+<seealso>
+<link id="BitZeroString"/>
+<link id="DefaultBitFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+<link id="TBoolean16SysHelper.ToOneZeroString"/>
+<link id="TBoolean32SysHelper.ToOneZeroString"/>
+<link id="TBoolean64SysHelper.ToOneZeroString"/>
+<link id="TBoolean8SysHelper.ToOneZeroString"/>
+<link id="TBooleanSysHelper.ToOneZeroString"/>
+<link id="TByteBoolSysHelper.ToOneZeroString"/>
+<link id="TLongBoolSysHelper.ToOneZeroString"/>
+<link id="TQWordBoolSysHelper.ToOneZeroString"/>
+<link id="TWordBoolSysHelper.ToOneZeroString"/>
+<link id="TByteSysHelper.ToBinString"/>
+<link id="TCardinalSysHelper.ToBinString"/>
+<link id="TInt64SysHelper.ToBinString"/>
+<link id="TIntegerSysHelper.ToBinString"/>
+<link id="TNativeIntSysHelper.ToBinString"/>
+<link id="TNativeUIntSysHelper.ToBinString"/>
+<link id="TQWordSysHelper.ToBinString"/>
+<link id="TShortIntSysHelper.ToBinString"/>
+<link id="TSmallIntSysHelper.ToBinString"/>
+<link id="TWordSysHelper.ToBinString"/>
+</seealso>
+</element>
+
+<element name="BitZeroString">
+<short>Global boolean to ZERO conversion string.</short>
+<descr>
+Shortcut for DefaultBitFormatSettings.BitZeroString.
+Default value is '0'.
+Used in ToOneZeroString() helper functions for boolean representation.
+Used in ToBinString() helper functions for representation of individual bits.
+</descr>
+<seealso>
+<link id="BitOneString"/>
+<link id="DefaultBitFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+<link id="TBoolean16SysHelper.ToOneZeroString"/>
+<link id="TBoolean32SysHelper.ToOneZeroString"/>
+<link id="TBoolean64SysHelper.ToOneZeroString"/>
+<link id="TBoolean8SysHelper.ToOneZeroString"/>
+<link id="TBooleanSysHelper.ToOneZeroString"/>
+<link id="TByteBoolSysHelper.ToOneZeroString"/>
+<link id="TLongBoolSysHelper.ToOneZeroString"/>
+<link id="TQWordBoolSysHelper.ToOneZeroString"/>
+<link id="TWordBoolSysHelper.ToOneZeroString"/>
+<link id="TByteSysHelper.ToBinString"/>
+<link id="TCardinalSysHelper.ToBinString"/>
+<link id="TInt64SysHelper.ToBinString"/>
+<link id="TIntegerSysHelper.ToBinString"/>
+<link id="TNativeIntSysHelper.ToBinString"/>
+<link id="TNativeUIntSysHelper.ToBinString"/>
+<link id="TQWordSysHelper.ToBinString"/>
+<link id="TShortIntSysHelper.ToBinString"/>
+<link id="TSmallIntSysHelper.ToBinString"/>
+<link id="TWordSysHelper.ToBinString"/>
+</seealso>
+</element>
+
+<element name="BinPrefixString">
+<short>Global prefix string at the beginning of binary string representation.</short>
+<descr>
+Shortcut for DefaultBinFormatSettings.BinPrefixString.
+Default value is empty string.
+Used in ToBinString() helper functions for binary representation.
+</descr>
+<seealso>
+<link id="DefaultBinFormatSettings"/>
+<link id="BinNibbleSeparator"/>
+<link id="BinByteSeparator"/>
+<link id="BinWordSeparator"/>
+<link id="BinDwordSeparator"/>
+<link id="BinSufixString"/>
+</seealso>
+</element>
+
+<element name="BinSufixString">
+<short>Global sufix string at the end of binary string representation.</short>
+<descr>
+Shortcut for DefaultBinFormatSettings.BinSufixString.
+Default value is empty string.
+Used in ToBinString() helper functions for binary representation.
+</descr>
+<seealso>
+<link id="DefaultBinFormatSettings"/>
+<link id="BinNibbleSeparator"/>
+<link id="BinByteSeparator"/>
+<link id="BinWordSeparator"/>
+<link id="BinDwordSeparator"/>
+<link id="BinPrefixString"/>
+</seealso>
+</element>
+
+<element name="BinNibbleSeparator">
+<short>Global separator string between nibbles (half bytes) in binary string representation.</short>
+<descr>
+Shortcut for DefaultBinFormatSettings.BinNibbleSeparator.
+Default value is empty string.
+Used in ToBinString() helper functions for binary representation.
+</descr>
+<seealso>
+<link id="DefaultBinFormatSettings"/>
+<link id="BinByteSeparator"/>
+<link id="BinWordSeparator"/>
+<link id="BinDwordSeparator"/>
+<link id="BinPrefixString"/>
+<link id="BinSufixString"/>
+</seealso>
+</element>
+
+<element name="BinByteSeparator">
+<short>Global separator string between bytes in binary string representation.</short>
+<descr>
+Shortcut for DefaultBinFormatSettings.BinByteSeparator.
+Default value is empty string.
+Used in ToBinString() helper functions for binary representation.
+</descr>
+<seealso>
+<link id="DefaultBinFormatSettings"/>
+<link id="BinNibbleSeparator"/>
+<link id="BinWordSeparator"/>
+<link id="BinDwordSeparator"/>
+<link id="BinPrefixString"/>
+<link id="BinSufixString"/>
+</seealso>
+</element>
+
+<element name="BinWordSeparator">
+<short>Global separator string between words in binary string representation.</short>
+<descr>
+Shortcut for DefaultBinFormatSettings.BinWordSeparator.
+Default value is empty string.
+Used in ToBinString() helper functions for binary representation.
+</descr>
+<seealso>
+<link id="DefaultBinFormatSettings"/>
+<link id="BinNibbleSeparator"/>
+<link id="BinByteSeparator"/>
+<link id="BinDwordSeparator"/>
+<link id="BinPrefixString"/>
+<link id="BinSufixString"/>
+</seealso>
+</element>
+
+<element name="BinDwordSeparator">
+<short>Global separator string between double words in binary string representation.</short>
+<descr>
+Shortcut for DefaultBinFormatSettings.BinDWordSeparator.
+Default value is empty string.
+Used in ToBinString() helper functions for binary representation.
+</descr>
+<seealso>
+<link id="DefaultBinFormatSettings"/>
+<link id="BinNibbleSeparator"/>
+<link id="BinByteSeparator"/>
+<link id="BinWordSeparator"/>
+<link id="BinPrefixString"/>
+<link id="BinSufixString"/>
+</seealso>
+</element>
+
+<element name="HexPrefixString">
+<short>Global prefix string at the beginning of hexadecimal string representation.</short>
+<descr>
+Shortcut for DefaultHexFormatSettings.HexPrefixString.
+Default value is empty string.
+Used in ToHexString() helper functions for hexadecimal representation.
+</descr>
+<seealso>
+<link id="DefaultHexFormatSettings"/>
+<link id="HexSufixString"/>
+<link id="HexNibbleSeparator"/>
+<link id="HexByteSeparator"/>
+<link id="HexWordSeparator"/>
+<link id="HexDwordSeparator"/>
+</seealso>
+</element>
+
+<element name="HexSufixString">
+<short>Global sufix string at the end of hexadecimal string representation.</short>
+<descr>
+Shortcut for DefaultHexFormatSettings.HexSufixString.
+Default value is empty string.
+Used in ToHexString() helper functions for hexadecimal representation.
+</descr>
+<seealso>
+<link id="DefaultHexFormatSettings"/>
+<link id="HexPrefixString"/>
+<link id="HexNibbleSeparator"/>
+<link id="HexByteSeparator"/>
+<link id="HexWordSeparator"/>
+<link id="HexDwordSeparator"/>
+</seealso>
+</element>
+
+<element name="HexNibbleSeparator">
+<short>Global separator string between nibbles (half bytes) in hexadecimal string representation.</short>
+<descr>
+Shortcut for DefaultHexFormatSettings.HexNibbleSeparator.
+Default value is empty string.
+Used in ToHexString() helper functions for hexadecimal representation.
+</descr>
+<seealso>
+<link id="HexPrefixString"/>
+<link id="HexSufixString"/>
+<link id="HexByteSeparator"/>
+<link id="HexWordSeparator"/>
+<link id="HexDwordSeparator"/>
+<link id="DefaultHexFormatSettings"/>
+</seealso>
+</element>
+
+<element name="HexByteSeparator">
+<short>Global separator string between bytes in hexadecimal string representation.</short>
+<descr>
+Shortcut for DefaultHexFormatSettings.HexByteSeparator.
+Default value is empty string.
+Used in ToHexString() helper functions for hexadecimal representation.
+</descr>
+<seealso>
+<link id="DefaultHexFormatSettings"/>
+<link id="HexPrefixString"/>
+<link id="HexSufixString"/>
+<link id="HexNibbleSeparator"/>
+<link id="HexWordSeparator"/>
+<link id="HexDwordSeparator"/>
+</seealso>
+</element>
+
+<element name="HexWordSeparator">
+<short>Global separator string between words in hexadecimal string representation.</short>
+<descr>
+Shortcut for DefaultHexFormatSettings.HexWordSeparator.
+Default value is empty string.
+Used in ToHexString() helper functions for hexadecimal representation.
+</descr>
+<seealso>
+<link id="HexPrefixString"/>
+<link id="HexSufixString"/>
+<link id="HexNibbleSeparator"/>
+<link id="HexByteSeparator"/>
+<link id="HexDwordSeparator"/>
+<link id="DefaultHexFormatSettings"/>
+</seealso>
+</element>
+
+<element name="HexDwordSeparator">
+<short>Global separator string between double words in hexadecimal string representation.</short>
+<descr>
+Shortcut for DefaultHexFormatSettings.HexDwordSeparator.
+Default value is empty string.
+Used in ToHexString() helper functions for hexadecimal representation.
+</descr>
+<seealso>
+<link id="DefaultHexFormatSettings"/>
+<link id="HexPrefixString"/>
+<link id="HexSufixString"/>
+<link id="HexNibbleSeparator"/>
+<link id="HexByteSeparator"/>
+<link id="HexWordSeparator"/>
+</seealso>
+</element>
+
+<element name="TByteSysHelper">
+<short>Byte type helper for customizable binary and hexadecimal string representation.</short>
+<descr>
+Convert Byte type value to binary or hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TShortIntSysHelper"/>
+<link id="TWordSysHelper"/>
+<link id="TSmallIntSysHelper"/>
+<link id="TCardinalSysHelper"/>
+<link id="TIntegerSysHelper"/>
+<link id="TQWordSysHelper"/>
+<link id="TInt64SysHelper"/>
+<link id="TNativeIntSysHelper"/>
+<link id="TNativeUIntSysHelper"/>
+</seealso>
+</element>
+
+<element name="TByteSysHelper.ToBinString">
+<short>Byte type helper method for customizable binary string representation.</short>
+<descr>
+Convert Byte type value to binary string using localized custom formatting.
+TBooleanSysHelper.ToOneZeroString method is used for conversion of individual bits.
+</descr>
+<seealso>
+<link id="TBinFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+<link id="TBooleanSysHelper.ToOneZeroString"/>
+</seealso>
+</element>
+
+<element name="TByteSysHelper.ToBinString.Result">
+<short>Binary output string.</short>
+</element>
+
+<element name="TByteSysHelper.ToBinString.aBinFormatSettings">
+<short>Record containing custom strings needed for conversion to binary string.</short>
+</element>
+
+<element name="TByteSysHelper.ToBinString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TByteSysHelper.ToBinString.aMinDigits">
+<short>Minimal number of binary digits to show in output string.</short>
+</element>
+
+<element name="TByteSysHelper.ToHexString">
+<short>Byte type helper method for customizable hexadecimal string representation.</short>
+<descr>
+Convert Byte type value to hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="THexFormatSettings"/>
+<link id="DefaultHexFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TByteSysHelper.ToHexString.Result">
+<short>Hexadecimal output string.</short>
+</element>
+
+<element name="TByteSysHelper.ToHexString.aHexFormatSettings">
+<short>Record containing custom strings needed for conversion to hexadecimal string.</short>
+</element>
+
+<element name="TByteSysHelper.ToHexString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TByteSysHelper.ToHexString.aMinDigits">
+<short>Minimal number of hexadecimal digits to show in output string.</short>
+</element>
+
+<element name="TShortIntSysHelper">
+<short>ShortInt type helper for customizable binary and hexadecimal string representation.</short>
+<descr>
+Convert ShortInt type value to binary or hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TByteSysHelper"/>
+<link id="TWordSysHelper"/>
+<link id="TSmallIntSysHelper"/>
+<link id="TCardinalSysHelper"/>
+<link id="TIntegerSysHelper"/>
+<link id="TQWordSysHelper"/>
+<link id="TInt64SysHelper"/>
+<link id="TNativeIntSysHelper"/>
+<link id="TNativeUIntSysHelper"/>
+</seealso>
+</element>
+
+<element name="TShortIntSysHelper.ToBinString">
+<short>ShortInt type helper method for customizable binary string representation.</short>
+<descr>
+Convert ShortInt type value to binary string using localized custom formatting.
+TBooleanSysHelper.ToOneZeroString method is used for conversion of individual bits.
+</descr>
+<seealso>
+<link id="TBinFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+<link id="TBooleanSysHelper.ToOneZeroString"/>
+</seealso>
+</element>
+
+<element name="TShortIntSysHelper.ToBinString.Result">
+<short>Binary output string.</short>
+</element>
+
+<element name="TShortIntSysHelper.ToBinString.aBinFormatSettings">
+<short>Record containing custom strings needed for conversion to binary string.</short>
+</element>
+
+<element name="TShortIntSysHelper.ToBinString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TShortIntSysHelper.ToBinString.aMinDigits">
+<short>Minimal number of binary digits to show in output string.</short>
+</element>
+
+<element name="TShortIntSysHelper.ToHexString">
+<short>ShortInt type helper method for customizable hexadecimal string representation.</short>
+<descr>
+Convert ShortInt type value to hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="THexFormatSettings"/>
+<link id="DefaultHexFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TShortIntSysHelper.ToHexString.Result">
+<short>Hexadecimal output string.</short>
+</element>
+
+<element name="TShortIntSysHelper.ToHexString.aHexFormatSettings">
+<short>Record containing custom strings needed for conversion to hexadecimal string.</short>
+</element>
+
+<element name="TShortIntSysHelper.ToHexString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TShortIntSysHelper.ToHexString.aMinDigits">
+<short>Minimal number of hexadecimal digits to show in output string.</short>
+</element>
+
+<element name="TWordSysHelper">
+<short>Word type helper for customizable binary and hexadecimal string representation.</short>
+<descr>
+Convert Word type value to binary or hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TByteSysHelper"/>
+<link id="TShortIntSysHelper"/>
+<link id="TSmallIntSysHelper"/>
+<link id="TCardinalSysHelper"/>
+<link id="TIntegerSysHelper"/>
+<link id="TQWordSysHelper"/>
+<link id="TInt64SysHelper"/>
+<link id="TNativeIntSysHelper"/>
+<link id="TNativeUIntSysHelper"/>
+</seealso>
+</element>
+
+<element name="TWordSysHelper.ToBinString">
+<short>Word type helper method for customizable binary string representation.</short>
+<descr>
+Convert Word type value to binary string using localized custom formatting.
+TBooleanSysHelper.ToOneZeroString method is used for conversion of individual bits.
+</descr>
+<seealso>
+<link id="TBinFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+<link id="TBooleanSysHelper.ToOneZeroString"/>
+</seealso>
+</element>
+
+<element name="TWordSysHelper.ToBinString.Result">
+<short>Binary output string.</short>
+</element>
+
+<element name="TWordSysHelper.ToBinString.aBinFormatSettings">
+<short>Record containing custom strings needed for conversion to binary string.</short>
+</element>
+
+<element name="TWordSysHelper.ToBinString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TWordSysHelper.ToBinString.aMinDigits">
+<short>Minimal number of binary digits to show in output string.</short>
+</element>
+
+<element name="TWordSysHelper.ToHexString">
+<short>Word type helper method for customizable hexadecimal string representation.</short>
+<descr>
+Convert Word type value to hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="THexFormatSettings"/>
+<link id="DefaultHexFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TWordSysHelper.ToHexString.Result">
+<short>Hexadecimal output string.</short>
+</element>
+
+<element name="TWordSysHelper.ToHexString.aHexFormatSettings">
+<short>Record containing custom strings needed for conversion to hexadecimal string.</short>
+</element>
+
+<element name="TWordSysHelper.ToHexString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TWordSysHelper.ToHexString.aMinDigits">
+<short>Minimal number of hexadecimal digits to show in output string.</short>
+</element>
+
+<element name="TSmallIntSysHelper">
+<short>SmallInt type helper for customizable binary and hexadecimal string representation.</short>
+<descr>
+Convert SmallInt type value to binary or hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TByteSysHelper"/>
+<link id="TShortIntSysHelper"/>
+<link id="TWordSysHelper"/>
+<link id="TCardinalSysHelper"/>
+<link id="TIntegerSysHelper"/>
+<link id="TQWordSysHelper"/>
+<link id="TInt64SysHelper"/>
+<link id="TNativeIntSysHelper"/>
+<link id="TNativeUIntSysHelper"/>
+</seealso>
+</element>
+
+<element name="TSmallIntSysHelper.ToBinString">
+<short>SmallInt type helper method for customizable binary string representation.</short>
+<descr>
+Convert SmallInt type value to binary string using localized custom formatting.
+TBooleanSysHelper.ToOneZeroString method is used for conversion of individual bits.
+</descr>
+<seealso>
+<link id="TBinFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+<link id="TBooleanSysHelper.ToOneZeroString"/>
+</seealso>
+</element>
+
+<element name="TSmallIntSysHelper.ToBinString.Result">
+<short>Binary output string.</short>
+</element>
+
+<element name="TSmallIntSysHelper.ToBinString.aBinFormatSettings">
+<short>Record containing custom strings needed for conversion to binary string.</short>
+</element>
+
+<element name="TSmallIntSysHelper.ToBinString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TSmallIntSysHelper.ToBinString.aMinDigits">
+<short>Minimal number of binary digits to show in output string.</short>
+</element>
+
+<element name="TSmallIntSysHelper.ToHexString">
+<short>SmallInt type helper method for customizable hexadecimal string representation.</short>
+<descr>
+Convert SmallInt type value to hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="THexFormatSettings"/>
+<link id="DefaultHexFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TSmallIntSysHelper.ToHexString.Result">
+<short>Hexadecimal output string.</short>
+</element>
+
+<element name="TSmallIntSysHelper.ToHexString.aHexFormatSettings">
+<short>Record containing custom strings needed for conversion to hexadecimal string.</short>
+</element>
+
+<element name="TSmallIntSysHelper.ToHexString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TSmallIntSysHelper.ToHexString.aMinDigits">
+<short>Minimal number of hexadecimal digits to show in output string.</short>
+</element>
+
+<element name="TCardinalSysHelper">
+<short>Cardinal type helper for customizable binary and hexadecimal string representation.</short>
+<descr>
+Convert Cardinal type value to binary or hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TByteSysHelper"/>
+<link id="TShortIntSysHelper"/>
+<link id="TWordSysHelper"/>
+<link id="TSmallIntSysHelper"/>
+<link id="TIntegerSysHelper"/>
+<link id="TQWordSysHelper"/>
+<link id="TInt64SysHelper"/>
+<link id="TNativeIntSysHelper"/>
+<link id="TNativeUIntSysHelper"/>
+</seealso>
+</element>
+
+<element name="TCardinalSysHelper.ToBinString">
+<short>Cardinal type helper method for customizable binary string representation.</short>
+<descr>
+Convert Cardinal type value to binary string using localized custom formatting.
+TBooleanSysHelper.ToOneZeroString method is used for conversion of individual bits.
+</descr>
+<seealso>
+<link id="TBinFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+<link id="TBooleanSysHelper.ToOneZeroString"/>
+</seealso>
+</element>
+
+<element name="TCardinalSysHelper.ToBinString.Result">
+<short>Binary output string.</short>
+</element>
+
+<element name="TCardinalSysHelper.ToBinString.aBinFormatSettings">
+<short>Record containing custom strings needed for conversion to binary string.</short>
+</element>
+
+<element name="TCardinalSysHelper.ToBinString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TCardinalSysHelper.ToBinString.aMinDigits">
+<short>Minimal number of binary digits to show in output string.</short>
+</element>
+
+<element name="TCardinalSysHelper.ToHexString">
+<short>Cardinal type helper method for customizable hexadecimal string representation.</short>
+<descr>
+Convert Cardinal type value to hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="THexFormatSettings"/>
+<link id="DefaultHexFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TCardinalSysHelper.ToHexString.Result">
+<short>Hexadecimal output string.</short>
+</element>
+
+<element name="TCardinalSysHelper.ToHexString.aHexFormatSettings">
+<short>Record containing custom strings needed for conversion to hexadecimal string.</short>
+</element>
+
+<element name="TCardinalSysHelper.ToHexString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TCardinalSysHelper.ToHexString.aMinDigits">
+<short>Minimal number of hexadecimal digits to show in output string.</short>
+</element>
+
+<element name="TIntegerSysHelper">
+<short>Integer type helper for customizable binary and hexadecimal string representation.</short>
+<descr>
+Convert Integer type value to binary or hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TByteSysHelper"/>
+<link id="TShortIntSysHelper"/>
+<link id="TWordSysHelper"/>
+<link id="TSmallIntSysHelper"/>
+<link id="TCardinalSysHelper"/>
+<link id="TQWordSysHelper"/>
+<link id="TInt64SysHelper"/>
+<link id="TNativeIntSysHelper"/>
+<link id="TNativeUIntSysHelper"/>
+</seealso>
+</element>
+
+<element name="TIntegerSysHelper.ToBinString">
+<short>Integer type helper method for customizable binary string representation.</short>
+<descr>
+Convert Integer type value to binary string using localized custom formatting.
+TBooleanSysHelper.ToOneZeroString method is used for conversion of individual bits.
+</descr>
+<seealso>
+<link id="TBinFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+<link id="TBooleanSysHelper.ToOneZeroString"/>
+</seealso>
+</element>
+
+<element name="TIntegerSysHelper.ToBinString.Result">
+<short>Binary output string.</short>
+</element>
+
+<element name="TIntegerSysHelper.ToBinString.aBinFormatSettings">
+<short>Record containing custom strings needed for conversion to binary string.</short>
+</element>
+
+<element name="TIntegerSysHelper.ToBinString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TIntegerSysHelper.ToBinString.aMinDigits">
+<short>Minimal number of binary digits to show in output string.</short>
+</element>
+
+<element name="TIntegerSysHelper.ToHexString">
+<short>Integer type helper method for customizable hexadecimal string representation.</short>
+<descr>
+Convert Integer type value to hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="THexFormatSettings"/>
+<link id="DefaultHexFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TIntegerSysHelper.ToHexString.Result">
+<short>Hexadecimal output string.</short>
+</element>
+
+<element name="TIntegerSysHelper.ToHexString.aHexFormatSettings">
+<short>Record containing custom strings needed for conversion to hexadecimal string.</short>
+</element>
+
+<element name="TIntegerSysHelper.ToHexString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TIntegerSysHelper.ToHexString.aMinDigits">
+<short>Minimal number of hexadecimal digits to show in output string.</short>
+</element>
+
+<element name="TQWordSysHelper">
+<short>QWord type helper for customizable binary and hexadecimal string representation.</short>
+<descr>
+Convert QWord type value to binary or hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TByteSysHelper"/>
+<link id="TShortIntSysHelper"/>
+<link id="TWordSysHelper"/>
+<link id="TSmallIntSysHelper"/>
+<link id="TCardinalSysHelper"/>
+<link id="TIntegerSysHelper"/>
+<link id="TInt64SysHelper"/>
+<link id="TNativeIntSysHelper"/>
+<link id="TNativeUIntSysHelper"/>
+</seealso>
+</element>
+
+<element name="TQWordSysHelper.ToBinString">
+<short>QWord type helper method for customizable binary string representation.</short>
+<descr>
+Convert QWord type value to binary string using localized custom formatting.
+TBooleanSysHelper.ToOneZeroString method is used for conversion of individual bits.
+</descr>
+<seealso>
+<link id="TBinFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+<link id="TBooleanSysHelper.ToOneZeroString"/>
+</seealso>
+</element>
+
+<element name="TQWordSysHelper.ToBinString.Result">
+<short>Binary output string.</short>
+</element>
+
+<element name="TQWordSysHelper.ToBinString.aBinFormatSettings">
+<short>Record containing custom strings needed for conversion to binary string.</short>
+</element>
+
+<element name="TQWordSysHelper.ToBinString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TQWordSysHelper.ToBinString.aMinDigits">
+<short>Minimal number of binary digits to show in output string.</short>
+</element>
+
+<element name="TQWordSysHelper.ToHexString">
+<short>QWord type helper method for customizable hexadecimal string representation.</short>
+<descr>
+Convert QWord type value to hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="THexFormatSettings"/>
+<link id="DefaultHexFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TQWordSysHelper.ToHexString.Result">
+<short>Hexadecimal output string.</short>
+</element>
+
+<element name="TQWordSysHelper.ToHexString.aHexFormatSettings">
+<short>Record containing custom strings needed for conversion to hexadecimal string.</short>
+</element>
+
+<element name="TQWordSysHelper.ToHexString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TQWordSysHelper.ToHexString.aMinDigits">
+<short>Minimal number of hexadecimal digits to show in output string.</short>
+</element>
+
+<element name="TInt64SysHelper">
+<short>Int64 type helper for customizable binary and hexadecimal string representation.</short>
+<descr>
+Convert Int64 type value to binary or hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TByteSysHelper"/>
+<link id="TShortIntSysHelper"/>
+<link id="TWordSysHelper"/>
+<link id="TSmallIntSysHelper"/>
+<link id="TCardinalSysHelper"/>
+<link id="TIntegerSysHelper"/>
+<link id="TQWordSysHelper"/>
+<link id="TNativeIntSysHelper"/>
+<link id="TNativeUIntSysHelper"/>
+</seealso>
+</element>
+
+<element name="TInt64SysHelper.ToBinString">
+<short>Int64 type helper method for customizable binary string representation.</short>
+<descr>
+Convert Int64 type value to binary string using localized custom formatting.
+TBooleanSysHelper.ToOneZeroString method is used for conversion of individual bits.
+</descr>
+<seealso>
+<link id="TBinFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+<link id="TBooleanSysHelper.ToOneZeroString"/>
+</seealso>
+</element>
+
+<element name="TInt64SysHelper.ToBinString.Result">
+<short>Binary output string.</short>
+</element>
+
+<element name="TInt64SysHelper.ToBinString.aBinFormatSettings">
+<short>Record containing custom strings needed for conversion to binary string.</short>
+</element>
+
+<element name="TInt64SysHelper.ToBinString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TInt64SysHelper.ToBinString.aMinDigits">
+<short>Minimal number of binary digits to show in output string.</short>
+</element>
+
+<element name="TInt64SysHelper.ToHexString">
+<short>Int64 type helper method for customizable hexadecimal string representation.</short>
+<descr>
+Convert Int64 type value to hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="THexFormatSettings"/>
+<link id="DefaultHexFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TInt64SysHelper.ToHexString.Result">
+<short>Hexadecimal output string.</short>
+</element>
+
+<element name="TInt64SysHelper.ToHexString.aHexFormatSettings">
+<short>Record containing custom strings needed for conversion to hexadecimal string.</short>
+</element>
+
+<element name="TInt64SysHelper.ToHexString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TInt64SysHelper.ToHexString.aMinDigits">
+<short>Minimal number of hexadecimal digits to show in output string.</short>
+</element>
+
+<element name="TNativeIntSysHelper">
+<short>NativeInt type helper for customizable binary and hexadecimal string representation.</short>
+<descr>
+Convert NativeInt type value to binary or hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TByteSysHelper"/>
+<link id="TShortIntSysHelper"/>
+<link id="TWordSysHelper"/>
+<link id="TSmallIntSysHelper"/>
+<link id="TCardinalSysHelper"/>
+<link id="TIntegerSysHelper"/>
+<link id="TQWordSysHelper"/>
+<link id="TInt64SysHelper"/>
+<link id="TNativeUIntSysHelper"/>
+</seealso>
+</element>
+
+<element name="TNativeIntSysHelper.ToBinString">
+<short>NativeInt type helper method for customizable binary string representation.</short>
+<descr>
+Convert NativeInt type value to binary string using localized custom formatting.
+TBooleanSysHelper.ToOneZeroString method is used for conversion of individual bits.
+</descr>
+<seealso>
+<link id="TBinFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+<link id="TBooleanSysHelper.ToOneZeroString"/>
+</seealso>
+</element>
+
+<element name="TNativeIntSysHelper.ToBinString.Result">
+<short>Binary output string.</short>
+</element>
+
+<element name="TNativeIntSysHelper.ToBinString.aBinFormatSettings">
+<short>Record containing custom strings needed for conversion to binary string.</short>
+</element>
+
+<element name="TNativeIntSysHelper.ToBinString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TNativeIntSysHelper.ToBinString.aMinDigits">
+<short>Minimal number of binary digits to show in output string.</short>
+</element>
+
+<element name="TNativeIntSysHelper.ToHexString">
+<short>NativeInt type helper method for customizable hexadecimal string representation.</short>
+<descr>
+Convert NativeInt type value to hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="THexFormatSettings"/>
+<link id="DefaultHexFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TNativeIntSysHelper.ToHexString.Result">
+<short>Hexadecimal output string.</short>
+</element>
+
+<element name="TNativeIntSysHelper.ToHexString.aHexFormatSettings">
+<short>Record containing custom strings needed for conversion to hexadecimal string.</short>
+</element>
+
+<element name="TNativeIntSysHelper.ToHexString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TNativeIntSysHelper.ToHexString.aMinDigits">
+<short>Minimal number of hexadecimal digits to show in output string.</short>
+</element>
+
+<element name="TNativeUIntSysHelper">
+<short>NativeUInt type helper for customizable binary and hexadecimal string representation.</short>
+<descr>
+Convert NativeUInt type value to binary or hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TByteSysHelper"/>
+<link id="TShortIntSysHelper"/>
+<link id="TWordSysHelper"/>
+<link id="TSmallIntSysHelper"/>
+<link id="TCardinalSysHelper"/>
+<link id="TIntegerSysHelper"/>
+<link id="TQWordSysHelper"/>
+<link id="TInt64SysHelper"/>
+<link id="TNativeIntSysHelper"/>
+</seealso>
+</element>
+
+<element name="TNativeUIntSysHelper.ToBinString">
+<short>NativeUInt type helper method for customizable binary string representation.</short>
+<descr>
+Convert NativeUInt type value to binary string using localized custom formatting.
+TBooleanSysHelper.ToOneZeroString method is used for conversion of individual bits.
+</descr>
+<seealso>
+<link id="TBinFormatSettings"/>
+<link id="DefaultBinFormatSettings"/>
+<link id="TBooleanSysHelper.ToOneZeroString"/>
+</seealso>
+</element>
+
+<element name="TNativeUIntSysHelper.ToBinString.Result">
+<short>Binary output string.</short>
+</element>
+
+<element name="TNativeUIntSysHelper.ToBinString.aBinFormatSettings">
+<short>Record containing custom strings needed for conversion to binary string.</short>
+</element>
+
+<element name="TNativeUIntSysHelper.ToBinString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TNativeUIntSysHelper.ToBinString.aMinDigits">
+<short>Minimal number of binary digits to show in output string.</short>
+</element>
+
+<element name="TNativeUIntSysHelper.ToHexString">
+<short>NativeUInt type helper method for customizable hexadecimal string representation.</short>
+<descr>
+Convert NativeUInt type value to hexadecimal string using localized custom formatting.
+</descr>
+<seealso>
+<link id="THexFormatSettings"/>
+<link id="DefaultHexFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TNativeUIntSysHelper.ToHexString.Result">
+<short>Hexadecimal output string.</short>
+</element>
+
+<element name="TNativeUIntSysHelper.ToHexString.aHexFormatSettings">
+<short>Record containing custom strings needed for conversion to hexadecimal string.</short>
+</element>
+
+<element name="TNativeUIntSysHelper.ToHexString.aShowLeadingZeros">
+<short>Should leading zeros be shown or not in output string.</short>
+</element>
+
+<element name="TNativeUIntSysHelper.ToHexString.aMinDigits">
+<short>Minimal number of hexadecimal digits to show in output string.</short>
+</element>
+
+<element name="TBooleanSysHelper">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert Boolean type value to string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TBoolean8SysHelper"/>
+<link id="TBoolean16SysHelper"/>
+<link id="TBoolean32SysHelper"/>
+<link id="TBoolean64SysHelper"/>
+<link id="TByteBoolSysHelper"/>
+<link id="TWordBoolSysHelper"/>
+<link id="TLongBoolSysHelper"/>
+<link id="TQWordBoolSysHelper"/>
+</seealso>
+</element>
+
+<element name="TBooleanSysHelper.ToString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert Boolean type value to string using localized custom formatting.
+</descr>
+</element>
+
+<element name="TBooleanSysHelper.ToString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBooleanSysHelper.ToString.aValue">
+<short>Boolean value that will be converted to string.</short>
+</element>
+
+<element name="TBooleanSysHelper.ToString.aTrueStr">
+<short>Custom string used for representation of boolean TRUE state.</short>
+</element>
+
+<element name="TBooleanSysHelper.ToString.aFalseStr">
+<short>Custom string used for representation of boolean FALSE state.</short>
+</element>
+
+<element name="TBooleanSysHelper.ToString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBooleanSysHelper.ToString.aBitFormatSettings">
+<short>Record holding custom strings for boolean to string conversion.</short>
+<seealso>
+<link id="TBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBooleanSysHelper.ToTrueFalseString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitTrueString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitFalseString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBooleanSysHelper.ToTrueFalseString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBooleanSysHelper.ToTrueFalseString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBooleanSysHelper.ToOnOffString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOnString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitOffString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBooleanSysHelper.ToOnOffString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBooleanSysHelper.ToOnOffString.aCharsCase">
+<short>Optional string casing.</short>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBooleanSysHelper.ToOneZeroString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOneString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitZeroString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBooleanSysHelper.ToOneZeroString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBooleanSysHelper.ToOneZeroString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean8SysHelper">
+<short>Boolean8 type helper for customizable boolean string representation.</short>
+<descr>
+Convert Boolean8 type value to string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TBooleanSysHelper"/>
+<link id="TBoolean16SysHelper"/>
+<link id="TBoolean32SysHelper"/>
+<link id="TBoolean64SysHelper"/>
+<link id="TByteBoolSysHelper"/>
+<link id="TWordBoolSysHelper"/>
+<link id="TLongBoolSysHelper"/>
+<link id="TQWordBoolSysHelper"/>
+</seealso>
+</element>
+
+<element name="TBoolean8SysHelper.ToString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert Boolean8 type value to string using localized custom formatting.
+</descr>
+</element>
+
+<element name="TBoolean8SysHelper.ToString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean8SysHelper.ToString.aValue">
+<short>Boolean value that will be converted to string.</short>
+</element>
+
+<element name="TBoolean8SysHelper.ToString.aTrueStr">
+<short>Custom string used for representation of boolean TRUE state.</short>
+</element>
+
+<element name="TBoolean8SysHelper.ToString.aFalseStr">
+<short>Custom string used for representation of boolean FALSE state.</short>
+</element>
+
+<element name="TBoolean8SysHelper.ToString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean8SysHelper.ToString.aBitFormatSettings">
+<short>Record holding custom strings for boolean to string conversion.</short>
+<seealso>
+<link id="TBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean8SysHelper.ToTrueFalseString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitTrueString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitFalseString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean8SysHelper.ToTrueFalseString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean8SysHelper.ToTrueFalseString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean8SysHelper.ToOnOffString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOnString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitOffString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean8SysHelper.ToOnOffString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean8SysHelper.ToOnOffString.aCharsCase">
+<short>Optional string casing.</short>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean8SysHelper.ToOneZeroString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOneString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitZeroString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean8SysHelper.ToOneZeroString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean8SysHelper.ToOneZeroString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean16SysHelper">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert Boolean16 type value to string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TBooleanSysHelper"/>
+<link id="TBoolean8SysHelper"/>
+<link id="TBoolean32SysHelper"/>
+<link id="TBoolean64SysHelper"/>
+<link id="TByteBoolSysHelper"/>
+<link id="TWordBoolSysHelper"/>
+<link id="TLongBoolSysHelper"/>
+<link id="TQWordBoolSysHelper"/>
+</seealso>
+</element>
+
+<element name="TBoolean16SysHelper.ToString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert Boolean16 type value to string using localized custom formatting.
+</descr>
+</element>
+
+<element name="TBoolean16SysHelper.ToString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean16SysHelper.ToString.aValue">
+<short>Boolean value that will be converted to string.</short>
+</element>
+
+<element name="TBoolean16SysHelper.ToString.aTrueStr">
+<short>Custom string used for representation of boolean TRUE state.</short>
+</element>
+
+<element name="TBoolean16SysHelper.ToString.aFalseStr">
+<short>Custom string used for representation of boolean FALSE state.</short>
+</element>
+
+<element name="TBoolean16SysHelper.ToString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean16SysHelper.ToString.aBitFormatSettings">
+<short>Record holding custom strings for boolean to string conversion.</short>
+<seealso>
+<link id="TBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean16SysHelper.ToTrueFalseString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitTrueString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitFalseString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean16SysHelper.ToTrueFalseString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean16SysHelper.ToTrueFalseString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean16SysHelper.ToOnOffString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOnString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitOffString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean16SysHelper.ToOnOffString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean16SysHelper.ToOnOffString.aCharsCase">
+<short>Optional string casing.</short>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean16SysHelper.ToOneZeroString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOneString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitZeroString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean16SysHelper.ToOneZeroString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean16SysHelper.ToOneZeroString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean32SysHelper">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert Boolean32 type value to string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TBooleanSysHelper"/>
+<link id="TBoolean8SysHelper"/>
+<link id="TBoolean16SysHelper"/>
+<link id="TBoolean64SysHelper"/>
+<link id="TByteBoolSysHelper"/>
+<link id="TWordBoolSysHelper"/>
+<link id="TLongBoolSysHelper"/>
+<link id="TQWordBoolSysHelper"/>
+</seealso>
+</element>
+
+<element name="TBoolean32SysHelper.ToString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert Boolean32 type value to string using localized custom formatting.
+</descr>
+</element>
+
+<element name="TBoolean32SysHelper.ToString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean32SysHelper.ToString.aValue">
+<short>Boolean value that will be converted to string.</short>
+</element>
+
+<element name="TBoolean32SysHelper.ToString.aTrueStr">
+<short>Custom string used for representation of boolean TRUE state.</short>
+</element>
+
+<element name="TBoolean32SysHelper.ToString.aFalseStr">
+<short>Custom string used for representation of boolean FALSE state.</short>
+</element>
+
+<element name="TBoolean32SysHelper.ToString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean32SysHelper.ToString.aBitFormatSettings">
+<short>Record holding custom strings for boolean to string conversion.</short>
+<seealso>
+<link id="TBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean32SysHelper.ToTrueFalseString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitTrueString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitFalseString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean32SysHelper.ToTrueFalseString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean32SysHelper.ToTrueFalseString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean32SysHelper.ToOnOffString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOnString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitOffString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean32SysHelper.ToOnOffString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean32SysHelper.ToOnOffString.aCharsCase">
+<short>Optional string casing.</short>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean32SysHelper.ToOneZeroString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOneString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitZeroString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean32SysHelper.ToOneZeroString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean32SysHelper.ToOneZeroString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean64SysHelper">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert Boolean64 type value to string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TBooleanSysHelper"/>
+<link id="TBoolean8SysHelper"/>
+<link id="TBoolean16SysHelper"/>
+<link id="TBoolean32SysHelper"/>
+<link id="TByteBoolSysHelper"/>
+<link id="TWordBoolSysHelper"/>
+<link id="TLongBoolSysHelper"/>
+<link id="TQWordBoolSysHelper"/>
+</seealso>
+</element>
+
+<element name="TBoolean64SysHelper.ToString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert Boolean64 type value to string using localized custom formatting.
+</descr>
+</element>
+
+<element name="TBoolean64SysHelper.ToString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean64SysHelper.ToString.aValue">
+<short>Boolean value that will be converted to string.</short>
+</element>
+
+<element name="TBoolean64SysHelper.ToString.aTrueStr">
+<short>Custom string used for representation of boolean TRUE state.</short>
+</element>
+
+<element name="TBoolean64SysHelper.ToString.aFalseStr">
+<short>Custom string used for representation of boolean FALSE state.</short>
+</element>
+
+<element name="TBoolean64SysHelper.ToString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean64SysHelper.ToString.aBitFormatSettings">
+<short>Record holding custom strings for boolean to string conversion.</short>
+<seealso>
+<link id="TBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean64SysHelper.ToTrueFalseString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitTrueString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitFalseString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean64SysHelper.ToTrueFalseString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean64SysHelper.ToTrueFalseString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean64SysHelper.ToOnOffString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOnString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitOffString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean64SysHelper.ToOnOffString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean64SysHelper.ToOnOffString.aCharsCase">
+<short>Optional string casing.</short>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TBoolean64SysHelper.ToOneZeroString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOneString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitZeroString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TBoolean64SysHelper.ToOneZeroString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TBoolean64SysHelper.ToOneZeroString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TByteBoolSysHelper">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert ByteBool type value to string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TBooleanSysHelper"/>
+<link id="TBoolean8SysHelper"/>
+<link id="TBoolean16SysHelper"/>
+<link id="TBoolean32SysHelper"/>
+<link id="TBoolean64SysHelper"/>
+<link id="TWordBoolSysHelper"/>
+<link id="TLongBoolSysHelper"/>
+<link id="TQWordBoolSysHelper"/>
+</seealso>
+</element>
+
+<element name="TByteBoolSysHelper.ToString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert ByteBool type value to string using localized custom formatting.
+</descr>
+</element>
+
+<element name="TByteBoolSysHelper.ToString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TByteBoolSysHelper.ToString.aValue">
+<short>Boolean value that will be converted to string.</short>
+</element>
+
+<element name="TByteBoolSysHelper.ToString.aTrueStr">
+<short>Custom string used for representation of boolean TRUE state.</short>
+</element>
+
+<element name="TByteBoolSysHelper.ToString.aFalseStr">
+<short>Custom string used for representation of boolean FALSE state.</short>
+</element>
+
+<element name="TByteBoolSysHelper.ToString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TByteBoolSysHelper.ToString.aBitFormatSettings">
+<short>Record holding custom strings for boolean to string conversion.</short>
+<seealso>
+<link id="TBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TByteBoolSysHelper.ToTrueFalseString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitTrueString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitFalseString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TByteBoolSysHelper.ToTrueFalseString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TByteBoolSysHelper.ToTrueFalseString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TByteBoolSysHelper.ToOnOffString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOnString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitOffString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TByteBoolSysHelper.ToOnOffString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TByteBoolSysHelper.ToOnOffString.aCharsCase">
+<short>Optional string casing.</short>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TByteBoolSysHelper.ToOneZeroString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOneString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitZeroString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TByteBoolSysHelper.ToOneZeroString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TByteBoolSysHelper.ToOneZeroString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TWordBoolSysHelper">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert WordBool type value to string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TBooleanSysHelper"/>
+<link id="TBoolean8SysHelper"/>
+<link id="TBoolean16SysHelper"/>
+<link id="TBoolean32SysHelper"/>
+<link id="TBoolean64SysHelper"/>
+<link id="TByteBoolSysHelper"/>
+<link id="TLongBoolSysHelper"/>
+<link id="TQWordBoolSysHelper"/>
+</seealso>
+</element>
+
+<element name="TWordBoolSysHelper.ToString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert WordBool type value to string using localized custom formatting.
+</descr>
+</element>
+
+<element name="TWordBoolSysHelper.ToString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TWordBoolSysHelper.ToString.aValue">
+<short>Boolean value that will be converted to string.</short>
+</element>
+
+<element name="TWordBoolSysHelper.ToString.aTrueStr">
+<short>Custom string used for representation of boolean TRUE state.</short>
+</element>
+
+<element name="TWordBoolSysHelper.ToString.aFalseStr">
+<short>Custom string used for representation of boolean FALSE state.</short>
+</element>
+
+<element name="TWordBoolSysHelper.ToString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TWordBoolSysHelper.ToString.aBitFormatSettings">
+<short>Record holding custom strings for boolean to string conversion.</short>
+<seealso>
+<link id="TBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TWordBoolSysHelper.ToTrueFalseString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitTrueString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitFalseString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TWordBoolSysHelper.ToTrueFalseString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TWordBoolSysHelper.ToTrueFalseString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TWordBoolSysHelper.ToOnOffString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOnString is used for representation of boolean TRUE state. DefaultBitFormatSettings.BitOffString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TWordBoolSysHelper.ToOnOffString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TWordBoolSysHelper.ToOnOffString.aCharsCase">
+<short>Optional string casing.</short>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TWordBoolSysHelper.ToOneZeroString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOneString is used for representation of boolean TRUE state. DefaultBitFormatSettings.BitZeroString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TWordBoolSysHelper.ToOneZeroString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TWordBoolSysHelper.ToOneZeroString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TLongBoolSysHelper">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert LongBool type value to string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TBooleanSysHelper"/>
+<link id="TBoolean8SysHelper"/>
+<link id="TBoolean16SysHelper"/>
+<link id="TBoolean32SysHelper"/>
+<link id="TBoolean64SysHelper"/>
+<link id="TByteBoolSysHelper"/>
+<link id="TWordBoolSysHelper"/>
+<link id="TQWordBoolSysHelper"/>
+</seealso>
+</element>
+
+<element name="TLongBoolSysHelper.ToString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert LongBool type value to string using localized custom formatting.
+</descr>
+</element>
+
+<element name="TLongBoolSysHelper.ToString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TLongBoolSysHelper.ToString.aValue">
+<short>Boolean value that will be converted to string.</short>
+</element>
+
+<element name="TLongBoolSysHelper.ToString.aTrueStr">
+<short>Custom string used for representation of boolean TRUE state.</short>
+</element>
+
+<element name="TLongBoolSysHelper.ToString.aFalseStr">
+<short>Custom string used for representation of boolean FALSE state.</short>
+</element>
+
+<element name="TLongBoolSysHelper.ToString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TLongBoolSysHelper.ToString.aBitFormatSettings">
+<short>Record holding custom strings for boolean to string conversion.</short>
+<seealso>
+<link id="TBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TLongBoolSysHelper.ToTrueFalseString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitTrueString is used for representation of boolean TRUE state. DefaultBitFormatSettings.BitFalseString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TLongBoolSysHelper.ToTrueFalseString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TLongBoolSysHelper.ToTrueFalseString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TLongBoolSysHelper.ToOnOffString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOnString is used for representation of boolean TRUE state. DefaultBitFormatSettings.BitOffString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TLongBoolSysHelper.ToOnOffString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TLongBoolSysHelper.ToOnOffString.aCharsCase">
+<short>Optional string casing.</short>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TLongBoolSysHelper.ToOneZeroString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOneString is used for representation of boolean TRUE state.
+DefaultBitFormatSettings.BitZeroString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TLongBoolSysHelper.ToOneZeroString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TLongBoolSysHelper.ToOneZeroString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TQWordBoolSysHelper">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert QWordBool type value to string using localized custom formatting.
+</descr>
+<seealso>
+<link id="TBooleanSysHelper"/>
+<link id="TBoolean8SysHelper"/>
+<link id="TBoolean16SysHelper"/>
+<link id="TBoolean32SysHelper"/>
+<link id="TBoolean64SysHelper"/>
+<link id="TByteBoolSysHelper"/>
+<link id="TWordBoolSysHelper"/>
+<link id="TLongBoolSysHelper"/>
+</seealso>
+</element>
+
+<element name="TQWordBoolSysHelper.ToString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+Convert QWordBool type value to string using localized custom formatting.
+</descr>
+</element>
+
+<element name="TQWordBoolSysHelper.ToString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TQWordBoolSysHelper.ToString.aValue">
+<short>Boolean value that will be converted to string.</short>
+</element>
+
+<element name="TQWordBoolSysHelper.ToString.aTrueStr">
+<short>Custom string used for representation of boolean TRUE state.</short>
+</element>
+
+<element name="TQWordBoolSysHelper.ToString.aFalseStr">
+<short>Custom string used for representation of boolean FALSE state.</short>
+</element>
+
+<element name="TQWordBoolSysHelper.ToString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TQWordBoolSysHelper.ToString.aBitFormatSettings">
+<short>Record holding custom strings for boolean to string conversion.</short>
+<seealso>
+<link id="TBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TQWordBoolSysHelper.ToTrueFalseString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitTrueString is used for representation of boolean TRUE state. DefaultBitFormatSettings.BitFalseString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TQWordBoolSysHelper.ToTrueFalseString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TQWordBoolSysHelper.ToTrueFalseString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TQWordBoolSysHelper.ToOnOffString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOnString is used for representation of boolean TRUE state. DefaultBitFormatSettings.BitOffString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TQWordBoolSysHelper.ToOnOffString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TQWordBoolSysHelper.ToOnOffString.aCharsCase">
+<short>Optional string casing.</short>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+<element name="TQWordBoolSysHelper.ToOneZeroString">
+<short>Boolean type helper for customizable boolean string representation.</short>
+<descr>
+DefaultBitFormatSettings.BitOneString is used for representation of boolean TRUE state. DefaultBitFormatSettings.BitZeroString is used for representation of boolean FALSE state.
+</descr>
+<seealso>
+<link id="DefaultBitFormatSettings"/>
+</seealso>
+</element>
+
+<element name="TQWordBoolSysHelper.ToOneZeroString.Result">
+<short>Helper function result string.</short>
+</element>
+
+<element name="TQWordBoolSysHelper.ToOneZeroString.aCharsCase">
+<short>Optional string casing.</short>
+<descr>
+Default value is scfUnchangedCase.
+</descr>
+<seealso>
+<link id="TStringCaseFormat"/>
+</seealso>
+</element>
+
+</module>
+</package>
+</fpdoc-descriptions>
