@@ -5,7 +5,7 @@ Uses ipc,baseunix;
 Type
   PMyMsgBuf = ^TMyMsgBuf;
   TMyMsgBuf = record
-    mtype : Longint;
+    mtype : clong;
     mtext : string[255];
   end;
 
