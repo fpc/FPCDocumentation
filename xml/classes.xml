@@ -15995,7 +15995,7 @@ id="EThreadExternalException"/> exception is raised.
 </seealso>
 </element>
 
-<!-- class procedure Visibility: public -->
+<!-- class procedure Visibility: protected -->
 <element name="TThread.Queue" alwaysvisible="1">
 <short>Queue a method for execution in the main thread.</short>
 <descr>
@@ -16004,6 +16004,9 @@ id="EThreadExternalException"/> exception is raised.
 main thread. In difference with <link id="TThread.Synchronize"/>,
 <var>Queue</var> just posts the method for execution in a queue, and
 does not wait for it to be executed, so this call returns at once.
+</p>
+<p>
+If the call is made in the main thread, the method is not put on the queue, but is executed at once.
 </p>
 <p>
 In the class procedure overloaded version of this call, the thread for which the method must be
@@ -16019,6 +16022,24 @@ the queue list.
 <seealso>
 <link id="TThread.Synchronize"/>
 <link id="TThread.RemoveQueuedEvents"/>
+<link id="TTHread.ForceQueue"/>
+</seealso>
+</element>
+
+<!-- class procedure Visibility: protected -->
+<element name="TThread.ForceQueue" alwaysvisible="1">
+<short>Always queue a method for execution in the main thread.</short>
+<descr>
+<p>
+<var>ForceQueue</var> schedules a method <var>aMethod</var> for execution in the
+main thread, just like <link id="TThread.Queue"/>. In difference with <link id="TThread.Queue"/>,
+if the call is made from the main thread, the function will not be executed at once, bu will actuall be put in the queue.
+</p>
+</descr>
+<seealso>
+<link id="TThread.Synchronize"/>
+<link id="TThread.RemoveQueuedEvents"/>
+<link id="TThread.Queue"/>
 </seealso>
 </element>
 
