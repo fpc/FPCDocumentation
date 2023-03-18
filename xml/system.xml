@@ -325,6 +325,35 @@ the fpwidestring or cwstring units must be used.
 </descr>
 </topic>
 
+<topic name="ManagedTypes">
+<short>A list of managed types.</short>
+<descr>
+<p>
+Some of the basic pascal types are managed. 
+This means that their lifetime is treated specially by the compiler: Variables of a managed type:
+</p>
+<ul>
+<li>Are implicitly initialized at the beginning of their scope. Usually this means the memory area reserved for them is zeroed out.</li>
+<li>Use some form of reference counting when they are assigned to one another during their lifetime.</li>
+<li>Are implicitly finalized at the end of their scope. Usually this means decreasing a reference count 
+and freeing the dynamic memory occupied by the variable if the reference count returns zero.</li>
+</ul>
+<p>The following types are managed:</p>
+<dl>
+<dt>Ansistring</dt><dd>The one-byte character string uses a reference count.</dd>
+<dt>UnicodeString</dt><dd>The two-byte character string uses a reference count</dd>
+<dt>Widestring</dt><dd>Is equal to Unicodestring on non-windows platforms, is managed specially on windows.</dd>
+<dt>Dynamic arrays</dt><dd>Are reference counted.</dd>
+<dt>Interfaces</dt><dd>COM interfaces are reference counted through the mechanisms in <var>IInterface</var>. CORBA interfaces are not managed.</dd>
+</dl>
+<p>
+Additionally, structured types such as arrays, records, objects and classes containing one of the above types automatically become managed too.
+Note that for classes this does not mean that the class instance itself becomes managed, but when creating/destroying the class through the 
+constructor and destructor, the fields in a class that are of managed type will be initialized and finalized.
+</p>
+</descr>
+</topic>
+
 <element name="Abs">
 <short>Calculate absolute value.</short>
 <descr>
@@ -17590,7 +17619,7 @@ in a run-time error 232.
 <var>Default</var> is a compiler intrinsic: it returns for every type
 <var>T</var> a default value. In essence, this is a block of memory that is zeroed
 out. It can be used to correctly initialize any type, and more importantly,
-a managed type. It also works using a generic type template.
+a <link id="ManagedTypes">managed type</link>. It also works using a generic type template.
 </p>
 <p>
 This function cannot be used on any of the file types or complex types that
@@ -17601,6 +17630,7 @@ contain a file type.
 <link id="TypeInfo"/>
 <link id="Initialize"/>
 <link id="Finalize"/>
+<link id="ManagedTypes"/>
 </seealso>
 </element>
 
@@ -17672,8 +17702,8 @@ and for classes, the object instance will be <var>Nil</var>.
 <descr>
 <p>
 <var>Initialize</var> is a compiler intrinsic: it initializes a memory area
-<var>T</var> for any kind of managed variable. Initializing means zeroing out
-the memory area. In this sense it is close in functionality to <link id="Default"/>,
+belonging to a variable <var>T</var> of a <link id="ManagedTypes"> managed type</link> (<var>TManagedType</var>). 
+Initializing means zeroing out the memory area. In this sense it is close in functionality to <link id="Default"/>,
 but <var>Default</var> returns an already initialized variable, whereas <var>Initialize</var> 
 initializes a previously declared memory area. 
 </p>
@@ -17690,8 +17720,9 @@ It then specifies the number of elements in the array.
 </p>
 </descr>
 <seealso>
-<link id="finalize"/>
+<link id="Finalize"/>
 <link id="Default"/>
+<link id="ManagedTypes"/>
 <link id="TypeInfo"/>
 </seealso>
 <example file="refex/ex117.pp"/>
@@ -17702,22 +17733,23 @@ It then specifies the number of elements in the array.
 <short>Finalize (clean up) memory block using RTTI.</short>
 <descr>
 <p>
-<var>Finalize</var> is a compiler intrinsic: it cleans up (finalizes) a memory area
-<var>T</var> for any kind of managed variable. Finalizing means decreasing
-reference counts where necessary and generally zeroing out the memory area.
+<var>Finalize</var> is a compiler intrinsic: it cleans up (finalizes) a memory area belonging to a variable 
+<var>T</var> of a  <link id="ManagedTypes">managed type</link> (<var>TManagedType</var>).
+Finalizing means decreasing reference counts where necessary and generally zeroing out the memory area.
 It performs the opposite operation of <link id="initialize"/>.
 </p>
 <p>
 The optional <var>ACount</var> parameter can be used to finalize an array of values.
 </p>
 <p>
-For examples, see <link id="initialize"/>.
+For examples, see <link id="Initialize"/>.
 </p>
 </descr>
 <seealso>
-<link id="initialize"/>
+<link id="Initialize"/>
 <link id="Default"/>
 <link id="TypeInfo"/>
+<link id="ManagedTypes"/>
 </seealso>
 </element>
 
