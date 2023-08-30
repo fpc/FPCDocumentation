@@ -2083,7 +2083,7 @@ otherwise.
 <var>Attr</var> is an or-ed combination of the following constants:
 </p>
 <dl>
-<dt>faAnyFile</dt><dd>Find any file (this is a combination of the other flags).</dd>
+<dt>faAnyFile</dt><dd>Find any file (this is a combination of the other flags except <var>faSymlink</var>).</dd>
 <dt>faReadOnly</dt><dd>The file is read-only.</dd>
 <dt>faHidden</dt><dd>The file is hidden. (On UNIX, this means that the filename starts with a dot)</dd>
 <dt>faSysFile</dt><dd>The file is a system file (On unix, this means that the file is a character,
@@ -2092,6 +2092,7 @@ block or FIFO file).</dd>
 Windows-like systems, this works only for plan FAT (not Fat32 of VFAT) file systems.</dd>
 <dt>faDirectory</dt><dd>File is a directory.</dd>
 <dt>faArchive</dt><dd>file needs to be archived. Not possible on Unix</dd>
+<dt>faSymlink</dt><dd>Report symlinks instead of following them</dd>
 </dl>
 <p>
 It is a common misconception that <var>Attr</var> specifies a set of attributes
@@ -2104,6 +2105,13 @@ Specifically: specifying <var>faDirectory</var> as a value for <var>Attr</var>
 does not mean that only directories will be returned. Normal files
 <em>and</em> directories will be returned.
 </p>
+<p>
+Since <var>faSymlink</var> is not included in <var>faAnyFile</var>, to find all possible files and symlinks you need to call <var>FindFirst</var> so:
+</p>
+<pre>
+if FindFirst('*', faAnyFile or faSymLink, info)=0 then
+  // do your thing
+</pre>
 <p>
 The <var>Rslt</var> record can be fed to subsequent calls to <var>FindNext</var>, in
 order to find other files matching the specifications.
@@ -2119,7 +2127,8 @@ to call <var>FindClose</var>.
 On error the function returns -1 on Unix-like platforms, a nonzero error code on Windows.
 </errors>
 <seealso>
-<link id="FindClose"/>{FindCloseSys}, <link id="FindNext"/>.
+<link id="FindClose"/>
+<link id="FindNext"/>
 </seealso>
 <example file="sysutex/ex43"/>
 </element>
@@ -2347,10 +2356,19 @@ None.
 <element name="AdjustLineBreaks">
 <short>Convert possible line-endings to the currently valid line ending.</short>
 <descr>
+<p>
 <var>AdjustLineBreaks</var> will change all occurrences of <var>#13</var> and
 <var>#10</var> characters with the correct line-ending characters for the
-current platform. This is <var>#13#10</var> on Windows and Dos. On Unix-like
-platforms, this is <var>#10</var> and for Mac OS X it is <var>#13</var>.
+current platform, or the specified platform if the 'Style' parameter was specified.
+</p>
+<p>
+The platform-specific line-ending characters are:
+</p>
+<ul>
+<li> #13#10 on Windows and DOS</li>
+<li> #13 on Classic Mac OS before OS X</li>
+<li> #10 on Unix clones / Linux / OS X / macOS.</li>
+</ul>
 </descr>
 <errors>
 None.
