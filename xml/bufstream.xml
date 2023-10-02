@@ -450,20 +450,31 @@ An exception may occur if the destination stream has problems writing.
 </p>
 <p>
   By default, It uses a fixed-size buffer consisting of 8 pages with a 4,096
-  bytes per page. Both page count and page size configurable using methods
+  bytes per page. Both page count and page size configurable using the <link id="TBufferedFileStream.InitializeCache">InitializeCache</link> method
   in the class. The buffer is automatically maintained when the stream size or
   position is changed, and when reading or writing content to/from the stream.
 </p>
 <p>
   Pages which have been modified in the buffer are written to the file stream
-  as needed, when the Flush method is called, and when the class instance is
-  freed.
+  as needed (all pages are used and a read/write operation is performed), 
+  when the Flush method is called, and when the class instance is freed. 
+  Thus, the class will never use more than the total size obtained by multiplying 
+  the <var>CacheBlockSize</var> and <var>aCacheBlockCount</var> arguments to
+  <link id="TBufferedFileStream.InitializeCache">InitializeCache</link>.
+</p>
+<p>
+This class is suitable when you need to do a lot of random access to a file:  
+hence the use of different pages of configurable size. 
+If you simply wish to speed up sequential reads you better use <link id="TReadBufStream"/> 
+or <link id="TWriteBufStream"/> for speeding up sequential writes.
 </p>
 </descr>
 <seealso>
 <link id="#rtl.classes.TFileStream">TFileStream</link>
 <link id="#rtl.classes.THandleStream">THandleStream</link>
 <link id="#rtl.classes.TStream">TStream</link>
+<link id="TReadBufStream"/>  
+<link id="TWriteBufStream"/>
 </seealso>
 </element>
 
