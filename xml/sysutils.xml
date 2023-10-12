@@ -1583,16 +1583,24 @@ None.
 <short>Return the timestamp of a file.</short>
 <descr>
 <p>
-<var>FileAge</var> returns the last modification time of file <var>FileName</var>.
-The FileDate format can be transformed to <var>TDateTime</var> format with the
-<link id="FileDateToDateTime"/> function.
+<var>FileAge</var> in it's simplest form returns the last modification time of file <var>FileName</var> as an opaque os-dependent file timestamp.
+In this case, the return value can be transformed to a <var>TDateTime</var> value with the <link id="FileDateToDateTime"/> function.
 </p>
 <p>
-Fileage cannot be used on directories, it will return -1 if <var>FileName</var> indicates a directory.
+In case a <var>FileDateTime</var> argument is supplied, the <var>FileAge</var> function will do the transformation by itself, and the 
+file time will be returned in the <var>FileDateTime</var> argument as a <var>TDateTime</var> value. 
+The function return value is then a boolean indicating success or failure. 
+</p>
+<p>
+The <var>FollowSymlink</var> parameter can be set to <var>False</var> to read the timestamp of a symbolic link, 
+instead of the timestamp of the file the symbolic link points to (which is the default behaviour).
+</p>
+<p>
+FileAge cannot be used on directories, it will return -1 (or <var>False</var>) if <var>FileName</var> indicates a directory.
 </p>
 </descr>
 <errors>
-In case of errors, <var>-1</var> is returned.
+In case of errors, <var>-1</var> or <var>False</var> is returned.
 </errors>
 <seealso>
 <link id="FileDateToDateTime"/>
