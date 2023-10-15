@@ -3109,6 +3109,13 @@ The argument type is determined from <var>ArgType</var>. It can have one of the
 following values (case insensitive):
 </p>
 <dl>
+<dt>B</dt>
+<dd>
+Boolean format. The next argument in the <var>Args</var> array should be
+a boolean or an integer (a nonzero value is taken as <var>True</var>, zero is taken as false). 
+The argument is converted to a string using <link id="BoolToStr"> with <var>True</var> as the second argument, i.e. boolean strings are used. 
+If a precision is specified, then the string will have at most <var>Precision</var> characters in it, as for the "S" format specifier.
+</dd>
 <dt>D</dt>
 <dd>
 Decimal format. The next argument in the <var>Args</var> array should be
@@ -3141,7 +3148,7 @@ decimal string, using fixed notation (see <link id="FloatToStrF"/>).
 decimal point.
 </p>
 <p>
-In short, the <var>F</var> specifier formats it's argument as follows:
+In short, the <var>F</var> specifier formats its argument as follows:
 </p>
 <code>
 FloatToStrF(Argument,ffFixed,ffixed,9999,Precision)
@@ -3190,8 +3197,9 @@ length 8, representing the hexadecimal value of the pointer.
 </dd>
 <dt>S</dt>
 <dd>String format. The next argument in the <var>Args</var> array must be
-a string. The argument is simply copied to the result string. If
-<var>Precision</var> is specified, then only <var>Precision</var> characters are
+a string or a character (unicode or ansi is acceptable for both). 
+The argument is simply copied to the result string. 
+If <var>Precision</var> is specified, then only <var>Precision</var> characters are
 copied to the result string.
 </dd>
 <dt>U</dt>
@@ -3209,6 +3217,7 @@ is specified then the resulting hexadecimal representation will have at
 least <var>Precision</var> characters in it (with a maximum value of 32).
 </dd>
 </dl>
+An unknown formatting character is ignored.
 </descr>
 <errors>
 <p>
