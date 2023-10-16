@@ -2280,6 +2280,48 @@ begin
 end.
 \end{verbatim}
 
+Note that you can always typecast a dynamic array to a pointer.
+\begin{verbatim}
+type
+  TIntArr = array of LongInt;
+  PLongInt = ^LongInt;
+
+var
+  xs: TIntArr;
+  p: PLongInt;
+begin
+  setlength(xs, 3);
+  xs[0] := 69;
+  xs[1] := 10;
+  xs[2] := 5;
+  p := PLongInt(xs); // <-- cast dynamic array to pointer
+  writeln(xs[0], xs[1], xs[2]); // 69105
+  writeln(p^, p[1], p[2]); // 69105
+end.
+\end{verbatim}
+The opposite typecast is also allowed by the compiler, but must not be
+used since the automatic referencing and length determination will not work
+correctly. The following program will print '3' for the length of the byte
+array, which is of course wrong:
+\begin{verbatim}
+type
+  TIntArr = array of LongInt;
+  PLongInt = ^LongInt;
+  TByteArr = Array of Byte;
+
+var
+  xs: TIntArr;
+  p: PLongInt;
+begin
+  setlength(xs, 3);
+  xs[0] := 69;
+  xs[1] := 10;
+  xs[2] := 5;
+  p := PLongInt(xs); 
+  Writeln(Length(TByteArr(P))); // Cast to dynamic array
+end.
+\end{verbatim}
+
 \subsubsection{Dynamic array constructor}
 \index{Types!Constructor}\index{Array!Constructor}\index{Array constructor}
 As of version 3.0 of \fpc, Dynamic array types have a constructor. This is intrinsic, the compiler provides it.
