@@ -43,8 +43,10 @@ FPCSRCDIR:=$(patsubst %/compiler,%,$(firstword $(strip $(wildcard $(addsuffix /c
 
 # Which docs to build by default
 ifndef DOCS
-DOCS = user rtl ref prog fpdoc chart fcl fclres
+DOCS = user ref prog fpdoc chart 
 endif
+
+HTMLDOCS=$(DOCS) rtl fcl fclres
 
 # Which RTF docs
 ifndef RTFS
@@ -251,10 +253,10 @@ LOG = $(addsuffix .log, $(DOCS))
 LOT = $(addsuffix .lot, $(DOCS))
 OUT = $(addsuffix .out, $(DOCS))
 # Html files are build in a directory
-HTML = $(addprefix $(HTMLDIR)/, $(DOCS))
-CHM = $(addsuffix .chm, $(DOCS))
-CHK = $(addprefix $(HTMLDIR)/, $(addsuffix .chk, $(DOCS)))
-IPF = $(addsuffix .ipf, $(DOCS))
+HTML = $(addprefix $(HTMLDIR)/, $(HTMLDOCS))
+CHM = $(addsuffix .chm, $(HTMLDOCS))
+CHK = $(addprefix $(HTMLDIR)/, $(addsuffix .chk, $(HTMLDOCS)))
+IPF = $(addsuffix .ipf, $(HTMLDOCS))
 
 debuginfo:
 	echo $(PDF)
