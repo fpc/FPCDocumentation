@@ -1504,8 +1504,8 @@ in 4 bytes, and sets with less than 256 elements in 32 bytes.
 \subsection{\var{\protect\$POP} : Restore compiler settings}
 \label{se:Pop}
 The \var{\$POP} directive restores the values of all local compiler
-directives with the last values that were stored on the settings stack. 
-The settings are then deleted from the stack.
+switches (so not all directives) with the last values that were stored 
+on the settings stack. The settings are then deleted from the stack.
 
 The settings can be stored on the stack with the \var{\$PUSH} directive
 (see \sees{Push}).
@@ -1515,13 +1515,18 @@ Note that global settings are not restored by this directive.
 \subsection{\var{\protect\$PUSH} : Save compiler settings}
 \label{se:Push}
 The \var{\$PUSH} directive saves the current values of all local compiler
-directives on the settings stack. Up to 20 sets of settings can be stored on the stack.
+switches on the settings stack. Up to 20 sets of settings can be stored on the stack.
+
+Some verbosity directives (\var{\$Warn} etc.) as well as the \var{\$PACKENUM},
+\var{\$PACKRECORDS} and \var{\$SETALLOC} are also saved.
 
 The settings can be restored from the stack using the \var{\$POP} directive
 (see \sees{Pop}).
 
 Note that global settings (search paths etc.) are not saved by this 
 directive.
+
+
 
 The settings stack is preserved across units, i.e. when the compiler starts
 compiling a new unit, the stack is not emptied.
