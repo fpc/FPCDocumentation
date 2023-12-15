@@ -9540,6 +9540,37 @@ block), but for the else case multiple statements are allowed (as can be
 seen in the syntax diagram). You may enclose them in an extra \var{Begin..End}
 block, but it is not necessary.
 
+Note that the semicolon in front of the \var{else} clause is optional.
+This may lead to confusion if the last label contains an if statement.
+
+In the following example, when \var{a} equals 3, nothing will be executed:
+\begin{verbatim}
+case a of
+1 : 
+  DoSomething;
+2 : 
+  If b>1 then
+    DoSomething
+else
+  DoSomethingElse;
+end;
+\end{verbatim}
+But in the following example, when \var{a} equals 3, \var{DoSomethingElse}
+will be executed.
+\begin{verbatim}
+case a of
+1 : 
+  DoSomething;
+2 : 
+  If b>1 then
+    DoSomething;
+else
+  DoSomethingElse;
+end;
+\end{verbatim}
+When in doubt or to avoid confusion, you can enclose the last statement in an extra \var{Begin..End}
+block.
+
 \begin{remark}
 Contrary to \tp, duplicate case labels are not
 allowed in \fpc, so the following code will generate an error when
