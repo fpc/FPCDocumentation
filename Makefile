@@ -3108,8 +3108,12 @@ dist/dvi/fclres.dvi: fclres.tex fclres.inc $(INCLUDES)
 dist/dvi/chart.dvi: chart.tex
 dist/dvi/onechap.dvi: onechap.tex $(INCLUDES)
 dist/dvi/rtl.dvi: rtl.tex rtl.inc $(INCLUDES)
+.PHONY: ref user prog
+ref: dist/pdf/ref.pdf
 dist/pdf/ref.pdf: ref.tex $(INCLUDES)
+user: dist/pdf/user.pdf
 dist/pdf/user.pdf: user.tex $(INCLUDES) tex/messages.inc tex/comphelp.inc
+prog:  dist/pdf/prog.pdf
 dist/pdf/prog.pdf: prog.tex $(INCLUDES)
 dist/pdf/onechap.pdf: onechap.tex $(INCLUDES)
 dist/pdf/fpdoc.pdf: fpdoc.tex $(INCLUDES)
