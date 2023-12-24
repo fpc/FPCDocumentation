@@ -128,6 +128,18 @@ Note, that one of the possibilities can be empty:
 This means that both the first or second possibility are optional.
 Of course, all these elements can be combined and nested.
 
+For some syntactical elements you will find no definition in the various diagrams. 
+This is because they are defined implicitly in the pascal parser: the tokens of the pascal language.
+
+The following elements are defined implicitly:
+\begin{description}
+\item[string] This is a literal string. 
+\item[number] This can be an integer number or a floating point number.
+\item[identifier] This is basically a name the programmer has given to an item he wishes to use in his code.
+This item can be a type, a variable, a constant or even the name of a procedure or unit.
+\end{description}
+Comments or whitespace will not appear in the syntax diagrams.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % About the pascal language
 \section*{About the Pascal language}
@@ -498,6 +510,10 @@ the underscore character), of which the first must be a letter (a--z or A--Z),
 or an underscore (\var{\_}).
 The following diagram gives the basic syntax for identifiers.
 \input{syntax/identifier.syn}
+Dotted identifiers are an identifier which can contain a dot in the name. 
+Fully qualified identifiers are dotted identifiers with the implied meaning that the first part is a unit name, and the second part is the name of an identifier in that unit. 
+Both the unit identifier and the latter can of course also be dotted identifiers in themselves.
+
 Like Pascal reserved words, identifiers are case insensitive, that is, both
 \begin{verbatim}
   myprocedure;
@@ -636,9 +652,9 @@ Label
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Character strings
 \section{Character strings}
-\index{String}\index{Constants!String}\index{Tokens!Strings}
-A character string (or string for short) is a sequence of zero or more
-characters (byte sized), enclosed in single quotes, and on a single
+\index{String}\index{Constants!String}\index{Tokens!Strings}\index{String literal}
+A character string or string literal (string for short) is a sequence of zero or more
+characters (byte or word sized), enclosed in single quotes, and on a single
 line of the program source code: no literal carriage return or linefeed
 characters can appear in the string.
 
@@ -748,13 +764,13 @@ Only constants of the following types can be declared:
 The following are all valid constant declarations:
 \begin{verbatim}
 Const
-  e = 2.7182818;  { Real type constant. }
-  a = 2;          { Ordinal (Integer) type constant. }
-  c = '4';        { Character type constant. }
-  s = 'This is a constant string'; {String type constant.}
+  e  = 2.7182818;  { Real type constant. }
+  a  = 2;          { Ordinal (Integer) type constant. }
+  c  = '4';        { Character type constant. }
+  s  = 'This is a constant string'; {String type constant.}
   sc = chr(32)
   ls = SizeOf(Longint);
-  P = Nil;
+  P  = Nil;
   Ss = [1,2];
 \end{verbatim}
 Assigning a value to an ordinary constant is not permitted.
@@ -780,6 +796,10 @@ for constants of complex structures (defined later in the manual).
 Their definition is quite simple.
 
 \input{syntax/tconst.syn}
+In the case of an expression, the expression must be computable at runtime, 
+just as for a normal constant, and the type of the expression must be assignment 
+compatible to the type of the constant.
+
 
 Contrary to ordinary constants, a value can be assigned to them at
 run-time.  This is an old concept from \tp, which has been
@@ -797,6 +817,7 @@ Local typed constants are also initialized at program start. If their value was
 changed during previous invocations of the function, they will retain their
 changed value, i.\,e. they are not initialized each time the function is invoked.
 \end{remark}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % resource strings
@@ -884,6 +905,13 @@ by semicolons:
 There are eight major kinds of types:
 \input{syntax/type.syn}
 Each of these cases will be examined separately.
+
+A syntax diagram has no notion of the type of an identifier or expression.
+However, sometimes it is useful (or necessary) to know the type of an identifier.
+To make the syntax diagrams more clear, the type of an identifier has been added as a 
+prefix to the name. The following is a list of such typed identifiers:
+\input{syntax/typedident.syn}
+from a perspective of language syntax, they can all be replaced by \var{fully-qualified-identifier}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Base types
@@ -1245,8 +1273,8 @@ For more information on characters, see \sees{charactertypes}.
 %
 %
 %
-\subsection{Real types}
-\index{Types!Real}
+\subsection{Floating-point types}
+\index{Types!Real}\index{Types!Float}
 \fpc uses the math coprocessor (or emulation) for all its floating-point
 calculations. The \var{Real} native type is processor dependent,
 but it is either a \var{Single} or a \var{Double}. Only the IEEE floating point types are
@@ -1254,7 +1282,7 @@ supported, and these depend on the target processor and emulation options.
 The true \tp compatible types are listed in
 \seet{Reals}.\index{Real}\index{Single}\index{Double}\index{Extended}\index{Comp}\index{Currency}
 \keywordlink{Real}\keywordlink{Single}\keywordlink{Double}\keywordlink{Extended}\keywordlink{Comp}\keywordlink{Currency}
-\begin{FPCltable}{lccr}{Supported Real types}{Reals}
+\begin{FPCltable}{lccr}{Supported floating-point types}{Reals}
 Type & Range & Significant digits & Size \\ \hline
 Real & platform dependant & ??? & 4 or 8 \\
 Single & 1.5E-45 .. 3.4E38 & 7--8 & 4 \\
@@ -1273,8 +1301,8 @@ minimizes rounding errors. This type should be used with care: when used in
 expressions using e.g. multiplication, the evaluation of the expression may
 go wrong (losing precision) if intermediate results fall outside the currency range.
 
-Note that not all float types are available on all platforms. The
-\var{single} float type is the only one guaranteed to be available on all
+Note that not all floating point types are available on all platforms. 
+The \var{single} float type is the only one guaranteed to be available on all
 platforms that have floating point support (so e.g. AVR does not have it).
 The \var{double} type is available on all platforms with coprocessor,
 and the \var{extended} type is available on all Intel x86 processors,
@@ -1895,8 +1923,10 @@ Pchar & Pointer size & L+1 \\
 \section{Structured Types}
 \index{Types!Structured}
 A structured type is a type that can hold multiple values in one variable.
-Structured types can be nested to unlimited levels.
+Structured types can be nested to unlimited levels. There are many possible structured types:
 \input{syntax/typestru.syn}
+Each of these types will be treated in a separate section or even chapter.
+
 Unlike Delphi, \fpc does not support the keyword \var{Packed} for all
 structured types.  In the following sections each of the possible
 structured types is discussed. It will be mentioned when a type supports
@@ -2238,6 +2268,46 @@ The \var{Low} function on a dynamic array will always return 0, and the
 \var{High} function will return the value \var{Length-1}, i.\,e., the value of the
 highest allowed array index.
 
+\subsubsection{Array constants}
+\index{constants!array}
+For typed constants or initialized variables that have as type a static or dynamic array, a constant value must be specified.
+A constant array value is specified using round brackets \var{(} and \var{)}, with the elements in between:
+
+\input{syntax/constarr.syn}
+
+As an example:
+\begin{verbatim}
+uses sysutils;
+
+var
+  A : TBytes = (0,1,2);
+  B : Array[1..3] of byte = (0,1,2);
+
+begin
+end. 
+\end{verbatim}
+For dynamic arrays you can also use an array constructor in code:
+\begin{verbatim}
+var
+  A : TBytes;
+  
+begin
+  A:=TBytes.Create(0,1,2);
+end. 
+\end{verbatim}
+The array constructor cannot be used in an initialized constant.  
+
+The constant value for an array cannot be used in an expression, only in a constant or variable declaration. 
+So the following will not work:
+\begin{verbatim}
+var
+  A : TBytes;
+  
+begin
+  A:=(0,1,2);
+end. 
+\end{verbatim}
+  
 \subsubsection{Dynamic array Type compatibility}
 \index{Type!Compatibility}
 Object Pascal is a strictly typed language. Two technically distinct types are sometimes considered assignment compatible
@@ -2482,6 +2552,29 @@ Type
           end;
 \end{verbatim}
 \end{remark}
+
+\subsubsection{Record-typed Constant}
+When initializing a variable (or constant) of type record, a special syntax must be used:
+for each field in the record, the name must be specified, followed by a colon and an expression for the field value.
+The compiler must be able to evaluate the expression at compile time.
+The values of the field are separated by a semicolon.
+
+\input{syntax/constrec.syn}
+
+For the \var{MyRec} record above, the following would initialize all fields:
+\begin{verbatim}
+var
+  R : MyRec = (X : 1; Y: 2; Z: 3);
+\end{verbatim}
+You do not need to specify values for all fields, but then the compiler will warn you. The following is a valid initialization:
+\begin{verbatim}
+  var
+    R : MyRec = (X : 1; Y: 2);
+\end{verbatim}
+But it results in a warning:  
+\begin{verbatim}
+cr.pp(11,26) Warning: Some fields coming after "Y" were not initialized
+\end{verbatim}
 
 \subsubsection{Record layout and size}
 
@@ -2818,7 +2911,7 @@ classes, not with other types.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Procedural types
-\section{Procedural types}
+\section{Procedural types}\label{se:proceduraltypes}
 \index{Procedure}\index{Types!Procedural}\index{Procedural}
 \fpc has support for procedural types, although it differs a little from
 the \tp or \delphi implementation of them. The type declaration remains the
@@ -3435,13 +3528,13 @@ global initialized variable.
 \section{Initialized variables}
 \label{se:initializedvars}\index{Variables!Initialized}
 By default, simple variables in Pascal are not initialized after their declaration.
-Any assumption that they contain 0 or any other default value is erroneous:
+Any assumption that they contain zero or any other default value is erroneous:
 They can contain rubbish. To remedy this, the concept of initialized variables
 exists. The difference with normal variables is that their declaration includes
 an initial value, as can be seen in the diagram in the previous section.
 
 \begin{remark}
-2 exceptions to this rule exist:
+Two exceptions to this rule exist:
 \begin{enumerate}
 \item Managed types are an exception to this rule: Managed types are always
 initialized with a default value: in general this means setting the reference
@@ -3473,7 +3566,7 @@ $000000000040024A
 $000000000042BF70
 $00000000004001D2
 \end{verbatim}
-Therefore is is {\em Highly recommended} to always initialize variables
+Therefore it is {\em Highly recommended} to always initialize variables
 before using them.
 
 This can be easily done in the declaration of the variables.
@@ -3745,7 +3838,7 @@ The prototype declaration of an object is as follows:
 \index{object}\keywordlink{object}
 \input{syntax/typeobj.syn}
 As can be seen, any visibility block can be specified multiple times, as
-often as needed..\index{private}\index{public}
+often as needed.\index{private}\index{public}
 
 The following is a valid definition of an object:
 \begin{verbatim}
@@ -3943,7 +4036,7 @@ constructor\footnote{A pointer to the VMT must be set up.}.
 
 In the declaration of the object type, a simple identifier should be used
 for the name of the constructor or destructor. When the constructor or destructor
-is implemented, a qualified method identifier should be used,
+is implemented, the fully qualified identifier should be used for the method,
 i.\,e. an identifier of the form \var{objectidentifier.methodidentifier}.
 
 \fpc supports also the extended syntax of the \var{New} and \var{Dispose}
@@ -4515,7 +4608,7 @@ However, for Delphi compatibility, the compiler ignores this directive.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Normal and static fields
 \section{Normal and static fields}
-\label{se:classfields}.
+\label{se:classfields}
 Classes can have fields. Depending on how they are defined, fields hold data specific to
 an instance of a class or to the class as a whole. Whatever the way they were defined,
 fields observe the rules of visibility just like any other member of the class.
@@ -4641,9 +4734,9 @@ The output of this program is:
 \begin{verbatim}
  2 2 2
 \end{verbatim}
-Because it is tied to a class, it can be overridden in delphi mode:
+Because it is tied to a class, it can be overridden in Delphi mode:
 \begin{verbatim}
-$mode delphi}
+{$mode delphi}
 type
   TA = class // base type
     class var CODE: integer;
@@ -5289,18 +5382,19 @@ value on the fly. Moreover, properties can be read-only or write only.
 The prototype declaration of a property is as follows:\index{Property}
 \input{syntax/property.syn}
 
-A \var{read specifier} \index{Read} is either the name of a field that contains the
+A \var{read-specifier} \index{Read} is either the name of a field that contains the
 property, or the name of a method function that has the same return type as
 the property type. In the case of a simple type, this
 function must not accept an argument. In case of an array property, the
 function must accept a single argument of the same type as the index.
 In case of an indexed property, it must accept a integer as an argument.
 
-A \var{read specifier} is optional, making the property write-only.
-Note that class methods cannot be used as read specifiers.
+A \var{read-specifier} is optional, making the property write-only.
+Note that class methods cannot be used as read specifiers for regular 
+properties, they can only be used for class properties.
 
-A \var{write specifier} \index{Write} is optional: If there is no \var{write specifier}, the
-property is read-only. A write specifier is either the name of a field, or
+A \var{write-specifier} \index{Write} is optional: If there is no \var{write-specifier}, 
+the property is read-only. A write specifier is either the name of a field, or
 the name of a method procedure that accepts as a sole argument a variable of
 the same type as the property. In case of an array property, the procedure
 must accept two arguments: the first argument must have the same type as the
@@ -5871,8 +5965,8 @@ Globally Unique Identifier, a 128-bit integer guaranteed always to be
 unique\footnote{In theory, of course.}. Especially on Windows systems,
 the GUID of an interface can and must be used when using COM.
 
-The definition of an Interface has the following
-form:\index{interface}\keywordlink{interface}
+The definition of an Interface has the following form:
+\index{interface}\keywordlink{interface}
 \input{syntax/typeintf.syn}
 Along with this definition the following must be noted:
 \begin{itemize}
@@ -6354,10 +6448,11 @@ A generic type definition is much like a type definition, with the exception tha
 as can be seen in the following syntax diagram:
 \input{syntax/generic.syn}
 \index{generic}\index{Type!Generics}\keywordlink{generic}
-For classes, objects, procedural types and extended records, the generic
-type declaration should be followed by a type implementation.
-It is the same as a normal class implementation with a single exception,
-namely that any identifier with the same name as one of the template
+In Delphi mode, the keyword \var{generic} is not needed. The presence of the template list is sufficient to designate a generic type.
+
+For classes, objects, procedural types and extended records, the generic type declaration should be followed by a type implementation.
+
+It is the same as a normal class implementation with a single exception, namely that any identifier with the same name as one of the template
 identifiers must be a type identifier.
 
 So, the generic type declaration is much like a normal type declaration, except that there is an as yet unknown type present.
@@ -6498,8 +6593,11 @@ This can be done in any \var{Type} definition block. The specialized type
 looks as follows:
 \input{syntax/specialize.syn}
 \index{specialize}\index{Type!Specializing}\keywordlink{specialize}
-Which is a very simple definition. Given the declaration of \var{TList} in
-the previous section, the following would be a valid type definition:
+In Delphi mode, the \var{specialize} keyword must not be used.
+
+The generic specialization is a very simple definition and can be used wherever a type definition would be used.
+
+Given the declaration of \var{TList} in the previous section, the following would be a valid type definition:
 \begin{verbatim}
 Type
   TPointerList = specialize TList<Pointer>;
@@ -7555,7 +7653,7 @@ end.
 The \var{helper} modifier is only a modifier just after the \var{class} or
 \var{record} keywords. That means that the first member of a class or record
 cannot be named \var{helper}. A member of a class or record can be called
-\var{helper}, it just cannot be the first one, unless it is escaped with a
+\var{helper}, it just cannot be the first one, unless it is escaped with an
 \var{\&}, as for all identifiers that match a keyword.
 \end{remark}
 
@@ -8614,9 +8712,9 @@ Factors are all other constructions:
 Function calls are part of expressions (although, using extended syntax,
 they can be statements too). They are constructed as follows:
 \input{syntax/fcall.syn}
-The \synt{variable reference} must be a procedural type variable reference.
-A method designator can only be used inside the method of an object. A
-qualified method designator can be used outside object methods too.
+The \var{variable-reference} must be a procedural type variable reference.
+A method designator can only be used inside the method of an object. 
+A qualified method designator can be used outside object methods too.
 The function that will get called is the function with a declared parameter
 list that matches the actual parameter list. This means that
 \begin{enumerate}
@@ -9102,23 +9200,26 @@ The compiler will give an error when compiling this code.
 \index{Operators!Set}
 The following operations on sets can be performed with operators:
 union, difference, symmetric difference, inclusion and intersection.
-Elements can be added or removed from the set with the \var{Include} or
-\var{Exclude} operators. The operators needed for this are listed
-in \seet{setoperators}.
+The operators are listed in \seet{setoperators}.
 \keywordlink{in}
 \begin{FPCltable}{ll}{Set operators}{setoperators}
-Operator & Action \\ \hline
-\var{+} & Union \\
-\var{-} & Difference \\
-\var{*} & Intersection \\
-\var{$><$} & Symmetric difference \\
-\var{$<=$} & Contains \\
-\var{$>=$} & Left hand side set is a superset of the one on the right \\
-\var{include} & include an element in the set\\
-\var{exclude} & exclude an element from the set\\
-\var{in} & check whether an element is in a set\\ \hline
+Operation & Action \\ \hline
+\var{+}  & Union \\
+\var{-}  & Difference operator\\
+\var{*}  & Intersection \\
+\var{$><$}  & Symmetric difference \\
+\var{$<=$}  & Contains \\
+\var{$>=$}  & Left hand side set is a superset of the one on the right \\
+\var{in}  & check whether an element is in a set\\
 \end{FPCltable}
-The set type of the operands must be the same, or an error will be
+In addition to the above operators, elements can be added or removed from the set with the \var{Include} or
+\var{Exclude} procedures:
+\begin{description} 
+\item[include] includes an element in the set.
+\item[exclude] excludes an element from the set.
+\end{description} 
+
+The set type of the operands or arguments must be the same, or an error will be
 generated by the compiler.
 
 The following program gives some valid examples of set operations:
@@ -10858,6 +10959,42 @@ half:
 \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The UNIV parameter type
+\subsection{Macpas: UNIV typed parameters}
+\index{Parameters!UNIV type}\index{UNIV}
+In Macpas mode, you can specify a \var{UNIV} (universal) parameter. 
+This signifies that any parameter with the exact same byte size as the declared parameter can be passed as the value of the parameter:
+Given the following procedure declaration:
+\begin{verbatim}
+procedure HDispose( var theHandle: univ Handle); 
+\end{verbatim}
+You can pass value of any type that has the same size as \var{Handle}. 
+
+This comes in especially handy for typed procedures. Given the following definition:
+\begin{verbatim}
+Type  
+  TComparer = function (theIndex: Int32; theValuePtr : univ Pointer): boolean;
+
+function Find(     
+      theValuePtr    : univ UnivPtr;
+      theFirstIndex  : Int32;
+      theLastIndex   : Int32;
+      SmallerThan    : TComparer;
+      EqualTo        : TComparer;
+      var theFoundIndex   : Int32): boolean;
+\end{verbatim}
+You can call \var{Find} as follows
+\begin{verbatim}
+ Result:=Find(@theCmdID,1,kCmdCount,IsSmallerThan, IsEqualTo,aIndex):
+\end{verbatim}
+Where the two functions \var{IsSmallerThan} and \var{IsEqualTo} are defined as:
+\begin{verbatim}
+function IsSmallerThan(theIndex : Int32; aPtr : PtrInt): boolean;
+function IsEqualTo(theIndex : Int32; aPtr  : PtrInt): boolean
+\end{verbatim}
+Because \var{PtrInt} has the same size as \var{Pointer}, this will compile.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The array of const construct
 \subsection{Array of const}
 \index{Parameters!Open Array}\index{Array}\index{Array!Of const}
@@ -11050,6 +11187,19 @@ This will result in the following error:
 Error: Variable identifier expected
 \end{verbatim}
 
+
+\subsection{Ellipsis parameter}
+\index{Parameters!ellipsis}
+In macpas mode you can have an ellipsis parameter. 
+The ellipsis (\var{\ldots}) parameter must be the last parameter in the parameter list.
+It has the same effect as the \var{varargs} modifier: it tells the compiler that a variable number of arguments is possible.
+
+This means the following external definitions are equivalent in macpas mode:
+\begin{verbatim}
+Procedure printf(format: PAnsiChar;...); cdecl; external;
+Procedure printf(format: PAnsiChar); varargs; cdecl; external;
+\end{verbatim}
+ 
 
 
 \subsection{Managed types and reference counts}
@@ -11417,9 +11567,11 @@ assembler in the \progref.
 A function or procedure declaration can contain modifiers. Here we list the
 various possibilities:
 \input{syntax/modifiers.syn}
+The call modifiers can be found in the setion on procedural types (\sees{proceduraltypes}).
 \fpc doesn't support all \tp modifiers (although it parses them for
 compatibility), but does support a number of additional modifiers.
 They are used mainly for assembler and reference to C object files.
+
 
 \subsection{alias}
 \label{se:alias}
@@ -11514,6 +11666,10 @@ restrictions, for instance the \var{array of const} construct can not be
 used (due the way this uses the stack). On the other hand, the
 \var{cdecl} modifier allows these functions to be used as callbacks for
 routines written in C, as the latter expect the ``cdecl'' calling convention.
+
+\begin{remark}
+In macpas mode, the \var{cdecl} modifier can be abbreviated to \var{c}.
+\end{remark}  
 
 
 \subsection{cppdecl}
@@ -13126,15 +13282,16 @@ are exported with the exact names as specified in the exports clause.
 Exceptions provide a convenient way to program error and error-recovery
 mechanisms, and are closely related to classes.
 Exception support is based on three constructs:
+\input{syntax/exception.syn}
 \begin{description}
-\item [Raise\ ] statements. To raise an exception. This is usually done to signal an
+\item [Raise statement] To raise an exception. This is usually done to signal an
 error condition.\index{Exceptions!Raising} It is however also usable to
 abort execution and immediately return to a well-known point in the
 executable.
-\item [Try ... Except\ ] blocks. These block serve to catch exceptions
+\item [Try ... Except statement] This is a structured statement. This block of statements serve to catch exceptions
 raised within the scope of the block, and to provide exception-recovery
 code.\index{Exceptions!Catching}
-\item [Try ... Finally\ ] blocks. These block serve to force code to be
+\item [Try ... Finally statement] Is also a structured statement. This block of statements force code to be
 executed irrespective of an exception occurrence or not. They generally
 serve to clean up memory or close files in case an exception occurs.
 The compiler generates many implicit \var{Try ... Finally} blocks around

@@ -3099,7 +3099,8 @@ dest/rtf/fcl.rtf: $(FCLXML)
 	$(FPDOC) $(FPDOCOPTS) --output=dest/rtf/fcl.rtf --project=xml/fcl-project.xml --format=rtf
 dest/rtf/fclres.rtf: $(FCLXML)
 	$(FPDOC) $(FPDOCOPTS) --output=dest/rtf/fclres.rtf $(FCLRESOPTS) --format=rtf
-dist/dvi/ref.dvi: ref.tex $(INCLUDES)
+SYNTAXDIAGRAMS=$(wildcard syntax/*.syn)
+dist/dvi/ref.dvi: ref.tex $(INCLUDES) $(SYNTAXDIAGRAMS)
 dist/dvi/prog.dvi: prog.tex $(INCLUDES)
 dist/dvi/user.dvi: user.tex $(INCLUDES) tex/messages.inc tex/comphelp.inc
 dist/dvi/fpdoc.dvi: fpdoc.tex $(INCLUDES)
@@ -3110,7 +3111,7 @@ dist/dvi/onechap.dvi: onechap.tex $(INCLUDES)
 dist/dvi/rtl.dvi: rtl.tex rtl.inc $(INCLUDES)
 .PHONY: ref user prog
 ref: dist/pdf/ref.pdf
-dist/pdf/ref.pdf: ref.tex $(INCLUDES)
+dist/pdf/ref.pdf: ref.tex $(INCLUDES)  $(SYNTAXDIAGRAMS)
 user: dist/pdf/user.pdf
 dist/pdf/user.pdf: user.tex $(INCLUDES) tex/messages.inc tex/comphelp.inc
 prog:  dist/pdf/prog.pdf
