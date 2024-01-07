@@ -2582,7 +2582,7 @@ ifneq ($(LATEXOPT),)
   override LATEX+= $(LATEXOPT)
   override PDFLATEX+= $(LATEXOPT)
 endif
-save_size=10000
+save_size=90000
 export save_size
 ifdef USEL2H
 ifndef LATEX2HTML
