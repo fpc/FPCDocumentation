@@ -5,6 +5,6 @@ Program Example1;
 Uses Unix;
 
 begin
-  Write ('Secs past the start of the Epoch (00:00 1/1/1980) : ');
+  Write ('Secs past the start of the Epoch (1970-01-01T00:00) : ');
   Writeln (GetEpochTime);
 end.

@@ -15,5 +15,5 @@ begin
   Write ('Seonds  : ');readln(Second);
   Write ('This is : ');
   Write (LocalToEpoch(year,month,day,hour,minute,second));
-  Writeln (' seconds past 00:00 1/1/1980');
+  Writeln (' seconds past 1970-01-01T00:00');
 end.
