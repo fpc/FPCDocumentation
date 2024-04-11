@@ -51,8 +51,20 @@ some constants.
 </p>
 <p>
 Do not use this unit directly, instead use the  <var>-gh</var> switch, to
-let the compiler insert the unit in the uses clause.
+let the compiler insert the unit in the uses clause. You can detect whether 
+the heaptrc unit is actually used in the main program code with the following function:
 </p>
+<code>
+function IsHeapTraceActive : boolean;
+
+begin
+{$if declared(UseHeapTrace)}
+  Result:=UseHeapTrace;
+{$else}
+  Result:=False;
+{$endif}
+end;
+</code>
 </descr>
 
 <topic name="usage">
@@ -194,9 +206,18 @@ default it is set to <var>True</var>.
 </element>
 
 <element name="useHeapTrace">
-<short>If set to <var>false</var>, the heap trace will be disabled.</short>
+<short>If set to <var>False</var>, the heap trace will be disabled.</short>
 <descr>
-This variable must be set at program startup, through the help of an environment variable.
+<p>
+This variable can be set to <var>False</var> at program startup to disable the heap trace functionality completely.
+Because this variable is checked in the initialization section of the unit, the only way to do this is through the 
+help of an <link id="environment">environment variable</link>, which must be set before the program starts.
+It follows that setting the variable to <var>False</var> while the main program is executed will have no effect.
+</p>
+<p>
+Note that this disables the heaptrace functionality completely: 
+the tracing heapmanager is simply not installed if the variable is set to <var>False</var>.
+</p>
 </descr>
 <seealso>
 <link id="environment"/>
