@@ -2,7 +2,7 @@ Program heapex;
 
 { Program used to demonstrate the usage of heaptrc unit }
 
-Uses heaptrc;
+{ you must compile this program with the -gh command-line switch of FPC}
 
 Var P1 : ^Longint;
     P2 : Pointer;
