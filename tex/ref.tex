@@ -943,7 +943,47 @@ check error if range checking is enabled.
 \item Ordinal values have a largest possible value. Trying to apply the
 \var{Succ} function on the largest possible value will generate a range
 check error if range checking is enabled.
+\item Integer ordinal types are mutually assignment compatible: there is no need to
+typecast when assigning an ordinal value of one (e.g. smallint) to another
+(e.g. byte). If you assign a value to a variable of an ordinal type, 
+and that value is actually out of the range of valid values for that type, 
+this will not result in an error. 
+Only when range checking is enabled will such an assignment result in a range
+check error.
 \end{enumerate}
+
+The fact that ordinals are mutually assignment compatible means that the 
+following program will work without errors when compiled without range checking:
+\begin{verbatim}
+var
+   b: byte;
+   si: integer;
+   w: word;
+begin
+   b := 33;
+   si := 512;
+   b := si; // out of range (too big)
+   writeLn(b);  // shows zero!
+
+   b := 33;
+   si := -512;
+   b := si; // out of range (negative)
+   writeLn(b);  // shows zero!
+
+   w := 33;
+   si := -9;
+   w := si; // Out of range (negative)
+   writeLn(w);  // shows 65527!
+
+   b := 33;
+   si := 512;
+   b := byte(si); // out of range (too big)
+   writeLn(b);  // shows zero!
+end.
+\end{verbatim}
+Only when you compile with range checking by specifying \var{-Cr} on commandline, or
+adding \var{\{\$R+\}} to the source code, will the compiler insert code to
+check whether the assigned value is valid for the target ordinal type.
 
 \begin{remark}
 \var{Int64} and \var{QWord} are considered ordinal types on 64-bit CPUs. On 32-bit types
