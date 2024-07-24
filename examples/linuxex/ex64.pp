@@ -1,5 +1,6 @@
 program Example64;
 
+{$R-}
 { Example to demonstrate the SysInfo function.
   Sysinfo is Linux-only. }
 
