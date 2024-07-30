@@ -15,12 +15,12 @@ Var I,J : longint;
 begin
   For I:=5 to 15 do
     For J:=1 to 4 do
-      For FF:=ffgeneral to ffcurrency do
+      For FF:=ffGeneral to {ffCurrency} ffGeneral do
         begin
         Write (Value,'(Prec: ',I:2,', Dig: ',J,', fmt : ',Fmt[ff],') : ');
-        Writeln (FloatToStrf(Value,FF,I,J));
+        Writeln (FloatToStrF(Value,FF,I,J));
         Write (-Value,'(Prec: ',I:2,', Dig: ',J,', fmt : ',Fmt[ff],') : ');
-        Writeln (FloatToStrf(-Value,FF,I,J));
+        Writeln (FloatToStrF(-Value,FF,I,J));
         end;
 end;
 
