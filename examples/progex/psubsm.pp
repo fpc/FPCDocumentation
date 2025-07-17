@@ -1,6 +1,8 @@
-program testsubs;
+program psubsm;
 
 uses strings;
+
+{$linklib subs}
 
 function SubStr(const CString: PChar; FromPos, ToPos: longint): PChar;
   cdecl; external 'subs';
