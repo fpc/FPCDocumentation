@@ -374,6 +374,9 @@ distclean: fpc_distclean clean cleanexamples
 tex/date.inc:
 	@$(ECHO) \\date\{`date +'%B %Y'`\} > tex/date.inc
 
+postproc$(EXEEXT): postproc.pp htmlpp.pp
+	$(FPC) postproc.pp
+
 $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT):
 	$(MAKE) -C $(FPCSRCDIR)/compiler/utils msg2inc$(EXEEXT)
 #        $(MAKE) -C $(FPCSRCDIR)/compiler msg2inc
@@ -980,6 +983,7 @@ $(HTMLDIR)/fcl.chk: $(FCLXML) xml/fcl-project.xml $(HTMLDIR)/rtl.chk | $(HTMLDIR
 ifndef CSSFILE
         cp fpdoc.cst $(HTMLDIR)/fcl/fpdoc.css
 endif
+	postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/fcl 
         @$(ECHO) '' > $(HTMLDIR)/fcl.chk
 
 $(HTMLDIR)/fclres.chk: $(FCLRESXML) | $(HTMLDIR)/
@@ -987,6 +991,7 @@ $(HTMLDIR)/fclres.chk: $(FCLRESXML) | $(HTMLDIR)/
 ifndef CSSFILE
         cp fpdoc.cst $(HTMLDIR)/fclres/fpdoc.css
 endif
+	postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/fclres
         @$(ECHO) '' > $(HTMLDIR)/fclres.chk
 
 $(HTMLDIR)/rtl.chk: $(RTLXML) xml/rtl-project.xml | $(HTMLDIR)/
@@ -994,14 +999,15 @@ $(HTMLDIR)/rtl.chk: $(RTLXML) xml/rtl-project.xml | $(HTMLDIR)/
 ifndef CSSFILE
         cp fpdoc.cst $(HTMLDIR)/rtl/fpdoc.css
 endif
+	postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/rtl
         @$(ECHO) '' > $(HTMLDIR)/rtl.chk
 
-$(HTMLDIR)/user.chk: $(INCLUDES) user.tex messages.inc
-$(HTMLDIR)/prog.chk: $(INCLUDES) prog.tex
-$(HTMLDIR)/onechap.chk: $(INCLUDES) onechap.tex
-$(HTMLDIR)/ref.chk: $(INCLUDES) ref.tex
-$(HTMLDIR)/fpdoc.chk: $(INCLUDES) fpdoc.tex
-$(HTMLDIR)/chart.chk: $(INCLUDES) chart.tex
+$(HTMLDIR)/user.chk: $(INCLUDES) user.tex messages.inc postproc$(EXEEXT) 
+$(HTMLDIR)/prog.chk: $(INCLUDES) prog.tex postproc$(EXEEXT)
+$(HTMLDIR)/onechap.chk: $(INCLUDES) onechap.tex postproc$(EXEEXT)
+$(HTMLDIR)/ref.chk: $(INCLUDES) ref.tex postproc$(EXEEXT) 
+$(HTMLDIR)/fpdoc.chk: $(INCLUDES) fpdoc.tex postproc$(EXEEXT)
+$(HTMLDIR)/chart.chk: $(INCLUDES) chart.tex 
 
 html: fpc_all comphelp.inc $(INCLUDES) $(CHK) | $(HTMLDIR)/
 
