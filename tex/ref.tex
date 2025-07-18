@@ -6801,6 +6801,114 @@ or
 \begin{verbatim}
 T2 = specialize TTest<String, Longint>;
 \end{verbatim}
+\section{Generic procedures and functions}
+\label{se:genericprocs}
+\index{Procedures!Generic}
+\index{Functions!Generic}
+As can be seen in the syntax diagrams for generic procedures and functions,
+it is possible to define generic procedures and functions or generic
+methods. Where in a generic class type all methods of the class can contain the
+template, it is possible to have a non-generic class with a generic method:
+\begin{verbatim}
+uses typinfo;
+
+type
+  TMyEnum = (one,two,three);
+
+  TTypeHelper = class(TObject)
+    generic procedure PrintTypeName<T>(a : T);
+  end;
+
+generic procedure TTypeHelper.PrintTypeName<T>(a : T);
+begin
+  Writeln(PTypeInfo(typeInfo(T)) ^.name);
+end;
+
+var
+  Helper : TTypeHelper;
+
+begin
+  Helper.specialize PrintTypeName<TMyEnum>(one);
+end.
+\end{verbatim}
+or, in Delphi syntax:
+\begin{verbatim}
+uses typinfo;
+
+type
+  TMyEnum = (one,two,three);
+
+  TTypeHelper = class(TObject)
+    procedure PrintTypeName<T>(a : T);
+  end;
+
+procedure TTypeHelper.PrintTypeName<T>(a : T);
+begin
+  Writeln(PTypeInfo(typeInfo(T)) ^.name);
+end;
+
+var
+  Helper : TTypeHelper;
+
+begin
+  Helper.PrintTypeName<TMyEnum>(one);
+end.
+\end{verbatim}
+Both global procedures or functions can also be generic:
+\begin{verbatim}
+ses typinfo;
+
+type
+  TMyEnum = (one,two,three);
+
+generic function GetTypeName<T>(a : T) : string;
+
+begin
+  Result:=PTypeInfo(typeInfo(T))^.name;
+end;
+
+begin
+  Writeln(specialize GetTypeName<TMyEnum>(one));
+end.
+\end{verbatim}
+It is even possible to use them in Delphi mode:
+\begin{verbatim}
+uses typinfo;
+
+type
+  TMyEnum = (one,two,three);
+
+function GetTypeName<T>(a : T) : string;
+
+begin
+  Result:=PTypeInfo(typeInfo(T))^.name;
+end;
+
+begin
+  Writeln(GetTypeName<TMyEnum>(one));
+end.
+\end{verbatim}
+But this code is not compilable with Delphi. In delphi, the closest thing to
+this feature is to use a record or class with generic class methods:
+\begin{verbatim}
+uses typinfo;
+
+type
+  TMyEnum = (one,two,three);
+
+  TTypeHelper = class(TObject)
+    class procedure PrintTypeName<T>(a : T);
+  end;
+
+class procedure TTypeHelper.PrintTypeName<T>(a : T);
+begin
+  Writeln(PTypeInfo(typeInfo(T)) ^.name);
+end;
+
+begin
+  TTypeHelper.PrintTypeName<TMyEnum>(one);
+end.
+\end{verbatim}
 
 \section{Delphi compatibility}
 \index{Delphi!Compatibility}
@@ -10668,6 +10776,9 @@ block of code. The procedure can then be called with a procedure statement.
 \input{syntax/procedur.syn}
 See \sees{Parameters} for the list of parameters.\index{Procedure}
 \keywordlink{procedure}
+Note that procedures can be generic, see \sees{genericprocs} for more
+details.
+
 A procedure declaration that is followed by a block implements the action of
 the procedure in that block.
 The following is a valid procedure:
@@ -10691,6 +10802,8 @@ statement, if extended syntax is on.
 \input{syntax/function.syn}
 \index{Function}The result type of a function can be any previously declared type.
 contrary to Turbo Pascal, where only simple types could be returned.
+Note that functions can be generic, see \sees{genericprocs} for more
+details.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Function results
