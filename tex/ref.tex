@@ -10035,6 +10035,9 @@ types can be used as counters in a loop.
 the counter variable with the initial value.
 \item It is not allowed to change (i.\,e. assign a value to) the value of a
 loop variable inside the loop.
+\item the loop can be exited using the \var{break} system routine.
+\item the loop can be forced to the next iteration (if any) using the
+\var{continue} system routine.
 \item The value of the loop variable is undefined after a loop has completed or if a loop is not executed at all.
 However, if the loop was terminated prematurely with an exception or a \var{break} or \var{goto} statement,
 the loop variable retains the value it had when the loop was exited.
@@ -10045,6 +10048,7 @@ If you declare a loop variable outside the nested procedure where the loop is, t
 complain. It is however allowed to use a global variable in a procedure.
 \item The compiler does not expliticly forbid jumping with a \var{goto} statement into a for loop block,
 but doing so will result in unpredictable behaviour.
+
 \end{itemize}
 \end{remark}
 
@@ -10115,7 +10119,7 @@ end.
 \end{verbatim}
 
 
-If the statement is a compound statement, then the \var{Break} and
+Inside the loop statement the \var{Break} and
 \var{Continue} system routines can be used to jump to the end or just
 after the end of the \var{For} block statement: in the case of
 \var{Continue}, this means that the for loop condition is again evaluated.
@@ -10537,10 +10541,14 @@ If a class is not enumerable, the compiler will report an error when it is
 encountered in a \var{for...in} loop.
 
 \begin{remark}
-Like the \var{for..to} loop, it is not allowed to change (i.\,e. assign a value to) the value of a
+\begin{itemize}
+\item A loop can be exited prematurely using the \var{break} system routine.
+\item The next iteration of a loop can be forced using the \var{continue} system routine.
+\item Like the \var{for..to} loop, it is not allowed to change (i.\,e. assign a value to) the value of a
 loop control variable inside the loop. Also, the loop variable is not
 defined after the loop finishes. The exception for \var{break} and
 \var{exit} also applies.
+\end{itemize}
 \end{remark}
 
 \subsection{The \var{Repeat..until} statement}
@@ -10612,10 +10620,9 @@ while x>=10e-3 do
 \end{verbatim}
 They correspond to the example loops for the \var{repeat} statements.
 
-If the statement is a compound statement, then  the \var{Break} and
-\var{Continue} reserved words can be used to jump to the end or just
-after the end of the \var{While} block. In the case of \var{Continue},
-this has the effect of immediatly checking the loop condition,
+In the while statement the \var{Break} and \var{Continue} system routines can be used to 
+jump to the end or just after the end of the \var{While} block. 
+In the case of \var{Continue}, this has the effect of immediatly checking the loop condition,
 bypassing all code between \var{Continue} and the end of the loop block.
 In the case of nested loops, only the innermost loop is considered.
 Note that \var{Break} and \var{Continue} are not reserved words and
