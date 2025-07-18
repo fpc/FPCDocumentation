@@ -4928,7 +4928,7 @@ the destructor will be called automatically.
 Declaration of methods in classes follows the same rules as method
 declarations in objects:
 \input{syntax/cmethods.syn}
-The only differences are the \var{override}, \var{reintroduce} and
+The only differences are the \var{override}, \var{reintroduce}, \var{final} and
 \var{message} directives.
 
 \subsection{Implementation}
@@ -5047,6 +5047,37 @@ methods behave the same as virtual methods. Unlike in Delphi, in FPC the
 implementation of dynamic methods is equal to the implementation of virtual
 methods.
 \end{remark}
+
+\subsection{Final methods}
+\index{Class}\index{Methods!Final}
+The \var{final} method can be used on a virtual or dynamic (or overridden)
+method to indicate it can no longer be overridden.
+
+Given the following declarations:
+\begin{verbatim}
+type
+  TParent = class
+    procedure Test; virtual;
+    procedure TestFinal; virtual; final;
+  end;
+
+  TChild1 = class(TParent)
+    procedure test; override; final;
+  end;
+\end{verbatim}
+The following declarations will result in compiler errors:
+\begin{verbatim}
+  TChild2 = class(TChild1)
+    // Error: There is no method in an ancestor class to be overridden: "Test;"
+    procedure test; override; 
+  end; 
+
+  TChild3 = class(TParent)
+    procedure TestProcedure; override;
+    // Error: There is no method in an ancestor class to be overridden: "TestFinal;"
+    procedure TestFinal; override;
+  end;
+\end{verbatim}
 
 \subsection{Class methods}
 \index{Class}\index{Methods!Class}
