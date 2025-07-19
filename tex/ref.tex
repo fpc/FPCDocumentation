@@ -551,7 +551,7 @@ well as the invocation of the procedure \var{do}.
 \end{remark}
 
 \section{Hint directives}
-\index{Hint directives}\index{Directives!Hint}
+\index{Hint directives}\index{Directives!Hint}\label{se:hintdirectives}
 Most identifiers (constants, variables, functions or methods, properties) can have a
 hint directive appended to their definition:
 
@@ -736,6 +736,13 @@ declaration.\index{Operators}
 Operators such as \var{+, -, *, /, not, and, or, div, mod, ord, chr,
 sizeof, pi, int, trunc, round, frac, odd} can be used, however.
 For more information on expressions, see \seec{Expressions}.
+
+As with all identifiers, constants can be accompagnied by hint directives
+(\sees{hintdirectives}):
+\begin{verbatim}
+const
+  MyPi = 3.14 deprecated;
+\end{verbatim}
 
 When a previously declared ordinary constant is used in the code, the compiler will insert
 the actual value of the constant instead of the constant name. That is, the
@@ -3572,7 +3579,12 @@ export two variables with the same assembler name. In particular, do not
 attempt to export variables with a public name that starts with \var{FPC\_};
 the compiler uses some internal system routines with this name.
 
-
+As for any identifier, variables can be accompagnied by hint directives
+(\sees{hintdirectives}):
+\begin{verbatim}
+var
+  curold : integer deprecated;
+\end{verbatim}
 
 \section{Scope}
 \index{Scope}
@@ -5544,6 +5556,12 @@ the various \var{setNNN} methods.
 Because of this mechanism, properties cannot be passed as var arguments to a
 function or procedure, since there is no known address of the property (at
 least, not always).\index{Parameters!Var}
+
+As for many identifiers, properties can have hint directives
+(\sees{hintdirectives}):
+\begin{verbatim}
+Property MyProp : Integer read FMyProp; deprecated; 
+\end{verbatim}
 
 \subsection{Indexed properties}
 \index{Properties!Indexed}\keywordlink{index}
@@ -10842,6 +10860,13 @@ begin
   Writeln ('Parameter in upper case : ',Upper(Para));
 end;
 \end{verbatim}
+
+As with most identifiers, a procedure can have hint directives
+(\sees{hintdirectives}):
+\begin{verbatim}
+procedure something; deprecated;
+\end{verbatim}
+
 Note that it is possible that a procedure calls itself.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -10857,6 +10882,12 @@ statement, if extended syntax is on.
 contrary to Turbo Pascal, where only simple types could be returned.
 Note that functions can be generic, see \sees{genericprocs} for more
 details.
+
+Just as procedures, functions can have hint directives
+(\sees{hintdirectives}):
+\begin{verbatim}
+function something : string; deprecated;
+\end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Function results
@@ -13030,7 +13061,7 @@ A Pascal program consists of the program header, followed possibly by a
 ``uses'' clause, and a block.
 \input{syntax/program.syn}
 The program header is not required. If present, it will be used by the compiler
-to name the program. If absent, the source filename will be used.
+to name the program. If absent, the source filename will be used. 
 
 The uses clause serves to identify all units that are needed by the program.
 All identifiers which are declared in the interface section of the units
@@ -13098,6 +13129,12 @@ As can be seen from the syntax diagram, a unit always consists of a
 interface and an implementation part. Optionally, there is an initialization
 block and a finalization block, containing code that will be executed when
 the program is started, and when the program stops, respectively.
+
+The unit header can be accompagnied by hint directives
+(\sees{hintdirectives}):
+\begin{verbatim}
+unit old deprecated;
+\end{verbatim}
 
 \keywordlink{interface}\keywordlink{implementation}
 Both the interface part or implementation part can be empty, but the
