@@ -5323,6 +5323,37 @@ static method was defined.
 For the class method, the class is set to the actual class used to call the method
 (\var{TB}).
 
+\subsection{Covariant return type}
+When overriding a function that has a class typed result, it is possible to change
+the exact class to a descendant of the result type of the parent method.
+
+This means that the following will compile:
+\begin{verbatim}
+Program Project1;
+{$mode objfpc}
+type
+  TClass1 = class
+  public
+    function A: TClass1; virtual; abstract;
+  end;
+
+  TClass2 = class(TClass1)
+  public
+    function A: TClass2; override; // result differs: TClass2 as descendant of TClass1
+  end;
+
+{ TClass2 }
+
+function TClass2.A: TClass2;
+begin
+  Result := Self;
+end;
+
+begin
+end.
+\end{verbatim}
+The covariant return type can be used in ObjFPC and Delphi modes.
+
 \subsection{Message methods}
 \index{Methods!Message}
 New in classes are \var{message} methods. Pointers to message methods are
@@ -11711,6 +11742,8 @@ Note that if you redefine (and overload) compiler internal functions, the
 original compiler functions are no longer available. This is for instance
 the case with \var{Inc()} and \var{Dec()}
 \end{remark}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % forward declared functions
