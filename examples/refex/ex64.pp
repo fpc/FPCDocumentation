@@ -2,8 +2,8 @@ program Example64;
 
 { Program to demonstrate the sptr function. }
 
-var p:ptruint;
+var p:pointer;
 
 begin
-  p:=ofs(stackbottom); { P Contains now the current stack position. }
+  p:=sptr; { P Contains now the current stack position. }
 end.
