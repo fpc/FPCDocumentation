@@ -11824,6 +11824,23 @@ This tells the compiler that the function has the name ``Fname''. The
 correct library or object file (in this case myfunc.o) must still be linked,
 ensuring that the function ``Fname'' is indeed included in the linking stage.
 
+Sometimes, the external symbol may not be there. In that case, you can use
+the \var{weakexternal} keyword instead of the \var{external} keyword. For
+example:
+\begin{verbatim}
+function _test: cardinal; weakexternal libname name '_TEST';
+\end{verbatim}
+If the function is not there at runtime, the function reference will be
+\var{Nil}. This means that before using such a function, you need to test
+if it is actually there:
+\begin{verbatim}
+if @_test<>Nil then
+  writeln(_test);
+\end{verbatim}
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Assembler functions
 \section{Assembler functions}
