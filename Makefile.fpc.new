@@ -43,11 +43,12 @@ FPCSRCDIR:=$(patsubst %/compiler,%,$(firstword $(strip $(wildcard $(addsuffix /c
 
 # Which docs to build by default
 ifndef DOCS
-DOCS = user ref prog fpdoc chart rtl fcl fclres
+DOCS = user ref prog fpdoc chart 
 endif
 
-HTMLDOCS=$(DOCS) 
-#  rtl fcl fclres
+HTMLDOCS=$(DOCS) rtl rtl fcl fclres
+
+TEXTDOCS=$(DOCS) rtl-tp rtl-delphi fcl fclres
 
 # Which RTF docs
 ifndef RTFS
@@ -114,12 +115,14 @@ else
 FPDOCOPTS=--macro=FPCDIR=$(FPCSRCDIR) --macro=XMLDIR=xml/ --examples-dir=examples
 endif
 
-FCLOPTS= --package=fcl --warn-no-node --descr=xml/fcl.xml --content=xml/fcl.xct --import=xml/rtl.xct,$(RTLLINKPREFIX) $(FCLUNITOPTS)
+FCLOPTS= --package=fcl --warn-no-node --descr=xml/fcl.xml --content=xml/fcl.xct
+--import=xml/rtl-tp.xct,$(RTLLINKPREFIX --import=xml/rtl-delphi.xct,$(RTLLINKPREFIX) $(FCLUNITOPTS)
+
 ifeq ($(HIDEPROTECTED),YES)
 FCLOPTS+= --hide-protected
 endif
 
-FCLRESOPTS= --package=fcl-res --warn-no-node --content=xml/fclres.xct --import=xml/fcl.xct --import=xml/rtl.xct,$(RTLLINKPREFIX) $(FCLRESUNITOPTS)
+FCLRESOPTS= --package=fcl-res --warn-no-node --content=xml/fclres.xct --import=xml/fcl.xct --import=xml/rtl-delphi.xct,$(RTLLINKPREFIX) $(FCLRESUNITOPTS)
 ifeq ($(HIDEPROTECTED),YES)
 FCLOPTS+= --hide-protected
 endif
@@ -157,18 +160,22 @@ export inUnix
 ifndef LATEX
 LATEX = latex
 endif
+
 # DVI to PS converter
 ifndef DVIPS
 DVIPS=dvips
 endif
+
 # DVI to TXT converter
 ifndef DVITXT
 DVITXT=dvi2tty -w132
 endif
+
 # PDF converter
 ifndef PDFLATEX
 PDFLATEX=pdflatex
 endif
+
 # Makeindex programma
 ifndef MAKEINDEX
 MAKEINDEX=makeindex
@@ -269,7 +276,7 @@ debuginfo:
 
 .PHONY: clean dvi help html ps psdist htmldist htmdist htdist pdfdist \
         txtdist htm txt pdf refex alldist messages onechap gtk \
-        user ref prog rtl updatexml updatefclxml updatertlxml updatefclresxml \
+        user ref prog rtl-tp rtl-delphi updatexml updatefclxml updatertlxml updatefclresxml \
         examples
 
 $(DVIDIR)/:
@@ -351,18 +358,12 @@ help:
         @echo ' linuxexamples : Compile all examples for linux'
         @echo ' dosexamples   : Compile all examples for dos'
         @echo ' execute       : Execute examples (DOS/Windows/OS/2 only)'
-        @echo ' htmldist      : html, and archive result.'
+        @echo ' htmldist      : html, and rchive result.'
         @echo ' psdist        : ps, and archive result.'
         @echo ' pdfdist       : pdf, and archive result.'
-	@echo ' ref           : reference guide in pdf: $(PDFDIR)/ref.pdf'
-	@echo ' user          : users guide in pdf: $(PDFDIR)/user.pdf'
-	@echo ' prog          : programmers guide in pdf: $(PDFDIR)/prog.pdf'
-	@echo ' refhtml       : reference guide in html: $(HTMLDIR)/ref/ref.html'
-	@echo ' userhtml      : users guide in html: $(HTMLDIR)/user/user.html'
-	@echo ' proghtml      : programmers guide in html: $(HTMLDIR)/prog/prog.html'
 
 clean: fpc_clean
-        -rm -f tex/preamble.inc tex/date.inc tex/messages.inc tex/rtl.inc tex/fcl.inc tex/comphelp.inc tex/fclres.inc
+        -rm -f tex/preamble.inc tex/date.inc tex/messages.inc tex/rtl-tp.inc tex/rtl-delphi.inc tex/fcl.inc tex/comphelp.inc tex/fclres.inc
 	-rm -f xml/*.xct
         -rm -f -r dist
 # Styles
@@ -379,12 +380,6 @@ distclean: fpc_distclean clean cleanexamples
 
 tex/date.inc:
 	@$(ECHO) \\date\{`date +'%B %Y'`\} > tex/date.inc
-
-postproc$(EXEEXT): postproc.pp htmlpp.pp
-	$(FPC) postproc.pp
-
-preparegrammar$(EXEEXT): preparegrammar.pp
-	$(FPC) preparegrammar.pp
 
 $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT):
 	$(MAKE) -C $(FPCSRCDIR)/compiler/utils msg2inc$(EXEEXT)
@@ -662,7 +657,7 @@ FCLRESUNITOPTS+= $(FCLRESELFREADER) $(FCLRESELFWRITER) $(FCLRESMACHOTYPES) $(FCL
 FCLRESUNITOPTS+= $(FCLRESMACHOWRITER) $(FCLRESEXTERNALTYPES) $(FCLRESEXTERNALREADER) $(FCLRESEXTERNALWRITER) 
 FCLRESUNITOPTS+= $(FCLRESDFMREADER)
 
-FCLRESOPTS=$(FPDOCOPTS) --package=fcl-res --warn-no-node --content=xml/fclres.xct --import=xml/fcl.xct --import=xml/rtl.xct,$(RTLLINKPREFIX) $(FCLRESUNITOPTS)
+FCLRESOPTS=$(FPDOCOPTS) --package=fcl-res --warn-no-node --content=xml/fclres.xct --import=xml/fcl.xct --import=xml/rtl-delphi.xct,$(RTLLINKPREFIX) $(FCLRESUNITOPTS)
 ifeq ($(HIDEPROTECTED),YES)
 FCLOPTS+= --hide-protected
 endif
@@ -850,17 +845,17 @@ updatertlxml: fpc_all
 # TeX files
 #####################################################################
 
-tex/rtl.inc: $(RTLXML)
-        $(FPDOC)  $(FPDOCOPTS) --output=tex/rtl.inc --project=xml/rtl-project.xml --format=latex
+tex/rtl-tp.inc: $(RTLXML)
+        $(FPDOC)  $(FPDOCOPTS) --output=tex/rtl-tp.inc --project=xml/rtl-tp.xml --format=latex
+
+tex/rtl-delphi.inc: $(RTLXML)
+        $(FPDOC)  $(FPDOCOPTS) --output=tex/rtl-delphi.inc --project=xml/rtl-delphi.xml --format=latex
 
 tex/fcl.inc: $(FCLXML)
         $(FPDOC) $(FPDOCOPTS) --output=tex/fcl.inc --project=xml/fcl-project.xml --format=latex
 
 tex/fclres.inc: $(FCLRESXML)
         $(FPDOC) $(FPDOCOPTS) --output=tex/fclres.inc $(FCLRESOPTS) --format=latex
-
-tex/grammar.ebnf: ObjectPascal.ebnf preparegrammar$(EXEEXT)
-	preparegrammar < ObjectPascal.ebnf >tex/grammar.ebnf
 
 #####################################################################
 # RTF files
@@ -869,8 +864,11 @@ RTFFILES = $(addsuffix .rtf,$(RTFS))
 
 rtf: $(RTFFILES)
 
-dest/rtf/rtl.rtf: $(RTLXML)
-        $(FPDOC) $(FPDOCOPTS) --output=dest/rtf/rtl.rtf --project=xml/rtl-project.xml --format=rtf
+dest/rtf/rtl-delphi.rtf: $(RTLXML)
+        $(FPDOC) $(FPDOCOPTS) --output=dest/rtf/rtl-delphi.rtf --project=xml/rtl-delphi.xml --format=rtf
+
+dest/rtf/rtl-tp.rtf: $(RTLXML)
+        $(FPDOC) $(FPDOCOPTS) --output=dest/rtf/rtl-tp.rtf --project=xml/rtl-tp.xml --format=rtf
 
 dest/rtf/fcl.rtf: $(FCLXML)
         $(FPDOC) $(FPDOCOPTS) --output=dest/rtf/fcl.rtf --project=xml/fcl-project.xml --format=rtf
@@ -884,7 +882,7 @@ dest/rtf/fclres.rtf: $(FCLXML)
 #####################################################################
 SYNTAXDIAGRAMS=$(wildcard syntax/*.syn)
 
-dist/dvi/ref.dvi: ref.tex tex/grammar.ebnf $(INCLUDES) $(SYNTAXDIAGRAMS)
+dist/dvi/ref.dvi: ref.tex $(INCLUDES) $(SYNTAXDIAGRAMS)
 
 dist/dvi/prog.dvi: prog.tex $(INCLUDES)
 
@@ -900,13 +898,15 @@ dist/dvi/chart.dvi: chart.tex
 
 dist/dvi/onechap.dvi: onechap.tex $(INCLUDES)
 
-dist/dvi/rtl.dvi: rtl.tex rtl.inc $(INCLUDES)
+dist/dvi/rtl-tp.dvi: rtl-tp.tex rtl-tp.inc $(INCLUDES)
+
+dist/dvi/rtl-delphi.dvi: rtl-delphi.tex rtl-delphi.inc $(INCLUDES)
 
 .PHONY: ref user prog
 
 ref: dist/pdf/ref.pdf
 
-dist/pdf/ref.pdf: ref.tex tex/grammar.ebnf $(INCLUDES)  $(SYNTAXDIAGRAMS)
+dist/pdf/ref.pdf: ref.tex $(INCLUDES)  $(SYNTAXDIAGRAMS)
 
 user: dist/pdf/user.pdf
 
@@ -920,13 +920,15 @@ dist/pdf/onechap.pdf: onechap.tex $(INCLUDES)
 
 dist/pdf/fpdoc.pdf: fpdoc.tex $(INCLUDES)
 
-dist/pdf/fcl.pdf: tex/fcl.tex fcl.inc $(INCLUDES)
+dist/pdf/fcl.pdf: fcl.tex fcl.inc $(INCLUDES)
 
 dist/pdf/fclres.pdf: fclres.tex fclres.inc $(INCLUDES)
 
 dist/pdf/chart.pdf: chart.tex
 
-dist/pdf/rtl.pdf: tex/rtl.tex rtl.inc $(INCLUDES)
+dist/pdf/rtl-tp.pdf: rtl-tp.tex rtl-tp.inc $(INCLUDES)
+
+dist/pdf/rtl-delphi.pdf: rtl-delphi.tex rtl-delphi.inc $(INCLUDES)
 
 dvi: $(DVI)
 
@@ -945,8 +947,8 @@ fclres.txt: $(FCLRESXML)
 	unix2dos fcl.txt
 
 rtl.txt: $(RTLXML)
-        $(FPDOC) $(FPDOCOPTS) --project=rtl-project.xml --format=txt --output=rtl.txt
-	unix2dos rtl.txt
+        $(FPDOC) $(FPDOCOPTS) --project=rtl-project.xml --format=txt --output=rtl-tp.txt
+	unix2dos rtl-tp.txt
 
 user.txt: messages.inc
 
@@ -964,20 +966,7 @@ all: dvi ps pdf txt html
 # HTML creation
 #######################################################################
 
-.PHONY: htex user prog onechap ref internal html hevea htmlref htmluser \
-  htmlprog htmlrtl htmlfcl
-
-
-htmlref: $(HTMLDIR)/ref.chk
-
-htmluser: $(HTMLDIR)/user.chk
-
-htmlprog: $(HTMLDIR)/prog.chk
-
-htmlrtl: $(HTMLDIR)/rtl.chk
-
-htmlfcl: $(HTMLDIR)/fcl.chk
-
+.PHONY: htex user prog onechap ref internal html hevea
 
 ifdef INSTALLDEBUG
 #######################################################################
@@ -1008,7 +997,6 @@ $(HTMLDIR)/fcl.chk: $(FCLXML) xml/fcl-project.xml $(HTMLDIR)/rtl.chk | $(HTMLDIR
 ifndef CSSFILE
         cp fpdoc.cst $(HTMLDIR)/fcl/fpdoc.css
 endif
-	postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/fcl 
         @$(ECHO) '' > $(HTMLDIR)/fcl.chk
 
 $(HTMLDIR)/fclres.chk: $(FCLRESXML) | $(HTMLDIR)/
@@ -1016,7 +1004,6 @@ $(HTMLDIR)/fclres.chk: $(FCLRESXML) | $(HTMLDIR)/
 ifndef CSSFILE
         cp fpdoc.cst $(HTMLDIR)/fclres/fpdoc.css
 endif
-	postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/fclres
         @$(ECHO) '' > $(HTMLDIR)/fclres.chk
 
 $(HTMLDIR)/rtl.chk: $(RTLXML) xml/rtl-project.xml | $(HTMLDIR)/
@@ -1024,15 +1011,14 @@ $(HTMLDIR)/rtl.chk: $(RTLXML) xml/rtl-project.xml | $(HTMLDIR)/
 ifndef CSSFILE
         cp fpdoc.cst $(HTMLDIR)/rtl/fpdoc.css
 endif
-	postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/rtl
         @$(ECHO) '' > $(HTMLDIR)/rtl.chk
 
-$(HTMLDIR)/user.chk: $(INCLUDES) user.tex messages.inc postproc$(EXEEXT) 
-$(HTMLDIR)/prog.chk: $(INCLUDES) prog.tex postproc$(EXEEXT)
-$(HTMLDIR)/onechap.chk: $(INCLUDES) onechap.tex postproc$(EXEEXT)
-$(HTMLDIR)/ref.chk: $(INCLUDES) ref.tex postproc$(EXEEXT) 
-$(HTMLDIR)/fpdoc.chk: $(INCLUDES) fpdoc.tex postproc$(EXEEXT)
-$(HTMLDIR)/chart.chk: $(INCLUDES) chart.tex 
+$(HTMLDIR)/user.chk: $(INCLUDES) user.tex messages.inc
+$(HTMLDIR)/prog.chk: $(INCLUDES) prog.tex
+$(HTMLDIR)/onechap.chk: $(INCLUDES) onechap.tex
+$(HTMLDIR)/ref.chk: $(INCLUDES) ref.tex
+$(HTMLDIR)/fpdoc.chk: $(INCLUDES) fpdoc.tex
+$(HTMLDIR)/chart.chk: $(INCLUDES) chart.tex
 
 html: fpc_all comphelp.inc $(INCLUDES) $(CHK) | $(HTMLDIR)/
 

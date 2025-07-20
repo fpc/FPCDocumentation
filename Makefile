@@ -2740,6 +2740,12 @@ help:
 	@echo ' htmldist      : html, and archive result.'
 	@echo ' psdist        : ps, and archive result.'
 	@echo ' pdfdist       : pdf, and archive result.'
+	@echo ' ref           : reference guide in pdf: $(PDFDIR)/ref.pdf'
+	@echo ' user          : users guide in pdf: $(PDFDIR)/user.pdf'
+	@echo ' prog          : programmers guide in pdf: $(PDFDIR)/prog.pdf'
+	@echo ' refhtml       : reference guide in html: $(HTMLDIR)/ref/ref.html'
+	@echo ' userhtml      : users guide in html: $(HTMLDIR)/user/user.html'
+	@echo ' proghtml      : programmers guide in html: $(HTMLDIR)/prog/prog.html'
 clean: fpc_clean
 	-rm -f tex/preamble.inc tex/date.inc tex/messages.inc tex/rtl.inc tex/fcl.inc tex/comphelp.inc tex/fclres.inc
 	-rm -f xml/*.xct
@@ -2751,6 +2757,8 @@ tex/date.inc:
 	@$(ECHO) \\date\{`date +'%B %Y'`\} > tex/date.inc
 postproc$(EXEEXT): postproc.pp htmlpp.pp
 	$(FPC) postproc.pp
+preparegrammar$(EXEEXT): preparegrammar.pp
+	$(FPC) preparegrammar.pp
 $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT):
 	$(MAKE) -C $(FPCSRCDIR)/compiler/utils msg2inc$(EXEEXT)
 tex/messages.inc: $(FPCSRCDIR)/compiler/utils/msg2inc$(EXEEXT) $(FPCSRCDIR)/compiler/msg/errore.msg
@@ -3135,6 +3143,8 @@ tex/fcl.inc: $(FCLXML)
 	$(FPDOC) $(FPDOCOPTS) --output=tex/fcl.inc --project=xml/fcl-project.xml --format=latex
 tex/fclres.inc: $(FCLRESXML)
 	$(FPDOC) $(FPDOCOPTS) --output=tex/fclres.inc $(FCLRESOPTS) --format=latex
+tex/grammar.ebnf: ObjectPascal.ebnf preparegrammar$(EXEEXT)
+	preparegrammar < ObjectPascal.ebnf >tex/grammar.ebnf
 RTFFILES = $(addsuffix .rtf,$(RTFS))
 rtf: $(RTFFILES)
 dest/rtf/rtl.rtf: $(RTLXML)
@@ -3144,7 +3154,7 @@ dest/rtf/fcl.rtf: $(FCLXML)
 dest/rtf/fclres.rtf: $(FCLXML)
 	$(FPDOC) $(FPDOCOPTS) --output=dest/rtf/fclres.rtf $(FCLRESOPTS) --format=rtf
 SYNTAXDIAGRAMS=$(wildcard syntax/*.syn)
-dist/dvi/ref.dvi: ref.tex $(INCLUDES) $(SYNTAXDIAGRAMS)
+dist/dvi/ref.dvi: ref.tex tex/grammar.ebnf $(INCLUDES) $(SYNTAXDIAGRAMS)
 dist/dvi/prog.dvi: prog.tex $(INCLUDES)
 dist/dvi/user.dvi: user.tex $(INCLUDES) tex/messages.inc tex/comphelp.inc
 dist/dvi/fpdoc.dvi: fpdoc.tex $(INCLUDES)
@@ -3155,7 +3165,7 @@ dist/dvi/onechap.dvi: onechap.tex $(INCLUDES)
 dist/dvi/rtl.dvi: rtl.tex rtl.inc $(INCLUDES)
 .PHONY: ref user prog
 ref: dist/pdf/ref.pdf
-dist/pdf/ref.pdf: ref.tex $(INCLUDES)  $(SYNTAXDIAGRAMS)
+dist/pdf/ref.pdf: ref.tex tex/grammar.ebnf $(INCLUDES)  $(SYNTAXDIAGRAMS)
 user: dist/pdf/user.pdf
 dist/pdf/user.pdf: user.tex $(INCLUDES) tex/messages.inc tex/comphelp.inc
 prog:  dist/pdf/prog.pdf
@@ -3185,7 +3195,13 @@ endif
 ps: dvi $(PS)
 pdf: $(PDF)
 all: dvi ps pdf txt html
-.PHONY: htex user prog onechap ref internal html hevea
+.PHONY: htex user prog onechap ref internal html hevea htmlref htmluser \
+  htmlprog htmlrtl htmlfcl
+htmlref: $(HTMLDIR)/ref.chk
+htmluser: $(HTMLDIR)/user.chk
+htmlprog: $(HTMLDIR)/prog.chk
+htmlrtl: $(HTMLDIR)/rtl.chk
+htmlfcl: $(HTMLDIR)/fcl.chk
 ifdef INSTALLDEBUG
 $(HTML):
 	$(MKDIR) $@
