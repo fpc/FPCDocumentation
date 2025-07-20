@@ -3144,7 +3144,7 @@ tex/fcl.inc: $(FCLXML)
 tex/fclres.inc: $(FCLRESXML)
 	$(FPDOC) $(FPDOCOPTS) --output=tex/fclres.inc $(FCLRESOPTS) --format=latex
 tex/grammar.ebnf: ObjectPascal.ebnf preparegrammar$(EXEEXT)
-	preparegrammar < ObjectPascal.ebnf >tex/grammar.ebnf
+	./preparegrammar < ObjectPascal.ebnf >tex/grammar.ebnf
 RTFFILES = $(addsuffix .rtf,$(RTFS))
 rtf: $(RTFFILES)
 dest/rtf/rtl.rtf: $(RTLXML)
