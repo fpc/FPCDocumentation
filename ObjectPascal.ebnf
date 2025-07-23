@@ -41,19 +41,19 @@ requires_clause = "requires" qualifier_list ";" ;
 (* unit *)
 
 unit_module = unit_header interface_section implementation_section
-		( [ initialization_section ] [ finalization_section ]
-		  | "begin" statement_list ) "end" "." ;
-		
+              ( [ initialization_section ] [ finalization_section ]
+                | "begin" statement_list ) "end" "." ;
+                
 unit_header = "unit" qualifier [ hintdirectives ] ";" ;
 
 interface_section = "interface" [ uses_clause ] [interface_parts ] ;
 
 uses_clause = "uses" identifier { "," identifier } ";" ;
 
-interface_section = interface_part { interface_part } ;
+interface_parts = interface_part { interface_part } ;
 
 interface_part = constant_declaration_block
-	             | type_declaration_block
+                     | type_declaration_block
                  | variable_declaration_block
                  | property_declaration_block
                  | procedure_headers_block ;
@@ -77,33 +77,33 @@ procedure_headers_block = procedure_header
                         | operator_header;
                         
 procedure_header = generic_procedure_header
-                  | regular_procedure_header
+                  | regular_procedure_header ;
 
 generic_procedure_header = "generic" "procedure" qualifier generic_template_list formal_parameter_list
-					";" [ call_modifiers ";" ] [hintdirectives] ;
+                                        ";" [ call_modifiers ";" ] [hintdirectives] ;
 
 regular_procedure_header = "procedure" qualifier [ generic_template_list ] formal_parameter_list
-					";" [ call_modifiers ";" ] [hintdirectives] ;
-					
+                                        ";" [ call_modifiers ";" ] [hintdirectives] ;
+                                        
 function_header = generic_function_header
                  | regular_function_header ;
 
 generic_function_header = "generic" "function" qualifier  [ "<" generic_template_list ">" ] formal_parameter_list ":" type
-  				 [ call_modifiers ";" ] [hintdirectives] ;
+                                   [ call_modifiers ";" ] [hintdirectives] ;
                  
 regular_function_header = "function" qualifier  [ "<" generic_template_list ">" ] formal_parameter_list ":" type
-  				 [ call_modifiers ";" ] [hintdirectives] ;
-  				 
+                                   [ call_modifiers ";" ] [hintdirectives] ;
+                                   
 operator_header = "operator" operator_definition  [ result_identifier ] ":" type ;
 
 operator_definition = assignment_operator_definition
-                     | arithmetic_operator_definition
-					 | comparison_operator_definition
-					 | logical_operator_definition
+                 | arithmetic_operator_definition
+                         | comparison_operator_definition
+                     | logical_operator_definition
                      | other_operator_definition ;
                      
 generic_template_list = constrained_template_list
-                      | free_template_list
+                      | free_template_list ;
 
 constrained_template_list = constrained_templates { ";" constrained_templates } ;
 
@@ -115,7 +115,7 @@ identifier_list = identifier { "," identifier } ;
 
 type_constraint = identifier
              | "class"
-             | "record"
+             | "record" ;
 
 block = { declaration_block } statement_block ;
 
@@ -131,11 +131,11 @@ declaration_block = label_declaration_block
 
 func_proc_declaration_block = procedure_declaration
                   | function_declaration
-				  | constructor_declaration
-				  | destructor_declaration
-				  | operator_declaration 
+                  | constructor_declaration
+                  | destructor_declaration
+                  | operator_declaration ;
 
-statement_block = compound_statement
+statement_block = compound_statement ;
 
 (* labels *)
 
@@ -143,10 +143,10 @@ label_declaration_block = "label" label_def [ "," label_def ] ";" ;
 
 (* Constants *)
 
-constant_declaration_block = "const" { constant_declaration [hintdirectives] }
+constant_declaration_block = "const" { constant_declaration [hintdirectives] } ;
 
 constant_declaration = identifier ":" constant_expression ";"
-                     | identifier ":" type "=" constant_expression ";";
+                     | identifier ":" type "=" constant_expression ";" ;
 
 resourcestring_declaration_block = "resourcestring" { string_constant_declaration } ;
 
@@ -173,36 +173,36 @@ absolute_target = identifier | expression ;
 type_declaration_block = "type" { type_declaration } ;
 
 hintdirective = "deprecated" [ string_constant ]
-				| "experimental" 
-				| "platform"
-				| "unimplemented"
+                                | "experimental" 
+                                | "platform"
+                                | "unimplemented" ;
 
 hintdirectives = hintdirective { ";" hintdirective } ;
 
-typed_constant = factor | procedural_constant
+typed_constant = factor | procedural_constant ;
             
-type_declaration = identifier "=" type [hintdirectives] ";"
+type_declaration = identifier "=" type [hintdirectives] ";" ;
 
 type = ["type"] simple_type
-		| pointer_type 
-		| full_procedural_type
-		| forward_class_type
-		| structured_type 
-		| class_reference_type 
-		| generic_type 
-		| specialized_type
-        | "helper" helper_type ;
+                | pointer_type 
+                | full_procedural_type
+                | forward_class_type
+                | structured_type 
+                | class_reference_type 
+                | generic_type 
+                | specialized_type
+                | "helper" helper_type ;
 
 
 forward_class_type = "class" ;
-		 
+                 
 class_reference_type = "class" "of" identifier ;
 
-pointer_type = "^" qualifier;
+pointer_type = "^" qualifier ;
 
 
 simple_type = string_type
-			| ordinal_type ;
+                        | ordinal_type ;
 
 string_type = "string" "[" constant_expression "]"
             |  "string" "(" positive_integer ")"
@@ -216,16 +216,16 @@ subrange_type = simple_constant_expression ".." simple_constant_expression ;
 
 ordinal_type = enumerated_type 
               | builtin_ordinal
-              | subrange_type;
+              | subrange_type ;
               
 builtin_ordinal = "byte"
-				| "shortint"
-				| "word"
-				| "smallint"
-				| "cardinal"
-				| "longint"
-				| "qword"
-				| "int64" ;
+                | "shortint"
+                | "word"
+                | "smallint"
+                | "cardinal"
+                | "longint"
+                | "qword"
+                | "int64" ;
 
 enumerated_type = "(" enumerated_item  { "," enumerated_item } ")" ;
 
@@ -234,10 +234,10 @@ enumerated_item = qualifier
                 | qualifier ":=" expression ;
 
 structured_type = set_type
-				| file_type
-				| interface_type
+                | file_type
+                | interface_type
                 | "packed" unpacked_type
-				| "bitpacked" unpacked_type ;
+                | "bitpacked" unpacked_type ;
 
 unpacked_type = array_type
                | record_type
@@ -278,7 +278,7 @@ record_visibility_specifier = "public"
 record_method_definition = function_header
                          | procedure_header ; 
 
-record_operator_definition = "class" operator_definition;
+record_operator_definition = "class" operator_header;
 
 full_procedural_type = procedural_type [ ";" call_modifiers ];
 
@@ -309,7 +309,7 @@ call_modifiers = "inline"
                 | "sysv_abi_cdecl"
                 | "vectorcall"
                 | "varargs" ;
-	
+        
 property_definition = identifier [ property_interface ] property_specifiers ;
 
 property_interface = [ property_parameter_list ] ":" qualifier ;
@@ -341,15 +341,14 @@ object_visibility_specifier = "private" | "protected" | "public" ;
                                  
 object_field_definition = [ [class] var ] identifier_list ":" type ";" [ "static" ";" ] ;
 
-object_method_definition = constructor_header
-                    | destructor_header 
-                    | method_definition ;
+object_method_definition = constructor_header [ method_directives ] 
+                    | destructor_header  [ method_directives ] 
+                    | method_definition [ method_directives ] ;
 
 
 method_definition = [class] function_header
                     | [class] procedure_header
-                    | [class] operator_definition
-					[ method_directives ] ;
+                    | [class] operator_header; 
 
 constructor_header = "constructor" identifier formal_parameter_list ;
 
@@ -360,9 +359,9 @@ method_directives = [ "virtual" ";" [ ( "abstract"  | "reintroduce" ) ";" ] ] [ 
 (* class declaration *)
 
 class_type = "class" [ "abstract" | "sealed" ] [ class_heritage ] { class_component } ["end"] ;
-					
+                                        
 class_heritage = "(" qualifier { "," qualifier } ")" ;
-			
+                        
 class_component = class_visibility_specifier 
                     | constant_declaration_block
                     | type_declaration_block
@@ -370,7 +369,7 @@ class_component = class_visibility_specifier
                     | class_field_definition ";"
                     | class_method_definition ";" 
                     | class_property_definition  ";" ;
-		
+                
 class_visibility_specifier = ["strict"] "private"
                                | ["strict"] "protected"
                                | "public"
@@ -380,14 +379,14 @@ class_visibility_specifier = ["strict"] "private"
 class_method_definition =  constructor_header 
                         | destructor_header
                         | method_definition [ class_method_directives ";" ] [ call_modifiers ";" ] ;
-					
+                                        
 class_method_directives = "virtual" [ abstract_or_reintroduce ]
                     | "dynamic" [ abstract_or_reintroduce ]  
-					| "override" [ ";" "final" ]
-					| "reintroduce" [ ";" "virtual" ]
-					| "message" ( integer_constant | string_constant )  
-					| "static" [ ";" "inline" ] ;
-					
+                                        | "override" [ ";" "final" ]
+                                        | "reintroduce" [ ";" "virtual" ]
+                                        | "message" ( integer_constant | string_constant )  
+                                        | "static" [ ";" "inline" ] ;
+                                        
 abstract_or_reintroduce = ";" ( "abstract" [ ";" "overload" ] | "reintroduce" ) ; 
 
 class_field_definition = identifier_list ":" type ";" [ "static" ";" ] ;
@@ -395,8 +394,8 @@ class_field_definition = identifier_list ":" type ";" [ "static" ";" ] ;
 class_property_definition = "property" identifier [ property_interface ] class_property_specifiers [hintdirectives] ";" ;
 
 class_property_specifiers = [ "index" expression ]  [ read_specifier ] [ write_specifier | implements_specifier ] [ default_specifier ]
-					[ stored_specifier ] [ "default" ] ;
-					
+                        [ stored_specifier ] [ "default" ] ;
+                                        
 implements_specifier = "implements" identifier { "," identifier } ;
 
 stored_specifier = "stored" identifier;
@@ -407,29 +406,29 @@ interface_type = interface [ heritage ] [ guid ] { interface_component } "end";
 
 interface_component = function_header [ ";" call_modifiers ] ";"
                         | procedure_header [ ";" call_modifiers ]  ";"
-                        | class_property_definition ";"
+                        | class_property_definition ";" ;
                         
-interface_property_specifiers = [ "index" expression ]  [ read_specifier ] [ write_specifier ] [ default_specifier ] [ "default" ]
+interface_property_specifiers = [ "index" expression ]  [ read_specifier ] [ write_specifier ] [ default_specifier ] [ "default" ] ;
 
-guid = "[" string_constant "]"
+guid = "[" string_constant "]" ;
 
 (* Generic type *)
 
-generic_type = [ "generic" ] identifier "<" generic_template_list ">" "=" generic_type_def ";"
+generic_type = [ "generic" ] identifier "<" generic_template_list ">" "=" generic_type_def ";" ;
 
-generic_type_def = class_type | object_type | interface_type | procedural_type | record_type | array_type
+generic_type_def = class_type | object_type | interface_type | procedural_type | record_type | array_type ;
 
-specialized_type = [ "specialize" ] identifier "<" qualifier_list ">"
+specialized_type = [ "specialize" ] identifier "<" qualifier_list ">" ;
 
 (* Helper type*)
 
 helper_type = ( class | record | type ) "helper" [ "(" base_helper ")" ] for qualifier 
-				helper_component_list helper_component_list * end [hintdirectives] ;
+                                helper_component_list "end" [hintdirectives] ;
 
 helper_component_list = helper_component { ";" helper_component } ;
 
 helper_component = method_definition
-                 | property_definition;
+                 | property_definition ;
 
 constructor_declaration = constructor_header ";" subroutine_block ";" ;
 
@@ -437,19 +436,19 @@ destructor_declaration = destructor_header ";" subroutine_block ";" ;
 
 (* Expressions *)
 
-expression = simple_expression [ relop simple_expression ]
+expression = simple_expression [ relop simple_expression ] ;
 
-relop = "<" | "<=" | ">" | ">=" | "=" | "<>" | "in" | "is"
+relop = "<" | "<=" | ">" | ">=" | "=" | "<>" | "in" | "is" ;
 
-simple_expression = term { addop term }
+simple_expression = term { addop term } ;
 
-simple_constant_expression = simple_expression
+simple_constant_expression = simple_expression ;
 
-addop = "+" | "-" | "or" | "xor" | "><"
+addop = "+" | "-" | "or" | "xor" | "><" ;
 
-term = factor { multop factor }
+term = factor { multop factor } ;
 
-multop = "*" | "/" | "div" | "mod" | "and" | "shl" | "shr" | "as" | "<<" | ">>"
+multop = "*" | "/" | "div" | "mod" | "and" | "shl" | "shr" | "as" | "<<" | ">>" ;
 
 factor = nested_expr_or_structured_const { selector }
            | varref_or_funcall_or_constid_or_cast
@@ -458,10 +457,10 @@ factor = nested_expr_or_structured_const { selector }
            | sign factor
            | set_constructor
            | address_factor
-           | inherited_call
+           | inherited_call ;
 
 varref_or_funcall_or_constid_or_cast = qualifier [ actual_parameter_list ] ;
-				
+                                
 nested_expr_or_structured_const = "(" element { (","|";") [ element ] } ")" ;
 
 element = [ ":" identifier ":" ] expression ;
@@ -480,7 +479,7 @@ address_factor = "@" ( designator | nested_expr_or_structured_const ) ;
 
 (* Statements *)
 
-statement_list = statement { ";" [statement] }
+statement_list = statement { ";" [statement] } ;
 
 statement = [ label_def ":" ] unlabeled_statement ;
 
@@ -503,10 +502,10 @@ assignop = ":=" | "+=" | "-=" | "*=" | "/=" ;
 goto_statement = goto label_def ;
 
 structured_statement = compound_statement
-                      | conditional_statement
-                      | loop_statement
-					  | with_statement
-					  | try_statement ;
+                  | conditional_statement
+                  | loop_statement
+                  | with_statement
+                  | try_statement ;
 
 conditional_statement = case_statement
                       | if_statement ;
@@ -538,8 +537,8 @@ for_downto_statement = for identifier ":=" expression "downto" expression "do" s
 for_in_statement = for identifier in enumerable "do" statement ;
 
 enumerable = enumerated_type 
-			| designator
-			| set_constructor ;
+                        | designator
+                        | set_constructor ;
 
 repeat_statement = "repeat" statement_list "until" expression ;
 
@@ -548,7 +547,7 @@ while_statement = "while" expression "do" statement ;
 with_statement = "with" variable_reference { "," variable_reference } "do" statement ;
 
 asm_statement = "asm" asm_statement_list "end" [ register_list ] ;
-				
+                                
 register_list = "[" string_constant { "," string_constant } "]" ;
 
 raise_statement = "raise" [ expression [ exception_address ] ] ;
@@ -570,7 +569,7 @@ subroutine_block = block
                  | asm_block
                  | "forward" ;
 
-function_declaration = function_header ";" subroutine_block ";"
+function_declaration = function_header ";" subroutine_block ";" ;
 
 formal_parameter_list = [ "(" parameter_declaration { ";" parameter_declaration } ")" ] ;
 
@@ -580,13 +579,13 @@ parameter_declaration = constant_parameter
                       | out_parameter ;
                       
 value_parameter = identifier_list ":" parameter_type [ "=" default_parameter_value ] ;
-				
+                                
 variable_parameter = var identifier_list [ ":" parameter_type ] ;
 
 out_parameter = out identifier_list [ ":" parameter_type ] ;
 
 constant_parameter = ( "const" | "constref" ) identifier_list [ ":" parameter_type [ "=" default_parameter_value ] ] ;
-					
+                                        
 parameter_type = [ array of ] ( qualifier | "const" ) ;
 
 external_directive = "external" [ string_constant [ "name" string_constant | "index" integer_constant] ] ;
@@ -596,14 +595,14 @@ asm_block = "assembler" ";" asm_statement_list ;
 modifiers = ";" modifier { ";" modifier } ;
 
 modifier = 
-	"export"
-	| "alias" ":" string_constant
-	| "interrupt"
-	| "noreturn"
-	| "iocheck"
-	| call_modifier ;
-						
-operator_definition = operator_header ";" subroutine_block ";" ;
+        "export"
+        | "alias" ":" string_constant
+        | "interrupt"
+        | "noreturn"
+        | "iocheck"
+        | call_modifier ;
+                                                
+operator_implementation = operator_header ";" subroutine_block ";" ;
 
 assignment_operator_definition = ( ":=" | "explicit" | "implicit" ) "(" parameter_list ")" ;
 
@@ -617,9 +616,9 @@ other_operator_definition = ( "enumerator" | "inc" | "dec" ) "(" parameter_list 
 
 label_def = decimal_int | identifier ;
 
-identifier =   letter | "_" , { letter | dec_digit | "_" } ;
+identifier =   letter | "_" { letter | dec_digit | "_" } ;
 
-designator = ( identifier | string ) { selector  | subrange } 
+designator = ( identifier | string ) { selector  | subrange } ;
 
 selector = "." identifier | "[" expression  { "," expression } "]" | "^"  | actual_parameter_list ;
 
@@ -634,7 +633,7 @@ integer_constant = signed_integer | unsigned_integer ;
 
 comment = "(*" non_comment_characters "*)"
           | "{" non_comment_characters "}"
-          | "//" non_comment_character EOL
+          | "//" non_comment_character EOL ;
 
 letter =   "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" 
        |   "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z"
@@ -668,18 +667,11 @@ unsigned_number     =   unsigned_real | unsigned_integer ;
 
 signed_number       =   sign unsigned_number ;
 
-character_string    =   quoted_string | control_string ;
-
 quoted_string       =   "'" { string_character } "'" ;
 
-string_character    =   "'" | non_terminal_string_character
+string_character    =   "'" | non_terminal_string_character ;
 
 control_string      =   "#" unsigned_integer ;
 
-unsigned_number = unsigned_integer | unsigned_real;
+character_string = ( quoted_string | control_string ) { quoted_string | control_string } ;
 
-unsigned_integer = decimal_int | hex_int | octal_int | binary_int ;
-
-character_string = ( quoted_string | control_string ) { quoted_string | control_string };
-
-control_string = "#" unsigned_integer;
