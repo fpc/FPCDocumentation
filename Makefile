@@ -3226,21 +3226,21 @@ $(HTMLDIR)/fcl.chk: $(FCLXML) xml/fcl-project.xml $(HTMLDIR)/rtl.chk | $(HTMLDIR
 ifndef CSSFILE
 	cp fpdoc.cst $(HTMLDIR)/fcl/fpdoc.css
 endif
-	postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/fcl 
+	./postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/fcl 
 	@$(ECHO) '' > $(HTMLDIR)/fcl.chk
 $(HTMLDIR)/fclres.chk: $(FCLRESXML) | $(HTMLDIR)/
 	$(FPDOC) $(FPDOCOPTS) $(FCLRESOPTS)  --format=$(HTMLFMT) --output=$(HTMLDIR)/fclres$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLRESCHMOPTS) 
 ifndef CSSFILE
 	cp fpdoc.cst $(HTMLDIR)/fclres/fpdoc.css
 endif
-	postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/fclres
+	./postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/fclres
 	@$(ECHO) '' > $(HTMLDIR)/fclres.chk
 $(HTMLDIR)/rtl.chk: $(RTLXML) xml/rtl-project.xml | $(HTMLDIR)/
 	$(FPDOC) $(FPDOCOPTS) --project=xml/rtl-project.xml --format=$(HTMLFMT) --output=$(HTMLDIR)/rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst $(HTMLDIR)/rtl/fpdoc.css
 endif
-	postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/rtl
+	./postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/rtl
 	@$(ECHO) '' > $(HTMLDIR)/rtl.chk
 $(HTMLDIR)/user.chk: $(INCLUDES) user.tex messages.inc postproc$(EXEEXT) 
 $(HTMLDIR)/prog.chk: $(INCLUDES) prog.tex postproc$(EXEEXT)
