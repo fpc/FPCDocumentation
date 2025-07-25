@@ -3245,7 +3245,7 @@ endif
 $(HTMLDIR)/user.chk: $(INCLUDES) user.tex messages.inc postproc$(EXEEXT) 
 $(HTMLDIR)/prog.chk: $(INCLUDES) prog.tex postproc$(EXEEXT)
 $(HTMLDIR)/onechap.chk: $(INCLUDES) onechap.tex postproc$(EXEEXT)
-$(HTMLDIR)/ref.chk: $(INCLUDES) ref.tex postproc$(EXEEXT) 
+$(HTMLDIR)/ref.chk: $(INCLUDES) tex/grammar.ebnf ref.tex postproc$(EXEEXT) 
 $(HTMLDIR)/fpdoc.chk: $(INCLUDES) fpdoc.tex postproc$(EXEEXT)
 $(HTMLDIR)/chart.chk: $(INCLUDES) chart.tex 
 html: fpc_all comphelp.inc $(INCLUDES) $(CHK) | $(HTMLDIR)/
