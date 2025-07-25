@@ -34,10 +34,15 @@ begin
     case c of
       'a'..'z',
       '_',
-      'A'..'Z' : if state=other then
+      'A'..'Z' : 
          begin
-         result:=Result+'<';
-         state:=ident;
+         if state=other then
+         begin
+           result:=Result+'<';
+           state:=ident;
+         end;
+         if c='_' then
+           Result:=Result+'\';
          end;
       '"' :
          if state=quoted then
