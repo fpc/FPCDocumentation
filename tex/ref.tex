@@ -4903,11 +4903,12 @@ will just exit.
 
 Destroying an instance does not remove or Nil a reference to an instance:
 \begin{verbatim}
-Var
-  A : TComponent;
-
+uses
+  Classes;
+var
+  A: TComponent;
 begin
-  A:=TComponent.Create;
+  A:=TComponent.Create(Nil);
   A.Name:='MyComponent';
   A.Free;
   Writeln('A is still assigned: ',Assigned(A));
@@ -4923,11 +4924,12 @@ the function \var{FreeAndNil} from the \file{SysUtils} unit can be used. It
 will call \var{Free} and will then write \var{Nil} in the object pointer (\var{A}
 in the above example):
 \begin{verbatim}
-Var
-  A : TComponent;
-
+uses
+  Classes, SysUtils;
+var
+  A: TComponent;
 begin
-  A:=TComponent.Create;
+  A:=TComponent.Create(Nil);
   A.Name:='MyComponent';
   FreeAndNil(A);
   Writeln('A is still assigned: ',Assigned(A));
