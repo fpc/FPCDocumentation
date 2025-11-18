@@ -1472,77 +1472,14 @@ If <var>AStart</var> is less than 1 or larger than the length of <var>AText</var
 
 
 <element name="SearchBuf">
-<short/>
-<descr/>
-<errors/>
-<seealso/>
-</element>
-
-
-<element name="SearchBuf.Result">
-<short/>
-<descr/>
-<errors/>
-<seealso/>
-</element>
-
-
-<element name="SearchBuf.Buf">
-<short/>
-<descr/>
-<errors/>
-<seealso/>
-</element>
-
-
-<element name="SearchBuf.BufLen">
-<short/>
-<descr/>
-<errors/>
-<seealso/>
-</element>
-
-
-<element name="SearchBuf.SelStart">
-<short/>
-<descr/>
-<errors/>
-<seealso/>
-</element>
-
-
-<element name="SearchBuf.SelLength">
-<short/>
-<descr/>
-<errors/>
-<seealso/>
-</element>
-
-
-<element name="SearchBuf.SearchString">
-<short/>
-<descr/>
-<errors/>
-<seealso/>
-</element>
-
-
-<element name="SearchBuf.Options">
-<short>Search options.</short>
-<descr/>
-<errors/>
-<seealso/>
-</element>
-
-
-<element name="SearchBuf">
 <short>Search a buffer for a certain string.</short>
 <descr>
 <p>
-<var>SearchBuf</var>
- searches the buffer <var>Buf</var> for the occurrence of <var>SearchString</var>.
-At must <var>Buflen</var> characters are searched, and the search is started at <var>SelStart</var>+<var>SelLength</var>.
+<var>SearchBuf</var> searches the buffer <var>Buf</var> for the occurrence of <var>SearchString</var>.
+At most <var>Buflen</var> characters are searched, and the search is started at at <var>SelStart</var> when searching (up, the default), 
+but starts at <var>SelStart</var>+<var>SelLength</var> when searching backward (the <var>soDown</var> option is given).
 If a match is found, a pointer to the position of the match is returned.
+<var>SelStart</var> is a zero-based offset from <var>Buf</var> and is the lower bound for search operations.
 The parameter <link id="TStringSearchOption">Options</link> specifies how the search is conducted. It is a set of the following options:
 </p>
 <table>
@@ -1552,7 +1489,7 @@ The parameter <link id="TStringSearchOption">Options</link> specifies how the se
 </th>
 <tr>
 <td>soDown</td>
-<td>Searches forward, starting at the end of the selection. Default is searching up</td>
+<td>Searches backward, starting at the end of the selection. Default is searching up.</td>
 </tr>
 <tr>
 <td>soMatchCase</td>
@@ -1560,7 +1497,7 @@ The parameter <link id="TStringSearchOption">Options</link> specifies how the se
 </tr>
 <tr>
 <td>soWholeWord</td>
-<td>Match only whole words. Default also returns parts of words</td>
+<td>Match only whole words. Default also returns parts of words.</td>
 </tr>
 </table>
 <p>The standard constant <link id="WordDelimiters"/> is used to mark the boundaries of words.
@@ -1580,7 +1517,7 @@ The parameter <link id="TStringSearchOption">Options</link> specifies how the se
 
 
 <element name="SearchBuf.Result">
-<short>Position of the string.</short>
+<short>Position of the string, nil if not found.</short>
 <descr/>
 <errors/>
 <seealso/>
