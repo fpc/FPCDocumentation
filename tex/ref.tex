@@ -10871,6 +10871,28 @@ The reason the pointer cannot be changed is that the address is stored
 by the compiler in a temporary register. Changing the pointer won't change
 the temporary address. The same is true for classes.
 \end{remark}
+\begin{remark}
+There is a subtle difference between Delphi and Free Pascal when resolving identifiers in a \var{With}  statement:
+Free Pascal will always search first in the scope of the expression used in the \var{With} statement, 
+and only then will it search in the local scope. Delphi will first search in the local scope and then only in the with scope:
+\begin{verbatim}
+Type
+  TField = Record
+    Procedure Updating;
+  end;
+
+procedure Test;
+var
+  Updating: Boolean;
+  F : TField;
+begin
+  Updating := Solo;
+  // ..
+  with F do 
+    Updating // TField.Updating in FPC, variable updating in Delphi
+  // ..
+\end{verbatim}  
+\end{remark}
 
 \subsection{Exception Statements}
 \index{Statements!Exception}
