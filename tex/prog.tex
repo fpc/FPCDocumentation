@@ -1508,6 +1508,21 @@ Type
           saturday, sunday);
 \end{verbatim}
 
+It is important to note that the number of elements is determined by the
+highest value of the enumeration. If the enumeration has assigned values, then
+the "number of elements" is actually the highest value in the enumeration+1.
+\begin{verbatim}
+program Project1;
+{$PACKENUM 2}
+type
+  TEnum = (a, b, c = $FFFF + 1);
+begin
+  writeln(sizeof(TEnum)); // 4
+end.
+\end{verbatim}
+will print 4 because the number of elements is \var{\$FFFF+2}
+
+
 \subsection{\var{\protect\$PACKRECORDS} : Alignment of record elements}
 \label{se:Packrecords}
 This directive controls the byte alignment of the elements in a record,
@@ -5242,6 +5257,20 @@ When the \var{\{\$Z2\}} or \var{\{\$PACKENUM 2\}} switches are in
 effect, the value is stored in 2 bytes (a \var{word}), if the enumeration 
 has less or equal than 65535 elements. If there are more elements,
 the enumeration value is stored as a 4 byte value (a \var{longword}).
+
+It is important to note that the number of elements is determined by the
+highest value of the enumeration. If the enumeration has assigned values, then
+the "number of elements" is actually the highest value in the enumeration+1.
+\begin{verbatim}
+program Project1;
+{$PACKENUM 2}
+type
+  TEnum = (a, b, c = $FFFF + 1);
+begin
+  writeln(sizeof(TEnum)); // 4
+end.
+\end{verbatim}
+will print 4 because the number of elements is \var{\$FFFF+2}
 
 \subsection{Floating point types}
 
