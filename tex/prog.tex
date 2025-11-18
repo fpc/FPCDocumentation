@@ -124,12 +124,26 @@ Thus \verb|{$I+}| is equivalent to \verb|{$IOCHECKS ON}| or
 \verb|{$C-}| is equivalent to \verb|{$ASSERTIONS OFF}| or
 \verb|{$ASSERTIONS-}|
 
+Note that anything after the ON/OFF or +/- or a value required by the
+directive, is ignored. i.e. the compiler parses the directive as far as it
+needs to in order to evaluate it, but the rest is skipped.
+
+This means that in the following, everything after 'off' is ignored:
+\begin{verbatim}
+{$warn 5023 off : no warning about unused units}
+\end{verbatim}
+
 The long forms of the switches are the same as their Delphi
 counterparts.
+
+
 
 It is worth mentioning that when defaults are indicated, this means defaults
 in the absence of a configuration file. The configuration files distributed
 with FPC will change some of the defaults mentioned here.
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Local switches
@@ -682,6 +696,18 @@ the source cannot be used. Macros and symbols may be used, however.
 
 More information on this can be found in the section about
 conditionals, \ref{se:compileexpressions} on page \pageref{se:compileexpressions}.
+
+Note that the compiler will only consider valid expressions. As soon as
+something invalid in the expression is encountered, the rest is considered
+comment. In the following, both conditions are checked:
+\begin{verbatim}
+{$if defined(define1) or defined(define2)}
+\end{verbatim}
+But in the below, only \var{define1} is checked, the rest is considered a
+comment:
+\begin{verbatim}
+{$if defined(define1)    defined(define2)}
+\end{verbatim}
 
 \subsection{\var{\protect\$IFC} : Start conditional compilation}
 In MACPAS mode, this directive can be used as an alternative to the \var{\$IF}
