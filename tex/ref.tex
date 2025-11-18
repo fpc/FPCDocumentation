@@ -2639,6 +2639,37 @@ But it results in a warning:
 \begin{verbatim}
 cr.pp(11,26) Warning: Some fields coming after "Y" were not initialized
 \end{verbatim}
+In ObjFPC mode, it is not allowed to skipfields; you can specifiy field
+values up to a specific field. Thus, the following will compile in Delphi
+mode, but not in ObjFPC mode:
+\begin{verbatim}
+program Project1;
+type
+  TPoint = record
+    x, y, z: integer;
+  end;
+var
+  p5: TPoint=(x: 1; z: 3);       // ERROR
+  p6: TPoint=(y: 2; z: 3);       // ERROR
+  p7: TPoint=(z: 3);             // ERROR
+begin
+end.
+\end{verbatim}
+The following will compile in both modes:
+\begin{verbatim}
+program Project1;
+type
+  TPoint = record
+    x, y, z: integer;
+  end;
+var
+  p1: TPoint=(x: 1; y: 2; z: 3); // OK
+  p2: TPoint=(x: 1; y: 2);       // OK
+  p3: TPoint=(x: 1);             // OK
+  p4: TPoint=();                 // OK
+begin
+end.
+\end{verbatim}
 
 \subsubsection{Record layout and size}
 
