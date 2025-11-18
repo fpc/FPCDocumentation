@@ -1242,6 +1242,11 @@ would be when the assignment wasn't present. After an assignment in an
 enumerated definition the compiler adds 1 to the assigned value to assign to
 the next enumerated value.
 
+As far as the compiler is concerned, the number of elements in an enumeration 
+with assigned values is determined by the highest value in the list of values: 
+in the above example, the number of elements is 42, but the elements with ordinal 
+values 3 to 39 simply do not have a name.
+
 When specifying such an enumeration type, it is important to keep in mind
 that the enumerated elements should be kept in ascending order. The
 following will produce a compiler error:
@@ -1257,6 +1262,8 @@ in mind:
 \item The \var{Pred} and \var{Succ} functions cannot be used on
 enumeration types with assigned values. Trying to do this anyhow will result in a
 compiler error.
+\item If the largest element in the list has an ordinal value greater than
+256, the enumeration cannot be used to construct a set.
 \item Enumeration types are stored using a default, independent of the
 actual number of values: the compiler does not try to optimize for space.
 This behavior can be changed with the \var{\{\$PACKENUM n\}} compiler
@@ -2775,6 +2782,9 @@ or removing elements, comparisons. These are documented in
 
 How the compiler stores sets depends on the mode and can be controlled with
 a directive. For more information, see the programmer's guide.
+
+Note that if you use an enumeration with assigned values, if the upper bound
+is larger than 256, you cannot construct a set with it.
 
 
 %
@@ -10220,6 +10230,21 @@ after the end of the \var{For} block statement: in the case of
 \var{Continue}, this means that the for loop condition is again evaluated.
 In the case of nested loops, only the innermost loop is considered.
 Note that \var{Break} and \var{Continue} are not reserved words and therefore can be overloaded.
+
+Note that for enumeration values with assigned values, the non-named values
+will also be iterated over:
+\begin{verbatim}
+program Project1;
+type
+  TEnum = (a, b = 100);
+var
+  e: TEnum;
+begin
+  for e := low(TEnum) to high(TEnum) do
+    writeln(ord(e));
+end.
+\end{verbatim}
+Will print 101 values: 0 to 100.
 
 \subsection{The \var{For..in..do} statement}
 \label{se:forin}\index{Statements!For}\index{Statements!Loop}\index{For}\index{For!in}
