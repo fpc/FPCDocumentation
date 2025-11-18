@@ -13617,6 +13617,7 @@ part of the class declaration.
 definition.
 \end{enumerate}
 Note that method designators are also considered identifiers.
+
 \subsection{Unit scope}
 \index{Scope!unit}\index{unit}
 All identifiers in the interface part of a unit are valid from the point of
@@ -13653,6 +13654,76 @@ begin
 end.
 \end{verbatim}
 This is especially useful when redeclaring the system unit's identifiers.
+
+Note that when you use 2 units declare the same symbol, the definition of the symbol 
+in the last unit in the uses clause is used, i.e. the compiler searches in used units from last to first.
+Thus, in the following set of units:
+\begin{verbatim}
+unit unitA;
+
+interface
+
+Type
+  MyType = Real;
+
+implementation
+end.
+
+unit unitB;
+
+interface
+
+Type
+  MyType = integer;
+
+implementation
+end.
+
+unit unitC;
+
+interface
+
+uses unitA, unitB;
+
+var
+  MyVar : MyType;
+
+implementation
+
+end.
+\end{verbatim}
+\var{MyVar} will be of type \vat{integer}.
+
+The compiler will always search in the current unit first before searching in the uses clauses.
+Thus, in the following units, the type of \var{MyVar} is again \var{integer}.
+\begin{verbatim}
+unit unitA;
+
+interface
+
+Type
+  MyType = Real;
+
+implementation
+
+end.
+
+unit unitB;
+
+interface
+
+Type
+  MyType = integer;
+
+implementation
+
+uses unitA;
+
+var
+  MyVar : MyType;
+end.
+\end{verbatim}
+The compiler will first search for \var{MyType} in the current unit, and if it is not found there, it will look in the uses clauses.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Libraries
