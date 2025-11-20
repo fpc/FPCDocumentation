@@ -2606,7 +2606,7 @@ this field.}. In effect, it introduces a new field in the record.
 It is possible to nest variant parts, as in:
 \begin{verbatim}
 Type
-  MyRec = Record
+  TMyRec = Record
           X : Longint;
           Case byte of
             2 : (Y : Longint;
@@ -2625,50 +2625,34 @@ The values of the field are separated by a semicolon.
 
 \input{syntax/constrec.syn}
 
-For the \var{MyRec} record above, the following would initialize all fields:
+For the \var{TMyRec} record above, the following would initialize all fields:
 \begin{verbatim}
 var
-  R : MyRec = (X : 1; Y: 2; Z: 3);
+  R1: TMyRec = (x: 1; y: 2; z: 3);
 \end{verbatim}
-You do not need to specify values for all fields, but then the compiler will warn you. The following is a valid initialization:
+You can omit some fields from the end, or all of them:
 \begin{verbatim}
-  var
-    R : MyRec = (X : 1; Y: 2);
-\end{verbatim}
-But it results in a warning:  
-\begin{verbatim}
-cr.pp(11,26) Warning: Some fields coming after "Y" were not initialized
-\end{verbatim}
-In ObjFPC mode, it is not allowed to skipfields; you can specifiy field
-values up to a specific field. Thus, the following will compile in Delphi
-mode, but not in ObjFPC mode:
-\begin{verbatim}
-program Project1;
-type
-  TPoint = record
-    x, y, z: integer;
-  end;
 var
-  p5: TPoint=(x: 1; z: 3);       // ERROR
-  p6: TPoint=(y: 2; z: 3);       // ERROR
-  p7: TPoint=(z: 3);             // ERROR
-begin
-end.
+  R2: TMyRec = (x: 1; y: 2);
+  R3: TMyRec = (x: 1);
+  R4: TMyRec = ();
 \end{verbatim}
-The following will compile in both modes:
+In this case, the compiler will display a warning:
 \begin{verbatim}
-program Project1;
-type
-  TPoint = record
-    x, y, z: integer;
-  end;
+Warning: Some fields coming after "y" were not initialized
+\end{verbatim}
+In \var{Delphi} (and \var{DelphiUnicode}) mode, any fields can be omitted, but the order must be the same:
+\begin{verbatim}
 var
-  p1: TPoint=(x: 1; y: 2; z: 3); // OK
-  p2: TPoint=(x: 1; y: 2);       // OK
-  p3: TPoint=(x: 1);             // OK
-  p4: TPoint=();                 // OK
-begin
-end.
+  R5: TMyRec = (x: 1; z: 3);
+  R6: TMyRec = (y: 2; z: 3);
+  R7: TMyRec = (z: 3);
+\end{verbatim}
+The following examples will return an error for any mode:
+\begin{verbatim}
+var
+  R8: TMyRec = (z: 3; y: 2; x: 1); // ERROR
+  R9: TMyRec = (z: 3; x: 1);       // ERROR
 \end{verbatim}
 
 \subsubsection{Record layout and size}
