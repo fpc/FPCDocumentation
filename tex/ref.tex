@@ -13274,6 +13274,43 @@ may also contain statements that are executed prior to the program code.
 
 The structure of a program block is discussed below.
 
+A note on the program identifier: 
+\begin{itemize}
+\item It can be used to refer to a variable, in order to distinguish between
+a local and a global variable:
+\begin{verbatim}
+program mytest;
+
+var 
+  x: integer = 1; // global
+
+procedure test;
+
+var 
+  x: integer = 9; // local
+begin
+  writeln(x); // 9
+  writeln(mytest.x); // 1
+end;
+
+begin
+  test;
+end.
+\end{verbatim}
+\item When linking in resources using a wildcard, the filename of the program is
+used to search the resource file. The name will not be used as the name of the 
+resource file. So in a file called \var{my.pas} the following code
+\begin{verbatim}
+program mytest;
+
+{$R *.res}
+
+begin
+end;
+\end{verbatim}
+will link in file \var{my.res}
+\end{itemize}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Units
 \section{Units}
