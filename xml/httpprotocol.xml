@@ -1,0 +1,1054 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+<!--
+  ====================================================================
+    httpprotocol
+  ====================================================================
+-->
+<module name="httpprotocol">
+<short>HTTP protocol utilities and constants.</short>
+<descr>
+<p>This unit provides HTTP 1.1 protocol definitions, constants, and utility functions
+for web applications. It includes:</p>
+<ul>
+<li>HTTP header type definitions and string constants</li>
+<li>URL encoding and decoding functions</li>
+<li>HTTP status code text lookup</li>
+<li>HTTP date/time parsing utilities</li>
+<li>Cookie formatting constants</li>
+</ul>
+</descr>
+
+<!-- uses unit Visibility: default -->
+
+<element name="Classes">
+<short>Basic classes and streaming functionality.</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+
+<element name="SysUtils">
+<short>System utilities and string functions.</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+
+<element name="DateUtils">
+<short>Date and time manipulation utilities.</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+
+<element name="THeader">
+<short>Enumeration of standard HTTP 1.1 headers.</short>
+<descr>
+<p>This enumeration defines all standard HTTP 1.1 headers as defined in RFC 2616,
+plus some commonly used non-standard headers like X-Requested-With, Cookie, and Set-Cookie.</p>
+</descr>
+<seealso>
+<link id="HeaderName"/>
+<link id="HeaderType"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhUnknown">
+<short>Unknown or unrecognized header type.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhAccept">
+<short>Accept header - specifies acceptable response media types.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhAcceptCharset">
+<short>Accept-Charset header - specifies acceptable character encodings.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhAcceptEncoding">
+<short>Accept-Encoding header - specifies acceptable content encodings.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhAcceptLanguage">
+<short>Accept-Language header - specifies acceptable natural languages.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhAcceptRanges">
+<short>Accept-Ranges header - indicates server support for range requests.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhAge">
+<short>Age header - indicates response age in seconds.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhAllow">
+<short>Allow header - lists supported HTTP methods for resource.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhAuthorization">
+<short>Authorization header - contains client authentication credentials.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhCacheControl">
+<short>Cache-Control header - specifies caching directives.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhConnection">
+<short>Connection header - controls connection persistence.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhContentEncoding">
+<short>Content-Encoding header - specifies content compression method.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhContentLanguage">
+<short>Content-Language header - specifies content natural language.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhContentLength">
+<short>Content-Length header - specifies content size in bytes.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhContentLocation">
+<short>Content-Location header - specifies alternative resource location.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhContentMD5">
+<short>Content-MD5 header - contains MD5 hash of content.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhContentRange">
+<short>Content-Range header - specifies partial content range.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhContentType">
+<short>Content-Type header - specifies media type of content.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhDate">
+<short>Date header - specifies message origination date and time.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhETag">
+<short>ETag header - provides entity tag for caching validation.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhExpires">
+<short>Expires header - specifies response expiration date and time.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhExpect">
+<short>Expect header - indicates expected server behaviors.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhFrom">
+<short>From header - contains user agent email address.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhHost">
+<short>Host header - specifies target host and port number.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhIfMatch">
+<short>If-Match header - makes request conditional on entity tag.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhIfModifiedSince">
+<short>If-Modified-Since header - makes request conditional on modification date.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhIfNoneMatch">
+<short>If-None-Match header - makes request conditional on entity tag mismatch.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhIfRange">
+<short>If-Range header - makes range request conditional on entity tag or date.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhIfUnModifiedSince">
+<short>If-Unmodified-Since header - makes request conditional on lack of modification.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhLastModified">
+<short>Last-Modified header - specifies resource last modification date.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhLocation">
+<short>Location header - specifies redirect or resource location.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhMaxForwards">
+<short>Max-Forwards header - limits number of proxy forwards.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhPragma">
+<short>Pragma header - contains implementation-specific directives.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhProxyAuthenticate">
+<short>Proxy-Authenticate header - specifies proxy authentication method.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhProxyAuthorization">
+<short>Proxy-Authorization header - contains proxy authentication credentials.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhRange">
+<short>Range header - specifies partial content ranges to retrieve.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhReferer">
+<short>Referer header - specifies referring page URI.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhRetryAfter">
+<short>Retry-After header - specifies delay before retry attempt.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhServer">
+<short>Server header - specifies server software information.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhTE">
+<short>TE header - specifies acceptable transfer encodings.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhTrailer">
+<short>Trailer header - specifies header fields in chunked encoding trailer.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhTransferEncoding">
+<short>Transfer-Encoding header - specifies message body encoding method.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhUpgrade">
+<short>Upgrade header - specifies protocol upgrade options.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhUserAgent">
+<short>User-Agent header - specifies client software information.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhVary">
+<short>Vary header - specifies headers affecting response selection.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhVia">
+<short>Via header - specifies intermediate proxy information.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhWarning">
+<short>Warning header - provides additional warning information.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeader.hhWWWAuthenticate">
+<short>WWW-Authenticate header - specifies server authentication method.</short>
+</element>
+
+<!-- set type Visibility: default -->
+
+<element name="THeaders">
+<short>Set of HTTP headers.</short>
+<descr>
+<p>A set type for working with multiple HTTP headers simultaneously.</p>
+</descr>
+<seealso>
+<link id="THeader"/>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+
+<element name="THeaderDirection">
+<short>Direction of HTTP header usage.</short>
+<descr>
+<p>Indicates whether a header is used in requests, responses, or both.</p>
+</descr>
+<seealso>
+<link id="THeaderDirections"/>
+<link id="HTTPHeaderDirections"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeaderDirection.hdRequest">
+<short>Header used in HTTP requests.</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+
+<element name="THeaderDirection.hdResponse">
+<short>Header used in HTTP responses.</short>
+</element>
+
+<!-- set type Visibility: default -->
+
+<element name="THeaderDirections">
+<short>Set of header direction values.</short>
+</element>
+
+<!-- array type Visibility: default -->
+
+<element name="THeadersArray">
+<short>Array of header name strings indexed by THeader.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderAccept">
+<short>Accept header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderAcceptCharset">
+<short>Accept-Charset header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderAcceptEncoding">
+<short>Accept-Encoding header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderAcceptLanguage">
+<short>Accept-Language header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderAcceptRanges">
+<short>Accept-Ranges header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderAge">
+<short>Age header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderAllow">
+<short>Allow header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderAuthorization">
+<short>Authorization header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderCacheControl">
+<short>Cache-Control header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderConnection">
+<short>Connection header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderContentEncoding">
+<short>Content-Encoding header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderContentLanguage">
+<short>Content-Language header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderContentLength">
+<short>Content-Length header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderContentLocation">
+<short>Content-Location header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderContentMD5">
+<short>Content-MD5 header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderContentRange">
+<short>Content-Range header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderContentType">
+<short>Content-Type header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderDate">
+<short>Date header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderETag">
+<short>ETag header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderExpires">
+<short>Expires header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderExpect">
+<short>Expect header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderFrom">
+<short>From header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderHost">
+<short>Host header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderIfMatch">
+<short>If-Match header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderIfModifiedSince">
+<short>If-Modified-Since header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderIfNoneMatch">
+<short>If-None-Match header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderIfRange">
+<short>If-Range header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderIfUnModifiedSince">
+<short>If-Unmodified-Since header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderLastModified">
+<short>Last-Modified header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderLocation">
+<short>Location header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderMaxForwards">
+<short>Max-Forwards header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderPragma">
+<short>Pragma header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderProxyAuthenticate">
+<short>Proxy-Authenticate header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderProxyAuthorization">
+<short>Proxy-Authorization header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderRange">
+<short>Range header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderReferer">
+<short>Referer header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderRetryAfter">
+<short>Retry-After header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderServer">
+<short>Server header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderTE">
+<short>TE header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderTrailer">
+<short>Trailer header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderTransferEncoding">
+<short>Transfer-Encoding header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderUpgrade">
+<short>Upgrade header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderUserAgent">
+<short>User-Agent header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderVary">
+<short>Vary header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderVia">
+<short>Via header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderWarning">
+<short>Warning header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderWWWAuthenticate">
+<short>WWW-Authenticate header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderXRequestedWith">
+<short>X-Requested-With header name string.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderCookie">
+<short>Cookie header name constant.</short>
+<descr>
+<p>String constant for the 'Cookie' HTTP header used to send cookies from client to server.</p>
+</descr>
+<seealso>
+<link id="HeaderSetCookie"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HeaderSetCookie">
+<short>Set-Cookie header name constant.</short>
+<descr>
+<p>String constant for the 'Set-Cookie' HTTP header used to send cookies from server to client.</p>
+</descr>
+<seealso>
+<link id="HeaderCookie"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HTTPDateFmt">
+<short>Format string for HTTP date formatting.</short>
+<descr>
+<p>Format string used with FormatDateTime for creating HTTP-compliant date strings.</p>
+</descr>
+<seealso>
+<link id="ParseHTTPDateTime"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="SCookieExpire">
+<short>Format string for cookie expiration date.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="SCookieDomain">
+<short>Format string for cookie domain attribute.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="SCookiePath">
+<short>Format string for cookie path attribute.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="SCookieSecure">
+<short>String for cookie Secure attribute.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="SCookieHttpOnly">
+<short>String for cookie HttpOnly attribute.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="SCookieSameSite">
+<short>String for cookie SameSite attribute.</short>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HTTPMonths">
+<short>Array of 3-letter month abbreviations for HTTP dates.</short>
+<descr>
+<p>Contains standard 3-letter month names (Jan, Feb, Mar, etc.) used in HTTP date formatting.</p>
+</descr>
+<seealso>
+<link id="HTTPDays"/>
+<link id="ParseHTTPDateTime"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HTTPDays">
+<short>Array of 3-letter day abbreviations for HTTP dates.</short>
+<descr>
+<p>Contains standard 3-letter day names (Sun, Mon, Tue, etc.) used in HTTP date formatting.</p>
+</descr>
+<seealso>
+<link id="HTTPMonths"/>
+<link id="ParseHTTPDateTime"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HTTPHeaderDirections">
+<short>Array defining which direction each header type is used in.</short>
+<descr>
+<p>Maps each THeader value to its allowed usage directions (request, response, or both).
+Used to validate proper header usage in HTTP communications.</p>
+</descr>
+<seealso>
+<link id="THeader"/>
+<link id="THeaderDirection"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+
+<element name="HTTPHeaderNames">
+<short>Array mapping header types to their string names.</short>
+<descr>
+<p>Contains the actual HTTP header name strings indexed by THeader enumeration values.
+Used internally by HeaderName function.</p>
+</descr>
+<seealso>
+<link id="THeader"/>
+<link id="HeaderName"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+
+<element name="THTTPUnsafeChar">
+<short>Type for representing unsafe characters in HTTP encoding.</short>
+<descr>
+<p>Byte type used to represent characters that need to be encoded in HTTP URLs.</p>
+</descr>
+<seealso>
+<link id="THTTPUnsafeChars"/>
+<link id="HTTPEncode"/>
+</seealso>
+</element>
+
+<!-- set type Visibility: default -->
+
+<element name="THTTPUnsafeChars">
+<short>Set of characters that are unsafe for HTTP URLs.</short>
+<descr>
+<p>Set of byte values representing characters that should be percent-encoded in HTTP URLs.
+Used with HTTPEncode to specify which characters to encode.</p>
+</descr>
+<seealso>
+<link id="THTTPUnsafeChar"/>
+<link id="HTTPEncode"/>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+
+<element name="HeaderName">
+<short>Returns the string name of an HTTP header.</short>
+<descr>
+<p>Converts a <link id="THeader"/> enumeration value to its corresponding HTTP header string.</p>
+</descr>
+<seealso>
+<link id="HeaderType"/>
+<link id="THeader"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+
+<element name="HeaderName.Result">
+<short>The HTTP header name string.</short>
+</element>
+
+<!-- argument Visibility: default -->
+
+<element name="HeaderName.AHeader">
+<short>The header type to convert to string.</short>
+</element>
+
+<!-- function Visibility: default -->
+
+<element name="HeaderType">
+<short>Returns the header type for a given header string.</short>
+<descr>
+<p>Converts an HTTP header string to its corresponding <link id="THeader"/> enumeration value.
+Returns hhUnknown if the header is not recognized.</p>
+</descr>
+<seealso>
+<link id="HeaderName"/>
+<link id="THeader"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+
+<element name="HeaderType.Result">
+<short>The header type, or hhUnknown if not recognized.</short>
+</element>
+
+<!-- argument Visibility: default -->
+
+<element name="HeaderType.AHeader">
+<short>The HTTP header name string to parse.</short>
+</element>
+
+<!-- function Visibility: default -->
+
+<element name="HTTPDecode">
+<short>Decodes HTTP URL-encoded strings.</short>
+<descr>
+<p>Decodes percent-encoded characters (%XX) and optionally converts plus signs to spaces.
+The overloaded version without aPlusAsSpaces defaults to treating plus signs as spaces.</p>
+</descr>
+<seealso>
+<link id="HTTPEncode"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+
+<element name="HTTPDecode.Result">
+<short>The decoded string.</short>
+</element>
+
+<!-- argument Visibility: default -->
+
+<element name="HTTPDecode.AStr">
+<short>The URL-encoded string to decode.</short>
+</element>
+
+<!-- argument Visibility: default -->
+
+<element name="HTTPDecode.aPlusAsSpaces">
+<short>Whether to convert plus signs to spaces.</short>
+</element>
+
+<!-- function Visibility: default -->
+
+<element name="HTTPEncode">
+<short>Encodes strings for HTTP URL transmission.</short>
+<descr>
+<p>Converts unsafe characters to percent-encoded format (%XX). The overloaded version
+allows specifying custom unsafe characters and space handling behavior.</p>
+</descr>
+<seealso>
+<link id="HTTPDecode"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+
+<element name="HTTPEncode.Result">
+<short>The URL-encoded string.</short>
+</element>
+
+<!-- argument Visibility: default -->
+
+<element name="HTTPEncode.AStr">
+<short>The string to encode.</short>
+</element>
+
+<!-- argument Visibility: default -->
+
+<element name="HTTPEncode.aUnsafeChars">
+<short>Additional characters to treat as unsafe.</short>
+</element>
+
+<!-- argument Visibility: default -->
+
+<element name="HTTPEncode.aSpacesAsPlus">
+<short>Whether to encode spaces as plus signs.</short>
+</element>
+
+<!-- function Visibility: default -->
+
+<element name="IncludeHTTPPathDelimiter">
+<short>Ensures a URL path ends with a forward slash.</short>
+<descr>
+<p>Adds a trailing forward slash to a path string if it doesn't already have one.
+Useful for normalizing directory paths in URLs.</p>
+</descr>
+<seealso>
+<link id="ExcludeHTTPPathDelimiter"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+
+<element name="IncludeHTTPPathDelimiter.Result">
+<short>The path string with trailing slash.</short>
+</element>
+
+<!-- argument Visibility: default -->
+
+<element name="IncludeHTTPPathDelimiter.AStr">
+<short>The path string to process.</short>
+</element>
+
+<!-- function Visibility: default -->
+
+<element name="ExcludeHTTPPathDelimiter">
+<short>Removes trailing forward slash from a URL path.</short>
+<descr>
+<p>Removes the trailing forward slash from a path string if present.
+Useful for normalizing file paths in URLs.</p>
+</descr>
+<seealso>
+<link id="IncludeHTTPPathDelimiter"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+
+<element name="ExcludeHTTPPathDelimiter.Result">
+<short>The path string without trailing slash.</short>
+</element>
+
+<!-- argument Visibility: default -->
+
+<element name="ExcludeHTTPPathDelimiter.AStr">
+<short>The path string to process.</short>
+</element>
+
+<!-- function Visibility: default -->
+
+<element name="GetHTTPStatusText">
+<short>Returns descriptive text for HTTP status codes.</short>
+<descr>
+<p>Converts numeric HTTP status codes (100-599) to their standard descriptive text.
+Supports all common HTTP status codes including informational, success, redirection,
+client error, and server error responses. Returns "Unknown status: XXX" for unrecognized codes.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+
+<element name="GetHTTPStatusText.Result">
+<short>The descriptive text for the status code.</short>
+</element>
+
+<!-- argument Visibility: default -->
+
+<element name="GetHTTPStatusText.ACode">
+<short>The HTTP status code number.</short>
+</element>
+
+<!-- argument Visibility: default -->
+
+<element name="GetHTTPStatusText.aUppercase">
+<short>Whether to return uppercase text.</short>
+</element>
+
+<!-- function Visibility: default -->
+
+<element name="ParseHTTPDateTime">
+<short>Parses HTTP date/time strings to TDateTime.</short>
+<descr>
+<p>Converts HTTP-formatted date/time strings (as used in headers like Last-Modified, Expires)
+to Pascal TDateTime values. Handles various HTTP date formats and ignores day names and GMT suffix.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+
+<element name="ParseHTTPDateTime.Result">
+<short>The parsed date/time value, or 0 if invalid.</short>
+</element>
+
+<!-- argument Visibility: default -->
+
+<element name="ParseHTTPDateTime.aTimestamp">
+<short>The HTTP date/time string to parse.</short>
+</element>
+</module> <!-- httpprotocol -->
+</package>
+</fpdoc-descriptions>

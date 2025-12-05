@@ -1,0 +1,1433 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    fpobserver
+  ====================================================================
+-->
+
+<module name="fpobserver">
+<short>Observer pattern implementation for Free Pascal</short>
+<descr>
+<p>The <var>fpobserver</var> unit provides a complete implementation of the Observer pattern for Free Pascal applications.
+It includes classes and interfaces for creating observable objects that can notify multiple observers when their state changes.</p>
+
+<p>The unit contains the <var>TObservedHook</var> class for adding observer support to any object,
+the <var>TBaseMediator</var> hierarchy for automatic data binding between model and view objects,
+and mediator management classes for registering and finding appropriate mediators.</p>
+
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Basic component and persistent object classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>System utility functions and classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="typinfo">
+<short>Run-time type information support</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="contnrs">
+<short>Container classes like TObjectList and TFPList</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TObservedHook">
+<short>Observer pattern helper class implementing IFPObserved interface</short>
+<descr>
+<p>The <var>TObservedHook</var> class provides a simple way to add observer pattern support to any object.
+It implements the <var>IFPObserved</var> interface and manages a list of observers that implement the <var>IFPObserver</var> interface.</p>
+
+<p>Objects can use this class as a helper to notify observers about changes, item additions, deletions, or custom events.
+The class handles attaching and detaching observers automatically and provides methods for different types of notifications.</p>
+
+<p>This class is intended to be used as a component within other classes that need to support observation, rather than being used directly as a standalone object.</p>
+</descr>
+<seealso>
+<link id="IFPObserver">IFPObserver</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TObservedHook.CreateSender">
+<short>Creates an observer hook with a specified sender object</short>
+<descr>
+<p>The <var>CreateSender</var> constructor initializes the observer hook with a specific sender object that will be used in all notifications.
+If <var>ASender</var> is <var>nil</var>, the hook itself becomes the default sender.</p>
+
+<p>The sender object is important because observers receive it as a parameter in their notification callbacks, allowing them to identify the source of the notification.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObservedHook.CreateSender.ASender">
+<short>Object that will be used as sender in notifications</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TObservedHook.Destroy">
+<short>Destroys the observer hook and notifies all observers</short>
+<descr>
+<p>The <var>Destroy</var> destructor ensures proper cleanup by notifying all attached observers that the observed object is being destroyed.</p>
+<p>This prevents observers from trying to access a destroyed object and gives them a chance to perform their own cleanup operations if needed.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TObservedHook.FPOAttachObserver">
+<short>Attaches an observer implementing IFPObserver interface</short>
+<descr>
+<p>The <var>FPOAttachObserver</var> method adds an observer to the notification list.
+The observer object must implement the <var>IFPObserver</var> interface or an exception will be raised.</p>
+
+<p>Once attached, the observer will receive notifications about all operations performed on the observed object,
+including changes, item additions, deletions, and custom notifications.</p>
+
+</descr>
+<errors>
+The same observer can only be attached once; attempting to attach it multiple times will result in an <link id="EObserver"/> Eexception.
+</errors>
+<seealso>
+<link id="EObserver"/>
+<link id="TObservedHook.FPODetachObserver"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObservedHook.FPOAttachObserver.AObserver">
+<short>Observer object to attach</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TObservedHook.FPODetachObserver">
+<short>Detaches an observer from the notification list</short>
+<descr>
+<p>The <var>FPODetachObserver</var> method removes an observer from the notification list.
+The observer will no longer receive notifications about operations on the observed object.</p>
+
+<p>If the observer is not currently attached, the method does nothing</p>
+</descr>
+<seealso>
+<link id="TObservedHook.FPOAttachObserver"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObservedHook.FPODetachObserver.AObserver">
+<short>Observer object to detach</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TObservedHook.Changed">
+<short>Notifies all observers that the object has changed</short>
+<descr>
+<p>The <var>Changed</var> method sends a change notification to all attached observers using the <var>ooChange</var> operation.</p>
+
+<p>Observers receive this notification through their <var>FPOObservedChanged</var> method and can respond by updating their display or performing other change-related operations.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TObservedHook.AddItem">
+<short>Notifies observers that an item was added</short>
+<descr>
+<p>The <var>AddItem</var> method sends an item addition notification to all observers using the <var>ooAddItem</var> operation.
+The added item is passed as the data parameter.</p>
+<p>This notification is typically used by collection-like objects to inform observers when new items are added to the collection.</p>
+</descr>
+<seealso>
+<link id="TObservedHook.DeleteItem">DeleteItem</link>
+<link id="TObservedHook.Changed">Changed</link>
+<link id="TObservedHook.CustomNotify">CustomNotify</link>
+<link id="TObservedHook.FPONotifyObservers">FPONotifyObservers</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObservedHook.AddItem.AItem">
+<short>Item that was added</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TObservedHook.DeleteItem">
+<short>Notifies observers that an item was deleted</short>
+<descr>
+<p>The <var>DeleteItem</var> method sends an item deletion notification to all observers using the <var>ooDeleteItem</var> operation.
+The deleted item is passed as the data parameter.</p>
+
+<p>This notification is typically used by collection-like objects to inform observers when items are removed from the collection.</p>
+</descr>
+<seealso>
+<link id="TObservedHook.AddItem">AddItem</link>
+<link id="TObservedHook.Changed">Changed</link>
+<link id="TObservedHook.CustomNotify">CustomNotify</link>
+<link id="TObservedHook.FPONotifyObservers">FPONotifyObservers</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObservedHook.DeleteItem.AItem">
+<short>Item that was deleted</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TObservedHook.CustomNotify">
+<short>Sends custom notification to all observers</short>
+<descr>
+<p>The <var>CustomNotify</var> method sends a custom notification to all observers using the <var>ooCustom</var> operation.
+Optional data can be passed to provide context for the custom notification.</p>
+
+<p>This method is useful for application-specific notifications that don't fit into the standard change, add item, or delete item categories.</p>
+</descr>
+<seealso>
+<link id="TObservedHook.AddItem">AddItem</link>
+<link id="TObservedHook.DeleteItem">DeleteItem</link>
+<link id="TObservedHook.Changed">Changed</link>
+<link id="TObservedHook.FPONotifyObservers">FPONotifyObservers</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObservedHook.CustomNotify.Data">
+<short>Custom data to pass with notification</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TObservedHook.FPONotifyObservers">
+<short>Core method to notify all observers about operations</short>
+<descr>
+<p>The <var>FPONotifyObservers</var> method is the central notification mechanism that calls the <var>FPOObservedChanged</var> method on all attached observers.</p>
+
+<p>This method is used internally by all other notification methods and can be called directly for custom notification scenarios.
+The operation parameter specifies the type of change that occurred.</p>
+<p>The method iterates through the observer list in reverse order to handle observers that might detach themselves during notification.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TObservedHook.AddItem">AddItem</link>
+<link id="TObservedHook.DeleteItem">DeleteItem</link>
+<link id="TObservedHook.Changed">Changed</link>
+<link id="TObservedHook.CustomNotify">CustomNotify</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObservedHook.FPONotifyObservers.ASender">
+<short>Object sending the notification</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObservedHook.FPONotifyObservers.AOperation">
+<short>Type of operation that occurred</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TObservedHook.FPONotifyObservers.Data">
+<short>Additional data associated with the operation</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TObservedHook.Sender">
+<short>Default sender object for notifications</short>
+<descr>
+<p>The <var>Sender</var> property contains the object that will be passed as the sender parameter to all observer notifications.
+This is typically the object that contains or uses the observer hook.</p>
+</descr>
+<seealso>
+<link id="TObservedHook.AddItem">AddItem</link>
+<link id="TObservedHook.DeleteItem">DeleteItem</link>
+<link id="TObservedHook.Changed">Changed</link>
+<link id="TObservedHook.CustomNotify">CustomNotify</link>
+<link id="TObservedHook.FPONotifyObservers">FPONotifyObservers</link>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TMediatingEvent">
+<short>Event type for mediating data transfer operations</short>
+<descr>
+<p>The <var>TMediatingEvent</var> procedure type defines the signature for events that occur during data transfer operations in mediators.
+The event allows custom handling of data transfer between subject and view objects.</p>
+
+<p>The <var>Handled</var> parameter can be set to <var>True</var> to indicate that the event handler has performed the data transfer,
+ preventing the default transfer mechanism from executing.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatingEvent.Sender">
+<short>Mediator object triggering the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatingEvent.Handled">
+<short>Flag indicating whether the event was handled by user code</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TBaseMediator">
+<short>Base class for mediating data between model and view objects</short>
+<descr>
+<p>The <var>TBaseMediator</var> class provides automatic data binding between model objects (subjects) and view components.
+It implements the observer pattern to automatically synchronize data when either the model or view changes.</p>
+
+<p>The mediator supports bidirectional data binding, read-only modes, and custom data transfer events.
+Subjects must implement the <var>IFPObserved</var> interface,
+while views must have published properties that can be accessed by name.</p>
+
+<p>This class serves as the base class for more specialized mediators like list mediators and component mediators,
+providing common functionality for property validation, observer management, and data transfer coordination.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TObservedHook"/>
+<link id="TComponentMediator"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TBaseMediator.Destroy">
+<short>Destroys the mediator and cleans up observer attachments</short>
+<descr>
+<p>The <var>Destroy</var> destructor ensures proper cleanup by detaching the mediator from both the subject and value list objects.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBaseMediator.ObjectToView">
+<short>Copies data from subject object to view component</short>
+<descr>
+<p>The <var>ObjectToView</var> method transfers data from the subject's property to the view's property.
+It first checks for custom handling via the <link id="TBaseMediator.OnObjectToView">OnObjectToView</link> event,
+then performs the default property copying if it was not handled in the event.</p>
+
+<p>This method is called automatically when the subject changes, or can be called manually to force a data refresh.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TBaseMediator.ViewToObject">ViewToObject</link>
+<link id="TBaseMediator.OnObjectToView">OnObjectToView</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBaseMediator.ViewToObject">
+<short>Copies data from view component to subject object</short>
+<descr>
+<p>The <var>ViewToObject</var> method transfers data from the view's property to the subject's property.
+ It first checks for custom handling via the <link id="TBaseMediator.OnViewToObject">OnViewToObject</link> event,
+ then performs the default property copying if not was not handled in the event.</p>
+<p>This method is typically called when the view component changes, unless the mediator is in read-only mode.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TBaseMediator.ObjectToView">ObjectToView</link>
+<link id="TBaseMediator.OnViewToObject">OnViewToObject</link>
+</seealso>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TBaseMediator.ViewClass">
+<short>Returns the minimum view class this mediator can handle</short>
+<descr>
+<p>The <var>ViewClass</var> class method returns the base class that view objects must inherit from to be compatible with this mediator.
+Descendant mediators override this to specify more specific view class requirements.</p>
+
+<p>The default implementation returns <var>TObject</var>, indicating that any object can serve as a view.</p>
+</descr>
+<link id="TBaseMediator.View">View</link>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TBaseMediator.ViewClass.Result">
+<short>Minimum view class type</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TBaseMediator.CompositeMediator">
+<short>Indicates whether this is a composite mediator</short>
+<descr>
+<p>The <var>CompositeMediator</var> class method returns <var>False</var> for base mediators,
+indicating they handle single property mediation.
+List mediators and other composite mediators override this to return <var>True</var>.</p>
+
+<p>This information is used by the mediator manager when automatically selecting appropriate mediators for different scenarios.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TBaseMediator.CompositeMediator.Result">
+<short>True if composite mediator, False otherwise</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBaseMediator.Subject">
+<short>Model object implementing IFPObserved interface</short>
+<descr>
+<p>The <var>Subject</var> property holds the model object whose data will be mediated to the view.
+The object must implement the <var>IFPObserved</var> interface to support change notifications.</p>
+
+<p>When set, the mediator automatically attaches as an observer and performs initial data synchronization if active.</p>
+</descr>
+<seealso>
+<link id="TBaseMediator.View">View</link>
+<link id="TBaseMediator.ViewClass">ViewClass</link>
+<link id="TBaseMediator.ViewPropertyName">ViewPropertyName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBaseMediator.View">
+<short>View component for data display and editing</short>
+<descr>
+<p>The <var>View</var> property provides access to the view component that displays and allows editing of the subject's data.
+The base class returns <var>nil</var>; descendant classes override <var>GetView</var> to return their specific view component.</p>
+
+<p>The view must have a published property matching <link id="TBaseMediator.ViewPropertyName">ViewPropertyName</link> for data binding to work correctly.</p>
+</descr>
+<seealso>
+<link id="TBaseMediator.Subject">Subject</link>
+<link id="TBaseMediator.ViewClass">ViewClass</link>
+<link id="TBaseMediator.ViewPropertyName">ViewPropertyName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBaseMediator.Valuelist">
+<short>Optional list of values for list-based mediators</short>
+<descr>
+<p>The <var>Valuelist</var> property holds an optional list of values used by mediators that work with dynamic value lists,
+such as combobox or listbox mediators.
+The list must implement <var>IFPObserved</var> for change notifications.</p>
+
+<p>When set, the mediator observes the value list for changes and updates the view accordingly.</p>
+</descr>
+<seealso>
+<link id="TBaseMediator.Subject">Subject</link>
+<link id="TBaseMediator.Subject">SubjectPropertyName</link>
+<link id="TBaseMediator.ViewPropertyName">ViewPropertyName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TBaseMediator.SubjectPropertyName">
+<short>Name of property in subject object to mediate</short>
+<descr>
+<p>The <var>SubjectPropertyName</var> property specifies which published property of the subject object will be synchronized with the view.
+The property must exist and be published for the mediation to work correctly.</p>
+
+<p>Setting this property triggers validation and may cause immediate data synchronization if the mediator is active.</p>
+</descr>
+<seealso>
+<link id="TBaseMediator.Subject">Subject</link>
+<link id="TBaseMediator.ViewPropertyName">ViewPropertyName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TBaseMediator.Active">
+<short>Enables or disables automatic data synchronization</short>
+<descr>
+<p>The <var>Active</var> property controls whether the mediator performs automatic data synchronization.
+When <var>True</var>, the mediator responds to subject changes and transfers data between subject and view.</p>
+
+<p>Setting this to <var>False</var> stops all automatic synchronization,
+though manual calls to <var>ObjectToView</var> and <var>ViewToObject</var> still work.</p>
+</descr>
+<seealso>
+<link id="TBaseMediator.ReadOnly">ReadOnly</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TBaseMediator.ReadOnly">
+<short>Prevents data transfer from view to subject when True</short>
+<descr>
+<p>The <var>ReadOnly</var> property controls the direction of data transfer.
+When <var>True</var>, data flows only from subject to view, preventing user input from modifying the subject object.</p>
+
+<p>This is useful for display-only scenarios where the view should reflect the subject's state but not allow modifications.</p>
+</descr>
+<seealso>
+<link id="TBaseMediator.Active">Active</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TBaseMediator.OnViewToObject">
+<short>Event triggered when copying data from view to subject</short>
+<descr>
+<p>The <var>OnViewToObject</var> event is triggered before the default view-to-subject data transfer.
+Setting the <var>Handled</var> parameter to <var>True</var> prevents the default transfer, allowing custom data handling.</p>
+
+<p>This event is useful for implementing custom validation, data transformation, or special handling during user input processing.</p>
+</descr>
+<seealso>
+<link id="TBaseMediator.OnObjectToView">OnObjectToView</link>
+<link id="TBaseMediator.Subject">Subject</link>
+<link id="TBaseMediator.ViewPropertyName">ViewPropertyName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TBaseMediator.OnObjectToView">
+<short>Event triggered when copying data from subject to view</short>
+<descr>
+<p>The <var>OnObjectToView</var> event is triggered before the default subject-to-view data transfer.
+Setting the <var>Handled</var> parameter to <var>True</var> prevents the default transfer, allowing custom data presentation.</p>
+
+<p>This event is useful for implementing custom formatting, data transformation, or special display logic when updating the view.</p>
+</descr>
+<seealso>
+<link id="TBaseMediator.OnViewToObject">OnViewToObject</link>
+<link id="TBaseMediator.Subject">Subject</link>
+<link id="TBaseMediator.ViewPropertyName">ViewPropertyName</link>
+</seealso>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TMediatorClass">
+<short>Class reference type for TBaseMediator descendants</short>
+<descr>
+<p>The <var>TMediatorClass</var> type is a class reference that points to <link id="TBaseMediator"/> or its descendants.
+It is used in mediator registration and management to specify mediator classes without creating instances.</p>
+</descr>
+<seealso>
+<link id="TBaseMediator"/>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TBaseListMediator">
+<short>Base mediator for handling lists of observable objects</short>
+<descr>
+<p>The <var>TBaseListMediator</var> class extends <link id="TBaseMediator"/> to handle collections of objects.
+It creates individual item mediators for each object in the list and manages their lifecycle automatically.</p>
+
+<p>The subject must be a <var>TObjectList</var>, <var>TList</var>, or <var>TCollection</var>.
+The mediator responds to list changes by creating, updating, or destroying item mediators as needed. T
+his class is abstract and must be subclassed to provide specific GUI integration.</p>
+
+<p>Each item in the list is handled by a <link id="TListItemMediator"/> instance,
+allowing individual objects to have their own observer relationships and data binding behavior.</p>
+</descr>
+<seealso>
+<link id="TBaseMediator"/>
+link id="TListItemMediator"/>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TComponentMediator">
+<short>General-purpose mediator for any TComponent-based view</short>
+<descr>
+<p>The <var>TComponentMediator</var> class provides mediation capabilities for any <var>TComponent</var>-based view.
+It extends <link id="TBaseMediator"/> to work with components that can be set at design time or runtime.</p>
+
+<p>This mediator is useful for creating flexible data binding scenarios where the specific view component
+type is not known at compile time, or when working with various types of input controls.
+You can also create descendants from this class which introduce more specific behaviour</p>
+</descr>
+<seealso>
+<link id="TBaseMediator"/>
+</seealso>
+</element>
+
+
+<!-- procedure Visibility: public -->
+<element name="TComponentMediator.Notification">
+<short>Handles component free notification events</short>
+<descr>
+<p>The <var>Notification</var> method responds to component destruction events.
+When the view component is being destroyed, it automatically clears the component reference and triggers view change handling.</p>
+
+<p>This ensures that the mediator doesn't hold dangling references to destroyed components.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TComponentMediator.Notification.AComponent">
+<short>Component being removed or added</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TComponentMediator.Notification.Operation">
+<short>Type of notification operation</short>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TComponentMediator.ViewComponent">
+<short>Component serving as the view in the mediation</short>
+<descr>
+<p>The <var>ViewComponent</var> property specifies which component will serve as the view for data binding.
+Setting this property establishes free notification handling and triggers view change processing.</p>
+</descr>
+<seealso>
+<link id="TComponentMediator.ViewPropertyName">ViewPropertyName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TComponentMediator.ViewPropertyName">
+<short>Name of property in view component to mediate</short>
+<descr>
+<p>The <var>ViewPropertyName</var> property specifies which published property of the view component will be synchronized with the subject.
+This property is published to allow configuration in the Object Inspector.</p>
+
+<p>The specified property must exist and be published in the view component for the mediation to function correctly.</p>
+</descr>
+<seealso>
+<link id="TComponentMediator.ViewComponent">ViewComponent</link>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnBeforeSetupField">
+<short>Event type for formatting field values before display</short>
+<descr>
+<p>The <var>TOnBeforeSetupField</var> procedure type defines the signature for events
+that allow formatting of field values before they are written to list view captions or items.
+This event provides access to the object, field name, and value that can be modified.</p>
+
+<p>This event is meant to provide the possibility to apply custom formatting for dates, numbers, or other data types.</p>
+</descr>
+<seealso>
+<link id="TListItemMediator.OnBeforeSetupField"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnBeforeSetupField.AObject">
+<short>Object containing the field being formatted</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnBeforeSetupField.AFieldName">
+<short>Name of the field being processed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnBeforeSetupField.AValue">
+<short>Value to be formatted for display</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TListItemMediator">
+<short>Mediator for individual items within list mediators</short>
+<descr>
+<p>The <var>TListItemMediator</var> class handles individual objects within list mediators.
+Each item in a list gets its own item mediator that manages the observer relationship and data synchronization for that specific object.</p>
+
+<p>Item mediators are created and managed automatically by their parent list mediator and coordinate with it for activation state and field formatting events.</p>
+</descr>
+<seealso>
+<link id="TBaseListMediator"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TListItemMediator.Destroy">
+<short>Destroys the list item mediator and detaches from subject</short>
+<descr>
+<p>The <var>Destroy</var> destructor ensures proper cleanup by detaching from the subject object, p
+reventing observer notifications to a destroyed mediator.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TListItemMediator.MaybeObjectToView">
+<short>Conditionally updates view with data from subject</short>
+<descr>
+<p>The <var>MaybeObjectToView</var> method checks if both the subject is assigned and the parent mediator is active before triggering a view update.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TListItemMediator.OnBeforeSetupField">
+<short>Event for formatting field values before display</short>
+<descr>
+<p>The <var>OnBeforeSetupField</var> event allows custom formatting of field values before they are displayed.
+This event is typically set by the parent list mediator to ensure consistent formatting across all items.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TListItemMediator.Subject">
+<short>Individual object being mediated by this item mediator</short>
+<descr>
+<p>The <var>Subject</var> property holds the specific object that this item mediator is responsible for.
+The object must implement <var>IFPObserved</var> for proper notification handling.</p>
+
+<p>When set, the mediator automatically establishes observer relationships and may trigger view updates if active.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TListItemMediator.Active">
+<short>Indicates if the parent list mediator is active</short>
+<descr>
+<p>The <var>Active</var> property returns the active state of the parent list mediator.
+Item mediators don't have their own activation state but inherit it from their parent.</p>
+</descr>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TBaseListMediator.Create">
+<short>Creates a base list mediator instance</short>
+<descr>
+<p>The <var>Create</var> constructor initializes the list mediator with an empty item mediator collection and
+sets the default <var>ViewPropertyName</var> to 'Caption'.
+The mediator is initially inactive.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBaseListMediator.Create.AOwner">
+<short>Component that will own this mediator</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TBaseListMediator.Destroy">
+<short>Destroys the list mediator and all item mediators</short>
+<descr>
+<p>The <var>Destroy</var> destructor cleans up all item mediators and frees the mediator collection.</p>
+</descr>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TBaseListMediator.CompositeMediator">
+<short>Returns True indicating this is a composite mediator</short>
+<descr>
+<p>The <var>CompositeMediator</var> method returns <var>True</var> for list mediators,
+indicating they handle multiple objects rather than single property mediation.
+This affects how the mediator manager registers and selects mediators.</p>
+
+<p>Composite mediators work without specific property names and handle entire object relationships rather than individual property synchronization.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TBaseListMediator.CompositeMediator.Result">
+<short>Always True for list mediators</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TBaseListMediator.ObservedChanged">
+<short>Handles changes in the observed list objects</short>
+<descr>
+<p>The <var>ObservedChanged</var> method responds to changes in the list by creating mediators for added items,
+removing mediators for deleted items, or rebuilding the entire mediator collection when necessary.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBaseListMediator.ObservedChanged.ASender">
+<short>Object that triggered the change notification</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBaseListMediator.ObservedChanged.Operation">
+<short>Type of operation that occurred</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBaseListMediator.SelectedObject">
+<short>Currently selected object in the list</short>
+<descr>
+<p>The <var>SelectedObject</var> property provides access to the currently selected object in the list.
+The base implementation returns <var>nil</var>; descendants must override the getter and setter to provide meaningful selection support.</p>
+
+<p>This property enables two-way binding between the GUI selection state and the object model.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TBaseListMediator.OnBeforeSetupField">
+<short>Event for formatting field values in all item mediators</short>
+<descr>
+<p>The <var>OnBeforeSetupField</var> event allows customization of how field values are formatted before display.
+It is automatically propagated to all item mediators in the collection.</p>
+
+<p>This event is particularly useful for formatting dates, numbers, or other data types for consistent display across all list items.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TMediatorFieldInfo">
+<short>Describes a column in columnar list display mediators</short>
+<descr>
+<p>The <var>TMediatorFieldInfo</var> class defines the properties of a column in list mediators that support multiple columns.
+It specifies the property name, display caption, width, and alignment for each column.</p>
+
+<p>Field info objects are typically managed within a <link id="TMediatorFieldInfoList"/> collection and can be configured through string parsing or individual property settings.</p>
+</descr>
+<seealso>
+<link id="TMediatorFieldInfoList"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMediatorFieldInfo.Assign">
+<short>Copies properties from another field info object</short>
+<descr>
+<p>The <var>Assign</var> method copies all properties from another <var>TMediatorFieldInfo</var> object,
+including property name, caption, width, and alignment settings.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorFieldInfo.Assign.Source">
+<short>Source object to copy properties from</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMediatorFieldInfo.AsString">
+<short>String representation of field info configuration</short>
+<descr>
+<p>The <var>AsString</var> property provides a convenient way to get or set all field properties using a single string.
+The string must be in the format <var>'PropertyName|Alignment|Width|Caption'</var>.
+This format is used for batch configuration and serialization.</p>
+
+<p>Setting this property parses the string and updates all individual properties accordingly.</p>
+</descr>
+<seealso>
+<link id="TMediatorFieldInfo.Caption">Caption</link>
+<link id="TMediatorFieldInfo.PropertyName">PropertyName</link>
+<link id="TMediatorFieldInfo.Width">Width</link>
+<link id="TMediatorFieldInfo.Alignment">Alignment</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TMediatorFieldInfo.Caption">
+<short>Display caption for the column header</short>
+<descr>
+<p>The <var>Caption</var> property specifies the text displayed in the column header.
+If not explicitly set, it defaults to the property name, providing a reasonable fallback for display purposes.</p>
+</descr>
+<seealso>
+<link id="TMediatorFieldInfo.PropertyName">PropertyName</link>
+<link id="TMediatorFieldInfo.Width">Width</link>
+<link id="TMediatorFieldInfo.Alignment">Alignment</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TMediatorFieldInfo.PropertyName">
+<short>Name of property to display in this column</short>
+<descr>
+<p>The <var>PropertyName</var> property specifies which property of the list items will be displayed in this column.
+The property must be published and accessible for the column to display data correctly.</p>
+</descr>
+<seealso>
+<link id="TMediatorFieldInfo.Caption">Caption</link>
+<link id="TMediatorFieldInfo.Width">Width</link>
+<link id="TMediatorFieldInfo.Alignment">Alignment</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TMediatorFieldInfo.Width">
+<short>Width of the column in display units</short>
+<descr>
+<p>The <var>Width</var> property specifies the column width in pixels or other display units,
+depending on the specific GUI implementation. The default width is 50 units.</p>
+</descr>
+<seealso>
+<link id="TMediatorFieldInfo.Caption">Caption</link>
+<link id="TMediatorFieldInfo.PropertyName">PropertyName</link>
+<link id="TMediatorFieldInfo.Alignment">Alignment</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TMediatorFieldInfo.Alignment">
+<short>Text alignment for the column content</short>
+<descr>
+<p>The <var>Alignment</var> property specifies how text should be aligned within the column.
+It uses the standard <var>TAlignment</var> type supporting left, right, and center alignment.</p>
+</descr>
+<seealso>
+<link id="TMediatorFieldInfo.Caption">Caption</link>
+<link id="TMediatorFieldInfo.PropertyName">PropertyName</link>
+<link id="TMediatorFieldInfo.Width">Width</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TColumnsListMediator">
+<short>List mediator supporting multiple columns with field configuration</short>
+<descr>
+<p>The <var>TColumnsListMediator</var> class extends <link id="TBaseListMediator"/> to support multi-column list displays.
+It manages a collection of field information objects that define the properties, captions, widths, and alignments for each column.</p>
+
+<p>This class provides the foundation for list controls that display multiple properties of each object in a tabular format,
+such as list views or grids.</p>
+</descr>
+<seealso>
+<link id="TBaseListMediator"/>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TMediatorFieldInfoList">
+<short>Collection of field information for columnar list displays</short>
+<descr>
+<p>The <var>TMediatorFieldInfoList</var> class manages a collection of <link id="TMediatorFieldInfo"/> objects,
+providing methods for adding field configurations and accessing them by index.</p>
+
+<p>The collection supports string-based batch configuration and provides notification to parent mediators when field configurations change.</p>
+</descr>
+<seealso>
+<link id="TMediatorFieldInfo"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMediatorFieldInfoList.AddFieldInfo">
+<short>Adds a new field information item to the collection</short>
+<descr>
+<p>The <var>AddFieldInfo</var> method creates a new field information item and adds it to the collection.
+Multiple overloads are available to specify different combinations of property name, width, caption, and alignment.</p>
+
+<p>The method returns the newly created field info object for further customization if needed.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TMediatorFieldInfoList.AddFieldInfo.Result">
+<short>Newly created field info item</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorFieldInfoList.AddFieldInfo.APropName">
+<short>Property name for the new field</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorFieldInfoList.AddFieldInfo.AFieldWidth">
+<short>Width for the new field column</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorFieldInfoList.AddFieldInfo.ACaption">
+<short>Caption for the new field column</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorFieldInfoList.AddFieldInfo.AAlignment">
+<short>Alignment for the new field column</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMediatorFieldInfoList.FieldInfo">
+<short>Indexed access to field information items</short>
+<descr>
+<p>The <var>FieldInfo</var> property provides indexed access to individual field information objects in the collection.
+This is the default property, allowing array-style access syntax.</p>
+</descr>
+<seealso>
+<link id="TMediatorFieldInfoList.AsString">AsString</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TMediatorFieldInfoList.FieldInfo.Index">
+<short>Index of the field info item to access</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMediatorFieldInfoList.AsString">
+<short>String representation of all field configurations</short>
+<descr>
+<p>The <var>AsString</var> property provides a semicolon-separated string containing all field configurations in the collection.
+This format is convenient for serialization and bulk configuration.</p>
+
+<p>Each field is represented in the format 'PropertyName|Alignment|Width|Caption', with fields separated by semicolons.</p>
+</descr>
+<seealso>
+<link id="TMediatorFieldInfoList.FieldInfo">FieldInfo</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TColumnsListItemMediator">
+<short>List item mediator with multi-column support</short>
+<descr>
+<p>The <var>TColumnsListItemMediator</var> class extends <link id="TListItemMediator"/> to provide access to the parent mediator's field information collection.
+This allows item mediators to access column configuration for multi-column display scenarios.</p>
+</descr>
+<seealso>
+<link id="TListItemMediator"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TColumnsListItemMediator.FieldsInfo">
+<short>Reference to parent mediator's field configuration</short>
+<descr>
+<p>The <var>FieldsInfo</var> property provides access to the parent <var>TColumnsListMediator</var>'s field information collection.
+This allows the item mediator to access column definitions for data formatting and display.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TColumnsListMediator.Create">
+<short>Creates a columns list mediator with field info collection</short>
+<descr>
+<p>The <var>Create</var> constructor initializes the columns mediator with an empty field information collection
+and sets the default <var>SubjectPropertyName</var> to 'Caption'.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TColumnsListMediator.Create.AOwner">
+<short>Component that will own this mediator</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TColumnsListMediator.Destroy">
+<short>Destroys the columns mediator and field info collection</short>
+<descr>
+<p>The <var>Destroy</var> destructor cleans up the field information collection along with all item mediators,
+ensuring complete cleanup of the mediator structure.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TColumnsListMediator.DisplayNames">
+<short>Convenient string format for setting column properties</short>
+<descr>
+<p>The <var>DisplayNames</var> property provides a convenient way to configure all columns using a semicolon-separated string format.
+Setting this property parses the string and updates the field information collection.</p>
+
+<p>This property is particularly useful for quick configuration and design-time setup of column layouts.</p>
+</descr>
+<seealso>
+<link id="TColumnsListMediator.FieldsInfo">FieldsInfo</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TColumnsListMediator.FieldsInfo">
+<short>Collection of field information for column display configuration</short>
+<descr>
+<p>The <var>FieldsInfo</var> property contains the collection of field information objects that define how each column should be displayed.
+This collection can be modified at design time or runtime to configure the column layout.</p>
+
+<p>Changes to this collection are monitored and may trigger column recreation if the mediator is active.</p>
+</descr>
+<seealso>
+<link id="TColumnsListMediator.DisplayNames">DisplayNames</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TMediatorDef">
+<short>Definition for registering mediators with the mediator manager</short>
+<descr>
+<p>The <var>TMediatorDef</var> class represents a mediator definition used by the mediator manager to automatically
+select appropriate mediator classes for given subject/GUI combinations.</p>
+
+<p>Each definition specifies the mediator class, minimum subject class, and either specific property names or property types that the mediator can handle.
+The manager uses this information to find the best matching mediator for automatic mediation scenarios.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TMediatorDef.Handles">Handles</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMediatorDef.Handles">
+<short>Determines if this definition can handle the given subject/GUI combination</short>
+<descr>
+<p>The <var>Handles</var> method evaluates whether this mediator definition can handle the specified combination of
+subject object, GUI component, and property information. It checks class compatibility and property requirements.</p>
+
+<p>This method is used by the mediator manager during the selection process to filter potentially suitable mediators.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TMediatorDef.BetterMatch"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TMediatorDef.Handles.Result">
+<short>True if this definition handles the parameters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorDef.Handles.ASubject">
+<short>Subject object to check compatibility for</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorDef.Handles.AGui">
+<short>GUI component to check compatibility for</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorDef.Handles.APropInfo">
+<short>Property information for property-specific mediators</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMediatorDef.BetterMatch">
+<short>Compares this definition against another for best match selection</short>
+<descr>
+<p>The <var>BetterMatch</var> method compares this definition against another to determine which provides a better match for a given scenario.
+It considers property name specificity, class hierarchies, and mediator types.</p>
+
+<p>This comparison logic ensures that the most specific and appropriate mediator is selected when multiple mediators could handle the same situation.</p>
+</descr>
+<seealso>
+<link id="TMediatorManager.FindDefFor">FindDefFor</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TMediatorDef.BetterMatch.Result">
+<short>True if this definition is a better match</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorDef.BetterMatch.M">
+<short>Other mediator definition to compare against</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMediatorDef.MediatorClass">
+<short>Class reference for the mediator implementation</short>
+<descr>
+<p>The <var>MediatorClass</var> property holds the class reference for the mediator that will be instantiated when this definition is selected.
+This must be a descendant of <var>TBaseMediator</var>.</p>
+</descr>
+<seealso>
+<link id="TBaseMediator"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMediatorDef.MinSubjectClass">
+<short>Minimum subject class that this mediator can handle</short>
+<descr>
+<p>The <var>MinSubjectClass</var> property specifies the minimum class that subject objects must inherit from for this mediator to be applicable.
+This allows mediators to be restricted to specific object hierarchies.</p>
+</descr>
+<seealso>
+<link id="TBaseMediator.Subject"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMediatorDef.PropertyTypes">
+<short>Set of property types this mediator can handle</short>
+<descr>
+<p>The <var>PropertyTypes</var> property defines the set of property types that this mediator can handle.
+This is used when the mediator should work with properties of specific types rather than specific property names.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMediatorDef.PropertyName">
+<short>Specific property name this mediator handles</short>
+<descr>
+<p>The <var>PropertyName</var> property specifies a specific property name that this mediator is designed to handle.
+When set, the mediator will only be selected for properties with this exact name.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TMediatorDefs">
+<short>Collection of mediator definitions for the manager</short>
+<descr>
+<p>The <var>TMediatorDefs</var> class is a collection that holds mediator definitions for the mediator manager.
+It provides methods for adding new definitions and accessing existing ones by index.</p>
+
+<p>The collection is used internally by the mediator manager to store and organize all registered mediator definitions,
+so normally you should not use this class directly.</p>
+</descr>
+<seealso>
+<link id="TMediatorManager"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMediatorDefs.AddDef">
+<short>Adds a new mediator definition to the collection</short>
+<descr>
+<p>The <var>AddDef</var> method creates a new mediator definition and adds it to the collection.
+The returned definition can then be configured with the appropriate mediator class, subject class, and property requirements.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TMediatorManager.RegisterMediator"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TMediatorDefs.AddDef.Result">
+<short>Newly created mediator definition</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMediatorDefs.Defs">
+<short>Indexed access to individual mediator definitions</short>
+<descr>
+<p>The <var>Defs</var> property provides indexed access to mediator definitions in the collection.
+This is the default property, allowing array-style access syntax.</p>
+</descr>
+<seealso>
+<link id="TMediatorManager.FindDefFor">FindDefFor</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TMediatorDefs.Defs.Index">
+<short>Index of the definition to access</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TMediatorManager">
+<short>Central manager for registering and finding mediator definitions</short>
+<descr>
+<p>The <var>TMediatorManager</var> class provides centralized registration and lookup of mediator definitions.
+It allows registration of mediator classes with specific requirements and automatically finds the
+best matching mediator for given subject/GUI combinations.</p>
+
+<p>The manager uses a collection of mediator definitions to evaluate compatibility and
+select the most appropriate mediator based on class hierarchies, property types, and property names.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TMediatorManager.Create">
+<short>Creates the mediator manager with empty definition collection</short>
+<descr>
+<p>The <var>Create</var> constructor initializes the mediator manager with an empty collection of mediator definitions.
+Mediator classes must be registered before the manager can provide automatic mediator selection.</p>
+</descr>
+<seealso>
+<link id="TMediatorManager.RegisterMediator">RegisterMediator</link>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TMediatorManager.Destroy">
+<short>Destroys the manager and its definition collection</short>
+<descr>
+<p>The <var>Destroy</var> destructor cleans up the mediator definition collection, freeing all registered mediator definitions.</p>
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMediatorManager.FindDefFor">
+<short>Finds the best mediator definition for given parameters</short>
+<descr>
+<p>The <var>FindDefFor</var> method searches through all registered mediator definitions to find the best match for the specified combination of subject object,
+GUI component, and optional property information.</p>
+
+<p>The method evaluates each definition's compatibility and uses the <var>BetterMatch</var> comparison to select the most appropriate mediator.
+Multiple overloads support different search criteria including property names and property information.</p>
+</descr>
+<seealso>
+<link id="TMediatorManager.RegisterMediator">RegisterMediator</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TMediatorManager.FindDefFor.Result">
+<short>Best matching mediator definition or Nil</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorManager.FindDefFor.ASubject">
+<short>Subject object for mediator matching</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorManager.FindDefFor.AGui">
+<short>GUI component for mediator matching</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorManager.FindDefFor.APropName">
+<short>Property name for property-specific matching</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorManager.FindDefFor.APropInfo">
+<short>Property information for detailed matching</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMediatorManager.RegisterMediator">
+<short>Registers a new mediator class with the manager</short>
+<descr>
+<p>The <var>RegisterMediator</var> method creates a new mediator definition and adds it to the manager's collection.
+Multiple overloads allow registration with different criteria including minimum subject class, property names, and property types.</p>
+
+<p>The method returns the created definition, which can be further customized if needed.</p>
+</descr>
+<link id="TMediatorManager.FindDefFor">FindDefFor</link>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TMediatorManager.RegisterMediator.Result">
+<short>Created mediator definition for the registration</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorManager.RegisterMediator.MediatorClass">
+<short>Class reference of the mediator to register</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorManager.RegisterMediator.MinSubjectClass">
+<short>Minimum subject class the mediator can handle</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorManager.RegisterMediator.PropertyName">
+<short>Specific property name the mediator handles</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMediatorManager.RegisterMediator.PropertyTypes">
+<short>Set of property types the mediator can handle</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMediatorManager.Defs">
+<short>Collection of registered mediator definitions</short>
+<descr>
+<p>The <var>Defs</var> property provides access to the collection of all registered mediator definitions.
+This can be used for advanced scenarios that require direct access to the definition collection.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EMediator">
+<short>Exception class for mediator-related errors</short>
+<descr>
+<p>The <var>EMediator</var> class is the exception type raised by mediator-related operations when errors occur.
+It provides specific error reporting for mediator configuration and operation problems.</p>
+</descr>
+</element>
+
+<!-- function Visibility: default -->
+<element name="MediatorManager">
+<short>Returns the global singleton mediator manager instance</short>
+<descr>
+<p>The <var>MediatorManager</var> function returns the global singleton instance of the mediator manager.
+If the instance doesn't exist yet, it creates one automatically.</p>
+
+<p>This function provides convenient access to the global mediator manager for registering mediators and
+finding appropriate mediator definitions.</p>
+<p>This function is not thread-safe, so make sure to call it once in the main thread so the instance is created once.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TMediatorManager"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="MediatorManager.Result">
+<short>Global mediator manager instance</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="MediatorError">
+<short>Raises formatted mediator error with context information</short>
+<descr>
+<p>The <var>MediatorError</var> procedure raises an <link id="EMediator"/> exception with detailed context information.
+It formats the error message with information about the sender object, including mediator details, view component names,
+and subject information where available.</p>
+
+<p>Multiple overloads support both direct message strings and format string with arguments.</p>
+</descr>
+<seealso>
+<link id="EMediator"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="MediatorError.Sender">
+<short>Object causing the error for context</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="MediatorError.Msg">
+<short>Error message to display</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="MediatorError.Fmt">
+<short>Format string for the error message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="MediatorError.Args">
+<short>Arguments for the format string</short>
+</element>
+
+</module> <!-- fpobserver -->
+
+</package>
+</fpdoc-descriptions>

@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    AdvancedIPC
+  ====================================================================
+-->
+
+<module name="AdvancedIPC">
+<short>File-based inter-process communication for server-client architectures</short>
+<descr>
+<p>
+The <var>AdvancedIPC</var> unit provides two-way request/response inter-process communication between one server and multiple clients using file-based messaging.
+The system is non-deterministic - message processing order is not guaranteed.
+However, <var>SendRequest</var> and <var>PostRequest</var>/<var>PeekResponse</var> sequences from a single client are processed in correct order.
+</p>
+<p>
+Because it is file based, it should not be used for intensive messaging, but it is suitable for exchanging small messages at startup,
+for example to transfer control to another instance. It is implemented using files as this is a common denominator on all platforms.
+</p>
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="sysutils">
+<short>Various routines</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Basic classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="singleinstance">
+<short>Unit to ensure we have only a single instance</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="HEADER_VERSION">
+<short>Message header version identifier</short>
+<descr>
+The <var>HEADER_VERSION</var> constant defines the version of the message header format.
+Currently set to 2. Messages with different header versions cannot be exchanged between clients and servers.
+</descr>
+<seealso>
+<link id="TMessageHeader">TMessageHeader</link>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TMessageType">
+<short>Type for message type identifiers</short>
+<descr>
+The <var>TMessageType</var> is an alias for <var>LongInt</var> used to identify different types of messages in IPC communication.
+Applications can use different message type values to distinguish between various request and response types.
+</descr>
+<seealso>
+<link id="TMessageHeader">TMessageHeader</link>
+</seealso>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TMessageHeader">
+<short>Message header structure for IPC communication</short>
+<descr>
+The <var>TMessageHeader</var> record defines the structure of the message header used in IPC communication.
+It contains version information, locking state, message type, length, and version compatibility data.
+</descr>
+<seealso>
+<link id="HEADER_VERSION">HEADER_VERSION</link>
+<link id="TMessageType">TMessageType</link>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TMessageHeader.HeaderVersion">
+<short>Header version byte</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TMessageHeader.FileLock">
+<short>File locking state (0=unlocked, 1=locked)</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TMessageHeader.MsgType">
+<short>Message type identifier</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TMessageHeader.MsgLen">
+<short>Message content length in bytes</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TMessageHeader.MsgVersion">
+<short>Message version for compatibility checking</short>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TFileHandle">
+<short>File handle type alias</short>
+<descr>
+The <var>TFileHandle</var> type is an alias for the platform-specific file handle type from the Classes unit.
+Used internally for file operations in IPC communication.
+</descr>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TReleaseHandleStream">
+<short>Handle stream that releases file handle on destruction</short>
+<descr>
+The <var>TReleaseHandleStream</var> class extends <var>THandleStream</var> to automatically close the file handle when the stream is destroyed.
+</descr>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TReleaseHandleStream.Destroy">
+<short>Destructor that closes the file handle</short>
+<descr>
+The <var>Destroy</var> destructor closes the file handle before calling the inherited destructor.
+</descr>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TIPCBase">
+<short>Base class for IPC client and server functionality</short>
+<descr>
+The <var>TIPCBase</var> class provides common functionality for both IPC clients and servers.
+It handles server identification, global/local communication scope, message versioning, and low-level message operations.
+</descr>
+<seealso>
+<link id="TIPCClient">TIPCClient</link>
+<link id="TIPCServer">TIPCServer</link>
+</seealso>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TIPCBase.FindRunningServers">
+<short>Find all running servers with matching server ID prefix</short>
+<descr>
+The <var>FindRunningServers</var> class procedure searches for all currently running IPC servers whose server ID starts with the specified prefix.
+Results are returned in the <var>outServerIDs</var> string list.
+</descr>
+<seealso>
+<link id="TIPCBase.ServerRunning">ServerRunning</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCBase.FindRunningServers.aServerIDPrefix">
+<short>Prefix to match against server IDs</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCBase.FindRunningServers.outServerIDs">
+<short>String list to receive matching server IDs</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCBase.FindRunningServers.aGlobal">
+<short>Search global servers if <var>True</var>, local servers if <var>False</var></short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TIPCBase.ServerRunning">
+<short>Check if a server with given ID is running</short>
+<descr>
+The <var>ServerRunning</var> class function checks whether an IPC server with the specified ID is currently active.
+Returns <var>True</var> if the server is running and accessible.
+</descr>
+<seealso>
+<link id="TIPCBase.FindRunningServers">FindRunningServers</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCBase.ServerRunning.Result">
+<short><var>True</var> if server is running, <var>False</var> otherwise</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCBase.ServerRunning.aServerID">
+<short>Server ID to check</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCBase.ServerRunning.aGlobal">
+<short>Check global server if <var>True</var>, local server if <var>False</var></short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIPCBase.ServerID">
+<short>Server identifier for IPC communication</short>
+<descr>
+The <var>ServerID</var> property specifies the unique identifier for the server.
+Only alphanumeric characters and underscores are allowed.
+Clients use this ID to connect to the server.
+</descr>
+<seealso>
+<link id="TIPCBase.Global">Global</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIPCBase.Global">
+<short>Communication scope (global or local)</short>
+<descr>
+The <var>Global</var> property determines the communication scope.
+If <var>True</var>, processes from different users can communicate.
+If <var>False</var>, only processes from the current user can communicate.
+</descr>
+<seealso>
+<link id="TIPCBase.ServerID">ServerID</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIPCBase.MessageVersion">
+<short>Message version for compatibility checking</short>
+<descr>
+The <var>MessageVersion</var> property specifies the message version.
+Only messages with the same <var>MessageVersion</var> can be exchanged between server and client.
+This ensures compatibility between different versions of applications.
+</descr>
+<seealso>
+<link id="TMessageHeader">TMessageHeader</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TIPCClient">
+<short>IPC client for sending requests and receiving responses</short>
+<descr>
+The <var>TIPCClient</var> class provides client-side functionality for inter-process communication.
+It can send requests to servers and receive responses using either blocking or non-blocking methods.
+</descr>
+<seealso>
+<link id="TIPCBase">TIPCBase</link>
+<link id="TIPCServer">TIPCServer</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TIPCClient.Create">
+<short>Create IPC client instance</short>
+<descr>
+The <var>Create</var> constructor initializes a new IPC client instance with default settings.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClient.Create.aOwner">
+<short>Component owner</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCClient.PostRequest">
+<short>Post request to server without waiting for response</short>
+<descr>
+The <var>PostRequest</var> function sends a request to the server and returns immediately without waiting for the server to process it.
+Returns the request ID that can be used to retrieve the response later using <var>PeekResponse</var>.
+</descr>
+<seealso>
+<link id="TIPCClient.SendRequest">SendRequest</link>
+<link id="TIPCClient.PeekResponse">PeekResponse</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCClient.PostRequest.Result">
+<short>Request ID for retrieving the response</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClient.PostRequest.aMsgType">
+<short>Message type identifier</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClient.PostRequest.aStream">
+<short>Stream containing request data</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCClient.SendRequest">
+<short>Send request to server and wait until processed</short>
+<descr>
+The <var>SendRequest</var> function sends a request to the server and waits until the server has processed it (request file is removed).
+Returns <var>True</var> if the request was processed within the timeout limit.
+</descr>
+<seealso>
+<link id="TIPCClient.PostRequest">PostRequest</link>
+<link id="TIPCClient.PeekResponse">PeekResponse</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCClient.SendRequest.Result">
+<short><var>True</var> if request was processed within timeout</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClient.SendRequest.aMsgType">
+<short>Message type identifier</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClient.SendRequest.aStream">
+<short>Stream containing request data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClient.SendRequest.aTimeOut">
+<short>Timeout in milliseconds</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClient.SendRequest.outRequestID">
+<short>Returns the request ID</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCClient.PeekResponse">
+<short>Retrieve response from server for a request</short>
+<descr>
+The <var>PeekResponse</var> function retrieves the server response for a previously sent request.
+Multiple overloads support immediate checking or waiting with timeout.
+Can retrieve response for specific request ID or the last request from this client.
+</descr>
+<seealso>
+<link id="TIPCClient.PostRequest">PostRequest</link>
+<link id="TIPCClient.SendRequest">SendRequest</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCClient.PeekResponse.Result">
+<short><var>True</var> if response was available</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClient.PeekResponse.aStream">
+<short>Stream to receive response data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClient.PeekResponse.outMsgType">
+<short>Returns the response message type</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClient.PeekResponse.aTimeOut">
+<short>Timeout in milliseconds</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClient.PeekResponse.aRequestID">
+<short>Request ID to retrieve response for</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCClient.DeleteRequest">
+<short>Delete a request from the queue</short>
+<descr>
+The <var>DeleteRequest</var> function removes a request from the server queue.
+Can delete by request ID or the last request from this client.
+Returns <var>True</var> if the request file existed and was successfully deleted.
+</descr>
+<seealso>
+<link id="TIPCClient.PostRequest">PostRequest</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCClient.DeleteRequest.Result">
+<short><var>True</var> if request was found and deleted</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCClient.DeleteRequest.aRequestID">
+<short>Request ID to delete</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCClient.ServerRunning">
+<short>Check if the target server is running</short>
+<descr>
+The <var>ServerRunning</var> function checks whether the server specified by <var>ServerID</var> is currently active and available for communication.
+</descr>
+<seealso>
+<link id="TIPCBase.ServerRunning">TIPCBase.ServerRunning</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCClient.ServerRunning.Result">
+<short><var>True</var> if server is running</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TIPCServer">
+<short>IPC server for receiving requests and sending responses</short>
+<descr>
+The <var>TIPCServer</var> class provides server-side functionality for inter-process communication.
+It can receive requests from clients, process them, and send back responses.
+The server must be started to become available for client connections.
+</descr>
+<seealso>
+<link id="TIPCBase">TIPCBase</link>
+<link id="TIPCClient">TIPCClient</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TIPCServer.Create">
+<short>Create IPC server instance</short>
+<descr>
+The <var>Create</var> constructor initializes a new IPC server instance.
+The server is not active until <var>StartServer</var> is called.
+</descr>
+<seealso>
+<link id="TIPCServer.StartServer">StartServer</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServer.Create.aOwner">
+<short>Component owner</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TIPCServer.Destroy">
+<short>Destroy IPC server instance</short>
+<descr>
+The <var>Destroy</var> destructor automatically stops the server if it is active before destroying the instance.
+</descr>
+<seealso>
+<link id="TIPCServer.StopServer">StopServer</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCServer.PeekRequest">
+<short>Peek at incoming requests from clients</short>
+<descr>
+The <var>PeekRequest</var> function retrieves incoming requests from clients.
+Multiple overloads support immediate checking or waiting with timeout.
+Some overloads read the message content directly, others only peek and require <var>ReadRequest</var> to get the content.
+</descr>
+<seealso>
+<link id="TIPCServer.ReadRequest">ReadRequest</link>
+<link id="TIPCServer.PostResponse">PostResponse</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCServer.PeekRequest.Result">
+<short><var>True</var> if request was available</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServer.PeekRequest.aStream">
+<short>Stream to receive request data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServer.PeekRequest.outMsgType">
+<short>Returns the request message type</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServer.PeekRequest.outRequestID">
+<short>Returns the request ID</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServer.PeekRequest.aTimeOut">
+<short>Timeout in milliseconds</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCServer.ReadRequest">
+<short>Read a previously peeked request</short>
+<descr>
+The <var>ReadRequest</var> function reads the content of a request that was previously peeked using <var>PeekRequest</var>.
+The request must have been peeked but not yet read or deleted.
+</descr>
+<seealso>
+<link id="TIPCServer.PeekRequest">PeekRequest</link>
+<link id="TIPCServer.DeleteRequest">DeleteRequest</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCServer.ReadRequest.Result">
+<short><var>True</var> if request was successfully read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServer.ReadRequest.aRequestID">
+<short>Request ID to read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServer.ReadRequest.aStream">
+<short>Stream to receive request data</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCServer.DeleteRequest">
+<short>Delete a peeked request</short>
+<descr>
+The <var>DeleteRequest</var> function removes a peeked request from the queue without reading it.
+Returns <var>True</var> if the request existed and was successfully deleted.
+</descr>
+<seealso>
+<link id="TIPCServer.PeekRequest">PeekRequest</link>
+<link id="TIPCServer.ReadRequest">ReadRequest</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCServer.DeleteRequest.Result">
+<short><var>True</var> if request was found and deleted</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServer.DeleteRequest.aRequestID">
+<short>Request ID to delete</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIPCServer.PostResponse">
+<short>Send response back to client</short>
+<descr>
+The <var>PostResponse</var> procedure sends a response back to the client for a specific request.
+The response is identified by the request ID and can be retrieved by the client using <var>PeekResponse</var>.
+</descr>
+<seealso>
+<link id="TIPCServer.PeekRequest">PeekRequest</link>
+<link id="TIPCClient.PeekResponse">TIPCClient.PeekResponse</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServer.PostResponse.aRequestID">
+<short>Request ID to respond to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServer.PostResponse.aMsgType">
+<short>Response message type</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServer.PostResponse.aStream">
+<short>Stream containing response data</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCServer.FindHighestPendingRequestId">
+<short>Find the highest pending request ID</short>
+<descr>
+The <var>FindHighestPendingRequestId</var> function returns the highest request ID among all pending requests in the server queue.
+Returns -1 if no pending requests exist.
+</descr>
+<seealso>
+<link id="TIPCServer.GetPendingRequestCount">GetPendingRequestCount</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCServer.FindHighestPendingRequestId.Result">
+<short>Highest pending request ID, or -1 if none</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCServer.GetPendingRequestCount">
+<short>Get the number of pending requests</short>
+<descr>
+The <var>GetPendingRequestCount</var> function returns the total number of requests currently waiting in the server queue.
+</descr>
+<seealso>
+<link id="TIPCServer.FindHighestPendingRequestId">FindHighestPendingRequestId</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCServer.GetPendingRequestCount.Result">
+<short>Number of pending requests</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCServer.StartServer">
+<short>Start the IPC server</short>
+<descr>
+The <var>StartServer</var> function activates the IPC server, making it available for client connections.
+Returns <var>True</var> if the server was successfully started or was already running.
+Optionally deletes any pending requests from previous sessions.
+</descr>
+<seealso>
+<link id="TIPCServer.StopServer">StopServer</link>
+<link id="TIPCServer.Active">Active</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCServer.StartServer.Result">
+<short><var>True</var> if server started successfully</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServer.StartServer.aDeletePendingRequests">
+<short>Delete pending requests on startup if <var>True</var></short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TIPCServer.StopServer">
+<short>Stop the IPC server</short>
+<descr>
+The <var>StopServer</var> function deactivates the IPC server, making it unavailable for client connections.
+Returns <var>True</var> if the server was successfully stopped.
+Optionally deletes any remaining pending requests.
+</descr>
+<seealso>
+<link id="TIPCServer.StartServer">StartServer</link>
+<link id="TIPCServer.Active">Active</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TIPCServer.StopServer.Result">
+<short><var>True</var> if server stopped successfully</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TIPCServer.StopServer.aDeletePendingRequests">
+<short>Delete pending requests on shutdown if <var>True</var></short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TIPCServer.DeletePendingRequests">
+<short>Delete all pending requests and responses</short>
+<descr>
+The <var>DeletePendingRequests</var> procedure removes all pending requests and responses from the server queue.
+This is useful for cleanup operations during server startup or shutdown.
+</descr>
+<seealso>
+<link id="TIPCServer.StartServer">StartServer</link>
+<link id="TIPCServer.StopServer">StopServer</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TIPCServer.Active">
+<short>Server running state</short>
+<descr>
+The <var>Active</var> property indicates whether the IPC server is currently running and available for client connections.
+<var>True</var> if the server has been started, <var>False</var> otherwise.
+</descr>
+<seealso>
+<link id="TIPCServer.StartServer">StartServer</link>
+<link id="TIPCServer.StopServer">StopServer</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EICPException">
+<short>Exception class for IPC-related errors</short>
+<descr>
+The <var>EICPException</var> class represents exceptions that occur during IPC operations.
+It is raised when invalid server IDs are used or when attempting to change properties while the server is active.
+</descr>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrInvalidServerID">
+<short>Error message for invalid server ID</short>
+<descr>
+The <var>SErrInvalidServerID</var> resource string contains the error message displayed when an invalid server ID is specified.
+Server IDs must contain only alphanumeric characters and underscores.
+</descr>
+<seealso>
+<link id="TIPCBase.ServerID">TIPCBase.ServerID</link>
+</seealso>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrSetGlobalActive">
+<short>Error message for changing Global property while server is active</short>
+<descr>
+The <var>SErrSetGlobalActive</var> resource string contains the error message displayed when attempting
+to change the <var>Global</var> property while the server is active.
+</descr>
+<seealso>
+<link id="TIPCBase.Global">TIPCBase.Global</link>
+<link id="TIPCServer.Active">TIPCServer.Active</link>
+</seealso>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrSetServerIDActive">
+<short>Error message for changing ServerID property while server is active</short>
+<descr>
+The <var>SErrSetServerIDActive</var> resource string contains the error message displayed when attempting
+to change the <var>ServerID</var> property while the server is active.
+</descr>
+<seealso>
+<link id="TIPCBase.ServerID">TIPCBase.ServerID</link>
+<link id="TIPCServer.Active">TIPCServer.Active</link>
+</seealso>
+</element>
+
+</module> <!-- AdvancedIPC -->
+
+</package>
+</fpdoc-descriptions>
