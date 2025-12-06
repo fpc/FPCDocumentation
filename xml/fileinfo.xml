@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    FileInfo
+  ====================================================================
+-->
+
+<module name="FileInfo">
+<short>File and program version information utilities</short>
+<descr>
+<p>
+The <var>FileInfo</var> unit provides classes and utilities for extracting and manipulating version information from executable files and modules.
+It includes both low-level access through <link id="TVersionInfo">TVersionInfo</link> and high-level component-based access through
+<link id="TFileVersionInfo">TFileVersionInfo</link>.
+</p>
+<p>
+The unit also provides convenience functions for version comparison (<link id="CompareVersionQuads">CompareVersionQuads</link>,
+<link id="CompareProgramVersion">CompareProgramVersion</link>, <link id="NewerVersion">NewerVersion</link>),
+string conversion (<link id="VersionQuadToStr">VersionQuadToStr</link>, <link id="ProgramversionToStr">ProgramversionToStr</link>,
+<link id="StrToVersionQuad">StrToVersionQuad</link>, <link id="StrToProgramVersion">StrToProgramVersion</link>),
+and version extraction (<link id="GetProgramVersion">GetProgramVersion</link>).
+</p>
+</descr>
+<seealso>
+<link id="CompareVersionQuads">CompareVersionQuads</link>
+<link id="CompareProgramVersion">CompareProgramVersion</link>
+<link id="NewerVersion">NewerVersion</link>
+<link id="VersionQuadToStr">VersionQuadToStr</link>
+<link id="ProgramversionToStr">ProgramversionToStr</link>
+<link id="StrToVersionQuad">StrToVersionQuad</link>
+<link id="StrToProgramVersion">StrToProgramVersion</link>
+<link id="GetProgramVersion">GetProgramVersion</link>
+</seealso>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>String formatting</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Streams</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="resource">
+<short>Getting resources</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="versiontypes">
+<short>various resource types</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="versionresource">
+<short>Version resourceM</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TVersionInfo">
+<short>Low-level class for accessing version information from executable files</short>
+<descr>
+<p>
+<var>TVersionInfo</var> provides direct access to version resources in executable files.
+It can load version information from files or module instances and exposes the raw version data structures.
+</p>
+</descr>
+<errors>
+<p>
+Raises <link id="EVersionInfo">EVersionInfo</link> when attempting to access version information before loading any resources.
+</p>
+</errors>
+<seealso>
+<link id="TFileVersionInfo">TFileVersionInfo</link>
+<link id="EVersionInfo">EVersionInfo</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TVersionInfo.Create">
+<short>Creates a new <var>TVersionInfo</var> instance</short>
+<descr>
+<p>
+Initializes the <var>TVersionInfo</var> object.
+No version information is loaded until <link id="TVersionInfo.Load">Load</link> is called.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TVersionInfo.Load">Load</link>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TVersionInfo.Destroy">
+<short>Destroys the <var>TVersionInfo</var> instance and frees resources</short>
+<descr>
+<p>
+Frees all loaded version resources and destroys the object.
+</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TVersionInfo.Load">
+<short>Loads version information from a file or module instance</short>
+<descr>
+<p>
+<var>Load</var> extracts version resources from the specified source.
+It can load from a file name or from a module instance handle.
+After successful loading, version information is available through the properties.
+</p>
+</descr>
+<errors>
+<p>
+May raise exceptions if the file cannot be opened or contains invalid version resources.
+</p>
+</errors>
+<seealso>
+<link id="TVersionInfo.FixedInfo">FixedInfo</link>
+<link id="TVersionInfo.StringFileInfo">StringFileInfo</link>
+<link id="TVersionInfo.VarFileInfo">VarFileInfo</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TVersionInfo.Load.Instance">
+<short>Module instance handle to load version information from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TVersionInfo.Load.AFileName">
+<short>File name to load version information from</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TVersionInfo.FixedInfo">
+<short>Fixed version information structure</short>
+<descr>
+<p>
+Provides access to the fixed version information containing file version, product version, file flags, and other binary version data.
+</p>
+</descr>
+<seealso>
+<link id="TVersionInfo.StringFileInfo">StringFileInfo</link>
+<link id="TVersionInfo.VarFileInfo">VarFileInfo</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TVersionInfo.StringFileInfo">
+<short>String-based version information</short>
+<descr>
+<p>
+Provides access to string version information such as company name, file description, file version, and other textual version data.
+Information is organized by language and code page.
+</p>
+</descr>
+<seealso>
+<link id="TVersionInfo.FixedInfo">FixedInfo</link>
+<link id="TVersionInfo.VarFileInfo">VarFileInfo</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TVersionInfo.VarFileInfo">
+<short>Variable version information containing language and code page data</short>
+<descr>
+<p>
+Provides access to the variable file information containing supported languages and code pages for the version strings.
+</p>
+</descr>
+<seealso>
+<link id="TVersionInfo.FixedInfo">FixedInfo</link>
+<link id="TVersionInfo.StringFileInfo">StringFileInfo</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TFileVersionInfo">
+<short>High-level component for accessing file version information</short>
+<descr>
+<p>
+<var>TFileVersionInfo</var> is a component that provides easy access to version information from executable files.
+It automatically extracts version strings and supports filtering by key names and translations.
+The component can be enabled to automatically read version information when properties change.
+</p>
+</descr>
+<errors>
+<p>
+Raises <link id="EVersionInfo">EVersionInfo</link> when translation is not found and <link id="TFileVersionInfo.TranslationOnly">TranslationOnly</link> is <var>True</var>.
+</p>
+</errors>
+<seealso>
+<link id="TVersionInfo">TVersionInfo</link>
+<link id="EVersionInfo">EVersionInfo</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TFileVersionInfo.Create">
+<short>Creates a new <var>TFileVersionInfo</var> component</short>
+<descr>
+<p>
+Initializes the component with empty string lists for version strings and filter.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFileVersionInfo.ReadFileInfo">ReadFileInfo</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFileVersionInfo.Create.AOwner">
+<short>Owner component for the version info instance</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TFileVersionInfo.Destroy">
+<short>Destroys the <var>TFileVersionInfo</var> component</short>
+<descr>
+<p>
+Frees the internal string lists and destroys the component.
+</p>
+</descr>
+<seealso>
+<link id="TFileVersionInfo.Create">Create</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFileVersionInfo.Loaded">
+<short>Called after component loading is complete</short>
+<descr>
+<p>
+Automatically triggers version information reading if the component is enabled after being loaded from a stream.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFileVersionInfo.ReadFileInfo">ReadFileInfo</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFileVersionInfo.ReadFileInfo">
+<short>Reads version information from the specified file</short>
+<descr>
+<p>
+<var>ReadFileInfo</var> extracts version strings from the file specified by <link id="TFileVersionInfo.FileName">FileName</link>.
+If no file is specified, it reads from the current executable.
+The extracted strings are filtered according to <link id="TFileVersionInfo.Filter">Filter</link> and stored in
+<link id="TFileVersionInfo.VersionStrings">VersionStrings</link>.
+</p>
+</descr>
+<errors>
+<p>
+Raises <link id="EVersionInfo">EVersionInfo</link> if the specified translation is not found and <link id="TFileVersionInfo.TranslationOnly">TranslationOnly</link> is <var>True</var>.
+</p>
+</errors>
+<seealso>
+<link id="TFileVersionInfo.FileName">FileName</link>
+<link id="TFileVersionInfo.VersionStrings">VersionStrings</link>
+<link id="TFileVersionInfo.Filter">Filter</link>
+<link id="TFileVersionInfo.Translation">Translation</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFileVersionInfo.Enabled">
+<short>Controls automatic reading of version information</short>
+<descr>
+<p>
+When <var>True</var>, version information is automatically read when properties change.
+When <var>False</var>, <link id="TFileVersionInfo.ReadFileInfo">ReadFileInfo</link> must be called manually.
+</p>
+</descr>
+<seealso>
+<link id="TFileVersionInfo.ReadFileInfo">ReadFileInfo</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFileVersionInfo.FileName">
+<short>File name to read version information from</short>
+<descr>
+<p>
+Specifies the executable file to extract version information from.
+If empty, version information is read from the current executable.
+</p>
+</descr>
+<seealso>
+<link id="TFileVersionInfo.ReadFileInfo">ReadFileInfo</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFileVersionInfo.VersionStrings">
+<short>Extracted version information strings</short>
+<descr>
+<p>
+Contains the version strings extracted from the file in key=value format.
+The strings are filtered according to <link id="TFileVersionInfo.Filter">Filter</link> settings.
+</p>
+</descr>
+<seealso>
+<link id="TFileVersionInfo.Filter">Filter</link>
+<link id="TFileVersionInfo.ReadFileInfo">ReadFileInfo</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFileVersionInfo.Filter">
+<short>List of version string keys to extract</short>
+<descr>
+<p>
+Contains the names of version string keys to extract.
+If empty, all available version strings are extracted.
+Common keys include CompanyName, FileDescription, FileVersion, ProductName, ProductVersion.
+</p>
+</descr>
+<seealso>
+<link id="TFileVersionInfo.VersionStrings">VersionStrings</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFileVersionInfo.Translation">
+<short>Language and code page identifier for version strings</short>
+<descr>
+<p>
+Specifies which language and code page combination to use when extracting version strings.
+The format is an 8-character hexadecimal string (e.g., "040904b0" for English US).
+If empty, the first available translation is used.
+</p>
+</descr>
+<seealso>
+<link id="TFileVersionInfo.TranslationOnly">TranslationOnly</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFileVersionInfo.TranslationOnly">
+<short>Controls behavior when specified translation is not found</short>
+<descr>
+<p>
+When <var>True</var>, an exception is raised if the specified <link id="TFileVersionInfo.Translation">Translation</link> is not found.
+When <var>False</var>, the first available translation is used instead.
+</p>
+</descr>
+<seealso>
+<link id="TFileVersionInfo.Translation">Translation</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EVersionInfo">
+<short>Exception class for version information errors</short>
+<descr>
+<p>
+<var>EVersionInfo</var> is raised when errors occur during version information processing, such as accessing unloaded resources or missing translations.
+</p>
+</descr>
+<seealso>
+<link id="TVersionInfo">TVersionInfo</link>
+<link id="TFileVersionInfo">TFileVersionInfo</link>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="TVersionQuad">
+<short>Array type for storing four-part version numbers</short>
+<descr>
+<p>
+<var>TVersionQuad</var> is an array of four Word values representing major, minor, revision, and build numbers respectively.
+</p>
+</descr>
+<seealso>
+<link id="TProgramVersion">TProgramVersion</link>
+<link id="CompareVersionQuads">CompareVersionQuads</link>
+</seealso>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="TProgramVersion">
+<short>Record type for storing four-part version numbers</short>
+<descr>
+<p>
+<var>TProgramVersion</var> is a record with named fields for major, minor, revision, and build numbers.
+It provides a more readable alternative to <link id="TVersionQuad">TVersionQuad</link>.
+</p>
+</descr>
+<seealso>
+<link id="TVersionQuad">TVersionQuad</link>
+<link id="CompareProgramVersion">CompareProgramVersion</link>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TProgramVersion.Major">
+<short>Major version number</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TProgramVersion.Minor">
+<short>Minor version number</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TProgramVersion.Revision">
+<short>Revision version number</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TProgramVersion.Build">
+<short>Build version number</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TVersionCompare">
+<short>Result of version comparison operations</short>
+<descr>
+<p>
+<var>TVersionCompare</var> indicates the level of difference between two version numbers, from equal to major version differences.
+</p>
+</descr>
+<seealso>
+<link id="CompareVersionQuads">CompareVersionQuads</link>
+<link id="CompareProgramVersion">CompareProgramVersion</link>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TVersionCompare.vcEqual">
+<short>Versions are identical</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TVersionCompare.vcBuildDiffers">
+<short>Only build numbers differ</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TVersionCompare.vcRevisionDiffers">
+<short>Revision numbers or lower differ</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TVersionCompare.vcMinorDiffers">
+<short>Minor version numbers or lower differ</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TVersionCompare.vcMajorDiffers">
+<short>Major version numbers differ</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="GetProgramVersion">
+<short>Extracts version information from the current executable</short>
+<descr>
+<p>
+<var>GetProgramVersion</var> retrieves the file version from the current executable's version resources.
+Returns <var>True</var> if version information was successfully extracted, <var>False</var> otherwise.
+</p>
+</descr>
+<seealso>
+<link id="TVersionInfo">TVersionInfo</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="GetProgramVersion.Result">
+<short>Returns <var>True</var> if version information was successfully extracted</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="GetProgramVersion.Version">
+<short>Variable to receive the extracted version information</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CompareVersionQuads">
+<short>Compares two version quad arrays</short>
+<descr>
+<p>
+<var>CompareVersionQuads</var> compares two <link id="TVersionQuad">TVersionQuad</link> values and returns the level of difference between them.
+Comparison is performed hierarchically from major to build version.
+</p>
+</descr>
+<seealso>
+<link id="TVersionQuad">TVersionQuad</link>
+<link id="TVersionCompare">TVersionCompare</link>
+<link id="CompareProgramVersion">CompareProgramVersion</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="CompareVersionQuads.Result">
+<short>Level of difference between the two version quads</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CompareVersionQuads.Quad1">
+<short>First version quad to compare</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CompareVersionQuads.Quad2">
+<short>Second version quad to compare</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="CompareProgramVersion">
+<short>Compares two program version records</short>
+<descr>
+<p>
+<var>CompareProgramVersion</var> compares two <link id="TProgramVersion">TProgramVersion</link> records and returns the level of difference between them.
+</p>
+</descr>
+<seealso>
+<link id="TProgramVersion">TProgramVersion</link>
+<link id="TVersionCompare">TVersionCompare</link>
+<link id="CompareVersionQuads">CompareVersionQuads</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="CompareProgramVersion.Result">
+<short>Level of difference between the two program versions</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CompareProgramVersion.Version1">
+<short>First program version to compare</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="CompareProgramVersion.Version2">
+<short>Second program version to compare</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="VersionQuadToStr">
+<short>Converts a version quad to string representation</short>
+<descr>
+<p>
+<var>VersionQuadToStr</var> converts a <link id="TVersionQuad">TVersionQuad</link> to a string in the format "major.minor.revision.build".
+</p>
+</descr>
+<seealso>
+<link id="TVersionQuad">TVersionQuad</link>
+<link id="StrToVersionQuad">StrToVersionQuad</link>
+<link id="ProgramversionToStr">ProgramversionToStr</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="VersionQuadToStr.Result">
+<short>String representation of the version quad</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="VersionQuadToStr.Quad">
+<short>Version quad to convert to string</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ProgramversionToStr">
+<short>Converts a program version record to string representation</short>
+<descr>
+<p>
+<var>ProgramversionToStr</var> converts a <link id="TProgramVersion">TProgramVersion</link> to a string in the format "major.minor.revision.build".
+</p>
+</descr>
+<seealso>
+<link id="TProgramVersion">TProgramVersion</link>
+<link id="StrToProgramVersion">StrToProgramVersion</link>
+<link id="VersionQuadToStr">VersionQuadToStr</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ProgramversionToStr.Result">
+<short>String representation of the program version</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ProgramversionToStr.Version">
+<short>Program version to convert to string</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TryStrToVersionQuad">
+<short>Attempts to convert a string to a version quad</short>
+<descr>
+<p>
+<var>TryStrToVersionQuad</var> parses a version string and converts it to a <link id="TVersionQuad">TVersionQuad</link>.
+Returns <var>True</var> if the conversion was successful, <var>False</var> otherwise.
+Accepts strings in the format "major.minor.revision.build".
+</p>
+</descr>
+<seealso>
+<link id="TVersionQuad">TVersionQuad</link>
+<link id="StrToVersionQuad">StrToVersionQuad</link>
+<link id="TryStrToProgramVersion">TryStrToProgramVersion</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TryStrToVersionQuad.Result">
+<short>Returns <var>True</var> if the string was successfully parsed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TryStrToVersionQuad.S">
+<short>String to parse as version quad</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TryStrToVersionQuad.Quad">
+<short>Variable to receive the parsed version quad</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="TryStrToProgramVersion">
+<short>Attempts to convert a string to a program version record</short>
+<descr>
+<p>
+<var>TryStrToProgramVersion</var> parses a version string and converts it to a <link id="TProgramVersion">TProgramVersion</link>.
+Returns <var>True</var> if the conversion was successful, <var>False</var> otherwise.
+</p>
+</descr>
+<seealso>
+<link id="TProgramVersion">TProgramVersion</link>
+<link id="StrToProgramVersion">StrToProgramVersion</link>
+<link id="TryStrToVersionQuad">TryStrToVersionQuad</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TryStrToProgramVersion.Result">
+<short>Returns <var>True</var> if the string was successfully parsed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TryStrToProgramVersion.S">
+<short>String to parse as program version</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TryStrToProgramVersion.Version">
+<short>Variable to receive the parsed program version</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="StrToVersionQuad">
+<short>Converts a string to a version quad</short>
+<descr>
+<p>
+<var>StrToVersionQuad</var> parses a version string and converts it to a <link id="TVersionQuad">TVersionQuad</link>.
+Raises an exception if the string cannot be parsed.
+</p>
+</descr>
+<errors>
+<p>
+Raises EConvertError if the string is not a valid version quad format.
+</p>
+</errors>
+<seealso>
+<link id="TVersionQuad">TVersionQuad</link>
+<link id="TryStrToVersionQuad">TryStrToVersionQuad</link>
+<link id="StrToProgramVersion">StrToProgramVersion</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="StrToVersionQuad.Result">
+<short>Parsed version quad</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="StrToVersionQuad.S">
+<short>String to parse as version quad</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="StrToProgramVersion">
+<short>Converts a string to a program version record</short>
+<descr>
+<p>
+<var>StrToProgramVersion</var> parses a version string and converts it to a <link id="TProgramVersion">TProgramVersion</link>.
+Raises an exception if the string cannot be parsed.
+</p>
+</descr>
+<errors>
+<p>
+Raises <var>EConvertError</var> if the string is not a valid version format.
+</p>
+</errors>
+<seealso>
+<link id="TProgramVersion">TProgramVersion</link>
+<link id="TryStrToProgramVersion">TryStrToProgramVersion</link>
+<link id="StrToVersionQuad">StrToVersionQuad</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="StrToProgramVersion.Result">
+<short>Parsed program version</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="StrToProgramVersion.S">
+<short>String to parse as program version</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="NewerVersion">
+<short>Determines if one version is newer than another</short>
+<descr>
+<p>
+<var>NewerVersion</var> compares two version values and returns <var>True</var> if the first version is newer than the second.
+Supports <link id="TVersionQuad">TVersionQuad</link>, <link id="TProgramVersion">TProgramVersion</link>, and string parameters.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="CompareVersionQuads">CompareVersionQuads</link>
+<link id="CompareProgramVersion">CompareProgramVersion</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="NewerVersion.Result">
+<short>Returns <var>True</var> if the first version is newer</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="NewerVersion.Q1">
+<short>First version quad to compare</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="NewerVersion.Q2">
+<short>Second version quad to compare</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="NewerVersion.V1">
+<short>First version to compare</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="NewerVersion.V2">
+<short>Second version to compare</short>
+</element>
+
+<!-- operator Visibility: default -->
+<element name="assign(TVersionQuad):TProgramVersion">
+<short>Assignment operator from version quad to program version</short>
+<descr>
+<p>
+This operator allows assigning a <link id="TVersionQuad">TVersionQuad</link> to a <link id="TProgramVersion">TProgramVersion</link> variable.
+</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TVersionQuad">TVersionQuad</link>
+<link id="TProgramVersion">TProgramVersion</link>
+<link id="assign(TProgramVersion):TVersionQuad">assign(TProgramVersion):TVersionQuad</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="assign(TVersionQuad):TProgramVersion.Result">
+<short>Resulting program version</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="assign(TVersionQuad):TProgramVersion.q">
+<short>Version quad to convert</short>
+</element>
+
+<!-- operator Visibility: default -->
+<element name="assign(TProgramVersion):TVersionQuad">
+<short>Assignment operator from program version to version quad</short>
+<descr>
+<p>
+This operator allows assigning a <link id="TProgramVersion">TProgramVersion</link> to a <link id="TVersionQuad">TVersionQuad</link> variable.
+</p>
+</descr>
+<seealso>
+<link id="TProgramVersion">TProgramVersion</link>
+<link id="TVersionQuad">TVersionQuad</link>
+<link id="assign(TVersionQuad):TProgramVersion">assign(TVersionQuad):TProgramVersion</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="assign(TProgramVersion):TVersionQuad.Result">
+<short>Resulting version quad</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="assign(TProgramVersion):TVersionQuad.V">
+<short>Program version to convert</short>
+</element>
+
+</module> <!-- FileInfo -->
+
+</package>
+</fpdoc-descriptions>
