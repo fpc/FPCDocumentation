@@ -1,0 +1,938 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+====================================================================
+fpTemplate
+====================================================================
+-->
+
+<module name="fpTemplate">
+<short>Simple template parsing mechanism.</short>
+<descr>
+<p>
+<file>fpTemplate</file> implements a class <link id="TTemplateParser"/> which can replace variables in a template text. 
+The template variables are enclosed in delimiters. When a variable is encountered, it can be replaced by a string value. 
+An event is called to get the value for a template variable. It does not contain loops or conditionals, but parametrized 
+templates are possible.
+</p>
+<p>
+The unit also contains <link id="TFPCustomTemplate"/> and its descendant <link id="TFPTemplate"/>.
+Which is a basic implementation that uses the template parser to substitute variables in a text.
+</p>
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>Contains system utilities.</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Contains base classes.</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="DefaultParseDepth">
+<short>Default maximum recursion depth for parsing.</short>
+<descr>
+<var>DefaultParseDepth</var> is the default value for the maximum recursion depth when parsing templates.
+</descr>
+<seealso>
+<link id="MaxParseDepth"/>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="MaxDelimLength">
+<short>Maximum length for a delimiter string.</short>
+<descr>
+<var>MaxDelimLength</var> is the maximum length (in characters) for a delimiter string.
+</descr>
+<seealso>
+<link id="TParseDelimiter"/>
+</seealso>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="TParseDelimiter">
+<short>Type for a delimiter string.</short>
+<descr>
+<var>TParseDelimiter</var> is the type used for the delimiter strings. 
+Its maximum length is <link id="MaxDelimLength"/>.
+</descr>
+<seealso>
+<link id="MaxDelimLength"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultStartDelimiter">
+<short>Default start delimiter for a template variable.</short>
+<descr>
+<var>DefaultStartDelimiter</var> is the default character which indicates the start of a template variable. 
+By default this is the <var>{</var> character.
+</descr>
+<seealso>
+<link id="TTemplateParser.StartDelimiter"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultEndDelimiter">
+<short>Default end delimiter for a template variable.</short>
+<descr>
+<var>DefaultEndDelimiter</var> is the default character which indicates the end of a template variable. 
+By default this is the <var>}</var> character.
+</descr>
+<seealso>
+<link id="TTemplateParser.EndDelimiter"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultParamStartDelimiter">
+<short>Default start delimiter for a template variable parameter.</short>
+<descr>
+<var>DefaultParamStartDelimiter</var> is the default string which indicates the start of a template variable's parameter. 
+By default this is the <var>[-</var> string.
+</descr>
+<seealso>
+<link id="TTemplateParser.ParamStartDelimiter"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultParamEndDelimiter">
+<short>Default end delimiter for a template variable parameter.</short>
+<descr>
+<var>DefaultParamEndDelimiter</var> is the default string which indicates the end of a template variable's parameter. 
+By default this is the <var>-]</var> string.
+</descr>
+<seealso>
+<link id="TTemplateParser.ParamEndDelimiter"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="DefaultParamValueSeparator">
+<short>Default separator for a template variable parameter and its value.</short>
+<descr>
+<var>DefaultParamValueSeparator</var> is the default character which separates a template variable's parameter and its value. 
+By default this is the <var>=</var> character.
+</descr>
+<seealso>
+<link id="TTemplateParser.ParamValueSeparator"/>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TGetParamEvent">
+<short>Event to get a value for a template variable.</short>
+<descr>
+<var>TGetParamEvent</var> is the type of the event that is called when the template parser needs the value for a certain template variable.
+</descr>
+<seealso>
+<link id="TTemplateParser.OnGetParam"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGetParamEvent.Sender">
+<short>Object that triggered the event.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGetParamEvent.ParamName">
+<short>Name of the parameter to get a value for.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGetParamEvent.AValue">
+<short>Value for the parameter.</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TReplaceTagEvent">
+<short>Event to replace a tag.</short>
+<descr>
+<var>TReplaceTagEvent</var> is the type of the event that is called when the template parser needs to replace a tag.
+</descr>
+<seealso>
+<link id="TTemplateParser.OnReplaceTag"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TReplaceTagEvent.Sender">
+<short>Object that triggered the event.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TReplaceTagEvent.TagString">
+<short>Tag to be replaced.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TReplaceTagEvent.TagParams">
+<short>Parameters for the tag.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TReplaceTagEvent.ReplaceText">
+<short>The replacement text.</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TTemplateParser">
+<short>A class to parse templates.</short>
+<descr>
+<p>
+<var>TTemplateParser</var> is a class that can parse a text and substitute template variables with their values.
+</p>
+<p>
+The template variables are enclosed in delimiters, by default <var>{</var> and <var>}</var>. 
+Whenever a variable is found, its value is looked up in the <link id="Values"/> property. 
+If it is not found there, the <link id="OnGetParam"/> event is called to obtain a value for the variable.
+</p>
+<p>
+The delimiters can be set using the various delimiter properties.
+</p>
+</descr>
+<errors>
+<p>
+If the text is deeply nested, an <link id="ETemplateParser"/> exception may be raised.
+</p>
+</errors>
+<seealso>
+<link id="TFPCustomTemplate"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TTemplateParser.Create">
+<short>Create a new instance of the template parser.</short>
+<descr>
+<var>Create</var> instantiates a new <var>TTemplateParser</var> object. 
+It initializes the delimiters to their default values and sets the maximum parse depth.
+</descr>
+<seealso>
+<link id="Destroy"/>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TTemplateParser.Destroy">
+<short>Frees the template parser instance.</short>
+<descr>
+<var>Destroy</var> cleans up the <var>TTemplateParser</var> instance and frees any memory allocated by it. 
+In particular, it will free the list of values.
+</descr>
+<seealso>
+<link id="Create"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTemplateParser.Clear">
+<short>Clear the list of values.</short>
+<descr>
+<var>Clear</var> removes all values from the list of values.
+</descr>
+<seealso>
+<link id="Values"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TTemplateParser.ReplaceTag">
+<short>Replace a tag with a value.</short>
+<descr>
+<p>
+<var>ReplaceTag</var> will replace the tag with name <var>Key</var> and parameters <var>TagParams</var> with the value in <var>ReplaceWith</var>.
+</p>
+<p>
+The function returns <var>True</var> if the tag was replaced, <var>False</var> otherwise. 
+A replacement will happen if the <link id="OnReplaceTag"/> event is assigned.
+</p>
+</descr>
+<seealso>
+<link id="OnReplaceTag"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TTemplateParser.ReplaceTag.Result">
+<short><var>True</var> if the tag was replaced.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.ReplaceTag.Key">
+<short>Name of the tag to replace.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.ReplaceTag.TagParams">
+<short>Parameters for the tag.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.ReplaceTag.ReplaceWith">
+<short>The replacement value for the tag.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TTemplateParser.GetParam">
+<short>Get a value for a parameter.</short>
+<descr>
+<p>
+<var>GetParam</var> will get the value for the parameter with name <var>Key</var> and return it in <var>AValue</var>.
+</p>
+<p>
+First, the <link id="Values"/> list is consulted. If the parameter is not found there, the <link id="OnGetParam"/> event is called. 
+If the parameter is found, the function returns <var>True</var>, otherwise it returns <var>False</var>.
+</p>
+</descr>
+<seealso>
+<link id="Values"/>, <link id="OnGetParam"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TTemplateParser.GetParam.Result">
+<short><var>True</var> if a value was found for the parameter.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.GetParam.Key">
+<short>Name of the parameter to get a value for.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.GetParam.AValue">
+<short>The value for the parameter.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTemplateParser.GetTagParams">
+<short>Extract tag parameters from a tag name.</short>
+<descr>
+<var>GetTagParams</var> will extract any tag parameters from the tag name <var>TagName</var> and 
+return them in the <var>TagParams</var> stringlist. The tag name itself is also adapted.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.GetTagParams.TagName">
+<short>The name of the tag.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.GetTagParams.TagParams">
+<short>The list of tag parameters.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TTemplateParser.ParseString">
+<short>Parse a string and substitute variables.</short>
+<descr>
+<var>ParseString</var> will parse the string <var>Src</var> and substitute all template variables with their values. 
+The resulting string is returned.
+</descr>
+<seealso>
+<link id="ParseStream"/>, <link id="ParseStrings"/>, <link id="ParseFiles"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TTemplateParser.ParseString.Result">
+<short>The parsed string.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.ParseString.Src">
+<short>The string to parse.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TTemplateParser.ParseStream">
+<short>Parse a stream and substitute variables.</short>
+<descr>
+<var>ParseStream</var> will read the content of stream <var>Src</var>, 
+substitute all template variables with their values and write the result to stream <var>Dest</var>. 
+The function returns the number of bytes written to the destination stream.
+</descr>
+<seealso>
+<link id="ParseString"/>, <link id="ParseStrings"/>, <link id="ParseFiles"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TTemplateParser.ParseStream.Result">
+<short>Number of bytes written to the destination stream.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.ParseStream.Src">
+<short>The stream to parse.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.ParseStream.Dest">
+<short>The stream to write the parsed content to.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTemplateParser.ParseStrings">
+<short>Parse a stringlist and substitute variables.</short>
+<descr>
+<var>ParseStrings</var> will read the strings from the stringlist <var>Src</var>, 
+substitute all template variables with their values and add the resulting strings to the stringlist <var>Dest</var>.
+</descr>
+<seealso>
+<link id="ParseString"/>, <link id="ParseStream"/>, <link id="ParseFiles"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.ParseStrings.Src">
+<short>The stringlist to parse.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.ParseStrings.Dest">
+<short>The stringlist to add the parsed strings to.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTemplateParser.ParseFiles">
+<short>Parse a file and substitute variables.</short>
+<descr>
+<var>ParseFiles</var> will read the content of file <var>Src</var>, 
+substitute all template variables with their values and write the result to file <var>Dest</var>.
+</descr>
+<seealso>
+<link id="ParseString"/>, <link id="ParseStream"/>, <link id="ParseStrings"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.ParseFiles.Src">
+<short>The file to parse.</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateParser.ParseFiles.Dest">
+<short>The file to write the parsed content to.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateParser.OnGetParam">
+<short>Event to get a value for a template variable.</short>
+<descr>
+<var>OnGetParam</var> is the event that is called when the template parser needs the value for a certain template variable. 
+This event is only used when simple template tags are allowed.
+</descr>
+<seealso>
+<link id="TGetParamEvent"/>, <link id="AllowTagParams"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateParser.OnReplaceTag">
+<short>Event to replace a tag.</short>
+<descr>
+<var>OnReplaceTag</var> is the event that is called when the template parser needs to replace a tag. 
+This event is used when template tags with parameters are allowed.
+</descr>
+<seealso>
+<link id="TReplaceTagEvent"/>, <link id="AllowTagParams"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateParser.StartDelimiter">
+<short>Start delimiter for a template variable.</short>
+<descr>
+<var>StartDelimiter</var> is the character which indicates the start of a template variable. 
+By default this is the <var>{</var> character.
+</descr>
+<seealso>
+<link id="DefaultStartDelimiter"/>, <link id="EndDelimiter"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateParser.EndDelimiter">
+<short>End delimiter for a template variable.</short>
+<descr>
+<var>EndDelimiter</var> is the character which indicates the end of a template variable. 
+By default this is the <var>}</var> character.
+</descr>
+<seealso>
+<link id="DefaultEndDelimiter"/>, <link id="StartDelimiter"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateParser.ParamStartDelimiter">
+<short>Start delimiter for a template variable parameter.</short>
+<descr>
+<var>ParamStartDelimiter</var> is the string which indicates the start of a template variable's parameter. 
+By default this is the <var>[-</var> string.
+</descr>
+<seealso>
+<link id="DefaultParamStartDelimiter"/>, <link id="ParamEndDelimiter"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateParser.ParamEndDelimiter">
+<short>End delimiter for a template variable parameter.</short>
+<descr>
+<var>ParamEndDelimiter</var> is the string which indicates the end of a template variable's parameter. 
+By default this is the <var>-]</var> string.
+</descr>
+<seealso>
+<link id="DefaultParamEndDelimiter"/>, <link id="ParamStartDelimiter"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateParser.ParamValueSeparator">
+<short>Separator for a template variable parameter and its value.</short>
+<descr>
+<var>ParamValueSeparator</var> is the character which separates a template variable's parameter and its value. 
+By default this is the <var>=</var> character.
+</descr>
+<seealso>
+<link id="DefaultParamValueSeparator"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateParser.Values">
+<short>List of values for template variables.</short>
+<descr>
+<var>Values</var> is a stringlist that contains key-value pairs. 
+The key is the name of the template variable, and the value is the string to replace the variable with. 
+This property is only used when simple template tags are allowed.
+</descr>
+<seealso>
+<link id="OnGetParam"/>, <link id="AllowTagParams"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TTemplateParser.Values.Key">
+<short>Name of the template variable.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateParser.ValuesByIndex">
+<short>Access to values by index.</short>
+<descr>
+<var>ValuesByIndex</var> provides access to the values in the <link id="Values"/> list by index. 
+This property is only used when simple template tags are allowed.
+</descr>
+<seealso>
+<link id="Values"/>, <link id="AllowTagParams"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TTemplateParser.ValuesByIndex.index">
+<short>Index of the value to retrieve.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateParser.NamesByIndex">
+<short>Access to variable names by index.</short>
+<descr>
+<var>NamesByIndex</var> provides access to the names of the variables in the <link id="Values"/> list by index. 
+This property is only used when simple template tags are allowed.
+</descr>
+<seealso>
+<link id="Values"/>, <link id="AllowTagParams"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TTemplateParser.NamesByIndex.index">
+<short>Index of the name to retrieve.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateParser.ValueCount">
+<short>Number of values in the list.</short>
+<descr>
+<var>ValueCount</var> is the number of values in the <link id="Values"/> list. 
+This property is only used when simple template tags are allowed.
+</descr>
+<seealso>
+<link id="Values"/>, <link id="AllowTagParams"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateParser.Recursive">
+<short>Enable recursive parsing.</short>
+<descr>
+If <var>Recursive</var> is set to <var>True</var>, then the substituted values are parsed again for template variables. 
+This property is only used when simple template tags are allowed.
+</descr>
+<seealso>
+<link id="AllowTagParams"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateParser.AllowTagParams">
+<short>Allow tags with parameters.</short>
+<descr>
+If <var>AllowTagParams</var> is set to <var>True</var>, then tags with parameters are allowed. 
+If <var>False</var>, then only simple tags are allowed.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TFPCustomTemplate">
+<short>Base class for templates.</short>
+<descr>
+<p>
+<var>TFPCustomTemplate</var> is a base class for template processing. 
+It can load a template from a file or from a string and then uses 
+a <link id="TTemplateParser"/> instance to parse the template.
+</p>
+<p>
+Do not use this class directly, use <link id="TFPTemplate"/> instead.
+</p>
+</descr>
+<seealso>
+<link id="TFPTemplate"/>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPCustomTemplate.HasContent">
+<short>Check if the template has content.</short>
+<descr>
+<var>HasContent</var> returns <var>True</var> if the template has content, 
+i.e. either the <link id="FileName"/> or the <link id="Template"/> property is set.
+</descr>
+<seealso>
+<link id="FileName"/>, <link id="Template"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomTemplate.HasContent.Result">
+<short><var>True</var> if the template has content.</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPCustomTemplate.GetContent">
+<short>Get the parsed template content.</short>
+<descr>
+<var>GetContent</var> will parse the template and return the result. 
+If the <link id="FileName"/> property is set, the content of the file is parsed. 
+Otherwise the <link id="Template"/> property is parsed.
+</descr>
+<seealso>
+<link id="FileName"/>, <link id="Template"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomTemplate.GetContent.Result">
+<short>The parsed template content.</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomTemplate.Assign">
+<short>Assign one template to another.</short>
+<descr>
+<var>Assign</var> will copy the properties of the <var>Source</var> template to the current one.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomTemplate.Assign.Source">
+<short>The source template.</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPCustomTemplate.StartDelimiter">
+<short>Start delimiter for a template variable.</short>
+<descr>
+<var>StartDelimiter</var> is the character which indicates the start of a template variable. 
+By default this is the <var>{</var> character.
+</descr>
+<seealso>
+<link id="DefaultStartDelimiter"/>, <link id="EndDelimiter"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPCustomTemplate.EndDelimiter">
+<short>End delimiter for a template variable.</short>
+<descr>
+<var>EndDelimiter</var> is the character which indicates the end of a template variable. 
+By default this is the <var>}</var> character.
+</descr>
+<seealso>
+<link id="DefaultEndDelimiter"/>, <link id="StartDelimiter"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPCustomTemplate.ParamStartDelimiter">
+<short>Start delimiter for a template variable parameter.</short>
+<descr>
+<var>ParamStartDelimiter</var> is the string which indicates the start of a template variable's parameter. 
+By default this is the <var>[-</var> string.
+</descr>
+<seealso>
+<link id="DefaultParamStartDelimiter"/>, <link id="ParamEndDelimiter"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPCustomTemplate.ParamEndDelimiter">
+<short>End delimiter for a template variable parameter.</short>
+<descr>
+<var>ParamEndDelimiter</var> is the string which indicates the end of a template variable's parameter. 
+By default this is the <var>-]</var> string.
+</descr>
+<seealso>
+<link id="DefaultParamEndDelimiter"/>, <link id="ParamStartDelimiter"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPCustomTemplate.ParamValueSeparator">
+<short>Separator for a template variable parameter and its value.</short>
+<descr>
+<var>ParamValueSeparator</var> is the character which separates a template variable's parameter and its value. 
+By default this is the <var>=</var> character.
+</descr>
+<seealso>
+<link id="DefaultParamValueSeparator"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPCustomTemplate.FileName">
+<short>Name of the file with the template.</short>
+<descr>
+<var>FileName</var> is the name of the file that contains the template text.
+</descr>
+<seealso>
+<link id="Template"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPCustomTemplate.Template">
+<short>The template text.</short>
+<descr>
+<var>Template</var> contains the template text.
+</descr>
+<seealso>
+<link id="FileName"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPCustomTemplate.OnGetParam">
+<short>Event to get a value for a template variable.</short>
+<descr>
+<var>OnGetParam</var> is the event that is called when the template parser needs the value for a certain template variable. 
+This event is only used when simple template tags are allowed.
+</descr>
+<seealso>
+<link id="TGetParamEvent"/>, <link id="AllowTagParams"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPCustomTemplate.OnReplaceTag">
+<short>Event to replace a tag.</short>
+<descr>
+<var>OnReplaceTag</var> is the event that is called when the template parser needs to replace a tag. 
+This event is used when template tags with parameters are allowed.
+</descr>
+<seealso>
+<link id="TReplaceTagEvent"/>, <link id="AllowTagParams"/>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPCustomTemplate.AllowTagParams">
+<short>Allow tags with parameters.</short>
+<descr>
+If <var>AllowTagParams</var> is set to <var>True</var>, then tags with parameters are allowed. 
+If <var>False</var>, then only simple tags are allowed.
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TFPTemplate">
+<short>Template component.</short>
+<descr>
+<p>
+<var>TFPTemplate</var> is a component that can be used to parse templates. 
+It is a descendant of <link id="TFPCustomTemplate"/> and publishes the properties of its ancestor.
+</p>
+<p>
+It can be dropped on a form and its properties can be set in the object inspector.
+</p>
+</descr>
+<seealso>
+<link id="TFPCustomTemplate"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPTemplate.FileName" link="TFPCustomTemplate.FileName">
+<short>Name of the file with the template.</short>
+<descr>
+See <link id="TFPCustomTemplate.FileName"/>.
+</descr>
+<seealso>
+<link id="TFPCustomTemplate.FileName"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPTemplate.Template" link="TFPCustomTemplate.Template">
+<short>The template text.</short>
+<descr>
+See <link id="TFPCustomTemplate.Template"/>.
+</descr>
+<seealso>
+<link id="TFPCustomTemplate.Template"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPTemplate.AllowTagParams" link="TFPCustomTemplate.AllowTagParams">
+<short>Allow tags with parameters.</short>
+<descr>
+See <link id="TFPCustomTemplate.AllowTagParams"/>.
+</descr>
+<seealso>
+<link id="TFPCustomTemplate.AllowTagParams"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPTemplate.OnReplaceTag" link="TFPCustomTemplate.OnReplaceTag">
+<short>Event to replace a tag.</short>
+<descr>
+See <link id="TFPCustomTemplate.OnReplaceTag"/>.
+</descr>
+<seealso>
+<link id="TFPCustomTemplate.OnReplaceTag"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPTemplate.StartDelimiter" link="TFPCustomTemplate.StartDelimiter">
+<short>Start delimiter for a template variable.</short>
+<descr>
+See <link id="TFPCustomTemplate.StartDelimiter"/>.
+</descr>
+<seealso>
+<link id="TFPCustomTemplate.StartDelimiter"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPTemplate.EndDelimiter" link="TFPCustomTemplate.EndDelimiter">
+<short>End delimiter for a template variable.</short>
+<descr>
+See <link id="TFPCustomTemplate.EndDelimiter"/>.
+</descr>
+<seealso>
+<link id="TFPCustomTemplate.EndDelimiter"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPTemplate.ParamStartDelimiter" link="TFPCustomTemplate.ParamStartDelimiter">
+<short>Start delimiter for a template variable parameter.</short>
+<descr>
+See <link id="TFPCustomTemplate.ParamStartDelimiter"/>.
+</descr>
+<seealso>
+<link id="TFPCustomTemplate.ParamStartDelimiter"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPTemplate.ParamEndDelimiter" link="TFPCustomTemplate.ParamEndDelimiter">
+<short>End delimiter for a template variable parameter.</short>
+<descr>
+See <link id="TFPCustomTemplate.ParamEndDelimiter"/>.
+</descr>
+<seealso>
+<link id="TFPCustomTemplate.ParamEndDelimiter"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPTemplate.ParamValueSeparator" link="TFPCustomTemplate.ParamValueSeparator">
+<short>Separator for a template variable parameter and its value.</short>
+<descr>
+See <link id="TFPCustomTemplate.ParamValueSeparator"/>.
+</descr>
+<seealso>
+<link id="TFPCustomTemplate.ParamValueSeparator"/>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPTemplate.OnGetParam" link="TFPCustomTemplate.OnGetParam">
+<short>Event to get a value for a template variable.</short>
+<descr>
+See <link id="TFPCustomTemplate.OnGetParam"/>.
+</descr>
+<seealso>
+<link id="TFPCustomTemplate.OnGetParam"/>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="ETemplateParser">
+<short>Exception for template parser errors.</short>
+<descr>
+<var>ETemplateParser</var> is the exception class for errors that occur during template parsing.
+</descr>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="MaxParseDepth">
+<short>Maximum recursion depth for parsing.</short>
+<descr>
+<var>MaxParseDepth</var> is the maximum recursion depth when parsing templates. 
+If this depth is exceeded, an <link id="ETemplateParser"/> exception is raised.
+</descr>
+<seealso>
+<link id="DefaultParseDepth"/>
+</seealso>
+</element>
+
+</module> <!-- fpTemplate -->
+
+</package>
+</fpdoc-descriptions>
