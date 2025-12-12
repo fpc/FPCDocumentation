@@ -108,7 +108,7 @@ begin
     begin
     lInfo:=TLineInfo(aList.Objects[i]);
     if not assigned(lInfo) then
-      Write(aFileName,': ')
+      Write(aFileName,':')
     else
       With lInfo do
         Write(Format('%s:(%d - %d) ',[FileName,Open,Close]));
@@ -156,8 +156,8 @@ begin
       begin
       if Elements[i].NodeType <> ELEMENT_NODE then
         Continue;
-      ElementName := (Elements[i] as TDOMElement).GetAttribute('name');
-      Tags := (Elements[i] as TDOMElement).GetElementsByTagName(TagName);
+      ElementName := UTF8Encode((Elements[i] as TDOMElement).GetAttribute('name'));
+      Tags := (Elements[i] as TDOMElement).GetElementsByTagName(UTF8Decode(TagName));
       if Tags.Count > 0 then
         begin
         CheckNode := Tags[0];
