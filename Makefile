@@ -2186,9 +2186,14 @@ ifdef INSTALL_CREATEPACKAGEFPC
 ifdef FPCMAKE
 ifdef PACKAGE_VERSION
 ifneq ($(wildcard Makefile.fpc),)
+ifdef FPCMAKENEW
+	$(MKDIR) $(INSTALL_UNITDIR)
+	$(FPCMAKENEW) -o $(INSTALL_UNITDIR)/Package.fpc -p -T$(CPU_TARGET)-$(OS_TARGET) Makefile.fpc
+else
 	$(FPCMAKE) -p -T$(CPU_TARGET)-$(OS_TARGET) Makefile.fpc
 	$(MKDIR) $(INSTALL_UNITDIR)
 	$(INSTALL) Package.fpc $(INSTALL_UNITDIR)
+endif
 endif
 endif
 endif
@@ -2386,7 +2391,7 @@ ifneq ($(PPUEXT),.ppu)
 	-$(DEL) *.o *.ppu *.a
 endif
 	-$(DELTREE) *$(SMARTEXT)
-	-$(DEL) fpcmade.* Package.fpc *.fpm
+	-$(DEL) fpcmade.* Package*.fpc *.fpm
 	-$(DEL) $(FPCEXTFILE) $(REDIRFILE) script*.res link*.res *_script.res *_link.res symbol_order*.fpc
 	-$(DEL) $(PPAS) *_ppas$(BATCHEXT) ppas$(BATCHEXT) ppaslink$(BATCHEXT)
 ifdef AOUTEXT
@@ -3221,21 +3226,21 @@ include tex/Makefile.4ht
 endif  # USEL2H
 endif  # USEPLASTEX
 endif  # USEHEVEA
-$(HTMLDIR)/fcl.chk: $(FCLXML) xml/fcl-project.xml $(HTMLDIR)/rtl.chk | $(HTMLDIR)/
+$(HTMLDIR)/fcl.chk: $(FCLXML) xml/fcl-project.xml $(HTMLDIR)/rtl.chk postproc$(EXEXT) | $(HTMLDIR)/
 	$(FPDOC) $(FPDOCOPTS) --project=xml/fcl-project.xml --format=$(HTMLFMT) --output=$(HTMLDIR)/fcl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst $(HTMLDIR)/fcl/fpdoc.css
 endif
 	./postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/fcl 
 	@$(ECHO) '' > $(HTMLDIR)/fcl.chk
-$(HTMLDIR)/fclres.chk: $(FCLRESXML) | $(HTMLDIR)/
+$(HTMLDIR)/fclres.chk: $(FCLRESXML) postproc$(EXEXT)| $(HTMLDIR)/
 	$(FPDOC) $(FPDOCOPTS) $(FCLRESOPTS)  --format=$(HTMLFMT) --output=$(HTMLDIR)/fclres$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(FCLRESCHMOPTS) 
 ifndef CSSFILE
 	cp fpdoc.cst $(HTMLDIR)/fclres/fpdoc.css
 endif
 	./postproc$(EXEEXT) -r -v -b $(HTMLDIR)/ -d $(HTMLDIR)/fclres
 	@$(ECHO) '' > $(HTMLDIR)/fclres.chk
-$(HTMLDIR)/rtl.chk: $(RTLXML) xml/rtl-project.xml | $(HTMLDIR)/
+$(HTMLDIR)/rtl.chk: $(RTLXML) xml/rtl-project.xml postproc$(EXEXT) | $(HTMLDIR)/
 	$(FPDOC) $(FPDOCOPTS) --project=xml/rtl-project.xml --format=$(HTMLFMT) --output=$(HTMLDIR)/rtl$(HTMLSUFFIX) $(FPDOCHTMLOPTS) $(RTLCHMOPTS)
 ifndef CSSFILE
 	cp fpdoc.cst $(HTMLDIR)/rtl/fpdoc.css
@@ -3246,7 +3251,7 @@ $(HTMLDIR)/user.chk: $(INCLUDES) user.tex messages.inc postproc$(EXEEXT)
 $(HTMLDIR)/prog.chk: $(INCLUDES) prog.tex postproc$(EXEEXT)
 $(HTMLDIR)/onechap.chk: $(INCLUDES) onechap.tex postproc$(EXEEXT)
 $(HTMLDIR)/ref.chk: $(INCLUDES) tex/grammar.ebnf ref.tex postproc$(EXEEXT) 
-$(HTMLDIR)/fpdoc.chk: $(INCLUDES) fpdoc.tex postproc$(EXEEXT)
+$(HTMLDIR)/fpdoc.chk: $(INCLUDES) fpdoc.tex postproc$(EXEEXT) 
 $(HTMLDIR)/chart.chk: $(INCLUDES) chart.tex 
 html: fpc_all comphelp.inc $(INCLUDES) $(CHK) | $(HTMLDIR)/
 chm: 
