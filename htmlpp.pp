@@ -103,7 +103,8 @@ var
   end;
 
 var
-  lLink,lReportFile : String;
+  lLink,lReportFile,lFooterLine : String;
+  lFooter,lFooterPos : Integer;
 
 begin
   lFile:=TStringList.Create;
@@ -116,17 +117,38 @@ begin
       Dec(lLast);
     While (lLast>=0) and (Pos('</body>',lFile[lLast])=0) do
       Dec(lLast);
+    lFooter:=lLast;
+    While (lFooter>=0) and (Pos('</footer>',lFile[lFooter])=0) do
+      Dec(lFooter);
+    if lFooter<>0 then
+      begin
+      // Make sure the closing tag is on a line by it's own, so we can insert correctly.
+      lFooterLine:=lFile[lFooter];
+      lFooterPos:=Pos('</footer>',lFooterLine);
+      if lFooterPos>1 then
+        begin
+        lFile[lFooter]:=Copy(lFooterLine,1,lFooterPos-1);
+        Delete(lFooterLine,1,lFooterPos-1);
+        inc(lFooter);
+        lFile.Insert(lFooter,lFooterLine);
+        end;
+      lLast:=lFooter;
+      end;
     if lLast<0 then
       Raise Exception.Create('End of html not found while treating '+aFileName);
-    AddLine('<footer>');
-    AddLine('<hr>');
+    if lFooter=0 then
+      begin
+      AddLine('<footer>');
+      AddLine('<hr>');
+      end;
     if FTimeStamp then
-      AddLine('<span>Page generated on '+FormatDateTime('yyyy-mm-dd',Date)+'.</span>&nbsp;');
+      AddLine('<span class="timestamp">Page generated on '+FormatDateTime('yyyy-mm-dd',Date)+'.</span>&nbsp;');
     lReportFile:=ExtractRelativePath(aBaseDir,aFileName);
     lLink:=NewIssueURL+'?issue%5Btitle%5D=issue%20in%20page%20'+lReportFile;
-    lLink:=Format('<a href="%s">Report a problem on this page</a>',[lLink]);
+    lLink:=Format('<a class="reportissue-link" href="%s">Report a problem on this page</a>',[lLink]);
     AddLine(lLink);
-    AddLine('</footer>');
+    if lFooter=0 then
+      AddLine('</footer>');
     lFile.SaveToFile(aFileName);
   finally
     lFile.Free;
