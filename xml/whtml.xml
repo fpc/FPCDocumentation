@@ -1,0 +1,833 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    whtml
+  ====================================================================
+-->
+
+<module name="whtml">
+<short>HTML formatting writer implementation</short>
+<descr>
+<p>The <var>whtml</var> unit provides <link id="THTMLWriter">THTMLWriter</link>, 
+a concrete implementation of <link id="TFormattingWriter">TFormattingWriter</link> that generates HTML output.
+This class implements all the abstract formatting methods to produce valid HTML markup for documents, forms, tables, and lists.</p>
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="wformat">
+<short>Base class</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>TStream</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>Formatting</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="THTMLWriter">
+<short>HTML implementation of formatting writer</short>
+<descr>
+<p><var>THTMLWriter</var> is a concrete implementation of <link id="TFormattingWriter">TFormattingWriter</link> that generates HTML output.
+It implements all formatting methods to produce valid HTML markup including document structure, text formatting, tables, lists, and HTML forms.
+The class properly escapes HTML special characters and generates standard HTML tags.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter"/>
+<link id="ListTags"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="THTMLWriter.Create">
+<short>Creates a new HTML writer instance</short>
+<descr>
+<p>Creates a new <var>THTMLWriter</var> instance that will write HTML output to the specified stream.
+This constructor calls the inherited constructor to initialize the base formatting writer.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.Create"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.Create.AStream">
+<short>Output stream for HTML content</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.TagStart">
+<short>Writes an opening HTML tag with optional attributes</short>
+<descr>
+<p>Writes an opening HTML tag to the output stream.
+If attributes are provided, they are included in the tag.
+This is a utility method used by other formatting methods to generate HTML markup.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.TagEnd"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.TagStart.Name">
+<short>HTML tag name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.TagStart.Attrs">
+<short>HTML tag attributes string</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.TagEnd">
+<short>Writes a closing HTML tag</short>
+<descr>
+<p>Writes a closing HTML tag to the output stream.
+This is a utility method used by other formatting methods to generate HTML markup.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.TagStart"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.TagEnd.Name">
+<short>HTML tag name</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTMLWriter.EscapeText">
+<short>Escapes HTML special characters</short>
+<descr>
+<p>Escapes HTML special characters in text to prevent them from being interpreted as markup.
+Replaces ampersand (&amp;), less-than (&lt;), greater-than (&gt;) characters with their HTML entities, and converts line feeds to HTML line breaks (&lt;BR&gt;).</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.EscapeText"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTMLWriter.EscapeText.Result">
+<short>Text with HTML characters escaped</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EscapeText.AText">
+<short>Input text to be escaped</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.DocumentStart">
+<short>Begins an HTML document</short>
+<descr>
+<p>Begins an HTML document by writing the HTML, TITLE, and BODY opening tags.
+The title is written into the HTML TITLE element.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.DocumentEnd"/>
+<link id="TFormattingWriter.DocumentStart"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.DocumentStart.Title">
+<short>HTML document title</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.DocumentEnd">
+<short>Ends the HTML document</short>
+<descr>
+<p>Ends the HTML document by writing the BODY and HTML closing tags.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.DocumentStart"/>
+<link id="TFormattingWriter.DocumentEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.HeaderStart">
+<short>Begins HTML header tag at specified level</short>
+<descr>
+<p>Begins an HTML header by writing the appropriate H1-H6 tag based on the level.
+Level 1 generates H1, level 2 generates H2, etc.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.HeaderEnd"/>
+<link id="TFormattingWriter.HeaderStart"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.HeaderStart.Alevel">
+<short>Header level (1-6 for H1-H6 tags)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.HeaderEnd">
+<short>Ends HTML header tag at specified level</short>
+<descr>
+<p>Ends an HTML header by writing the appropriate closing H1-H6 tag based on the level.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.HeaderStart"/>
+<link id="TFormattingWriter.HeaderEnd"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.HeaderEnd.Alevel">
+<short>Header level (1-6 for H1-H6 tags)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.ParagraphStart">
+<short>Begins HTML paragraph tag</short>
+<descr>
+<p>Begins an HTML paragraph by writing the P opening tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.ParagraphEnd"/>
+<link id="TFormattingWriter.ParagraphStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.ParagraphEnd">
+<short>Ends HTML paragraph tag</short>
+<descr>
+<p>Ends an HTML paragraph by writing the P closing tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.ParagraphStart"/>
+<link id="TFormattingWriter.ParagraphEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.LineBreak">
+<short>Inserts HTML line break tag</short>
+<descr>
+<p>Inserts an HTML line break by writing the BR tag.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.LineBreak"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.Rule">
+<short>Inserts HTML horizontal rule tag</short>
+<descr>
+<p>Inserts an HTML horizontal rule by writing the HR tag.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.Rule"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.BoldStart">
+<short>Begins HTML bold formatting</short>
+<descr>
+<p>Begins HTML bold text formatting by writing the B opening tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.BoldEnd"/>
+<link id="TFormattingWriter.BoldStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.BoldEnd">
+<short>Ends HTML bold formatting</short>
+<descr>
+<p>Ends HTML bold text formatting by writing the B closing tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.BoldStart"/>
+<link id="TFormattingWriter.BoldEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.ItalicStart">
+<short>Begins HTML italic formatting</short>
+<descr>
+<p>Begins HTML italic text formatting by writing the I opening tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.ItalicEnd"/>
+<link id="TFormattingWriter.ItalicStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.ItalicEnd">
+<short>Ends HTML italic formatting</short>
+<descr>
+<p>Ends HTML italic text formatting by writing the I closing tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.ItalicStart"/>
+<link id="TFormattingWriter.ItalicEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.UnderlineStart">
+<short>Begins HTML underline formatting</short>
+<descr>
+<p>Begins HTML underline text formatting by writing the U opening tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.UnderlineEnd"/>
+<link id="TFormattingWriter.UnderlineStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.UnderlineEnd">
+<short>Ends HTML underline formatting</short>
+<descr>
+<p>Ends HTML underline text formatting by writing the U closing tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.UnderlineStart"/>
+<link id="TFormattingWriter.UnderlineEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.PreformatStart">
+<short>Begins HTML preformatted text block</short>
+<descr>
+<p>Begins an HTML preformatted text block by writing the PRE opening tag.
+Text within this block preserves whitespace and line breaks.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.PreformatEnd"/>
+<link id="TFormattingWriter.PreformatStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.PreformatEnd">
+<short>Ends HTML preformatted text block</short>
+<descr>
+<p>Ends an HTML preformatted text block by writing the PRE closing tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.PreformatStart"/>
+<link id="TFormattingWriter.PreformatEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.TableStart">
+<short>Begins HTML table with optional border</short>
+<descr>
+<p>Begins an HTML table by writing the TABLE opening tag.
+If border is <var>True</var>, includes the BORDER=1 attribute.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.TableEnd"/>
+<link id="TFormattingWriter.TableStart"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.TableStart.NoCols">
+<short>Number of columns (not used in HTML implementation)</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.TableStart.Border">
+<short><var>True</var> to add BORDER=1 attribute to table</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.TableEnd">
+<short>Ends HTML table</short>
+<descr>
+<p>Ends an HTML table by writing the TABLE closing tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.TableStart"/>
+<link id="TFormattingWriter.TableEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.RowStart">
+<short>Begins HTML table row</short>
+<descr>
+<p>Begins an HTML table row by writing the TR opening tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.RowEnd"/>
+<link id="TFormattingWriter.RowStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.RowEnd">
+<short>Ends HTML table row</short>
+<descr>
+<p>Ends an HTML table row by writing the TR closing tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.RowStart"/>
+<link id="TFormattingWriter.RowEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.CellStart">
+<short>Begins HTML table cell</short>
+<descr>
+<p>Begins an HTML table cell by writing the TD opening tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.CellEnd"/>
+<link id="TFormattingWriter.CellStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.CellEnd">
+<short>Ends HTML table cell</short>
+<descr>
+<p>Ends an HTML table cell by writing the TD closing tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.CellStart"/>
+<link id="TFormattingWriter.CellEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.HeaderCellStart">
+<short>Begins HTML table header cell</short>
+<descr>
+<p>Begins an HTML table header cell by writing the TH opening tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.HeaderCellEnd"/>
+<link id="TFormattingWriter.HeaderCellStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.HeaderCellEnd">
+<short>Ends HTML table header cell</short>
+<descr>
+<p>Ends an HTML table header cell by writing the TH closing tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.HeaderCellStart"/>
+<link id="TFormattingWriter.HeaderCellEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.ListStart">
+<short>Begins HTML list of specified type</short>
+<descr>
+<p>Begins an HTML list by writing the appropriate list tag.
+Uses OL for numbered lists, UL for ordered lists, and DL for definition lists based on the <link id="ListTags">ListTags</link> array.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.ListEnd"/>
+<link id="TFormattingWriter.ListStart"/>
+<link id="ListTags"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.ListStart.ListType">
+<short>Type of HTML list to create</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.ListEnd">
+<short>Ends HTML list of specified type</short>
+<descr>
+<p>Ends an HTML list by writing the appropriate closing list tag.
+Uses the <link id="ListTags">ListTags</link> array to determine the correct closing tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.ListStart"/>
+<link id="TFormattingWriter.ListEnd"/>
+<link id="ListTags"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.ListEnd.ListType">
+<short>Type of HTML list being ended</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.ListItemStart">
+<short>Begins HTML list item</short>
+<descr>
+<p>Begins an HTML list item by writing the LI opening tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.ListItemEnd"/>
+<link id="TFormattingWriter.ListItemStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.ListItemEnd">
+<short>Ends HTML list item</short>
+<descr>
+<p>Ends an HTML list item by writing the LI closing tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.ListItemStart"/>
+<link id="TFormattingWriter.ListItemEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.DefinitionItem">
+<short>Creates HTML definition list item</short>
+<descr>
+<p>Creates an HTML definition list item by writing DT tags around the name and DD tags around the description text.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.DefinitionItem"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.DefinitionItem.Aname">
+<short>Term being defined (placed in DT tags)</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.DefinitionItem.AText">
+<short>Definition text (placed in DD tags)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.FormStart">
+<short>Begins HTML form with action and method</short>
+<descr>
+<p>Begins an HTML form by writing the FORM opening tag with ACTION and optional METHOD attributes.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.FormEnd"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.FormStart.Action">
+<short>Form action URL</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.FormStart.Method">
+<short>Form method (GET or POST)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.FormEnd">
+<short>Ends HTML form</short>
+<descr>
+<p>Ends an HTML form by writing the FORM closing tag.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.FormStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.EmitInput">
+<short>Emits HTML input field</short>
+<descr>
+<p>Emits an HTML INPUT tag with NAME and VALUE attributes.
+This is an overloaded method that can include additional attributes.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.EmitPasswordInput"/>
+<link id="THTMLWriter.EmitCheckBox"/>
+<link id="THTMLWriter.EmitRadioButton"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitInput.Name">
+<short>Input field name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitInput.Value">
+<short>Input field value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitInput.Attrs">
+<short>Additional HTML attributes</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.EmitPasswordInput">
+<short>Emits HTML password input field</short>
+<descr>
+<p>Emits an HTML INPUT tag with TYPE="password" attribute for secure password entry.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.EmitInput"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitPasswordInput.Name">
+<short>Password field name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitPasswordInput.Value">
+<short>Password field value</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.EmitCheckBox">
+<short>Emits HTML checkbox input</short>
+<descr>
+<p>Emits an HTML INPUT tag with TYPE="checkbox" attribute.
+This is an overloaded method that can specify whether the checkbox is initially checked.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.EmitRadioButton"/>
+<link id="THTMLWriter.EmitInput"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitCheckBox.Name">
+<short>Checkbox field name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitCheckBox.Value">
+<short>Checkbox value when checked</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitCheckBox.Checked">
+<short><var>True</var> if checkbox should be initially checked</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.EmitRadioButton">
+<short>Emits HTML radio button input</short>
+<descr>
+<p>Emits an HTML INPUT tag with TYPE="radio" attribute.
+This is an overloaded method that can specify whether the radio button is initially selected.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.EmitCheckBox"/>
+<link id="THTMLWriter.EmitInput"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitRadioButton.Name">
+<short>Radio button group name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitRadioButton.Value">
+<short>Radio button value when selected</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitRadioButton.Checked">
+<short><var>True</var> if radio button should be initially selected</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.EmitArea">
+<short>Emits HTML textarea for multi-line input</short>
+<descr>
+<p>Emits an HTML TEXTAREA tag with specified rows and columns dimensions.
+The value is written as the content between opening and closing TEXTAREA tags.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.EmitInput"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitArea.Name">
+<short>Textarea field name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitArea.Value">
+<short>Textarea content text</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitArea.Rows">
+<short>Number of visible text rows</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitArea.Cols">
+<short>Number of visible character columns</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.EmitComboBox">
+<short>Emits HTML select dropdown list</short>
+<descr>
+<p>Emits an HTML SELECT tag with OPTION elements from the provided string list.
+This is an overloaded method that can use name=value pairs when UseValues is <var>True</var>.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitComboBox.Name">
+<short>Select field name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitComboBox.Value">
+<short>Initially selected option value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitComboBox.Items">
+<short>String list containing option values</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitComboBox.UseValues">
+<short><var>True</var> to parse name=value pairs from items</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.EmitButton">
+<short>Emits HTML button input</short>
+<descr>
+<p>Emits an HTML INPUT tag with the specified button type (submit, reset, button, etc.).</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.EmitSubmitButton"/>
+<link id="THTMLWriter.EmitResetButton"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitButton.Name">
+<short>Button field name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitButton.ButtonType">
+<short>Button type (submit, reset, button, etc.)</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitButton.Value">
+<short>Button display text and value</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.EmitSubmitButton">
+<short>Emits HTML submit button</short>
+<descr>
+<p>Emits an HTML INPUT tag with TYPE="submit" for form submission.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.EmitButton"/>
+<link id="THTMLWriter.EmitResetButton"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitSubmitButton.Name">
+<short>Submit button field name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitSubmitButton.Value">
+<short>Submit button display text</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.EmitResetButton">
+<short>Emits HTML reset button</short>
+<descr>
+<p>Emits an HTML INPUT tag with TYPE="reset" for clearing form fields.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.EmitButton"/>
+<link id="THTMLWriter.EmitSubmitButton"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitResetButton.Name">
+<short>Reset button field name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitResetButton.Value">
+<short>Reset button display text</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTMLWriter.EmitHiddenVar">
+<short>Emits HTML hidden input field</short>
+<descr>
+<p>Emits an HTML INPUT tag with TYPE="hidden" for storing invisible form data.</p>
+</descr>
+<seealso>
+<link id="THTMLWriter.EmitInput"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitHiddenVar.Name">
+<short>Hidden field name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTMLWriter.EmitHiddenVar.Value">
+<short>Hidden field value</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="ListTags">
+<short>HTML tags for different list types</short>
+<descr>
+<p><var>ListTags</var> is an array constant that maps <link id="TListType">TListType</link> enumeration values to their corresponding HTML list tags.
+Contains 'OL' for numbered lists, 'UL' for ordered lists, and 'DL' for definition lists.</p>
+</descr>
+<seealso>
+<link id="TListType"/>
+<link id="THTMLWriter.ListStart"/>
+<link id="THTMLWriter.ListEnd"/>
+</seealso>
+</element>
+
+</module> <!-- whtml -->
+
+</package>
+</fpdoc-descriptions>

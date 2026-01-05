@@ -1,0 +1,701 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    wformat
+  ====================================================================
+-->
+
+<module name="wformat">
+<short>Base class for formatted document writers</short>
+<descr>
+<p>The <var>wformat</var> unit provides the abstract base class <link id="TFormattingWriter">TFormattingWriter</link> for creating formatted document writers.
+This class defines a standard interface for generating formatted output in various formats like HTML, LaTeX, or plain text.
+Descendant classes implement the formatting methods for their specific output format.</p>
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short><var>TStream</var> and friends</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>Formatting</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TlistType">
+<short>Enumeration defining supported list types</short>
+<descr>
+<p><var>TListType</var> defines the types of lists that can be created using the <link id="TFormattingWriter">TFormattingWriter</link> class.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.ListStart"/>
+<link id="TFormattingWriter.WriteList"/>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TlistType.ltNumbered">
+<short>Numbered list with numeric indices</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TlistType.ltOrdered">
+<short>Ordered list with bullets or markers</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TlistType.ltDefinition">
+<short>Definition list with name-value pairs</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TFormattingWriter">
+<short>Abstract base class for formatted document writers</short>
+<descr>
+<p><var>TFormattingWriter</var> is an abstract base class that defines the interface for creating formatted documents.
+It provides methods for document structure (headers, paragraphs), text formatting (bold, italic, underline), tables, and lists.
+Descendant classes implement the specific formatting for different output formats such as HTML, LaTeX, or plain text.</p>
+<p>The class writes output to a stream provided during construction.
+Most methods are virtual and should be overridden by descendant classes to provide format-specific implementation.</p>
+</descr>
+<seealso>
+<link id="TListType"/>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TFormattingWriter.Create">
+<short>Creates a new formatting writer instance</short>
+<descr>
+<p>Creates a new <var>TFormattingWriter</var> instance that will write output to the specified stream.
+The stream must be valid and remain available for the lifetime of the writer instance.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.Create.AStream">
+<short>Output stream for formatted content</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFormattingWriter.EscapeText">
+<short>Escapes text for the target format</short>
+<descr>
+<p>Virtual method that escapes special characters in text for the target output format.
+The base implementation returns the text unchanged.
+Descendant classes should override this method to escape format-specific characters.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.Write"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFormattingWriter.EscapeText.Result">
+<short>Text with format-specific characters escaped</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.EscapeText.AText">
+<short>Input text to be escaped</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.Dump">
+<short>Writes raw text directly to the output stream</short>
+<descr>
+<p>Writes text directly to the output stream without any escaping or formatting.
+This is used for writing format-specific markup or pre-escaped text.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.DumpLn"/>
+<link id="TFormattingWriter.Write"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.Dump.AText">
+<short>Raw text to write to stream</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.DumpLn">
+<short>Writes raw text followed by line ending to the output stream</short>
+<descr>
+<p>Writes text directly to the output stream followed by a line ending without any escaping or formatting.
+This is used for writing format-specific markup or pre-escaped text that should end with a new line.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.Dump"/>
+<link id="LineFeed"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.DumpLn.AText">
+<short>Raw text to write to stream</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.Write">
+<short>Writes escaped text to the output stream</short>
+<descr>
+<p>Writes text to the output stream after passing it through <link id="TFormattingWriter.EscapeText">EscapeText</link> for proper formatting.
+This is the preferred method for writing user content that needs format-specific escaping.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.EscapeText"/>
+<link id="TFormattingWriter.Dump"/>
+<link id="TFormattingWriter.WriteFmt"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.Write.AText">
+<short>Text to be escaped and written</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.WriteFmt">
+<short>Writes formatted text using Format function</short>
+<descr>
+<p>Formats the text using the Format function and writes the result through <link id="TFormattingWriter.Write">Write</link>.
+This provides a convenient way to write formatted text with proper escaping.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.Write"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.WriteFmt.Fmt">
+<short>Format string for text formatting</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.WriteFmt.Args">
+<short>Arguments for format string</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.DocumentStart">
+<short>Begins a new document</short>
+<descr>
+<p>Virtual method that begins a new document with the specified title.
+Descendant classes should override this method to write format-specific document headers or initialization code.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.DocumentEnd"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.DocumentStart.Title">
+<short>Document title</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.DocumentEnd">
+<short>Ends the current document</short>
+<descr>
+<p>Virtual method that ends the current document.
+Descendant classes should override this method to write format-specific document footers or cleanup code.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.DocumentStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.Header">
+<short>Writes a complete header at the specified level</short>
+<descr>
+<p>Writes a complete header by calling <link id="TFormattingWriter.HeaderStart">HeaderStart</link>, writing the message text, and calling <link id="TFormattingWriter.HeaderEnd">HeaderEnd</link>.
+This is a convenience method for writing simple headers.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.HeaderStart"/>
+<link id="TFormattingWriter.HeaderEnd"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.Header.Alevel">
+<short>Header level (1 for top level, higher numbers for subheaders)</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.Header.Msg">
+<short>Header text content</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.HeaderStart">
+<short>Begins a header at the specified level</short>
+<descr>
+<p>Virtual method that begins header formatting at the specified level.
+Descendant classes should override this method to write format-specific header opening tags or formatting.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.HeaderEnd"/>
+<link id="TFormattingWriter.Header"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.HeaderStart.Alevel">
+<short>Header level (1 for top level, higher numbers for subheaders)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.HeaderEnd">
+<short>Ends a header at the specified level</short>
+<descr>
+<p>Virtual method that ends header formatting at the specified level.
+Descendant classes should override this method to write format-specific header closing tags or formatting.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.HeaderStart"/>
+<link id="TFormattingWriter.Header"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.HeaderEnd.Alevel">
+<short>Header level (1 for top level, higher numbers for subheaders)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.ParagraphStart">
+<short>Begins a new paragraph</short>
+<descr>
+<p>Virtual method that begins paragraph formatting.
+Descendant classes should override this method to write format-specific paragraph opening tags or formatting.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.ParagraphEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.ParagraphEnd">
+<short>Ends the current paragraph</short>
+<descr>
+<p>Virtual method that ends paragraph formatting.
+Descendant classes should override this method to write format-specific paragraph closing tags or formatting.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.ParagraphStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.LineBreak">
+<short>Inserts a line break</short>
+<descr>
+<p>Virtual method that inserts a line break in the output.
+Descendant classes should override this method to write format-specific line break markup.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.Rule">
+<short>Inserts a horizontal rule</short>
+<descr>
+<p>Virtual method that inserts a horizontal rule or separator line in the output.
+Descendant classes should override this method to write format-specific rule markup.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.BoldStart">
+<short>Begins bold text formatting</short>
+<descr>
+<p>Virtual method that begins bold text formatting.
+Descendant classes should override this method to write format-specific bold opening markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.BoldEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.BoldEnd">
+<short>Ends bold text formatting</short>
+<descr>
+<p>Virtual method that ends bold text formatting.
+Descendant classes should override this method to write format-specific bold closing markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.BoldStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.ItalicStart">
+<short>Begins italic text formatting</short>
+<descr>
+<p>Virtual method that begins italic text formatting.
+Descendant classes should override this method to write format-specific italic opening markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.ItalicEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.ItalicEnd">
+<short>Ends italic text formatting</short>
+<descr>
+<p>Virtual method that ends italic text formatting.
+Descendant classes should override this method to write format-specific italic closing markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.ItalicStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.UnderlineStart">
+<short>Begins underlined text formatting</short>
+<descr>
+<p>Virtual method that begins underlined text formatting.
+Descendant classes should override this method to write format-specific underline opening markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.UnderlineEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.UnderlineEnd">
+<short>Ends underlined text formatting</short>
+<descr>
+<p>Virtual method that ends underlined text formatting.
+Descendant classes should override this method to write format-specific underline closing markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.UnderlineStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.PreformatStart">
+<short>Begins preformatted text block</short>
+<descr>
+<p>Virtual method that begins a preformatted text block where whitespace and line breaks are preserved.
+Descendant classes should override this method to write format-specific preformatted opening markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.PreformatEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.PreformatEnd">
+<short>Ends preformatted text block</short>
+<descr>
+<p>Virtual method that ends a preformatted text block.
+Descendant classes should override this method to write format-specific preformatted closing markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.PreformatStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.TableStart">
+<short>Begins a table with specified columns and border</short>
+<descr>
+<p>Virtual method that begins a table with the specified number of columns and optional border.
+Descendant classes should override this method to write format-specific table opening markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.TableEnd"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.TableStart.NoCols">
+<short>Number of columns in the table</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.TableStart.Border">
+<short><var>True</var> to display table border, <var>False</var> otherwise</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.TableEnd">
+<short>Ends the current table</short>
+<descr>
+<p>Virtual method that ends the current table.
+Descendant classes should override this method to write format-specific table closing markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.TableStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.RowStart">
+<short>Begins a new table row</short>
+<descr>
+<p>Virtual method that begins a new table row.
+Descendant classes should override this method to write format-specific row opening markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.RowEnd"/>
+<link id="TFormattingWriter.RowNext"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.RowEnd">
+<short>Ends the current table row</short>
+<descr>
+<p>Virtual method that ends the current table row.
+Descendant classes should override this method to write format-specific row closing markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.RowStart"/>
+<link id="TFormattingWriter.RowNext"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.RowNext">
+<short>Moves to the next table row</short>
+<descr>
+<p>Convenience method that calls <link id="TFormattingWriter.RowEnd">RowEnd</link> followed by <link id="TFormattingWriter.RowStart">RowStart</link> to move to the next table row.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.RowStart"/>
+<link id="TFormattingWriter.RowEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.CellStart">
+<short>Begins a new table cell</short>
+<descr>
+<p>Virtual method that begins a new table cell.
+Descendant classes should override this method to write format-specific cell opening markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.CellEnd"/>
+<link id="TFormattingWriter.CellNext"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.CellEnd">
+<short>Ends the current table cell</short>
+<descr>
+<p>Virtual method that ends the current table cell.
+Descendant classes should override this method to write format-specific cell closing markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.CellStart"/>
+<link id="TFormattingWriter.CellNext"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.CellNext">
+<short>Moves to the next table cell</short>
+<descr>
+<p>Convenience method that calls <link id="TFormattingWriter.CellEnd">CellEnd</link> followed by <link id="TFormattingWriter.CellStart">CellStart</link> to move to the next table cell.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.CellStart"/>
+<link id="TFormattingWriter.CellEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.HeaderCellStart">
+<short>Begins a new table header cell</short>
+<descr>
+<p>Virtual method that begins a new table header cell.
+Descendant classes should override this method to write format-specific header cell opening markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.HeaderCellEnd"/>
+<link id="TFormattingWriter.HeaderCellNext"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.HeaderCellEnd">
+<short>Ends the current table header cell</short>
+<descr>
+<p>Virtual method that ends the current table header cell.
+Descendant classes should override this method to write format-specific header cell closing markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.HeaderCellStart"/>
+<link id="TFormattingWriter.HeaderCellNext"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.HeaderCellNext">
+<short>Moves to the next table header cell</short>
+<descr>
+<p>Convenience method that calls <link id="TFormattingWriter.HeaderCellEnd">HeaderCellEnd</link> followed by <link id="TFormattingWriter.HeaderCellStart">HeaderCellStart</link> to move to the next table header cell.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.HeaderCellStart"/>
+<link id="TFormattingWriter.HeaderCellEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.ListStart">
+<short>Begins a list of the specified type</short>
+<descr>
+<p>Virtual method that begins a list of the specified type.
+Descendant classes should override this method to write format-specific list opening markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.ListEnd"/>
+<link id="TListType"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.ListStart.ListType">
+<short>Type of list to create</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.ListEnd">
+<short>Ends a list of the specified type</short>
+<descr>
+<p>Virtual method that ends a list of the specified type.
+Descendant classes should override this method to write format-specific list closing markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.ListStart"/>
+<link id="TListType"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.ListEnd.ListType">
+<short>Type of list being ended</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.ListItemStart">
+<short>Begins a new list item</short>
+<descr>
+<p>Virtual method that begins a new list item.
+Descendant classes should override this method to write format-specific list item opening markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.ListItemEnd"/>
+<link id="TFormattingWriter.ListItem"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.ListItemEnd">
+<short>Ends the current list item</short>
+<descr>
+<p>Virtual method that ends the current list item.
+Descendant classes should override this method to write format-specific list item closing markup.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.ListItemStart"/>
+<link id="TFormattingWriter.ListItem"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.ListItem">
+<short>Creates a complete list item with text</short>
+<descr>
+<p>Convenience method that creates a complete list item by calling <link id="TFormattingWriter.ListItemStart">ListItemStart</link>, writing the text, and calling <link id="TFormattingWriter.ListItemEnd">ListItemEnd</link>.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.ListItemStart"/>
+<link id="TFormattingWriter.ListItemEnd"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.ListItem.AText">
+<short>Text content for the list item</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.DefinitionItem">
+<short>Creates a definition list item with name and description</short>
+<descr>
+<p>Virtual method that creates a definition list item with a name and its description.
+Descendant classes should override this method to write format-specific definition item markup.</p>
+</descr>
+<seealso>
+<link id="TlistType.ltDefinition"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.DefinitionItem.Aname">
+<short>Name or term being defined</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.DefinitionItem.AText">
+<short>Definition or description text</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFormattingWriter.WriteList">
+<short>Writes a complete list from string list</short>
+<descr>
+<p>Convenience method that writes a complete list from a <var>TStrings</var> object.
+For definition lists, strings should contain name=value pairs where the name is separated from the value by an equals sign.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.ListStart"/>
+<link id="TFormattingWriter.ListEnd"/>
+<link id="TFormattingWriter.ListItem"/>
+<link id="TFormattingWriter.DefinitionItem"/>
+<link id="TListType"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.WriteList.ListType">
+<short>Type of list to create</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFormattingWriter.WriteList.List">
+<short>String list containing list items</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="LineFeed">
+<short>Platform-specific line ending constant</short>
+<descr>
+<p><var>LineFeed</var> is a constant that contains the platform-specific line ending character sequence.
+It is defined as <var>LineEnding</var> and is used by <link id="TFormattingWriter.DumpLn">DumpLn</link> for consistent line breaks across platforms.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter.DumpLn"/>
+</seealso>
+</element>
+
+</module> <!-- wformat -->
+
+</package>
+</fpdoc-descriptions>

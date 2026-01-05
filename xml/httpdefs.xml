@@ -1,0 +1,3823 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    HTTPDefs
+  ====================================================================
+-->
+
+<module name="HTTPDefs">
+<short>Basic HTTP protocol declarations and classes</short>
+<descr>
+<p>The <var>HTTPDefs</var> unit provides essential types, constants, and classes for HTTP protocol handling.
+It contains basic <link id="THTTPHeader">HTTP header</link> field definitions, <link id="TRequest">request</link> and <link id="TResponse">response</link> classes, <link id="TCookie">cookie management</link>,
+<link id="TUploadedFile">file upload</link> support, and <link id="TMimeItem">MIME</link> content handling for web applications.</p>
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="typinfo">
+<short>Runtime type information support unit</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Base classes and collection types</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Sysutils">
+<short>System utility functions and types</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="httpprotocol">
+<short>HTTP protocol constants and utility functions</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="uriparser">
+<short>URI parsing and manipulation functions</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="DefaultTimeOut">
+<short>Default timeout value in seconds</short>
+<descr>
+<p><var>DefaultTimeOut</var> specifies the default timeout value of 15 seconds for HTTP operations.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SFPWebSession">
+<short>Default session cookie name</short>
+<descr>
+<p><var>SFPWebSession</var> contains the string 'FPWebSession' which is used as the default name for session cookies in web applications.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="fieldAccept">
+<short>Accept HTTP header field name</short>
+<descr>
+<p><var>fieldAccept</var> contains the HTTP header field name for content type acceptance.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldAcceptCharset">
+<short>Accept-Charset HTTP header field name</short>
+<descr>
+<p><var>FieldAcceptCharset</var> contains the HTTP header field name for character set acceptance.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldAcceptEncoding">
+<short>Accept-Encoding HTTP header field name</short>
+<descr>
+<p><var>FieldAcceptEncoding</var> contains the HTTP header field name for encoding acceptance.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldAcceptLanguage">
+<short>Accept-Language HTTP header field name</short>
+<descr>
+<p><var>FieldAcceptLanguage</var> contains the HTTP header field name for language preference specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldAcceptRanges">
+<short>Accept-Ranges HTTP header field name</short>
+<descr>
+<p><var>FieldAcceptRanges</var> contains the HTTP header field name for range request acceptance.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldAge">
+<short>Age HTTP header field name</short>
+<descr>
+<p><var>FieldAge</var> contains the HTTP header field name for response age specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldAllow">
+<short>Allow HTTP header field name</short>
+<descr>
+<p><var>FieldAllow</var> contains the HTTP header field name for allowed methods specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldAuthorization">
+<short>Authorization HTTP header field name</short>
+<descr>
+<p><var>FieldAuthorization</var> contains the HTTP header field name for authorization credentials.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldCacheControl">
+<short>Cache-Control HTTP header field name</short>
+<descr>
+<p><var>FieldCacheControl</var> contains the HTTP header field name for cache control directives.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldConnection">
+<short>Connection HTTP header field name</short>
+<descr>
+<p><var>FieldConnection</var> contains the HTTP header field name for connection management.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldContentEncoding">
+<short>Content-Encoding HTTP header field name</short>
+<descr>
+<p><var>FieldContentEncoding</var> contains the HTTP header field name for content encoding specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldContentLanguage">
+<short>Content-Language HTTP header field name</short>
+<descr>
+<p><var>FieldContentLanguage</var> contains the HTTP header field name for content language specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldContentLength">
+<short>Content-Length HTTP header field name</short>
+<descr>
+<p><var>FieldContentLength</var> contains the HTTP header field name for content length specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldContentLocation">
+<short>Content-Location HTTP header field name</short>
+<descr>
+<p><var>FieldContentLocation</var> contains the HTTP header field name for content location specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldContentMD5">
+<short>Content-MD5 HTTP header field name</short>
+<descr>
+<p><var>FieldContentMD5</var> contains the HTTP header field name for content MD5 checksum.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldContentRange">
+<short>Content-Range HTTP header field name</short>
+<descr>
+<p><var>FieldContentRange</var> contains the HTTP header field name for content range specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldContentType">
+<short>Content-Type HTTP header field name</short>
+<descr>
+<p><var>FieldContentType</var> contains the HTTP header field name for content type specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldDate">
+<short>Date HTTP header field name</short>
+<descr>
+<p><var>FieldDate</var> contains the HTTP header field name for date specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldETag">
+<short>ETag HTTP header field name</short>
+<descr>
+<p><var>FieldETag</var> contains the HTTP header field name for entity tag specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldExpires">
+<short>Expires HTTP header field name</short>
+<descr>
+<p><var>FieldExpires</var> contains the HTTP header field name for expiration date specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldExpect">
+<short>Expect HTTP header field name</short>
+<descr>
+<p><var>FieldExpect</var> contains the HTTP header field name for expectation specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldFrom">
+<short>From HTTP header field name</short>
+<descr>
+<p><var>FieldFrom</var> contains the HTTP header field name for sender email address specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldHost">
+<short>Host HTTP header field name</short>
+<descr>
+<p><var>FieldHost</var> contains the HTTP header field name for host header specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldIfMatch">
+<short>If-Match HTTP header field name</short>
+<descr>
+<p><var>FieldIfMatch</var> contains the HTTP header field name for conditional request matching.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldIfModifiedSince">
+<short>If-Modified-Since HTTP header field name</short>
+<descr>
+<p><var>FieldIfModifiedSince</var> contains the HTTP header field name for conditional modification checking.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldIfNoneMatch">
+<short>If-None-Match HTTP header field name</short>
+<descr>
+<p><var>FieldIfNoneMatch</var> contains the HTTP header field name for conditional request non-matching.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldIfRange">
+<short>If-Range HTTP header field name</short>
+<descr>
+<p><var>FieldIfRange</var> contains the HTTP header field name for conditional range request.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldIfUnModifiedSince">
+<short>If-Unmodified-Since HTTP header field name</short>
+<descr>
+<p><var>FieldIfUnModifiedSince</var> contains the HTTP header field name for conditional unmodification checking.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldLastModified">
+<short>Last-Modified HTTP header field name</short>
+<descr>
+<p><var>FieldLastModified</var> contains the HTTP header field name for last modification date specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldLocation">
+<short>Location HTTP header field name</short>
+<descr>
+<p><var>FieldLocation</var> contains the HTTP header field name for resource location specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldMaxForwards">
+<short>Max-Forwards HTTP header field name</short>
+<descr>
+<p><var>FieldMaxForwards</var> contains the HTTP header field name for maximum forwards specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldPragma">
+<short>Pragma HTTP header field name</short>
+<descr>
+<p><var>FieldPragma</var> contains the HTTP header field name for pragma directive specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldProxyAuthenticate">
+<short>Proxy-Authenticate HTTP header field name</short>
+<descr>
+<p><var>FieldProxyAuthenticate</var> contains the HTTP header field name for proxy authentication specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldProxyAuthorization">
+<short>Proxy-Authorization HTTP header field name</short>
+<descr>
+<p><var>FieldProxyAuthorization</var> contains the HTTP header field name for proxy authorization specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldRange">
+<short>Range HTTP header field name</short>
+<descr>
+<p><var>FieldRange</var> contains the HTTP header field name for range request specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldReferer">
+<short>Referer HTTP header field name</short>
+<descr>
+<p><var>FieldReferer</var> contains the HTTP header field name for referrer URL specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldRetryAfter">
+<short>Retry-After HTTP header field name</short>
+<descr>
+<p><var>FieldRetryAfter</var> contains the HTTP header field name for retry delay specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldServer">
+<short>Server HTTP header field name</short>
+<descr>
+<p><var>FieldServer</var> contains the HTTP header field name for server information specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldTE">
+<short>TE HTTP header field name</short>
+<descr>
+<p><var>FieldTE</var> contains the HTTP header field name for transfer encoding preference.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldTrailer">
+<short>Trailer HTTP header field name</short>
+<descr>
+<p><var>FieldTrailer</var> contains the HTTP header field name for trailer header specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldTransferEncoding">
+<short>Transfer-Encoding HTTP header field name</short>
+<descr>
+<p><var>FieldTransferEncoding</var> contains the HTTP header field name for transfer encoding specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldUpgrade">
+<short>Upgrade HTTP header field name</short>
+<descr>
+<p><var>FieldUpgrade</var> contains the HTTP header field name for protocol upgrade specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldUserAgent">
+<short>User-Agent HTTP header field name</short>
+<descr>
+<p><var>FieldUserAgent</var> contains the HTTP header field name for user agent identification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldVary">
+<short>Vary HTTP header field name</short>
+<descr>
+<p><var>FieldVary</var> contains the HTTP header field name for response variation specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldVia">
+<short>Via HTTP header field name</short>
+<descr>
+<p><var>FieldVia</var> contains the HTTP header field name for proxy path specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldWarning">
+<short>Warning HTTP header field name</short>
+<descr>
+<p><var>FieldWarning</var> contains the HTTP header field name for warning message specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldWWWAuthenticate">
+<short>WWW-Authenticate HTTP header field name</short>
+<descr>
+<p><var>FieldWWWAuthenticate</var> contains the HTTP header field name for authentication requirement specification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldXRequestedWith">
+<short>X-Requested-With HTTP header field name</short>
+<descr>
+<p><var>FieldXRequestedWith</var> contains the HTTP header field name for request origin identification.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldCookie">
+<short>Cookie HTTP header field name</short>
+<descr>
+<p><var>FieldCookie</var> contains the HTTP header field name for cookie transmission.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="FieldSetCookie">
+<short>Set-Cookie HTTP header field name</short>
+<descr>
+<p><var>FieldSetCookie</var> contains the HTTP header field name for setting cookies in responses.
+This constant is deprecated in favour of using the httpprotocol unit constants.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="NoHTTPFields">
+<short>Number of HTTP header fields</short>
+<descr>
+<p><var>NoHTTPFields</var> contains the value 28, representing the number of standard HTTP header fields.
+This constant is deprecated.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="HTTPDateFmt">
+<short>HTTP date format string</short>
+<descr>
+<p><var>HTTPDateFmt</var> contains the standard HTTP date format string used for formatting dates in HTTP headers.
+This is an alias to the constant in the httpprotocol unit.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SCookieExpire">
+<short>Cookie expires attribute name</short>
+<descr>
+<p><var>SCookieExpire</var> contains the string 'expires' used in cookie attributes.
+This is an alias to the constant in the httpprotocol unit.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SCookieDomain">
+<short>Cookie domain attribute name</short>
+<descr>
+<p><var>SCookieDomain</var> contains the string 'domain' used in cookie domain attributes.
+This constant specifies the domain scope for cookies.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SCookiePath">
+<short>Cookie path attribute name</short>
+<descr>
+<p><var>SCookiePath</var> contains the string 'path' used in cookie path attributes.
+This constant specifies the path scope for cookies.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SCookieSecure">
+<short>Cookie secure attribute name</short>
+<descr>
+<p><var>SCookieSecure</var> contains the string 'secure' used in cookie secure attributes.
+This constant indicates that cookies should only be sent over secure connections.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SCookieHttpOnly">
+<short>Cookie HttpOnly attribute name</short>
+<descr>
+<p><var>SCookieHttpOnly</var> contains the string 'HttpOnly' used in cookie HttpOnly attributes.
+This constant indicates that cookies should not be accessible via JavaScript.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="SCookieSameSite">
+<short>Cookie SameSite attribute name</short>
+<descr>
+<p><var>SCookieSameSite</var> contains the string 'SameSite' used in cookie SameSite attributes.
+This constant controls cross-site request behavior for cookies.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="HTTPMonths">
+<short>Array of month abbreviations for HTTP dates</short>
+<descr>
+<p><var>HTTPMonths</var> is an array containing 3-letter abbreviations for months (Jan, Feb, Mar, etc.)
+used in HTTP date formatting.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="HTTPDays">
+<short>Array of day abbreviations for HTTP dates</short>
+<descr>
+<p><var>HTTPDays</var> is an array containing 3-letter abbreviations for days of the week (Sun, Mon, Tue, etc.)
+used in HTTP date formatting.</p>
+</descr>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="RTLString">
+<short>Runtime library string type</short>
+<descr>
+<p><var>RTLString</var> is an alias for AnsiString, providing a string type that is compatible with the runtime library.</p>
+</descr>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="THTTPVariableType">
+<short>HTTP variable type enumeration</short>
+<descr>
+<p><var>THTTPVariableType</var> defines the different types of HTTP-related variables that can be handled by the web server.
+These include request information, headers, and CGI environment variables.</p>
+<dl>
+<dt>hvUnknown</dt><dd>Unknown or unspecified variable type</dd>
+<dt>hvHTTPVersion</dt><dd>HTTP protocol version</dd>
+<dt>hvMethod</dt><dd>HTTP request method (GET, POST, etc.)</dd>
+<dt>hvCookie</dt><dd>Cookie header from request</dd>
+<dt>hvSetCookie</dt><dd>Set-Cookie header for response</dd>
+<dt>hvXRequestedWith</dt><dd>X-Requested-With header (AJAX indicator)</dd>
+<dt>hvPathInfo</dt><dd>Additional path information</dd>
+<dt>hvPathTranslated</dt><dd>Translated path information</dd>
+<dt>hvRemoteAddress</dt><dd>Client IP address</dd>
+<dt>hvRemoteHost</dt><dd>Client hostname</dd>
+<dt>hvScriptName</dt><dd>Script name being executed</dd>
+<dt>hvServerPort</dt><dd>Server port number</dd>
+<dt>hvURL</dt><dd>Request URL</dd>
+<dt>hvQuery</dt><dd>Query string parameters</dd>
+<dt>hvContent</dt><dd>Request body content</dd>
+</dl>
+</descr>
+<seealso>
+<link id="THTTPVariableTypes">THTTPVariableTypes</link>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvUnknown">
+<short>Unknown or unspecified variable type</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvHTTPVersion">
+<short>HTTP protocol version</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvMethod">
+<short>HTTP request method</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvCookie">
+<short>Cookie header from request</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvSetCookie">
+<short>Set-Cookie header field variable</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvXRequestedWith">
+<short>X-Requested-With header field variable</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvPathInfo">
+<short>PATH_INFO environment variable</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvPathTranslated">
+<short>PATH_TRANSLATED environment variable</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvRemoteAddress">
+<short>REMOTE_ADDR environment variable</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvRemoteHost">
+<short>REMOTE_HOST environment variable</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvScriptName">
+<short>SCRIPT_NAME environment variable</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvServerPort">
+<short>SERVER_PORT environment variable</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvURL">
+<short>Complete request URL variable</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvQuery">
+<short>QUERY_STRING environment variable</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THTTPVariableType.hvContent">
+<short>Request body content</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="THTTPVariableTypes">
+<short>Set of HTTP variable types</short>
+<descr>
+<p><var>THTTPVariableTypes</var> is a set type based on <var>THTTPVariableType</var> enumeration.
+It allows specification of multiple HTTP variable types simultaneously.</p>
+</descr>
+<seealso>
+<link id="THTTPVariableType">THTTPVariableType</link>
+</seealso>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="THTTPVariables">
+<short>Set of HTTP variable types</short>
+<descr>
+<p><var>THTTPVariables</var> is an array type that maps HTTP variable types to their corresponding values.
+This provides indexed access to HTTP request and environment variables.</p>
+</descr>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="THttpFields">
+<short>Array of HTTP header field names</short>
+<descr>
+<p><var>THttpFields</var> is an array type containing HTTP header field names.
+This array maps field indexes to their corresponding header field name strings.</p>
+</descr>
+</element>
+
+<!-- array type Visibility: default -->
+<element name="THttpIndexes">
+<short>Array of HTTP header field indexes</short>
+<descr>
+<p><var>THttpIndexes</var> is an array type containing HTTP header field index mappings.
+This array provides reverse lookup from header field names to their indexes.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="HeaderBasedVariables">
+<short>Set of HTTP variables derived from header fields</short>
+<descr>
+<p><var>HeaderBasedVariables</var> contains a set of HTTP variable types that are derived from HTTP headers.
+This constant identifies which variables correspond to standard HTTP header fields.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="HTTPFieldNames">
+<short>Array of standard HTTP header field names</short>
+<descr>
+<p><var>HTTPFieldNames</var> is an array containing the names of standard HTTP header fields.
+This array provides mapping from field indexes to their string representations.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="HTTPFieldIndexes">
+<short>Array of HTTP header field index mappings</short>
+<descr>
+<p><var>HTTPFieldIndexes</var> is an array that maps HTTP variable types to their corresponding field indexes.
+This provides efficient lookup of header field positions by variable type.</p>
+</descr>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TContentStreamingState">
+<short>Content streaming state enumeration</short>
+<descr>
+<p><var>TContentStreamingState</var> defines the different states during streaming content processing.
+Used when processing multipart content or other streamed data.</p>
+</descr>
+<seealso>
+<link id="TOnStreamEncodingEvent">TOnStreamEncodingEvent</link>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TContentStreamingState.cssStart">
+<short>Content streaming start state</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TContentStreamingState.cssData">
+<short>Content streaming data state</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TContentStreamingState.cssEnd">
+<short>Content streaming end state</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.HTTPDefs.TRequest
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TRequest">
+<short>HTTP request representation</short>
+<descr>
+<p><var>TRequest</var> represents an HTTP request received by a web server.
+It extends <link id="THTTPHeader"/> and provides access to request data including headers, query parameters,
+form data, uploaded files, and other request information.</p>
+</descr>
+<seealso>
+<link id="TResponse">TResponse</link>
+<link id="THTTPHeader">THTTPHeader</link>
+<link id="TUploadedFiles">TUploadedFiles</link>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TSameSite">
+<short>Cookie SameSite attribute values</short>
+<descr>
+<p><var>TSameSite</var> defines the possible values for the SameSite cookie attribute,
+which controls when cookies are sent with cross-site requests.</p>
+<dl>
+<dt>ssEmpty</dt><dd>No SameSite attribute specified</dd>
+<dt>ssNone</dt><dd>Cookie sent with all cross-site requests</dd>
+<dt>ssStrict</dt><dd>Cookie only sent with same-site requests</dd>
+<dt>ssLax</dt><dd>Cookie sent with top-level navigation cross-site requests</dd>
+</dl>
+</descr>
+<seealso>
+<link id="TCookie">TCookie</link>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSameSite.ssEmpty">
+<short>No SameSite attribute</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSameSite.ssNone">
+<short>Send with all cross-site requests</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSameSite.ssStrict">
+<short>Send only with same-site requests</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSameSite.ssLax">
+<short>Send with top-level navigation</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.HTTPDefs.TCookie
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TCookie">
+<short>HTTP cookie implementation</short>
+<descr>
+<p><var>TCookie</var> represents an HTTP cookie with all its attributes.
+It provides properties for name, value, domain, path, expiration, security settings, and other cookie attributes.</p>
+</descr>
+<seealso>
+<link id="TCookies">TCookies</link>
+<link id="TSameSite">TSameSite</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCookie.Create">
+<short>Creates a new cookie instance</short>
+<descr>
+<p><var>Create</var> initializes a new <var>TCookie</var> instance as part of the specified collection.</p>
+</descr>
+<seealso>
+<link id="TCookies">TCookies</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCookie.Create.ACollection">
+<short>Collection to which the cookie belongs</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCookie.Assign">
+<short>Assigns values from another persistent object</short>
+<descr>
+<p><var>Assign</var> copies all cookie properties from the source <var>TCookie</var> object to this instance.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCookie.Assign.Source">
+<short>Source object to copy cookie data from</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCookie.Expire">
+<short>Marks the cookie as expired</short>
+<descr>
+<p><var>Expire</var> sets the cookie's expiration date to a past date, causing the client to delete the cookie.</p>
+</descr>
+<seealso>
+<link id="TCookie.Expires">Expires</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCookie.Name">
+<short>Cookie name</short>
+<descr>
+<p><var>Name</var> specifies the name of the cookie. This is the identifier used to reference the cookie.</p>
+</descr>
+<seealso>
+<link id="TCookie.Value">Value</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCookie.Value">
+<short>Cookie value</short>
+<descr>
+<p><var>Value</var> contains the data stored in the cookie. This is the information that will be sent back by the client.</p>
+</descr>
+<seealso>
+<link id="TCookie.Name">Name</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCookie.Domain">
+<short>Cookie domain restriction</short>
+<descr>
+<p><var>Domain</var> specifies which domain the cookie applies to.
+If empty, the cookie applies only to the current domain.</p>
+</descr>
+<seealso>
+<link id="TCookie.Path">Path</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCookie.Path">
+<short>Path attribute of the cookie</short>
+<descr>
+<p><var>Path</var> specifies the URL path that must exist in the requested URL for the browser to send the cookie.
+If not specified, defaults to the path of the request URL that generated the cookie.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCookie.Expires">
+<short>Expiration date and time of the cookie</short>
+<descr>
+<p><var>Expires</var> specifies when the cookie should expire.
+After this date and time, the browser will delete the cookie automatically.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCookie.MaxAge">
+<short>Maximum age of the cookie in seconds</short>
+<descr>
+<p><var>MaxAge</var> specifies the cookie lifetime in seconds from the time it was created.
+This takes precedence over the <var>Expires</var> attribute if both are present.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCookie.Secure">
+<short>Cookie security flag</short>
+<descr>
+<p><var>Secure</var> determines whether the cookie should only be sent over secure (HTTPS) connections.
+When <var>True</var>, the cookie will not be sent over unencrypted HTTP connections.</p>
+</descr>
+<seealso>
+<link id="TCookie.HttpOnly">HttpOnly</link>
+<link id="TCookie.SameSite">SameSite</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCookie.HttpOnly">
+<short>HTTP-only access flag</short>
+<descr>
+<p><var>HttpOnly</var> when <var>True</var> prevents client-side scripts from accessing the cookie,
+reducing the risk of cross-site scripting (XSS) attacks.</p>
+</descr>
+<seealso>
+<link id="TCookie.Secure">Secure</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCookie.SameSite">
+<short>SameSite attribute of the cookie</short>
+<descr>
+<p><var>SameSite</var> controls whether cookies are sent with cross-site requests.
+This attribute helps prevent cross-site request forgery attacks.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCookie.Partitioned">
+<short>Partitioned attribute of the cookie</short>
+<descr>
+<p><var>Partitioned</var> indicates that the cookie should be partitioned storage.
+This provides additional privacy protection by isolating cookies in different storage partitions.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCookie.AsString">
+<short>String representation of the cookie</short>
+<descr>
+<p><var>AsString</var> returns the complete cookie as a string formatted according to HTTP cookie specifications.
+This includes the name, value, and all attributes formatted for transmission in HTTP headers.</p>
+</descr>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.HTTPDefs.TCookies
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TCookies">
+<short>Collection of HTTP cookies</short>
+<descr>
+<p><var>TCookies</var> is a collection class that manages multiple <var>TCookie</var> objects.
+It provides methods to add, find, and access cookies by name or index.</p>
+</descr>
+<seealso>
+<link id="TCookie">TCookie</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCookies.Add">
+<short>Adds a new cookie to the collection</short>
+<descr>
+<p><var>Add</var> creates and adds a new <var>TCookie</var> instance to the collection, returning a reference to it.</p>
+</descr>
+<seealso>
+<link id="TCookies.AddFromString">AddFromString</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCookies.Add.Result">
+<short>Newly created cookie instance</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCookies.AddFromString">
+<short>Adds a cookie from a string representation</short>
+<descr>
+<p><var>AddFromString</var> parses a cookie string and creates a new <var>TCookie</var> instance from it.
+The string should be in the format used in HTTP Set-Cookie headers.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCookies.AddFromString.Result">
+<short>Newly created cookie from string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCookies.AddFromString.S">
+<short>String representation of the cookie to add</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCookies.CookieByName">
+<short>Finds a cookie by name</short>
+<descr>
+<p><var>CookieByName</var> searches for and returns a cookie with the specified name.
+If no cookie is found, it returns <var>nil</var>.</p>
+</descr>
+<seealso>
+<link id="TCookies.FindCookie">FindCookie</link>
+<link id="TCookies.IndexOfCookie">IndexOfCookie</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCookies.CookieByName.Result">
+<short>Cookie with the specified name or nil if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCookies.CookieByName.AName">
+<short>Name of the cookie to find</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCookies.FindCookie">
+<short>Finds a cookie by name</short>
+<descr>
+<p><var>FindCookie</var> searches for a cookie with the specified name and returns it.
+Returns <var>nil</var> if no cookie with the given name is found.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCookies.FindCookie.Result">
+<short>Cookie with the specified name or nil if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCookies.FindCookie.AName">
+<short>Name of the cookie to find</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCookies.IndexOfCookie">
+<short>Returns the index of a cookie by name</short>
+<descr>
+<p><var>IndexOfCookie</var> returns the zero-based index of the cookie with the specified name.
+Returns -1 if no cookie with the given name is found.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCookies.IndexOfCookie.Result">
+<short>Index of the cookie or -1 if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCookies.IndexOfCookie.AName">
+<short>Name of the cookie to find</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCookies.Items">
+<short>Cookie at the specified index</short>
+<descr>
+<p><var>Items</var> provides indexed access to cookies in the collection.
+This is the default array property for the <var>TCookies</var> class.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCookies.Items.Index">
+<short>Index of the cookie to retrieve</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.HTTPDefs.TUploadedFile
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TUploadedFile">
+<short>Represents an uploaded file in an HTTP request</short>
+<descr>
+<p><var>TUploadedFile</var> encapsulates information about a file uploaded through an HTML form using multipart/form-data encoding.
+It provides access to the file content, metadata, and properties such as filename, size, and content type.</p>
+</descr>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TUploadedFile.Destroy">
+<short>Destroys the uploaded file instance</short>
+<descr>
+<p><var>Destroy</var> cleans up resources used by the uploaded file instance.
+This includes closing any associated streams and removing temporary files.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TUploadedFile.FieldName">
+<short>Form field name of the uploaded file</short>
+<descr>
+<p><var>FieldName</var> contains the name of the HTML form field that was used to upload the file.
+This corresponds to the 'name' attribute of the input element in the form.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TUploadedFile.FileName">
+<short>Original filename of the uploaded file</short>
+<descr>
+<p><var>FileName</var> contains the original filename as specified by the client.
+This is the name of the file on the client's system before it was uploaded.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TUploadedFile.Stream">
+<short>Stream containing the uploaded file data</short>
+<descr>
+<p><var>Stream</var> provides access to the uploaded file content.
+The stream can be read to retrieve the file data or written to a local file.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TUploadedFile.Size">
+<short>Size of the uploaded file in bytes</short>
+<descr>
+<p><var>Size</var> indicates the total size of the uploaded file content in bytes.
+This represents the actual size of the data that was uploaded.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TUploadedFile.ContentType">
+<short>MIME content type of the uploaded file</short>
+<descr>
+<p><var>ContentType</var> contains the MIME type of the uploaded file as specified by the client.
+This indicates the type of content in the file (e.g., 'image/jpeg', 'text/plain').</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TUploadedFile.Disposition">
+<short>Content disposition header of the uploaded file</short>
+<descr>
+<p><var>Disposition</var> contains the <var>Content-Disposition</var> header value from the multipart data.
+This typically includes information about how the content should be displayed or handled.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TUploadedFile.LocalFileName">
+<short>Local temporary filename where file is stored</short>
+<descr>
+<p><var>LocalFileName</var> contains the path to the temporary file where the uploaded content is stored on the server.
+This file is created during the upload process and should be moved or copied to a permanent location if needed.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TUploadedFile.Description">
+<short>Description of the uploaded file</short>
+<descr>
+<p><var>Description</var> contains additional descriptive information about the uploaded file.
+This may include user-provided descriptions or other metadata associated with the upload.</p>
+</descr>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TUploadedFileClass">
+<short>Class type for uploaded file instances</short>
+<descr>
+<p><var>TUploadedFileClass</var> is a class reference type that allows creating instances of <var>TUploadedFile</var> or its descendants.
+This enables customization of uploaded file handling by using derived classes.</p>
+</descr>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.HTTPDefs.TUploadedFiles
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TUploadedFiles">
+<short>Collection of uploaded files</short>
+<descr>
+<p><var>TUploadedFiles</var> manages a collection of <var>TUploadedFile</var> instances.
+It provides methods to access, search, and manage uploaded files from HTTP requests.</p>
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUploadedFiles.First">
+<short>Returns the first uploaded file in the collection</short>
+<descr>
+<p><var>First</var> returns the first <var>TUploadedFile</var> in the collection.
+Returns <var>nil</var> if the collection is empty.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TUploadedFiles.First.Result">
+<short>First uploaded file or nil if collection is empty</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUploadedFiles.Last">
+<short>Returns the last uploaded file in the collection</short>
+<descr>
+<p><var>Last</var> returns the last <var>TUploadedFile</var> in the collection.
+Returns <var>nil</var> if the collection is empty.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TUploadedFiles.Last.Result">
+<short>Last uploaded file or nil if collection is empty</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUploadedFiles.IndexOfFile">
+<short>Returns the index of an uploaded file by field name</short>
+<descr>
+<p><var>IndexOfFile</var> searches for an uploaded file with the specified field name and returns its index.
+Returns -1 if no file with the given field name is found.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TUploadedFiles.IndexOfFile.Result">
+<short>Index of the file or -1 if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TUploadedFiles.IndexOfFile.AName">
+<short>Field name of the uploaded file to find</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUploadedFiles.FileByName">
+<short>Returns an uploaded file by field name</short>
+<descr>
+<p><var>FileByName</var> searches for and returns an uploaded file with the specified field name.
+Returns <var>nil</var> if no file with the given field name is found.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TUploadedFiles.FileByName.Result">
+<short>Uploaded file with the specified field name or nil if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TUploadedFiles.FileByName.AName">
+<short>Field name of the uploaded file to find</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TUploadedFiles.FindFile">
+<short>Finds an uploaded file by field name</short>
+<descr>
+<p><var>FindFile</var> locates and returns an uploaded file with the specified field name.
+This method is an alias for <var>FileByName</var>.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TUploadedFiles.FindFile.Result">
+<short>Uploaded file with the specified field name or nil if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TUploadedFiles.FindFile.AName">
+<short>Field name of the uploaded file to find</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TUploadedFiles.Files">
+<short>Uploaded file at the specified index</short>
+<descr>
+<p><var>Files</var> provides indexed access to uploaded files in the collection.
+This is the default array property for the <var>TUploadedFiles</var> class.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TUploadedFiles.Files.Index">
+<short>Index of the uploaded file to retrieve</short>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TUploadedFilesClass">
+<short>Class type for uploaded files collection</short>
+<descr>
+<p><var>TUploadedFilesClass</var> is a class reference type for creating instances of <var>TUploadedFiles</var> or its descendants.
+This enables customization of uploaded files collection handling.</p>
+</descr>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.HTTPDefs.TMimeItem
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TMimeItem">
+<short>Represents a MIME multipart item</short>
+<descr>
+<p><var>TMimeItem</var> represents a single part within a MIME multipart message.
+It encapsulates the content, headers, and metadata for one item in a multipart HTTP request.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMimeItem.ProcessStreaming">
+<short>Processes streamed MIME data</short>
+<descr>
+<p><var>ProcessStreaming</var> processes MIME data incrementally as it arrives in a stream.
+This allows handling of large uploads without loading the entire content into memory.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMimeItem.ProcessStreaming.State">
+<short>Current streaming state</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMimeItem.ProcessStreaming.Buf">
+<short>Buffer containing streaming data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMimeItem.ProcessStreaming.Size">
+<short>Size of the streaming buffer</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMimeItem.Process">
+<short>Processes MIME data from a stream</short>
+<descr>
+<p><var>Process</var> reads and parses MIME data from the provided stream.
+This method processes the entire MIME item content in one operation.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMimeItem.Process.Stream">
+<short>Stream containing MIME data to process</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeItem.RawData">
+<short>Raw unprocessed MIME item data</short>
+<descr>
+<p><var>RawData</var> contains the original unprocessed content of the MIME item.
+This includes the raw bytes as received in the multipart message.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeItem.Data">
+<short>Processed MIME item data</short>
+<descr>
+<p><var>Data</var> contains the processed content of the MIME item.
+This is the decoded data after applying any content transfer encoding.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeItem.Name">
+<short>Name attribute of the MIME item</short>
+<descr>
+<p><var>Name</var> contains the name attribute from the Content-Disposition header.
+This typically corresponds to the form field name for form uploads.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeItem.Disposition">
+<short>Content disposition of the MIME item</short>
+<descr>
+<p><var>Disposition</var> contains the complete Content-Disposition header value.
+This specifies how the content should be handled (e.g., 'form-data', 'attachment').</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeItem.FileName">
+<short>Filename attribute of the MIME item</short>
+<descr>
+<p><var>FileName</var> contains the filename attribute from the Content-Disposition header.
+This represents the original filename of an uploaded file.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeItem.ContentType">
+<short>Content type of the MIME item</short>
+<descr>
+<p><var>ContentType</var> contains the MIME type of the item content.
+This indicates the format and nature of the data (e.g., 'text/plain', 'image/jpeg').</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeItem.Description">
+<short>Description of the MIME item</short>
+<descr>
+<p><var>Description</var> contains the Content-Description header value if present.
+This provides additional descriptive information about the MIME item content.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeItem.IsFile">
+<short>Indicates whether the MIME item is a file</short>
+<descr>
+<p><var>IsFile</var> returns <var>True</var> if the MIME item represents a file upload.
+This is determined by the presence of a filename attribute in the Content-Disposition header.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeItem.DataSize">
+<short>Size of the MIME item data in bytes</short>
+<descr>
+<p><var>DataSize</var> indicates the total size of the MIME item data in bytes.
+This represents the actual size of the content after any decoding.</p>
+</descr>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TMimeItemClass">
+<short>Class type for MIME item instances</short>
+<descr>
+<p><var>TMimeItemClass</var> is a class reference type for creating instances of <var>TMimeItem</var> or its descendants.
+This enables customization of MIME item processing.</p>
+</descr>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.HTTPDefs.TMimeItems
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TMimeItems">
+<short>Collection of MIME multipart items</short>
+<descr>
+<p><var>TMimeItems</var> manages a collection of <var>TMimeItem</var> instances representing the parts of a multipart MIME message.
+It provides access to the individual items and handles multipart parsing.</p>
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMimeItems.First">
+<short>Returns the first MIME item in the collection</short>
+<descr>
+<p><var>First</var> returns the first <var>TMimeItem</var> in the collection.
+Returns <var>nil</var> if the collection is empty.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TMimeItems.First.Result">
+<short>First MIME item or nil if collection is empty</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMimeItems.Last">
+<short>Returns the last MIME item in the collection</short>
+<descr>
+<p><var>Last</var> returns the last <var>TMimeItem</var> in the collection.
+Returns <var>nil</var> if the collection is empty.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TMimeItems.Last.Result">
+<short>Last MIME item or nil if collection is empty</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeItems.Parts">
+<short>MIME item at the specified index</short>
+<descr>
+<p><var>Parts</var> provides indexed access to <var>TMimeItem</var> instances in the collection.
+This is the default array property for the <var>TMimeItems</var> class.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TMimeItems.Parts.AIndex">
+<short>Index of the MIME item to retrieve</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeItems.Preamble">
+<short>Preamble text before multipart content</short>
+<descr>
+<p><var>Preamble</var> contains any text that appears before the first multipart boundary.
+This text is typically ignored by MIME-aware applications but may contain explanatory information.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeItems.Boundary">
+<short>Boundary string for multipart content</short>
+<descr>
+<p><var>Boundary</var> contains the boundary string used to separate parts in the multipart message.
+This value is specified in the Content-Type header of the multipart message.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TMimeItems.Files">
+<short>Collection of uploaded files from MIME items</short>
+<descr>
+<p><var>Files</var> provides access to a collection of uploaded files extracted from the MIME items.
+This collection contains only those MIME items that represent file uploads.</p>
+</descr>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TMimeItemsClass">
+<short>Class type for MIME items collection</short>
+<descr>
+<p><var>TMimeItemsClass</var> is a class reference type for creating instances of <var>TMimeItems</var> or its descendants.
+This enables customization of MIME items collection handling.</p>
+</descr>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.HTTPDefs.TStreamingMimeItems
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TStreamingMimeItems">
+<short>Collection for streaming MIME multipart items</short>
+<descr>
+<p><var>TStreamingMimeItems</var> extends <var>TMimeItems</var> to support streaming processing of large multipart messages.
+This allows handling of very large uploads without loading the entire content into memory at once.</p>
+</descr>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.HTTPDefs.THTTPHeader
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="THTTPHeader">
+<short>Base class for HTTP header management</short>
+<descr>
+<p><var>THTTPHeader</var> provides common functionality for handling HTTP headers, variables, and content.
+It serves as the base class for both <var>TRequest</var> and <var>TResponse</var> classes.</p>
+</descr>
+<seealso>
+<link id="TRequest">TRequest</link>
+<link id="TResponse">TResponse</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="THTTPHeader.Create">
+<short>Creates an HTTP header instance</short>
+<descr>
+<p><var>Create</var> initializes a new HTTP header instance.
+This sets up the internal structures for managing HTTP header fields and variables.</p>
+</descr>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="THTTPHeader.Destroy">
+<short>Destroys the HTTP header instance</short>
+<descr>
+<p><var>Destroy</var> cleans up resources used by the HTTP header instance.
+This includes freeing internal collections and associated objects.</p>
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPHeader.HeaderIsSet">
+<short>Checks if a specific header field is set</short>
+<descr>
+<p><var>HeaderIsSet</var> determines whether a specific HTTP header field has been set.
+Returns <var>True</var> if the header field contains a value, <var>False</var> otherwise.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPHeader.HeaderIsSet.Result">
+<short>True if the header field is set, False otherwise</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.HeaderIsSet.AHeader">
+<short>Header field type to check</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPHeader.GetHeader">
+<short>Gets the value of a specific header field</short>
+<descr>
+<p><var>GetHeader</var> retrieves the value of a specific HTTP header field.
+Returns an empty string if the header field is not set.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPHeader.GetHeader.Result">
+<short>Value of the header field or empty string if not set</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.GetHeader.AHeader">
+<short>Header field type to retrieve</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTTPHeader.SetHeader">
+<short>Sets the value of a specific header field</short>
+<descr>
+<p><var>SetHeader</var> assigns a value to a specific HTTP header field.
+This method updates the header field with the provided value.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.SetHeader.AHeader">
+<short>Header field type to set</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.SetHeader.AValue">
+<short>Value to set for the header field</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTTPHeader.SetFieldByName">
+<short>Sets a header field value by field name</short>
+<descr>
+<p><var>SetFieldByName</var> sets a header field value using the field name as a string.
+This provides a flexible way to set header fields by name rather than by enumerated type.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.SetFieldByName.AName">
+<short>Name of the header field to set</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.SetFieldByName.AValue">
+<short>Value to set for the header field</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPHeader.GetFieldByName">
+<short>Gets a header field value by field name</short>
+<descr>
+<p><var>GetFieldByName</var> retrieves a header field value using the field name as a string.
+Returns an empty string if the field is not found.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPHeader.GetFieldByName.Result">
+<short>Value of the header field or empty string if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.GetFieldByName.AName">
+<short>Name of the header field to retrieve</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="THTTPHeader.GetVariableHeaderName">
+<short>Gets the header field name for an HTTP variable type</short>
+<descr>
+<p><var>GetVariableHeaderName</var> returns the HTTP header field name corresponding to a given HTTP variable type.
+This provides the mapping from enumerated types to header field strings.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPHeader.GetVariableHeaderName.Result">
+<short>Header field name corresponding to the variable type</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.GetVariableHeaderName.AVariable">
+<short>HTTP variable type to get the header name for</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="THTTPHeader.GetVariableHeaderType">
+<short>Gets the HTTP variable type for a header field name</short>
+<descr>
+<p><var>GetVariableHeaderType</var> returns the HTTP variable type corresponding to a given header field name.
+This provides reverse mapping from header field strings to enumerated types.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPHeader.GetVariableHeaderType.Result">
+<short>HTTP variable type corresponding to the header field name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.GetVariableHeaderType.aName">
+<short>Header field name to get the variable type for</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="THTTPHeader.ParseContentType">
+<short>Parses a content type header value</short>
+<descr>
+<p><var>ParseContentType</var> analyzes a Content-Type header value and extracts the main type and parameters.
+This utility method helps process content type information from HTTP headers.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPHeader.ParseContentType.Result">
+<short>Main content type without parameters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.ParseContentType.AContentType">
+<short>Content type string to parse</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.ParseContentType.Parameters">
+<short>String list to receive content type parameters</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPHeader.GetCustomHeader">
+<short>Gets a custom header field value by name</short>
+<descr>
+<p><var>GetCustomHeader</var> retrieves the value of a custom (non-standard) HTTP header field.
+Custom headers are typically application-specific extensions to the standard HTTP headers.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPHeader.GetCustomHeader.Result">
+<short>Value of the custom header field</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.GetCustomHeader.Name">
+<short>Name of the custom header field</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTTPHeader.SetCustomHeader">
+<short>Sets a custom header field value by name</short>
+<descr>
+<p><var>SetCustomHeader</var> assigns a value to a custom (non-standard) HTTP header field.
+This allows setting application-specific header extensions beyond standard HTTP headers.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.SetCustomHeader.Name">
+<short>Name of the custom header field</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.SetCustomHeader.Value">
+<short>Value to set for the custom header field</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPHeader.LoadFromStream">
+<short>Loads HTTP headers from a stream</short>
+<descr>
+<p><var>LoadFromStream</var> parses HTTP header data from a stream and populates the header fields.
+This method can optionally include parsing of the command line (request/status line).</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPHeader.LoadFromStream.Result">
+<short>True if headers were loaded successfully</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.LoadFromStream.Stream">
+<short>Stream containing HTTP header data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.LoadFromStream.IncludeCommand">
+<short>Whether to include the command line in parsing</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPHeader.LoadFromStrings">
+<short>Loads HTTP headers from a string list</short>
+<descr>
+<p><var>LoadFromStrings</var> parses HTTP header data from a string list and populates the header fields.
+Each string in the list represents a header line in standard HTTP format.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPHeader.LoadFromStrings.Result">
+<short>True if headers were loaded successfully</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.LoadFromStrings.Strings">
+<short>String list containing HTTP header lines</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPHeader.LoadFromStrings.IncludeCommand">
+<short>Whether to include the command line in parsing</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.FieldCount">
+<short>Number of header fields</short>
+<descr>
+<p><var>FieldCount</var> returns the total number of header fields that have been set.
+This includes both standard and custom header fields.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Fields">
+<short>Header field name and value at the specified index</short>
+<descr>
+<p><var>Fields</var> provides indexed access to header field name-value pairs.
+Returns the complete field in the format 'Name: Value'.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="THTTPHeader.Fields.AIndex">
+<short>Index of the header field to retrieve</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.FieldNames">
+<short>Name of the header field at the specified index</short>
+<descr>
+<p><var>FieldNames</var> provides indexed access to header field names only.
+This returns just the name portion without the value.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="THTTPHeader.FieldNames.AIndex">
+<short>Index of the header field name to retrieve</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.FieldValues">
+<short>Value of the header field at the specified index</short>
+<descr>
+<p><var>FieldValues</var> provides indexed access to header field values only.
+This returns just the value portion without the field name.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="THTTPHeader.FieldValues.AIndex">
+<short>Index of the header field value to retrieve</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Accept">
+<short>Accept header field value</short>
+<descr>
+<p><var>Accept</var> contains the <var>Accept</var> header field value, which specifies the media types that are acceptable for the response.
+This indicates what content types the client can process.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.AcceptCharset">
+<short>Accept-Charset header field value</short>
+<descr>
+<p><var>AcceptCharset</var> contains the <var>Accept-Charset</var> header field value, which specifies the character encodings that are acceptable for the response.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.AcceptEncoding">
+<short>Accept-Encoding header field value</short>
+<descr>
+<p><var>AcceptEncoding</var> contains the <var>Accept-Encoding</var> header field value, which specifies the content encodings that are acceptable for the response.
+This typically includes compression methods like gzip or deflate.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.AcceptLanguage">
+<short>Accept-Language header field value</short>
+<descr>
+<p><var>AcceptLanguage</var> contains the <var>Accept-Language</var> header field value, which specifies the natural languages that are preferred for the response.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Authorization">
+<short>Authorization header field value</short>
+<descr>
+<p><var>Authorization</var> contains the <var>Authorization</var> header field value, which provides authentication credentials for the request.
+This typically includes the authentication scheme and credentials.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Connection">
+<short>Connection header field value</short>
+<descr>
+<p><var>Connection</var> contains the <var>Connection</var> header field value, which specifies connection options for the current connection.
+Common values include 'keep-alive' and 'close'.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.ContentEncoding">
+<short>Content-Encoding header field value</short>
+<descr>
+<p><var>ContentEncoding</var> contains the <var>Content-Encoding</var> header field value, which specifies any encoding applied to the entity body.
+This typically indicates compression methods like gzip or deflate.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.ContentLanguage">
+<short>Content-Language header field value</short>
+<descr>
+<p><var>ContentLanguage</var> contains the <var>Content-Language</var> header field value, which specifies the natural language of the content.
+This indicates what language the content is written in.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.ContentLength">
+<short>Content-Length header field value</short>
+<descr>
+<p><var>ContentLength</var> contains the <var>Content-Length</var> header field value, which indicates the size of the entity body in bytes.
+This specifies the exact length of the message body.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.ContentType">
+<short>Content-Type header field value</short>
+<descr>
+<p><var>ContentType</var> contains the <var>Content-Type</var> header field value, which specifies the media type of the entity body.
+This indicates the format and nature of the content (e.g., 'text/html', 'application/json').</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Date">
+<short>Date header field value</short>
+<descr>
+<p><var>Date</var> contains the <var>Date</var> header field value, which represents the date and time when the message was sent.
+This is formatted according to RFC 7231 date format.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Expires">
+<short>Expires header field value</short>
+<descr>
+<p><var>Expires</var> contains the <var>Expires</var> header field value, which specifies when the content expires and should be considered stale.
+This is used for caching control.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.From">
+<short>From header field value</short>
+<descr>
+<p><var>From</var> contains the <var>From</var> header field value, which specifies the email address of the user making the request.
+This is rarely used in practice due to privacy concerns.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Host">
+<short>Host header field value</short>
+<descr>
+<p><var>Host</var> contains the <var>Host</var> header field value, which specifies the hostname and port of the target server.
+This is required in HTTP/1.1 requests.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.IfModifiedSince">
+<short>If-Modified-Since header field value</short>
+<descr>
+<p><var>IfModifiedSince</var> contains the <var>If-Modified-Since</var> header field value, which allows conditional requests.
+The server will only return the resource if it has been modified since the specified date.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.LastModified">
+<short>Last-Modified header field value</short>
+<descr>
+<p><var>LastModified</var> contains the <var>Last-Modified</var> header field value, which indicates when the resource was last modified.
+This is used for caching and conditional request processing.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Location">
+<short>Location header field value</short>
+<descr>
+<p><var>Location</var> contains the <var>Location</var> header field value, which specifies a URI for redirection or location of a newly created resource.
+This is commonly used in redirect responses.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Pragma">
+<short>Pragma header field value</short>
+<descr>
+<p><var>Pragma</var> contains the <var>Pragma</var> header field value, which provides implementation-specific directives.
+This is primarily used for backwards compatibility with HTTP/1.0 caches.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Referer">
+<short>Referer header field value</short>
+<descr>
+<p><var>Referer</var> contains the <var>Referer</var> header field value, which identifies the URI of the resource from which the request was made.
+This indicates the previous page that linked to the current request.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.RetryAfter">
+<short>Retry-After header field value</short>
+<descr>
+<p><var>RetryAfter</var> contains the <var>Retry-After</var> header field value, which indicates when the client should retry the request.
+This is used in responses with 503 (Service Unavailable) or 429 (Too Many Requests) status codes.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Server">
+<short>Server header field value</short>
+<descr>
+<p><var>Server</var> contains the <var>Server</var> header field value, which identifies the server software handling the request.
+This typically includes the server name and version information.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.UserAgent">
+<short>User-Agent header field value</short>
+<descr>
+<p><var>UserAgent</var> contains the <var>User-Agent</var> header field value, which identifies the client application making the request.
+This typically includes browser name, version, and operating system information.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Warning">
+<short>Warning header field value</short>
+<descr>
+<p><var>Warning</var> contains the <var>Warning</var> header field value, which provides additional information about the status of a message.
+This is used to convey warnings that might not be reflected in the status code.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.WWWAuthenticate">
+<short>WWW-Authenticate header field value</short>
+<descr>
+<p><var>WWWAuthenticate</var> contains the <var>WWW-Authenticate</var> header field value, which specifies the authentication schemes and parameters for the requested resource.
+This is sent in 401 (Unauthorized) responses to challenge the client for authentication.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Via">
+<short>Via header field value</short>
+<descr>
+<p><var>Via</var> contains the <var>Via</var> header field value, which tracks intermediate proxies and gateways.
+This header is used by proxies to indicate their presence in the request/response chain.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.HTTPAccept">
+<short>HTTP Accept header accessor property</short>
+<descr>
+<p><var>HTTPAccept</var> is an alias for the <var>Accept</var> property.
+This provides alternative access to the Accept header field value.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.HTTPAcceptCharset">
+<short>HTTP Accept-Charset header accessor property</short>
+<descr>
+<p><var>HTTPAcceptCharset</var> is an alias for the <var>AcceptCharset</var> property.
+This provides alternative access to the Accept-Charset header field value.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.HTTPAcceptEncoding">
+<short>HTTP Accept-Encoding header accessor property</short>
+<descr>
+<p><var>HTTPAcceptEncoding</var> is an alias for the <var>AcceptEncoding</var> property.
+This provides alternative access to the Accept-Encoding header field value.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.HTTPIfModifiedSince">
+<short>HTTP If-Modified-Since header accessor property</short>
+<descr>
+<p><var>HTTPIfModifiedSince</var> is an alias for the <var>IfModifiedSince</var> property.
+This provides alternative access to the If-Modified-Since header field value.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.HTTPReferer">
+<short>HTTP Referer header accessor property</short>
+<descr>
+<p><var>HTTPReferer</var> is an alias for the <var>Referer</var> property.
+This provides alternative access to the Referer header field value.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.HTTPUserAgent">
+<short>HTTP User-Agent header accessor property</short>
+<descr>
+<p><var>HTTPUserAgent</var> is an alias for the <var>UserAgent</var> property.
+This provides alternative access to the User-Agent header field value.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Cookie">
+<short>Cookie header field value</short>
+<descr>
+<p><var>Cookie</var> contains the <var>Cookie</var> header field value sent by the client.
+This includes all cookies that the client is sending to the server for this request.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.SetCookie">
+<short>Set-Cookie header field value</short>
+<descr>
+<p><var>SetCookie</var> contains the <var>Set-Cookie</var> header field value to be sent to the client.
+This is used by servers to send cookies to the client for storage and future requests.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.HTTPXRequestedWith">
+<short>HTTP X-Requested-With header accessor property</short>
+<descr>
+<p><var>HTTPXRequestedWith</var> contains the <var>X-Requested-With</var> header field value.
+This is commonly used by JavaScript frameworks to identify AJAX requests (typically set to 'XMLHttpRequest').</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.HttpVersion">
+<short>HTTP protocol version</short>
+<descr>
+<p><var>HttpVersion</var> contains the HTTP protocol version used in the request or response.
+This indicates the HTTP version such as '1.0', '1.1', or '2.0'.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.ProtocolVersion">
+<short>Protocol version string</short>
+<descr>
+<p><var>ProtocolVersion</var> is an alias for <var>HttpVersion</var>.
+This provides alternative access to the HTTP protocol version information.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.PathInfo">
+<short>PATH_INFO environment variable value</short>
+<descr>
+<p><var>PathInfo</var> contains the PATH_INFO environment variable value.
+This represents additional path information following the script name in the URL.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.PathTranslated">
+<short>PATH_TRANSLATED environment variable value</short>
+<descr>
+<p><var>PathTranslated</var> contains the PATH_TRANSLATED environment variable value.
+This represents the translated path information mapped to the file system.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.RemoteAddress">
+<short>REMOTE_ADDR environment variable value</short>
+<descr>
+<p><var>RemoteAddress</var> contains the IP address of the client making the request.
+This corresponds to the REMOTE_ADDR environment variable in CGI.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.RemoteAddr">
+<short>Alias for RemoteAddress property</short>
+<descr>
+<p><var>RemoteAddr</var> is an alias for the <var>RemoteAddress</var> property.
+This provides alternative access to the client's IP address information.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.RemoteHost">
+<short>REMOTE_HOST environment variable value</short>
+<descr>
+<p><var>RemoteHost</var> contains the hostname of the client making the request.
+This corresponds to the REMOTE_HOST environment variable in CGI.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.ScriptName">
+<short>SCRIPT_NAME environment variable value</short>
+<descr>
+<p><var>ScriptName</var> contains the name of the script being executed.
+This corresponds to the SCRIPT_NAME environment variable in CGI.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.ServerPort">
+<short>SERVER_PORT environment variable value</short>
+<descr>
+<p><var>ServerPort</var> contains the port number on which the server received the request.
+This corresponds to the SERVER_PORT environment variable in CGI.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Method">
+<short>HTTP request method</short>
+<descr>
+<p><var>Method</var> contains the HTTP request method used in the request.
+Common values include GET, POST, PUT, DELETE, HEAD, and OPTIONS.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.URL">
+<short>Complete request URL</short>
+<descr>
+<p><var>URL</var> contains the complete URL of the current request.
+This includes the protocol, host, port, path, and query string components.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Query">
+<short>QUERY_STRING environment variable value</short>
+<descr>
+<p><var>Query</var> contains the query string portion of the request URL.
+This includes all parameters passed in the URL after the '?' character.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.Content">
+<short>Request content as string</short>
+<descr>
+<p><var>Content</var> contains the request body content as a string.
+This is typically used for POST requests with text-based content types.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.ContentBytes">
+<short>Request content as byte array</short>
+<descr>
+<p><var>ContentBytes</var> contains the request body content as raw bytes.
+This is useful for binary content or when the exact byte representation is needed.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.CookieFields">
+<short>Collection of cookie name-value pairs</short>
+<descr>
+<p><var>CookieFields</var> provides access to the parsed cookie values as name-value pairs.
+This collection contains all cookies sent by the client in the request.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.ContentFields">
+<short>Collection of content form fields</short>
+<descr>
+<p><var>ContentFields</var> provides access to form field values from the request content.
+This collection contains parsed form data from POST requests.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.QueryFields">
+<short>Collection of query string name-value pairs</short>
+<descr>
+<p><var>QueryFields</var> provides access to parsed query string parameters as name-value pairs.
+This collection contains all parameters passed in the URL query string.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPHeader.CustomHeaders">
+<short>Collection of custom header fields</short>
+<descr>
+<p><var>CustomHeaders</var> provides access to custom (non-standard) HTTP header fields.
+This collection contains application-specific headers beyond the standard HTTP headers.</p>
+</descr>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TStreamingContentType">
+<short>Content types for streaming HTTP data</short>
+<descr>
+<p><var>TStreamingContentType</var> defines content types that can be used for streaming HTTP responses.
+This enumeration specifies different formats for server-sent events and streaming data.</p>
+</descr>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStreamingContentType.sctUnknown">
+<short>Unknown content type for streaming</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStreamingContentType.sctMultipart">
+<short>Multipart content type for streaming</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TStreamingContentType.sctFormUrlEncoded">
+<short>Form URL-encoded content type for streaming</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnStreamEncodingEvent">
+<short>Event type for stream encoding processing</short>
+<descr>
+<p><var>TOnStreamEncodingEvent</var> is an event type called during stream content encoding processing.
+It provides access to the encoding state, buffer data, and size for custom processing of streamed content.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnStreamEncodingEvent.Sender">
+<short>Object that triggered the stream encoding event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnStreamEncodingEvent.State">
+<short>Current streaming state</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnStreamEncodingEvent.Buf">
+<short>Buffer containing stream data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnStreamEncodingEvent.Size">
+<short>Size of the stream buffer</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnUnknownEncodingEvent">
+<short>Event type for handling unknown content encoding</short>
+<descr>
+<p><var>TOnUnknownEncodingEvent</var> is an event type triggered when unknown content encoding is encountered.
+It allows custom handling of content with unrecognized encoding through the provided stream.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnUnknownEncodingEvent.Sender">
+<short>Object that triggered the unknown encoding event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnUnknownEncodingEvent.ContentType">
+<short>Content type that could not be recognized</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnUnknownEncodingEvent.Stream">
+<short>Stream containing the unknown encoded content</short>
+</element>
+
+<!-- procedure type Visibility: public -->
+<element name="TRequest.TConnectionIDAllocator">
+<short>Connection ID allocator method type</short>
+<descr>
+<p><var>TConnectionIDAllocator</var> is a method type used for allocating connection identifiers.
+It takes a connection ID parameter and enables custom connection ID management.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRequest.TConnectionIDAllocator.aID">
+<short>Connection ID parameter</short>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="TRequest.IDAllocator">
+<short>Connection ID allocator instance</short>
+<descr>
+<p><var>IDAllocator</var> is the connection ID allocator method instance used by the request.
+It provides the mechanism for generating and managing connection identifiers.</p>
+</descr>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="TRequest.DefaultRequestUploadDir">
+<short>Default directory for uploaded files</short>
+<descr>
+<p><var>DefaultRequestUploadDir</var> specifies the default directory where uploaded files are stored.
+This directory is used when no specific upload directory is configured for file uploads.</p>
+</descr>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TRequest.Create">
+<short>Creates a new request instance</short>
+<descr>
+<p><var>Create</var> initializes a new <var>TRequest</var> object and allocates a unique request ID.</p>
+</descr>
+<seealso>
+<link id="TRequest.RequestID">RequestID</link>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TRequest.destroy">
+<short>Destroys the HTTP request instance</short>
+<descr>
+<p><var>destroy</var> cleans up resources used by the HTTP request instance.
+This includes releasing uploaded files, form data, and other associated objects.</p>
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TRequest.GetNextPathInfo">
+<short>Gets the next path info segment</short>
+<descr>
+<p><var>GetNextPathInfo</var> retrieves the next segment from the path info.
+This is useful for processing REST-style URLs with multiple path segments.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TRequest.GetNextPathInfo.Result">
+<short>Next path info segment or empty string</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TRequest.ToString">
+<short>Returns string representation of the request</short>
+<descr>
+<p><var>ToString</var> returns a formatted string containing key information about the HTTP request.
+This is useful for debugging and logging purposes.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TRequest.ToString.Result">
+<short>String representation of the HTTP request</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.RequestID">
+<short>Unique request identifier</short>
+<descr>
+<p><var>RequestID</var> contains a unique identifier assigned to this request.
+Useful for logging and tracking individual requests.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.RouteParams">
+<short>Route parameter value by name</short>
+<descr>
+<p><var>RouteParams</var> provides access to route parameters extracted from the URL path.
+These are typically used in REST-style routing systems to capture URL segments as parameters.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TRequest.RouteParams.AParam">
+<short>Name of the route parameter</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.ReturnedPathInfo">
+<short>Path info that was returned from GetNextPathInfo</short>
+<descr>
+<p><var>ReturnedPathInfo</var> contains the path info segment that was most recently returned by <var>GetNextPathInfo</var>.
+This allows tracking of the current position when processing path segments.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.LocalPathPrefix">
+<short>Local path prefix for the request</short>
+<descr>
+<p><var>LocalPathPrefix</var> contains the local path prefix that should be prepended to relative paths.
+This is useful for handling requests in subdirectories or virtual directories.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.CommandLine">
+<short>HTTP command line from request</short>
+<descr>
+<p><var>CommandLine</var> contains the complete HTTP command line from the request.
+This includes the method, URI, and HTTP version (e.g., 'GET /path HTTP/1.1').</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.Command">
+<short>HTTP command (method and URI)</short>
+<descr>
+<p><var>Command</var> contains the HTTP method and URI portion of the command line.
+This excludes the HTTP version information.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.URI">
+<short>URI of the HTTP request</short>
+<descr>
+<p><var>URI</var> contains the URI portion of the HTTP request.
+This includes the path and query string but excludes the protocol and host information.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.QueryString">
+<short>Query string portion of the request</short>
+<descr>
+<p><var>QueryString</var> contains the query string portion of the request URL.
+This includes all parameters passed after the '?' character in the URL.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.HeaderLine">
+<short>Complete header line from request</short>
+<descr>
+<p><var>HeaderLine</var> contains the complete first line of the HTTP request.
+This is the request line including method, URI, and HTTP version.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.Files">
+<short>Collection of uploaded files</short>
+<descr>
+<p><var>Files</var> provides access to the collection of files uploaded with the request.
+This contains all files submitted through multipart form uploads.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.HandleGetOnPost">
+<short>Whether to handle GET parameters on POST requests</short>
+<descr>
+<p><var>HandleGetOnPost</var> determines whether GET parameters in the query string should be processed on POST requests.
+When <var>True</var>, both POST form data and GET query parameters are available.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.OnUnknownEncoding">
+<short>Event handler for unknown content encoding</short>
+<descr>
+<p><var>OnUnknownEncoding</var> is an event that fires when an unknown content encoding is encountered.
+This allows custom handling of non-standard content encodings.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.OnStreamEncodingEvent">
+<short>Event handler for stream encoding processing</short>
+<descr>
+<p><var>OnStreamEncodingEvent</var> is an event that fires during stream encoding processing.
+This allows custom handling of streaming content encoding.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.IfMatch">
+<short>If-Match header field value</short>
+<descr>
+<p><var>IfMatch</var> contains the <var>If-Match</var> header field value for conditional requests.
+This specifies entity tags that must match for the request to proceed.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.IfNoneMatch">
+<short>If-None-Match header field value</short>
+<descr>
+<p><var>IfNoneMatch</var> contains the <var>If-None-Match</var> header field value for conditional requests.
+This specifies entity tags that must not match for the request to proceed.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.IfRange">
+<short>If-Range header field value</short>
+<descr>
+<p><var>IfRange</var> contains the <var>If-Range</var> header field value for conditional range requests.
+This allows range requests only if the entity matches the specified condition.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.IfUnModifiedSince">
+<short>If-Unmodified-Since header field value</short>
+<descr>
+<p><var>IfUnModifiedSince</var> contains the <var>If-Unmodified-Since</var> header field value for conditional requests.
+This specifies that the request should only proceed if the resource has not been modified since the given date.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.ContentRange">
+<short>Content-Range header field value</short>
+<descr>
+<p><var>ContentRange</var> contains the <var>Content-Range</var> header field value.
+This indicates which part of a resource is being sent in partial content responses.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.TE">
+<short>TE (Transfer-Encoding) header field value</short>
+<descr>
+<p><var>TE</var> contains the <var>TE</var> header field value, which specifies the transfer encodings the client is willing to accept.
+This is used in HTTP/1.1 for specifying acceptable transfer encodings.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.Upgrade">
+<short>Upgrade header field value</short>
+<descr>
+<p><var>Upgrade</var> contains the <var>Upgrade</var> header field value, which is used to upgrade the connection to a different protocol.
+Commonly used for WebSocket upgrades.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequest.KeepFullContents">
+<short>Whether to keep full request contents in memory</short>
+<descr>
+<p><var>KeepFullContents</var> determines whether the complete request content should be kept in memory.
+When <var>True</var>, the entire request body is stored; when <var>False</var>, memory usage is minimized.</p>
+</descr>
+</element>
+
+<!-- record type Visibility: default -->
+<element name="THTTPServerEvent">
+<short>Server-sent event data structure</short>
+<descr>
+<p><var>THTTPServerEvent</var> represents a server-sent event for real-time communication with web clients.
+This structure contains all the fields needed to send events to clients using the Server-Sent Events (SSE) standard.</p>
+</descr>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="THTTPServerEvent.Id">
+<short>Event ID for server-sent events</short>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="THTTPServerEvent.Data">
+<short>Event data content</short>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="THTTPServerEvent.Event">
+<short>Event type name</short>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="THTTPServerEvent.Comment">
+<short>Event comment</short>
+</element>
+
+<!-- variable Visibility: public -->
+<element name="THTTPServerEvent.Retry">
+<short>Retry interval for the event</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPServerEvent.ToString">
+<short>Returns string representation of the server event</short>
+<descr>
+<p><var>ToString</var> returns the server event formatted according to the Server-Sent Events specification.
+This includes all relevant fields formatted for transmission to the client.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPServerEvent.ToString.Result">
+<short>String representation of the server-sent event</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.HTTPDefs.TResponse
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TResponse">
+<short>HTTP response representation</short>
+<descr>
+<p><var>TResponse</var> represents an HTTP response sent back to a client.
+It extends <var>THTTPHeader</var> and provides methods to set status codes, headers, content,
+cookies, and send the response data.</p>
+</descr>
+<seealso>
+<link id="TRequest">TRequest</link>
+<link id="THTTPHeader">THTTPHeader</link>
+<link id="TCookies">TCookies</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TResponse.Create">
+<short>Creates an HTTP response instance</short>
+<descr>
+<p><var>Create</var> initializes a new HTTP response instance associated with the specified request.
+This sets up the response structure and links it to the corresponding request.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TResponse.Create.ARequest">
+<short>HTTP request associated with this response</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TResponse.destroy">
+<short>Destroys the HTTP response instance</short>
+<descr>
+<p><var>destroy</var> cleans up resources used by the HTTP response instance.
+This includes freeing any associated content streams and releasing memory.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TResponse.SendContent">
+<short>Sends the response content to the client</short>
+<descr>
+<p><var>SendContent</var> transmits the response body content to the client.
+This method sends the actual data payload of the HTTP response.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TResponse.SendHeaders">
+<short>Sends the response headers to the client</short>
+<descr>
+<p><var>SendHeaders</var> transmits the HTTP headers to the client.
+This must be called before sending any content and includes the status line and all response headers.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TResponse.SendResponse">
+<short>Sends the complete HTTP response</short>
+<descr>
+<p><var>SendResponse</var> sends both headers and content to the client, completing the HTTP response.</p>
+</descr>
+<seealso>
+<link id="TResponse.SendHeaders">SendHeaders</link>
+<link id="TResponse.SendContent">SendContent</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TResponse.StartServerEvents">
+<short>Starts server-sent events mode</short>
+<descr>
+<p><var>StartServerEvents</var> initiates server-sent events (SSE) mode for real-time communication.
+This sets the appropriate headers and keeps the connection open for streaming events.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TResponse.SendServerEvent">
+<short>Sends a server-sent event</short>
+<descr>
+<p><var>SendServerEvent</var> transmits a single server-sent event to the client.
+This method formats and sends the event according to the SSE specification.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TResponse.SendServerEvent.aEvent">
+<short>Server event to send</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TResponse.EndServerEvents">
+<short>Ends server-sent events mode</short>
+<descr>
+<p><var>EndServerEvents</var> terminates server-sent events mode and closes the SSE connection.
+This properly ends the event stream and releases associated resources.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TResponse.SendRedirect">
+<short>Sends a redirect response</short>
+<descr>
+<p><var>SendRedirect</var> sends an HTTP redirect response to the client.
+This sets the appropriate status code and Location header to redirect the client to a new URL.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TResponse.SendRedirect.TargetURL">
+<short>Target URL for the redirect</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TResponse.ToString">
+<short>Returns string representation of the response</short>
+<descr>
+<p><var>ToString</var> returns a formatted string containing key information about the HTTP response.
+This is useful for debugging and logging purposes.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TResponse.ToString.Result">
+<short>String representation of the HTTP response</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TResponse.SetStatus">
+<short>Sets the HTTP status code and text</short>
+<descr>
+<p><var>SetStatus</var> sets the HTTP status code and optionally sends it immediately.
+This method allows setting both the numeric status code and corresponding reason phrase.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TResponse.SetStatus.aStatus">
+<short>HTTP status code to set</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TResponse.SetStatus.aSend">
+<short>Whether to send the status immediately</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.Request">
+<short>Associated HTTP request object</short>
+<descr>
+<p><var>Request</var> contains a reference to the HTTP request object that this response is answering.
+This provides access to the original request data for response generation.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.Code">
+<short>HTTP response status code</short>
+<descr>
+<p><var>Code</var> contains the HTTP status code for the response.
+Common values include 200 (OK), 404 (Not Found), and 500 (Internal Server Error).</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.CodeText">
+<short>HTTP response status text</short>
+<descr>
+<p><var>CodeText</var> contains the reason phrase corresponding to the HTTP status code.
+This provides the descriptive text that accompanies the numeric status code.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.Age">
+<short>Age header value indicating response age in seconds</short>
+<descr>
+<p><var>Age</var> contains the Age header value, indicating how long the response has been cached.
+This value is measured in seconds since the response was generated.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.Allow">
+<short>Allow header value listing permitted HTTP methods</short>
+<descr>
+<p><var>Allow</var> contains the Allow header value, which lists the HTTP methods supported by the resource.
+This is commonly used in response to OPTIONS requests or with 405 Method Not Allowed responses.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.CacheControl">
+<short>Cache-Control header value for caching directives</short>
+<descr>
+<p><var>CacheControl</var> contains the Cache-Control header value with caching directives.
+This controls how the response should be cached by browsers and intermediate caches.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.ContentLocation">
+<short>Content-Location header value for alternate location</short>
+<descr>
+<p><var>ContentLocation</var> contains the Content-Location header value.
+This indicates an alternate location for the content that is being returned.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.ContentMD5">
+<short>Content-MD5 header value with MD5 digest of content</short>
+<descr>
+<p><var>ContentMD5</var> contains the Content-MD5 header value with an MD5 digest of the response content.
+This provides integrity checking for the transmitted content.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.ContentRange">
+<short>Content-Range header value for partial content</short>
+<descr>
+<p><var>ContentRange</var> contains the Content-Range header value for partial content responses.
+This is used in 206 Partial Content responses to indicate which portion of the resource is being sent.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.ETag">
+<short>ETag header value for entity tag validation</short>
+<descr>
+<p><var>ETag</var> contains the ETag header value, which is an entity tag for cache validation.
+This provides a mechanism for efficient cache validation and conditional requests.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.ProxyAuthenticate">
+<short>Proxy-Authenticate header value for proxy authentication</short>
+<descr>
+<p><var>ProxyAuthenticate</var> contains the Proxy-Authenticate header value.
+This is sent in 407 Proxy Authentication Required responses to challenge the client for proxy authentication.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.RetryAfter">
+<short>Retry-After header value indicating when to retry request</short>
+<descr>
+<p><var>RetryAfter</var> contains the Retry-After header value, indicating when the client should retry the request.
+This is used with 503 Service Unavailable and 429 Too Many Requests responses.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.FirstHeaderLine">
+<short>First line of HTTP response headers</short>
+<descr>
+<p><var>FirstHeaderLine</var> contains the status line of the HTTP response.
+This includes the HTTP version, status code, and reason phrase.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.ContentStream">
+<short>Stream containing response body content</short>
+<descr>
+<p><var>ContentStream</var> contains the response body content as a stream.
+This allows efficient handling of large responses without loading everything into memory.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.Content">
+<short>Response body content as string</short>
+<descr>
+<p><var>Content</var> contains the response body content as a string.
+This provides convenient access to the response content for text-based responses.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.Contents">
+<short>String list containing response content lines</short>
+<descr>
+<p><var>Contents</var> contains the response body content as a string list.
+This provides line-based access to the response content, with each line as a separate string.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.HeadersSent">
+<short>Indicates whether response headers have been sent</short>
+<descr>
+<p><var>HeadersSent</var> indicates whether the HTTP response headers have already been transmitted to the client.
+Once <var>True</var>, headers can no longer be modified.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.ContentSent">
+<short>Indicates whether response content has been sent</short>
+<descr>
+<p><var>ContentSent</var> indicates whether the response body content has been transmitted to the client.
+This helps track the completion status of the response.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.Cookies">
+<short>Collection of HTTP cookies to send with response</short>
+<descr>
+<p><var>Cookies</var> provides access to the collection of cookies that will be sent to the client.
+These cookies are included in Set-Cookie headers in the HTTP response.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TResponse.FreeContentStream">
+<short>Whether to automatically free the content stream</short>
+<descr>
+<p><var>FreeContentStream</var> determines whether the content stream should be automatically freed after use.
+When <var>True</var>, the stream is destroyed when the response is completed.</p>
+</descr>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TSessionState">
+<short>Enumeration of possible session states</short>
+<descr>
+<p><var>TSessionState</var> defines the possible states of an HTTP session.
+This enumeration tracks the lifecycle of user sessions from creation to expiration.</p>
+</descr>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSessionState.ssNew">
+<short>New session state</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSessionState.ssExpired">
+<short>Expired session state</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSessionState.ssActive">
+<short>Active session state</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TSessionState.ssResponseInitialized">
+<short>Response initialized session state</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TSessionStates">
+<short>Set of session states</short>
+<descr>
+<p><var>TSessionStates</var> represents a set of <link id="TSessionState">TSessionState</link> values.
+It is used to track multiple session states simultaneously during session management.</p>
+</descr>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.HTTPDefs.TCustomSession
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TCustomSession">
+<short>Base class for HTTP session management</short>
+<descr>
+<p><var>TCustomSession</var> provides the foundation for HTTP session management functionality.
+It handles session initialization, variable management, state tracking, and cleanup operations.</p>
+</descr>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCustomSession.Create">
+<short>Creates a new session instance</short>
+<descr>
+<p><var>Create</var> constructs a new session instance with the specified owner.
+It initializes the session with default values and prepares it for use.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomSession.Create.AOwner">
+<short>Owner component for the session</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomSession.InitSession">
+<short>Initializes the session from HTTP request</short>
+<descr>
+<p><var>InitSession</var> initializes the session using data from the HTTP request.
+It reads session cookies and triggers the new session event handler if needed.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomSession.InitSession.ARequest">
+<short>HTTP request to initialize session from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomSession.InitSession.OnNewSession">
+<short>Event handler called when new session is created</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomSession.InitSession.OnExpired">
+<short>Event handler called when session expires</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomSession.InitResponse">
+<short>Initializes the HTTP response for the session</short>
+<descr>
+<p><var>InitResponse</var> initializes the HTTP response for session handling.
+It sets up response headers and cookies required for session management.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomSession.InitResponse.AResponse">
+<short>HTTP response to initialize for session</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomSession.UpdateResponse">
+<short>Updates the HTTP response with session information</short>
+<descr>
+<p><var>UpdateResponse</var> updates the HTTP response with current session information.
+It ensures session cookies and headers are properly set in the response.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomSession.UpdateResponse.AResponse">
+<short>HTTP response to update with session data</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomSession.RemoveVariable">
+<short>Removes a variable from the session</short>
+<descr>
+<p><var>RemoveVariable</var> removes the specified variable from the session storage.
+The variable name is case-insensitive for removal operations.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomSession.RemoveVariable.VariableName">
+<short>Name of the variable to remove</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomSession.Terminate">
+<short>Terminates and invalidates the session</short>
+<descr>
+<p><var>Terminate</var> terminates the current session and cleans up session data.
+It marks the session for deletion and removes associated cookies from the response.</p>
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomSession.SessionVariableExists">
+<short>Checks if a session variable exists</short>
+<descr>
+<p><var>SessionVariableExists</var> checks whether a variable with the specified name exists in the session.
+Returns <var>True</var> if the variable exists, <var>False</var> otherwise.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomSession.SessionVariableExists.Result">
+<short><var>True</var> if the variable exists, <var>False</var> otherwise</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomSession.SessionVariableExists.VarName">
+<short>Name of the variable to check for existence</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomSession.TimeOutMinutes">
+<short>Session timeout period in minutes</short>
+<descr>
+<p><var>TimeOutMinutes</var> specifies the session timeout period in minutes.
+Sessions that remain inactive longer than this period will expire automatically.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomSession.SessionID">
+<short>Unique identifier for the session</short>
+<descr>
+<p><var>SessionID</var> contains the unique identifier for the current session.
+This identifier is used to track and maintain session state across HTTP requests.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomSession.SessionCookie">
+<short>Name of the cookie used to store session ID</short>
+<descr>
+<p><var>SessionCookie</var> specifies the name of the HTTP cookie used to store the session ID.
+This cookie name is used for both reading and writing session information.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomSession.SessionCookiePath">
+<short>Path attribute for the session cookie</short>
+<descr>
+<p><var>SessionCookiePath</var> defines the path scope for the session cookie.
+The cookie will only be sent for requests matching this path prefix.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomSession.Variables">
+<short>Access to session variables by name</short>
+<descr>
+<p><var>Variables</var> provides access to the session variables collection.
+It allows storing and retrieving named values that persist across HTTP requests within the session.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomSession.Variables.VarName">
+<short>Name of the session variable to access</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomSession.SessionState">
+<short>Current state of the session</short>
+<descr>
+<p><var>SessionState</var> indicates the current state of the session.
+It tracks whether the session is new, active, or has been terminated.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomSession.OnSessionStateChange">
+<short>Event triggered when session state changes</short>
+<descr>
+<p><var>OnSessionStateChange</var> is triggered when the session state changes.
+It allows monitoring and responding to session state transitions.</p>
+</descr>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TRequestEvent">
+<short>Event procedure type for HTTP request handling</short>
+<descr>
+<p><var>TRequestEvent</var> is an event type for handling HTTP request processing.
+It provides access to the request object during various stages of request handling.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRequestEvent.Sender">
+<short>Object that triggered the request event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRequestEvent.ARequest">
+<short>HTTP request object being handled</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TResponseEvent">
+<short>Event procedure type for HTTP response handling</short>
+<descr>
+<p><var>TResponseEvent</var> is an event type for handling HTTP response processing.
+It provides access to the response object during various stages of response generation.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TResponseEvent.Sender">
+<short>Object that triggered the response event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TResponseEvent.AResponse">
+<short>HTTP response object being handled</short>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.HTTPDefs.EHTTP
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="EHTTP">
+<short>HTTP exception class</short>
+<descr>
+<p><var>EHTTP</var> is an exception class for HTTP-related errors.
+It includes properties for HTTP status code and status text.</p>
+</descr>
+<seealso>
+<link id="HTTPError">HTTPError</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="EHTTP.StatusCode">
+<short>HTTP status code of the error</short>
+<descr>
+<p><var>StatusCode</var> contains the HTTP status code associated with the error.
+This numeric code indicates the type of HTTP error that occurred.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="EHTTP.StatusText">
+<short>HTTP status text of the error</short>
+<descr>
+<p><var>StatusText</var> contains the textual description of the HTTP status code.
+This provides a human-readable explanation of the error condition.</p>
+</descr>
+</element>
+
+<!-- alias type Visibility: default -->
+<element name="HTTPError">
+<short>Creates an HTTP error exception</short>
+<descr>
+<p><var>HTTPError</var> creates an <link id="EHTTP">EHTTP</link> exception with the specified status code and message.
+It provides a convenient way to raise HTTP-specific errors with proper status information.</p>
+</descr>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TCORSOption">
+<short>Options for CORS (Cross-Origin Resource Sharing) configuration</short>
+<descr>
+<p><var>TCORSOption</var> defines individual options for CORS configuration.
+These options control various aspects of cross-origin resource sharing behavior.</p>
+</descr>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCORSOption.coAllowCredentials">
+<short>Allow credentials in CORS requests</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TCORSOption.coEmptyDomainToOrigin">
+<short>Convert empty domain to origin in CORS</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TCORSOptions">
+<short>Set of CORS options</short>
+<descr>
+<p><var>TCORSOptions</var> is a set of <link id="TCORSOption">TCORSOption</link> values.
+It allows combining multiple CORS configuration options for comprehensive control.</p>
+</descr>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="THandleCORSOption">
+<short>Options for handling CORS requests</short>
+<descr>
+<p><var>THandleCORSOption</var> defines options that control how CORS requests are handled.
+These options affect the processing and response generation for cross-origin requests.</p>
+</descr>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THandleCORSOption.hcDetect">
+<short>Detect CORS requests option</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THandleCORSOption.hcFull">
+<short>Full CORS handling option</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THandleCORSOption.hcHumanReadable">
+<short>Human readable CORS handling option</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="THandleCORSOption.hcSend">
+<short>Send CORS headers option</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="THandleCORSOptions">
+<short>Set of CORS handling options</short>
+<descr>
+<p><var>THandleCORSOptions</var> is a set of <link id="THandleCORSOption">THandleCORSOption</link> values.
+It allows configuring multiple aspects of CORS request handling behavior.</p>
+</descr>
+</element>
+
+<!--
+  ********************************************************************
+    #fcl.HTTPDefs.TCORSSupport
+  ********************************************************************
+-->
+
+<!-- class Visibility: default -->
+<element name="TCORSSupport">
+<short>Cross-Origin Resource Sharing support</short>
+<descr>
+<p><var>TCORSSupport</var> provides functionality for handling CORS (Cross-Origin Resource Sharing) requests.
+It manages allowed origins, methods, headers, and other CORS-related settings.</p>
+</descr>
+<seealso>
+<link id="TCORSOptions">TCORSOptions</link>
+<link id="THandleCORSOptions">THandleCORSOptions</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCORSSupport.Create">
+<short>Creates a new CORS support instance</short>
+<descr>
+<p><var>Create</var> constructs a new CORS support instance with the specified owner.
+It initializes the CORS configuration with default values.</p>
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCORSSupport.ResolvedCORSAllowedOrigins">
+<short>Resolves allowed origins for CORS requests</short>
+<descr>
+<p><var>ResolvedCORSAllowedOrigins</var> resolves the list of allowed origins for the current request.
+It processes the configured origins and returns the applicable ones based on the request context.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCORSSupport.ResolvedCORSAllowedOrigins.Result">
+<short>Resolved list of allowed origins</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCORSSupport.ResolvedCORSAllowedOrigins.aRequest">
+<short>HTTP request to resolve origins for</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCORSSupport.HandleRequest">
+<short>Handles CORS request processing</short>
+<descr>
+<p><var>HandleRequest</var> processes CORS headers and validation for the HTTP request.
+It returns the appropriate CORS handling result based on the request and configuration.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCORSSupport.HandleRequest.Result">
+<short><var>True</var> if CORS request was handled, <var>False</var> otherwise</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCORSSupport.HandleRequest.aRequest">
+<short>HTTP request to handle for CORS</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCORSSupport.HandleRequest.aResponse">
+<short>HTTP response to populate with CORS headers</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCORSSupport.HandleRequest.aOptions">
+<short>CORS handling options to apply</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCORSSupport.Assign">
+<short>Assigns CORS settings from another object</short>
+<descr>
+<p><var>Assign</var> copies CORS configuration settings from another <var>TCORSSupport</var> instance.
+It transfers all CORS options, origins, methods, and headers to the current instance.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCORSSupport.Assign.Source">
+<short>Source object to copy CORS settings from</short>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCORSSupport.Enabled">
+<short>Enables or disables CORS support</short>
+<descr>
+<p><var>Enabled</var> controls whether CORS processing is active.
+When <var>True</var>, CORS headers are processed and validated for cross-origin requests.</p>
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCORSSupport.Options">
+<short>CORS configuration options</short>
+<descr>
+<p><var>Options</var> contains the set of <link id="TCORSOptions">CORS configuration options</link>.
+These options control various aspects of CORS behavior such as credential handling.</p>
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCORSSupport.AllowedMethods">
+<short>HTTP methods allowed for CORS requests</short>
+<descr>
+<p><var>AllowedMethods</var> specifies the HTTP methods permitted for cross-origin requests.
+Common methods include GET, POST, PUT, DELETE, and OPTIONS.</p>
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCORSSupport.AllowedOrigins">
+<short>Origins allowed for CORS requests</short>
+<descr>
+<p><var>AllowedOrigins</var> contains the list of origins permitted to make cross-origin requests.
+Origins can be specific domains or wildcard patterns for broader access.</p>
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCORSSupport.AllowedHeaders">
+<short>Headers allowed for CORS requests</short>
+<descr>
+<p><var>AllowedHeaders</var> specifies the HTTP headers that are permitted in cross-origin requests.
+This controls which headers clients can include in their CORS requests.</p>
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCORSSupport.MaxAge">
+<short>Maximum age for CORS preflight cache in seconds</short>
+<descr>
+<p><var>MaxAge</var> specifies how long browsers may cache CORS preflight responses.
+This value is sent in the Access-Control-Max-Age header to control preflight caching.</p>
+</descr>
+</element>
+
+<!-- function Visibility: default -->
+<element name="HTTPDecode">
+<short>Decodes URL-encoded string</short>
+<descr>
+<p><var>HTTPDecode</var> converts a URL-encoded string back to its original form,
+replacing percent-encoded characters with their actual values.</p>
+</descr>
+<seealso>
+<link id="HTTPEncode">HTTPEncode</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="HTTPDecode.Result">
+<short>Decoded HTTP string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="HTTPDecode.AStr">
+<short>HTTP encoded string to decode</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="HTTPEncode">
+<short>Encodes string for URL transmission</short>
+<descr>
+<p><var>HTTPEncode</var> converts a string to URL-encoded format,
+replacing special characters with percent-encoded representations suitable for HTTP transmission.</p>
+</descr>
+<seealso>
+<link id="HTTPDecode">HTTPDecode</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="HTTPEncode.Result">
+<short>HTTP encoded string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="HTTPEncode.AStr">
+<short>String to HTTP encode</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="IncludeHTTPPathDelimiter">
+<short>Ensures path ends with forward slash</short>
+<descr>
+<p><var>IncludeHTTPPathDelimiter</var> appends a forward slash ('/') to the end of a path string
+if it doesn't already end with one, ensuring proper HTTP path formatting.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="IncludeHTTPPathDelimiter.Result">
+<short>Path string with trailing slash delimiter</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IncludeHTTPPathDelimiter.AStr">
+<short>HTTP path string to add delimiter to</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="UploadedFilesClass">
+<short>Global variable for uploaded files class type</short>
+<descr>
+<p><var>UploadedFilesClass</var> is a global class reference variable for <link id="TUploadedFiles">TUploadedFiles</link>.
+It allows customization of the uploaded files collection class used throughout the HTTP framework.</p>
+</descr>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="UploadedFileClass">
+<short>Global variable for uploaded file class type</short>
+<descr>
+<p><var>UploadedFileClass</var> is a global class reference variable for <link id="TUploadedFile">TUploadedFile</link>.
+It allows customization of the uploaded file class used for individual file uploads.</p>
+</descr>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="MimeItemsClass">
+<short>Global variable for MIME items class type</short>
+<descr>
+<p><var>MimeItemsClass</var> is a global class reference variable for <link id="TMimeItems">TMimeItems</link>.
+It allows customization of the MIME items collection class used for content processing.</p>
+</descr>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="MimeItemClass">
+<short>Global variable for MIME item class type</short>
+<descr>
+<p><var>MimeItemClass</var> is a global class reference variable for <link id="TMimeItem">TMimeItem</link>.
+It allows customization of the MIME item class used for individual content items.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="DefaultAllowedHeaders">
+<short>Default set of allowed CORS headers</short>
+<descr>
+<p><var>DefaultAllowedHeaders</var> contains the default set of HTTP headers allowed in CORS requests.
+This constant provides a standard list of commonly permitted headers for cross-origin requests.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="DefaultAllowedOrigins">
+<short>Default set of allowed CORS origins</short>
+<descr>
+<p><var>DefaultAllowedOrigins</var> contains the default set of origins allowed for CORS requests.
+This constant provides a standard list of permitted origins for cross-origin resource sharing.</p>
+</descr>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="DefaultAllowedMethods">
+<short>Default set of allowed CORS methods</short>
+<descr>
+<p><var>DefaultAllowedMethods</var> contains the default set of HTTP methods allowed in CORS requests.
+This constant provides a standard list of permitted methods for cross-origin resource sharing.</p>
+</descr>
+</element>
+
+</module> <!-- HTTPDefs -->
+
+</package>
+</fpdoc-descriptions>

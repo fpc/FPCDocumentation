@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    wmarkdown
+  ====================================================================
+-->
+
+<module name="wmarkdown">
+<short>Markdown formatting writer implementation</short>
+<descr>
+<p>This unit provides <link id="TMarkdownWriter">TMarkdownWriter</link>, a concrete implementation of
+<var>TFormattingWriter</var> that generates Markdown output.</p>
+<p>The writer supports document structure (headers, paragraphs), text formatting (bold, italic, underline via HTML),
+tables with proper alignment, lists (unordered, ordered, definition), preformatted code blocks,
+and character escaping for special Markdown characters.</p>
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="wformat">
+<short>Base class</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>TStream</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>Formatting</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TMarkdownWriter">
+<short>Markdown output writer with native Markdown formatting</short>
+<descr>
+<p><var>TMarkdownWriter</var> generates standard Markdown output from formatted content.</p>
+<p>Headers use # symbols (number matches level + 1), bold text uses ** delimiters,
+italic text uses * delimiters, and underline uses HTML &lt;u&gt; tags.
+Tables use pipe (|) separators with automatic header row underlining,
+lists use dash (-) bullets, and code blocks use triple backticks (```).</p>
+<p>Special characters are escaped to prevent structural conflicts with Markdown syntax.</p>
+</descr>
+<seealso>
+<link id="TFormattingWriter">TFormattingWriter</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TMarkdownWriter.Create">
+<short>Creates a new Markdown writer instance</short>
+<descr>
+<p>Creates a new <var>TMarkdownWriter</var> instance that writes to the specified stream.</p>
+<p>The constructor initializes table and list tracking state for proper formatting.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMarkdownWriter.Create.AStream">
+<short>Output stream for the generated Markdown</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TMarkdownWriter.EscapeText">
+<short>Escapes special Markdown characters</short>
+<descr>
+<p>Escapes characters that could break Markdown structure.</p>
+<p><var>EscapeText</var> escapes backslashes (\), square brackets ([]), but preserves
+formatting characters (* _ ` #) as they might be intentional formatting.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TMarkdownWriter.EscapeText.Result">
+<short>Text with escaped Markdown special characters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMarkdownWriter.EscapeText.AText">
+<short>Text to escape</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.DocumentStart">
+<short>Begins document with title header</short>
+<descr>
+<p>Begins document generation and writes the document title as level 1 header if provided.</p>
+<p>The title is formatted with a single # symbol and followed by blank lines.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.DocumentEnd">DocumentEnd</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMarkdownWriter.DocumentStart.Title">
+<short>Document title to display</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.DocumentEnd">
+<short>Completes document output</short>
+<descr>
+<p>Completes document generation.</p>
+<p>Markdown does not require explicit document ending markers.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.DocumentStart">DocumentStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.HeaderStart">
+<short>Begins header with # symbols</short>
+<descr>
+<p>Starts a header section at the specified level using # symbols.</p>
+<p>The number of # symbols equals the level + 1.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.HeaderEnd">HeaderEnd</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMarkdownWriter.HeaderStart.Alevel">
+<short>Header level (0=# 1=## 2=### etc)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.HeaderEnd">
+<short>Completes header with blank lines</short>
+<descr>
+<p>Completes the header section and adds blank lines for separation.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.HeaderStart">HeaderStart</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMarkdownWriter.HeaderEnd.Alevel">
+<short>Header level (0=# 1=## 2=### etc)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.ParagraphStart">
+<short>Begins paragraph</short>
+<descr>
+<p>Starts a new paragraph.</p>
+<p>Markdown paragraphs do not require explicit start markers.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.ParagraphEnd">ParagraphEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.ParagraphEnd">
+<short>Completes paragraph with blank lines</short>
+<descr>
+<p>Completes the current paragraph and adds blank lines for separation.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.ParagraphStart">ParagraphStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.LineBreak">
+<short>Forces line break with trailing spaces</short>
+<descr>
+<p>Forces a line break by writing two trailing spaces.</p>
+<p>This creates a hard line break in Markdown output.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.Rule">
+<short>Writes horizontal rule</short>
+<descr>
+<p>Writes a horizontal rule using three dashes (---) with blank lines for separation.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.BoldStart">
+<short>Begins bold formatting with double asterisks</short>
+<descr>
+<p>Begins bold text formatting by writing double asterisks (**).</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.BoldEnd">BoldEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.BoldEnd">
+<short>Ends bold formatting with double asterisks</short>
+<descr>
+<p>Ends bold text formatting by writing double asterisks (**).</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.BoldStart">BoldStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.ItalicStart">
+<short>Begins italic formatting with single asterisk</short>
+<descr>
+<p>Begins italic text formatting by writing a single asterisk (*).</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.ItalicEnd">ItalicEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.ItalicEnd">
+<short>Ends italic formatting with single asterisk</short>
+<descr>
+<p>Ends italic text formatting by writing a single asterisk (*).</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.ItalicStart">ItalicStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.UnderlineStart">
+<short>Begins underline formatting with HTML tag</short>
+<descr>
+<p>Begins underline text formatting by writing HTML &lt;u&gt; tag.</p>
+<p>Markdown has no native underline support, so HTML tags are used.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.UnderlineEnd">UnderlineEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.UnderlineEnd">
+<short>Ends underline formatting with HTML tag</short>
+<descr>
+<p>Ends underline text formatting by writing HTML &lt;/u&gt; tag.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.UnderlineStart">UnderlineStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.PreformatStart">
+<short>Begins preformatted code block</short>
+<descr>
+<p>Begins a preformatted code block using triple backticks (```).</p>
+<p>Code blocks preserve whitespace and disable Markdown formatting.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.PreformatEnd">PreformatEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.PreformatEnd">
+<short>Ends preformatted code block</short>
+<descr>
+<p>Ends the preformatted code block with closing triple backticks (```).</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.PreformatStart">PreformatStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.TableStart">
+<short>Begins Markdown table with pipe separators</short>
+<descr>
+<p>Begins a Markdown table with the specified number of columns.</p>
+<p>Table cells are separated with pipe symbols (|) and header rows are automatically underlined.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.TableEnd">TableEnd</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMarkdownWriter.TableStart.NoCols">
+<short>Number of columns in the table</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMarkdownWriter.TableStart.Border">
+<short>Border flag (currently unused)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.TableEnd">
+<short>Completes table output</short>
+<descr>
+<p>Completes the table and adds a blank line for separation.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.TableStart">TableStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.RowStart">
+<short>Begins table row with pipe</short>
+<descr>
+<p>Begins a new table row by writing the initial pipe symbol (|).</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.RowEnd">RowEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.RowEnd">
+<short>Completes table row with separator line</short>
+<descr>
+<p>Completes the current table row.</p>
+<p>For header rows, automatically adds a separator line with dashes (---) below.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.RowStart">RowStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.CellStart">
+<short>Begins table cell with spacing</short>
+<descr>
+<p>Begins a table cell by adding a leading space for padding.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.CellEnd">CellEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.CellEnd">
+<short>Completes table cell with pipe separator</short>
+<descr>
+<p>Completes the table cell by adding trailing space and pipe separator ( |).</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.CellStart">CellStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.HeaderCellStart">
+<short>Begins table header cell</short>
+<descr>
+<p>Begins a table header cell.</p>
+<p>Header cells are formatted identically to regular cells.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.HeaderCellEnd">HeaderCellEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.HeaderCellEnd">
+<short>Completes table header cell</short>
+<descr>
+<p>Completes the table header cell and triggers separator line creation.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.HeaderCellStart">HeaderCellStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.ListStart">
+<short>Begins list with blank line</short>
+<descr>
+<p>Begins a list by adding a blank line for separation.</p>
+<p>All list types use dash (-) bullets for consistency.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.ListEnd">ListEnd</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMarkdownWriter.ListStart.ListType">
+<short>Type of list (ordered or unordered)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.ListEnd">
+<short>Completes list with blank line</short>
+<descr>
+<p>Completes the list and adds a blank line for separation.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.ListStart">ListStart</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMarkdownWriter.ListEnd.ListType">
+<short>Type of list (ordered or unordered)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.ListItemStart">
+<short>Begins list item with dash bullet</short>
+<descr>
+<p>Begins a list item using a dash (-) bullet for all list types.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.ListItemEnd">ListItemEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.ListItemEnd">
+<short>Completes list item</short>
+<descr>
+<p>Completes the current list item and moves to a new line.</p>
+</descr>
+<seealso>
+<link id="TMarkdownWriter.ListItemStart">ListItemStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TMarkdownWriter.DefinitionItem">
+<short>Writes definition item with term and description</short>
+<descr>
+<p>Writes a definition item with the term name followed by a colon (:) and description.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMarkdownWriter.DefinitionItem.Aname">
+<short>Term being defined</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TMarkdownWriter.DefinitionItem.AText">
+<short>Description of the term</short>
+</element>
+
+</module> <!-- wmarkdown -->
+
+</package>
+</fpdoc-descriptions>

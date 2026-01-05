@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    wtext
+  ====================================================================
+-->
+
+<module name="wtext">
+<short>Plain text formatting writer implementation</short>
+<descr>
+<p>This unit provides <link id="TTextWriter">TTextWriter</link>, a concrete implementation of
+<var>TFormattingWriter</var> that generates plain text output with line wrapping.</p>
+<p>The writer supports configurable line length, automatic text wrapping at word boundaries,
+headers with underlines, ASCII-formatted tables, lists with bullets and numbering,
+preformatted text blocks, and clean plain text output suitable for email or console display.</p>
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="wformat">
+<short>Base class</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>TStream</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>Formatting</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TTextWriter">
+<short>Plain text output writer with line wrapping and formatting support</short>
+<descr>
+<p><var>TTextWriter</var> generates plain text output from formatted content.</p>
+<p>The writer supports automatic line wrapping at configurable line lengths,
+headers with underline characters (= for level 0-1, - for level 2+),
+ASCII-formatted tables with borders and column alignment,
+lists with numbered or bullet formatting, and preformatted text blocks with indentation.</p>
+<p>Text formatting is rendered using asterisks for bold (*text*), underscores for italic and underline (_text_).</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFormattingWriter">TFormattingWriter</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TTextWriter.Create">
+<short>Creates a new text writer instance</short>
+<descr>
+<p>Creates a new <var>TTextWriter</var> instance that writes to the specified stream.</p>
+<p>The constructor initializes <link id="TTextWriter.MaxLineLength">MaxLineLength</link> to 72 characters
+(standard email width) and sets up internal buffers for line wrapping and table formatting.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.MaxLineLength">MaxLineLength</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextWriter.Create.AStream">
+<short>Output stream for the generated text</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TTextWriter.Destroy">
+<short>Destroys the text writer instance</short>
+<descr>
+<p>Destroys the <var>TTextWriter</var> instance and flushes any remaining content to the output stream.</p>
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TTextWriter.EscapeText">
+<short>Returns the input text unchanged</short>
+<descr>
+<p>Plain text output requires no character escaping.</p>
+<p><var>EscapeText</var> returns the input text without modification.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TTextWriter.EscapeText.Result">
+<short>The unmodified input text</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextWriter.EscapeText.AText">
+<short>Text to process</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.DocumentStart">
+<short>Begins document output with title</short>
+<descr>
+<p>Begins document generation and writes the document title if provided.</p>
+<p>The title is underlined with equals signs (=) and followed by a blank line.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.DocumentEnd">DocumentEnd</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextWriter.DocumentStart.Title">
+<short>Document title to display</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.DocumentEnd">
+<short>Completes document output</short>
+<descr>
+<p>Finishes document generation and flushes any remaining content to the output stream.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.DocumentStart">DocumentStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.HeaderStart">
+<short>Begins header section</short>
+<descr>
+<p>Starts a header section at the specified level.</p>
+<p>Headers are rendered with underline characters after <link id="TTextWriter.HeaderEnd">HeaderEnd</link> is called.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.HeaderEnd">HeaderEnd</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextWriter.HeaderStart.Alevel">
+<short>Header level (0-1 use =, 2+ use -)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.HeaderEnd">
+<short>Completes header section with underline</short>
+<descr>
+<p>Completes the header section and adds an underline below the header text.</p>
+<p>Level 0-1 headers use equals signs (=), level 2+ headers use dashes (-).</p>
+<p>The underline length matches the header text length.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.HeaderStart">HeaderStart</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextWriter.HeaderEnd.Alevel">
+<short>Header level (0-1 use =, 2+ use -)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.ParagraphStart">
+<short>Begins paragraph</short>
+<descr>
+<p>Starts a new paragraph by flushing any current line content.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.ParagraphEnd">ParagraphEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.ParagraphEnd">
+<short>Completes paragraph with blank line</short>
+<descr>
+<p>Completes the current paragraph and adds a blank line for separation.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.ParagraphStart">ParagraphStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.LineBreak">
+<short>Forces line break</short>
+<descr>
+<p>Forces a line break by flushing the current line to output.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.Rule">
+<short>Writes horizontal rule</short>
+<descr>
+<p>Writes a horizontal rule using dashes (-) across the full line width.</p>
+<p>The rule length equals <link id="TTextWriter.MaxLineLength">MaxLineLength</link>.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.MaxLineLength">MaxLineLength</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.BoldStart">
+<short>Begins bold formatting with asterisk</short>
+<descr>
+<p>Begins bold text formatting by writing an asterisk (*).</p>
+</descr>
+<seealso>
+<link id="TTextWriter.BoldEnd">BoldEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.BoldEnd">
+<short>Ends bold formatting with asterisk</short>
+<descr>
+<p>Ends bold text formatting by writing an asterisk (*).</p>
+</descr>
+<seealso>
+<link id="TTextWriter.BoldStart">BoldStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.ItalicStart">
+<short>Begins italic formatting with underscore</short>
+<descr>
+<p>Begins italic text formatting by writing an underscore (_).</p>
+</descr>
+<seealso>
+<link id="TTextWriter.ItalicEnd">ItalicEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.ItalicEnd">
+<short>Ends italic formatting with underscore</short>
+<descr>
+<p>Ends italic text formatting by writing an underscore (_).</p>
+</descr>
+<seealso>
+<link id="TTextWriter.ItalicStart">ItalicStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.UnderlineStart">
+<short>Begins underline formatting with underscore</short>
+<descr>
+<p>Begins underline text formatting by writing an underscore (_).</p>
+</descr>
+<seealso>
+<link id="TTextWriter.UnderlineEnd">UnderlineEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.UnderlineEnd">
+<short>Ends underline formatting with underscore</short>
+<descr>
+<p>Ends underline text formatting by writing an underscore (_).</p>
+</descr>
+<seealso>
+<link id="TTextWriter.UnderlineStart">UnderlineStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.PreformatStart">
+<short>Begins preformatted text section</short>
+<descr>
+<p>Begins a preformatted text section with 4-space indentation.</p>
+<p>Preformatted text preserves whitespace and is indented from the left margin.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.PreformatEnd">PreformatEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.PreformatEnd">
+<short>Ends preformatted text section</short>
+<descr>
+<p>Ends the preformatted text section and removes the 4-space indentation.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.PreformatStart">PreformatStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.TableStart">
+<short>Begins ASCII table with specified columns</short>
+<descr>
+<p>Begins an ASCII-formatted table with the specified number of columns.</p>
+<p>Table cells are separated with vertical bars (|) and header rows are underlined with dashes.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.TableEnd">TableEnd</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextWriter.TableStart.NoCols">
+<short>Number of columns in the table</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextWriter.TableStart.Border">
+<short>Border flag (currently unused)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.TableEnd">
+<short>Completes table output</short>
+<descr>
+<p>Completes the table and adds blank lines for separation.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.TableStart">TableStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.RowStart">
+<short>Begins table row</short>
+<descr>
+<p>Begins a new table row and clears the cell buffer.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.RowEnd">RowEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.RowEnd">
+<short>Completes table row with formatting</short>
+<descr>
+<p>Completes the current table row and formats it with borders and padding.</p>
+<p>The first row is treated as a header and followed by a separator line.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.RowStart">RowStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.CellStart">
+<short>Begins table cell</short>
+<descr>
+<p>Begins a new table cell.</p>
+<p>Cell content is captured through subsequent <link id="TTextWriter.Write">Write</link> calls.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.CellEnd">CellEnd</link>
+<link id="TTextWriter.Write">Write</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.CellEnd">
+<short>Completes table cell</short>
+<descr>
+<p>Completes the current table cell and stores its content for row formatting.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.CellStart">CellStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.HeaderCellStart">
+<short>Begins table header cell</short>
+<descr>
+<p>Begins a table header cell.</p>
+<p>Header cells are formatted identically to regular cells but determine column widths.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.HeaderCellEnd">HeaderCellEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.HeaderCellEnd">
+<short>Completes table header cell</short>
+<descr>
+<p>Completes the table header cell and stores its content for formatting.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.HeaderCellStart">HeaderCellStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.ListStart">
+<short>Begins list with specified type</short>
+<descr>
+<p>Begins a list with the specified type and increases indentation by 4 spaces.</p>
+<p>List items are formatted with numbers for ordered lists or bullets for unordered lists.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.ListEnd">ListEnd</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextWriter.ListStart.ListType">
+<short>Type of list (ordered or unordered)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.ListEnd">
+<short>Completes list and reduces indentation</short>
+<descr>
+<p>Completes the list and reduces indentation by 4 spaces.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.ListStart">ListStart</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextWriter.ListEnd.ListType">
+<short>Type of list (ordered or unordered)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.ListItemStart">
+<short>Begins list item with numbering or bullet</short>
+<descr>
+<p>Begins a list item with appropriate numbering for ordered lists or bullet (*) for unordered lists.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.ListItemEnd">ListItemEnd</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.ListItemEnd">
+<short>Completes list item</short>
+<descr>
+<p>Completes the current list item and flushes content to output.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.ListItemStart">ListItemStart</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.ListItem">
+<short>Writes complete list item with text</short>
+<descr>
+<p>Writes a complete list item with the specified text.</p>
+<p>This is a convenience method that calls <link id="TTextWriter.ListItemStart">ListItemStart</link>,
+<link id="TTextWriter.Write">Write</link>, and <link id="TTextWriter.ListItemEnd">ListItemEnd</link> in sequence.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.ListItemStart">ListItemStart</link>
+<link id="TTextWriter.ListItemEnd">ListItemEnd</link>
+<link id="TTextWriter.Write">Write</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextWriter.ListItem.AText">
+<short>Text content of the list item</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.DefinitionItem">
+<short>Writes definition item with term and description</short>
+<descr>
+<p>Writes a definition item with the term name followed by its description on an indented line.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextWriter.DefinitionItem.Aname">
+<short>Term being defined</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextWriter.DefinitionItem.AText">
+<short>Description of the term</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTextWriter.Write">
+<short>Writes text with line wrapping</short>
+<descr>
+<p>Writes text content with automatic line wrapping at word boundaries.</p>
+<p>Text is wrapped to fit within <link id="TTextWriter.MaxLineLength">MaxLineLength</link>
+and respects current indentation levels.</p>
+</descr>
+<seealso>
+<link id="TTextWriter.MaxLineLength">MaxLineLength</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTextWriter.Write.AText">
+<short>Text content to write</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTextWriter.MaxLineLength">
+<short>Maximum line length for text wrapping</short>
+<descr>
+<p>Maximum line length for automatic text wrapping.</p>
+<p>Text longer than this limit is wrapped at word boundaries.
+Default value is 72 characters (standard email width).</p>
+</descr>
+</element>
+
+</module> <!-- wtext -->
+
+</package>
+</fpdoc-descriptions>

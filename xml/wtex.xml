@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    wtex
+  ====================================================================
+-->
+
+<module name="wtex">
+<short>LaTeX formatting writer implementation</short>
+<descr>
+<p>The <var>wtex</var> unit provides <link id="TTexWriter">TTexWriter</link>,
+a concrete implementation of <link id="TFormattingWriter">TFormattingWriter</link> that generates LaTeX output.
+This class implements all the abstract formatting methods to produce valid LaTeX markup for documents,
+tables, and lists using standard LaTeX commands and environments.</p>
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="wformat">
+<short>Base class</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="classes">
+<short>TStream</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="sysutils">
+<short>Formatting</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TTexWriter">
+<short>LaTeX implementation of formatting writer</short>
+<descr>
+<p><var>TTexWriter</var> is a concrete implementation of <link id="TFormattingWriter">TFormattingWriter</link> that generates LaTeX output.
+It implements all formatting methods to produce valid LaTeX markup including document structure, text formatting, tables, and lists.
+The class properly escapes LaTeX special characters and uses standard LaTeX commands and environments.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFormattingWriter"/>
+<link id="ListNames"/>
+</seealso>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="TTexWriter.FCellCount">
+<short>Internal counter for table cell positions</short>
+<descr>
+<p><var>FCellCount</var> is used internally to track the current cell position within a table row.
+It is reset at the beginning of each row and incremented for each cell to determine when to insert column separators (&amp;) in LaTeX tables.</p>
+</descr>
+<seealso>
+<link id="TTexWriter.CellStart"/>
+<link id="TTexWriter.RowStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.ScopeStart">
+<short>Writes LaTeX opening brace</short>
+<descr>
+<p>Writes an opening brace ({) to begin a LaTeX scope or command argument.
+This is a utility method used by other formatting methods to create properly scoped LaTeX constructs.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.ScopeEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.ScopeEnd">
+<short>Writes LaTeX closing brace</short>
+<descr>
+<p>Writes a closing brace (}) to end a LaTeX scope or command argument.
+This is a utility method used by other formatting methods to create properly scoped LaTeX constructs.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.ScopeStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.EnvironmentStart">
+<short>Begins LaTeX environment with optional parameters</short>
+<descr>
+<p>Writes a LaTeX \begin command for the specified environment name.
+If options are provided, they are included before the environment name.
+This is a utility method for creating LaTeX environments.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.EnvironmentEnd"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTexWriter.EnvironmentStart.Name">
+<short>LaTeX environment name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTexWriter.EnvironmentStart.Opts">
+<short>Optional environment parameters</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.EnvironmentEnd">
+<short>Ends LaTeX environment</short>
+<descr>
+<p>Writes a LaTeX \end command for the specified environment name.
+This is a utility method for properly closing LaTeX environments.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.EnvironmentStart"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTexWriter.EnvironmentEnd.Name">
+<short>LaTeX environment name</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TTexWriter.EscapeText">
+<short>Escapes LaTeX special characters</short>
+<descr>
+<p>Escapes LaTeX special characters in text to prevent them from being interpreted as commands.
+Currently replaces underscore (_) characters with escaped underscores (\_).</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFormattingWriter.EscapeText"/>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TTexWriter.EscapeText.Result">
+<short>Text with LaTeX characters escaped</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTexWriter.EscapeText.AText">
+<short>Input text to be escaped</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.DocumentStart">
+<short>Begins LaTeX document</short>
+<descr>
+<p>Begins a LaTeX document by writing the document class, package includes, document environment, and title command.
+Generates \documentclass{report}, \usepackage{a4}, \begin{document}, and \title{} markup.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.DocumentEnd"/>
+<link id="TFormattingWriter.DocumentStart"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTexWriter.DocumentStart.Title">
+<short>LaTeX document title</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.DocumentEnd">
+<short>Ends LaTeX document</short>
+<descr>
+<p>Ends a LaTeX document by writing the \end{document} command.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.DocumentStart"/>
+<link id="TFormattingWriter.DocumentEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.HeaderStart">
+<short>Begins LaTeX section header</short>
+<descr>
+<p>Begins a LaTeX section header by writing the appropriate sectioning command based on the level.
+Level 0 generates \part, level 1 generates \chapter, level 2 generates \section, etc.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.HeaderEnd"/>
+<link id="TFormattingWriter.HeaderStart"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTexWriter.HeaderStart.Alevel">
+<short>Header level (0=part, 1=chapter, 2=section, etc.)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.HeaderEnd">
+<short>Ends LaTeX section header</short>
+<descr>
+<p>Ends a LaTeX section header by writing the closing brace and adding a blank line.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.HeaderStart"/>
+<link id="TFormattingWriter.HeaderEnd"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTexWriter.HeaderEnd.Alevel">
+<short>Header level (not used in implementation)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.ParagraphEnd">
+<short>Ends LaTeX paragraph</short>
+<descr>
+<p>Ends a LaTeX paragraph by writing two line feeds to create a paragraph break.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFormattingWriter.ParagraphEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.LineBreak">
+<short>Inserts LaTeX line break</short>
+<descr>
+<p>Inserts a LaTeX line break by writing the \\ command.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFormattingWriter.LineBreak"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.Rule">
+<short>Inserts LaTeX horizontal rule</short>
+<descr>
+<p>Inserts a LaTeX horizontal rule by writing the \hline command.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFormattingWriter.Rule"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.BoldStart">
+<short>Begins LaTeX bold formatting</short>
+<descr>
+<p>Begins LaTeX bold text formatting by writing the \textbf command and opening brace.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.BoldEnd"/>
+<link id="TFormattingWriter.BoldStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.BoldEnd">
+<short>Ends LaTeX bold formatting</short>
+<descr>
+<p>Ends LaTeX bold text formatting by writing the closing brace.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.BoldStart"/>
+<link id="TFormattingWriter.BoldEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.ItalicStart">
+<short>Begins LaTeX italic formatting</short>
+<descr>
+<p>Begins LaTeX italic text formatting by writing the \textit command and opening brace.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.ItalicEnd"/>
+<link id="TFormattingWriter.ItalicStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.ItalicEnd">
+<short>Ends LaTeX italic formatting</short>
+<descr>
+<p>Ends LaTeX italic text formatting by writing the closing brace.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.ItalicStart"/>
+<link id="TFormattingWriter.ItalicEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.UnderlineStart">
+<short>Begins LaTeX underline formatting</short>
+<descr>
+<p>Begins LaTeX underline text formatting by writing the \textul command and opening brace.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.UnderlineEnd"/>
+<link id="TFormattingWriter.UnderlineStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.UnderlineEnd">
+<short>Ends LaTeX underline formatting</short>
+<descr>
+<p>Ends LaTeX underline text formatting by writing the closing brace.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.UnderlineStart"/>
+<link id="TFormattingWriter.UnderlineEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.PreformatStart">
+<short>Begins LaTeX verbatim environment</short>
+<descr>
+<p>Begins a LaTeX verbatim environment where text is displayed exactly as entered with fixed-width font and preserved formatting.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.PreformatEnd"/>
+<link id="TFormattingWriter.PreformatStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.PreformatEnd">
+<short>Ends LaTeX verbatim environment</short>
+<descr>
+<p>Ends a LaTeX verbatim environment.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.PreformatStart"/>
+<link id="TFormattingWriter.PreformatEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.TableStart">
+<short>Begins LaTeX tabular environment</short>
+<descr>
+<p>Begins a LaTeX tabular environment with column specifications.
+Generates column specification with left-aligned columns (l) based on the number of columns specified.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.TableEnd"/>
+<link id="TFormattingWriter.TableStart"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTexWriter.TableStart.NoCols">
+<short>Number of table columns</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTexWriter.TableStart.Border">
+<short>Border flag (not used in LaTeX implementation)</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.TableEnd">
+<short>Ends LaTeX tabular environment</short>
+<descr>
+<p>Ends a LaTeX tabular environment.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.TableStart"/>
+<link id="TFormattingWriter.TableEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.RowStart">
+<short>Begins LaTeX table row</short>
+<descr>
+<p>Begins a LaTeX table row by resetting the cell counter to zero.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.RowEnd"/>
+<link id="TFormattingWriter.RowStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.RowEnd">
+<short>Ends LaTeX table row</short>
+<descr>
+<p>Ends a LaTeX table row by writing the row terminator (\\) followed by a line break.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.RowStart"/>
+<link id="TFormattingWriter.RowEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.CellStart">
+<short>Begins LaTeX table cell</short>
+<descr>
+<p>Begins a LaTeX table cell by writing the column separator (&amp;) if this is not the first cell in the row.
+Increments the internal cell counter.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.FCellCount"/>
+<link id="TFormattingWriter.CellStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.HeaderCellStart">
+<short>Begins LaTeX table header cell</short>
+<descr>
+<p>Begins a LaTeX table header cell by calling <link id="TTexWriter.CellStart">CellStart</link>.
+LaTeX does not distinguish between header and regular cells in the tabular environment.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.CellStart"/>
+<link id="TTexWriter.HeaderCellEnd"/>
+<link id="TFormattingWriter.HeaderCellStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.HeaderCellEnd">
+<short>Ends LaTeX table header cell</short>
+<descr>
+<p>Ends a LaTeX table header cell by calling <link id="TTexWriter.CellEnd">CellEnd</link>.
+LaTeX does not require special handling for header cell endings in the tabular environment.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.CellEnd"/>
+<link id="TTexWriter.HeaderCellStart"/>
+<link id="TFormattingWriter.HeaderCellEnd"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.ListStart">
+<short>Begins LaTeX list environment</short>
+<descr>
+<p>Begins a LaTeX list environment based on the list type.
+Uses enumerate for numbered lists, itemize for ordered lists, and definition for definition lists based on the <link id="ListNames">ListNames</link> array.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.ListEnd"/>
+<link id="TFormattingWriter.ListStart"/>
+<link id="ListNames"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTexWriter.ListStart.ListType">
+<short>Type of LaTeX list to create</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.ListEnd">
+<short>Ends LaTeX list environment</short>
+<descr>
+<p>Ends a LaTeX list environment by writing the appropriate \end command.
+Uses the <link id="ListNames">ListNames</link> array to determine the correct environment name.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTexWriter.ListStart"/>
+<link id="TFormattingWriter.ListEnd"/>
+<link id="ListNames"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTexWriter.ListEnd.ListType">
+<short>Type of LaTeX list being ended</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.ListItemStart">
+<short>Begins LaTeX list item</short>
+<descr>
+<p>Begins a LaTeX list item by writing the \item command.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFormattingWriter.ListItemStart"/>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTexWriter.DefinitionItem">
+<short>Creates LaTeX definition list item</short>
+<descr>
+<p>Creates a LaTeX definition list item by writing \item with the name in square brackets followed by the definition text.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFormattingWriter.DefinitionItem"/>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTexWriter.DefinitionItem.Aname">
+<short>Term being defined (placed in square brackets)</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTexWriter.DefinitionItem.AText">
+<short>Definition text</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="ListNames">
+<short>LaTeX environment names for different list types</short>
+<descr>
+<p><var>ListNames</var> is an array constant that maps <link id="TListType">TListType</link> enumeration values to their corresponding LaTeX list environment names.
+Contains 'enumerate' for numbered lists, 'itemize' for ordered lists, and 'definition' for definition lists.</p>
+</descr>
+<seealso>
+<link id="TListType"/>
+<link id="TTexWriter.ListStart"/>
+<link id="TTexWriter.ListEnd"/>
+</seealso>
+</element>
+
+</module> <!-- wtex -->
+
+</package>
+</fpdoc-descriptions>
