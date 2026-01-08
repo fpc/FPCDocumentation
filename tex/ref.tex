@@ -5027,10 +5027,10 @@ end;
 Method invocation for classes is no different than for objects. The
 following is a valid method invocation:
 \begin{verbatim}
-Var  AnObject : TAnObject;
+Var A : TMyClass;
 begin
-  AnObject := TAnObject.Create;
-  ANobject.AMethod;
+  A := TMyClass.Create;
+  A.MyProc;
 \end{verbatim}
 
 
@@ -5048,16 +5048,16 @@ one.  The \var{Inherited} keyword will not jump to the inherited method, if
 The following code is {\em wrong}:
 \begin{verbatim}
 Type
-  ObjParent = Class
+  TParent = Class
     Procedure MyProc; virtual;
   end;
-  ObjChild  = Class(ObjPArent)
+  TChild  = Class(TParent)
     Procedure MyProc; virtual;
   end;
 \end{verbatim}
 The compiler will produce a warning:
 \begin{verbatim}
-Warning: An inherited method is hidden by OBJCHILD.MYPROC
+Warning: An inherited method is hidden by "MyProc;"
 \end{verbatim}
 The compiler will compile it, but using \var{Inherited} can\index{Inherited}
 produce strange effects.
@@ -5065,10 +5065,10 @@ produce strange effects.
 The correct declaration is as follows:
 \begin{verbatim}
 Type
-  ObjParent = Class
+  TParent = Class
     Procedure MyProc; virtual;
   end;
-  ObjChild  = Class(ObjPArent)
+  TChild  = Class(TParent)
     Procedure MyProc; override;
   end;
 \end{verbatim}
@@ -5079,10 +5079,10 @@ same name, then the \var{reintroduce} keyword can be used:\index{reintroduce}
 \keywordlink{reintroduce}
 \begin{verbatim}
 Type
-  ObjParent = Class
+  TParent = Class
     Procedure MyProc; virtual;
   end;
-  ObjChild  = Class(ObjPArent)
+  TChild  = Class(TParent)
     Procedure MyProc; reintroduce;
   end;
 \end{verbatim}
