@@ -1,0 +1,1659 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    httproute
+  ====================================================================
+-->
+
+<module name="HttpRoute">
+<short>HTTP request routing implementation</short>
+<descr>
+<p>The <var>HttpRoute</var> unit provides HTTP request routing functionality for web applications.
+It defines the <link id="THTTPRouter"/> class, which allows mapping URL patterns to specific handlers
+based on HTTP methods and path patterns, with support for callbacks, events, objects, and interfaces as route handlers.</p>
+<p>
+A global instance of the router is available in <link id="HTTPRouter"/>, 
+this is where you must register your routes: the rest of the FPC web 
+framework uses this global instance to determine where to route requests to.
+</p>
+</descr>
+
+<topic name="HttpRouterPrinciple">
+<short>HTTP Router Working Principle</short>
+<descr>
+<p>The HTTP router operates on a simple principle: you register routes that map URL patterns to handler code,
+and when an HTTP request arrives, the router finds the best matching route and executes its handler.</p>
+<p>The request processing workflow consists of five main steps:</p>
+<p>1. <b>Route Registration</b>: Use <var>RegisterRoute</var> to associate URL patterns with handlers.
+Each route specifies a URL pattern (like <var>/users/:id</var>), an HTTP method (GET, POST, etc.),
+and a handler (callback, event, interface, or object class).</p>
+<p>2. <b>Request Processing</b>: When <var>RouteRequest</var> is called with an incoming HTTP request,
+the router searches through registered routes to find matches based on the request's path and HTTP method.</p>
+<p>3. <b>Pattern Matching</b>: The router supports parameterized routes using colon notation (like <var>:id</var>).
+Parameters are extracted from the URL and made available to handlers through string lists.</p>
+<p>4. <b>Handler Execution</b>: Once a matching route is found, its associated handler is executed with
+the HTTP request and response objects, along with any extracted parameters.</p>
+<p>5. <b>Interceptor Processing</b>: Before and after route handling, registered interceptors can process
+the request and response for cross-cutting concerns like logging, authentication, and CORS.</p>
+<p>The router prioritizes routes based on specificity, with exact matches taking precedence over
+parameterized routes, and parameterized routes taking precedence over default routes.</p>
+</descr>
+</topic>
+
+<topic name="HttpRouterHandlerTypes">
+<short>HTTP Router Handler Types</short>
+<descr>
+<p>The HTTP router supports several different types of handlers, providing flexibility in how you structure your application code.
+Each handler type serves different architectural needs and complexity levels.</p>
+<p><b>Procedure Callbacks</b> - Simple standalone procedures that accept <var>TRequest</var> and <var>TResponse</var> parameters.
+This is the most straightforward approach for basic routing needs and stateless operations.</p>
+<p><b>Method Events</b> - Object methods (<var>TRouteEvent</var>) that can access instance data and provide better organization
+for complex applications with state management. These handlers maintain object context between calls.</p>
+<p><b>Interface Handlers</b> - Objects implementing <var>IRouteInterface</var> provide clean separation
+of concerns and enable dependency injection patterns. This approach promotes testability and modularity.</p>
+<p><b>Object Class Handlers</b> - Specify a <var>TRouteObjectClass</var> that will be instantiated for each request,
+providing complete request isolation and automatic memory management. Each request gets a fresh instance.</p>
+<p><b>Extended Callbacks</b> - <var>TRouteCallBackEx</var> procedures that accept additional user data pointer,
+useful for passing configuration or context information to handlers without global variables.</p>
+<p>Choose the handler type based on your application's complexity, state management needs, and architectural preferences.
+Simple applications can use procedure callbacks, while complex systems benefit from interface or object-based handlers.</p>
+</descr>
+</topic>
+
+<topic name="HttpRouterBasicUsage">
+<short>Basic HTTP Router Usage</short>
+<descr>
+<p>The simplest way to use the HTTP router is through callback procedures.
+The router matches incoming requests to registered URL patterns and HTTP methods:</p>
+<code>
+program BasicRouter;
+
+{$mode objfpc}{$H+}
+
+uses
+  httproute, httpdefs;
+
+procedure HandleHome(ARequest: TRequest; AResponse: TResponse);
+begin
+  AResponse.Content := 'Welcome to the homepage!';
+end;
+
+procedure HandleAPI(ARequest: TRequest; AResponse: TResponse);
+begin
+  AResponse.Content := 'API endpoint response';
+end;
+
+begin
+  // Register routes
+  HTTPRouter.RegisterRoute('/', rmGet, @HandleHome, False);
+  HTTPRouter.RegisterRoute('/api', rmGet, @HandleAPI, False);
+
+  Writeln('HTTP Router configured with routes:');
+  Writeln('GET / - Homepage');
+  Writeln('GET /api - API endpoint');
+end.
+</code>
+
+</descr>
+</topic>
+
+<topic name="HttpRouterParameters">
+<short>HTTP Router Parameterized Routes</short>
+<descr>
+<p>Routes can include parameters using pattern matching with colon notation.
+Parameters are extracted from the URL path and made available to handlers through string lists.
+This enables RESTful URL patterns like <var>/users/:id</var> or <var>/users/:uid/posts/:pid</var>.</p>
+<code>
+program ParameterRouter;
+
+{$mode objfpc}{$H+}
+
+uses
+  httproute, httpdefs, Classes, SysUtils;
+
+procedure HandleUser(ARequest: TRequest; AResponse: TResponse);
+var
+  Params: TStringList;
+  UserID: String;
+begin
+  Params := TStringList.Create;
+  try
+    // Extract parameters from the route
+    if HTTPRouter.GetHTTPRoute(ARequest.PathInfo, rmGet, Params) &lt;&gt; nil then
+    begin
+      if Params.Count > 0 then
+        UserID := Params[0]
+      else
+        UserID := 'unknown';
+      AResponse.Content := 'User ID: ' + UserID;
+    end
+    else
+      AResponse.Content := 'No route found';
+  finally
+    Params.Free;
+  end;
+end;
+
+procedure HandleUserPosts(ARequest: TRequest; AResponse: TResponse);
+var
+  Params: TStringList;
+  UserID, PostID: String;
+begin
+  Params := TStringList.Create;
+  try
+    if HTTPRouter.GetHTTPRoute(ARequest.PathInfo, rmGet, Params) &lt;&gt; nil then
+    begin
+      UserID := 'unknown';
+      PostID := 'unknown';
+      if Params.Count > 0 then UserID := Params[0];
+      if Params.Count > 1 then PostID := Params[1];
+      AResponse.Content := Format('User %s, Post %s', [UserID, PostID]);
+    end
+    else
+      AResponse.Content := 'No route found';
+  finally
+    Params.Free;
+  end;
+end;
+
+begin
+  HTTPRouter.RegisterRoute('/user/:id', rmGet, @HandleUser, False);
+  HTTPRouter.RegisterRoute('/user/:uid/post/:pid', rmGet, @HandleUserPosts, False);
+
+  Writeln('Parameter routing examples:');
+  Writeln('GET /user/123 - Shows user 123');
+  Writeln('GET /user/456/post/789 - Shows post 789 for user 456');
+end.
+</code>
+
+</descr>
+</topic>
+
+<topic name="HttpRouterInterceptors">
+<short>HTTP Router Interceptors and Middleware</short>
+<descr>
+<p>Interceptors allow processing requests before and after route handling.
+This enables middleware functionality like authentication, logging, CORS, and request validation.
+Interceptors are implemented as object methods that receive the request, response, and a continuation flag.</p>
+<p>Interceptors can run at two different times: <var>iaBefore</var> (before route processing) and <var>iaAfter</var> (after route processing).
+The continuation parameter allows interceptors to halt request processing if needed.</p>
+<code>
+program MiddlewareRouter;
+
+{$mode objfpc}{$H+}
+
+uses
+  httproute, httpdefs, SysUtils;
+
+type
+  TMiddlewareHelper = class
+  public
+    procedure LoggingInterceptor(ARequest: TRequest; AResponse: TResponse; var aContinue: Boolean);
+    procedure CORSInterceptor(ARequest: TRequest; AResponse: TResponse; var aContinue: Boolean);
+  end;
+
+procedure TMiddlewareHelper.LoggingInterceptor(ARequest: TRequest;
+  AResponse: TResponse; var aContinue: Boolean);
+begin
+  Writeln(Format('[%s] %s %s', [FormatDateTime('yyyy-mm-dd hh:nn:ss', Now),
+    RouteMethodToString(THTTPRouter.StringToRouteMethod(ARequest.Method)),
+    ARequest.PathInfo]));
+  aContinue := True;
+end;
+
+procedure TMiddlewareHelper.CORSInterceptor(ARequest: TRequest;
+  AResponse: TResponse; var aContinue: Boolean);
+begin
+  AResponse.SetCustomHeader('Access-Control-Allow-Origin', '*');
+  AResponse.SetCustomHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  aContinue := True;
+end;
+
+procedure HandleAPI(ARequest: TRequest; AResponse: TResponse);
+begin
+  AResponse.Content := '{"message": "API response with middleware"}';
+  AResponse.ContentType := 'application/json';
+end;
+
+var
+  Helper: TMiddlewareHelper;
+begin
+  Helper := TMiddlewareHelper.Create;
+  try
+    // Register interceptors (middleware)
+    HTTPRouter.RegisterInterceptor('logging', @Helper.LoggingInterceptor, iaBefore);
+    HTTPRouter.RegisterInterceptor('cors', @Helper.CORSInterceptor, iaAfter);
+
+    // Register API route
+    Router.RegisterRoute('/api/data', rmGet, @HandleAPI, False);
+
+    Writeln('Middleware router with logging and CORS support');
+    Writeln('GET /api/data - Returns JSON with proper headers');
+  finally
+    Helper.Free;
+  end;
+end.
+</code>
+
+</descr>
+</topic>
+
+<topic name="HttpRouterMethods">
+<short>HTTP Router Methods and RESTful APIs</short>
+<descr>
+<p>Routes can be configured to handle different HTTP methods (GET, POST, PUT, DELETE, etc.).
+The same URL pattern can have different handlers for different methods, enabling RESTful API design.
+This allows implementing CRUD operations on the same resource endpoint.</p>
+<code>
+program MethodRouter;
+
+{$mode objfpc}{$H+}
+
+uses
+  httproute, httpdefs;
+
+procedure HandleGetUsers(ARequest: TRequest; AResponse: TResponse);
+begin
+  AResponse.Content := '{"users": ["alice", "bob", "charlie"]}';
+  AResponse.ContentType := 'application/json';
+end;
+
+procedure HandleCreateUser(ARequest: TRequest; AResponse: TResponse);
+begin
+  AResponse.Content := '{"status": "user created", "id": 123}';
+  AResponse.ContentType := 'application/json';
+  AResponse.Code := 201;
+end;
+
+procedure HandleUpdateUser(ARequest: TRequest; AResponse: TResponse);
+begin
+  AResponse.Content := '{"status": "user updated"}';
+  AResponse.ContentType := 'application/json';
+end;
+
+procedure HandleDeleteUser(ARequest: TRequest; AResponse: TResponse);
+begin
+  AResponse.Code := 204; // No Content
+end;
+
+begin
+  HTTPRouter.RegisterRoute('/users', rmGet, @HandleGetUsers, False);
+  HTTPRouter.RegisterRoute('/users', rmPost, @HandleCreateUser, False);
+  HTTPRouter.RegisterRoute('/users/:id', rmPut, @HandleUpdateUser, False);
+  HTTPRouter.RegisterRoute('/users/:id', rmDelete, @HandleDeleteUser, False);
+
+  Writeln('RESTful API routing:');
+  Writeln('GET /users - List users');
+  Writeln('POST /users - Create user');
+  Writeln('PUT /users/:id - Update user');
+  Writeln('DELETE /users/:id - Delete user');
+end.
+</code>
+
+</descr>
+</topic>
+
+<topic name="HttpRouterAdvancedHandlers">
+<short>Advanced HTTP Router Handler Examples</short>
+<descr>
+<p>Beyond simple procedure callbacks, the HTTP router supports sophisticated handler patterns
+for complex applications. These examples demonstrate method events, interface handlers, and object class handlers.</p>
+<code>
+// Method Event Handler Example
+type
+  TAPIHandler = class
+  private
+    FVersion: String;
+  public
+    constructor Create(const AVersion: String);
+    procedure HandleVersionInfo(ARequest: TRequest; AResponse: TResponse);
+  end;
+
+constructor TAPIHandler.Create(const AVersion: String);
+begin
+  inherited Create;
+  FVersion := AVersion;
+end;
+
+procedure TAPIHandler.HandleVersionInfo(ARequest: TRequest; AResponse: TResponse);
+begin
+  AResponse.Content := Format('{"version": "%s"}', [FVersion]);
+  AResponse.ContentType := 'application/json';
+end;
+
+// Interface Handler Example
+type
+  IUserService = interface(IRouteInterface)
+    ['{12345678-1234-1234-1234-123456789012}']
+  end;
+
+  TUserService = class(TInterfacedObject, IUserService)
+  public
+    procedure HandleRequest(ARequest: TRequest; AResponse: TResponse);
+  end;
+
+procedure TUserService.HandleRequest(ARequest: TRequest; AResponse: TResponse);
+begin
+  AResponse.Content := 'User service response';
+end;
+
+// Object Class Handler Example
+type
+  TRequestProcessor = class(TRouteObject)
+  public
+    procedure HandleRequest(ARequest: TRequest; AResponse: TResponse); override;
+  end;
+
+procedure TRequestProcessor.HandleRequest(ARequest: TRequest; AResponse: TResponse);
+begin
+  AResponse.Content := 'Processed by object instance';
+end;
+
+// Registration examples:
+var
+  APIHandler: TAPIHandler;
+  UserService: IUserService;
+begin
+  APIHandler := TAPIHandler.Create('1.0');
+  UserService := TUserService.Create;
+
+  // Register method event
+  HTTPRouter.RegisterRoute('/version', rmGet, @APIHandler.HandleVersionInfo);
+
+  // Register interface handler
+  HTTPRouter.RegisterRoute('/users', rmGet, UserService);
+
+  // Register object class handler
+  HTTPRouter.RegisterRoute('/process', rmPost, TRequestProcessor);
+end.
+</code>
+
+<p>These examples simply demonstrate the core functionality of the HTTP router.
+An actual implementation would typically integrate with an HTTP server framework 
+like <var>fpweb</var> or <var>fphttp</var> to handle incoming requests, and 
+would use one of the various request-handling units such as <link id="httpapp"/> or <link id="cgiapp"/>.
+</p>
+</descr>
+</topic>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Base classes and collection types</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>System utility functions and types</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="syncobjs">
+<short>Thread synchronization objects</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="httpdefs">
+<short>HTTP protocol definitions and classes</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EHTTPRoute">
+<short>HTTP routing exception class</short>
+<descr>
+<p><var>EHTTPRoute</var> is an exception class for HTTP routing errors.
+It extends <var>EHTTP</var> to provide specific error handling for routing operations.</p>
+</descr>
+<seealso>
+<link id="EHTTP">EHTTP</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="THTTPRouter">
+<short>HTTP request router class</short>
+<descr>
+<p><var>THTTPRouter</var> provides HTTP request routing functionality for web applications.
+It manages a collection of routes and matches incoming HTTP requests to appropriate handlers 
+based on URL patterns and HTTP methods.</p>
+</descr>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="THTTPRouterClass">
+<short>Class reference type for HTTP router</short>
+<descr>
+<p><var>THTTPRouterClass</var> is a class reference type that points to <var>THTTPRouter</var> or its descendants.
+It is used for creating router instances dynamically.</p>
+</descr>
+<seealso>
+<link id="THTTPRouter">THTTPRouter</link>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TRouteMethod">
+<short>HTTP method enumeration for routing</short>
+<descr>
+<p><var>TRouteMethod</var> defines the HTTP methods that can be matched by routes.
+It includes common HTTP methods like GET, POST, PUT, DELETE, and others.</p>
+</descr>
+<seealso>
+<link id="THTTPRoute">THTTPRoute</link>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRouteMethod.rmUnknown">
+<short>Unknown or unspecified HTTP method</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRouteMethod.rmAll">
+<short>Matches all HTTP methods</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRouteMethod.rmGet">
+<short>HTTP GET method</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRouteMethod.rmPost">
+<short>HTTP POST method</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRouteMethod.rmPut">
+<short>HTTP PUT method</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRouteMethod.rmDelete">
+<short>HTTP DELETE method</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRouteMethod.rmOptions">
+<short>HTTP OPTIONS method</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRouteMethod.rmHead">
+<short>HTTP HEAD method</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRouteMethod.rmTrace">
+<short>HTTP TRACE method</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRouteMethod.rmPatch">
+<short>HTTP PATCH method</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TRouteOption">
+<short>Route matching options enumeration</short>
+<descr>
+<p><var>TRouteOption</var> defines options that control how routes are matched against incoming requests.
+These options affect case sensitivity and empty pattern behavior.</p>
+</descr>
+<seealso>
+<link id="TRouteOptions">TRouteOptions</link>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRouteOption.roCaseSensitive">
+<short>Enable case-sensitive pattern matching</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TRouteOption.roEmptyMatchesAll">
+<short>Allow empty patterns to match all requests</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TRouteOptions">
+<short>Set of route matching options</short>
+<descr>
+<p><var>TRouteOptions</var> is a set type containing <var>TRouteOption</var> values.
+It allows combining multiple route matching options for flexible route configuration.</p>
+</descr>
+<seealso>
+<link id="TRouteOption">TRouteOption</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="THTTPRoute">
+<short>Base HTTP route class</short>
+<descr>
+<p><var>THTTPRoute</var> is the base class for all HTTP routes in the routing system.
+It provides pattern matching functionality and request handling infrastructure for specific route implementations.</p>
+</descr>
+<seealso>
+<link id="THTTPRouter">THTTPRouter</link>
+<link id="TRouteMethod">TRouteMethod</link>
+<link id="TRouteOptions">TRouteOptions</link>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="THTTPRoute.Destroy">
+<short>Destroys the HTTP route instance</short>
+<descr>
+<p><var>Destroy</var> performs cleanup when the route instance is destroyed.
+It ensures proper resource cleanup for the route.</p>
+</descr>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="THTTPRoute.NormalizeRoute">
+<short>Normalizes a route pattern string</short>
+<descr>
+<p><var>NormalizeRoute</var> processes a route pattern string to ensure it follows standard format conventions.
+This method is used internally to prepare route patterns for matching.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRoute.NormalizeRoute.Result">
+<short>Normalized route pattern string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRoute.NormalizeRoute.AValue">
+<short>Original route pattern to normalize</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTTPRoute.HandleRequest">
+<short>Handles an HTTP request</short>
+<descr>
+<p><var>HandleRequest</var> processes an incoming HTTP request and generates an appropriate response.
+This method delegates to <var>DoHandleRequest</var> for actual request processing.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRoute.HandleRequest.ARequest">
+<short>HTTP request to handle</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRoute.HandleRequest.AResponse">
+<short>HTTP response to generate</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPRoute.Matches">
+<short>Checks if route matches pattern and method</short>
+<descr>
+<p><var>Matches</var> determines whether this route matches the specified URL pattern and HTTP method.
+It combines pattern and method matching to determine route eligibility.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRoute.Matches.Result">
+<short><var>True</var> if route matches the criteria</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRoute.Matches.APattern">
+<short>URL pattern to match against</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRoute.Matches.AMethod">
+<short>HTTP method to match against</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRoute.Matches.Options">
+<short>Route matching options to apply</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPRoute.MatchPattern">
+<short>Matches URL pattern against request path</short>
+<descr>
+<p><var>MatchPattern</var> performs pattern matching between the route's URL pattern and an incoming request path.
+It supports parameterized routes and extracts path parameters.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRoute.MatchPattern.Result">
+<short><var>True</var> if pattern matches the path</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRoute.MatchPattern.Path">
+<short>Request path to match</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRoute.MatchPattern.L">
+<short>String list to store extracted parameters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRoute.MatchPattern.Options">
+<short>Matching options to apply</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPRoute.MatchMethod">
+<short>Checks if route matches HTTP method</short>
+<descr>
+<p><var>MatchMethod</var> determines whether this route handles the specified HTTP method.
+It compares the route's method against the request method.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRoute.MatchMethod.Result">
+<short><var>True</var> if method matches</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRoute.MatchMethod.AMethod">
+<short>HTTP method to check</short>
+</element>
+
+<!-- property Visibility: published -->
+<element name="THTTPRoute.Default">
+<short>Indicates if this is a default route</short>
+<descr>
+<p><var>Default</var> specifies whether this route serves as the default handler for its HTTP method.
+Default routes are used when no other routes match the request.</p>
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="THTTPRoute.URLPattern">
+<short>URL pattern for route matching</short>
+<descr>
+<p><var>URLPattern</var> defines the URL pattern that this route matches.
+It can include parameter placeholders and supports pattern-based routing.</p>
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="THTTPRoute.Method">
+<short>HTTP method handled by this route</short>
+<descr>
+<p><var>Method</var> specifies which HTTP method this route handles.
+Routes can be configured to handle specific methods like GET, POST, etc.</p>
+</descr>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="THTTPRouteClass">
+<short>Class reference type for HTTP route</short>
+<descr>
+<p><var>THTTPRouteClass</var> is a class reference type that points to <var>THTTPRoute</var> or its descendants.
+It enables dynamic creation of route instances.</p>
+</descr>
+<seealso>
+<link id="THTTPRoute">THTTPRoute</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="THTTPRouteList">
+<short>Collection of HTTP routes</short>
+<descr>
+<p><var>THTTPRouteList</var> maintains a collection of <var>THTTPRoute</var> objects.
+It provides indexed access to routes and manages the route collection.</p>
+</descr>
+<seealso>
+<link id="THTTPRoute">THTTPRoute</link>
+<link id="THTTPRouter">THTTPRouter</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPRouteList.Routes">
+<short>Provides indexed access to routes</short>
+<descr>
+<p><var>Routes</var> allows accessing individual routes in the collection by index.
+It provides both read and write access to route objects.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="THTTPRouteList.Routes.AIndex">
+<short>Index of the route to access</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TRouteCallBack">
+<short>Procedure type for route callback handlers</short>
+<descr>
+<p><var>TRouteCallBack</var> defines a procedure type for handling HTTP requests in callback-based routes.
+It receives request and response objects for processing.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRouteCallBack.ARequest">
+<short>HTTP request to handle</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRouteCallBack.AResponse">
+<short>HTTP response to generate</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="THTTPRouteCallback">
+<short>Route with callback procedure handler</short>
+<descr>
+<p><var>THTTPRouteCallback</var> implements a route that handles requests using a callback procedure.
+It executes the assigned callback when the route is matched.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPRouteCallback.CallBack">
+<short>Callback procedure for handling requests</short>
+<descr>
+<p><var>CallBack</var> is the procedure that gets executed when this route handles a request.
+It implements the actual request processing logic.</p>
+</descr>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TRouteCallBackEx">
+<short>Extended callback procedure type with user data</short>
+<descr>
+<p><var>TRouteCallBackEx</var> defines an extended callback procedure type that accepts additional user data.
+It provides a way to pass custom data to the callback handler.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRouteCallBackEx.AData">
+<short>User data passed to callback</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRouteCallBackEx.ARequest">
+<short>HTTP request to handle</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRouteCallBackEx.AResponse">
+<short>HTTP response to generate</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="THTTPRouteCallbackEx">
+<short>Route with extended callback handler</short>
+<descr>
+<p><var>THTTPRouteCallbackEx</var> implements a route that handles requests using an extended callback procedure.
+It supports passing custom data to the callback handler.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPRouteCallbackEx.CallBack">
+<short>Extended callback procedure for handling requests</short>
+<descr>
+<p><var>CallBack</var> is the extended callback procedure that gets executed when this route handles a request.
+It receives additional user data along with request and response objects.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPRouteCallbackEx.Data">
+<short>User data passed to callback</short>
+<descr>
+<p><var>Data</var> contains user-defined data that is passed to the callback procedure.
+It allows passing context or configuration data to the handler.</p>
+</descr>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TRouteEvent">
+<short>Event type for route handlers</short>
+<descr>
+<p><var>TRouteEvent</var> defines an object method type for handling HTTP requests in event-based routes.
+It provides object-oriented request handling with sender context.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRouteEvent.ARequest">
+<short>HTTP request to handle</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRouteEvent.AResponse">
+<short>HTTP response to generate</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="THTTPRouteEvent">
+<short>Route with object event handler</short>
+<descr>
+<p><var>THTTPRouteEvent</var> implements a route that handles requests using an object method event.
+It provides object-oriented request handling capabilities.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPRouteEvent.Event">
+<short>Event handler for processing requests</short>
+<descr>
+<p><var>Event</var> is the object method that gets executed when this route handles a request.
+It provides access to the sender object context during request processing.</p>
+</descr>
+</element>
+
+<!-- interface Visibility: default -->
+<element name="IRouteInterface">
+<short>Interface for route request handlers</short>
+<descr>
+<p><var>IRouteInterface</var> defines an interface for objects that can handle HTTP requests.
+It provides a standardized way to implement route handlers using interface-based design.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IRouteInterface.HandleRequest">
+<short>Handles an HTTP request</short>
+<descr>
+<p><var>HandleRequest</var> processes an incoming HTTP request and generates an appropriate response.
+This method must be implemented by classes that support the <var>IRouteInterface</var> interface.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IRouteInterface.HandleRequest.ARequest">
+<short>HTTP request to handle</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IRouteInterface.HandleRequest.AResponse">
+<short>HTTP response to generate</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="THTTPRouteInterface">
+<short>Route with interface-based handler</short>
+<descr>
+<p><var>THTTPRouteInterface</var> implements a route that handles requests using an interface-based handler.
+It delegates request processing to an object implementing <var>IRouteInterface</var>.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPRouteInterface.Intf">
+<short>Interface handler for processing requests</short>
+<descr>
+<p><var>Intf</var> is the interface object that handles requests for this route.
+It must implement the <var>IRouteInterface</var> interface to process HTTP requests.</p>
+</descr>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TRouteObject">
+<short>Base class for route handler objects</short>
+<descr>
+<p><var>TRouteObject</var> is an abstract base class for objects that can handle HTTP requests.
+It implements <var>IRouteInterface</var> and serves as a foundation for custom route handler classes.</p>
+</descr>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TRouteObject.Create">
+<short>Creates a route object instance</short>
+<descr>
+<p><var>Create</var> initializes a new route object instance.
+This constructor can be overridden in descendant classes for custom initialization.</p>
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TRouteObject.HandleRequest">
+<short>Handles an HTTP request</short>
+<descr>
+<p><var>HandleRequest</var> is an abstract method that must be implemented by descendant classes.
+It processes HTTP requests and generates appropriate responses.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRouteObject.HandleRequest.ARequest">
+<short>HTTP request to handle</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRouteObject.HandleRequest.AResponse">
+<short>HTTP response to generate</short>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TRouteObjectClass">
+<short>Class reference type for route objects</short>
+<descr>
+<p><var>TRouteObjectClass</var> is a class reference type that points to <var>TRouteObject</var> or its descendants.
+It enables dynamic creation of route handler object instances.</p>
+</descr>
+</element>
+
+<!-- class Visibility: default -->
+<element name="THTTPRouteObject">
+<short>Route with object class handler</short>
+<descr>
+<p><var>THTTPRouteObject</var> implements a route that handles requests by creating instances of a specified object class.
+It instantiates the object class for each request to provide isolated request handling.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPRouteObject.ObjectCLass">
+<short>Object class for handling requests</short>
+<descr>
+<p><var>ObjectCLass</var> specifies the class that will be instantiated to handle requests for this route.
+The class must descend from <var>TRouteObject</var> and implement the <var>HandleRequest</var> method.</p>
+</descr>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="THTTPRouteRequestEvent">
+<short>Event type for HTTP route requests</short>
+<descr>
+<p><var>THTTPRouteRequestEvent</var> defines an event type for handling HTTP route requests with sender context.
+It provides access to the sender object along with request and response objects.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouteRequestEvent.Sender">
+<short>Object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouteRequestEvent.ARequest">
+<short>HTTP request to handle</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouteRequestEvent.AResponse">
+<short>HTTP response to generate</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TRequestInterceptEvent">
+<short>Event type for request interception</short>
+<descr>
+<p><var>TRequestInterceptEvent</var> defines an event type for intercepting HTTP requests before or after processing.
+It allows modifying requests/responses or controlling whether processing should continue.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRequestInterceptEvent.ARequest">
+<short>HTTP request being intercepted</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRequestInterceptEvent.AResponse">
+<short>HTTP response being processed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRequestInterceptEvent.aContinue">
+<short>Controls whether processing should continue</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TInterceptAt">
+<short>Timing enumeration for request interception</short>
+<descr>
+<p><var>TInterceptAt</var> specifies when request interception should occur.
+It determines whether the interceptor runs before or after normal request processing.</p>
+</descr>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TInterceptAt.iaBefore">
+<short>Intercept before request processing</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TInterceptAt.iaAfter">
+<short>Intercept after request processing</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TRequestInterceptorItem">
+<short>Single request interceptor definition</short>
+<descr>
+<p><var>TRequestInterceptorItem</var> represents a single request interceptor in the interceptor collection.
+It contains the interceptor configuration including timing, event handler, and status.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequestInterceptorItem.Disabled">
+<short>Controls whether the interceptor is active</short>
+<descr>
+<p><var>Disabled</var> determines whether this interceptor is currently active.
+When <var>True</var>, the interceptor is skipped during request processing.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequestInterceptorItem.Name">
+<short>Unique name of the interceptor</short>
+<descr>
+<p><var>Name</var> provides a unique identifier for the interceptor.
+It is used for lookup, registration, and management operations.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequestInterceptorItem.Event">
+<short>Event handler for the interceptor</short>
+<descr>
+<p><var>Event</var> is the event handler that gets executed when the interceptor runs.
+It processes the request and response and can control further processing.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequestInterceptorItem.InterceptAt">
+<short>Timing for when the interceptor runs</short>
+<descr>
+<p><var>InterceptAt</var> specifies when this interceptor should be executed.
+It determines whether the interceptor runs before or after normal request processing.</p>
+</descr>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TRequestInterceptorList">
+<short>Collection of request interceptors</short>
+<descr>
+<p><var>TRequestInterceptorList</var> manages a collection of request interceptors.
+It provides methods for adding, finding, and executing interceptors during request processing.</p>
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TRequestInterceptorList.addInterCeptor">
+<short>Adds a new interceptor to the collection</short>
+<descr>
+<p><var>addInterCeptor</var> creates and adds a new request interceptor with the specified name.
+It returns the newly created interceptor item for further configuration.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TRequestInterceptorList.addInterCeptor.Result">
+<short>Newly created interceptor item</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRequestInterceptorList.addInterCeptor.aName">
+<short>Name for the new interceptor</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TRequestInterceptorList.RunIntercepts">
+<short>Executes interceptors at specified timing</short>
+<descr>
+<p><var>RunIntercepts</var> executes all active interceptors that are configured to run at the specified timing.
+It processes request and response through each interceptor and returns whether processing should continue.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TRequestInterceptorList.RunIntercepts.Result">
+<short><var>True</var> if processing should continue</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRequestInterceptorList.RunIntercepts.RunAt">
+<short>Timing when to run interceptors</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRequestInterceptorList.RunIntercepts.ARequest">
+<short>HTTP request to process</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRequestInterceptorList.RunIntercepts.AResponse">
+<short>HTTP response to process</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TRequestInterceptorList.IndexOfInterceptor">
+<short>Finds index of interceptor by name</short>
+<descr>
+<p><var>IndexOfInterceptor</var> searches for an interceptor with the specified name and returns its index.
+It returns -1 if no interceptor with the given name is found.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TRequestInterceptorList.IndexOfInterceptor.Result">
+<short>Index of the interceptor or -1 if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRequestInterceptorList.IndexOfInterceptor.aName">
+<short>Name of interceptor to find</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TRequestInterceptorList.FindInterceptor">
+<short>Finds interceptor by name</short>
+<descr>
+<p><var>FindInterceptor</var> searches for an interceptor with the specified name and returns the interceptor object.
+It returns <var>nil</var> if no interceptor with the given name is found.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TRequestInterceptorList.FindInterceptor.Result">
+<short>Interceptor item or <var>nil</var> if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRequestInterceptorList.FindInterceptor.aName">
+<short>Name of interceptor to find</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TRequestInterceptorList.Interceptors">
+<short>Provides indexed access to interceptors</short>
+<descr>
+<p><var>Interceptors</var> allows accessing individual interceptors in the collection by index.
+It provides read-only access to interceptor items.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TRequestInterceptorList.Interceptors.aIndex">
+<short>Index of the interceptor to access</short>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="THTTPRouter.Create">
+<short>Creates a new HTTP router instance</short>
+<descr>
+<p><var>Create</var> initializes a new HTTP router with default settings.
+It sets up the internal route collection and interceptor management.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.Create.AOwner">
+<short>Owner component for the router</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="THTTPRouter.Destroy">
+<short>Destroys the HTTP router instance</short>
+<descr>
+<p><var>Destroy</var> performs cleanup when the router is destroyed.
+It releases all routes, interceptors, and associated resources.</p>
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPRouter.FindDefaultRoute">
+<short>Finds the default route for a method</short>
+<descr>
+<p><var>FindDefaultRoute</var> searches for the default route that handles the specified HTTP method.
+It returns the first route marked as default for the given method.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRouter.FindDefaultRoute.Result">
+<short>Default route for the method or <var>nil</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.FindDefaultRoute.AMethod">
+<short>HTTP method to find default route for</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTTPRouter.DeleteRoute">
+<short>Removes a route from the collection</short>
+<descr>
+<p><var>DeleteRoute</var> removes the specified route from the router's route collection.
+It can delete by index or by route object reference.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.DeleteRoute.AIndex">
+<short>Index of route to delete</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTTPRouter.DeleteRouteByID">
+<short>Removes a route by its ID</short>
+<descr>
+<p><var>DeleteRouteByID</var> removes a route from the collection using its unique identifier.
+It searches for the route with the specified ID and removes it.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.DeleteRouteByID.AID">
+<short>Unique ID of route to delete</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.DeleteRoute.ARoute">
+<short>Route object to delete</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="THTTPRouter.SanitizeRoute">
+<short>Sanitizes a route path string</short>
+<descr>
+<p><var>SanitizeRoute</var> cleans and normalizes a route path string to ensure proper format.
+It removes invalid characters and applies standard formatting rules.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRouter.SanitizeRoute.Result">
+<short>Sanitized route path string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.SanitizeRoute.Path">
+<short>Original path to sanitize</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="THTTPRouter.Service">
+<short>Returns the global router service instance</short>
+<descr>
+<p><var>Service</var> provides access to the global router service instance.
+It implements a singleton pattern for router access across the application.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRouter.Service.Result">
+<short>Global router service instance</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="THTTPRouter.ServiceClass">
+<short>Returns the router service class</short>
+<descr>
+<p><var>ServiceClass</var> returns the class used for creating router service instances.
+It allows customization of the router implementation.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRouter.ServiceClass.Result">
+<short>Router service class type</short>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="THTTPRouter.SetServiceClass">
+<short>Sets the router service class</short>
+<descr>
+<p><var>SetServiceClass</var> configures the class to use for creating router service instances.
+It allows replacing the default router implementation with a custom one.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.SetServiceClass.AClass">
+<short>New router service class to use</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="THTTPRouter.StringToRouteMethod">
+<short>Converts string to route method enumeration</short>
+<descr>
+<p><var>StringToRouteMethod</var> parses a string representation of an HTTP method and returns the corresponding <var>TRouteMethod</var> enumeration value.
+It supports standard HTTP method names like "GET", "POST", etc.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRouter.StringToRouteMethod.Result">
+<short>Route method enumeration value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.StringToRouteMethod.S">
+<short>String representation of HTTP method</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTTPRouter.RegisterInterceptor">
+<short>Registers a request interceptor</short>
+<descr>
+<p><var>RegisterInterceptor</var> adds a new request interceptor to the router.
+It configures the interceptor with the specified name, event handler, and timing.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.RegisterInterceptor.aName">
+<short>Unique name for the interceptor</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.RegisterInterceptor.aEvent">
+<short>Event handler for the interceptor</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.RegisterInterceptor.aAt">
+<short>Timing when interceptor should run</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTTPRouter.UnRegisterInterceptor">
+<short>Removes a request interceptor</short>
+<descr>
+<p><var>UnRegisterInterceptor</var> removes the specified interceptor from the router.
+It searches for the interceptor by name and removes it from the collection.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.UnRegisterInterceptor.aName">
+<short>Name of interceptor to remove</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPRouter.RegisterRoute">
+<short>Registers a new route with the router</short>
+<descr>
+<p><var>RegisterRoute</var> adds a new route to the router with the specified pattern and handler.
+It supports various handler types including callbacks, events, interfaces, and object classes.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRouter.RegisterRoute.Result">
+<short>Newly registered route object</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.RegisterRoute.APattern">
+<short>URL pattern for the route</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.RegisterRoute.AEvent">
+<short>Event handler for the route</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.RegisterRoute.IsDefault">
+<short>Whether this is a default route</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.RegisterRoute.AMethod">
+<short>HTTP method for the route</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.RegisterRoute.AIntf">
+<short>Interface handler for the route</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.RegisterRoute.AObjectClass">
+<short>Object class handler for the route</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.RegisterRoute.AData">
+<short>User data for extended callbacks</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.RegisterRoute.ACallBack">
+<short>Callback handler for the route</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPRouter.FindHTTPRoute">
+<short>Finds a route matching path and method</short>
+<descr>
+<p><var>FindHTTPRoute</var> searches for a route that matches the specified path and HTTP method.
+It extracts parameters and provides information about method mismatches.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRouter.FindHTTPRoute.Result">
+<short>Matching route or <var>nil</var> if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.FindHTTPRoute.Path">
+<short>Request path to match</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.FindHTTPRoute.AMethod">
+<short>HTTP method to match</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.FindHTTPRoute.Params">
+<short>String list to store extracted parameters</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.FindHTTPRoute.MethodMismatch">
+<short>Returns <var>True</var> if pattern matched but method didn't</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPRouter.GetHTTPRoute">
+<short>Gets the best matching route for path and method</short>
+<descr>
+<p><var>GetHTTPRoute</var> finds the best route that matches the specified path and method.
+It prioritizes exact matches over default routes and extracts path parameters.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRouter.GetHTTPRoute.Result">
+<short>Best matching route or <var>nil</var></short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.GetHTTPRoute.Path">
+<short>Request path to match</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.GetHTTPRoute.AMethod">
+<short>HTTP method to match</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.GetHTTPRoute.Params">
+<short>String list to store extracted parameters</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTTPRouter.RouteRequest">
+<short>Routes an HTTP request to appropriate handler</short>
+<descr>
+<p><var>RouteRequest</var> processes an incoming HTTP request by finding the appropriate route and executing its handler.
+It includes interceptor processing and error handling for the complete request lifecycle.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.RouteRequest.ARequest">
+<short>HTTP request to route</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.RouteRequest.AResponse">
+<short>HTTP response to generate</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPRouter.MoveRouteBeforeDefault">
+<short>Moves route before default routes</short>
+<descr>
+<p><var>MoveRouteBeforeDefault</var> repositions the specified route to execute before default routes.
+This ensures higher priority processing for specific routes over default handlers.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRouter.MoveRouteBeforeDefault.Result">
+<short><var>True</var> if route was moved successfully</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.MoveRouteBeforeDefault.aRouteID">
+<short>ID of route to move</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPRouter.MoveRouteBefore">
+<short>Moves one route before another</short>
+<descr>
+<p><var>MoveRouteBefore</var> repositions one route to execute before another route in the processing order.
+This allows fine-tuning of route evaluation priority.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPRouter.MoveRouteBefore.Result">
+<short><var>True</var> if routes were moved successfully</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.MoveRouteBefore.aRoute1">
+<short>Route to move</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPRouter.MoveRouteBefore.aRoute2">
+<short>Target route to move before</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPRouter.Routes">
+<short>Provides indexed access to routes</short>
+<descr>
+<p><var>Routes</var> allows accessing individual routes in the router's collection by index.
+It provides read-only access to route objects for inspection and management.</p>
+</descr>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="THTTPRouter.Routes.AIndex">
+<short>Index of route to access</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPRouter.RouteCount">
+<short>Returns the number of registered routes</short>
+<descr>
+<p><var>RouteCount</var> provides the total count of routes currently registered with the router.
+This includes all route types and can be used for iteration and management purposes.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPRouter.BeforeRequest">
+<short>Event triggered before processing requests</short>
+<descr>
+<p><var>BeforeRequest</var> is an event that fires before any request processing begins.
+It allows global pre-processing of requests before route matching and handling.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPRouter.AfterRequest">
+<short>Event triggered after processing requests</short>
+<descr>
+<p><var>AfterRequest</var> is an event that fires after request processing completes.
+It allows global post-processing of requests and responses.</p>
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPRouter.RouteOptions">
+<short>Global options for route matching</short>
+<descr>
+<p><var>RouteOptions</var> specifies global options that affect how all routes in the router perform pattern matching.
+These options control case sensitivity and empty pattern behavior.</p>
+</descr>
+</element>
+
+<!-- function Visibility: default -->
+<element name="RouteMethodToString">
+<short>Converts route method enumeration to string</short>
+<descr>
+<p><var>RouteMethodToString</var> converts a <var>TRouteMethod</var> enumeration value to its string representation.
+It returns standard HTTP method names like "GET", "POST", etc.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="RouteMethodToString.Result">
+<short>String representation of the HTTP method</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RouteMethodToString.R">
+<short>Route method enumeration to convert</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="HTTPRouter">
+<short>Returns the global HTTP router instance</short>
+<descr>
+<p><var>HTTPRouter</var> provides access to the global HTTP router service instance.
+It creates the router if it doesn't exist and returns the singleton instance.</p>
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="HTTPRouter.Result">
+<short>Global HTTP router instance</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="RouteMethodNames">
+<short>Array constant containing HTTP method name strings</short>
+<descr>
+<p><var>RouteMethodNames</var> is an array constant that maps <var>TRouteMethod</var> enumeration values to their string representations.
+It provides the standard HTTP method names used for string conversion operations.</p>
+</descr>
+</element>
+
+</module> <!-- httproute -->
+
+</package>
+</fpdoc-descriptions>
