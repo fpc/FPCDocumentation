@@ -1,0 +1,854 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    custweb
+  ====================================================================
+-->
+
+<module name="CustWeb">
+<short>Base functionality for HTTP hosting implementations</short>
+<descr>
+<p>The <var>custweb</var> unit provides the base functionality common to all HTTP hosting implementations in Free Pascal: CGI, FastCGI, HTTP server and Apache loadable modules.
+It contains the foundational classes <link id="TWebHandler">TWebHandler</link> and <link id="TCustomWebApplication">TCustomWebApplication</link> that handle HTTP requests and provide web application functionality.</p>
+<p>The unit supports module-based request handling, error management, event logging, and various configuration options for different hosting environments.
+It provides the infrastructure for routing requests to appropriate HTTP modules and managing the complete request-response cycle.</p>
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="CustApp">
+<short>Custom application framework classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Basic component and persistence classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>System utility functions and classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="httpdefs">
+<short>HTTP protocol definitions and constants</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="fphttp">
+<short>HTTP request and response handling classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="eventlog">
+<short>System event logging functionality</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TGetModuleEvent">
+<short>Event type for determining HTTP module class for a request</short>
+<descr>
+<p>Event handler type called when the web application needs to determine which HTTP module class to use for handling a specific request.
+This allows custom logic for module selection based on request properties.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.OnGetModule">TWebHandler.OnGetModule</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGetModuleEvent.Sender">
+<short>The web handler object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGetModuleEvent.ARequest">
+<short>The HTTP request being processed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGetModuleEvent.ModuleClass">
+<short>Variable to store the selected HTTP module class</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnShowRequestException">
+<short>Event type for custom exception handling in HTTP requests</short>
+<descr>
+<p>Event handler type called when an exception occurs during HTTP request processing.
+Allows custom handling of exceptions before the default error response is generated.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.OnShowRequestException">TWebHandler.OnShowRequestException</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnShowRequestException.AResponse">
+<short>The HTTP response object for sending error response</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnShowRequestException.AnException">
+<short>The exception that occurred during request processing</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnShowRequestException.handled">
+<short>Set to <var>True</var> if the exception was handled by the event</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TLogEvent">
+<short>Event type for logging web application events</short>
+<descr>
+<p>Event handler type called when the web application needs to log an event.
+Allows custom logging implementation for web application events and errors.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.OnLog">TWebHandler.OnLog</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TLogEvent.EventType">
+<short>The type of event being logged</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TLogEvent.Msg">
+<short>The message text to be logged</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TInitModuleEvent">
+<short>Event type for HTTP module initialization</short>
+<descr>
+<p>Event handler type called when an HTTP module is initialized before handling a request.
+Allows custom initialization of module properties and setup.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.OnInitModule">TWebHandler.OnInitModule</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TInitModuleEvent.Sender">
+<short>The web handler object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TInitModuleEvent.Module">
+<short>The HTTP module being initialized</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TWebHandler">
+<short>Base class for handling HTTP requests in web applications</short>
+<descr>
+<p><var>TWebHandler</var> is the core component that handles HTTP requests in web applications.
+It provides the framework for routing requests to appropriate HTTP modules, handling errors, and managing the request-response cycle.
+This class serves as the foundation for all HTTP hosting implementations including CGI, FastCGI, HTTP server and Apache modules.</p>
+<p>The handler supports both legacy routing and new HTTP routing systems, module lifecycle management, error handling with custom exception display, and event logging.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions during request processing.</p>
+</errors>
+<seealso>
+<link id="TCustomWebApplication">TCustomWebApplication</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TWebHandler.Create">
+<short>Creates a new web handler instance</short>
+<descr>
+<p>Creates and initializes a new <var>TWebHandler</var> instance with default settings.
+Sets up default module variable name, enables default module handling, and configures request handling options.</p>
+</descr>
+<errors>
+<p>May raise exceptions during component initialization.</p>
+</errors>
+<seealso>
+<link id="TWebHandler.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWebHandler.Create.AOwner">
+<short>The owner component for the web handler</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TWebHandler.Destroy">
+<short>Destroys the web handler instance</short>
+<descr>
+<p>Cleans up resources and destroys the <var>TWebHandler</var> instance.
+Resets module factory event handlers and performs standard component cleanup.</p>
+</descr>
+<errors>
+<p>No specific errors expected during destruction.</p>
+</errors>
+<seealso>
+<link id="TWebHandler.Create">Create</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TWebHandler.Run">
+<short>Main request processing loop for the web handler</short>
+<descr>
+<p>Starts the main request processing loop that waits for incoming HTTP requests and handles them.
+Continues processing until the handler is terminated, calling idle events between requests when available.</p>
+</descr>
+<errors>
+<p>May raise exceptions during request waiting or processing.</p>
+</errors>
+<seealso>
+<link id="TWebHandler.DoHandleRequest">DoHandleRequest</link>
+<link id="TWebHandler.OnIdle">OnIdle</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TWebHandler.Log">
+<short>Logs an event message using the configured log handler</short>
+<descr>
+<p>Logs an event message with the specified event type if a log event handler is assigned.
+Provides centralized logging for web application events and errors.</p>
+</descr>
+<errors>
+<p>No specific errors, depends on log handler implementation.</p>
+</errors>
+<seealso>
+<link id="TWebHandler.OnLog">OnLog</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWebHandler.Log.EventType">
+<short>The type of event being logged</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWebHandler.Log.Msg">
+<short>The message text to log</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TWebHandler.DoHandleRequest">
+<short>Handles a complete HTTP request with error handling and cleanup</short>
+<descr>
+<p>Processes a complete HTTP request including error handling, response sending, and proper cleanup of request and response objects.
+Ensures content is sent even if not explicitly sent by the handler, and logs any content sending errors.</p>
+</descr>
+<errors>
+<p>Handles and logs content sending errors internally.</p>
+</errors>
+<seealso>
+<link id="TWebHandler.HandleRequest">HandleRequest</link>
+<link id="TWebHandler.EndRequest">EndRequest</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWebHandler.DoHandleRequest.ARequest">
+<short>The HTTP request to process</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWebHandler.DoHandleRequest.AResponse">
+<short>The HTTP response to send</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TWebHandler.HandleRequest">
+<short>Routes and processes an HTTP request to the appropriate handler</short>
+<descr>
+<p>Routes an HTTP request to the appropriate handler using either legacy routing or the HTTP router system.
+Catches and handles any exceptions that occur during request processing by calling the exception handler.</p>
+</descr>
+<errors>
+<p>Catches all exceptions during request processing and handles them via <var>ShowRequestException</var>.</p>
+</errors>
+<seealso>
+<link id="TWebHandler.LegacyRouting">LegacyRouting</link>
+<link id="TWebHandler.ShowRequestException">ShowRequestException</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWebHandler.HandleRequest.ARequest">
+<short>The HTTP request to route and process</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWebHandler.HandleRequest.AResponse">
+<short>The HTTP response to populate</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.HandleGetOnPost">
+<short>Controls whether GET requests are handled by POST handlers</short>
+<descr>
+<p>When <var>True</var>, allows POST request handlers to also process GET requests.
+This provides flexibility for web applications that need to handle both request types with the same logic.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.RedirectOnError">
+<short>Controls whether errors trigger HTTP redirects</short>
+<descr>
+<p>When <var>True</var>, exceptions during request processing cause an HTTP redirect to the URL specified in <link id="TWebHandler.RedirectOnErrorURL">RedirectOnErrorURL</link>.
+When <var>False</var>, errors are displayed as HTML error pages.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.RedirectOnErrorURL">RedirectOnErrorURL</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.RedirectOnErrorURL">
+<short>URL template for error redirects</short>
+<descr>
+<p>Specifies the URL pattern used for error redirects when <link id="TWebHandler.RedirectOnError">RedirectOnError</link> is <var>True</var>.
+The URL can contain format specifiers to include error message details in the redirect.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.RedirectOnError">RedirectOnError</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.ApplicationURL">
+<short>Base URL for the web application</short>
+<descr>
+<p>Specifies the base URL for the web application.
+When empty, the application URL is determined from the request script name.
+Used for constructing absolute URLs and setting module base URLs.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.SetBaseURL">SetBaseURL</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.AllowDefaultModule">
+<short>Controls whether requests without module names use default modules</short>
+<descr>
+<p>When <var>True</var>, requests that don't specify a module name will use the default module specified in <link id="TWebHandler.DefaultModuleName">DefaultModuleName</link>.
+When <var>False</var>, requests without module names result in an error.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.DefaultModuleName">DefaultModuleName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.DefaultModuleName">
+<short>Name of the default HTTP module for requests without explicit module names</short>
+<descr>
+<p>Specifies which HTTP module to use when a request doesn't explicitly specify a module name and <link id="TWebHandler.AllowDefaultModule">AllowDefaultModule</link> is <var>True</var>.
+If empty and only one module is registered, that module becomes the default.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.AllowDefaultModule">AllowDefaultModule</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.ModuleVariable">
+<short>Query parameter name for specifying HTTP module names</short>
+<descr>
+<p>Specifies the name of the query parameter used to determine which HTTP module should handle a request.
+Defaults to 'Module'. For example, '?Module=MyModule' would route to the MyModule HTTP module.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.GetModuleName">GetModuleName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.OnGetModule">
+<short>Event for custom module selection logic</short>
+<descr>
+<p>Event called to determine which HTTP module class should handle a request.
+Allows custom module selection logic based on request properties, overriding the default module name resolution.</p>
+</descr>
+<seealso>
+<link id="TGetModuleEvent">TGetModuleEvent</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.Email">
+<short>Administrator email address for error notifications</short>
+<descr>
+<p>Email address displayed in error pages for user contact.
+Used in HTML error pages to provide a contact point for error reporting.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.Administrator">Administrator</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.Title">
+<short>Application title displayed in error pages</short>
+<descr>
+<p>Title of the web application used in error page headers and titles.
+Provides branding and identification in error responses.</p>
+</descr>
+<seealso>
+<link id="ExceptionToHTML">ExceptionToHTML</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.Administrator">
+<short>Administrator name for error pages</short>
+<descr>
+<p>Name of the application administrator displayed in error pages.
+Used together with the email address to provide contact information for error reporting.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.Email">Email</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.OnShowRequestException">
+<short>Event for custom exception handling during request processing</short>
+<descr>
+<p>Event called when an exception occurs during HTTP request processing.
+Allows custom handling of exceptions before the default error response is generated.</p>
+</descr>
+<seealso>
+<link id="TOnShowRequestException">TOnShowRequestException</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.OnIdle">
+<short>Event triggered when the handler is idle between requests</short>
+<descr>
+<p>Event called between request processing cycles when the handler is waiting for new requests.
+Allows background processing or cleanup tasks during idle periods.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.Run">Run</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.OnLog">
+<short>Event for logging web application events and errors</short>
+<descr>
+<p>Event called when the web application needs to log events or errors.
+Allows custom logging implementation for web application diagnostics.</p>
+</descr>
+<seealso>
+<link id="TLogEvent">TLogEvent</link>
+<link id="TWebHandler.Log">Log</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.OnUnknownRequestEncoding">
+<short>Event for handling unknown request content encodings</short>
+<descr>
+<p>Event called when the HTTP request contains content with an unknown or unsupported encoding.
+Allows custom handling of request content encoding issues.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.OnInitModule">
+<short>Event for initializing HTTP modules before request processing</short>
+<descr>
+<p>Event called when an HTTP module is initialized before processing a request.
+Allows custom setup and configuration of module properties.</p>
+</descr>
+<seealso>
+<link id="TInitModuleEvent">TInitModuleEvent</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.PreferModuleName">
+<short>Controls whether module name extraction is preferred over path info parsing</short>
+<descr>
+<p>When <var>True</var>, the handler prefers extracting module names from path info even when path contains multiple segments.
+Affects how module names are determined from request URLs.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.GetModuleName">GetModuleName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TWebHandler.LegacyRouting">
+<short>Controls whether to use legacy request routing instead of HTTP router</short>
+<descr>
+<p>When <var>True</var>, uses the original request routing mechanism instead of the HTTP router system.
+Provides backward compatibility with older web applications.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.HandleRequest">HandleRequest</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TCustomWebApplication">
+<short>Base class for web applications with integrated request handling</short>
+<descr>
+<p><var>TCustomWebApplication</var> extends <var>TCustomApplication</var> to provide web-specific functionality.
+It integrates a <link id="TWebHandler">TWebHandler</link> instance for processing HTTP requests and provides properties for configuring web application behavior.</p>
+<p>This class serves as the foundation for all web application implementations including CGI, FastCGI, and other HTTP hosting environments.
+It handles application lifecycle, event logging, and web handler management.</p>
+</descr>
+<errors>
+<p>May raise exceptions during web handler initialization or request processing.</p>
+</errors>
+<seealso>
+<link id="TWebHandler">TWebHandler</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCustomWebApplication.Create">
+<short>Creates and initializes a new web application instance</short>
+<descr>
+<p>Creates a new <var>TCustomWebApplication</var> instance and initializes the web handler through the abstract <var>InitializeWebHandler</var> method.
+Sets up event handlers for termination and logging.</p>
+</descr>
+<errors>
+<p>May raise exceptions during web handler initialization.</p>
+</errors>
+<seealso>
+<link id="TCustomWebApplication.InitializeWebHandler">InitializeWebHandler</link>
+<link id="TCustomWebApplication.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomWebApplication.Create.AOwner">
+<short>The owner component for the web application</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCustomWebApplication.Destroy">
+<short>Destroys the web application and cleans up resources</short>
+<descr>
+<p>Destroys the web application instance, freeing the web handler and event log resources.
+Performs proper cleanup of all web application components.</p>
+</descr>
+<errors>
+<p>No specific errors expected during destruction.</p>
+</errors>
+<seealso>
+<link id="TCustomWebApplication.Create">Create</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomWebApplication.CreateForm">
+<short>Creates a component instance with the web handler as owner</short>
+<descr>
+<p>Creates an instance of the specified component class with the web handler as the owner component.
+Provides a way to create forms and components within the web application context.</p>
+</descr>
+<errors>
+<p>May raise exceptions during component creation.</p>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomWebApplication.CreateForm.AClass">
+<short>The component class to instantiate</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomWebApplication.CreateForm.Reference">
+<short>Variable to store the created component reference</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomWebApplication.Initialize">
+<short>Initializes the web application with error handling enabled</short>
+<descr>
+<p>Initializes the web application and enables <var>StopOnException</var> to ensure proper error handling.
+Calls the inherited initialization from <var>TCustomApplication</var>.</p>
+</descr>
+<errors>
+<p>May raise exceptions during application initialization.</p>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomWebApplication.Terminate">
+<short>Terminates the web application and web handler</short>
+<descr>
+<p>Terminates the web application by first calling the inherited termination and then terminating the web handler if it's still running.
+Ensures clean shutdown of the web request processing loop.</p>
+</descr>
+<errors>
+<p>No specific errors expected during termination.</p>
+</errors>
+<seealso>
+<link id="TWebHandler.Terminate">TWebHandler.Terminate</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.HandleGetOnPost">
+<short>Controls whether GET requests are handled by POST handlers</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.HandleGetOnPost">TWebHandler.HandleGetOnPost</link> property.
+When <var>True</var>, allows POST request handlers to also process GET requests.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.HandleGetOnPost">TWebHandler.HandleGetOnPost</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.RedirectOnError">
+<short>Controls whether errors trigger HTTP redirects</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.RedirectOnError">TWebHandler.RedirectOnError</link> property.
+When <var>True</var>, exceptions during request processing cause an HTTP redirect.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.RedirectOnError">TWebHandler.RedirectOnError</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.RedirectOnErrorURL">
+<short>URL template for error redirects</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.RedirectOnErrorURL">TWebHandler.RedirectOnErrorURL</link> property.
+Specifies the URL pattern used for error redirects.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.RedirectOnErrorURL">TWebHandler.RedirectOnErrorURL</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.ApplicationURL">
+<short>Base URL for the web application</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.ApplicationURL">TWebHandler.ApplicationURL</link> property.
+Specifies the base URL for the web application.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.ApplicationURL">TWebHandler.ApplicationURL</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.AllowDefaultModule">
+<short>Controls whether requests without module names use default modules</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.AllowDefaultModule">TWebHandler.AllowDefaultModule</link> property.
+When <var>True</var>, requests without module names use the default module.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.AllowDefaultModule">TWebHandler.AllowDefaultModule</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.DefaultModuleName">
+<short>Name of the default HTTP module</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.DefaultModuleName">TWebHandler.DefaultModuleName</link> property.
+Specifies the default HTTP module for requests without explicit module names.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.DefaultModuleName">TWebHandler.DefaultModuleName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.ModuleVariable">
+<short>Query parameter name for specifying HTTP module names</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.ModuleVariable">TWebHandler.ModuleVariable</link> property.
+Specifies the query parameter name used to determine module names.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.ModuleVariable">TWebHandler.ModuleVariable</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.OnGetModule">
+<short>Event for custom module selection logic</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.OnGetModule">TWebHandler.OnGetModule</link> property.
+Event called to determine which HTTP module class should handle a request.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.OnGetModule">TWebHandler.OnGetModule</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.Email">
+<short>Administrator email address for error notifications</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.Email">TWebHandler.Email</link> property.
+Email address displayed in error pages for user contact.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.Email">TWebHandler.Email</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.Administrator">
+<short>Administrator name for error pages</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.Administrator">TWebHandler.Administrator</link> property.
+Name of the application administrator displayed in error pages.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.Administrator">TWebHandler.Administrator</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.OnShowRequestException">
+<short>Event for custom exception handling during request processing</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.OnShowRequestException">TWebHandler.OnShowRequestException</link> property.
+Event called when an exception occurs during HTTP request processing.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.OnShowRequestException">TWebHandler.OnShowRequestException</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.OnUnknownRequestEncoding">
+<short>Event for handling unknown request content encodings</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.OnUnknownRequestEncoding">TWebHandler.OnUnknownRequestEncoding</link> property.
+Event called when request contains content with unknown encoding.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.OnUnknownRequestEncoding">TWebHandler.OnUnknownRequestEncoding</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.EventLog">
+<short>Event log instance for logging web application events</short>
+<descr>
+<p>Provides access to the event log used by the web application for logging events and errors.
+The event log is created automatically when first accessed and configured for system logging.</p>
+</descr>
+<seealso>
+<link id="TCustomWebApplication.CreateEventLog">CreateEventLog</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.PreferModuleName">
+<short>Controls module name extraction preference</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.PreferModuleName">TWebHandler.PreferModuleName</link> property.
+Controls whether module name extraction is preferred over path info parsing.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.PreferModuleName">TWebHandler.PreferModuleName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebApplication.LegacyRouting">
+<short>Controls whether to use legacy request routing</short>
+<descr>
+<p>Delegates to the <link id="TWebHandler.LegacyRouting">TWebHandler.LegacyRouting</link> property.
+When <var>True</var>, uses legacy routing instead of the HTTP router system.</p>
+</descr>
+<seealso>
+<link id="TWebHandler.LegacyRouting">TWebHandler.LegacyRouting</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EFpWebError">
+<short>Exception class for web application errors</short>
+<descr>
+<p><var>EFpWebError</var> is an exception class specifically for web application errors.
+It extends <var>EFPHTTPError</var> to provide HTTP-specific error handling with status codes and status text.</p>
+</descr>
+<errors>
+<p>This class represents errors that occur during web request processing.</p>
+</errors>
+<seealso>
+<link id="TWebHandler.DoError">TWebHandler.DoError</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="ExceptionToHTML">
+<short>Utility function to format exceptions as HTML error pages</short>
+<descr>
+<p>Formats an exception into a complete HTML error page with stack trace information.
+Generates a user-friendly error page that includes exception details, stack trace, and administrator contact information.</p>
+<p>The generated HTML includes the application title, error message, stack trace with function names, and optional administrator email contact link.</p>
+</descr>
+<errors>
+<p>No specific errors during HTML generation.</p>
+</errors>
+<seealso>
+<link id="TWebHandler.ShowRequestException">TWebHandler.ShowRequestException</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ExceptionToHTML.S">
+<short>String list to store the generated HTML content</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ExceptionToHTML.E">
+<short>The exception to format as HTML</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ExceptionToHTML.Title">
+<short>Application title for the error page</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ExceptionToHTML.Email">
+<short>Administrator email address for contact link</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ExceptionToHTML.Administrator">
+<short>Administrator name for the contact information</short>
+</element>
+
+</module> <!-- custweb -->
+
+</package>
+</fpdoc-descriptions>

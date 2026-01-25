@@ -1,0 +1,1216 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    jsonreader
+  ====================================================================
+-->
+
+<module name="JsonReader">
+<short>Event-based JSON reading with SAX-like parsing</short>
+<descr>
+The <var>jsonreader</var> unit provides event-based JSON reading functionality.
+It offers a SAX-like approach to JSON parsing where events are fired as JSON elements are encountered during parsing.
+This allows for efficient processing of large JSON documents without loading the entire structure into memory.
+The unit includes abstract base classes, event-driven readers, and interface-based consumers for flexible JSON processing.
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Object-oriented programming support</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>System utilities and exception handling</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="fpJSON">
+<short>JSON data structures and types</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="jsonscanner">
+<short>JSON tokenizer and scanner functionality</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TBaseJSONReader">
+<short>Abstract base class for JSON readers</short>
+<descr>
+<var>TBaseJSONReader</var> is the abstract base class for all JSON reading functionality.
+It provides the core parsing logic and virtual methods that must be implemented by derived classes.
+The class uses <link id="TJSONScanner">TJSONScanner</link> for tokenization and handles the parsing of JSON objects, arrays, and primitive values.
+Derived classes must implement abstract methods to handle different JSON element types encountered during parsing.
+</descr>
+<errors>
+Raises <link id="EJSONParser">EJSONParser</link> when invalid JSON syntax is encountered.
+</errors>
+<seealso>
+<link id="TJSONEventReader">TJSONEventReader</link>
+<link id="TJSONConsumerReader">TJSONConsumerReader</link>
+<link id="TJSONScanner">TJSONScanner</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TBaseJSONReader.Create">
+<short>Creates a new JSON reader with specified source and options</short>
+<descr>
+Creates a new <var>TBaseJSONReader</var> instance with the specified JSON source and parsing options.
+The constructor initializes the internal <link id="TJSONScanner">TJSONScanner</link> with the provided source and options.
+Multiple overloaded versions are available for different source types and option configurations.
+</descr>
+<errors>
+May raise exceptions if the source cannot be accessed or is invalid.
+</errors>
+<seealso>
+<link id="TBaseJSONReader.Destroy">Destroy</link>
+<link id="TBaseJSONReader.Options">Options</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBaseJSONReader.Create.Source">
+<short>JSON source data stream, string or unicode string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBaseJSONReader.Create.AUseUTF8">
+<short>Whether to use UTF-8 encoding for string processing</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TBaseJSONReader.Create.AOptions">
+<short>JSON parsing options to control reader behavior</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TBaseJSONReader.Destroy">
+<short>Destroys the JSON reader and frees resources</short>
+<descr>
+Destroys the <var>TBaseJSONReader</var> instance and frees all associated resources.
+This includes releasing the internal <link id="TJSONScanner">TJSONScanner</link> and any allocated memory.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TBaseJSONReader.Create">Create</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TBaseJSONReader.Options">
+<short>JSON parsing options that control reader behavior</short>
+<descr>
+The <var>Options</var> property controls various aspects of JSON parsing behavior.
+This includes UTF-8 handling, strict mode parsing, and other parsing preferences.
+Changes to options affect how the underlying scanner processes JSON tokens.
+</descr>
+<seealso>
+<link id="TJSONOptions">TJSONOptions</link>
+<link id="TJSONScanner">TJSONScanner</link>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnJSONBoolean">
+<short>Event handler for JSON boolean values</short>
+<descr>
+<var>TOnJSONBoolean</var> is an event handler type that is called when a JSON boolean value is encountered during parsing.
+The event provides the sender object and the boolean value that was found in the JSON data.
+</descr>
+<seealso>
+<link id="TJSONEventReader.OnBooleanValue">TJSONEventReader.OnBooleanValue</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONBoolean.Sender">
+<short>Object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONBoolean.AValue">
+<short>Boolean value found in the JSON data</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnJSONFloat">
+<short>Event handler for JSON floating-point values</short>
+<descr>
+<var>TOnJSONFloat</var> is an event handler type that is called when a JSON floating-point number value is encountered during parsing.
+The event provides the sender object and the floating-point value that was found in the JSON data.
+</descr>
+<seealso>
+<link id="TJSONEventReader.OnFloatValue">TJSONEventReader.OnFloatValue</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONFloat.Sender">
+<short>Object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONFloat.AValue">
+<short>Floating-point value found in the JSON data</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnJSONInt64">
+<short>Event handler for JSON 64-bit integer values</short>
+<descr>
+<var>TOnJSONInt64</var> is an event handler type that is called when a JSON 64-bit integer value is encountered during parsing.
+The event provides the sender object and the 64-bit integer value that was found in the JSON data.
+</descr>
+<seealso>
+<link id="TJSONEventReader.OnInt64Value">TJSONEventReader.OnInt64Value</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONInt64.Sender">
+<short>Object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONInt64.AValue">
+<short>64-bit integer value found in the JSON data</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnJSONQWord">
+<short>Event handler for JSON unsigned quadword values</short>
+<descr>
+<var>TOnJSONQWord</var> is an event handler type that is called when a JSON unsigned quadword (64-bit unsigned integer) value is encountered during parsing.
+The event provides the sender object and the quadword value that was found in the JSON data.
+</descr>
+<seealso>
+<link id="TJSONEventReader.OnQWordValue">TJSONEventReader.OnQWordValue</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONQWord.Sender">
+<short>Object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONQWord.AValue">
+<short>Quadword value found in the JSON data</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnJSONInteger">
+<short>Event handler for JSON integer values</short>
+<descr>
+<var>TOnJSONInteger</var> is an event handler type that is called when a JSON integer value is encountered during parsing.
+The event provides the sender object and the integer value that was found in the JSON data.
+</descr>
+<seealso>
+<link id="TJSONEventReader.OnIntegerValue">TJSONEventReader.OnIntegerValue</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONInteger.Sender">
+<short>Object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONInteger.AValue">
+<short>Integer value found in the JSON data</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnJSONString">
+<short>Event handler for JSON string values</short>
+<descr>
+<var>TOnJSONString</var> is an event handler type that is called when a JSON string value is encountered during parsing.
+The event provides the sender object and the string value that was found in the JSON data.
+</descr>
+<seealso>
+<link id="TJSONEventReader.OnStringValue">TJSONEventReader.OnStringValue</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONString.Sender">
+<short>Object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONString.AValue">
+<short>String value found in the JSON data</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnJSONKey">
+<short>Event handler for JSON object key names</short>
+<descr>
+<var>TOnJSONKey</var> is an event handler type that is called when a JSON object key name is encountered during parsing.
+The event provides the sender object and the key name that was found in the JSON object data.
+</descr>
+<seealso>
+<link id="TJSONEventReader.OnKeyName">TJSONEventReader.OnKeyName</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONKey.Sender">
+<short>Object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnJSONKey.AKey">
+<short>Object key name found in the JSON data</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TJSONEventReader">
+<short>Event-based JSON reader that fires events for JSON elements</short>
+<descr>
+<var>TJSONEventReader</var> provides event-based JSON reading functionality.
+It inherits from <link id="TBaseJSONReader">TBaseJSONReader</link> and fires specific events when different JSON elements are encountered during parsing.
+This allows applications to process JSON data using an event-driven approach similar to SAX parsing for XML.
+Each JSON element type has a corresponding event property that can be assigned to handle the parsed data.
+</descr>
+<errors>
+Inherits error handling from <link id="TBaseJSONReader">TBaseJSONReader</link>.
+Raises <link id="EJSONParser">EJSONParser</link> for parsing errors.
+</errors>
+<seealso>
+<link id="TBaseJSONReader">TBaseJSONReader</link>
+<link id="TJSONConsumerReader">TJSONConsumerReader</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONEventReader.Execute">
+<short>Starts the JSON parsing process and fires events</short>
+<descr>
+<var>Execute</var> starts the JSON parsing process.
+As JSON elements are encountered during parsing, the corresponding event handlers are called if they are assigned.
+The method processes the entire JSON input until completion or until an error is encountered.
+</descr>
+<errors>
+Raises <link id="EJSONParser">EJSONParser</link> when invalid JSON syntax is encountered.
+</errors>
+<seealso>
+<link id="TBaseJSONReader.DoExecute">TBaseJSONReader.DoExecute</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONEventReader.OnNullValue">
+<short>Event fired when a JSON null value is encountered</short>
+<descr>
+<var>OnNullValue</var> is fired when a JSON null value is encountered during parsing.
+The event handler receives the sender object as parameter.
+This event corresponds to JSON null values in the input data.
+</descr>
+<seealso>
+<link id="TNotifyEvent">TNotifyEvent</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONEventReader.OnBooleanValue">
+<short>Event fired when a JSON boolean value is encountered</short>
+<descr>
+<var>OnBooleanValue</var> is fired when a JSON boolean value is encountered during parsing.
+The event handler receives the sender object and the boolean value as parameters.
+This event corresponds to JSON <var>True</var> and <var>False</var> values in the input data.
+</descr>
+<seealso>
+<link id="TOnJSONBoolean">TOnJSONBoolean</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONEventReader.OnNumberValue">
+<short>Event fired when a JSON number value is encountered</short>
+<descr>
+<var>OnNumberValue</var> is fired when any JSON number value is encountered during parsing.
+The event handler receives the sender object and the number as a string representation.
+This event is fired for all numeric values before they are converted to specific numeric types.
+</descr>
+<seealso>
+<link id="TOnJSONString">TOnJSONString</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONEventReader.OnFloatValue">
+<short>Event fired when a JSON floating-point value is encountered</short>
+<descr>
+<var>OnFloatValue</var> is fired when a JSON floating-point number is encountered during parsing.
+The event handler receives the sender object and the floating-point value as parameters.
+This event is fired for JSON numbers that contain decimal points or exponential notation.
+</descr>
+<seealso>
+<link id="TOnJSONFloat">TOnJSONFloat</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONEventReader.OnIntegerValue">
+<short>Event fired when a JSON integer value is encountered</short>
+<descr>
+<var>OnIntegerValue</var> is fired when a JSON integer value that fits in a standard integer is encountered during parsing.
+The event handler receives the sender object and the integer value as parameters.
+This event is fired for JSON numbers that can be represented as 32-bit signed integers.
+</descr>
+<seealso>
+<link id="TOnJSONInteger">TOnJSONInteger</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONEventReader.OnInt64Value">
+<short>Event fired when a JSON 64-bit integer value is encountered</short>
+<descr>
+<var>OnInt64Value</var> is fired when a JSON integer value that requires 64-bit representation is encountered during parsing.
+The event handler receives the sender object and the 64-bit integer value as parameters.
+This event is fired for JSON numbers that exceed the range of 32-bit integers but fit in 64-bit signed integers.
+</descr>
+<seealso>
+<link id="TOnJSONInt64">TOnJSONInt64</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONEventReader.OnQWordValue">
+<short>Event fired when a JSON quadword value is encountered</short>
+<descr>
+<var>OnQWordValue</var> is fired when a JSON integer value that requires unsigned 64-bit representation is encountered during parsing.
+The event handler receives the sender object and the quadword value as parameters.
+This event is fired for JSON numbers that exceed the range of signed 64-bit integers.
+</descr>
+<seealso>
+<link id="TOnJSONQWord">TOnJSONQWord</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONEventReader.OnStringValue">
+<short>Event fired when a JSON string value is encountered</short>
+<descr>
+<var>OnStringValue</var> is fired when a JSON string value is encountered during parsing.
+The event handler receives the sender object and the string value as parameters.
+This event corresponds to JSON string literals enclosed in double quotes.
+</descr>
+<seealso>
+<link id="TOnJSONString">TOnJSONString</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONEventReader.OnKeyName">
+<short>Event fired when a JSON object key name is encountered</short>
+<descr>
+<var>OnKeyName</var> is fired when a JSON object key name is encountered during parsing.
+The event handler receives the sender object and the key name as parameters.
+This event is fired for the key portion of key-value pairs in JSON objects.
+</descr>
+<seealso>
+<link id="TOnJSONKey">TOnJSONKey</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONEventReader.OnStartObject">
+<short>Event fired when a JSON object begins</short>
+<descr>
+<var>OnStartObject</var> is fired when the start of a JSON object is encountered during parsing.
+The event handler receives the sender object as parameter.
+This event corresponds to opening curly braces in JSON data.
+</descr>
+<seealso>
+<link id="TJSONEventReader.OnEndObject">OnEndObject</link>
+<link id="TNotifyEvent">TNotifyEvent</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONEventReader.OnEndObject">
+<short>Event fired when a JSON object ends</short>
+<descr>
+<var>OnEndObject</var> is fired when the end of a JSON object is encountered during parsing.
+The event handler receives the sender object as parameter.
+This event corresponds to closing curly braces in JSON data.
+</descr>
+<seealso>
+<link id="TJSONEventReader.OnStartObject">OnStartObject</link>
+<link id="TNotifyEvent">TNotifyEvent</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONEventReader.OnStartArray">
+<short>Event fired when a JSON array begins</short>
+<descr>
+<var>OnStartArray</var> is fired when the start of a JSON array is encountered during parsing.
+The event handler receives the sender object as parameter.
+This event corresponds to opening square brackets in JSON data.
+</descr>
+<seealso>
+<link id="TJSONEventReader.OnEndArray">OnEndArray</link>
+<link id="TNotifyEvent">TNotifyEvent</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONEventReader.OnEndArray">
+<short>Event fired when a JSON array ends</short>
+<descr>
+<var>OnEndArray</var> is fired when the end of a JSON array is encountered during parsing.
+The event handler receives the sender object as parameter.
+This event corresponds to closing square brackets in JSON data.
+</descr>
+<seealso>
+<link id="TJSONEventReader.OnStartArray">OnStartArray</link>
+<link id="TNotifyEvent">TNotifyEvent</link>
+</seealso>
+</element>
+
+<!-- interface Visibility: default -->
+<element name="IJSONConsumer">
+<short>Interface for JSON data consumers</short>
+<descr>
+<var>IJSONConsumer</var> defines a standard interface for objects that consume JSON data during parsing.
+This interface provides methods that correspond to different JSON element types and structural events.
+Implementers of this interface can process JSON data as it is parsed without needing to create event handlers.
+The interface is used with <link id="TJSONConsumerReader">TJSONConsumerReader</link> for flexible JSON processing.
+</descr>
+<errors>
+Implementation-specific error handling depends on the implementing class.
+</errors>
+<seealso>
+<link id="TJSONConsumerReader">TJSONConsumerReader</link>
+<link id="TJSONEventReader">TJSONEventReader</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IJSONConsumer.NullValue">
+<short>Processes a JSON null value</short>
+<descr>
+<var>NullValue</var> is called when a JSON null value is encountered during parsing.
+Implementers should handle the null value according to their processing requirements.
+</descr>
+<errors>
+Implementation-specific error handling.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IJSONConsumer.BooleanValue">
+<short>Processes a JSON boolean value</short>
+<descr>
+<var>BooleanValue</var> is called when a JSON boolean value is encountered during parsing.
+The method receives the boolean value that was found in the JSON data.
+Implementers should handle the boolean value according to their processing requirements.
+</descr>
+<errors>
+Implementation-specific error handling.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IJSONConsumer.BooleanValue.AValue">
+<short>Boolean value found in the JSON data</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IJSONConsumer.NumberValue">
+<short>Processes a JSON number value as string</short>
+<descr>
+<var>NumberValue</var> is called when a JSON number value is encountered during parsing.
+The method receives the number as its string representation before type conversion.
+Implementers should handle the number string according to their processing requirements.
+</descr>
+<errors>
+Implementation-specific error handling.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IJSONConsumer.NumberValue.AValue">
+<short>String representation of the number value</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IJSONConsumer.FloatValue">
+<short>Processes a JSON floating-point value</short>
+<descr>
+<var>FloatValue</var> is called when a JSON floating-point number is encountered during parsing.
+The method receives the floating-point value that was parsed from the JSON data.
+Implementers should handle the float value according to their processing requirements.
+</descr>
+<errors>
+Implementation-specific error handling.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IJSONConsumer.FloatValue.AValue">
+<short>Floating-point value found in the JSON data</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IJSONConsumer.Int64Value">
+<short>Processes a JSON 64-bit integer value</short>
+<descr>
+<var>Int64Value</var> is called when a JSON 64-bit integer is encountered during parsing.
+The method receives the 64-bit integer value that was parsed from the JSON data.
+Implementers should handle the integer value according to their processing requirements.
+</descr>
+<errors>
+Implementation-specific error handling.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IJSONConsumer.Int64Value.AValue">
+<short>64-bit integer value found in the JSON data</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IJSONConsumer.QWordValue">
+<short>Processes a JSON quadword value</short>
+<descr>
+<var>QWordValue</var> is called when a JSON unsigned 64-bit integer is encountered during parsing.
+The method receives the quadword value that was parsed from the JSON data.
+Implementers should handle the quadword value according to their processing requirements.
+</descr>
+<errors>
+Implementation-specific error handling.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IJSONConsumer.QWordValue.AValue">
+<short>Quadword value found in the JSON data</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IJSONConsumer.IntegerValue">
+<short>Processes a JSON integer value</short>
+<descr>
+<var>IntegerValue</var> is called when a JSON integer is encountered during parsing.
+The method receives the integer value that was parsed from the JSON data.
+Implementers should handle the integer value according to their processing requirements.
+</descr>
+<errors>
+Implementation-specific error handling.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IJSONConsumer.IntegerValue.AValue">
+<short>Integer value found in the JSON data</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IJSONConsumer.StringValue">
+<short>Processes a JSON string value</short>
+<descr>
+<var>StringValue</var> is called when a JSON string is encountered during parsing.
+The method receives the string value that was parsed from the JSON data.
+Implementers should handle the string value according to their processing requirements.
+</descr>
+<errors>
+Implementation-specific error handling.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IJSONConsumer.StringValue.AValue">
+<short>String value found in the JSON data</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IJSONConsumer.KeyName">
+<short>Processes a JSON object key name</short>
+<descr>
+<var>KeyName</var> is called when a JSON object key name is encountered during parsing.
+The method receives the key name that was parsed from the JSON object data.
+Implementers should handle the key name according to their processing requirements.
+</descr>
+<errors>
+Implementation-specific error handling.
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="IJSONConsumer.KeyName.AKey">
+<short>Object key name found in the JSON data</short>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IJSONConsumer.StartObject">
+<short>Processes the start of a JSON object</short>
+<descr>
+<var>StartObject</var> is called when the beginning of a JSON object is encountered during parsing.
+This corresponds to opening curly braces in the JSON data.
+Implementers should handle the start of the object according to their processing requirements.
+</descr>
+<errors>
+Implementation-specific error handling.
+</errors>
+<seealso>
+<link id="IJSONConsumer.EndObject">EndObject</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IJSONConsumer.EndObject">
+<short>Processes the end of a JSON object</short>
+<descr>
+<var>EndObject</var> is called when the end of a JSON object is encountered during parsing.
+This corresponds to closing curly braces in the JSON data.
+Implementers should handle the end of the object according to their processing requirements.
+</descr>
+<errors>
+Implementation-specific error handling.
+</errors>
+<seealso>
+<link id="IJSONConsumer.StartObject">StartObject</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IJSONConsumer.StartArray">
+<short>Processes the start of a JSON array</short>
+<descr>
+<var>StartArray</var> is called when the beginning of a JSON array is encountered during parsing.
+This corresponds to opening square brackets in the JSON data.
+Implementers should handle the start of the array according to their processing requirements.
+</descr>
+<errors>
+Implementation-specific error handling.
+</errors>
+<seealso>
+<link id="IJSONConsumer.EndArray">EndArray</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="IJSONConsumer.EndArray">
+<short>Processes the end of a JSON array</short>
+<descr>
+<var>EndArray</var> is called when the end of a JSON array is encountered during parsing.
+This corresponds to closing square brackets in the JSON data.
+Implementers should handle the end of the array according to their processing requirements.
+</descr>
+<errors>
+Implementation-specific error handling.
+</errors>
+<seealso>
+<link id="IJSONConsumer.StartArray">StartArray</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TJSONConsumerReader">
+<short>JSON reader that uses an IJSONConsumer for processing</short>
+<descr>
+<var>TJSONConsumerReader</var> provides JSON reading functionality using the <link id="IJSONConsumer">IJSONConsumer</link> interface.
+It inherits from <link id="TBaseJSONReader">TBaseJSONReader</link> and delegates JSON element processing to an assigned consumer object.
+This approach allows for flexible JSON processing by implementing the <link id="IJSONConsumer">IJSONConsumer</link> interface rather than creating event handlers.
+The consumer pattern provides an alternative to the event-driven approach used by <link id="TJSONEventReader">TJSONEventReader</link>.
+</descr>
+<errors>
+Inherits error handling from <link id="TBaseJSONReader">TBaseJSONReader</link>.
+Raises <link id="EJSONParser">EJSONParser</link> for parsing errors.
+</errors>
+<seealso>
+<link id="TBaseJSONReader">TBaseJSONReader</link>
+<link id="IJSONConsumer">IJSONConsumer</link>
+<link id="TJSONEventReader">TJSONEventReader</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONConsumerReader.Execute">
+<short>Starts the JSON parsing process using the assigned consumer</short>
+<descr>
+<var>Execute</var> starts the JSON parsing process.
+As JSON elements are encountered during parsing, the corresponding methods in the assigned <link id="IJSONConsumer">IJSONConsumer</link> are called if a consumer is assigned.
+The method processes the entire JSON input until completion or until an error is encountered.
+</descr>
+<errors>
+Raises <link id="EJSONParser">EJSONParser</link> when invalid JSON syntax is encountered.
+</errors>
+<seealso>
+<link id="TBaseJSONReader.DoExecute">TBaseJSONReader.DoExecute</link>
+<link id="TJSONConsumerReader.Consumer">Consumer</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONConsumerReader.Consumer">
+<short>JSON consumer object that processes parsed elements</short>
+<descr>
+<var>Consumer</var> specifies the <link id="IJSONConsumer">IJSONConsumer</link> object that will process JSON elements as they are parsed.
+When assigned, the consumer's methods are called for each JSON element type encountered during parsing.
+If no consumer is assigned, the parsing will proceed but no processing will occur.
+</descr>
+<seealso>
+<link id="IJSONConsumer">IJSONConsumer</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EJSONParser">
+<short>Exception class for JSON parsing errors</short>
+<descr>
+<var>EJSONParser</var> is raised when JSON parsing errors are encountered.
+It inherits from <var>EParserError</var> and provides specific error information for JSON syntax violations and parsing problems.
+The exception includes details about the location of the error in the JSON input, including line and column information.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TBaseJSONReader">TBaseJSONReader</link>
+<link id="TJSONEventReader">TJSONEventReader</link>
+<link id="TJSONConsumerReader">TJSONConsumerReader</link>
+</seealso>
+</element>
+
+<!-- ====================================================================
+  jsonreader Usage examples
+  ====================================================================-->
+
+<topic name="JSONEventReaderUsage">
+<short>Using TJSONEventReader for event-based JSON parsing</short>
+<descr>
+<p><link id="TJSONEventReader">TJSONEventReader</link> provides event-based JSON parsing similar to SAX parsing for XML.
+As the parser encounters different JSON elements, it fires corresponding events that you can handle to process the data.</p>
+
+<p>This approach is memory-efficient for large JSON documents since it doesn't load the entire structure into memory.
+You only need to handle the events for the data you're interested in processing.</p>
+
+<p>Basic usage involves:</p>
+<ol>
+<li>Create a <link id="TJSONEventReader">TJSONEventReader</link> instance with JSON source</li>
+<li>Assign event handlers for the JSON elements you want to process</li>
+<li>Call <link id="TJSONEventReader.Execute">Execute</link> to start parsing</li>
+</ol>
+
+<p>Here's a complete example that parses JSON and extracts specific values:</p>
+
+<code>
+program JSONEventReaderDemo;
+
+{$mode objfpc}{$H+}
+
+uses
+  Classes, SysUtils, jsonreader;
+
+type
+  TMyJSONProcessor = class
+  private
+    FPersonName: string;
+    FPersonAge: Integer;
+    FInAddress: Boolean;
+    FCurrentKey: string;
+  public
+    procedure OnKeyName(Sender: TObject; const AKey: UTF8String);
+    procedure OnStringValue(Sender: TObject; const AValue: UTF8String);
+    procedure OnIntegerValue(Sender: TObject; const AValue: Integer);
+    procedure OnStartObject(Sender: TObject);
+    procedure OnEndObject(Sender: TObject);
+
+    property PersonName: string read FPersonName;
+    property PersonAge: Integer read FPersonAge;
+  end;
+
+procedure TMyJSONProcessor.OnKeyName(Sender: TObject; const AKey: UTF8String);
+begin
+  FCurrentKey := AKey;
+  FInAddress := (AKey = 'address');
+end;
+
+procedure TMyJSONProcessor.OnStringValue(Sender: TObject; const AValue: UTF8String);
+begin
+  if not FInAddress and (FCurrentKey = 'name') then
+    FPersonName := AValue;
+end;
+
+procedure TMyJSONProcessor.OnIntegerValue(Sender: TObject; const AValue: Integer);
+begin
+  if not FInAddress and (FCurrentKey = 'age') then
+    FPersonAge := AValue;
+end;
+
+procedure TMyJSONProcessor.OnStartObject(Sender: TObject);
+begin
+  // Object started
+end;
+
+procedure TMyJSONProcessor.OnEndObject(Sender: TObject);
+begin
+  FInAddress := False;
+end;
+
+var
+  Reader: TJSONEventReader;
+  Processor: TMyJSONProcessor;
+  JSONData: string;
+begin
+  JSONData := '{"name": "Alice Smith", "age": 28, "address": {"street": "123 Oak St", "city": "Springfield"}}';
+
+  Processor := TMyJSONProcessor.Create;
+  Reader := TJSONEventReader.Create(JSONData, []);
+  try
+    // Assign event handlers
+    Reader.OnKeyName := @Processor.OnKeyName;
+    Reader.OnStringValue := @Processor.OnStringValue;
+    Reader.OnIntegerValue := @Processor.OnIntegerValue;
+    Reader.OnStartObject := @Processor.OnStartObject;
+    Reader.OnEndObject := @Processor.OnEndObject;
+
+    // Parse the JSON
+    Reader.Execute;
+
+    // Display results
+    Writeln('Person Name: ', Processor.PersonName);
+    Writeln('Person Age: ', Processor.PersonAge);
+
+  finally
+    Reader.Free;
+    Processor.Free;
+  end;
+end.
+</code>
+
+<p>The event-based approach is ideal when you need to:</p>
+<ul>
+<li>Process large JSON files without loading them entirely into memory</li>
+<li>Extract specific values from complex JSON structures</li>
+<li>Transform JSON data during parsing</li>
+<li>Handle JSON streams in real-time</li>
+</ul>
+</descr>
+</topic>
+
+<topic name="JSONConsumerUsage">
+<short>Using TJSONConsumerReader with IJSONConsumer interface</short>
+<descr>
+<p><link id="TJSONConsumerReader">TJSONConsumerReader</link> provides an alternative to event-based parsing by using the <link id="IJSONConsumer">IJSONConsumer</link> interface.
+Instead of assigning event handlers, you implement the interface methods to process JSON elements.</p>
+
+<p>This approach provides a cleaner object-oriented design and can be easier to maintain for complex JSON processing logic.</p>
+
+<p>The workflow involves:</p>
+<ol>
+<li>Create a class that implements <link id="IJSONConsumer">IJSONConsumer</link></li>
+<li>Create a <link id="TJSONConsumerReader">TJSONConsumerReader</link> instance</li>
+<li>Assign your consumer to the <link id="TJSONConsumerReader.Consumer">Consumer</link> property</li>
+<li>Call <link id="TJSONConsumerReader.Execute">Execute</link> to start parsing</li>
+</ol>
+
+<p>Here's an example that builds a simple data structure from JSON:</p>
+
+<code>
+program JSONConsumerDemo;
+
+{$mode objfpc}{$H+}
+
+uses
+  Classes, SysUtils, jsonreader, Generics.Collections;
+
+type
+  TJSONDataExtractor = class(TInterfacedObject, IJSONConsumer)
+  private
+    FStack: TList&lt;string&gt;;
+    FCurrentPath: string;
+    FData: TStringList;
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    // IJSONConsumer interface
+    procedure NullValue;
+    procedure BooleanValue(const AValue: Boolean);
+    procedure NumberValue(const AValue: string);
+    procedure FloatValue(const AValue: Double);
+    procedure Int64Value(const AValue: Int64);
+    procedure QWordValue(const AValue: QWord);
+    procedure IntegerValue(const AValue: Integer);
+    procedure StringValue(const AValue: UTF8String);
+    procedure KeyName(const AKey: UTF8String);
+    procedure StartObject;
+    procedure EndObject;
+    procedure StartArray;
+    procedure EndArray;
+
+    property Data: TStringList read FData;
+  end;
+
+constructor TJSONDataExtractor.Create;
+begin
+  inherited Create;
+  FStack := TList&lt;string&gt;.Create;
+  FData := TStringList.Create;
+end;
+
+destructor TJSONDataExtractor.Destroy;
+begin
+  FStack.Free;
+  FData.Free;
+  inherited Destroy;
+end;
+
+procedure TJSONDataExtractor.KeyName(const AKey: UTF8String);
+begin
+  if FCurrentPath &lt;&gt; '' then
+    FCurrentPath := FCurrentPath + '.' + AKey
+  else
+    FCurrentPath := AKey;
+end;
+
+procedure TJSONDataExtractor.StringValue(const AValue: UTF8String);
+begin
+  if FCurrentPath &lt;&gt; '' then
+    FData.Values[FCurrentPath] := AValue;
+  FCurrentPath := '';
+end;
+
+procedure TJSONDataExtractor.IntegerValue(const AValue: Integer);
+begin
+  if FCurrentPath &lt;&gt; '' then
+    FData.Values[FCurrentPath] := IntToStr(AValue);
+  FCurrentPath := '';
+end;
+
+procedure TJSONDataExtractor.BooleanValue(const AValue: Boolean);
+begin
+  if FCurrentPath &lt;&gt; '' then
+    FData.Values[FCurrentPath] := BoolToStr(AValue, True);
+  FCurrentPath := '';
+end;
+
+procedure TJSONDataExtractor.StartObject;
+begin
+  if FCurrentPath &lt;&gt; '' then
+    FStack.Add(FCurrentPath);
+end;
+
+procedure TJSONDataExtractor.EndObject;
+begin
+  if FStack.Count &gt; 0 then
+  begin
+    FCurrentPath := FStack[FStack.Count - 1];
+    FStack.Delete(FStack.Count - 1);
+  end
+  else
+    FCurrentPath := '';
+end;
+
+// Implement remaining interface methods
+procedure TJSONDataExtractor.NullValue; begin FCurrentPath := ''; end;
+procedure TJSONDataExtractor.NumberValue(const AValue: UTF8String); begin StringValue(AValue); end;
+procedure TJSONDataExtractor.FloatValue(const AValue: Double); begin StringValue(FloatToStr(AValue)); end;
+procedure TJSONDataExtractor.Int64Value(const AValue: Int64); begin StringValue(IntToStr(AValue)); end;
+procedure TJSONDataExtractor.QWordValue(const AValue: QWord); begin StringValue(IntToStr(AValue)); end;
+procedure TJSONDataExtractor.StartArray; begin end;
+procedure TJSONDataExtractor.EndArray; begin end;
+
+var
+  Reader: TJSONConsumerReader;
+  Extractor: TJSONDataExtractor;
+  JSONData: string;
+  i: Integer;
+begin
+  JSONData := '{"user": {"name": "Bob Jones", "age": 35, "active": true}, "settings": {"theme": "dark"}}';
+
+  Extractor := TJSONDataExtractor.Create;
+  Reader := TJSONConsumerReader.Create(JSONData, []);
+  try
+    Reader.Consumer := Extractor;
+    Reader.Execute;
+
+    Writeln('Extracted data:');
+    for i := 0 to Extractor.Data.Count - 1 do
+      Writeln('  ', Extractor.Data[i]);
+
+  finally
+    Reader.Free;
+    Extractor.Free;
+  end;
+end.
+</code>
+
+<p>The consumer interface approach is beneficial when you need to:</p>
+<ul>
+<li>Implement complex parsing logic in a structured way</li>
+<li>Reuse the same parsing logic across different parts of your application</li>
+<li>Build data structures incrementally during parsing</li>
+<li>Keep parsing state in a more organized manner</li>
+</ul>
+</descr>
+</topic>
+
+<topic name="JSONReaderStreamUsage">
+<short>Using JSON readers with streams and files</short>
+<descr>
+<p>Both <link id="TJSONEventReader">TJSONEventReader</link> and <link id="TJSONConsumerReader">TJSONConsumerReader</link> can read JSON data from various sources including streams, files, and strings.</p>
+
+<p>This flexibility allows you to process JSON data from files, network streams, or any other stream-based source without loading the entire content into memory first.</p>
+
+<p>Here's an example that reads JSON from a file stream:</p>
+
+<code>
+program JSONStreamDemo;
+
+{$mode objfpc}{$H+}
+
+uses
+  Classes, SysUtils, jsonreader;
+
+type
+  TJSONCounter = class
+  private
+    FObjectCount: Integer;
+    FArrayCount: Integer;
+    FStringCount: Integer;
+    FNumberCount: Integer;
+  public
+    procedure OnStartObject(Sender: TObject);
+    procedure OnStartArray(Sender: TObject);
+    procedure OnStringValue(Sender: TObject; const AValue: UTF8String);
+    procedure OnIntegerValue(Sender: TObject; const AValue: Integer);
+    procedure OnFloatValue(Sender: TObject; const AValue: Double);
+
+    property ObjectCount: Integer read FObjectCount;
+    property ArrayCount: Integer read FArrayCount;
+    property StringCount: Integer read FStringCount;
+    property NumberCount: Integer read FNumberCount;
+  end;
+
+procedure TJSONCounter.OnStartObject(Sender: TObject);
+begin
+  Inc(FObjectCount);
+end;
+
+procedure TJSONCounter.OnStartArray(Sender: TObject);
+begin
+  Inc(FArrayCount);
+end;
+
+procedure TJSONCounter.OnStringValue(Sender: TObject; const AValue: UTF8String);
+begin
+  Inc(FStringCount);
+end;
+
+procedure TJSONCounter.OnIntegerValue(Sender: TObject; const AValue: Integer);
+begin
+  Inc(FNumberCount);
+end;
+
+procedure TJSONCounter.OnFloatValue(Sender: TObject; const AValue: Double);
+begin
+  Inc(FNumberCount);
+end;
+
+var
+  FileStream: TFileStream;
+  Reader: TJSONEventReader;
+  Counter: TJSONCounter;
+  JSONData: string;
+  TempFile: TextFile;
+begin
+  // Create a sample JSON file
+  JSONData := '{"users": [{"name": "John", "age": 25}, {"name": "Jane", "age": 30}], "total": 2}';
+  AssignFile(TempFile, '/tmp/claude/sample.json');
+  Rewrite(TempFile);
+  try
+    Write(TempFile, JSONData);
+  finally
+    CloseFile(TempFile);
+  end;
+
+  Counter := TJSONCounter.Create;
+  FileStream := TFileStream.Create('/tmp/claude/sample.json', fmOpenRead);
+  Reader := TJSONEventReader.Create(FileStream, []);
+  try
+    // Assign counting event handlers
+    Reader.OnStartObject := @Counter.OnStartObject;
+    Reader.OnStartArray := @Counter.OnStartArray;
+    Reader.OnStringValue := @Counter.OnStringValue;
+    Reader.OnIntegerValue := @Counter.OnIntegerValue;
+    Reader.OnFloatValue := @Counter.OnFloatValue;
+
+    // Parse the JSON file
+    Reader.Execute;
+
+    // Display statistics
+    Writeln('JSON Statistics:');
+    Writeln('  Objects: ', Counter.ObjectCount);
+    Writeln('  Arrays: ', Counter.ArrayCount);
+    Writeln('  Strings: ', Counter.StringCount);
+    Writeln('  Numbers: ', Counter.NumberCount);
+
+  finally
+    Reader.Free;
+    FileStream.Free;
+    Counter.Free;
+
+    // Clean up temp file
+    DeleteFile('/tmp/claude/sample.json');
+  end;
+end.
+</code>
+
+<p>You can also use the readers with string sources when the JSON data is already in memory:</p>
+
+<code>
+// String source
+Reader := TJSONEventReader.Create(JSONString, []);
+
+// Unicode string source
+Reader := TJSONEventReader.Create(UnicodeJSONString, []);
+
+// Stream source with options
+Reader := TJSONEventReader.Create(MyStream, [joUTF8, joStrict]);
+</code>
+
+<p>The parsing options (<var>TJSONOptions</var>) allow you to control:</p>
+<ul>
+<li><var>joUTF8</var>: Handle UTF-8 encoding properly</li>
+<li><var>joStrict</var>: Use strict JSON parsing rules</li>
+<li><var>joIgnoreTrailingComma</var>: Allow trailing commas in objects and arrays</li>
+<li><var>joComments</var>: Allow JavaScript-style comments in JSON</li>
+</ul>
+</descr>
+</topic>
+
+</module> <!-- jsonreader -->
+
+</package>
+</fpdoc-descriptions>

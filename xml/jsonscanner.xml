@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    jsonscanner
+  ====================================================================
+-->
+
+<module name="JsonScanner">
+<short>JSON lexical scanner</short>
+<descr>
+The <var>jsonscanner</var> unit provides a tokenizer for JSON data.
+It breaks JSON text into discrete tokens for subsequent parsing.
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>System utilities unit</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Base classes unit</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrInvalidCharacter">
+<short>Invalid character error message</short>
+<descr>
+Error message format string for invalid characters encountered during scanning.
+Contains placeholders for line number, column position, and the invalid character.
+</descr>
+<seealso>
+<link id="EScannerError">EScannerError</link>
+</seealso>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SUnterminatedComment">
+<short>Unterminated comment error message</short>
+<descr>
+Error message format string for unterminated comments encountered during scanning.
+Contains placeholders for line number and column position where the unterminated comment begins.
+</descr>
+<seealso>
+<link id="EScannerError">EScannerError</link>
+</seealso>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrOpenString">
+<short>Open string error message</short>
+<descr>
+Error message format string for unclosed strings that exceed the end of a line.
+Contains a placeholder for the line number where the string begins.
+</descr>
+<seealso>
+<link id="EScannerError">EScannerError</link>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TJSONToken">
+<short>JSON token types</short>
+<descr>
+Enumeration of all possible token types that can be encountered during JSON scanning.
+Each token represents a distinct syntactic element in JSON syntax.
+
+<dl>
+<dt><var>tkEOF</var></dt>
+<dd>End of input stream reached</dd>
+<dt><var>tkWhitespace</var></dt>
+<dd>Whitespace characters (spaces, tabs)</dd>
+<dt><var>tkString</var></dt>
+<dd>String literal enclosed in quotes</dd>
+<dt><var>tkNumber</var></dt>
+<dd>Numeric value (integer or floating-point)</dd>
+<dt><var>tkTrue</var></dt>
+<dd>Boolean <var>True</var> literal</dd>
+<dt><var>tkFalse</var></dt>
+<dd>Boolean <var>False</var> literal</dd>
+<dt><var>tkNull</var></dt>
+<dd>Null literal value</dd>
+<dt><var>tkComma</var></dt>
+<dd>Comma separator character</dd>
+<dt><var>tkColon</var></dt>
+<dd>Colon separator character</dd>
+<dt><var>tkCurlyBraceOpen</var></dt>
+<dd>Opening curly brace for objects</dd>
+<dt><var>tkCurlyBraceClose</var></dt>
+<dd>Closing curly brace for objects</dd>
+<dt><var>tkSquaredBraceOpen</var></dt>
+<dd>Opening square bracket for arrays</dd>
+<dt><var>tkSquaredBraceClose</var></dt>
+<dd>Closing square bracket for arrays</dd>
+<dt><var>tkIdentifier</var></dt>
+<dd>Identifier (in non-strict mode)</dd>
+<dt><var>tkComment</var></dt>
+<dd>Comment content (when comments are enabled)</dd>
+<dt><var>tkUnknown</var></dt>
+<dd>Unrecognized token</dd>
+</dl>
+</descr>
+<seealso>
+<link id="TJSONScanner">TJSONScanner</link>
+<link id="TokenInfos">TokenInfos</link>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkEOF">
+<short>End of file token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkWhitespace">
+<short>Whitespace token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkString">
+<short>String literal token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkNumber">
+<short>Numeric value token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkTrue">
+<short>Boolean true token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkFalse">
+<short>Boolean false token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkNull">
+<short>Null value token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkComma">
+<short>Comma separator token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkColon">
+<short>Colon separator token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkCurlyBraceOpen">
+<short>Opening curly brace token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkCurlyBraceClose">
+<short>Closing curly brace token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkSquaredBraceOpen">
+<short>Opening square bracket token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkSquaredBraceClose">
+<short>Closing square bracket token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkIdentifier">
+<short>Identifier token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkComment">
+<short>Comment token</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToken.tkUnknown">
+<short>Unknown token</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EScannerError">
+<short>JSON scanner exception</short>
+<descr>
+Exception class raised when errors occur during JSON tokenization.
+Descends from <var>EParserError</var> to provide specific error handling for scanner operations.
+</descr>
+<errors>
+Raised when invalid characters, unterminated strings, or other lexical errors are encountered during JSON scanning.
+</errors>
+<seealso>
+<link id="SErrInvalidCharacter">SErrInvalidCharacter</link>
+<link id="SUnterminatedComment">SUnterminatedComment</link>
+<link id="SErrOpenString">SErrOpenString</link>
+</seealso>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TJSONOption">
+<short>JSON scanner options</short>
+<descr>
+Enumeration of options that control the behavior of the JSON scanner.
+These options can be combined in a <link id="TJSONOptions">TJSONOptions</link> set.
+
+<dl>
+<dt><var>joUTF8</var></dt>
+<dd>Return strings with UTF8 codepage</dd>
+<dt><var>joStrict</var></dt>
+<dd>Use strict JSON parsing (require quotes around object member names)</dd>
+<dt><var>joComments</var></dt>
+<dd>Allow JavaScript-style comments in JSON</dd>
+<dt><var>joIgnoreTrailingComma</var></dt>
+<dd>Ignore trailing commas in arrays and objects</dd>
+<dt><var>joIgnoreDuplicates</var></dt>
+<dd>Do not attempt to add duplicate object members</dd>
+<dt><var>joBOMCheck</var></dt>
+<dd>Check for byte order mark at beginning of stream</dd>
+<dt><var>joSingle</var></dt>
+<dd>Read only a single JSON value from the stream</dd>
+</dl>
+</descr>
+<seealso>
+<link id="TJSONOptions">TJSONOptions</link>
+<link id="DefaultOptions">DefaultOptions</link>
+<link id="TJSONScanner">TJSONScanner</link>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONOption.joUTF8">
+<short>UTF8 string encoding option</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONOption.joStrict">
+<short>Strict JSON parsing option</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONOption.joComments">
+<short>Allow comments option</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONOption.joIgnoreTrailingComma">
+<short>Ignore trailing comma option</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONOption.joIgnoreDuplicates">
+<short>Ignore duplicate keys option</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONOption.joBOMCheck">
+<short>Check byte order mark option</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONOption.joSingle">
+<short>Single value parsing option</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TJSONOptions">
+<short>Set of JSON scanner options</short>
+<descr>
+Set type that combines multiple <link id="TJSONOption">TJSONOption</link> values.
+Used to configure the behavior of the JSON scanner.
+</descr>
+<seealso>
+<link id="TJSONOption">TJSONOption</link>
+<link id="DefaultOptions">DefaultOptions</link>
+<link id="TJSONScanner">TJSONScanner</link>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="DefaultOptions">
+<short>Default scanner options</short>
+<descr>
+Default set of options for the JSON scanner.
+Contains the <link id="TJSONOption.joUTF8">joUTF8</link> option by default.
+</descr>
+<seealso>
+<link id="TJSONOptions">TJSONOptions</link>
+<link id="TJSONOption">TJSONOption</link>
+<link id="TJSONScanner">TJSONScanner</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TJSONScanner">
+<short>JSON lexical scanner</short>
+<descr>
+Lexical scanner class that tokenizes JSON text input.
+Breaks JSON source into discrete tokens for subsequent parsing by higher-level parsers.
+Supports various scanning options through <link id="TJSONOptions">TJSONOptions</link>.
+</descr>
+<errors>
+Raises <link id="EScannerError">EScannerError</link> when encountering invalid JSON syntax or characters.
+</errors>
+<seealso>
+<link id="TJSONToken">TJSONToken</link>
+<link id="TJSONOptions">TJSONOptions</link>
+<link id="EScannerError">EScannerError</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TJSONScanner.Create">
+<short>Create JSON scanner instance</short>
+<descr>
+Creates a new JSON scanner instance.
+Can be initialized with either a <var>TStream</var> or a raw byte string source.
+Accepts optional scanning options to control parsing behavior.
+</descr>
+<errors>
+May raise exceptions during source loading from streams.
+</errors>
+<seealso>
+<link id="TJSONOptions">TJSONOptions</link>
+<link id="DefaultOptions">DefaultOptions</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONScanner.Create.Source">
+<short>Input stream containing JSON data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONScanner.Create.AUseUTF8">
+<short>Enable UTF-8 string encoding</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONScanner.Create.AOptions">
+<short>Scanner options set</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONScanner.Create.aSource">
+<short>Raw byte string containing JSON data</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONScanner.FetchToken">
+<short>Fetch next token from input</short>
+<descr>
+Reads and returns the next token from the JSON input stream.
+Advances the scanner position and updates current token information.
+The token type and associated string value are available through properties after calling this method.
+</descr>
+<errors>
+Raises <link id="EScannerError">EScannerError</link> when encountering invalid JSON syntax.
+</errors>
+<seealso>
+<link id="TJSONToken">TJSONToken</link>
+<link id="TJSONScanner.CurToken">CurToken</link>
+<link id="TJSONScanner.CurTokenString">CurTokenString</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TJSONScanner.FetchToken.Result">
+<short>Type of the fetched token</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONScanner.CurLine">
+<short>Current line content</short>
+<descr>
+Returns the content of the current line being scanned.
+Useful for error reporting and debugging.
+</descr>
+<seealso>
+<link id="TJSONScanner.CurRow">CurRow</link>
+<link id="TJSONScanner.CurColumn">CurColumn</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONScanner.CurRow">
+<short>Current row number</short>
+<descr>
+Returns the current line number in the input stream.
+Line numbers start from 1.
+</descr>
+<seealso>
+<link id="TJSONScanner.CurLine">CurLine</link>
+<link id="TJSONScanner.CurColumn">CurColumn</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONScanner.CurColumn">
+<short>Current column number</short>
+<descr>
+Returns the current column position within the current line.
+Column numbers start from 0.
+</descr>
+<seealso>
+<link id="TJSONScanner.CurRow">CurRow</link>
+<link id="TJSONScanner.CurLine">CurLine</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONScanner.AbsolutePos">
+<short>Absolute character position</short>
+<descr>
+Returns the absolute character position in the input stream.
+Position is relative to the start of the input source.
+</descr>
+<seealso>
+<link id="TJSONScanner.CurRow">CurRow</link>
+<link id="TJSONScanner.CurColumn">CurColumn</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONScanner.CurToken">
+<short>Current token type</short>
+<descr>
+Returns the type of the current token.
+Updated after each call to <link id="TJSONScanner.FetchToken">FetchToken</link>.
+</descr>
+<seealso>
+<link id="TJSONToken">TJSONToken</link>
+<link id="TJSONScanner.FetchToken">FetchToken</link>
+<link id="TJSONScanner.CurTokenString">CurTokenString</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONScanner.CurTokenString">
+<short>Current token string value</short>
+<descr>
+Returns the string representation of the current token.
+For string tokens, contains the unescaped string content.
+For other tokens, contains the literal text representation.
+</descr>
+<seealso>
+<link id="TJSONScanner.CurToken">CurToken</link>
+<link id="TJSONScanner.FetchToken">FetchToken</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONScanner.Strict">
+<short>Strict JSON parsing mode</short>
+<descr>
+Controls whether strict JSON parsing is enabled.
+When <var>True</var>, requires quotes around object member names and disallows single quotes.
+This property is deprecated; use <link id="TJSONScanner.Options">Options</link> instead.
+</descr>
+<seealso>
+<link id="TJSONOption.joStrict">joStrict</link>
+<link id="TJSONScanner.Options">Options</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONScanner.UseUTF8">
+<short>UTF-8 encoding mode</short>
+<descr>
+Controls whether strings are converted to UTF-8 encoding.
+When <var>True</var>, string tokens use UTF-8 codepage instead of system codepage.
+This property is deprecated; use <link id="TJSONScanner.Options">Options</link> instead.
+</descr>
+<seealso>
+<link id="TJSONOption.joUTF8">joUTF8</link>
+<link id="TJSONScanner.Options">Options</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONScanner.Options">
+<short>Scanner options set</short>
+<descr>
+Set of options that control the scanner behavior.
+Allows combining multiple <link id="TJSONOption">TJSONOption</link> values to customize parsing.
+</descr>
+<seealso>
+<link id="TJSONOptions">TJSONOptions</link>
+<link id="TJSONOption">TJSONOption</link>
+<link id="DefaultOptions">DefaultOptions</link>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="TokenInfos">
+<short>Token type descriptions</short>
+<descr>
+Array of string descriptions for each <link id="TJSONToken">TJSONToken</link> type.
+Provides human-readable names for token types, useful for debugging and error reporting.
+Indexed by token type enumeration values.
+</descr>
+<seealso>
+<link id="TJSONToken">TJSONToken</link>
+<link id="TJSONScanner">TJSONScanner</link>
+</seealso>
+</element>
+
+</module> <!-- jsonscanner -->
+
+</package>
+</fpdoc-descriptions>

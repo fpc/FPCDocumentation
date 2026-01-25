@@ -1,0 +1,872 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    jsonini
+  ====================================================================
+-->
+
+<module name="JsonIni">
+<short>JSON-based ini file implementation</short>
+<descr>
+This unit provides <var>TJSONIniFile</var>, a class that implements the ini file interface using JSON format instead of traditional ini files.
+It allows applications to store configuration data as JSON objects while maintaining compatibility with the standard <var>TCustomIniFile</var> interface.
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Basic classes unit</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>System utilities unit</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="inifiles">
+<short>Base ini file classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="fpjson">
+<short>JSON data structures and manipulation</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="jsonscanner">
+<short>JSON lexical scanner</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="jsonparser">
+<short>JSON parser implementation</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="dateutils">
+<short>Date and time utility functions</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TJSONIniFile">
+<short>Ini file implementation using JSON storage format</short>
+<descr>
+<var>TJSONIniFile</var> is a descendant of <link id="inifiles.TCustomIniFile">TCustomIniFile</link> that stores configuration data in JSON format instead of traditional ini file format.
+The JSON structure uses objects for sections and key-value pairs within those objects for the actual configuration entries.
+This allows for more flexible data storage while maintaining full compatibility with the standard ini file interface.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="inifiles.TCustomIniFile">TCustomIniFile</link>
+<link id="inifiles.TMemIniFile">TMemIniFile</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TJSONIniFile.Create">
+<short>Creates a new TJSONIniFile instance</short>
+<descr>
+<var>Create</var> creates a new <var>TJSONIniFile</var> instance.
+The constructor has two overloaded forms:
+<ul>
+<li><var>Create(AFileName, AOptions)</var> - Creates an instance that reads from and writes to the specified file</li>
+<li><var>Create(AStream, AOptions)</var> - Creates an instance that reads from the provided stream</li>
+</ul>
+If the file specified in <var>AFileName</var> does not exist, a new empty JSON object is created.
+If the file exists, it is parsed as JSON and loaded into memory.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.UpdateFile">UpdateFile</link>
+<link id="inifiles.TCustomIniFile.Create">TCustomIniFile.Create</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.Create.AFileName">
+<short>The file name for the JSON ini file</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.Create.AOptions">
+<short>Ini file options or JSON parsing options</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.Create.AStream">
+<short>Stream containing JSON data to parse</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TJSONIniFile.Destroy">
+<short>Destroys the TJSONIniFile instance</short>
+<descr>
+<var>Destroy</var> frees all allocated resources and destroys the <var>TJSONIniFile</var> instance.
+The internal JSON object is freed and the inherited destructor is called.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.Create">Create</link>
+</seealso>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TJSONIniFile.ConvertIni">
+<short>Converts a traditional ini file to JSON format</short>
+<descr>
+<var>ConvertIni</var> is a class method that converts an existing traditional ini file to JSON format.
+The method reads all sections and keys from the source ini file and writes them to a new JSON ini file.
+If <var>StringsOnly</var> is <var>True</var>, all values are stored as strings.
+If <var>StringsOnly</var> is <var>False</var>, the method attempts to detect the data type and store integers, floats, booleans, and dates in their appropriate JSON types.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.Create">Create</link>
+<link id="inifiles.TMemIniFile">TMemIniFile</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ConvertIni.AIniFile">
+<short>Path to the source ini file to convert</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ConvertIni.AJSONFile">
+<short>Path to the destination JSON ini file</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ConvertIni.StringsOnly">
+<short>If True, store all values as strings; if False, detect data types</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONIniFile.ReadString">
+<short>Reads a string value from the JSON ini file</short>
+<descr>
+<var>ReadString</var> reads a string value from the specified section and key.
+If the key is not found, the <var>Default</var> value is returned.
+For structured JSON values (objects or arrays), the JSON representation is returned as a string.
+For other values, the string representation is returned.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.WriteString">WriteString</link>
+<link id="inifiles.TCustomIniFile.ReadString">TCustomIniFile.ReadString</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TJSONIniFile.ReadString.Result">
+<short>The string value or default if key not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadString.Section">
+<short>The section name to read from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadString.Ident">
+<short>The key name to read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadString.Default">
+<short>Default value to return if key not found</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONIniFile.ReadInteger">
+<short>Reads an integer value from the JSON ini file</short>
+<descr>
+<var>ReadInteger</var> reads an integer value from the specified section and key.
+If the stored value is a JSON number, it is converted to integer.
+If the stored value is a string, it attempts to parse it as an integer.
+If the key is not found or conversion fails, the <var>Default</var> value is returned.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.WriteInteger">WriteInteger</link>
+<link id="jsonini.TJSONIniFile.ReadInt64">ReadInt64</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TJSONIniFile.ReadInteger.Result">
+<short>The integer value or default if key not found or conversion failed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadInteger.Section">
+<short>The section name to read from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadInteger.Ident">
+<short>The key name to read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadInteger.Default">
+<short>Default value to return if key not found or conversion failed</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONIniFile.ReadInt64">
+<short>Reads a 64-bit integer value from the JSON ini file</short>
+<descr>
+<var>ReadInt64</var> reads a 64-bit integer value from the specified section and key.
+If the stored value is a JSON number, it is converted to <var>Int64</var>.
+If the stored value is a string, it attempts to parse it as a 64-bit integer.
+If the key is not found or conversion fails, the <var>Default</var> value is returned.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.WriteInt64">WriteInt64</link>
+<link id="jsonini.TJSONIniFile.ReadInteger">ReadInteger</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TJSONIniFile.ReadInt64.Result">
+<short>The Int64 value or default if key not found or conversion failed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadInt64.Section">
+<short>The section name to read from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadInt64.Ident">
+<short>The key name to read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadInt64.Default">
+<short>Default value to return if key not found or conversion failed</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONIniFile.ReadBool">
+<short>Reads a boolean value from the JSON ini file</short>
+<descr>
+<var>ReadBool</var> reads a boolean value from the specified section and key.
+If the stored value is a JSON boolean, it is returned directly.
+For other value types, the method attempts to convert them to boolean.
+If the key is not found or conversion fails, the <var>Default</var> value is returned.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.WriteBool">WriteBool</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TJSONIniFile.ReadBool.Result">
+<short>The boolean value or default if key not found or conversion failed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadBool.Section">
+<short>The section name to read from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadBool.Ident">
+<short>The key name to read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadBool.Default">
+<short>Default value to return if key not found or conversion failed</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONIniFile.ReadDate">
+<short>Reads a date value from the JSON ini file</short>
+<descr>
+<var>ReadDate</var> reads a date value from the specified section and key.
+If the stored value is a JSON number, it is interpreted as a <var>TDateTime</var> value.
+If the stored value is a string, it is parsed using the ISO date format (yyyy-mm-dd).
+If the key is not found or conversion fails, the <var>Default</var> value is returned.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.WriteDate">WriteDate</link>
+<link id="jsonini.TJSONIniFile.ReadDateTime">ReadDateTime</link>
+<link id="jsonini.TJSONIniFile.ReadTime">ReadTime</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TJSONIniFile.ReadDate.Result">
+<short>The date value or default if key not found or conversion failed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadDate.Section">
+<short>The section name to read from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadDate.Ident">
+<short>The key name to read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadDate.Default">
+<short>Default value to return if key not found or conversion failed</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONIniFile.ReadDateTime">
+<short>Reads a date-time value from the JSON ini file</short>
+<descr>
+<var>ReadDateTime</var> reads a date-time value from the specified section and key.
+If the stored value is a JSON number, it is interpreted as a <var>TDateTime</var> value.
+If the stored value is a string, it is parsed using ISO date-time format (yyyy-mm-ddThh:nn:ss.zzz).
+If the key is not found or conversion fails, the <var>Default</var> value is returned.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.WriteDateTime">WriteDateTime</link>
+<link id="jsonini.TJSONIniFile.ReadDate">ReadDate</link>
+<link id="jsonini.TJSONIniFile.ReadTime">ReadTime</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TJSONIniFile.ReadDateTime.Result">
+<short>The date-time value or default if key not found or conversion failed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadDateTime.Section">
+<short>The section name to read from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadDateTime.Ident">
+<short>The key name to read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadDateTime.Default">
+<short>Default value to return if key not found or conversion failed</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONIniFile.ReadFloat">
+<short>Reads a floating-point value from the JSON ini file</short>
+<descr>
+<var>ReadFloat</var> reads a floating-point value from the specified section and key.
+If the stored value is a JSON number, it is converted to <var>Double</var>.
+If the stored value is a string, it attempts to parse it as a floating-point number using both localized and non-localized formats.
+If the key is not found or conversion fails, the <var>Default</var> value is returned.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.WriteFloat">WriteFloat</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TJSONIniFile.ReadFloat.Result">
+<short>The floating-point value or default if key not found or conversion failed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadFloat.Section">
+<short>The section name to read from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadFloat.Ident">
+<short>The key name to read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadFloat.Default">
+<short>Default value to return if key not found or conversion failed</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONIniFile.ReadTime">
+<short>Reads a time value from the JSON ini file</short>
+<descr>
+<var>ReadTime</var> reads a time value from the specified section and key.
+If the stored value is a JSON number, the fractional part is extracted as the time component.
+If the stored value is a string, it is parsed using time format (0000-00-00Thh:nn:ss.zzz).
+If the key is not found or conversion fails, the <var>Default</var> value is returned.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.WriteTime">WriteTime</link>
+<link id="jsonini.TJSONIniFile.ReadDate">ReadDate</link>
+<link id="jsonini.TJSONIniFile.ReadDateTime">ReadDateTime</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TJSONIniFile.ReadTime.Result">
+<short>The time value or default if key not found or conversion failed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadTime.Section">
+<short>The section name to read from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadTime.Ident">
+<short>The key name to read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadTime.Default">
+<short>Default value to return if key not found or conversion failed</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.WriteString">
+<short>Writes a string value to the JSON ini file</short>
+<descr>
+<var>WriteString</var> writes a string value to the specified section and key.
+The value is stored as a JSON string in the underlying JSON object.
+If the section does not exist, it is created automatically.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.ReadString">ReadString</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteString.Section">
+<short>The section name to write to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteString.Ident">
+<short>The key name to write</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteString.Value">
+<short>The string value to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.WriteDate">
+<short>Writes a date value to the JSON ini file</short>
+<descr>
+<var>WriteDate</var> writes a date value to the specified section and key.
+The date is formatted as an ISO date string (yyyy-mm-ddT00:00:00.zzz) and stored as a JSON string.
+If the section does not exist, it is created automatically.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.ReadDate">ReadDate</link>
+<link id="jsonini.TJSONIniFile.WriteDateTime">WriteDateTime</link>
+<link id="jsonini.TJSONIniFile.WriteTime">WriteTime</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteDate.Section">
+<short>The section name to write to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteDate.Ident">
+<short>The key name to write</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteDate.Value">
+<short>The date value to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.WriteDateTime">
+<short>Writes a date-time value to the JSON ini file</short>
+<descr>
+<var>WriteDateTime</var> writes a date-time value to the specified section and key.
+The date-time is formatted as an ISO date-time string (yyyy-mm-ddThh:nn:ss.zzz) and stored as a JSON string.
+If the section does not exist, it is created automatically.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.ReadDateTime">ReadDateTime</link>
+<link id="jsonini.TJSONIniFile.WriteDate">WriteDate</link>
+<link id="jsonini.TJSONIniFile.WriteTime">WriteTime</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteDateTime.Section">
+<short>The section name to write to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteDateTime.Ident">
+<short>The key name to write</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteDateTime.Value">
+<short>The date-time value to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.WriteFloat">
+<short>Writes a floating-point value to the JSON ini file</short>
+<descr>
+<var>WriteFloat</var> writes a floating-point value to the specified section and key.
+The value is stored as a JSON number in the underlying JSON object.
+If the section does not exist, it is created automatically.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.ReadFloat">ReadFloat</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteFloat.Section">
+<short>The section name to write to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteFloat.Ident">
+<short>The key name to write</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteFloat.Value">
+<short>The floating-point value to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.WriteTime">
+<short>Writes a time value to the JSON ini file</short>
+<descr>
+<var>WriteTime</var> writes a time value to the specified section and key.
+The time is formatted as a string (0000-00-00Thh:nn:ss.zzz) and stored as a JSON string.
+If the section does not exist, it is created automatically.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.ReadTime">ReadTime</link>
+<link id="jsonini.TJSONIniFile.WriteDate">WriteDate</link>
+<link id="jsonini.TJSONIniFile.WriteDateTime">WriteDateTime</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteTime.Section">
+<short>The section name to write to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteTime.Ident">
+<short>The key name to write</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteTime.Value">
+<short>The time value to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.WriteInteger">
+<short>Writes an integer value to the JSON ini file</short>
+<descr>
+<var>WriteInteger</var> writes an integer value to the specified section and key.
+The value is stored as a JSON number in the underlying JSON object.
+If the section does not exist, it is created automatically.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.ReadInteger">ReadInteger</link>
+<link id="jsonini.TJSONIniFile.WriteInt64">WriteInt64</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteInteger.Section">
+<short>The section name to write to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteInteger.Ident">
+<short>The key name to write</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteInteger.Value">
+<short>The integer value to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.WriteInt64">
+<short>Writes a 64-bit integer value to the JSON ini file</short>
+<descr>
+<var>WriteInt64</var> writes a 64-bit integer value to the specified section and key.
+The value is stored as a JSON number in the underlying JSON object.
+If the section does not exist, it is created automatically.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.ReadInt64">ReadInt64</link>
+<link id="jsonini.TJSONIniFile.WriteInteger">WriteInteger</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteInt64.Section">
+<short>The section name to write to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteInt64.Ident">
+<short>The key name to write</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteInt64.Value">
+<short>The 64-bit integer value to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.WriteBool">
+<short>Writes a boolean value to the JSON ini file</short>
+<descr>
+<var>WriteBool</var> writes a boolean value to the specified section and key.
+The value is stored as a JSON boolean (<var>True</var> or <var>False</var>) in the underlying JSON object.
+If the section does not exist, it is created automatically.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.ReadBool">ReadBool</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteBool.Section">
+<short>The section name to write to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteBool.Ident">
+<short>The key name to write</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.WriteBool.Value">
+<short>The boolean value to write</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.ReadSection">
+<short>Reads all key names from a section</short>
+<descr>
+<var>ReadSection</var> reads all key names from the specified section and adds them to the <var>Strings</var> list.
+Only keys with actual values (not JSON objects or arrays) are included in the list.
+If the section does not exist, the list remains unchanged.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.ReadSections">ReadSections</link>
+<link id="jsonini.TJSONIniFile.ReadSectionValues">ReadSectionValues</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadSection.Section">
+<short>The section name to read keys from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadSection.Strings">
+<short>String list to store the key names</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.ReadSections">
+<short>Reads all section names from the JSON ini file</short>
+<descr>
+<var>ReadSections</var> reads all section names from the JSON ini file and adds them to the <var>Strings</var> list.
+Only top-level JSON objects are considered sections.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.ReadSection">ReadSection</link>
+<link id="jsonini.TJSONIniFile.ReadSectionValues">ReadSectionValues</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadSections.Strings">
+<short>String list to store the section names</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.ReadSectionValues">
+<short>Reads all key-value pairs from a section</short>
+<descr>
+<var>ReadSectionValues</var> reads all key-value pairs from the specified section and adds them to the <var>Strings</var> list in the format "key=value".
+The <var>AOptions</var> parameter controls which types of values are included.
+If <var>svoIncludeInvalid</var> is in <var>AOptions</var>, structured JSON values (objects and arrays) are included as their JSON representation.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.ReadSection">ReadSection</link>
+<link id="jsonini.TJSONIniFile.ReadSections">ReadSections</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadSectionValues.Section">
+<short>The section name to read key-value pairs from</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadSectionValues.Strings">
+<short>String list to store the key-value pairs</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.ReadSectionValues.AOptions">
+<short>Options controlling which values to include</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.EraseSection">
+<short>Removes an entire section from the JSON ini file</short>
+<descr>
+<var>EraseSection</var> removes the specified section and all its key-value pairs from the JSON ini file.
+If the section does not exist, the method has no effect.
+The file is automatically updated unless <var>CacheUpdates</var> is <var>True</var>.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.DeleteKey">DeleteKey</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.EraseSection.Section">
+<short>The section name to remove</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.DeleteKey">
+<short>Removes a key from a section</short>
+<descr>
+<var>DeleteKey</var> removes the specified key from the specified section.
+If the section or key does not exist, the method has no effect.
+The file is automatically updated unless <var>CacheUpdates</var> is <var>True</var>.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.EraseSection">EraseSection</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.DeleteKey.Section">
+<short>The section name containing the key to remove</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.DeleteKey.Ident">
+<short>The key name to remove</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONIniFile.UpdateFile">
+<short>Writes the JSON data to file</short>
+<descr>
+<var>UpdateFile</var> writes the current JSON data to the file.
+The method has two overloaded forms:
+<ul>
+<li><var>UpdateFile()</var> - writes to the file specified in the constructor</li>
+<li><var>UpdateFile(AFileName)</var> - writes to the specified file</li>
+</ul>
+The JSON data is formatted with proper indentation before writing.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonini.TJSONIniFile.Create">Create</link>
+<link id="jsonini.TJSONIniFile.CacheUpdates">CacheUpdates</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONIniFile.UpdateFile.AFileName">
+<short>The file name to write JSON data to</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONIniFile.Stream">
+<short>Read-only access to the internal stream</short>
+<descr>
+<var>Stream</var> provides read-only access to the internal stream used by the <var>TJSONIniFile</var> instance.
+This property is only available when the instance was created with a stream parameter.
+For file-based instances, this property returns <var>nil</var>.
+</descr>
+<seealso>
+<link id="jsonini.TJSONIniFile.Create">Create</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONIniFile.CacheUpdates">
+<short>Controls when changes are written to file</short>
+<descr>
+<var>CacheUpdates</var> controls when changes to the JSON data are written to the file.
+When <var>CacheUpdates</var> is <var>True</var>, changes are cached in memory and only written to file when <var>UpdateFile</var> is called explicitly or when <var>CacheUpdates</var> is set to <var>False</var>.
+When <var>CacheUpdates</var> is <var>False</var>, changes are written to file immediately.
+</descr>
+<seealso>
+<link id="jsonini.TJSONIniFile.UpdateFile">UpdateFile</link>
+</seealso>
+</element>
+
+</module> <!-- jsonini -->
+
+</package>
+</fpdoc-descriptions>

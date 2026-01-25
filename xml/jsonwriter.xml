@@ -1,0 +1,650 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    jsonwriter
+  ====================================================================
+-->
+
+<module name="JsonWriter">
+<short>JSON writer classes for creating JSON files without building in-memory data structures</short>
+<descr>
+The <var>jsonwriter</var> unit provides classes to create JSON files efficiently without first having to create a JSON data structure in memory.
+The unit contains two main implementations: <link id="jsonwriter.TJSONDataWriter">TJSONDataWriter</link> which builds a <var>TJSONData</var> tree in memory, and <link id="jsonwriter.TJSONStreamWriter">TJSONStreamWriter</link> which writes JSON directly to a stream for memory-efficient processing of large JSON files.
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Used for <var>TStream</var> and <var>TStrings</var> classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>Used for exception handling and string conversion functions</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="fpjson">
+<short>Provides JSON data types and string conversion functions</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EJSONWriter">
+<short>Exception class for JSON writing errors</short>
+<descr>
+<var>EJSONWriter</var> is the exception class raised by JSON writer classes when errors occur during JSON writing operations.
+It inherits from <var>EJSON</var> and is raised for conditions such as attempting to write to an invalid state or stack underflow/overflow conditions.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="fpjson.EJSON">EJSON</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TAbstractJSONWriter">
+<short>Abstract base class for JSON writers</short>
+<descr>
+<var>TAbstractJSONWriter</var> is the abstract base class for all JSON writer implementations.
+It provides the interface for writing JSON data and implements convenience methods for writing properties.
+Derived classes must implement the abstract methods for actual writing operations.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONDataWriter">TJSONDataWriter</link>
+<link id="jsonwriter.TJSONStreamWriter">TJSONStreamWriter</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractJSONWriter.WriteValue">
+<short>Write a JSON value to the output</short>
+<descr>
+<var>WriteValue</var> writes a JSON value to the output.
+This method is overloaded for different data types and has abstract variants that must be implemented by derived classes.
+The non-abstract variants handle complex types like <var>TStrings</var> and <var>TJSONData</var> by decomposing them into simpler operations.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TAbstractJSONWriter.WriteProperty">WriteProperty</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAbstractJSONWriter.WriteValue.aValue">
+<short>The value to write to the JSON output</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractJSONWriter.WriteProperty">
+<short>Write a named property to a JSON object</short>
+<descr>
+<var>WriteProperty</var> writes a named property to a JSON object.
+This method is overloaded for different data types and automatically handles the property name and value writing sequence.
+It calls <link id="jsonwriter.TAbstractJSONWriter.StartProperty">StartProperty</link>, <link id="jsonwriter.TAbstractJSONWriter.WriteValue">WriteValue</link>, and <link id="jsonwriter.TAbstractJSONWriter.EndProperty">EndProperty</link> in sequence.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TAbstractJSONWriter.StartProperty">StartProperty</link>
+<link id="jsonwriter.TAbstractJSONWriter.WriteValue">WriteValue</link>
+<link id="jsonwriter.TAbstractJSONWriter.EndProperty">EndProperty</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAbstractJSONWriter.WriteProperty.aName">
+<short>The name of the property</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAbstractJSONWriter.WriteProperty.aValue">
+<short>The value of the property</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractJSONWriter.StartProperty">
+<short>Start writing a property in a JSON object</short>
+<descr>
+<var>StartProperty</var> begins writing a property in a JSON object.
+This method must be followed by a <link id="jsonwriter.TAbstractJSONWriter.WriteValue">WriteValue</link> call and then <link id="jsonwriter.TAbstractJSONWriter.EndProperty">EndProperty</link>.
+This is an abstract method that must be implemented by derived classes.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TAbstractJSONWriter.EndProperty">EndProperty</link>
+<link id="jsonwriter.TAbstractJSONWriter.WriteValue">WriteValue</link>
+<link id="jsonwriter.TAbstractJSONWriter.WriteProperty">WriteProperty</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TAbstractJSONWriter.StartProperty.aName">
+<short>The name of the property to start writing</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractJSONWriter.EndProperty">
+<short>End writing a property in a JSON object</short>
+<descr>
+<var>EndProperty</var> ends writing a property in a JSON object.
+This method must be called after <link id="jsonwriter.TAbstractJSONWriter.StartProperty">StartProperty</link> and <link id="jsonwriter.TAbstractJSONWriter.WriteValue">WriteValue</link> to complete the property writing sequence.
+This is an abstract method that must be implemented by derived classes.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TAbstractJSONWriter.StartProperty">StartProperty</link>
+<link id="jsonwriter.TAbstractJSONWriter.WriteValue">WriteValue</link>
+<link id="jsonwriter.TAbstractJSONWriter.WriteProperty">WriteProperty</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractJSONWriter.StartArray">
+<short>Start writing a JSON array</short>
+<descr>
+<var>StartArray</var> begins writing a JSON array.
+This method must be followed by zero or more <link id="jsonwriter.TAbstractJSONWriter.NextElement">NextElement</link> and <link id="jsonwriter.TAbstractJSONWriter.WriteValue">WriteValue</link> calls, and then <link id="jsonwriter.TAbstractJSONWriter.EndArray">EndArray</link>.
+This is an abstract method that must be implemented by derived classes.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TAbstractJSONWriter.EndArray">EndArray</link>
+<link id="jsonwriter.TAbstractJSONWriter.NextElement">NextElement</link>
+<link id="jsonwriter.TAbstractJSONWriter.WriteValue">WriteValue</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractJSONWriter.EndArray">
+<short>End writing a JSON array</short>
+<descr>
+<var>EndArray</var> ends writing a JSON array.
+This method must be called after <link id="jsonwriter.TAbstractJSONWriter.StartArray">StartArray</link> and any array elements to complete the array writing sequence.
+This is an abstract method that must be implemented by derived classes.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TAbstractJSONWriter.StartArray">StartArray</link>
+<link id="jsonwriter.TAbstractJSONWriter.NextElement">NextElement</link>
+<link id="jsonwriter.TAbstractJSONWriter.WriteValue">WriteValue</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractJSONWriter.NextElement">
+<short>Prepare for the next element in a JSON array</short>
+<descr>
+<var>NextElement</var> prepares for writing the next element in a JSON array.
+This method should be called before each <link id="jsonwriter.TAbstractJSONWriter.WriteValue">WriteValue</link> call when writing array elements.
+This is an abstract method that must be implemented by derived classes.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TAbstractJSONWriter.StartArray">StartArray</link>
+<link id="jsonwriter.TAbstractJSONWriter.EndArray">EndArray</link>
+<link id="jsonwriter.TAbstractJSONWriter.WriteValue">WriteValue</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractJSONWriter.StartObject">
+<short>Start writing a JSON object</short>
+<descr>
+<var>StartObject</var> begins writing a JSON object.
+This method must be followed by zero or more <link id="jsonwriter.TAbstractJSONWriter.WriteProperty">WriteProperty</link> calls, and then <link id="jsonwriter.TAbstractJSONWriter.EndObject">EndObject</link>.
+This is an abstract method that must be implemented by derived classes.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TAbstractJSONWriter.EndObject">EndObject</link>
+<link id="jsonwriter.TAbstractJSONWriter.WriteProperty">WriteProperty</link>
+<link id="jsonwriter.TAbstractJSONWriter.StartProperty">StartProperty</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractJSONWriter.EndObject">
+<short>End writing a JSON object</short>
+<descr>
+<var>EndObject</var> ends writing a JSON object.
+This method must be called after <link id="jsonwriter.TAbstractJSONWriter.StartObject">StartObject</link> and any object properties to complete the object writing sequence.
+This is an abstract method that must be implemented by derived classes.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TAbstractJSONWriter.StartObject">StartObject</link>
+<link id="jsonwriter.TAbstractJSONWriter.WriteProperty">WriteProperty</link>
+<link id="jsonwriter.TAbstractJSONWriter.StartProperty">StartProperty</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TAbstractJSONWriter.Flush">
+<short>Flush any pending output to the destination</short>
+<descr>
+<var>Flush</var> ensures that all pending JSON data is written to the destination.
+This method should be called when the JSON writing is complete or when intermediate flushing is required.
+This is an abstract method that must be implemented by derived classes.
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TJSONDataWriter">
+<short>JSON writer that builds TJSONData tree in memory</short>
+<descr>
+<var>TJSONDataWriter</var> is a JSON writer implementation that builds a <var>TJSONData</var> tree in memory.
+This writer maintains an internal stack of JSON objects and arrays and constructs the complete JSON data structure as it writes.
+The resulting <var>TJSONData</var> can be extracted using <link id="jsonwriter.TJSONDataWriter.ExtractData">ExtractData</link>.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TAbstractJSONWriter">TAbstractJSONWriter</link>
+<link id="jsonwriter.TJSONStreamWriter">TJSONStreamWriter</link>
+<link id="jsonwriter.TJSONDataWriter.ExtractData">ExtractData</link>
+<link id="fpjson.TJSONData">TJSONData</link>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TJSONDataWriter.destroy">
+<short>Destroy the writer and free any created JSON data</short>
+<descr>
+<var>destroy</var> destroys the <var>TJSONDataWriter</var> instance and frees any JSON data that has not been extracted.
+If JSON data was created but not extracted using <link id="jsonwriter.TJSONDataWriter.ExtractData">ExtractData</link>, it will be freed to prevent memory leaks.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONDataWriter.ExtractData">ExtractData</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONDataWriter.EndArray">
+<short>End writing a JSON array</short>
+<descr>
+<var>EndArray</var> completes the writing of a JSON array by popping the current array from the internal stack.
+This method must be called after <link id="jsonwriter.TJSONDataWriter.StartArray">StartArray</link> and any array elements.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONDataWriter.StartArray">StartArray</link>
+<link id="jsonwriter.TJSONDataWriter.NextElement">NextElement</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONDataWriter.EndObject">
+<short>End writing a JSON object</short>
+<descr>
+<var>EndObject</var> completes the writing of a JSON object by popping the current object from the internal stack.
+This method must be called after <link id="jsonwriter.TJSONDataWriter.StartObject">StartObject</link> and any object properties.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONDataWriter.StartObject">StartObject</link>
+<link id="jsonwriter.TJSONDataWriter.StartProperty">StartProperty</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONDataWriter.EndProperty">
+<short>End writing a property in a JSON object</short>
+<descr>
+<var>EndProperty</var> validates that the current context is appropriate for ending a property.
+This method must be called after <link id="jsonwriter.TJSONDataWriter.StartProperty">StartProperty</link> and a value has been written.
+</descr>
+<errors>
+<var>EJSONWriter</var> is raised if the current value is not a structured value.
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONDataWriter.StartProperty">StartProperty</link>
+<link id="jsonwriter.EJSONWriter">EJSONWriter</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONDataWriter.NextElement">
+<short>Prepare for the next element in a JSON array</short>
+<descr>
+<var>NextElement</var> validates that the current context is appropriate for writing the next array element.
+This method must be called before each value when writing array elements.
+</descr>
+<errors>
+<var>EJSONWriter</var> is raised if the current value is not a structured value.
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONDataWriter.StartArray">StartArray</link>
+<link id="jsonwriter.TJSONDataWriter.EndArray">EndArray</link>
+<link id="jsonwriter.EJSONWriter">EJSONWriter</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONDataWriter.StartArray">
+<short>Start writing a JSON array</short>
+<descr>
+<var>StartArray</var> creates a new <var>TJSONArray</var> and pushes it onto the internal stack.
+This method begins the writing of a JSON array structure.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONDataWriter.EndArray">EndArray</link>
+<link id="jsonwriter.TJSONDataWriter.NextElement">NextElement</link>
+<link id="fpjson.TJSONArray">TJSONArray</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONDataWriter.StartObject">
+<short>Start writing a JSON object</short>
+<descr>
+<var>StartObject</var> creates a new <var>TJSONObject</var> and pushes it onto the internal stack.
+This method begins the writing of a JSON object structure.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONDataWriter.EndObject">EndObject</link>
+<link id="jsonwriter.TJSONDataWriter.StartProperty">StartProperty</link>
+<link id="fpjson.TJSONObject">TJSONObject</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONDataWriter.StartProperty">
+<short>Start writing a property in a JSON object</short>
+<descr>
+<var>StartProperty</var> sets the property name for the next value to be written to a JSON object.
+This method must be followed by a value write operation and <link id="jsonwriter.TJSONDataWriter.EndProperty">EndProperty</link>.
+</descr>
+<errors>
+<var>EJSONWriter</var> is raised if a property name is already set.
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONDataWriter.EndProperty">EndProperty</link>
+<link id="jsonwriter.EJSONWriter">EJSONWriter</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONDataWriter.StartProperty.aName">
+<short>The name of the property to start writing</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONDataWriter.WriteValue">
+<short>Write a JSON value to the current position</short>
+<descr>
+<var>WriteValue</var> creates the appropriate <var>TJSONData</var> subclass instance for the value and pushes it onto the internal stack.
+This method is overloaded for different data types including Boolean, Integer, Int64, Double, and String.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="fpjson.TJSONData">TJSONData</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONDataWriter.WriteValue.aValue">
+<short>The value to write to the JSON output</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONDataWriter.Flush">
+<short>Validate the internal state for data extraction</short>
+<descr>
+<var>Flush</var> validates that JSON data has been created and is available for extraction.
+This method checks that the internal stack contains valid JSON data before extraction.
+</descr>
+<errors>
+<var>EJSONWriter</var> is raised if no objects have been created on the stack.
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONDataWriter.ExtractData">ExtractData</link>
+<link id="jsonwriter.EJSONWriter">EJSONWriter</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TJSONDataWriter.ExtractData">
+<short>Extract the created JSON data tree</short>
+<descr>
+<var>ExtractData</var> returns the complete JSON data structure that has been built and transfers ownership to the caller.
+After calling this method, the writer no longer owns the JSON data, and the caller is responsible for freeing it.
+This method calls <link id="jsonwriter.TJSONDataWriter.Flush">Flush</link> internally to validate the state before extraction.
+</descr>
+<errors>
+<var>EJSONWriter</var> is raised if no objects have been created on the stack.
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONDataWriter.Flush">Flush</link>
+<link id="fpjson.TJSONData">TJSONData</link>
+<link id="jsonwriter.EJSONWriter">EJSONWriter</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TJSONDataWriter.ExtractData.Result">
+<short>The created JSON data structure with ownership transferred to caller</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TJSONStreamWriter">
+<short>JSON writer that writes directly to a stream</short>
+<descr>
+<var>TJSONStreamWriter</var> is a JSON writer implementation that writes JSON text directly to a stream without building an in-memory data structure.
+This writer is memory-efficient for large JSON files as it streams the output directly.
+It maintains element counters to properly format arrays and objects with correct comma placement.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TAbstractJSONWriter">TAbstractJSONWriter</link>
+<link id="jsonwriter.TJSONDataWriter">TJSONDataWriter</link>
+<link id="jsonwriter.TJSONStreamWriter.StrictStrings">StrictStrings</link>
+<link id="Classes.TStream">TStream</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TJSONStreamWriter.create">
+<short>Create a new stream writer for the given stream</short>
+<descr>
+<var>create</var> creates a new <var>TJSONStreamWriter</var> instance that will write JSON output to the specified stream.
+The stream must be writable and remain valid for the lifetime of the writer instance.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="Classes.TStream">TStream</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONStreamWriter.create.aStream">
+<short>The stream to write JSON output to</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONStreamWriter.WriteValue">
+<short>Write a JSON value directly to the stream</short>
+<descr>
+<var>WriteValue</var> writes a JSON value directly to the output stream.
+This method is overloaded for different data types and formats the values according to JSON syntax.
+String values are properly escaped and quoted according to the <link id="jsonwriter.TJSONStreamWriter.StrictStrings">StrictStrings</link> property.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONStreamWriter.StrictStrings">StrictStrings</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONStreamWriter.WriteValue.aValue">
+<short>The value to write to the JSON stream</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONStreamWriter.StartProperty">
+<short>Start writing a property in a JSON object</short>
+<descr>
+<var>StartProperty</var> writes the property name to the stream followed by a colon.
+If this is not the first property in the object, it automatically adds a comma before the property name.
+The property name is properly escaped and quoted according to JSON syntax.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONStreamWriter.EndProperty">EndProperty</link>
+<link id="jsonwriter.TJSONStreamWriter.StrictStrings">StrictStrings</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONStreamWriter.StartProperty.aName">
+<short>The name of the property to start writing</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONStreamWriter.EndProperty">
+<short>End writing a property in a JSON object</short>
+<descr>
+<var>EndProperty</var> completes the property writing sequence.
+This method performs no action for stream writers as the property is considered complete after the value is written.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONStreamWriter.StartProperty">StartProperty</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONStreamWriter.StartArray">
+<short>Start writing a JSON array</short>
+<descr>
+<var>StartArray</var> writes the opening bracket '[' to the stream and initializes element counting for the array.
+The element counter is used to properly place commas between array elements.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONStreamWriter.EndArray">EndArray</link>
+<link id="jsonwriter.TJSONStreamWriter.NextElement">NextElement</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONStreamWriter.EndArray">
+<short>End writing a JSON array</short>
+<descr>
+<var>EndArray</var> writes the closing bracket ']' to the stream and pops the element counter for the array.
+This method completes the array writing sequence started with <link id="jsonwriter.TJSONStreamWriter.StartArray">StartArray</link>.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONStreamWriter.StartArray">StartArray</link>
+<link id="jsonwriter.TJSONStreamWriter.NextElement">NextElement</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONStreamWriter.NextElement">
+<short>Prepare for the next element in a JSON array</short>
+<descr>
+<var>NextElement</var> writes a comma to the stream if this is not the first element in the array.
+This method increments the element counter and ensures proper comma placement between array elements.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONStreamWriter.StartArray">StartArray</link>
+<link id="jsonwriter.TJSONStreamWriter.EndArray">EndArray</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONStreamWriter.StartObject">
+<short>Start writing a JSON object</short>
+<descr>
+<var>StartObject</var> writes the opening brace '{' to the stream and initializes element counting for the object.
+The element counter is used to properly place commas between object properties.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONStreamWriter.EndObject">EndObject</link>
+<link id="jsonwriter.TJSONStreamWriter.StartProperty">StartProperty</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONStreamWriter.EndObject">
+<short>End writing a JSON object</short>
+<descr>
+<var>EndObject</var> writes the closing brace '}' to the stream and pops the element counter for the object.
+This method completes the object writing sequence started with <link id="jsonwriter.TJSONStreamWriter.StartObject">StartObject</link>.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="jsonwriter.TJSONStreamWriter.StartObject">StartObject</link>
+<link id="jsonwriter.TJSONStreamWriter.StartProperty">StartProperty</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONStreamWriter.Flush">
+<short>Flush any pending output to the stream</short>
+<descr>
+<var>Flush</var> ensures that all written data is flushed to the underlying stream.
+For <var>TJSONStreamWriter</var>, this method performs no action as data is written directly to the stream.
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONStreamWriter.StrictStrings">
+<short>Control strict JSON string encoding</short>
+<descr>
+<var>StrictStrings</var> controls whether string encoding follows strict JSON rules.
+When <var>True</var>, all non-ASCII characters are escaped using Unicode escape sequences.
+When <var>False</var>, only the minimal required characters are escaped according to JSON syntax.
+</descr>
+<seealso>
+<link id="fpjson.StringToJSONString">StringToJSONString</link>
+</seealso>
+</element>
+
+</module> <!-- jsonwriter -->
+
+</package>
+</fpdoc-descriptions>

@@ -1,0 +1,936 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    fpWeb
+  ====================================================================
+-->
+
+<module name="fpWeb">
+<short>Advanced web application development with actions and templates</short>
+<descr>
+<p>The <var>fpWeb</var> unit provides HTML-oriented functionality for web application development.
+It extends the basic HTTP functionality with support for web actions, template processing, and structured web modules.</p>
+<p>This unit introduces the concept of web actions which allow mapping of URL patterns to specific handlers.
+It also provides template support for dynamic content generation and a complete web module framework for building complex web applications.</p>
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Basic component and persistence classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>System utility functions and classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="httpdefs">
+<short>HTTP protocol definitions and constants</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="fphttp">
+<short>Basic HTTP request and response handling</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="fptemplate">
+<short>Template processing for dynamic content generation</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TFPWebAction">
+<short>Web action with content and template support</short>
+<descr>
+<p><var>TFPWebAction</var> extends <link id="TCustomWebAction">TCustomWebAction</link> with support for direct content assignment and template processing.
+This class allows actions to serve static content from string lists or process dynamic content through templates.</p>
+<p>The action can handle requests through the <var>OnRequest</var> event and provides built-in content serving capabilities.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPWebActions">TFPWebActions</link>
+<link id="TCustomWebAction">TCustomWebAction</link>
+<link id="TFPTemplate">TFPTemplate</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TFPWebAction.create">
+<short>Creates a new <var>TFPWebAction</var> instance</short>
+<descr>
+<p>Creates a new <var>TFPWebAction</var> instance and initializes the internal template object.
+The action is added to the specified collection.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPWebAction.destroy">destroy</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPWebAction.create.ACollection">
+<short>The collection that will own this action</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TFPWebAction.destroy">
+<short>Destroys the <var>TFPWebAction</var> instance</short>
+<descr>
+<p>Destroys the <var>TFPWebAction</var> instance and frees the associated content strings and template objects.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPWebAction.create">create</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPWebAction.Assign">
+<short>Assigns properties from another object</short>
+<descr>
+<p>Copies all properties from the source <var>TFPWebAction</var> object to this instance.
+This includes name, events, content, and template settings.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPWebAction.Assign.Source">
+<short>The source object to copy properties from</short>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebAction.Contents">
+<short>Static content to serve when the action is executed</short>
+<descr>
+<p>Contains static text content that will be served when this action is executed.
+If the action's <var>OnRequest</var> event does not handle the request, this content will be returned to the client.</p>
+</descr>
+<seealso>
+<link id="TFPWebAction.OnRequest">OnRequest</link>
+<link id="TFPWebAction.Template">Template</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebAction.OnRequest">
+<short>Event handler called when this action is executed</short>
+<descr>
+<p>Event that is triggered when this web action is executed.
+The event handler receives the request and response objects and can set the Handled parameter to <var>True</var> to indicate that the request has been processed.</p>
+</descr>
+<seealso>
+<link id="TWebActionEvent">TWebActionEvent</link>
+<link id="TFPWebAction.Contents">Contents</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebAction.Template">
+<short>Template for dynamic content generation</short>
+<descr>
+<p>Template object used for processing dynamic content.
+The template can contain variable substitutions that are resolved at runtime to generate the final output.</p>
+</descr>
+<seealso>
+<link id="TFPTemplate">TFPTemplate</link>
+<link id="TFPWebAction.Contents">Contents</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TFPWebActions">
+<short>Collection of web actions with advanced functionality</short>
+<descr>
+<p><var>TFPWebActions</var> extends <link id="TCustomWebActions">TCustomWebActions</link> to provide a collection of <link id="TFPWebAction">TFPWebAction</link> objects.
+It handles request routing to appropriate actions and provides content generation capabilities.</p>
+<p>The collection maintains a reference to the currently executing action and can route requests based on URL parameters.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPWebAction">TFPWebAction</link>
+<link id="TCustomWebActions">TCustomWebActions</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPWebActions.Add">
+<short>Adds a new web action to the collection</short>
+<descr>
+<p>Creates and adds a new <var>TFPWebAction</var> to the collection.
+The newly created action is returned for further configuration.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPWebAction">TFPWebAction</link>
+<link id="TFPWebActions.FindAction">FindAction</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPWebActions.Add.Result">
+<short>The newly created web action</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPWebActions.ActionByName">
+<short>Returns the action with the specified name</short>
+<descr>
+<p>Finds and returns the web action with the given name.
+Raises an exception if no action with the specified name is found.</p>
+</descr>
+<errors>
+<p>Raises an exception if the action name is not found.</p>
+</errors>
+<seealso>
+<link id="TFPWebActions.FindAction">FindAction</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPWebActions.ActionByName.Result">
+<short>The web action with the specified name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPWebActions.ActionByName.AName">
+<short>The name of the action to find</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPWebActions.FindAction">
+<short>Searches for an action with the specified name</short>
+<descr>
+<p>Searches for a web action with the given name.
+Returns <var>nil</var> if no action with the specified name is found.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPWebActions.ActionByName">ActionByName</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPWebActions.FindAction.Result">
+<short>The web action with the specified name, or <var>nil</var> if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPWebActions.FindAction.AName">
+<short>The name of the action to search for</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPWebActions.FPWebActions">
+<short>Array property providing indexed access to web actions</short>
+<descr>
+<p>Provides indexed access to the web actions in the collection.
+This is the default array property for the class.</p>
+</descr>
+<seealso>
+<link id="TFPWebAction">TFPWebAction</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TFPWebActions.FPWebActions.Index">
+<short>The index of the web action to access</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPWebActions.ActionVar">
+<short>Name of the request parameter used to identify the action</short>
+<descr>
+<p>Specifies the name of the request parameter (usually a URL parameter) that contains the action name to execute.
+Common values include 'action', 'command', or 'page'.</p>
+</descr>
+<seealso>
+<link id="TFPWebActions.FindAction">FindAction</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPWebActions.CurrentAction">
+<short>The currently executing web action</short>
+<descr>
+<p>References the web action that is currently being executed.
+This property is set during request processing and is available for the duration of the action execution.</p>
+</descr>
+<seealso>
+<link id="TFPWebAction">TFPWebAction</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TTemplateVar">
+<short>Template variable with name and value</short>
+<descr>
+<p><var>TTemplateVar</var> represents a single template variable that can be used in template processing.
+Each variable has a name and a corresponding value that will be substituted during template processing.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTemplateVars">TTemplateVars</link>
+<link id="TFPTemplate">TFPTemplate</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TTemplateVar.Assign">
+<short>Assigns properties from another template variable</short>
+<descr>
+<p>Copies the name and value from another <var>TTemplateVar</var> instance to this one.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateVar.Assign.Source">
+<short>The source template variable to copy from</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TTemplateVar.GetDisplayName">
+<short>Returns the display name for this template variable</short>
+<descr>
+<p>Returns the variable name as the display name.
+This is used for displaying the variable in collection editors and similar contexts.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTemplateVar.Name">Name</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TTemplateVar.GetDisplayName.Result">
+<short>The display name (same as the variable name)</short>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TTemplateVar.Name">
+<short>The name of the template variable</short>
+<descr>
+<p>The name used to identify this variable in templates.
+This name is used for variable substitution during template processing.</p>
+</descr>
+<seealso>
+<link id="TTemplateVar.Value">Value</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TTemplateVar.Value">
+<short>The value of the template variable</short>
+<descr>
+<p>The text value that will be substituted when the variable name is encountered in template processing.</p>
+</descr>
+<seealso>
+<link id="TTemplateVar.Name">Name</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TTemplateVars">
+<short>Collection of template variables</short>
+<descr>
+<p><var>TTemplateVars</var> manages a collection of <link id="TTemplateVar">TTemplateVar</link> objects.
+It provides methods to find variables by name and access them by index.</p>
+<p>This collection is used by web modules to maintain template variables that can be referenced during template processing.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTemplateVar">TTemplateVar</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TTemplateVars.IndexOfVar">
+<short>Returns the index of the variable with the specified name</short>
+<descr>
+<p>Searches for a template variable with the given name and returns its index in the collection.
+Returns -1 if no variable with the specified name is found.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTemplateVars.VarByName">VarByName</link>
+<link id="TTemplateVars.FindVar">FindVar</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TTemplateVars.IndexOfVar.Result">
+<short>The index of the variable, or -1 if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateVars.IndexOfVar.AName">
+<short>The name of the variable to search for</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TTemplateVars.VarByName">
+<short>Returns the variable with the specified name</short>
+<descr>
+<p>Finds and returns the template variable with the given name.
+Raises an exception if no variable with the specified name is found.</p>
+</descr>
+<errors>
+<p>Raises <link id="EFPWebError">EFPWebError</link> if the variable name is not found.</p>
+</errors>
+<seealso>
+<link id="TTemplateVars.FindVar">FindVar</link>
+<link id="EFPWebError">EFPWebError</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TTemplateVars.VarByName.Result">
+<short>The template variable with the specified name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateVars.VarByName.AName">
+<short>The name of the variable to find</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TTemplateVars.FindVar">
+<short>Searches for a variable with the specified name</short>
+<descr>
+<p>Searches for a template variable with the given name.
+Returns <var>nil</var> if no variable with the specified name is found.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TTemplateVars.VarByName">VarByName</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TTemplateVars.FindVar.Result">
+<short>The template variable with the specified name, or <var>nil</var> if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TTemplateVars.FindVar.AName">
+<short>The name of the variable to search for</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TTemplateVars.Variables">
+<short>Array property providing indexed access to template variables</short>
+<descr>
+<p>Provides indexed access to the template variables in the collection.
+This is the default array property for the class.</p>
+</descr>
+<seealso>
+<link id="TTemplateVar">TTemplateVar</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TTemplateVars.Variables.I">
+<short>The index of the template variable to access</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TContentEvent">
+<short>Event type for content generation</short>
+<descr>
+<p>Event type used for content generation callbacks.
+The event passes a content stream that can be written to.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TContentEvent.Sender">
+<short>The object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TContentEvent.Content">
+<short>The stream to write content to</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TCustomFPWebModule">
+<short>Base class for web modules with action and template support</short>
+<descr>
+<p><var>TCustomFPWebModule</var> extends <link id="TSessionHTTPModule">TSessionHTTPModule</link> with support for web actions, template processing, and advanced request handling.
+This class provides the foundation for building complex web applications with structured request routing and dynamic content generation.</p>
+<p>The module manages a collection of web actions, template variables, and provides hooks for request preprocessing and response postprocessing.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPWebModule">TFPWebModule</link>
+<link id="TFPWebActions">TFPWebActions</link>
+<link id="TSessionHTTPModule">TSessionHTTPModule</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCustomFPWebModule.CreateNew">
+<short>Creates a new web module instance</short>
+<descr>
+<p>Creates a new web module and initializes the actions collection, template, and template variables.
+This constructor is used instead of the standard Create constructor to support the component creation mode.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCustomFPWebModule.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomFPWebModule.CreateNew.AOwner">
+<short>The component that will own this web module</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomFPWebModule.CreateNew.CreateMode">
+<short>The creation mode for the component</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCustomFPWebModule.Destroy">
+<short>Destroys the web module instance</short>
+<descr>
+<p>Destroys the web module and frees all associated resources including template variables, template, and actions collection.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCustomFPWebModule.CreateNew">CreateNew</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomFPWebModule.HandleRequest">
+<short>Processes an incoming HTTP request</short>
+<descr>
+<p>Main request handling method that processes incoming HTTP requests.
+This method coordinates session management, action execution, template processing, and response generation.</p>
+<p>The method calls various hooks in sequence: <var>BeforeRequest</var>, <var>OnRequest</var>, action processing, template processing, and <var>AfterResponse</var>.</p>
+</descr>
+<errors>
+<p>May raise <link id="EFPWebError">EFPWebError</link> if the request cannot be handled.</p>
+</errors>
+<seealso>
+<link id="TCustomFPWebModule.BeforeRequest">BeforeRequest</link>
+<link id="TCustomFPWebModule.OnRequest">OnRequest</link>
+<link id="TCustomFPWebModule.AfterResponse">AfterResponse</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomFPWebModule.HandleRequest.ARequest">
+<short>The HTTP request to process</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomFPWebModule.HandleRequest.AResponse">
+<short>The HTTP response to generate</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomFPWebModule.Actions">
+<short>Collection of web actions for this module</short>
+<descr>
+<p>Contains the collection of web actions that can be executed by this web module.
+Actions are selected based on request parameters and executed to handle specific requests.</p>
+</descr>
+<seealso>
+<link id="TFPWebActions">TFPWebActions</link>
+<link id="TCustomFPWebModule.ActionVar">ActionVar</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomFPWebModule.ActionVar">
+<short>Name of the request parameter used to identify actions</short>
+<descr>
+<p>Specifies the name of the request parameter that contains the action name to execute.
+This is typically a URL parameter like 'action' or 'command'.</p>
+</descr>
+<seealso>
+<link id="TCustomFPWebModule.Actions">Actions</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomFPWebModule.BeforeRequest">
+<short>Event called before request processing</short>
+<descr>
+<p>Event triggered before the main request processing begins.
+This can be used for request preprocessing, authentication, or logging.</p>
+</descr>
+<seealso>
+<link id="TRequestEvent">TRequestEvent</link>
+<link id="TCustomFPWebModule.AfterResponse">AfterResponse</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomFPWebModule.OnRequest">
+<short>Event called for request processing</short>
+<descr>
+<p>Event triggered during request processing.
+If this event handles the request and sets the Handled parameter to <var>True</var>, no further processing occurs.</p>
+</descr>
+<seealso>
+<link id="TWebActionEvent">TWebActionEvent</link>
+<link id="TCustomFPWebModule.BeforeRequest">BeforeRequest</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomFPWebModule.AfterResponse">
+<short>Event called after response processing</short>
+<descr>
+<p>Event triggered after the response has been generated and sent.
+This can be used for cleanup, logging, or response postprocessing.</p>
+</descr>
+<seealso>
+<link id="TResponseEvent">TResponseEvent</link>
+<link id="TCustomFPWebModule.BeforeRequest">BeforeRequest</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomFPWebModule.OnGetAction">
+<short>Event called to determine which action to execute</short>
+<descr>
+<p>Event that allows custom logic for determining which action should be executed for a given request.
+This provides more flexibility than the standard action variable lookup.</p>
+</descr>
+<seealso>
+<link id="TGetActionEvent">TGetActionEvent</link>
+<link id="TCustomFPWebModule.ActionVar">ActionVar</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomFPWebModule.DefActionWhenUnknown">
+<short>Whether to use the default action when no specific action is found</short>
+<descr>
+<p>Determines whether the default action should be executed when no action name is specified in the request or when the specified action cannot be found.</p>
+</descr>
+<seealso>
+<link id="TCustomFPWebModule.Actions">Actions</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomFPWebModule.ModuleTemplate">
+<short>Template used for content generation</short>
+<descr>
+<p>Template object used for dynamic content generation when no action handles the request.
+The template can contain variables that are substituted during processing.</p>
+</descr>
+<seealso>
+<link id="TFPTemplate">TFPTemplate</link>
+<link id="TCustomFPWebModule.OnGetParam">OnGetParam</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomFPWebModule.OnGetParam">
+<short>Event called to resolve template parameters</short>
+<descr>
+<p>Event triggered when a template parameter needs to be resolved during template processing.
+This allows dynamic parameter value generation.</p>
+</descr>
+<seealso>
+<link id="TGetParamEvent">TGetParamEvent</link>
+<link id="TCustomFPWebModule.ModuleTemplate">ModuleTemplate</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomFPWebModule.OnTemplateContent">
+<short>Event called for template content processing</short>
+<descr>
+<p>Event triggered for template content processing.
+This is an alias for the <var>OnGetParam</var> event and provides the same functionality.</p>
+</descr>
+<seealso>
+<link id="TCustomFPWebModule.OnGetParam">OnGetParam</link>
+<link id="TGetParamEvent">TGetParamEvent</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomFPWebModule.Request">
+<short>The current HTTP request being processed</short>
+<descr>
+<p>Provides access to the HTTP request currently being processed.
+This property is only valid during request processing and is set to <var>nil</var> when no request is active.</p>
+</descr>
+<seealso>
+<link id="TRequest">TRequest</link>
+<link id="TCustomFPWebModule.Response">Response</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomFPWebModule.Response">
+<short>The current HTTP response being generated</short>
+<descr>
+<p>Provides access to the HTTP response currently being generated.
+This property is only valid during request processing and is set to <var>nil</var> when no request is active.</p>
+</descr>
+<seealso>
+<link id="TResponse">TResponse</link>
+<link id="TCustomFPWebModule.Request">Request</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TFPWebModule">
+<short>Complete web module with published properties</short>
+<descr>
+<p><var>TFPWebModule</var> is the complete implementation of a web module that publishes all properties from <link id="TCustomFPWebModule">TCustomFPWebModule</link>.
+This class is intended for use in visual design environments and provides access to all web module functionality through published properties.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCustomFPWebModule">TCustomFPWebModule</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.Actions">
+<short>Collection of web actions for this module</short>
+<descr>
+<p>Published version of <link id="TCustomFPWebModule.Actions">TCustomFPWebModule.Actions</link>.</p>
+</descr>
+<seealso>
+<link id="TCustomFPWebModule.Actions">TCustomFPWebModule.Actions</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.ActionVar">
+<short>Name of the request parameter used to identify actions</short>
+<descr>
+<p>Published version of <link id="TCustomFPWebModule.ActionVar">TCustomFPWebModule.ActionVar</link>.</p>
+</descr>
+<seealso>
+<link id="TCustomFPWebModule.ActionVar">TCustomFPWebModule.ActionVar</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.BeforeRequest">
+<short>Event called before request processing</short>
+<descr>
+<p>Published version of <link id="TCustomFPWebModule.BeforeRequest">TCustomFPWebModule.BeforeRequest</link>.</p>
+</descr>
+<seealso>
+<link id="TCustomFPWebModule.BeforeRequest">TCustomFPWebModule.BeforeRequest</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.OnRequest">
+<short>Event called for request processing</short>
+<descr>
+<p>Published version of <link id="TCustomFPWebModule.OnRequest">TCustomFPWebModule.OnRequest</link>.</p>
+</descr>
+<seealso>
+<link id="TCustomFPWebModule.OnRequest">TCustomFPWebModule.OnRequest</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.AfterResponse">
+<short>Event called after response processing</short>
+<descr>
+<p>Published version of <link id="TCustomFPWebModule.AfterResponse">TCustomFPWebModule.AfterResponse</link>.</p>
+</descr>
+<seealso>
+<link id="TCustomFPWebModule.AfterResponse">TCustomFPWebModule.AfterResponse</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.OnGetAction">
+<short>Event called to determine which action to execute</short>
+<descr>
+<p>Published version of <link id="TCustomFPWebModule.OnGetAction">TCustomFPWebModule.OnGetAction</link>.</p>
+</descr>
+<seealso>
+<link id="TCustomFPWebModule.OnGetAction">TCustomFPWebModule.OnGetAction</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.DefActionWhenUnknown">
+<short>Whether to use the default action when no specific action is found</short>
+<descr>
+<p>Published version of <link id="TCustomFPWebModule.DefActionWhenUnknown">TCustomFPWebModule.DefActionWhenUnknown</link>.</p>
+</descr>
+<seealso>
+<link id="TCustomFPWebModule.DefActionWhenUnknown">TCustomFPWebModule.DefActionWhenUnknown</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.CreateSession">
+<short>Whether to automatically create sessions</short>
+<descr>
+<p>Determines whether sessions should be automatically created for incoming requests.
+This property is inherited from the parent HTTP module class.</p>
+</descr>
+<seealso>
+<link id="TFPWebModule.Session">Session</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.Session">
+<short>The current session object</short>
+<descr>
+<p>Provides access to the current session object for the request.
+This property is inherited from the parent HTTP module class.</p>
+</descr>
+<seealso>
+<link id="TFPWebModule.CreateSession">CreateSession</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.Kind">
+<short>The module kind</short>
+<descr>
+<p>Specifies the kind of web module.
+This property is inherited from the parent HTTP module class.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.OnNewSession">
+<short>Event called when a new session is created</short>
+<descr>
+<p>Event triggered when a new session is created for a client.
+This property is inherited from the parent HTTP module class.</p>
+</descr>
+<seealso>
+<link id="TFPWebModule.OnSessionExpired">OnSessionExpired</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.OnSessionExpired">
+<short>Event called when a session expires</short>
+<descr>
+<p>Event triggered when a session expires or is explicitly terminated.
+This property is inherited from the parent HTTP module class.</p>
+</descr>
+<seealso>
+<link id="TFPWebModule.OnNewSession">OnNewSession</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.AfterInitModule">
+<short>Event called after module initialization</short>
+<descr>
+<p>Event triggered after the module has been initialized.
+This property is inherited from the parent HTTP module class.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPWebModule.CORS">
+<short>Cross-Origin Resource Sharing configuration</short>
+<descr>
+<p>Configuration object for Cross-Origin Resource Sharing (CORS) support.
+This property is inherited from the parent HTTP module class.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EFPWebError">
+<short>Exception class for web-related errors</short>
+<descr>
+<p><var>EFPWebError</var> is the exception class used throughout the fpweb unit for web-related errors.
+It extends <link id="EHTTP">EHTTP</link> to provide specific error handling for web application functionality.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="EHTTP">EHTTP</link>
+</seealso>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrInvalidVar">
+<short>Error message for invalid template variable names</short>
+<descr>
+<p>Resource string used when an invalid template variable name is encountered.</p>
+</descr>
+<seealso>
+<link id="TTemplateVars.VarByName">TTemplateVars.VarByName</link>
+</seealso>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrInvalidWebAction">
+<short>Error message for invalid web actions</short>
+<descr>
+<p>Resource string used when an invalid web action is encountered during request processing.</p>
+</descr>
+<seealso>
+<link id="TFPWebActions">TFPWebActions</link>
+</seealso>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrNoContentProduced">
+<short>Error message when no content is produced</short>
+<descr>
+<p>Resource string used when no content is produced during template or action processing.</p>
+</descr>
+<seealso>
+<link id="TCustomFPWebModule">TCustomFPWebModule</link>
+</seealso>
+</element>
+
+</module> <!-- fpWeb -->
+
+</package>
+</fpdoc-descriptions>

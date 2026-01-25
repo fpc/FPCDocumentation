@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    fpjsonapply
+  ====================================================================
+-->
+
+<module name="fpJsonApply">
+<short>Apply elements from one JSON object to another</short>
+<descr>
+This unit provides the <link id="fpjsonapply.TJSONApplier">TJSONApplier</link> component class for merging JSON objects.
+It allows applying (merging) elements from one JSON object to another with various configuration options for ownership control, case sensitivity, type handling, and output formatting.
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Standard component and streaming classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>System utility functions and types</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="fpJSON">
+<short>JSON data structure classes and functions</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TOwnsJSON">
+<short>Enumeration values for JSON object ownership control</short>
+<descr>
+The <var>TOwnsJSON</var> enumeration defines which JSON objects are owned by the <link id="fpjsonapply.TJSONApplier">TJSONApplier</link> component.
+When a JSON object is owned, it will be automatically freed when the component is destroyed or when a new object is assigned.
+<dl>
+<dt><var>ojSource</var></dt>
+<dd>The source JSON object is owned by the applier component</dd>
+<dt><var>ojApply</var></dt>
+<dd>The apply JSON object is owned by the applier component</dd>
+</dl>
+</descr>
+<seealso>
+<link id="fpjsonapply.TOwnsJSONs">TOwnsJSONs</link>
+<link id="fpjsonapply.TJSONApplier.OwnsJSON">TJSONApplier.OwnsJSON</link>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TOwnsJSON.ojSource">
+<short>The source JSON object is owned by the applier component</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TOwnsJSON.ojApply">
+<short>The apply JSON object is owned by the applier component</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TOwnsJSONs">
+<short>Set of JSON object ownership flags</short>
+<descr>
+The <var>TOwnsJSONs</var> type is a set of <link id="fpjsonapply.TOwnsJSON">TOwnsJSON</link> enumeration values.
+It specifies which JSON objects are owned and managed by the <link id="fpjsonapply.TJSONApplier">TJSONApplier</link> component.
+Owned objects will be automatically freed when no longer needed.
+</descr>
+<seealso>
+<link id="fpjsonapply.TOwnsJSON">TOwnsJSON</link>
+<link id="fpjsonapply.TJSONApplier.OwnsJSON">TJSONApplier.OwnsJSON</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TJSONApplier">
+<short>Component class for applying (merging) JSON objects</short>
+<descr>
+The <var>TJSONApplier</var> class is a component that provides functionality to apply (merge) elements from one JSON object to another.
+It supports loading JSON objects from files or working with existing objects in memory, with various configuration options for controlling the merge behavior.
+The component can merge at specific paths within JSON structures, handle type conflicts, control case sensitivity, and manage object ownership.
+</descr>
+<errors>
+Raises <var>EJSON</var> exceptions when:
+<ul>
+<li>Source or apply JSON objects are empty</li>
+<li>JSON files do not contain valid JSON objects</li>
+<li>Specified paths are not found in the JSON structures</li>
+</ul>
+</errors>
+<seealso>
+<link id="fpjsonapply.TOwnsJSON">TOwnsJSON</link>
+<link id="fpjsonapply.TOwnsJSONs">TOwnsJSONs</link>
+</seealso>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TJSONApplier.destroy">
+<short>Destructor that frees owned JSON objects and cleans up resources</short>
+<descr>
+The <var>destroy</var> destructor frees any JSON objects that are owned by the component as indicated by the <link id="fpjsonapply.TJSONApplier.OwnsJSON">OwnsJSON</link> property.
+It also frees the destination JSON object if it differs from the source JSON object.
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.OwnsJSON">TJSONApplier.OwnsJSON</link>
+<link id="fpjsonapply.TJSONApplier.SourceJSON">TJSONApplier.SourceJSON</link>
+<link id="fpjsonapply.TJSONApplier.ApplyJSON">TJSONApplier.ApplyJSON</link>
+<link id="fpjsonapply.TJSONApplier.DestJSON">TJSONApplier.DestJSON</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONApplier.Execute">
+<short>Executes the JSON merge operation from apply JSON to source JSON</short>
+<descr>
+The <var>Execute</var> method performs the main JSON merge operation.
+It loads the source and apply JSON objects from files if they are not already set, then applies the elements from the apply JSON object to the source JSON object.
+The result is stored in the <link id="fpjsonapply.TJSONApplier.DestJSON">DestJSON</link> property.
+If file paths are specified, it starts merging at those specific locations within the JSON structures.
+If a destination filename is specified, the result is automatically saved to that file.
+</descr>
+<errors>
+Raises <var>EJSON</var> exceptions when:
+<ul>
+<li>Source JSON object is empty</li>
+<li>Apply JSON object is empty</li>
+<li>JSON files do not contain valid JSON objects</li>
+<li>Specified source or apply paths are not found or do not point to JSON objects</li>
+</ul>
+</errors>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.SourceJSON">TJSONApplier.SourceJSON</link>
+<link id="fpjsonapply.TJSONApplier.ApplyJSON">TJSONApplier.ApplyJSON</link>
+<link id="fpjsonapply.TJSONApplier.DestJSON">TJSONApplier.DestJSON</link>
+<link id="fpjsonapply.TJSONApplier.SourcePath">TJSONApplier.SourcePath</link>
+<link id="fpjsonapply.TJSONApplier.ApplyPath">TJSONApplier.ApplyPath</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONApplier.SourceJSON">
+<short>Source JSON object to merge into</short>
+<descr>
+The <var>SourceJSON</var> property holds the source JSON object that serves as the base for the merge operation.
+If not set directly, it will be loaded automatically from the file specified in <link id="fpjsonapply.TJSONApplier.SourceFileName">SourceFileName</link> when <link id="fpjsonapply.TJSONApplier.Execute">Execute</link> is called.
+When a new value is assigned, any previously owned source JSON object is freed.
+</descr>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.SourceFileName">TJSONApplier.SourceFileName</link>
+<link id="fpjsonapply.TJSONApplier.DestJSON">TJSONApplier.DestJSON</link>
+<link id="fpjsonapply.TJSONApplier.OwnsJSON">TJSONApplier.OwnsJSON</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONApplier.ApplyJSON">
+<short>JSON object containing elements to apply to the source</short>
+<descr>
+The <var>ApplyJSON</var> property holds the JSON object whose elements will be merged into the source JSON object.
+If not set directly, it will be loaded automatically from the file specified in <link id="fpjsonapply.TJSONApplier.ApplyFileName">ApplyFileName</link> when <link id="fpjsonapply.TJSONApplier.Execute">Execute</link> is called.
+When a new value is assigned, any previously owned apply JSON object is freed.
+</descr>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.ApplyFileName">TJSONApplier.ApplyFileName</link>
+<link id="fpjsonapply.TJSONApplier.SourceJSON">TJSONApplier.SourceJSON</link>
+<link id="fpjsonapply.TJSONApplier.OwnsJSON">TJSONApplier.OwnsJSON</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONApplier.DestJSON">
+<short>Destination JSON object containing the merge result</short>
+<descr>
+The <var>DestJSON</var> property contains the result of the merge operation after <link id="fpjsonapply.TJSONApplier.Execute">Execute</link> is called.
+If <link id="fpjsonapply.TJSONApplier.CloneSource">CloneSource</link> is <var>True</var>, this will be a clone of the source JSON object.
+If <link id="fpjsonapply.TJSONApplier.CloneSource">CloneSource</link> is <var>False</var>, this will be the same reference as the source JSON object.
+This property is read-only and is set automatically during the merge operation.
+</descr>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.SourceJSON">TJSONApplier.SourceJSON</link>
+<link id="fpjsonapply.TJSONApplier.CloneSource">TJSONApplier.CloneSource</link>
+<link id="fpjsonapply.TJSONApplier.Execute">TJSONApplier.Execute</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONApplier.OwnsJSON">
+<short>Set specifying which JSON objects are owned by the component</short>
+<descr>
+The <var>OwnsJSON</var> property is a set of <link id="fpjsonapply.TOwnsJSON">TOwnsJSON</link> values that specifies which JSON objects are owned and managed by the component.
+Owned objects are automatically freed when the component is destroyed or when new objects are assigned.
+This property is automatically updated when JSON objects are loaded from files.
+</descr>
+<seealso>
+<link id="fpjsonapply.TOwnsJSON">TOwnsJSON</link>
+<link id="fpjsonapply.TOwnsJSONs">TOwnsJSONs</link>
+<link id="fpjsonapply.TJSONApplier.SourceJSON">TJSONApplier.SourceJSON</link>
+<link id="fpjsonapply.TJSONApplier.ApplyJSON">TJSONApplier.ApplyJSON</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONApplier.SourceFileName">
+<short>Filename to load source JSON from if SourceJSON is not set</short>
+<descr>
+The <var>SourceFileName</var> property specifies the file path from which to load the source JSON object.
+If <link id="fpjsonapply.TJSONApplier.SourceJSON">SourceJSON</link> is not set when <link id="fpjsonapply.TJSONApplier.Execute">Execute</link> is called, the JSON object will be loaded from this file.
+When loaded from file, the component will take ownership of the JSON object.
+</descr>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.SourceJSON">TJSONApplier.SourceJSON</link>
+<link id="fpjsonapply.TJSONApplier.OwnsJSON">TJSONApplier.OwnsJSON</link>
+<link id="fpjsonapply.TJSONApplier.Execute">TJSONApplier.Execute</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONApplier.SourcePath">
+<short>JSON path in source object where merging should start</short>
+<descr>
+The <var>SourcePath</var> property specifies a JSON path within the source JSON object where the merge operation should begin.
+If empty, merging starts at the root of the source object.
+The path must point to an existing JSON object within the source structure.
+JSON paths use dot notation to navigate nested objects.
+</descr>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.SourceJSON">TJSONApplier.SourceJSON</link>
+<link id="fpjsonapply.TJSONApplier.ApplyPath">TJSONApplier.ApplyPath</link>
+<link id="fpjsonapply.TJSONApplier.Execute">TJSONApplier.Execute</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONApplier.ApplyFileName">
+<short>Filename to load apply JSON from if ApplyJSON is not set</short>
+<descr>
+The <var>ApplyFileName</var> property specifies the file path from which to load the apply JSON object.
+If <link id="fpjsonapply.TJSONApplier.ApplyJSON">ApplyJSON</link> is not set when <link id="fpjsonapply.TJSONApplier.Execute">Execute</link> is called, the JSON object will be loaded from this file.
+When loaded from file, the component will take ownership of the JSON object.
+</descr>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.ApplyJSON">TJSONApplier.ApplyJSON</link>
+<link id="fpjsonapply.TJSONApplier.OwnsJSON">TJSONApplier.OwnsJSON</link>
+<link id="fpjsonapply.TJSONApplier.Execute">TJSONApplier.Execute</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONApplier.ApplyPath">
+<short>JSON path in apply object where merging data should be taken from</short>
+<descr>
+The <var>ApplyPath</var> property specifies a JSON path within the apply JSON object from which elements should be merged.
+If empty, elements are taken from the root of the apply object.
+The path must point to an existing JSON object within the apply structure.
+JSON paths use dot notation to navigate nested objects.
+</descr>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.ApplyJSON">TJSONApplier.ApplyJSON</link>
+<link id="fpjsonapply.TJSONApplier.SourcePath">TJSONApplier.SourcePath</link>
+<link id="fpjsonapply.TJSONApplier.Execute">TJSONApplier.Execute</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONApplier.DestFileName">
+<short>Filename to write the destination JSON to after merging</short>
+<descr>
+The <var>DestFileName</var> property specifies the file path where the result of the merge operation should be saved.
+If this property is set, the destination JSON object will be automatically saved to this file after <link id="fpjsonapply.TJSONApplier.Execute">Execute</link> completes.
+If empty, no automatic saving is performed.
+</descr>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.DestJSON">TJSONApplier.DestJSON</link>
+<link id="fpjsonapply.TJSONApplier.Execute">TJSONApplier.Execute</link>
+<link id="fpjsonapply.TJSONApplier.Formatted">TJSONApplier.Formatted</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONApplier.CloneSource">
+<short>Controls whether to make a clone copy of source JSON before applying changes</short>
+<descr>
+The <var>CloneSource</var> property determines whether a clone copy of the source JSON object is made before applying changes.
+When <var>True</var>, the source JSON object is cloned and changes are applied to the clone, leaving the original unchanged.
+When <var>False</var>, changes are applied directly to the source JSON object.
+The default value is <var>False</var>.
+</descr>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.SourceJSON">TJSONApplier.SourceJSON</link>
+<link id="fpjsonapply.TJSONApplier.DestJSON">TJSONApplier.DestJSON</link>
+<link id="fpjsonapply.TJSONApplier.Execute">TJSONApplier.Execute</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONApplier.CaseInsensitive">
+<short>Controls whether property name matching is case sensitive</short>
+<descr>
+The <var>CaseInsensitive</var> property controls whether property names are matched case-sensitively during the merge operation.
+When <var>True</var>, property names are compared ignoring case differences.
+When <var>False</var>, property names must match exactly including case.
+The default value is <var>False</var>.
+</descr>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.Execute">TJSONApplier.Execute</link>
+<link id="fpjsonapply.TJSONApplier.RemoveNonExisting">TJSONApplier.RemoveNonExisting</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONApplier.ForceCorrectType">
+<short>Controls whether to overwrite properties when types differ between source and apply JSON</short>
+<descr>
+The <var>ForceCorrectType</var> property determines the behavior when a property exists in both source and apply JSON objects but with different data types.
+When <var>True</var>, the property in the source is deleted and replaced with the property from the apply JSON.
+When <var>False</var>, properties with different types are handled according to their specific types (objects are merged recursively).
+The default value is <var>False</var>.
+</descr>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.Execute">TJSONApplier.Execute</link>
+<link id="fpjsonapply.TJSONApplier.CaseInsensitive">TJSONApplier.CaseInsensitive</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONApplier.RemoveNonExisting">
+<short>Controls whether to remove properties from source that do not exist in apply JSON</short>
+<descr>
+The <var>RemoveNonExisting</var> property determines whether properties that exist in the source JSON but not in the apply JSON should be removed after merging.
+When <var>True</var>, properties in the source that are not present in the apply JSON are deleted.
+When <var>False</var>, existing properties in the source are preserved even if they do not exist in the apply JSON.
+The default value is <var>False</var>.
+</descr>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.Execute">TJSONApplier.Execute</link>
+<link id="fpjsonapply.TJSONApplier.CaseInsensitive">TJSONApplier.CaseInsensitive</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONApplier.Formatted">
+<short>Controls whether output JSON is formatted with indentation and line breaks</short>
+<descr>
+The <var>Formatted</var> property controls whether the JSON output is formatted with indentation and line breaks for better readability.
+When <var>True</var>, the output JSON is formatted with proper indentation.
+When <var>False</var>, the output JSON is written as a compact string without formatting.
+This property affects the output when writing to the <link id="fpjsonapply.TJSONApplier.DestFileName">DestFileName</link>.
+The default value is <var>False</var>.
+</descr>
+<seealso>
+<link id="fpjsonapply.TJSONApplier.DestFileName">TJSONApplier.DestFileName</link>
+<link id="fpjsonapply.TJSONApplier.Execute">TJSONApplier.Execute</link>
+</seealso>
+</element>
+
+</module> <!-- fpjsonapply -->
+
+</package>
+</fpdoc-descriptions>

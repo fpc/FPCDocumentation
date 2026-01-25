@@ -1,0 +1,1062 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    fphttp
+  ====================================================================
+-->
+
+<module name="fpHttp">
+<short>HTTP request handling for web servers</short>
+<descr>
+<p>
+The <var>fphttp</var> unit provides the foundation for handling HTTP requests in web server applications.
+It implements <link id="THTTPContentProducer">content producers</link>, <link id="TCustomWebAction">web actions</link>, 
+and <link id="TCustomHTTPModule">web modules</link> for processing HTTP requests and generating responses.
+</p>
+<p>
+The idea behind the web module and action architecture is that they process an URL of the following kind:
+</p>
+<pre>
+{BaseURL}/module/action/*
+</pre>
+<p>
+Where the appropriate module is determined by the <link id="httproute.THTTPRouter">http router</link> and the 
+correct action is selected by the module. The action's event handler will then be executed.
+</p>
+<p>
+If your application requires a more flexible URL handling, you may want to register callbacks directly with the HTTP router.
+If you are looking to generate HTML, then the <link id="fpweb"/> unit contains web modules that descend from 
+<link id="TCustomHTTPModule"/> but are geared towards generating HTML.
+</p>
+</descr>
+<seealso>
+<link id="httproute.THTTPRouter">THTTPRouter</link>
+<link id="THTTPContentProducer"/>
+<link id="TCustomWebAction"/>
+<link id="TCustomHTTPModule"/>
+</seealso>
+
+<!-- uses unit Visibility: default -->
+<element name="sysutils">
+<short>System utilities unit</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="classes">
+<short>Base classes unit</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="httpdefs">
+<short>HTTP definitions unit</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="httproute">
+<short>HTTP routing unit</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TWebModuleKind">
+<short>Web module creation modes</short>
+<descr>
+<var>TWebModuleKind</var> defines how web modules are created and managed during request handling.
+</descr>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TWebModuleKind.wkPooled">
+<short>Module instances are pooled and reused</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TWebModuleKind.wkOneShot">
+<short>New module instance created for each request</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TWebActionEvent">
+<short>Event handler for web action processing</short>
+<descr>
+<var>TWebActionEvent</var> is an event type for handling web action processing before or after request handling.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWebActionEvent.Sender">
+<short>Object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWebActionEvent.ARequest">
+<short>HTTP request object</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWebActionEvent.AResponse">
+<short>HTTP response object</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TWebActionEvent.Handled">
+<short>Indicates if the request has been handled</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="THTTPContentProducer">
+<short>Base class for HTTP content production</short>
+<descr>
+<var>THTTPContentProducer</var> is the base class for generating HTTP content.
+It provides methods for handling requests and producing content for HTTP responses.
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTTPContentProducer.HandleRequest">
+<short>Handles an HTTP request</short>
+<descr>
+<var>HandleRequest</var> processes an HTTP request and sets the handled flag if the request was processed.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPContentProducer.HandleRequest.ARequest">
+<short>HTTP request to handle</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPContentProducer.HandleRequest.AResponse">
+<short>HTTP response to populate</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPContentProducer.HandleRequest.Handled">
+<short>Set to True if request was handled</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="THTTPContentProducer.GetContent">
+<short>Retrieves content for the HTTP response</short>
+<descr>
+<var>GetContent</var> retrieves the content to be sent as the HTTP response body.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPContentProducer.GetContent.ARequest">
+<short>HTTP request being processed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPContentProducer.GetContent.Content">
+<short>Generated content string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPContentProducer.GetContent.Handled">
+<short>Set to True if content was generated</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPContentProducer.HaveContent">
+<short>Checks if content is available</short>
+<descr>
+<var>HaveContent</var> returns <var>True</var> if the content producer can generate content for the current request.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPContentProducer.HaveContent.Result">
+<short>True if content is available</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="THTTPContentProducer.ContentToStream">
+<short>Writes content to a stream</short>
+<descr>
+<var>ContentToStream</var> writes the generated content directly to a stream and returns the number of bytes written.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="THTTPContentProducer.ContentToStream.Result">
+<short>Number of bytes written to stream</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPContentProducer.ContentToStream.Stream">
+<short>Stream to write content to</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPContentProducer.Request">
+<short>Current HTTP request</short>
+<descr>
+<var>Request</var> provides access to the current HTTP request being processed.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="THTTPContentProducer.Response">
+<short>Current HTTP response</short>
+<descr>
+<var>Response</var> provides access to the current HTTP response being generated.
+</descr>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TCustomWebAction">
+<short>Base class for web actions</short>
+<descr>
+<p>
+<var>TCustomWebAction</var> represents an individual web action that can handle specific HTTP requests.
+It associates a content producer or a simple event with request handling events. 
+Web actions are selected by the <link id="TCustomHTTPModule"/> module by checking the second path element in the HTTP URL:
+</p>
+<pre>
+{BaseURL}/module/action
+</pre>
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomWebAction.GetNamePath">
+<short>Returns the action name path</short>
+<descr>
+<var>GetNamePath</var> returns the full path name of the action for identification purposes.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomWebAction.GetNamePath.Result">
+<short>Full name path of the action</short>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCustomWebAction.Name">
+<short>Name of the web action</short>
+<descr>
+<var>Name</var> specifies the unique name used to identify this web action.
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCustomWebAction.ContentProducer">
+<short>Content producer for this action</short>
+<descr>
+<var>ContentProducer</var> specifies the content producer responsible for generating the response content.
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCustomWebAction.Default">
+<short>Indicates if this is the default action</short>
+<descr>
+<var>Default</var> specifies whether this action should be used as the default when no specific action is requested.
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCustomWebAction.BeforeRequest">
+<short>Event triggered before request processing</short>
+<descr>
+<var>BeforeRequest</var> is triggered before the request is processed by the action.
+</descr>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TCustomWebAction.AfterResponse">
+<short>Event triggered after response generation</short>
+<descr>
+<var>AfterResponse</var> is triggered after the response has been generated by the action.
+</descr>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TGetActionEvent">
+<short>Event for determining action names</short>
+<descr>
+<var>TGetActionEvent</var> is triggered to determine which action should handle a specific request.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGetActionEvent.Sender">
+<short>Object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGetActionEvent.ARequest">
+<short>HTTP request being processed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGetActionEvent.ActionName">
+<short>Name of the action to execute</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TCustomWebActions">
+<short>Collection of web actions</short>
+<descr>
+<var>TCustomWebActions</var> manages a collection of web actions that can handle HTTP requests.
+</descr>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCustomWebActions.Create">
+<short>Creates a new web actions collection</short>
+<descr>
+<var>Create</var> initializes a new web actions collection with the specified action item class.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomWebActions.Create.AItemClass">
+<short>Class type for action items</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomWebActions.Assign">
+<short>Copies actions from another collection</short>
+<descr>
+<var>Assign</var> copies all actions from the source collection to this collection.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomWebActions.Assign.Source">
+<short>Source collection to copy from</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomWebActions.Add">
+<short>Adds a new web action</short>
+<descr>
+<var>Add</var> creates and adds a new web action to the collection.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomWebActions.Add.Result">
+<short>The newly created web action</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomWebActions.ActionByName">
+<short>Finds action by name</short>
+<descr>
+<var>ActionByName</var> returns the web action with the specified name, or raises an exception if not found.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomWebActions.ActionByName.Result">
+<short>The web action with the specified name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomWebActions.ActionByName.AName">
+<short>Name of the action to find</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomWebActions.FindAction">
+<short>Searches for action by name</short>
+<descr>
+<var>FindAction</var> searches for a web action with the specified name and returns nil if not found.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomWebActions.FindAction.Result">
+<short>The web action or nil if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomWebActions.FindAction.AName">
+<short>Name of the action to search for</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomWebActions.IndexOfAction">
+<short>Returns index of named action</short>
+<descr>
+<var>IndexOfAction</var> returns the index of the web action with the specified name, or -1 if not found.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomWebActions.IndexOfAction.Result">
+<short>Index of the action or -1 if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomWebActions.IndexOfAction.AName">
+<short>Name of the action to locate</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebActions.OnGetAction">
+<short>Event for action name determination</short>
+<descr>
+<var>OnGetAction</var> is triggered to determine which action should handle a request.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebActions.Actions">
+<short>Array access to web actions</short>
+<descr>
+<var>Actions</var> provides indexed access to individual web actions in the collection.
+</descr>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TCustomWebActions.Actions.Index">
+<short>Index of the action to access</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomWebActions.DefActionWhenUnknown">
+<short>Use default action for unknown requests</short>
+<descr>
+<var>DefActionWhenUnknown</var> determines whether the default action should handle requests for unknown actions.
+</descr>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TInitModuleEvent">
+<short>Event for module initialization</short>
+<descr>
+<var>TInitModuleEvent</var> is triggered when an HTTP module is initialized for request processing.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TInitModuleEvent.Sender">
+<short>Object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TInitModuleEvent.ARequest">
+<short>HTTP request being processed</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TCustomHTTPModule">
+<short>Base class for HTTP modules</short>
+<descr>
+<var>TCustomHTTPModule</var> is the base class for HTTP modules that handle web requests.
+It provides the foundation for web applications with action-based request routing.
+</descr>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCustomHTTPModule.CreateNew">
+<short>Creates a new HTTP module instance</short>
+<descr>
+<var>CreateNew</var> creates a new HTTP module instance with the specified owner and creation mode.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomHTTPModule.CreateNew.aOwner">
+<short>Owner component for the module</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomHTTPModule.CreateNew.CreateMode">
+<short>Mode for module creation</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCustomHTTPModule.Destroy">
+<short>Destroys the HTTP module instance</short>
+<descr>
+<var>Destroy</var> frees the HTTP module instance and its associated resources.
+</descr>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TCustomHTTPModule.RegisterModule">
+<short>Registers the module with the factory</short>
+<descr>
+<var>RegisterModule</var> registers this HTTP module class with the module factory using the specified name.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomHTTPModule.RegisterModule.AModuleName">
+<short>Name to register the module under</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomHTTPModule.RegisterModule.ASkipStreaming">
+<short>Whether to skip component streaming</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomHTTPModule.HandleRequest">
+<short>Handles an HTTP request</short>
+<descr>
+<var>HandleRequest</var> processes an HTTP request and generates the appropriate response.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomHTTPModule.HandleRequest.ARequest">
+<short>HTTP request to handle</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomHTTPModule.HandleRequest.AResponse">
+<short>HTTP response to populate</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomHTTPModule.DoAfterInitModule">
+<short>Executes after module initialization</short>
+<descr>
+<var>DoAfterInitModule</var> is called after the module has been initialized for the current request.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomHTTPModule.DoAfterInitModule.ARequest">
+<short>HTTP request being processed</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomHTTPModule.Kind">
+<short>Module creation mode</short>
+<descr>
+<var>Kind</var> determines how module instances are created and managed.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomHTTPModule.BaseURL">
+<short>Base URL for the module</short>
+<descr>
+<var>BaseURL</var> specifies the base URL path that this module handles.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomHTTPModule.AfterInitModule">
+<short>Event after module initialization</short>
+<descr>
+<var>AfterInitModule</var> is triggered after the module is initialized for request processing.
+</descr>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TCustomHTTPModuleClass">
+<short>Class reference for HTTP modules</short>
+<descr>
+<var>TCustomHTTPModuleClass</var> is a class reference type for HTTP module classes.
+</descr>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TSessionHTTPModule">
+<short>HTTP module with session support</short>
+<descr>
+<var>TSessionHTTPModule</var> extends HTTP modules with session management capabilities.
+It automatically manages user sessions across multiple HTTP requests.
+</descr>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TSessionHTTPModule.destroy">
+<short>Destroys the session HTTP module</short>
+<descr>
+<var>destroy</var> frees the session HTTP module and its associated session resources.
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSessionHTTPModule.HandleRequest">
+<short>Handles request with session management</short>
+<descr>
+<var>HandleRequest</var> processes an HTTP request with automatic session management.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSessionHTTPModule.HandleRequest.ARequest">
+<short>HTTP request to handle</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSessionHTTPModule.HandleRequest.AResponse">
+<short>HTTP response to populate</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSessionHTTPModule.CreateSession">
+<short>Indicates if sessions should be created</short>
+<descr>
+<var>CreateSession</var> determines whether new sessions are automatically created for requests.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSessionHTTPModule.Session">
+<short>Current session object</short>
+<descr>
+<var>Session</var> provides access to the current user session associated with the request.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSessionHTTPModule.OnNewSession">
+<short>Event triggered when a new session is created</short>
+<descr>
+<var>OnNewSession</var> is triggered when a new user session is created.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSessionHTTPModule.OnSessionExpired">
+<short>Event triggered when a session expires</short>
+<descr>
+<var>OnSessionExpired</var> is triggered when a user session expires due to timeout.
+</descr>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TSessionHTTPModuleClass">
+<short>Class reference for session HTTP modules</short>
+<descr>
+<var>TSessionHTTPModuleClass</var> is a class reference type for session-enabled HTTP module classes.
+</descr>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EWebSessionError">
+<short>Exception for session-related errors</short>
+<descr>
+<var>EWebSessionError</var> is raised when errors occur during session management operations.
+</descr>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TSessionFactory">
+<short>Factory for managing user sessions</short>
+<descr>
+<var>TSessionFactory</var> provides session management functionality including creation, cleanup, and configuration.
+</descr>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TSessionFactory.CreateSession">
+<short>Creates a new user session</short>
+<descr>
+<var>CreateSession</var> creates a new user session for the specified HTTP request.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TSessionFactory.CreateSession.Result">
+<short>The newly created session object</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSessionFactory.CreateSession.ARequest">
+<short>HTTP request associated with the session</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSessionFactory.DoneSession">
+<short>Finalizes a user session</short>
+<descr>
+<var>DoneSession</var> performs cleanup and finalization for the specified session.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSessionFactory.DoneSession.ASession">
+<short>Session to finalize</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TSessionFactory.CleanupSessions">
+<short>Cleans up expired sessions</short>
+<descr>
+<var>CleanupSessions</var> removes expired sessions from the session storage.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSessionFactory.CleanupInterval">
+<short>Session cleanup interval in minutes</short>
+<descr>
+<var>CleanupInterval</var> specifies how often expired sessions are cleaned up, in minutes.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSessionFactory.DefaultTimeOutMinutes">
+<short>Default session timeout in minutes</short>
+<descr>
+<var>DefaultTimeOutMinutes</var> specifies the default timeout period for new sessions, in minutes.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSessionFactory.SessionCookie">
+<short>Name of the session cookie</short>
+<descr>
+<var>SessionCookie</var> specifies the name of the HTTP cookie used to store session identifiers.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TSessionFactory.SessionCookiePath">
+<short>Path for the session cookie</short>
+<descr>
+<var>SessionCookiePath</var> specifies the path attribute for the session cookie.
+</descr>
+</element>
+
+<!-- "class of" type Visibility: default -->
+<element name="TSessionFactoryClass">
+<short>Class reference for session factories</short>
+<descr>
+<var>TSessionFactoryClass</var> is a class reference type for session factory classes.
+</descr>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TModuleItem">
+<short>Container for module registration information</short>
+<descr>
+<var>TModuleItem</var> holds registration information for an HTTP module in the module factory.
+</descr>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TModuleItem.Destroy">
+<short>Destroys the module item</short>
+<descr>
+<var>Destroy</var> frees the module item and its associated resources.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TModuleItem.ModuleClass">
+<short>HTTP module class</short>
+<descr>
+<var>ModuleClass</var> specifies the class for this registered HTTP module.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TModuleItem.ModuleName">
+<short>Name of the module</short>
+<descr>
+<var>ModuleName</var> specifies the registered name for this HTTP module.
+</descr>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TModuleItem.SkipStreaming">
+<short>Whether to skip component streaming</short>
+<descr>
+<var>SkipStreaming</var> determines whether component streaming is skipped for this module.
+</descr>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TOnModuleRequest">
+<short>Event for module request handling</short>
+<descr>
+<var>TOnModuleRequest</var> is an event type for handling requests at the module level.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnModuleRequest.Sender">
+<short>Object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnModuleRequest.ARequest">
+<short>HTTP request being processed</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TOnModuleRequest.AResponse">
+<short>HTTP response to populate</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TModuleFactory">
+<short>Factory for managing HTTP modules</short>
+<descr>
+<var>TModuleFactory</var> manages the registration and creation of HTTP modules.
+</descr>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TModuleFactory.RegisterHTTPModule">
+<short>Registers an HTTP module</short>
+<descr>
+<var>RegisterHTTPModule</var> registers an HTTP module class with the factory.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TModuleFactory.RegisterHTTPModule.ModuleName">
+<short>Name to register the module under</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TModuleFactory.RegisterHTTPModule.ModuleClass">
+<short>HTTP module class to register</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TModuleFactory.RegisterHTTPModule.SkipStreaming">
+<short>Whether to skip component streaming</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TModuleFactory.FindModule">
+<short>Finds a module by name</short>
+<descr>
+<var>FindModule</var> searches for a registered module with the specified name.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TModuleFactory.FindModule.Result">
+<short>Module item or nil if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TModuleFactory.FindModule.AModuleName">
+<short>Name of the module to find</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TModuleFactory.ModuleByName">
+<short>Returns module by name</short>
+<descr>
+<var>ModuleByName</var> returns the module item with the specified name, or raises an exception if not found.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TModuleFactory.ModuleByName.Result">
+<short>Module item with the specified name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TModuleFactory.ModuleByName.AModuleName">
+<short>Name of the module to retrieve</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TModuleFactory.IndexOfModule">
+<short>Returns index of named module</short>
+<descr>
+<var>IndexOfModule</var> returns the index of the module with the specified name, or -1 if not found.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TModuleFactory.IndexOfModule.Result">
+<short>Index of the module or -1 if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TModuleFactory.IndexOfModule.AModuleName">
+<short>Name of the module to locate</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TModuleFactory.RemoveModule">
+<short>Removes a module from the factory</short>
+<descr>
+<var>RemoveModule</var> unregisters the module with the specified name from the factory.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TModuleFactory.RemoveModule.AModuleName">
+<short>Name of the module to remove</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TModuleFactory.MoveModuleBeforeDefault">
+<short>Moves module before default module</short>
+<descr>
+<var>MoveModuleBeforeDefault</var> repositions the specified module to execute before the default module.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TModuleFactory.MoveModuleBeforeDefault.Result">
+<short>True if module was moved successfully</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TModuleFactory.MoveModuleBeforeDefault.AModuleName">
+<short>Name of the module to move</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TModuleFactory.Modules">
+<short>Array access to registered modules</short>
+<descr>
+<var>Modules</var> provides indexed access to registered module items.
+</descr>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TModuleFactory.Modules.Index">
+<short>Index of the module to access</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TModuleFactory.OnModuleRequest">
+<short>Event for module request handling</short>
+<descr>
+<var>OnModuleRequest</var> is triggered when a request is being handled by a module.
+</descr>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EFPHTTPError">
+<short>Exception for HTTP processing errors</short>
+<descr>
+<var>EFPHTTPError</var> is raised when errors occur during HTTP request processing.
+</descr>
+</element>
+
+<!-- procedure Visibility: default -->
+<element name="RegisterHTTPModule">
+<short>Registers an HTTP module with the factory</short>
+<descr>
+<var>RegisterHTTPModule</var> is a convenience function to register an HTTP module class with the global module factory.
+</descr>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RegisterHTTPModule.ModuleClass">
+<short>HTTP module class to register</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RegisterHTTPModule.SkipStreaming">
+<short>Whether to skip component streaming</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="RegisterHTTPModule.ModuleName">
+<short>Name to register the module under</short>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="ModuleFactory">
+<short>Global HTTP module factory instance</short>
+<descr>
+<var>ModuleFactory</var> is the global instance of the module factory for managing HTTP modules.
+</descr>
+</element>
+
+<!-- variable Visibility: default -->
+<element name="SessionFactoryClass">
+<short>Class reference for session factory</short>
+<descr>
+<var>SessionFactoryClass</var> holds the class reference used to create session factory instances.
+</descr>
+</element>
+
+<!-- function Visibility: default -->
+<element name="SessionFactory">
+<short>Returns the global session factory instance</short>
+<descr>
+<var>SessionFactory</var> returns the global session factory instance used for session management.
+</descr>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="SessionFactory.Result">
+<short>Global session factory instance</short>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrNosuchModule">
+<short>Error message for unknown module</short>
+<descr>
+<var>SErrNosuchModule</var> is the error message displayed when a requested module cannot be found.
+</descr>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrNoSuchAction">
+<short>Error message for unknown action</short>
+<descr>
+<var>SErrNoSuchAction</var> is the error message displayed when a requested action cannot be found.
+</descr>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrUnknownAction">
+<short>Error message for unrecognized action</short>
+<descr>
+<var>SErrUnknownAction</var> is the error message displayed for unrecognized or invalid actions.
+</descr>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrNoDefaultAction">
+<short>Error message for missing default action</short>
+<descr>
+<var>SErrNoDefaultAction</var> is the error message displayed when no default action is available.
+</descr>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrInvActNoDefaultAction">
+<short>Error message for invalid action without default</short>
+<descr>
+<var>SErrInvActNoDefaultAction</var> is the error message displayed when an invalid action is requested and no default action is available.
+</descr>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrRequestNotHandled">
+<short>Error message for unhandled request</short>
+<descr>
+<var>SErrRequestNotHandled</var> is the error message displayed when a request cannot be handled by any action.
+</descr>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrNoSessionFactoryClass">
+<short>Error message for missing session factory class</short>
+<descr>
+<var>SErrNoSessionFactoryClass</var> is the error message displayed when no session factory class is registered.
+</descr>
+</element>
+
+<!-- resource string Visibility: default -->
+<element name="SErrNoSessionOutsideRequest">
+<short>Error message for session access outside request</short>
+<descr>
+<var>SErrNoSessionOutsideRequest</var> is the error message displayed when attempting to access session data outside of a request context.
+</descr>
+</element>
+
+</module> <!-- fphttp -->
+
+</package>
+</fpdoc-descriptions>

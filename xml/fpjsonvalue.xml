@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    fpjsonvalue
+  ====================================================================
+-->
+
+<module name="fpJsonValue">
+<short>Routines to convert TValue records to JSON and vice versa</short>
+<descr>
+This unit provides two main conversion functions for converting between <var>TValue</var> records and JSON data structures.
+The conversion functions support various Pascal data types including strings, integers, booleans, and dynamic arrays.
+The unit uses RTTI type information to determine the appropriate JSON representation and perform accurate conversions.
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="fpjson">
+<short>JSON data structures and parsing functionality</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="rtti">
+<short>Runtime type information support</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="ValueToJSON">
+<short>Converts a TValue to a JSON data structure</short>
+<descr>
+<var>ValueToJSON</var> converts a <var>TValue</var> record to its corresponding JSON representation using the provided RTTI type information.
+The function supports conversion of strings (AnsiString, UnicodeString, WideString, ShortString), integers (Integer, Int64, QWord), booleans, and dynamic arrays.
+For dynamic arrays, the function recursively converts each element using the array's element type information.
+If an error occurs during conversion, any partially created JSON structure is cleaned up before re-raising the exception.
+</descr>
+<errors>
+May raise an exception if the conversion fails or if an unsupported type is encountered.
+</errors>
+<seealso>
+<link id="JSONToValue">JSONToValue</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="ValueToJSON.Result">
+<short>The JSON data structure representing the converted value</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ValueToJSON.aValue">
+<short>The TValue record to convert to JSON</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="ValueToJSON.aType">
+<short>The RTTI type information for the value being converted</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="JSONToValue">
+<short>Converts JSON data to a TValue record</short>
+<descr>
+<var>JSONToValue</var> converts a JSON data structure to its corresponding <var>TValue</var> record using the provided RTTI type information.
+The function supports conversion of JSON strings to Pascal strings (AnsiString, UnicodeString), JSON numbers to integers (Integer, Int64, QWord), JSON booleans to Pascal booleans, and JSON arrays to dynamic arrays.
+For dynamic arrays, the function recursively converts each JSON array element using the array's element type information.
+The function uses <var>TValue.Make</var> and <var>TValue.FromArray</var> to construct the appropriate TValue representation.
+</descr>
+<errors>
+May raise an exception if the conversion fails or if there is a type mismatch between the JSON data and the expected type.
+</errors>
+<seealso>
+<link id="ValueToJSON">ValueToJSON</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="JSONToValue.Result">
+<short>The TValue record representing the converted JSON data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="JSONToValue.aData">
+<short>The JSON data structure to convert to a TValue</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="JSONToValue.aType">
+<short>The RTTI type information for the target value type</short>
+</element>
+
+</module> <!-- fpjsonvalue -->
+
+</package>
+</fpdoc-descriptions>

@@ -1,0 +1,2375 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    fphttpclient
+  ====================================================================
+-->
+
+<module name="fpHttpClient">
+<short>HTTP client implementation for making HTTP requests</short>
+<descr>
+<p>The <var>fpHttpClient</var> unit provides a complete HTTP client implementation for making HTTP requests.
+It supports all standard HTTP methods (GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD), SSL/TLS connections, redirects, authentication, cookies, and form posting including file uploads.</p>
+<p>The main classes are <link id="TFPCustomHTTPClient">TFPCustomHTTPClient</link> (base class) and <link id="TFPHTTPClient">TFPHTTPClient</link> (with published properties).
+The unit also supports Server-Sent Events through <link id="TCustomHTTPEventSource">TCustomHTTPEventSource</link> and proxy connections through <link id="TProxyData">TProxyData</link>.</p>
+</descr>
+
+<topic name="fpHttpClientUsage">
+<short>Using the TFPHTTPClient</short>
+<descr>
+<p>The <var>TFPHTTPClient</var> class provides both simple class methods for quick requests and instance-based methods for more control over the HTTP client behavior.
+For basic operations, use the static <var>SimpleGet</var>, <var>SimplePost</var>, and <var>SimpleFormPost</var> methods.
+For advanced features like custom headers, authentication, or cookie management, create a <var>TFPHTTPClient</var> instance.</p>
+<p>The HTTP client automatically handles redirects (up to a configurable limit), manages cookies, and supports both HTTP and HTTPS protocols.
+For HTTPS support, you must include either <var>opensslsockets</var> or <var>gnutlssockets</var> in your program's uses clause.</p>
+<code>
+program HTTPClientBasic;
+
+{$mode objfpc}{$H+}
+
+uses
+  SysUtils, Classes, fphttpclient, opensslsockets; // opensslsockets enables HTTPS
+
+var
+  Client: TFPHTTPClient;
+  Response: String;
+  ResponseStream: TStringStream;
+begin
+  // Simple GET request using class method
+  Response := TFPHTTPClient.SimpleGet('https://httpbin.org/get');
+  Writeln('Simple GET response:');
+  Writeln(Response);
+
+  // Instance-based approach for more control
+  Client := TFPHTTPClient.Create(nil);
+  ResponseStream := TStringStream.Create('');
+  try
+    // Configure client
+    Client.AllowRedirect := True;
+    Client.MaxRedirects := 5;
+
+    // Add custom headers
+    Client.AddHeader('User-Agent', 'MyApp/1.0');
+    Client.AddHeader('Accept', 'application/json');
+
+    // Make request to stream
+    Client.Get('https://httpbin.org/headers', ResponseStream);
+
+    Writeln('Response with custom headers:');
+    Writeln(ResponseStream.DataString);
+
+    Writeln('Response Status Code: ', Client.ResponseStatusCode);
+    Writeln('Response Headers:');
+    Writeln(Client.ResponseHeaders.Text);
+  finally
+    ResponseStream.Free;
+    Client.Free;
+  end;
+end.
+</code>
+</descr>
+</topic>
+
+<topic name="fpHttpClientHttps">
+<short>HTTPS Support in TFPHTTPClient</short>
+<descr>
+<p>To enable HTTPS support in the TFPHTTPClient class, you must include either <var>opensslsockets</var> or <var>gnutlssockets</var> in your program's uses clause.
+These units register SSL socket handlers that the HTTP client uses automatically when encountering HTTPS URLs.</p>
+<p><var>opensslsockets</var> uses the OpenSSL library and is the most commonly used option.
+<var>gnutlssockets</var> uses the GnuTLS library as an alternative.
+Include only one of these units - do not include both in the same program.</p>
+<code>
+program HTTPSExample;
+
+{$mode objfpc}{$H+}
+
+uses
+  SysUtils, fphttpclient, opensslsockets; // This enables HTTPS support
+
+var
+  Client: TFPHTTPClient;
+  Response: String;
+begin
+  Client := TFPHTTPClient.Create(nil);
+  try
+    // Configure SSL settings if needed
+    Client.AllowRedirect := True;
+
+    // Make HTTPS request - automatically uses SSL
+    Response := Client.Get('https://api.github.com/users/freepascal');
+
+    Writeln('HTTPS Response:');
+    Writeln(Response);
+
+    Writeln('HTTPS request completed successfully');
+    Writeln('Status Code: ', Client.ResponseStatusCode);
+
+  finally
+    Client.Free;
+  end;
+end.
+</code>
+<p><b>SSL Certificate Verification:</b> By default, the client verifies SSL certificates.
+You can disable this verification for testing purposes by setting <var>Client.IOTimeout := 0</var> and handling the <var>OnVerifyCertificate</var> event,
+but this is not recommended for production code as it makes connections vulnerable to man-in-the-middle attacks.</p>
+</descr>
+</topic>
+
+<topic name="fpHttpClientMethods">
+<short>HTTP Methods with TFPHTTPClient</short>
+<descr>
+<p>The <var>TFPHTTPClient</var> class supports all standard HTTP methods through various methods and overloads.
+Each method provides multiple ways to handle the response: as a string, stream, or file.</p>
+<code>
+program HTTPMethodsExample;
+
+{$mode objfpc}{$H+}
+
+uses
+  SysUtils, Classes, fphttpclient, opensslsockets;
+
+var
+  Client: TFPHTTPClient;
+  Response: String;
+  PostData: TStringStream;
+  ResponseStream: TFileStream;
+begin
+  Client := TFPHTTPClient.Create(nil);
+  try
+    // GET request
+    Writeln('=== GET Request ===');
+    Response := Client.Get('https://httpbin.org/get?param1=value1');
+    Writeln('GET Response: ', Copy(Response, 1, 100), '...');
+
+    // POST request with data
+    Writeln('=== POST Request ===');
+    Client.RequestBody := TRawByteStringStream.Create('{"key": "value", "number": 42}');
+    Client.AddHeader('Content-Type', 'application/json');
+    Response := Client.Post('https://httpbin.org/post');
+    Writeln('POST Response: ', Copy(Response, 1, 100), '...');
+
+    // PUT request
+    Writeln('=== PUT Request ===');
+    Client.RequestBody := TRawByteStringStream.Create('{"updated": "data"}');
+    Client.AddHeader('Content-Type', 'application/json');
+    Client.HTTPMethod('PUT', 'https://httpbin.org/put', nil, [200]);
+    Writeln('PUT Status Code: ', Client.ResponseStatusCode);
+
+    // DELETE request
+    Writeln('=== DELETE Request ===');
+    Client.HTTPMethod('DELETE', 'https://httpbin.org/delete', nil, [200]);
+    Writeln('DELETE Status Code: ', Client.ResponseStatusCode);
+
+    // HEAD request (only headers, no body)
+    Writeln('=== HEAD Request ===');
+    Client.HTTPMethod('HEAD', 'https://httpbin.org/get', nil, [200]);
+    Writeln('HEAD Content-Length: ', Client.GetHeader(Client.ResponseHeaders, 'Content-Length'));
+
+    // OPTIONS request
+    Writeln('=== OPTIONS Request ===');
+    Client.HTTPMethod('OPTIONS', 'https://httpbin.org', nil, [200]);
+    Writeln('Allowed Methods: ', Client.GetHeader(Client.ResponseHeaders, 'Allow'));
+
+    // Save response to file
+    Writeln('=== GET to File ===');
+    Client.Get('https://httpbin.org/json', '/tmp/claude/response.json');
+    if FileExists('/tmp/claude/response.json') then
+      Writeln('Response saved to file successfully');
+
+  finally
+    Client.Free;
+  end;
+end.
+</code>
+</descr>
+</topic>
+
+<topic name="fpHttpClientFormPost">
+<short>Form Data and File Upload with fpHttpClient</short>
+<descr>
+<p>The <var>TFPHTTPClient</var> class provides specialized methods for posting form data and uploading files.
+<var>FormPost</var> handles URL-encoded form data, while <var>FileFormPost</var> uploads files using multipart/form-data encoding.</p>
+<code>
+program FormPostExample;
+
+{$mode objfpc}{$H+}
+
+uses
+  SysUtils, Classes, fphttpclient, opensslsockets;
+
+var
+  Client: TFPHTTPClient;
+  FormData: TStrings;
+  Response: String;
+  FileStream: TFileStream;
+begin
+  Client := TFPHTTPClient.Create(nil);
+  FormData := TStringList.Create;
+  try
+    // Simple form post with key-value pairs
+    Writeln('=== Form Post Example ===');
+    FormData.Values['username'] := 'testuser';
+    FormData.Values['email'] := 'test@example.com';
+    FormData.Values['message'] := 'Hello from FreePascal!';
+
+    Response := Client.FormPost('https://httpbin.org/post', FormData);
+    Writeln('Form POST response: ', Copy(Response, 1, 150), '...');
+
+    // Form post with raw data
+    Writeln('=== Raw Form Data Post ===');
+    Response := Client.FormPost('https://httpbin.org/post', 'field1=value1&amp;field2=value2');
+    Writeln('Raw form POST status: ', Client.ResponseStatusCode);
+
+    // File upload using FileFormPost
+    Writeln('=== File Upload Example ===');
+
+    // Create a test file to upload
+    FileStream := TFileStream.Create('/tmp/claude/test_upload.txt', fmCreate);
+    try
+      FileStream.WriteAnsiString('This is test content for file upload');
+    finally
+      FileStream.Free;
+    end;
+
+    // Upload the file
+    Client.FileFormPost('https://httpbin.org/post', 'file', '/tmp/claude/test_upload.txt',
+                        TStringStream.Create(''));
+
+    Writeln('File upload status: ', Client.ResponseStatusCode);
+    if Client.ResponseStatusCode = 200 then
+      Writeln('File uploaded successfully');
+
+    // Clean up test file
+    if FileExists('/tmp/claude/test_upload.txt') then
+      DeleteFile('/tmp/claude/test_upload.txt');
+
+  finally
+    FormData.Free;
+    Client.Free;
+  end;
+end.
+</code>
+</descr>
+</topic>
+
+<topic name="fpHttpClientFileUpload">
+<short>File Upload with Local Filename</short>
+<descr>
+<p>The <var>FileFormPost</var> method provides an easy way to upload local files to a server.
+It automatically handles multipart/form-data encoding and sets appropriate headers.
+The method takes the URL, form field name, local filename, and a response stream.</p>
+<code>
+program FileUploadExample;
+
+{$mode objfpc}{$H+}
+
+uses
+  SysUtils, Classes, fphttpclient, opensslsockets;
+
+procedure CreateTestFile(const FileName: String);
+var
+  F: TextFile;
+begin
+  AssignFile(F, FileName);
+  Rewrite(F);
+  try
+    Writeln(F, 'Sample file content for upload test');
+    Writeln(F, 'Created: ', DateTimeToStr(Now));
+    Writeln(F, 'This file will be uploaded via HTTP POST');
+  finally
+    CloseFile(F);
+  end;
+end;
+
+var
+  Client: TFPHTTPClient;
+  ResponseStream: TStringStream;
+  TestFileName: String;
+begin
+  Client := TFPHTTPClient.Create(nil);
+  ResponseStream := TStringStream.Create('');
+  TestFileName := '/tmp/claude/upload_test.txt';
+
+  try
+    // Create a test file to upload
+    CreateTestFile(TestFileName);
+
+    Writeln('=== File Upload with Local Filename ===');
+    Writeln('Uploading file: ', TestFileName);
+
+    // Configure client for file upload
+    Client.AllowRedirect := True;
+    Client.AddHeader('User-Agent', 'FreePascal-FileUploader/1.0');
+
+    // Upload the file
+    // Parameters: URL, field name, local filename, response stream
+    Client.FileFormPost('https://httpbin.org/post', 'uploaded_file', TestFileName, ResponseStream);
+
+    // Check upload result
+    if Client.ResponseStatusCode = 200 then
+    begin
+      Writeln('Upload successful!');
+      Writeln('Server response status: ', Client.ResponseStatusCode);
+      Writeln('Response content type: ', Client.GetHeader(Client.ResponseHeaders, 'Content-Type'));
+
+      // Show part of the response
+      Writeln('Server response (first 200 chars):');
+      Writeln(Copy(ResponseStream.DataString, 1, 200));
+    end
+    else
+    begin
+      Writeln('Upload failed with status: ', Client.ResponseStatusCode);
+      Writeln('Response: ', ResponseStream.DataString);
+    end;
+
+    // Upload with additional form fields
+    Writeln('=== File Upload with Additional Fields ===');
+    ResponseStream.Clear;
+
+    // Add custom headers for the upload
+    Client.AddHeader('X-Upload-Purpose', 'documentation-example');
+
+    // You can also upload to services that expect additional form data
+    // by using FileFormPost combined with other form fields
+
+  finally
+    ResponseStream.Free;
+    Client.Free;
+
+    // Clean up test file
+    if FileExists(TestFileName) then
+      DeleteFile(TestFileName);
+  end;
+end.
+</code>
+<p><b>Important Notes:</b></p>
+<p>• The file must exist and be readable for the upload to succeed</p>
+<p>• The form field name should match what the server expects</p>
+<p>• The method automatically sets Content-Type to multipart/form-data</p>
+<p>• Large files are streamed efficiently without loading entirely into memory</p>
+<p>• The server response is written to the provided response stream</p>
+</descr>
+</topic>
+
+<topic name="fpHttpClientAdvanced">
+<short>Advanced TFPHTTPClient Features</short>
+<descr>
+<p>The <var>TFPHTTPClient</var> class supports advanced features like authentication, custom headers, cookies, proxy settings, and request/response event handling.
+These features enable building robust HTTP client applications with full control over the HTTP communication.</p>
+<code>
+program AdvancedHTTPExample;
+
+{$mode objfpc}{$H+}
+
+uses
+  SysUtils, Classes, fphttpclient, opensslsockets, base64;
+
+procedure OnDataReceived(Sender: TObject; const ContentLength, CurrentPos: Int64);
+begin
+  if ContentLength > 0 then
+    Write(Format('Progress: %d/%d bytes (%.1f%%)' + #13,
+                [CurrentPos, ContentLength, (CurrentPos/ContentLength)*100]));
+end;
+
+procedure OnPassword(Sender: TObject; var RepeatRequest: Boolean);
+begin
+  Writeln('Authentication required - this is where you would prompt for credentials');
+  RepeatRequest := False; // Don't retry automatically
+end;
+
+var
+  Client: TFPHTTPClient;
+  Response: String;
+  AuthHeader: String;
+begin
+  Client := TFPHTTPClient.Create(nil);
+  try
+    Writeln('=== Basic Authentication Example ===');
+    // HTTP Basic Authentication
+    AuthHeader := 'Basic ' + EncodeBase64('username:password');
+    Client.AddHeader('Authorization', AuthHeader);
+
+    // You can also use the Username/Password properties
+    // Client.UserName := 'testuser';
+    // Client.Password := 'testpass';
+
+    Writeln('=== Custom Headers Example ===');
+    Client.AddHeader('X-API-Key', 'your-api-key-here');
+    Client.AddHeader('X-Custom-Header', 'custom-value');
+    Client.AddHeader('Accept', 'application/json');
+
+    Writeln('=== Event Handlers Example ===');
+    Client.OnDataReceived := @OnDataReceived;
+    Client.OnPassword := @OnPassword;
+
+    Writeln('=== Cookie Management Example ===');
+    // Cookies are automatically managed between requests
+    Client.Cookies.Values['session_id'] := 'abc123';
+    Client.Cookies.Values['user_pref'] := 'dark_mode';
+
+    Writeln('=== Redirect Configuration ===');
+    Client.AllowRedirect := True;
+    Client.MaxRedirects := 10;
+
+    Writeln('=== Timeout Configuration ===');
+    Client.IOTimeout := 30000; // 30 seconds timeout
+    Client.ConnectTimeout := 10000; // 10 seconds connect timeout
+
+    Writeln('=== Proxy Configuration Example ===');
+    // Uncomment to use proxy
+    // Client.Proxy.Host := 'proxy.example.com';
+    // Client.Proxy.Port := 8080;
+    // Client.Proxy.UserName := 'proxy_user';
+    // Client.Proxy.Password := 'proxy_pass';
+
+    try
+      // Make request with all configured settings
+      Response := Client.Get('https://httpbin.org/headers');
+
+      Writeln('Request completed successfully!');
+      Writeln('Status Code: ', Client.ResponseStatusCode);
+      Writeln('Response Length: ', Length(Response));
+
+      // Access response headers
+      Writeln('Server: ', Client.GetHeader(Client.ResponseHeaders, 'Server'));
+      Writeln('Content-Type: ', Client.GetHeader(Client.ResponseHeaders, 'Content-Type'));
+
+      // Show cookies received from server
+      if Client.Cookies.Count > 0 then
+      begin
+        Writeln('Cookies received:');
+        Writeln(Client.Cookies.Text);
+      end;
+
+    except
+      on E: Exception do
+      begin
+        Writeln('Request failed: ', E.Message);
+        Writeln('Last status code: ', Client.ResponseStatusCode);
+      end;
+    end;
+
+  finally
+    Client.Free;
+  end;
+end.
+</code>
+</descr>
+</topic>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Basic component and persistence classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>System utility functions and classes</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="ssockets">
+<short>Socket stream implementation for network communication</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="httpdefs">
+<short>HTTP protocol definitions and constants</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="uriparser">
+<short>URI parsing and manipulation functions</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="base64">
+<short>Base64 encoding and decoding functions</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="sslsockets">
+<short>SSL/TLS socket implementation for secure connections</short>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="ReadBufLen">
+<short>Default buffer size for socket reading operations</short>
+<descr>
+<p>Default buffer size used for reading data from sockets.
+The value is 4096 bytes, which provides a good balance between memory usage and performance.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- constant Visibility: default -->
+<element name="DefMaxRedirects">
+<short>Default maximum number of HTTP redirects to follow</short>
+<descr>
+<p>Default maximum number of HTTP redirects that will be followed automatically.
+The value is 16, which prevents infinite redirect loops while allowing reasonable redirect chains.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.MaxRedirects">TFPHTTPClient.MaxRedirects</link>
+<link id="TFPHTTPClient.AllowRedirect">TFPHTTPClient.AllowRedirect</link>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TRedirectEvent">
+<short>Event type for handling HTTP redirects</short>
+<descr>
+<p>Event type called when an HTTP redirect is encountered.
+The event handler can modify the destination URL or prevent the redirect.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.OnRedirect">TFPHTTPClient.OnRedirect</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRedirectEvent.Sender">
+<short>The HTTP client object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRedirectEvent.ASrc">
+<short>The original URL that caused the redirect</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TRedirectEvent.ADest">
+<short>The destination URL for the redirect (can be modified)</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TPasswordEvent">
+<short>Event type for handling authentication challenges</short>
+<descr>
+<p>Event type called when the server requests authentication.
+The event handler can provide credentials and indicate whether to retry the request.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.OnPassword">TFPHTTPClient.OnPassword</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPasswordEvent.Sender">
+<short>The HTTP client object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPasswordEvent.RepeatRequest">
+<short>Set to <var>True</var> to retry the request with new credentials</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TDataEvent">
+<short>Event type for tracking data transfer progress</short>
+<descr>
+<p>Event type called during data transfer to provide progress information.
+During header reading, ContentLength is 0. During content reading, ContentLength is -1 if not specified by server.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.OnDataReceived">TFPHTTPClient.OnDataReceived</link>
+<link id="TFPHTTPClient.OnDataSent">TFPHTTPClient.OnDataSent</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDataEvent.Sender">
+<short>The HTTP client object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDataEvent.ContentLength">
+<short>Total content length in bytes (0 during headers, -1 if unknown)</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TDataEvent.CurrentPos">
+<short>Current position in the content being transferred</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TGetSocketHandlerEvent">
+<short>Event type for providing custom socket handlers</short>
+<descr>
+<p>Event type called to allow custom socket handler creation.
+This enables the use of custom SSL implementations or socket configurations.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.OnGetSocketHandler">TFPHTTPClient.OnGetSocketHandler</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGetSocketHandlerEvent.Sender">
+<short>The HTTP client object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGetSocketHandlerEvent.UseSSL">
+<short><var>True</var> if SSL/TLS connection is required</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TGetSocketHandlerEvent.AHandler">
+<short>The socket handler to use for the connection</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="TSocketHandlerCreatedEvent">
+<short>Event type called after socket handler creation</short>
+<descr>
+<p>Event type called after a socket handler has been created, allowing additional configuration of the handler.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.AfterSocketHandlerCreate">TFPHTTPClient.AfterSocketHandlerCreate</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSocketHandlerCreatedEvent.Sender">
+<short>The HTTP client object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TSocketHandlerCreatedEvent.AHandler">
+<short>The socket handler that was created</short>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="THTTPVerifyCertificateEvent">
+<short>Event type for SSL certificate verification</short>
+<descr>
+<p>Event type called during SSL certificate verification, allowing custom certificate validation logic.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.OnVerifySSLCertificate">TFPHTTPClient.OnVerifySSLCertificate</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPVerifyCertificateEvent.Sender">
+<short>The HTTP client object that triggered the event</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPVerifyCertificateEvent.AHandler">
+<short>The SSL socket handler containing the certificate</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPVerifyCertificateEvent.aAllow">
+<short>Set to <var>True</var> to accept the certificate</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TFPCustomHTTPClient">
+<short>Base HTTP client class for making HTTP requests</short>
+<descr>
+<p><var>TFPCustomHTTPClient</var> is the base class for HTTP client functionality.
+It provides methods for all standard HTTP operations including GET, POST, PUT, DELETE, PATCH, OPTIONS, and HEAD requests.</p>
+<p>The class supports SSL/TLS connections, HTTP redirects, authentication, cookies, form posting with file uploads, proxy connections, and Server-Sent Events.
+It handles connection management, timeout control, and provides various events for monitoring request progress.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPHTTPClient">TFPHTTPClient</link>
+<link id="TProxyData">TProxyData</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TCustomHTTPEventSource">
+<short>Base class for Server-Sent Events (SSE) client</short>
+<descr>
+<p><var>TCustomHTTPEventSource</var> provides Server-Sent Events functionality for receiving real-time data streams from HTTP servers.
+It handles the SSE protocol for parsing event streams and provides methods for reading events and checking data availability.</p>
+<p>This class is used internally by the HTTP client for SSE support and can be extended for custom SSE implementations.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="THTTPEventSource">THTTPEventSource</link>
+<link id="TFPCustomHTTPClient.GetEventSource">TFPCustomHTTPClient.GetEventSource</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TCustomHTTPEventSource.Create">
+<short>Creates a new Server-Sent Events source</short>
+<descr>
+<p>Creates a new Server-Sent Events source using the provided socket stream and initial buffer data.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCustomHTTPEventSource.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomHTTPEventSource.Create.aSocket">
+<short>The socket stream for the SSE connection</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomHTTPEventSource.Create.aBuffer">
+<short>Initial buffer data from the connection</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TCustomHTTPEventSource.Destroy">
+<short>Destroys the Server-Sent Events source</short>
+<descr>
+<p>Destroys the Server-Sent Events source and closes the associated socket connection.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCustomHTTPEventSource.Create">Create</link>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomHTTPEventSource.DataAvailable">
+<short>Checks if data is available for reading</short>
+<descr>
+<p>Returns <var>True</var> if data is available for reading from the event source without blocking.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCustomHTTPEventSource.ReadEvent">ReadEvent</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomHTTPEventSource.DataAvailable.Result">
+<short><var>True</var> if data is available for reading</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TCustomHTTPEventSource.ReadEvent">
+<short>Reads one Server-Sent Event from the stream</short>
+<descr>
+<p>Reads one Server-Sent Event from the stream.
+Will block if no data is available. Returns <var>False</var> if no event could be read or the stream is closed.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCustomHTTPEventSource.DataAvailable">DataAvailable</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TCustomHTTPEventSource.ReadEvent.Result">
+<short><var>True</var> if an event was successfully read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomHTTPEventSource.ReadEvent.aEvent">
+<short>The Server-Sent Event that was read</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TCustomHTTPEventSource.ReadEvent.aConcatData">
+<short>Whether to concatenate multi-line event data</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TCustomHTTPEventSource.Close">
+<short>Closes the event source connection</short>
+<descr>
+<p>Closes the underlying socket connection and terminates the event source.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomHTTPEventSource.Headers">
+<short>HTTP headers from the original Server-Sent Events request</short>
+<descr>
+<p>Contains the HTTP headers that were returned by the server when the Server-Sent Events connection was established.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TCustomHTTPEventSource.EOF">
+<short>Indicates whether the event stream has ended</short>
+<descr>
+<p>Returns <var>True</var> when the server has closed the event stream and no more events will be available.</p>
+</descr>
+<seealso>
+<link id="TCustomHTTPEventSource.DataAvailable">DataAvailable</link>
+</seealso>
+</element>
+
+<!-- procedure type Visibility: default -->
+<element name="THTTPEventStreamHandler">
+<short>Event type for handling Server-Sent Events streams</short>
+<descr>
+<p>Event type called when a Server-Sent Events stream is established, providing access to the event source for reading events.</p>
+</descr>
+<seealso>
+<link id="TCustomHTTPEventSource">TCustomHTTPEventSource</link>
+<link id="TFPHTTPClient.OnEventStream">TFPHTTPClient.OnEventStream</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPEventStreamHandler.aSender">
+<short>The HTTP client that created the event source</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="THTTPEventStreamHandler.aSource">
+<short>The event source for reading SSE data</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="THTTPEventSource">
+<short>Default Server-Sent Events source implementation</short>
+<descr>
+<p><var>THTTPEventSource</var> is the default implementation of Server-Sent Events functionality.
+It is returned by <link id="TFPCustomHTTPClient.GetEventSource">TFPCustomHTTPClient.GetEventSource</link> for SSE connections.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TCustomHTTPEventSource">TCustomHTTPEventSource</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TProxyData">
+<short>Proxy server configuration data</short>
+<descr>
+<p><var>TProxyData</var> stores proxy server configuration including host, port, and authentication credentials.
+It is used by the HTTP client to route requests through proxy servers.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPHTTPClient.Proxy">TFPHTTPClient.Proxy</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TProxyData.Assign">
+<short>Assigns proxy settings from another object</short>
+<descr>
+<p>Copies proxy configuration from another <var>TProxyData</var> instance.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TProxyData.Assign.Source">
+<short>The source proxy data to copy from</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProxyData.Host">
+<short>Proxy server hostname or IP address</short>
+<descr>
+<p>The hostname or IP address of the proxy server to use for HTTP requests.</p>
+</descr>
+<seealso>
+<link id="TProxyData.Port">Port</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProxyData.Port">
+<short>Proxy server port number</short>
+<descr>
+<p>The port number to connect to on the proxy server.</p>
+</descr>
+<seealso>
+<link id="TProxyData.Host">Host</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProxyData.UserName">
+<short>Username for proxy authentication</short>
+<descr>
+<p>Username to use for proxy server authentication if required.</p>
+</descr>
+<seealso>
+<link id="TProxyData.Password">Password</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TProxyData.Password">
+<short>Password for proxy authentication</short>
+<descr>
+<p>Password to use for proxy server authentication if required.</p>
+</descr>
+<seealso>
+<link id="TProxyData.UserName">UserName</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TFPCustomHTTPClient.Create">
+<short>Creates a new HTTP client instance</short>
+<descr>
+<p>Creates a new HTTP client instance and initializes default settings for timeouts, HTTP version, and other configuration options.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Destroy">Destroy</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Create.AOwner">
+<short>The component that will own this HTTP client</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TFPCustomHTTPClient.Destroy">
+<short>Destroys the HTTP client instance</short>
+<descr>
+<p>Destroys the HTTP client instance, closes any open connections, and frees associated resources.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Create">Create</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPCustomHTTPClient.UnixSocketPath">
+<short>Path to Unix domain socket for local connections</short>
+<descr>
+<p>When set, the HTTP client will connect to a Unix domain socket at the specified path instead of using TCP connections.
+This is useful for communicating with local services via Unix sockets.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.AddHeader">
+<short>Adds an HTTP header to a headers collection</short>
+<descr>
+<p>Static utility method to add an HTTP header with the specified name and value to a headers collection.
+If a header with the same name already exists, its value is updated.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.GetHeader">GetHeader</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.AddHeader.HTTPHeaders">
+<short>The headers collection to add the header to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.AddHeader.AHeader">
+<short>The header name</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.AddHeader.AValue">
+<short>The header value</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TFPCustomHTTPClient.IndexOfHeader">
+<short>Returns the index of a header in a headers collection</short>
+<descr>
+<p>Static utility method to find the index of a header with the specified name in a headers collection.
+Returns -1 if the header is not found.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.GetHeader">GetHeader</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.IndexOfHeader.Result">
+<short>The index of the header, or -1 if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.IndexOfHeader.HTTPHeaders">
+<short>The headers collection to search in</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.IndexOfHeader.AHeader">
+<short>The header name to search for</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TFPCustomHTTPClient.GetHeader">
+<short>Gets the value of a header from a headers collection</short>
+<descr>
+<p>Static utility method to retrieve the value of a header with the specified name from a headers collection.
+Returns an empty string if the header is not found.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.AddHeader">AddHeader</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.GetHeader.Result">
+<short>The header value, or empty string if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.GetHeader.HTTPHeaders">
+<short>The headers collection to search in</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.GetHeader.AHeader">
+<short>The header name to retrieve</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.Terminate">
+<short>Terminates any ongoing HTTP operation</short>
+<descr>
+<p>Signals that any ongoing HTTP operation should be terminated.
+This sets the <var>Terminated</var> property to <var>True</var> and may abort current requests.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Terminated">Terminated</link>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.HTTPMethod">
+<short>Executes an HTTP request with the specified method</short>
+<descr>
+<p>Generic method for executing HTTP requests with any HTTP method.
+This is the core method used by all other HTTP method shortcuts (GET, POST, etc.).</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors or invalid responses.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Get">Get</link>
+<link id="TFPCustomHTTPClient.Post">Post</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.HTTPMethod.AMethod">
+<short>The HTTP method to use (GET, POST, PUT, etc.)</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.HTTPMethod.AURL">
+<short>The URL to send the request to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.HTTPMethod.Stream">
+<short>Stream to write the response content to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.HTTPMethod.AllowedResponseCodes">
+<short>Array of HTTP status codes that are considered successful</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.Get">
+<short>Performs an HTTP GET request</short>
+<descr>
+<p>Performs an HTTP GET request to retrieve data from the specified URL.
+The response can be written to a stream, saved to a file, or returned as a string.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors or invalid responses.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Post">Post</link>
+<link id="TFPCustomHTTPClient.SimpleGet">SimpleGet</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Get.AURL">
+<short>The URL to retrieve</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Get.Stream">
+<short>Stream to write the response content to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Get.LocalFileName">
+<short>Local filename to save the response to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Get.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.Get.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TFPCustomHTTPClient.GetEventSource">
+<short>Creates a Server-Sent Events connection</short>
+<descr>
+<p>Establishes a Server-Sent Events connection to the specified URL and returns an event source for reading events.
+The connection uses the specified HTTP method and optional request body.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors.</p>
+</errors>
+<seealso>
+<link id="TCustomHTTPEventSource">TCustomHTTPEventSource</link>
+<link id="TFPHTTPClient.OnEventStream">TFPHTTPClient.OnEventStream</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.GetEventSource.Result">
+<short>The Server-Sent Events source for reading events</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.GetEventSource.aMethod">
+<short>The HTTP method to use (typically GET)</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.GetEventSource.aURL">
+<short>The URL of the Server-Sent Events endpoint</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.GetEventSource.aBody">
+<short>Optional request body data</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TFPCustomHTTPClient.IsRedirect">
+<short>Checks if an HTTP status code indicates a redirect</short>
+<descr>
+<p>Static utility method that returns <var>True</var> if the specified HTTP status code indicates a redirect (3xx codes).</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.RedirectForcesGET">RedirectForcesGET</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.IsRedirect.Result">
+<short><var>True</var> if the status code indicates a redirect</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.IsRedirect.ACode">
+<short>The HTTP status code to check</short>
+</element>
+
+<!-- class function Visibility: public -->
+<element name="TFPCustomHTTPClient.RedirectForcesGET">
+<short>Checks if a redirect status code forces GET method</short>
+<descr>
+<p>Static utility method that returns <var>True</var> if the specified redirect status code requires changing the HTTP method to GET.
+This applies to certain 3xx status codes that mandate method changes.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.IsRedirect">IsRedirect</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.RedirectForcesGET.Result">
+<short><var>True</var> if the redirect forces GET method</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.RedirectForcesGET.ACode">
+<short>The HTTP redirect status code to check</short>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.SimpleGet">
+<short>Static method to perform a simple HTTP GET request</short>
+<descr>
+<p>Static utility method for performing a simple HTTP GET request without requiring an HTTP client instance.
+This is convenient for quick one-off requests.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Get">Get</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleGet.AURL">
+<short>The URL to retrieve</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleGet.Stream">
+<short>Stream to write the response content to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleGet.LocalFileName">
+<short>Local filename to save the response to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleGet.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleGet.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.Post">
+<short>Performs an HTTP POST request</short>
+<descr>
+<p>Performs an HTTP POST request to send data to the specified URL.
+The request body is taken from the <var>RequestBody</var> property.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors or invalid responses.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Get">Get</link>
+<link id="TFPCustomHTTPClient.FormPost">FormPost</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Post.URL">
+<short>The URL to post to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Post.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Post.LocalFileName">
+<short>Local filename to save the response to</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.Post.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.SimplePost">
+<short>Static method to perform a simple HTTP POST request</short>
+<descr>
+<p>Static utility method for performing a simple HTTP POST request without requiring an HTTP client instance.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Post">Post</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimplePost.URL">
+<short>The URL to post to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimplePost.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimplePost.LocalFileName">
+<short>Local filename to save the response to</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.SimplePost.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.Put">
+<short>Performs an HTTP PUT request</short>
+<descr>
+<p>Performs an HTTP PUT request to upload or update data at the specified URL.
+The request body is taken from the <var>RequestBody</var> property.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors or invalid responses.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Post">Post</link>
+<link id="TFPCustomHTTPClient.Patch">Patch</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Put.URL">
+<short>The URL to send the PUT request to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Put.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Put.LocalFileName">
+<short>Local filename to save the response to</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.Put.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.SimplePut">
+<short>Static method to perform a simple HTTP PUT request</short>
+<descr>
+<p>Static utility method for performing a simple HTTP PUT request without requiring an HTTP client instance.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Put">Put</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimplePut.URL">
+<short>The URL to send the PUT request to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimplePut.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimplePut.LocalFileName">
+<short>Local filename to save the response to</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.SimplePut.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.Delete">
+<short>Performs an HTTP DELETE request</short>
+<descr>
+<p>Performs an HTTP DELETE request to delete a resource at the specified URL.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors or invalid responses.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Get">Get</link>
+<link id="TFPCustomHTTPClient.Post">Post</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Delete.URL">
+<short>The URL to send the DELETE request to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Delete.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Delete.LocalFileName">
+<short>Local filename to save the response to</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.Delete.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.SimpleDelete">
+<short>Static method to perform a simple HTTP DELETE request</short>
+<descr>
+<p>Static utility method for performing a simple HTTP DELETE request without requiring an HTTP client instance.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Delete">Delete</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleDelete.URL">
+<short>The URL to send the DELETE request to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleDelete.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleDelete.LocalFileName">
+<short>Local filename to save the response to</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleDelete.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.Patch">
+<short>Performs an HTTP PATCH request</short>
+<descr>
+<p>Performs an HTTP PATCH request to partially update a resource at the specified URL.
+The request body is taken from the <var>RequestBody</var> property.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors or invalid responses.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Put">Put</link>
+<link id="TFPCustomHTTPClient.Post">Post</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Patch.URL">
+<short>The URL to send the PATCH request to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Patch.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Patch.LocalFileName">
+<short>Local filename to save the response to</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.Patch.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.SimplePatch">
+<short>Static method to perform a simple HTTP PATCH request</short>
+<descr>
+<p>Static utility method for performing a simple HTTP PATCH request without requiring an HTTP client instance.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Patch">Patch</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimplePatch.URL">
+<short>The URL to send the PATCH request to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimplePatch.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimplePatch.LocalFileName">
+<short>Local filename to save the response to</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.SimplePatch.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.Options">
+<short>Performs an HTTP OPTIONS request</short>
+<descr>
+<p>Performs an HTTP OPTIONS request to query the supported methods and capabilities of a server or resource.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors or invalid responses.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Head">Head</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Options.URL">
+<short>The URL to send the OPTIONS request to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Options.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Options.LocalFileName">
+<short>Local filename to save the response to</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.Options.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.SimpleOptions">
+<short>Static method to perform a simple HTTP OPTIONS request</short>
+<descr>
+<p>Static utility method for performing a simple HTTP OPTIONS request without requiring an HTTP client instance.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Options">Options</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleOptions.URL">
+<short>The URL to send the OPTIONS request to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleOptions.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleOptions.LocalFileName">
+<short>Local filename to save the response to</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleOptions.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.Head">
+<short>Performs an HTTP HEAD request</short>
+<descr>
+<p>Performs an HTTP HEAD request to retrieve only the headers for a resource without the body content.
+Useful for checking resource metadata, existence, or modification dates.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors or invalid responses.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Get">Get</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Head.AURL">
+<short>The URL to send the HEAD request to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.Head.Headers">
+<short>Variable to store the response headers</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.FormPost">
+<short>Performs an HTTP POST request with form data</short>
+<descr>
+<p>Performs an HTTP POST request with form-encoded data.
+The form data is automatically encoded as application/x-www-form-urlencoded.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors or invalid responses.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.Post">Post</link>
+<link id="TFPCustomHTTPClient.FileFormPost">FileFormPost</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.FormPost.URL">
+<short>The URL to post the form data to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.FormPost.FormData">
+<short>The form data to post</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.FormPost.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.FormPost.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.SimpleFormPost">
+<short>Static method to perform a simple form POST request</short>
+<descr>
+<p>Static utility method for performing a simple form POST request without requiring an HTTP client instance.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.FormPost">FormPost</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleFormPost.URL">
+<short>The URL to post the form data to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleFormPost.FormData">
+<short>The form data to post</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleFormPost.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleFormPost.Result">
+<short>The response content as string</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.FileFormPost">
+<short>Performs an HTTP POST request with file upload</short>
+<descr>
+<p>Performs an HTTP POST request with file upload using multipart/form-data encoding.
+This method allows uploading files as part of a form submission.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors or invalid responses.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.FormPost">FormPost</link>
+<link id="TFPCustomHTTPClient.StreamFormPost">StreamFormPost</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.FileFormPost.AURL">
+<short>The URL to upload the file to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.FileFormPost.AFieldName">
+<short>The form field name for the file upload</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.FileFormPost.AFileName">
+<short>The filename to upload</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.FileFormPost.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.FileFormPost.FormData">
+<short>Additional form data to include with the file upload</short>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.StreamFormPost">
+<short>Performs an HTTP form POST with stream upload</short>
+<descr>
+<p>Performs an HTTP POST request with form data that includes a file uploaded from a stream.
+Uses multipart/form-data encoding for the upload.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors or invalid responses.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.FileFormPost">FileFormPost</link>
+<link id="TFPCustomHTTPClient.FormPost">FormPost</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.StreamFormPost.AURL">
+<short>The URL to post the stream form request to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.StreamFormPost.AFieldName">
+<short>The form field name for the stream data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.StreamFormPost.AFileName">
+<short>The filename to associate with the stream data</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.StreamFormPost.AStream">
+<short>The stream containing the data to upload</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.StreamFormPost.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.StreamFormPost.FormData">
+<short>Additional form data to include with the stream upload</short>
+</element>
+
+<!-- class procedure Visibility: public -->
+<element name="TFPCustomHTTPClient.SimpleFileFormPost">
+<short>Static method to perform a simple file upload form POST</short>
+<descr>
+<p>Static utility method for performing a simple file upload form POST request without requiring an HTTP client instance.
+Uses multipart/form-data encoding for the file upload.</p>
+</descr>
+<errors>
+<p>May raise HTTP-related exceptions on connection errors.</p>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient.FileFormPost">FileFormPost</link>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleFileFormPost.AURL">
+<short>The URL to post the file form request to</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleFileFormPost.AFieldName">
+<short>The form field name for the file upload</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleFileFormPost.AFileName">
+<short>The filename of the file to upload</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TFPCustomHTTPClient.SimpleFileFormPost.Response">
+<short>Variable to store the response content as string</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPCustomHTTPClient.Terminated">
+<short>Indicates whether the HTTP operation has been terminated</short>
+<descr>
+<p>Returns <var>True</var> if the current HTTP operation has been terminated by calling <var>Terminate</var>.
+This can be used to check if an operation was cancelled.</p>
+</descr>
+<seealso>
+<link id="TFPCustomHTTPClient.Terminate">Terminate</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TFPHTTPClient">
+<short>Full-featured HTTP client with published properties</short>
+<descr>
+<p><var>TFPHTTPClient</var> is the complete HTTP client implementation that publishes all properties from <link id="TFPCustomHTTPClient">TFPCustomHTTPClient</link>.
+This class is intended for use in visual design environments and provides access to all HTTP client functionality through published properties.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="TFPCustomHTTPClient">TFPCustomHTTPClient</link>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TFPHTTPClient.ResponseCookies">
+<short>Cookies received from the server in the last response</short>
+<descr>
+<p>Contains cookies that were sent by the server in the Set-Cookie headers of the last response.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.RequestCookies">RequestCookies</link>
+<link id="TFPHTTPClient.Cookies">Cookies</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.KeepConnection">
+<short>Whether to keep the connection alive between requests</short>
+<descr>
+<p>When set to <var>True</var>, the HTTP connection is kept open between requests to the same server.
+This can improve performance for multiple requests to the same host.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.Connected">Connected</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.Connected">
+<short>Indicates whether a connection is currently active</short>
+<descr>
+<p>Returns <var>True</var> if there is currently an active connection to a server.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.KeepConnection">KeepConnection</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.IOTimeout">
+<short>Timeout for data transfer operations in milliseconds</short>
+<descr>
+<p>Maximum time to wait for data transfer operations (reading/writing) before timing out.
+A value of 0 means no timeout.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.ConnectTimeout">ConnectTimeout</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.ConnectTimeout">
+<short>Timeout for connection establishment in milliseconds</short>
+<descr>
+<p>Maximum time to wait when establishing a connection to a server before timing out.
+A value of 0 means no timeout.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.IOTimeout">IOTimeout</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.RequestCookies">
+<short>Cookies to send with requests</short>
+<descr>
+<p>Collection of cookies that will be sent with HTTP requests.
+Cookies are automatically formatted into Cookie headers.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.ResponseCookies">ResponseCookies</link>
+<link id="TFPHTTPClient.Cookies">Cookies</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.RequestHeaders">
+<short>HTTP headers to send with requests</short>
+<descr>
+<p>Collection of HTTP headers that will be sent with all requests.
+Common headers include Content-Type, User-Agent, Accept, etc.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.ResponseHeaders">ResponseHeaders</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.RequestBody">
+<short>The request body content for POST/PUT requests</short>
+<descr>
+<p>Contains the data that will be sent as the request body for POST, PUT, PATCH, and similar requests.
+The content type should be set appropriately in <var>RequestHeaders</var>.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.RequestHeaders">RequestHeaders</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.ResponseHeaders">
+<short>HTTP headers received from server responses</short>
+<descr>
+<p>Collection of HTTP headers received from the server in the last response.
+This is populated after each request and contains server response metadata.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.RequestHeaders">RequestHeaders</link>
+<link id="TFPHTTPClient.ResponseStatusCode">ResponseStatusCode</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.HTTPversion">
+<short>The HTTP protocol version to use for requests</short>
+<descr>
+<p>Specifies which HTTP protocol version to use (e.g., '1.0', '1.1').
+Defaults to HTTP/1.1.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.ServerHTTPVersion">ServerHTTPVersion</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.ServerHTTPVersion">
+<short>The HTTP protocol version used by the server in the last response</short>
+<descr>
+<p>Contains the HTTP protocol version that the server used in its last response.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.HTTPversion">HTTPversion</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.ResponseStatusCode">
+<short>HTTP status code from the last response</short>
+<descr>
+<p>The HTTP status code returned by the server for the last request.
+Common values include 200 (OK), 404 (Not Found), 500 (Internal Server Error), etc.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.ResponseStatusText">ResponseStatusText</link>
+<link id="TFPHTTPClient.ResponseHeaders">ResponseHeaders</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.ResponseStatusText">
+<short>HTTP status text from the last response</short>
+<descr>
+<p>The HTTP status text (reason phrase) returned by the server for the last request.
+For example, 'OK' for status code 200, 'Not Found' for 404, etc.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.ResponseStatusCode">ResponseStatusCode</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.Cookies">
+<short>Cookie jar for automatic cookie management</short>
+<descr>
+<p>Cookie jar that automatically manages cookies between requests.
+Cookies received from servers are stored and automatically sent with subsequent requests to the same domain.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.RequestCookies">RequestCookies</link>
+<link id="TFPHTTPClient.ResponseCookies">ResponseCookies</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.AllowRedirect">
+<short>Whether to automatically follow HTTP redirects</short>
+<descr>
+<p>When set to <var>True</var>, the client will automatically follow HTTP redirects (3xx status codes).
+When <var>False</var>, redirects must be handled manually.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.MaxRedirects">MaxRedirects</link>
+<link id="TFPHTTPClient.OnRedirect">OnRedirect</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.MaxRedirects">
+<short>Maximum number of redirects to follow automatically</short>
+<descr>
+<p>Maximum number of HTTP redirects to follow automatically before giving up.
+Defaults to <link id="DefMaxRedirects">DefMaxRedirects</link> (16).</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.AllowRedirect">AllowRedirect</link>
+<link id="DefMaxRedirects">DefMaxRedirects</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.OnRedirect">
+<short>Event called when a redirect is encountered</short>
+<descr>
+<p>Event triggered when an HTTP redirect response is received.
+The event handler can modify the destination URL or prevent the redirect.</p>
+</descr>
+<seealso>
+<link id="TRedirectEvent">TRedirectEvent</link>
+<link id="TFPHTTPClient.AllowRedirect">AllowRedirect</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.UserName">
+<short>Username for HTTP authentication</short>
+<descr>
+<p>Username to use for HTTP Basic Authentication when the server requires credentials.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.Password">Password</link>
+<link id="TFPHTTPClient.OnPassword">OnPassword</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.Password">
+<short>Password for HTTP authentication</short>
+<descr>
+<p>Password to use for HTTP Basic Authentication when the server requires credentials.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.UserName">UserName</link>
+<link id="TFPHTTPClient.OnPassword">OnPassword</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.OnPassword">
+<short>Event called when authentication is required</short>
+<descr>
+<p>Event triggered when the server requests authentication.
+The event handler can provide credentials and indicate whether to retry the request.</p>
+</descr>
+<seealso>
+<link id="TPasswordEvent">TPasswordEvent</link>
+<link id="TFPHTTPClient.UserName">UserName</link>
+<link id="TFPHTTPClient.Password">Password</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.OnDataReceived">
+<short>Event called during data reception to track progress</short>
+<descr>
+<p>Event triggered periodically during data reception to provide progress information.
+Useful for showing download progress to users.</p>
+</descr>
+<seealso>
+<link id="TDataEvent">TDataEvent</link>
+<link id="TFPHTTPClient.OnDataSent">OnDataSent</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.OnDataSent">
+<short>Event called during data transmission to track progress</short>
+<descr>
+<p>Event triggered periodically during data transmission to provide progress information.
+Useful for showing upload progress to users.</p>
+</descr>
+<seealso>
+<link id="TDataEvent">TDataEvent</link>
+<link id="TFPHTTPClient.OnDataReceived">OnDataReceived</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.OnHeaders">
+<short>Event called when response headers are received</short>
+<descr>
+<p>Event triggered when HTTP response headers have been received but before the response body is read.
+Useful for examining headers before processing the response content.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.ResponseHeaders">ResponseHeaders</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.OnGetSocketHandler">
+<short>Event called to provide custom socket handlers</short>
+<descr>
+<p>Event triggered when a socket handler is needed, allowing the application to provide custom socket implementations.
+This enables the use of custom SSL implementations or socket configurations.</p>
+</descr>
+<seealso>
+<link id="TGetSocketHandlerEvent">TGetSocketHandlerEvent</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.Proxy">
+<short>Proxy server configuration</short>
+<descr>
+<p>Configuration for proxy server connections.
+When configured, all HTTP requests will be routed through the specified proxy server.</p>
+</descr>
+<seealso>
+<link id="TProxyData">TProxyData</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.VerifySSLCertificate">
+<short>Whether to verify SSL certificates</short>
+<descr>
+<p>When set to <var>True</var>, SSL certificates are verified against trusted certificate authorities.
+When <var>False</var>, SSL certificate verification is disabled (less secure).</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.OnVerifySSLCertificate">OnVerifySSLCertificate</link>
+<link id="TFPHTTPClient.CertCAFileName">CertCAFileName</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.CertCAFileName">
+<short>Path to Certificate Authority file for SSL verification</short>
+<descr>
+<p>Filename of the Certificate Authority (CA) file used for verifying SSL certificates.
+This file contains trusted root certificates for SSL verification.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.VerifySSLCertificate">VerifySSLCertificate</link>
+<link id="TFPHTTPClient.TrustedCertsDir">TrustedCertsDir</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.TrustedCertsDir">
+<short>Directory containing trusted certificate files</short>
+<descr>
+<p>Path to directory containing trusted certificate files for SSL verification.
+Certificate files in this directory are used as trusted roots for SSL connections.</p>
+</descr>
+<seealso>
+<link id="TFPHTTPClient.CertCAFileName">CertCAFileName</link>
+<link id="TFPHTTPClient.VerifySSLCertificate">VerifySSLCertificate</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.AfterSocketHandlerCreate">
+<short>Event called after socket handler creation</short>
+<descr>
+<p>Event triggered after a socket handler has been created, allowing additional configuration of the handler.</p>
+</descr>
+<seealso>
+<link id="TSocketHandlerCreatedEvent">TSocketHandlerCreatedEvent</link>
+<link id="TFPHTTPClient.OnGetSocketHandler">OnGetSocketHandler</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.OnVerifySSLCertificate">
+<short>Event called for custom SSL certificate verification</short>
+<descr>
+<p>Event triggered during SSL certificate verification, allowing custom certificate validation logic.
+The event handler can accept or reject certificates based on custom criteria.</p>
+</descr>
+<seealso>
+<link id="THTTPVerifyCertificateEvent">THTTPVerifyCertificateEvent</link>
+<link id="TFPHTTPClient.VerifySSLCertificate">VerifySSLCertificate</link>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TFPHTTPClient.OnEventStream">
+<short>Event called when a Server-Sent Events stream is established</short>
+<descr>
+<p>Event triggered when a Server-Sent Events connection is established, providing access to the event source for reading events.</p>
+</descr>
+<seealso>
+<link id="THTTPEventStreamHandler">THTTPEventStreamHandler</link>
+<link id="TFPCustomHTTPClient.GetEventSource">GetEventSource</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EHTTPClient">
+<short>Exception class for HTTP client errors</short>
+<descr>
+<p><var>EHTTPClient</var> is raised when HTTP operations fail, providing status code and error message information.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="EHTTPClientSocket">EHTTPClientSocket</link>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="EHTTPClient.Create">
+<short>Creates an HTTP client exception with status information</short>
+<descr>
+<p>Creates an HTTP client exception with the specified status text and status code.
+This provides detailed error information from HTTP operations.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="EHTTPClient.Create.AStatusText">
+<short>The HTTP status text or error message</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="EHTTPClient.Create.AStatusCode">
+<short>The HTTP status code (if applicable)</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EHTTPClientSocket">
+<short>Exception class for HTTP client socket errors</short>
+<descr>
+<p><var>EHTTPClientSocket</var> is raised when socket-level errors occur during HTTP operations.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="EHTTPClient">EHTTPClient</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EHTTPClientSocketRead">
+<short>Exception class for HTTP client socket read errors</short>
+<descr>
+<p><var>EHTTPClientSocketRead</var> is raised when socket read errors occur during HTTP operations.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="EHTTPClientSocket">EHTTPClientSocket</link>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EHTTPClientSocketWrite">
+<short>Exception class for HTTP client socket write errors</short>
+<descr>
+<p><var>EHTTPClientSocketWrite</var> is raised when socket write errors occur during HTTP operations.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="EHTTPClientSocket">EHTTPClientSocket</link>
+</seealso>
+</element>
+
+<!-- function Visibility: default -->
+<element name="EncodeURLElement">
+<short>URL-encodes a string for use in URLs</short>
+<descr>
+<p>Encodes special characters in a string to make it safe for use in URLs by replacing them with percent-encoded sequences.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="DecodeURLElement">DecodeURLElement</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="EncodeURLElement.Result">
+<short>The URL-encoded string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="EncodeURLElement.S">
+<short>The string to URL-encode</short>
+</element>
+
+<!-- function Visibility: default -->
+<element name="DecodeURLElement">
+<short>URL-decodes a string from URL encoding</short>
+<descr>
+<p>Decodes percent-encoded sequences in a URL-encoded string back to their original characters.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+<link id="EncodeURLElement">EncodeURLElement</link>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="DecodeURLElement.Result">
+<short>The decoded string</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="DecodeURLElement.S">
+<short>The URL-encoded string to decode</short>
+</element>
+
+</module> <!-- fphttpclient -->
+
+</package>
+</fpdoc-descriptions>

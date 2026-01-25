@@ -1,0 +1,641 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<fpdoc-descriptions>
+<package name="fcl">
+
+<!--
+  ====================================================================
+    fpjsontopas
+  ====================================================================
+-->
+
+<module name="fpJsonToPas">
+<short>JSON to Pascal code generator</short>
+<descr>
+<p>The <var>fpJsonToPas</var> unit provides functionality to generate Object Pascal class definitions from JSON data structures.
+The main class <link id="TJSONToPascal">TJSONToPascal</link> analyzes JSON input and creates complete Pascal unit code with classes that can serialize to and from JSON.</p>
+
+<p>The generated Pascal classes include properties for each JSON field, optional load/save methods for JSON serialization,
+and proper type mappings from JSON types to Pascal types.</p>
+</descr>
+
+<!-- uses unit Visibility: default -->
+<element name="Classes">
+<short>Standard classes unit</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="SysUtils">
+<short>System utilities unit</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="fpjson">
+<short>FPC JSON handling unit</short>
+</element>
+
+<!-- uses unit Visibility: default -->
+<element name="jsonparser">
+<short>JSON parser unit</short>
+</element>
+
+<!-- class Visibility: default -->
+<element name="EJSONToPascal">
+<short>Exception class for JSON to Pascal conversion errors</short>
+<descr>
+<p><var>EJSONToPascal</var> is raised when errors occur during JSON to Pascal code generation.
+It inherits from <var>EJSON</var> to maintain compatibility with the JSON handling framework.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TPropertyMapItem">
+<short>Collection item representing a single property mapping</short>
+<descr>
+<p><var>TPropertyMapItem</var> represents a mapping between a JSON path and Pascal type information.
+It stores details about how a specific JSON property should be converted to Pascal code, including type names, property names, and generation options.</p>
+
+<p>Each item corresponds to a JSON property path and contains information about the Pascal type to generate,
+the parent class, and various options that control code generation for that specific property.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TPropertyMapItem.Assign">
+<short>Assigns values from another TPropertyMapItem</short>
+<descr>
+<p><var>Assign</var> copies all property values from the source <var>TPropertyMapItem</var> to this instance.
+Overrides the standard <var>TPersistent.Assign</var> method.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropertyMapItem.Assign.Source">
+<short>Source TPropertyMapItem to copy from</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPropertyMapItem.Generated">
+<short>Indicates if this mapping was automatically generated</short>
+<descr>
+<p><var>Generated</var> is <var>True</var> if this property mapping was automatically created during code generation,
+<var>False</var> if it was manually added. Read-only property.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TPropertyMapItem.Path">
+<short>JSON path for this property mapping</short>
+<descr>
+<p><var>Path</var> specifies the JSON path that this mapping applies to.
+Paths use dot notation, e.g., 'person.address.street' for nested properties.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TPropertyMapItem.TypeName">
+<short>Pascal type name for this property</short>
+<descr>
+<p><var>TypeName</var> specifies the Pascal type name to use for this property.
+Can be a simple type like 'String' or 'Integer', or a class name for objects.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TPropertyMapItem.ParentTypeName">
+<short>Base class name for generated objects</short>
+<descr>
+<p><var>ParentTypeName</var> specifies the base class to use when this property generates an object type.
+Overrides the <link id="TJSONToPascal.DefaultParentName">DefaultParentName</link> setting for this specific property.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TPropertyMapItem.PropertyName">
+<short>Pascal property name</short>
+<descr>
+<p><var>PropertyName</var> specifies the name to use for the Pascal property.
+If empty, the name is derived from the JSON property name.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TPropertyMapItem.JSONType">
+<short>JSON type for this property</short>
+<descr>
+<p><var>JSONType</var> indicates the JSON type detected or assigned for this property.
+Uses the <var>TJSONType</var> enumeration (jtString, jtNumber, jtBoolean, jtArray, jtObject, etc.).</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TPropertyMapItem.SkipType">
+<short>Skip generating class or array type for this property</short>
+<descr>
+<p>When <var>SkipType</var> is <var>True</var>, no class or array type declaration is generated for this property.
+Useful when you want to handle complex types manually or use existing types.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TPropertyMap">
+<short>Collection of property mapping items</short>
+<descr>
+<p><var>TPropertyMap</var> is a collection that holds <link id="TPropertyMapItem">TPropertyMapItem</link> instances.
+It provides methods to manage mappings between JSON paths and Pascal type information during code generation.</p>
+
+<p>The collection allows you to customize how specific JSON properties are converted to Pascal code,
+override type names, and control the generation process for individual properties.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TPropertyMap.AddPath">
+<short>Adds a new property mapping for the specified path</short>
+<descr>
+<p><var>AddPath</var> creates a new <link id="TPropertyMapItem">TPropertyMapItem</link> for the given JSON path and type name.
+Returns the created mapping item for further configuration.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TPropertyMap.AddPath.Result">
+<short>The created TPropertyMapItem</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropertyMap.AddPath.APath">
+<short>JSON path for the property mapping</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropertyMap.AddPath.ATypeName">
+<short>Pascal type name for the property</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TPropertyMap.IndexOfPath">
+<short>Returns the index of the mapping for the specified path</short>
+<descr>
+<p><var>IndexOfPath</var> searches for a property mapping with the given JSON path and returns its index.
+Returns -1 if no mapping is found for the specified path.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TPropertyMap.IndexOfPath.Result">
+<short>Index of the mapping, or -1 if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropertyMap.IndexOfPath.APath">
+<short>JSON path to search for</short>
+</element>
+
+<!-- function Visibility: public -->
+<element name="TPropertyMap.FindPath">
+<short>Finds the property mapping for the specified path</short>
+<descr>
+<p><var>FindPath</var> searches for and returns the <link id="TPropertyMapItem">TPropertyMapItem</link> for the given JSON path.
+Returns <var>nil</var> if no mapping is found for the specified path.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- function result Visibility: default -->
+<element name="TPropertyMap.FindPath.Result">
+<short>The found TPropertyMapItem, or nil if not found</short>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TPropertyMap.FindPath.APath">
+<short>JSON path to search for</short>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TPropertyMap.Map">
+<short>Indexed access to property mapping items</short>
+<descr>
+<p><var>Map</var> provides indexed access to the <link id="TPropertyMapItem">TPropertyMapItem</link> instances in the collection.
+This is the default property, allowing array-style access to mappings.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: public -->
+<element name="TPropertyMap.Map.Aindex">
+<short>Index of the mapping item to access</short>
+</element>
+
+<!-- enumeration type Visibility: default -->
+<element name="TJSONToPascalOption">
+<short>Options controlling JSON to Pascal code generation</short>
+<descr>
+<p><var>TJSONToPascalOption</var> defines various options that control how Pascal code is generated from JSON data:</p>
+
+<dl>
+<dt>jpoUseSetter</dt>
+<dd>Generate setter methods for properties instead of direct field access</dd>
+<dt>jpoGenerateLoad</dt>
+<dd>Generate LoadFromJSON methods for deserializing JSON data</dd>
+<dt>jpoUnknownLoadPropsError</dt>
+<dd>Raise an error when unknown properties are encountered during loading</dd>
+<dt>jpoDelphiJSON</dt>
+<dd>Generate code compatible with Delphi's JSON framework</dd>
+<dt>jpoLoadCaseInsensitive</dt>
+<dd>Make JSON property loading case-insensitive</dd>
+<dt>jpoGenerateSave</dt>
+<dd>Generate SaveToJSON methods for serializing objects to JSON</dd>
+</dl>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToPascalOption.jpoUseSetter">
+<short>Generate setter methods for properties</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToPascalOption.jpoGenerateLoad">
+<short>Generate LoadFromJSON methods</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToPascalOption.jpoUnknownLoadPropsError">
+<short>Raise error for unknown properties during loading</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToPascalOption.jpoDelphiJSON">
+<short>Generate Delphi-compatible JSON code</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToPascalOption.jpoLoadCaseInsensitive">
+<short>Make property loading case-insensitive</short>
+</element>
+
+<!-- enumeration value Visibility: default -->
+<element name="TJSONToPascalOption.jpoGenerateSave">
+<short>Generate SaveToJSON methods</short>
+</element>
+
+<!-- set type Visibility: default -->
+<element name="TJSONToPascalOptions">
+<short>Set of JSON to Pascal generation options</short>
+<descr>
+<p><var>TJSONToPascalOptions</var> is a set type based on <link id="TJSONToPascalOption">TJSONToPascalOption</link>.
+It allows combining multiple options to control the code generation process.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- class Visibility: default -->
+<element name="TJSONToPascal">
+<short>Main class for generating Pascal code from JSON data</short>
+<descr>
+<p><var>TJSONToPascal</var> is the core component that generates Object Pascal class definitions from JSON data structures.
+It analyzes the JSON input and creates complete Pascal unit code with classes that can serialize to and from JSON format.</p>
+
+<p>The class provides comprehensive control over the code generation process through various properties and options.
+Generated classes include appropriate property declarations, constructor/destructor methods, and optional JSON serialization methods.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- constructor Visibility: public -->
+<element name="TJSONToPascal.Create">
+<short>Creates a new TJSONToPascal instance</short>
+<descr>
+<p>Creates a new <var>TJSONToPascal</var> instance and initializes default values for properties.
+The <var>AOwner</var> parameter specifies the component owner for memory management.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- argument Visibility: default -->
+<element name="TJSONToPascal.Create.AOwner">
+<short>Component owner for memory management</short>
+</element>
+
+<!-- destructor Visibility: public -->
+<element name="TJSONToPascal.Destroy">
+<short>Destroys the TJSONToPascal instance</short>
+<descr>
+<p>Cleans up resources and destroys the <var>TJSONToPascal</var> instance.
+Frees the internal property map and code strings.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- procedure Visibility: public -->
+<element name="TJSONToPascal.Execute">
+<short>Generates Pascal code from JSON data</short>
+<descr>
+<p><var>Execute</var> is the main method that performs the JSON to Pascal code generation.
+It analyzes the JSON data from <link id="TJSONToPascal.JSONData">JSONData</link>, <link id="TJSONToPascal.JSONStream">JSONStream</link>, or <link id="TJSONToPascal.JSON">JSON</link> properties and generates complete Pascal unit code.</p>
+
+<p>The generated code is stored in the <link id="TJSONToPascal.Code">Code</link> property and includes class declarations,
+property definitions, and optional serialization methods based on the configured options.</p>
+</descr>
+<errors>
+</errors>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONToPascal.JSONData">
+<short>JSON data object to generate code from</short>
+<descr>
+<p><var>JSONData</var> specifies the <var>TJSONData</var> object containing the JSON structure to convert to Pascal code.
+This property takes priority over <link id="TJSONToPascal.JSONStream">JSONStream</link> and <link id="TJSONToPascal.JSON">JSON</link> properties.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: public -->
+<element name="TJSONToPascal.JSONStream">
+<short>Stream containing JSON data to generate code from</short>
+<descr>
+<p><var>JSONStream</var> specifies a stream containing JSON data to convert to Pascal code.
+<link id="TJSONToPascal.JSONData">JSONData</link> property takes priority over this property if both are set.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONToPascal.Active">
+<short>Automatically execute code generation when set to True</short>
+<descr>
+<p>When <var>Active</var> is set to <var>True</var>, the <link id="TJSONToPascal.Execute">Execute</link> method is automatically called.
+This property is useful for generating code at design time in the IDE.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONToPascal.Options">
+<short>Code generation options</short>
+<descr>
+<p><var>Options</var> controls various aspects of the code generation process using <link id="TJSONToPascalOptions">TJSONToPascalOptions</link>.
+Common combinations include generating load/save methods or making the code compatible with different JSON frameworks.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONToPascal.JSON">
+<short>JSON string to generate code from</short>
+<descr>
+<p><var>JSON</var> specifies the JSON data as a string to convert to Pascal code.
+<link id="TJSONToPascal.JSONData">JSONData</link> and <link id="TJSONToPascal.JSONStream">JSONStream</link> properties take priority over this property.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONToPascal.Code">
+<short>Generated Pascal unit code</short>
+<descr>
+<p><var>Code</var> contains the generated Pascal unit code after calling <link id="TJSONToPascal.Execute">Execute</link>.
+The code includes complete class definitions with properties, methods, and optional JSON serialization support.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONToPascal.PropertyMap">
+<short>Manual type mappings for JSON properties</short>
+<descr>
+<p><var>PropertyMap</var> allows manual control over how specific JSON properties are converted to Pascal types.
+After <link id="TJSONToPascal.Execute">Execute</link>, it contains all detected and generated type mappings for properties.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONToPascal.DestUnitName">
+<short>Name of the generated Pascal unit</short>
+<descr>
+<p><var>DestUnitName</var> specifies the unit name that appears in the generated Pascal code.
+This becomes the unit declaration in the generated code.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONToPascal.DefaultParentName">
+<short>Default base class for generated objects</short>
+<descr>
+<p><var>DefaultParentName</var> specifies the base class used for generated Pascal classes.
+Default is 'TObject'. Can be overridden per property using the property map.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONToPascal.IndentSize">
+<short>Number of spaces for code indentation</short>
+<descr>
+<p><var>IndentSize</var> controls how many spaces are used for indenting the generated Pascal code.
+Default value is 2 spaces per indentation level.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONToPascal.ExtraUnitNames">
+<short>Additional units for the uses clause</short>
+<descr>
+<p><var>ExtraUnitNames</var> specifies additional unit names (comma-separated) to include in the interface uses clause of the generated unit.
+Useful for including custom base classes or additional functionality.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONToPascal.PropertyTypeSuffix">
+<short>Suffix for generated object and array type names</short>
+<descr>
+<p><var>PropertyTypeSuffix</var> is appended to object and array type names during property map construction.
+Helps avoid naming conflicts and provides consistent naming conventions.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONToPascal.FieldPrefix">
+<short>Prefix for private field names</short>
+<descr>
+<p><var>FieldPrefix</var> specifies the prefix used for private field names in generated classes.
+Common values are 'F' (e.g., 'FName') or '_' (e.g., '_name').</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONToPascal.ObjectConstructorArguments">
+<short>Arguments for object constructors</short>
+<descr>
+<p><var>ObjectConstructorArguments</var> specifies the constructor arguments inserted literally between parentheses in generated constructor calls.
+Useful when the parent class constructor requires specific parameters.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- property Visibility: published -->
+<element name="TJSONToPascal.ToplevelObjectClassName">
+<short>Name of the main generated class</short>
+<descr>
+<p><var>ToplevelObjectClassName</var> specifies the class name for the main object generated from the root JSON object.
+This is typically the primary class users will instantiate.</p>
+</descr>
+<seealso>
+</seealso>
+</element>
+
+<!-- ====================================================================
+  fpjsontopas Usage examples
+  ====================================================================-->
+
+<topic name="JSONToPascalUsage">
+<short>Using fpjsontopas to generate Pascal classes from JSON</short>
+<descr>
+<p>The <var>fpjsontopas</var> unit allows you to generate Object Pascal class definitions from JSON data.
+This is useful for creating strongly-typed classes that can serialize to and from JSON format.</p>
+
+<p>The basic workflow involves:</p>
+<ol>
+<li>Create a <link id="TJSONToPascal">TJSONToPascal</link> instance</li>
+<li>Set the JSON data using the <link id="TJSONToPascal.JSON">JSON</link> property</li>
+<li>Configure options like <link id="TJSONToPascal.DestUnitName">DestUnitName</link> and <link id="TJSONToPascal.ToplevelObjectClassName">ToplevelObjectClassName</link></li>
+<li>Call <link id="TJSONToPascal.Execute">Execute</link> to generate the Pascal code</li>
+<li>Retrieve the generated code from the <link id="TJSONToPascal.Code">Code</link> property</li>
+</ol>
+
+<p>Here's a simple example that generates Pascal classes from JSON data:</p>
+
+<code>
+program JSONToPascalDemo;
+
+{$mode objfpc}{$H+}
+
+uses
+  Classes, SysUtils, fpjsontopas;
+
+var
+  Generator: TJSONToPascal;
+  JSONData: string;
+  i: Integer;
+begin
+  JSONData := '{"name": "John Doe", "age": 30, "active": true, "address": {"street": "123 Main St", "city": "Anytown"}}';
+
+  Generator := TJSONToPascal.Create(nil);
+  try
+    // Configure the generator
+    Generator.JSON := JSONData;
+    Generator.DestUnitName := 'PersonUnit';
+    Generator.ToplevelObjectClassName := 'TPerson';
+    Generator.Options := [jpoGenerateLoad, jpoGenerateSave];
+
+    // Generate the Pascal code
+    Generator.Execute;
+
+    // Output the generated code
+    Writeln('Generated Pascal unit:');
+    Writeln;
+    for i := 0 to Generator.Code.Count - 1 do
+      Writeln(Generator.Code[i]);
+
+  finally
+    Generator.Free;
+  end;
+end.
+</code>
+
+<p>This example will generate a complete Pascal unit with <var>TPerson</var> and <var>TPersonAddress</var> classes,
+including properties for each JSON field and methods to load from/save to JSON.</p>
+
+<p>You can customize the generation process using various properties:</p>
+<ul>
+<li><link id="TJSONToPascal.DefaultParentName">DefaultParentName</link>: Base class for generated objects</li>
+<li><link id="TJSONToPascal.FieldPrefix">FieldPrefix</link>: Prefix for private field names</li>
+<li><link id="TJSONToPascal.IndentSize">IndentSize</link>: Code indentation size</li>
+<li><link id="TJSONToPascal.ExtraUnitNames">ExtraUnitNames</link>: Additional units in the uses clause</li>
+<li><link id="TJSONToPascal.PropertyMap">PropertyMap</link>: Manual type mappings for specific JSON paths</li>
+</ul>
+</descr>
+</topic>
+
+</module> <!-- fpjsontopas -->
+
+</package>
+</fpdoc-descriptions>

@@ -16,6 +16,525 @@ It contains basic <link id="THTTPHeader">HTTP header</link> field definitions, <
 <link id="TUploadedFile">file upload</link> support, and <link id="TMimeItem">MIME</link> content handling for web applications.</p>
 </descr>
 
+<topic name="httpsessions">
+<short>Working with HTTP Sessions</short>
+<descr>
+<p>HTTP sessions provide a way to maintain state across multiple HTTP requests from the same client.
+The <var>TCustomSession</var> class manages session data using session IDs that are typically stored in cookies.</p>
+<p>Sessions can be in different states: <var>ssNew</var> (newly created), <var>ssActive</var> (currently valid),
+<var>ssExpired</var> (timed out), or <var>ssResponseInitialized</var> (response has been started).
+Session variables are accessed using string key-value pairs through the <var>Variables</var> property.</p>
+<code>
+program SessionExample;
+
+{$mode objfpc}{$H+}
+
+uses
+  httpdefs, SysUtils, Classes;
+
+type
+  TMySession = class(TCustomSession)
+  private
+    FData: TStringList;
+  protected
+    function GetSessionVariable(const VarName: String): String; override;
+    procedure SetSessionVariable(const VarName: String; const AValue: String); override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+  end;
+
+constructor TMySession.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FData := TStringList.Create;
+  TimeOutMinutes := 30; // 30 minutes timeout
+end;
+
+destructor TMySession.Destroy;
+begin
+  FData.Free;
+  inherited Destroy;
+end;
+
+function TMySession.GetSessionVariable(const VarName: String): String;
+var
+  Index: Integer;
+begin
+  Index := FData.IndexOfName(VarName);
+  if Index >= 0 then
+    Result := FData.ValueFromIndex[Index]
+  else
+    Result := '';
+end;
+
+procedure TMySession.SetSessionVariable(const VarName: String; const AValue: String);
+begin
+  FData.Values[VarName] := AValue;
+end;
+
+var
+  Session: TMySession;
+begin
+  Session := TMySession.Create(nil);
+  try
+    // Store session data
+    Session.Variables['username'] := 'john_doe';
+    Session.Variables['last_login'] := DateTimeToStr(Now);
+
+    // Retrieve session data
+    Writeln('Username: ', Session.Variables['username']);
+    Writeln('Last login: ', Session.Variables['last_login']);
+
+    Writeln('Session ID: ', Session.SessionID);
+    Writeln('Session cookie: ', Session.SessionCookie);
+  finally
+    Session.Free;
+  end;
+end.
+</code>
+</descr>
+</topic>
+
+<topic name="httpcors">
+<short>CORS Support Usage</short>
+<descr>
+<p>Cross-Origin Resource Sharing (CORS) allows web applications running at one origin to access
+resources from another origin. The <var>TCORSSupport</var> class handles CORS headers and validation.</p>
+<p>CORS support includes configuration of allowed origins, methods, and headers, as well as
+handling preflight OPTIONS requests. The <var>HandleRequest</var> method processes CORS requests
+and returns <var>True</var> if the request should continue or <var>False</var> if it should be blocked.</p>
+<code>
+program CORSExample;
+
+{$mode objfpc}{$H+}
+
+uses
+  httpdefs, SysUtils;
+
+procedure HandleCORSRequest(Request: TRequest; Response: TResponse);
+var
+  CORS: TCORSSupport;
+  ContinueProcessing: Boolean;
+begin
+  CORS := TCORSSupport.Create;
+  try
+    // Configure CORS settings
+    CORS.Enabled := True;
+    CORS.AllowedOrigins := 'https://example.com,https://app.example.com';
+    CORS.AllowedMethods := 'GET,POST,PUT,DELETE,OPTIONS';
+    CORS.AllowedHeaders := 'Content-Type,Authorization,X-Requested-With';
+    CORS.MaxAge := 3600; // Cache preflight response for 1 hour
+
+    // Handle the CORS request
+    ContinueProcessing := CORS.HandleRequest(Request, Response, []);
+
+    if ContinueProcessing then
+    begin
+      // Process the actual request
+      if Request.Method = 'GET' then
+      begin
+        Response.Content := '{"message": "CORS request handled successfully"}';
+        Response.ContentType := 'application/json';
+      end
+      else if Request.Method = 'OPTIONS' then
+      begin
+        // Preflight request - CORS headers already set
+        Response.Code := 204; // No Content
+      end;
+
+      Writeln('CORS request from origin: ', Request.GetCustomHeader('Origin'));
+      Writeln('Request processed successfully');
+    end
+    else
+    begin
+      // CORS validation failed
+      Response.Code := 403; // Forbidden
+      Response.Content := 'CORS policy violation';
+      Writeln('CORS request blocked');
+    end;
+  finally
+    CORS.Free;
+  end;
+end;
+
+var
+  Request: TRequest;
+  Response: TResponse;
+begin
+  Request := TRequest.Create;
+  Response := TResponse.Create(Request);
+  try
+    // Simulate a CORS request
+    Request.Method := 'GET';
+    Request.SetCustomHeader('Origin', 'https://example.com');
+
+    HandleCORSRequest(Request, Response);
+
+    Writeln('Response code: ', Response.Code);
+    Writeln('Response content: ', Response.Content);
+  finally
+    Response.Free;
+    Request.Free;
+  end;
+end.
+</code>
+</descr>
+</topic>
+
+<topic name="httpcorshandlerequest">
+<short>Understanding TCORSSupport.HandleRequest Return Value</short>
+<descr>
+<p>The <var>TCORSSupport.HandleRequest</var> method returns a boolean value that indicates whether
+the request should continue processing after CORS validation. Understanding this return value is
+crucial for proper CORS implementation.</p>
+<p><var>True</var> - The request passes CORS validation and should be processed normally.
+This means the origin is allowed, the method is permitted, and required headers are present.</p>
+<p><var>False</var> - The request fails CORS validation and should be rejected.
+The method automatically sets appropriate error response headers when returning <var>False</var>.</p>
+<code>
+program CORSReturnValueExample;
+
+{$mode objfpc}{$H+}
+
+uses
+  httpdefs, SysUtils;
+
+procedure ProcessRequestWithCORS(Request: TRequest; Response: TResponse);
+var
+  CORS: TCORSSupport;
+  AllowRequest: Boolean;
+begin
+  CORS := TCORSSupport.Create;
+  try
+    CORS.Enabled := True;
+    CORS.AllowedOrigins := 'https://trusted-site.com';
+    CORS.AllowedMethods := 'GET,POST';
+
+    // Handle CORS - the return value determines next steps
+    AllowRequest := CORS.HandleRequest(Request, Response, []);
+
+    if AllowRequest then
+    begin
+      Writeln('✓ CORS validation passed - processing request');
+
+      // Continue with normal request processing
+      if Request.Method = 'GET' then
+      begin
+        Response.Content := 'Data from server';
+        Response.ContentType := 'text/plain';
+        Response.Code := 200;
+      end
+      else if Request.Method = 'POST' then
+      begin
+        Response.Content := 'Data received';
+        Response.Code := 201;
+      end
+      else if Request.Method = 'OPTIONS' then
+      begin
+        // Preflight handled by CORS support
+        Response.Code := 200;
+      end;
+    end
+    else
+    begin
+      Writeln('✗ CORS validation failed - request blocked');
+
+      // Don't process the request - CORS already set error response
+      // Response.Code and headers are already set by HandleRequest
+      Writeln('Response already configured with CORS error');
+    end;
+  finally
+    CORS.Free;
+  end;
+end;
+
+var
+  Request: TRequest;
+  Response: TResponse;
+begin
+  Request := TRequest.Create;
+  Response := TResponse.Create(Request);
+  try
+    // Test with allowed origin
+    Writeln('=== Testing with allowed origin ===');
+    Request.Method := 'GET';
+    Request.SetCustomHeader('Origin', 'https://trusted-site.com');
+    ProcessRequestWithCORS(Request, Response);
+
+    // Reset for next test
+    Response.Code := 200;
+    Response.Content := '';
+
+    // Test with disallowed origin
+    Writeln('=== Testing with disallowed origin ===');
+    Request.SetCustomHeader('Origin', 'https://malicious-site.com');
+    ProcessRequestWithCORS(Request, Response);
+
+    Writeln('Final response code: ', Response.Code);
+  finally
+    Response.Free;
+    Request.Free;
+  end;
+end.
+</code>
+</descr>
+</topic>
+
+<topic name="httpcookies">
+<short>Working with HTTP Cookies</short>
+<descr>
+<p>HTTP cookies provide a way to store small pieces of data in the client's browser.
+The <var>TCookie</var> class represents individual cookies, while <var>TCookies</var> manages collections of cookies.
+Cookies can have various attributes like expiration time, domain, path, and security settings.</p>
+<p>Cookies are automatically sent by browsers with subsequent requests to the same domain,
+making them useful for session management, user preferences, and tracking.</p>
+<code>
+program CookieExample;
+
+{$mode objfpc}{$H+}
+
+uses
+  httpdefs, SysUtils, DateUtils;
+
+procedure DemonstrateCookies(Response: TResponse);
+var
+  SessionCookie, PrefCookie, SecureCookie: TCookie;
+begin
+  // Create a session cookie (expires when browser closes)
+  SessionCookie := Response.Cookies.Add;
+  SessionCookie.Name := 'session_id';
+  SessionCookie.Value := 'abc123xyz789';
+  SessionCookie.Path := '/';
+
+  // Create a preference cookie (expires in 30 days)
+  PrefCookie := Response.Cookies.Add;
+  PrefCookie.Name := 'user_theme';
+  PrefCookie.Value := 'dark_mode';
+  PrefCookie.Path := '/';
+  PrefCookie.Domain := 'example.com';
+  PrefCookie.Expires := Now + 30; // 30 days from now
+
+  // Create a secure cookie for sensitive data
+  SecureCookie := Response.Cookies.Add;
+  SecureCookie.Name := 'auth_token';
+  SecureCookie.Value := 'secure_token_here';
+  SecureCookie.Path := '/admin';
+  SecureCookie.Secure := True;     // Only sent over HTTPS
+  SecureCookie.HttpOnly := True;   // Not accessible via JavaScript
+  SecureCookie.SameSite := ssStrict; // CSRF protection
+  SecureCookie.Expires := Now + (1/24); // Expires in 1 hour
+
+  Writeln('Cookies set in response:');
+  Writeln('1. Session cookie: ', SessionCookie.AsString);
+  Writeln('2. Preference cookie: ', PrefCookie.AsString);
+  Writeln('3. Secure cookie: ', SecureCookie.AsString);
+end;
+
+procedure ReadCookiesFromRequest(Request: TRequest);
+var
+  SessionID, Theme: String;
+begin
+  // Read cookies from request (simulate browser sending cookies)
+  SessionID := Request.CookieFields.Values['session_id'];
+  Theme := Request.CookieFields.Values['user_theme'];
+
+  if SessionID &lt;&gt; '' then
+    Writeln('Found session ID: ', SessionID)
+  else
+    Writeln('No session cookie found');
+
+  if Theme &lt;&gt; '' then
+    Writeln('User theme preference: ', Theme)
+  else
+    Writeln('No theme preference found');
+end;
+
+var
+  Request: TRequest;
+  Response: TResponse;
+  Cookie: TCookie;
+begin
+  Request := TRequest.Create;
+  Response := TResponse.Create(Request);
+  try
+    // Demonstrate setting cookies
+    DemonstrateCookies(Response);
+
+    // Simulate reading cookies from a request
+    Writeln;
+    Writeln('=== Simulating cookie reading ===');
+    Request.CookieFields.Values['session_id'] := 'abc123xyz789';
+    Request.CookieFields.Values['user_theme'] := 'dark_mode';
+    ReadCookiesFromRequest(Request);
+
+    // Demonstrate cookie expiration
+    Writeln;
+    Writeln('=== Cookie management ===');
+    Cookie := Response.Cookies.FindCookie('session_id');
+    if Cookie &lt;&gt; nil then
+    begin
+      Writeln('Expiring session cookie...');
+      Cookie.Expire; // Sets expiration to past date
+      Writeln('Cookie after expiration: ', Cookie.AsString);
+    end;
+  finally
+    Response.Free;
+    Request.Free;
+  end;
+end.
+</code>
+</descr>
+</topic>
+
+<topic name="httprequestresponse">
+<short>Using TRequest and TResponse Classes</short>
+<descr>
+<p>The <var>TRequest</var> and <var>TResponse</var> classes are the foundation of HTTP communication in FCL-Web.
+<var>TRequest</var> represents incoming HTTP requests with methods, headers, parameters, and content.
+<var>TResponse</var> represents outgoing HTTP responses with status codes, headers, and content.</p>
+<p>These classes provide comprehensive access to HTTP protocol features including custom headers,
+content types, query parameters, form data, and file uploads.</p>
+<code>
+program RequestResponseExample;
+
+{$mode objfpc}{$H+}
+
+uses
+  httpdefs, SysUtils, Classes;
+
+procedure ProcessRequest(Request: TRequest; Response: TResponse);
+var
+  UserAgent, ContentType: String;
+  Stream: TStringStream;
+begin
+  Writeln('=== Processing HTTP Request ===');
+
+  // Read request information
+  Writeln('Method: ', Request.Method);
+  Writeln('URI: ', Request.URI);
+  Writeln('Query String: ', Request.QueryString);
+  Writeln('Content Length: ', Request.ContentLength);
+
+  // Read headers
+  UserAgent := Request.GetCustomHeader('User-Agent');
+  if UserAgent &lt;&gt; '' then
+    Writeln('User Agent: ', UserAgent);
+
+  // Read query parameters
+  if Request.QueryFields.Values['search'] &lt;&gt; '' then
+    Writeln('Search query: ', Request.QueryFields.Values['search']);
+
+  // Read POST data (if any)
+  if Request.ContentLength > 0 then
+  begin
+    Writeln('Request content: ', Request.Content);
+    ContentType := Request.ContentType;
+    Writeln('Content type: ', ContentType);
+  end;
+
+  // Process based on request method
+  case Request.Method of
+    'GET':
+      begin
+        Response.Content := '{"message": "GET request processed"}';
+        Response.ContentType := 'application/json';
+        Response.Code := 200;
+      end;
+    'POST':
+      begin
+        // Echo back the posted data
+        Response.Content := 'Received: ' + Request.Content;
+        Response.ContentType := 'text/plain';
+        Response.Code := 201;
+      end;
+    'PUT':
+      begin
+        Response.Content := 'Resource updated';
+        Response.Code := 200;
+      end;
+    'DELETE':
+      begin
+        Response.Content := '';
+        Response.Code := 204; // No Content
+      end;
+  else
+    Response.Content := 'Method not allowed';
+    Response.Code := 405;
+  end;
+
+  // Set custom response headers
+  Response.SetCustomHeader('X-Powered-By', 'FreePascal-FCL-Web');
+  Response.SetCustomHeader('X-Request-ID', 'req-' + IntToStr(Random(99999)));
+
+  // Set security headers
+  Response.SetCustomHeader('X-Content-Type-Options', 'nosniff');
+  Response.SetCustomHeader('X-Frame-Options', 'DENY');
+
+  Writeln('=== Response Generated ===');
+  Writeln('Status Code: ', Response.Code);
+  Writeln('Content Type: ', Response.ContentType);
+  Writeln('Content Length: ', Length(Response.Content));
+end;
+
+procedure DemonstrateStreamContent(Response: TResponse);
+var
+  Stream: TStringStream;
+begin
+  Writeln;
+  Writeln('=== Demonstrating Stream Content ===');
+
+  Stream := TStringStream.Create('{"users": ["alice", "bob", "charlie"]}');
+  try
+    Response.ContentStream := Stream;
+    Response.ContentType := 'application/json';
+    Response.FreeContentStream := False; // We manage the stream
+
+    Writeln('Content set via stream');
+    Writeln('Stream size: ', Stream.Size, ' bytes');
+  finally
+    Stream.Free;
+  end;
+end;
+
+var
+  Request: TRequest;
+  Response: TResponse;
+begin
+  Request := TRequest.Create;
+  Response := TResponse.Create(Request);
+  try
+    // Simulate a GET request
+    Request.Method := 'GET';
+    Request.URI := '/api/users';
+    Request.QueryString := 'search=john&amp;limit=10';
+    Request.QueryFields.Values['search'] := 'john';
+    Request.QueryFields.Values['limit'] := '10';
+    Request.SetCustomHeader('User-Agent', 'TestClient/1.0');
+
+    ProcessRequest(Request, Response);
+
+    // Simulate a POST request
+    Writeln;
+    Request.Method := 'POST';
+    Request.URI := '/api/users';
+    Request.Content := '{"name": "John Doe", "email": "john@example.com"}';
+    Request.ContentType := 'application/json';
+
+    ProcessRequest(Request, Response);
+
+    // Demonstrate stream content
+    DemonstrateStreamContent(Response);
+
+  finally
+    Response.Free;
+    Request.Free;
+  end;
+end.
+</code>
+</descr>
+</topic>
+
 <!-- uses unit Visibility: default -->
 <element name="typinfo">
 <short>Runtime type information support unit</short>
