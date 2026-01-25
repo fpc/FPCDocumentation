@@ -12,9 +12,9 @@ fpTemplate
 <short>Simple template parsing mechanism.</short>
 <descr>
 <p>
-<file>fpTemplate</file> implements a class <link id="TTemplateParser"/> which can replace variables in a template text. 
-The template variables are enclosed in delimiters. When a variable is encountered, it can be replaced by a string value. 
-An event is called to get the value for a template variable. It does not contain loops or conditionals, but parametrized 
+<file>fpTemplate</file> implements a class <link id="TTemplateParser"/> which can replace variables in a template text.
+The template variables are enclosed in delimiters. When a variable is encountered, it can be replaced by a string value.
+An event is called to get the value for a template variable. It does not contain loops or conditionals, but parametrized
 templates are possible.
 </p>
 <p>
@@ -22,6 +22,390 @@ The unit also contains <link id="TFPCustomTemplate"/> and its descendant <link i
 Which is a basic implementation that uses the template parser to substitute variables in a text.
 </p>
 </descr>
+
+<topic name="Basic Template Usage">
+<short>Basic usage of the template parser</short>
+<descr>
+<var>TTemplateParser</var> allows you to replace variables in template text with actual values.
+Variables are enclosed in delimiters (by default <var>{</var> and <var>}</var>).
+
+The following example demonstrates basic template parsing with simple variables:
+
+<example>
+<title>Basic template parsing</title>
+<code>
+program BasicTemplateExample;
+
+{$mode objfpc}{$h+}
+
+uses
+  fpTemplate, SysUtils;
+
+var
+  Parser: TTemplateParser;
+  Template, Result: string;
+begin
+  Parser := TTemplateParser.Create;
+  try
+    // Set up template values
+    Parser.Values['Name'] := 'John Doe';
+    Parser.Values['Age'] := '30';
+    Parser.Values['City'] := 'Amsterdam';
+
+    // Define template text
+    Template := 'Hello {Name}! You are {Age} years old and live in {City}.';
+
+    // Parse the template
+    Result := Parser.ParseString(Template);
+
+    WriteLn(Result);
+  finally
+    Parser.Free;
+  end;
+end.
+</code>
+</example>
+
+This will output: <code>Hello John Doe! You are 30 years old and live in Amsterdam.</code>
+
+You can also use an event handler to provide values dynamically:
+
+<example>
+<title>Template parsing with event handler</title>
+<code>
+program EventTemplateExample;
+
+{$mode objfpc}{$h+}
+
+uses
+  fpTemplate, SysUtils;
+
+type
+  TEventHandler = class
+    procedure GetParamValue(Sender: TObject; const ParamName: string; out AValue: string);
+  end;
+
+procedure TEventHandler.GetParamValue(Sender: TObject; const ParamName: string; out AValue: string);
+begin
+  case ParamName of
+    'CurrentDate': AValue := DateToStr(Now);
+    'CurrentTime': AValue := TimeToStr(Now);
+    'UserName': AValue := GetEnvironmentVariable('USER');
+  else
+    AValue := 'Unknown';
+  end;
+end;
+
+var
+  Parser: TTemplateParser;
+  Handler: TEventHandler;
+  Template, Result: string;
+begin
+  Parser := TTemplateParser.Create;
+  Handler := TEventHandler.Create;
+  try
+    // Assign event handler
+    Parser.OnGetParam := @Handler.GetParamValue;
+
+    // Define template text
+    Template := 'Date: {CurrentDate}, Time: {CurrentTime}, User: {UserName}';
+
+    // Parse the template
+    Result := Parser.ParseString(Template);
+
+    WriteLn(Result);
+  finally
+    Handler.Free;
+    Parser.Free;
+  end;
+end.
+</code>
+</example>
+
+The <var>TFPTemplate</var> class provides a higher-level interface that can load templates from files:
+
+<example>
+<title>Using TFPTemplate for file-based templates</title>
+<code>
+program FileTemplateExample;
+
+{$mode objfpc}{$h+}
+
+uses
+  fpTemplate, SysUtils;
+
+type
+  TEventHandler = class
+    procedure GetParamValue(Sender: TObject; const ParamName: string; out AValue: string);
+  end;
+
+procedure TEventHandler.GetParamValue(Sender: TObject; const ParamName: string; out AValue: string);
+begin
+  case ParamName of
+    'Title': AValue := 'Welcome Page';
+    'Content': AValue := 'This is the main content of the page.';
+    'Footer': AValue := 'Copyright 2024 Example Company';
+  else
+    AValue := '';
+  end;
+end;
+
+var
+  Template: TFPTemplate;
+  Handler: TEventHandler;
+  Result: string;
+begin
+  Template := TFPTemplate.Create;
+  Handler := TEventHandler.Create;
+  try
+    // Set template content directly
+    Template.Template := '<html><head><title>{Title}</title></head>' +
+                         '<body><h1>{Title}</h1><p>{Content}</p>' +
+                         '<footer>{Footer}</footer></body></html>';
+
+    // Assign event handler
+    Template.OnGetParam := @Handler.GetParamValue;
+
+    // Get parsed content
+    Result := Template.GetContent;
+
+    WriteLn(Result);
+  finally
+    Handler.Free;
+    Template.Free;
+  end;
+end.
+</code>
+</example>
+</descr>
+<seealso>
+<link id="TTemplateParser"/>
+<link id="TFPTemplate"/>
+<link id="TFPCustomTemplate"/>
+</seealso>
+</topic>
+
+<topic name="Parametrized Template Usage">
+<short>Using templates with parameters</short>
+<descr>
+<var>TTemplateParser</var> supports parametrized templates where tags can have parameters.
+To use parametrized templates, set <var>AllowTagParams</var> to <var>True</var> and use the <var>OnReplaceTag</var> event instead of <var>OnGetParam</var>.
+Parameters are enclosed in square brackets with the format <var>{TagName[-param1=value1-][-param2=value2-]}</var>.
+
+The following example demonstrates parametrized template usage:
+
+<example>
+<title>Parametrized template parsing</title>
+<code>
+program ParametrizedTemplateExample;
+
+{$mode objfpc}{$h+}
+
+uses
+  fpTemplate, SysUtils, Classes;
+
+type
+  TEventHandler = class
+    procedure ReplaceTagHandler(Sender: TObject; const TagString: string;
+      TagParams: TStringList; out ReplaceText: string);
+  end;
+
+procedure TEventHandler.ReplaceTagHandler(Sender: TObject; const TagString: string;
+  TagParams: TStringList; out ReplaceText: string);
+var
+  i: Integer;
+  ParamName, ParamValue: string;
+begin
+  if TagString = 'FORMAT' then
+  begin
+    // Handle FORMAT tag with parameters
+    ReplaceText := 'Formatted text';
+    for i := 0 to TagParams.Count - 1 do
+    begin
+      ParamName := TagParams.Names[i];
+      ParamValue := TagParams.ValueFromIndex[i];
+      if ParamName = 'style' then
+      begin
+        if ParamValue = 'bold' then
+          ReplaceText := '**' + ReplaceText + '**'
+        else if ParamValue = 'italic' then
+          ReplaceText := '*' + ReplaceText + '*';
+      end
+      else if ParamName = 'color' then
+        ReplaceText := '[' + ParamValue + ']' + ReplaceText + '[/' + ParamValue + ']';
+    end;
+  end
+  else if TagString = 'REPEAT' then
+  begin
+    // Handle REPEAT tag with count parameter
+    ReplaceText := '';
+    for i := 0 to TagParams.Count - 1 do
+    begin
+      ParamName := TagParams.Names[i];
+      ParamValue := TagParams.ValueFromIndex[i];
+      if ParamName = 'count' then
+      begin
+        ReplaceText := StringOfChar('*', StrToIntDef(ParamValue, 1));
+        Break;
+      end;
+    end;
+  end
+  else if TagString = 'TABLE' then
+  begin
+    // Handle TABLE tag with rows and cols parameters
+    ReplaceText := 'Table';
+    for i := 0 to TagParams.Count - 1 do
+    begin
+      ParamName := TagParams.Names[i];
+      ParamValue := TagParams.ValueFromIndex[i];
+      if ParamName = 'rows' then
+        ReplaceText := ReplaceText + '(' + ParamValue + ' rows'
+      else if ParamName = 'cols' then
+        ReplaceText := ReplaceText + ', ' + ParamValue + ' cols)';
+    end;
+  end
+  else
+    ReplaceText := 'Unknown tag: ' + TagString;
+end;
+
+var
+  Parser: TTemplateParser;
+  Handler: TEventHandler;
+  Template, Result: string;
+begin
+  Parser := TTemplateParser.Create;
+  Handler := TEventHandler.Create;
+  try
+    // Enable parametrized templates
+    Parser.AllowTagParams := True;
+
+    // Assign tag replacement handler
+    Parser.OnReplaceTag := @Handler.ReplaceTagHandler;
+
+    // Define template text with parametrized tags
+    Template := 'This is {FORMAT[-style=bold-]} text with {FORMAT[-style=italic-][-color=red-]} formatting.' + LineEnding +
+                'Here are some {REPEAT[-count=5-]} stars.' + LineEnding +
+                'And here is a {TABLE[-rows=3-][-cols=4-]} definition.';
+
+    // Parse the template
+    Result := Parser.ParseString(Template);
+
+    WriteLn(Result);
+  finally
+    Handler.Free;
+    Parser.Free;
+  end;
+end.
+</code>
+</example>
+
+This will output:
+<code>This is **Formatted text** text with [red]*Formatted text*[/red] formatting.
+Here are some ***** stars.
+And here is a Table(3 rows, 4 cols) definition.</code>
+
+You can also use parametrized templates with <var>TFPTemplate</var>:
+
+<example>
+<title>Parametrized TFPTemplate usage</title>
+<code>
+program ParametrizedTFPTemplateExample;
+
+{$mode objfpc}{$h+}
+
+uses
+  fpTemplate, SysUtils, Classes;
+
+type
+  TEventHandler = class
+    procedure ReplaceTagHandler(Sender: TObject; const TagString: string;
+      TagParams: TStringList; out ReplaceText: string);
+  end;
+
+procedure TEventHandler.ReplaceTagHandler(Sender: TObject; const TagString: string;
+  TagParams: TStringList; out ReplaceText: string);
+var
+  i: Integer;
+  ParamName, ParamValue: string;
+begin
+  if TagString = 'LINK' then
+  begin
+    // Handle LINK tag with url and text parameters
+    ReplaceText := '#';
+    for i := 0 to TagParams.Count - 1 do
+    begin
+      ParamName := TagParams.Names[i];
+      ParamValue := TagParams.ValueFromIndex[i];
+      if ParamName = 'url' then
+        ReplaceText := '<a href="' + ParamValue + '">'
+      else if ParamName = 'text' then
+        ReplaceText := ReplaceText + ParamValue + '</a>';
+    end;
+  end
+  else if TagString = 'IMG' then
+  begin
+    // Handle IMG tag with src and alt parameters
+    ReplaceText := '<img';
+    for i := 0 to TagParams.Count - 1 do
+    begin
+      ParamName := TagParams.Names[i];
+      ParamValue := TagParams.ValueFromIndex[i];
+      ReplaceText := ReplaceText + ' ' + ParamName + '="' + ParamValue + '"';
+    end;
+    ReplaceText := ReplaceText + ' />';
+  end
+  else
+    ReplaceText := '';
+end;
+
+var
+  Template: TFPTemplate;
+  Handler: TEventHandler;
+  Result: string;
+begin
+  Template := TFPTemplate.Create;
+  Handler := TEventHandler.Create;
+  try
+    // Enable parametrized templates
+    Template.AllowTagParams := True;
+
+    // Set template content
+    Template.Template := '<p>Visit our {LINK[-url=http://www.freepascal.org-][-text=website-]} for more information.</p>' + LineEnding +
+                         '<p>Logo: {IMG[-src=logo.png-][-alt=FreePascal Logo-]}</p>';
+
+    // Assign tag replacement handler
+    Template.OnReplaceTag := @Handler.ReplaceTagHandler;
+
+    // Get parsed content
+    Result := Template.GetContent;
+
+    WriteLn(Result);
+  finally
+    Handler.Free;
+    Template.Free;
+  end;
+end.
+</code>
+</example>
+
+This will output:
+<code>&lt;p&gt;Visit our &lt;a href="http://www.freepascal.org"&gt;website&lt;/a&gt; for more information.&lt;/p&gt;
+&lt;p&gt;Logo: &lt;img src="logo.png" alt="FreePascal Logo" /&gt;&lt;/p&gt;</code>
+
+Note that when using parametrized templates:
+<ul>
+<li>Set <var>AllowTagParams</var> to <var>True</var></li>
+<li>Use <var>OnReplaceTag</var> event instead of <var>OnGetParam</var></li>
+<li>Parameters use the format <var>[-paramname=value-]</var></li>
+<li>The <var>Values</var> property is not used in parametrized mode</li>
+</ul>
+</descr>
+<seealso>
+<link id="TTemplateParser.AllowTagParams"/>
+<link id="TTemplateParser.OnReplaceTag"/>
+<link id="TReplaceTagEvent"/>
+</seealso>
+</topic>
 
 <!-- uses unit Visibility: default -->
 <element name="SysUtils">
