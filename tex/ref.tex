@@ -5539,6 +5539,40 @@ Although the examples were given using constructors, the use of
 for any procedure or function or destructor as well.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Method overloading
+\section{Method overloading}
+\index{Method!Overloaded}
+Similar to function overloading, method overloading simply means that the same 
+method is defined more than once in the same class, but each time with a different 
+formal parameter list.
+
+The parameter lists must differ at least in one of its element types.
+When the compiler encounters a method call, it will look at the method's
+parameters to decide which one of the defined methods it should call.
+This can be useful when the same method must be defined for different
+types.
+
+For example, in the \var{TStrings class of the \var{Classes} unit, 
+the  \var{AddStrings} method has many overloads
+\begin{verbatim}
+procedure AddStrings(TheStrings: TStrings); overload; virtual;
+procedure AddStrings(TheStrings: TStrings; ClearFirst : Boolean); overload;
+procedure AddStrings(const TheStrings: array of string); overload; virtual;
+procedure AddStrings(const TheStrings: array of string; ClearFirst : Boolean); overload;
+\end{verbatim}
+When the compiler encounters a call to the \var{AddStrings} method, it will first search
+which method it should use. It therefore checks the parameters in a
+method call, and looks if there is a method definition which matches the
+specified parameter list. If the compiler finds such a method, a call is
+inserted to that function. If no such method is found, a compiler error is
+generated.
+
+If the \var{overload} keyword is not present, then all overloaded versions
+of the method must reside in the same class, i.\,e. the compiler will not 
+look for overloaded methods in parent classes if the \var{overload} keyword 
+was not specified.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Properties
 \section{Properties}
 \index{Properties}\keywordlink{property}
@@ -11828,10 +11862,7 @@ it doesn't find a matching version of an overloaded function in one unit,
 and if the \var{overload} keyword is present.
 
 If the \var{overload} keyword is not present, then all overloaded versions
-must reside in the same unit, and if it concerns methods part of a class,
-they must be in the same class, i.\,e. the compiler will not look for
-overloaded methods in parent classes if the \var{overload} keyword was not
-specified.
+must reside in the same unit.
 
 \begin{remark}
 Note that if you redefine (and overload) compiler internal functions, the
@@ -12263,13 +12294,17 @@ The \var{overload} modifier tells the compiler that this function is
 overloaded. It is mainly for \delphi compatibility, as in \fpc, all
 functions and procedures can be overloaded without this modifier.
 
-There is only one case where the \var{overload} modifier is mandatory:
+There are two cases where the \var{overload} modifier is mandatory:
 if a function must be overloaded that resides in another unit. Both
 functions must be declared with the \var{overload} modifier: the
 \var{overload} modifier tells the compiler that it should continue
 looking for overloaded versions in other units.
 
-The following example illustrates this. Take the first unit:
+Secondly, if it concerns methods part of a class, if the overloaded methods
+are not in the same class. Without the \var{overload} keyword, the compiler 
+will not look for overloaded methods in parent classes.
+
+The following example illustrates the first case. Take the first unit:
 \begin{verbatim}
 unit ua;
 
