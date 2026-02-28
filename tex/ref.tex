@@ -1614,25 +1614,26 @@ reference count equal to 1 with the \var{UniqueString} call:
 It's recommended to do this e.\,g. when typecasting an ansistring to a PChar var
 and passing it to a C routine that modifies the string.
 
+Constant AnsiStrings have a reference count of \var{-1} and are treated specially.
+
 The \var{Length} function must be used to get the length of an
 ansistring: the length is not stored at character 0 of the ansistring.
-The construct
 \begin{verbatim}
- L:=ord(S[0]);
+var S: AnsiString;
+begin
+  L:=length(S); // correct, for AnsiString and ShortString
+  L:=ord(S[0]); // error, only works for ShortStrings
 \end{verbatim}
-which was valid for \tp shortstrings, is no longer correct for
-Ansistrings. The compiler will warn if such a construct is encountered.
 
 
-To set the length of an ansistring, the \var{SetLength} function must be used.
-Constant ansistrings have a reference count of \var{-1} and are treated specially,
-The same remark as for \var{Length} must be given: The construct
+The same remark as for \var{Length} must be given:
+to set the length of an AnsiString, the \var{SetLength} function must be used.
 \begin{verbatim}
-  L:=12;
-  S[0]:=Char(L);
+var S: AnsiString;
+begin
+  SetLength(S,4); // corrent, for AnsiString and ShortString
+  S[0]:=Char(4);  // error, only works for ShortString
 \end{verbatim}
-which was valid for \tp shortstrings, is no longer correct for
-Ansistrings. The compiler will warn if such a construct is encountered.
 
 Ansistrings are converted to short strings by the compiler if needed,
 this means that the use of ansistrings and short strings can be mixed
