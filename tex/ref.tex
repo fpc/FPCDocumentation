@@ -1940,7 +1940,52 @@ begin
 end.
 \end{verbatim}
 This will have the same result as the previous two examples.
+
 Note that characters in String start with 1, not 0.
+This is important to consider when assigning a pointer:
+\begin{verbatim}
+P := @S;    // error, will point to the "length byte"
+P := @S[0]; // error as above
+P := @S[1]; // correct
+\end{verbatim}
+
+As already shown, for a ShortString (unlike AnsiString), a terminating null byte
+must be explicitly added if you want to use it as a reference for a PChar.
+This should also be done when assigning empty strings:
+\begin{verbatim}
+var
+  S: ShortString;
+  P: PChar;
+begin
+  S := 'abcd';
+  S := '12';
+  P := @S[1];
+  WriteLn(P);   // print "12cd" and possibly other garbage
+  S := '12'+#0;
+  WriteLn(P);   // print "12"
+  S := #0;
+  WriteLn(P);   // print ""
+end.
+\end{verbatim}
+
+\begin{remark}
+This example also demonstrates that a PChar is not a separate string,
+but a reference to an existing one (or even part of one). Therefore,
+changing the contents of \var{S} also affects \var{P}.
+\end{remark}
+
+The maximum length of a short string must accommodate the entire text,
+including the terminating null byte.
+
+\begin{remark}
+There are many ways to write the null character:
+\begin{verbatim}
+S:='abcd'#0;       // character constant
+S:='abcd'+#0;      // character constant (alternative)
+S:='abcd'+chr(0);  // function Chr
+S:='abcd'+char(0); // type casting
+\end{verbatim}
+\end{remark}
 
 Null-terminated strings cannot be added as normal Pascal
 strings. If two \var{PChar} strings must be concatenated; the functions from
