@@ -1955,8 +1955,6 @@ end.
 \end{verbatim}
 These examples also show that it is possible to write {\em the contents} of
 the string to a file of type \var{Text}.
-The \seestrings unit contains procedures and functions that manipulate the
-\var{PChar} type as in the standard C library.
 Since it is equivalent to a pointer to a type \var{Char} variable, it  is
 also possible to do the following:
 \begin{verbatim}
@@ -2017,11 +2015,25 @@ S:='abcd'+char(0); // type casting
 \end{verbatim}
 \end{remark}
 
-Null-terminated strings cannot be added as normal Pascal
-strings. If two \var{PChar} strings must be concatenated; the functions from
-the unit \seestrings must be used.
+Due to the nature of \var{PChar} strings, many standard string operations
+(e.g. concatenation) are unavailable. To work with them correctly, functions
+from the \seestrings unit must be used as in the standard C library.
 
-However, it is possible to do some pointer arithmetic. The \index{Operators}
+However, some still work. For example, to obtain string length
+(taking care of the null character), the standard \var{Length} function
+can be used if the \var{PChar} type is explicitly specified (or cast):
+\begin{verbatim}
+var
+  S: String = 'ab'+#0+'cd';
+  P: PChar;
+begin
+  P:=@S[1];
+  WriteLn(Length(S));            // 5
+  WriteLn(Length(P));            // 2
+  WriteLn(Length(PChar(@S[1]))); // 2
+\end{verbatim}
+
+Also note some peculiarities of pointer arithmetic. The \index{Operators}
 operators \var{+} and \var{-} can be used to do operations on \var{PChar} pointers.
 In \seet{PCharMath}, \var{P} and \var{Q} are of type \var{PChar}, and
 \var{I} is of type \var{Longint}.
@@ -2034,6 +2046,31 @@ Operation & Result \\ \hline
  & (or the number of characters between \var{P} and \var{Q}) \\
 \hline
 \end{FPCltable}
+
+\var{PChar} doesn't necessarily point to the beginning of the string,
+but then you must ensure it points to the correct data.
+In this case, it will act as a string "truncated" from the beginning:
+\begin{verbatim}
+var
+  S: String = 'abcd'#0;
+  P: PChar;
+begin
+  P:=@S[3];
+  WriteLn(P); // cd
+\end{verbatim}
+Note that "extra" null characters within the string can
+even split it into "multiple" \var{PChar} strings:
+\begin{verbatim}
+var
+  S: String = 'ab'+#0+'cd'+#0;
+  P: PChar;
+begin
+  P:=@S[1];
+  WriteLn(P); // ab
+  P:=P+3;
+  WriteLn(P); // cd
+\end{verbatim}
+In general, it's recommended to be careful with them, especially when writing.
 
 % String sizes
 \subsection{String sizes}
