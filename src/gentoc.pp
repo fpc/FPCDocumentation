@@ -9,11 +9,11 @@ program gentoc;
 {$apptype console}
 {$endif}
 
-Uses {$ifdef unix}cthreads, {$endif} chmreader,chmfilewriter,sysutils,classes,dom_html,xmlwrite,htmwrite8859,chmbase,chmwriter,chmsitemap;
+Uses {$ifdef unix}cthreads, {$endif} chmreader,chmfilewriter,sysutils,classes,dom_html,xmlwrite,chmbase,chmwriter,chmsitemap;
 
 { Index generation }
 
-Type 
+Type
      TContextClass = class
 			  Description : string;
                           defaultpage : string;
@@ -52,7 +52,7 @@ end;
 procedure scanchms(chmspath:string;flz:TStringlist);
 
 var r    : TChmReader;
-    fs   : TFileStream;    
+    fs   : TFileStream;
     i    : integer;
     ctxt : TContextClass;
 
@@ -75,7 +75,7 @@ begin
     end;
 end;
 
-const   
+const
     NrKnownChms = 9;
     KnownNames : array [0.. NrKnownChms-1] of string = ('ref',
 					   'prog',
@@ -85,46 +85,58 @@ const
 					   'lcl',
 					   'fpdoc',
 					   'lazutils',
-					   'fclres' 
+					   'fclres'
 				          );
     Descriptions  : array [0.. NrKnownChms-1] of string = (
                  'Language reference Manual contents',
                  'Programmer''s guide contents',
                  'User''s guide contents',
-                 'Run-Time Library (RTL) Manual contents',                
+                 'Run-Time Library (RTL) Manual contents',
                  'Free Component Library (FCL) Manual contents',
 		 'Lazarus Component Library (LCL) Manual contents',
 		 'FPDoc Documentation tool contents',
-		 'Lazarus unils library (LazUtils) Manual contents',
+		 'Lazarus utils library (LazUtils) Manual contents',
 		 'Free Component Library Resource Handling contents');
-		 
+
     Preamble  = '<html><head></head><body><h1> Free Pascal/Lazarus documentation overview</h1><ol>';
     postamble=  '</ol></body></html>';
 
- 
+var KnownFilesCorssIndex : array [0.. NrKnownChms-1] of integer;
+    UnknownFiles : array of integer;
+    UnknownFilesCount : integer;
+
 procedure gendescription(files:Tstringlist);
 var
     i,j    : integer;
     ctxt : TContextClass;
     fn   : string;
 begin
+  FillChar(KnownFilesCorssIndex,SizeOf(KnownFilesCorssIndex),$ff); { fill with invalid index values (-1) }
+  SetLength(UnknownFiles,files.count);
+  UnknownFilesCount:=0;
   for i:=0 to files.count-1 do
     begin
       fn:=changefileext(files[i],'');
       ctxt:=TContextClass(files.objects[i]);
       j:=0;
-      while (j<=high(Knownnames)) and (fn<>knownnames[j]) do inc(j);  
+      while (j<=high(Knownnames)) and (fn<>knownnames[j]) do inc(j);
       if j<=high(knownnames) then
+      begin
+        KnownFilesCorssIndex[j]:=i;
         ctxt.description:=Descriptions[j]
-      else
+      end else
+      begin
         ctxt.description:=fn+' Contents';
+        UnknownFiles[UnknownFilesCount]:=i;
+        inc(UnknownFilesCount);
+      end;
     end;
 end;
 
 procedure  genfile(fn:string;files:TStringList);
 
 var f : text;
-    i : integer;
+    i,j : integer;
     ctxt : TContextClass;
 
 begin
@@ -132,8 +144,18 @@ begin
   assignfile(f,fn);
   rewrite(f);
   writeln(f,preamble);
-  for i:=0 to Files.count-1 do
+  { write known files in predefined order }
+  for j:=low(KnownFilesCorssIndex) to high(KnownFilesCorssIndex) do
    begin
+     i:=KnownFilesCorssIndex[j];
+     if i<0 then continue; { not among found, skip }
+     ctxt:=TContextClass(files.objects[i]);
+     writeln(f,'<li><a href="ms-its:',files[i],'::',ctxt.defaultpage,'">&nbsp;',ctxt.Description,'</a></li>');
+   end;
+  { write unknown files in order they have been found }
+  for j:=0 to UnknownFilesCount-1 do
+   begin
+     i:=UnknownFiles[j];
      ctxt:=TContextClass(files.objects[i]);
      writeln(f,'<li><a href="ms-its:',files[i],'::',ctxt.defaultpage,'">&nbsp;',ctxt.Description,'</a></li>');
    end;
@@ -146,18 +168,18 @@ procedure usage;
 begin
   Writeln('CHMgentoc "[chmspath]" "[tocchmpath]"'#13#10'   where chmspath is the dir to scan for chms, and tocchmpath is the place to write the generate CHM'#13#10);
   halt;
-end; 
+end;
 
-var chmspath, 
+var chmspath,
     tocchmpath : string;
     x 	       : TCHMProject;
     f 	       : TFileStream;
-    files      : TStringList; 
+    files      : TStringList;
     tocpath,
     tmppath    : String;
 begin
  chmspath:='.';
- tocchmpath:='.'; 
+ tocchmpath:='.';
   if paramcount>0 then
     chmspath:=paramstr(1);
   if paramcount>1 then
@@ -165,16 +187,20 @@ begin
   tocchmpath:=expandfilename(tocchmpath);
   if (chmspath<>'') and not directoryexists(chmspath) then
     usage;
- 
+
+  FillChar(KnownFilesCorssIndex,SizeOf(KnownFilesCorssIndex),$ff); { fill with invalid index values (-1) }
+  SetLength(UnknownFiles,0);
+
   tmppath:=includetrailingpathdelimiter(gettempdir(false));
-  
+
   tocpath:=tmppath+'toc';
   forcedirectories(tocpath);
   tocpath:=includetrailingpathdelimiter(tocpath);
-   
+
   tocchmpath:=includetrailingpathdelimiter(tocchmpath);
   chmspath:=includetrailingpathdelimiter(chmspath);
   files:=TStringList.create;
+
   scandir(chmspath,false,files);  // make list of chms.
   scanchms(chmspath,files);       // scan them for defaultpage/tocfile path/name
   gendescription(files);
