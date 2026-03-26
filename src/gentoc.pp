@@ -83,9 +83,9 @@ const
 					   'rtl',
 					   'fcl',
 					   'lcl',
-					   'fpdoc',
 					   'lazutils',
-					   'fclres'
+					   'fclres',
+					   'fpdoc'
 				          );
     Descriptions  : array [0.. NrKnownChms-1] of string = (
                  'Language reference Manual contents',
@@ -94,9 +94,9 @@ const
                  'Run-Time Library (RTL) Manual contents',
                  'Free Component Library (FCL) Manual contents',
 		 'Lazarus Component Library (LCL) Manual contents',
-		 'FPDoc Documentation tool contents',
 		 'Lazarus utils library (LazUtils) Manual contents',
-		 'Free Component Library Resource Handling contents');
+		 'Free Component Library Resource Handling contents',
+		 'FPDoc Documentation tool contents');
 
     Preamble  = '<html><head></head><body><h1> Free Pascal/Lazarus documentation overview</h1><ol>';
     postamble=  '</ol></body></html>';
