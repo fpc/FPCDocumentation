@@ -82,7 +82,60 @@ The files given at the command line are loaded into edit windows automatically.
 Under DOS/Win32, the first character of a command line option can be a \var{/}
 character instead of a \var{-} character. So \var{/S} is equivalent to \var{-S}.
 \end{remark}
+%
+% IDE configuration files
+%
+\subsection{IDE configuration files}
+Configuration files are essential for IDE to work. If none is found then they
+will be created, thus IDE expects to have write permission in directory where
+it is started from.
 
+Configuration consists of 3 files:
+\begin{itemize}
+\item \file{fp.cfg} - save compiler related configuration and this file is
+passed to compiler as command line parameter @fp.cfg
+\item \file{fp.dsk} - save data that should be preserved across IDE sessions.
+Chose what to save in desktop file in \menu{Options|Environment|Desktop...}
+\item \file{fp.ini} - configuration of IDE itself.
+\end{itemize}
+Whenever you start IDE in directory first time, there are 4 scenarios for IDE
+configuration files.
+\begin{enumerate}
+\item Use default configuration files. IDE creates file \file{fp.dir}.
+\menu{Options|Environment|Preferences} \emph{Desktop file: Config file
+directory}.
+\item Use default configuration files. Create desktop file in current
+directory. IDE creates file \file{fp.dir}. \menu{Options|Environment|Preferences}
+\emph{Desktop file: Current directory}.
+\item Copy default configuration files. Save in current directory.
+\item Create new configuration files. Save in current directory.
+\end{enumerate}
+Possible locations for default configuration files:
+\begin{itemize}
+\item \linux/\unix:
+\begin{enumerate}
+\item \file{~/.fp}
+\item Directory of IDE executable.
+\item Current directory.
+\end{enumerate}
+\item \windows:
+\begin{enumerate}
+\item \file{APPDATA}\verb+\+\file{fp}\footnote{\file{APPDATA} means directory
+in environment variable \file{APPDATA}.}
+\item Directory of IDE executable.
+\item Current directory.
+\end{enumerate}
+\item Other platforms:
+\begin{enumerate}
+\item Directory of IDE executable.
+\end{enumerate}
+\end{itemize}
+On sequential IDE start up in same directory ether \file{fp.cfg}, \file{fp.dsk}
+and \file{fp.ini} from current directory will be used or default configuration
+files will be used if file \file{fp.dir} exists.
+%
+% The IDE screen
+%
 \subsection{The IDE screen}
 
 After start up, the screen of the IDE can look like \seefig{idestart}.
