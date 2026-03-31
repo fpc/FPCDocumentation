@@ -9979,21 +9979,25 @@ a /= b & Divides \var{a} through \var{b}, and stores the result in
 \var{a} (only for floats, not integers). \\ \hline
 \end{FPCltable}
 
-
-For these constructs to work, the \var{-Sc} command-line switch must
-be specified.
+For C-like assignments, the \var{$COPERATORS} directive must be enabled
+or the \var{-Sc} command-line switch must be specified when compiling.
+These constructions are just for typing convenience and generate the same code.
 
 \begin{remark}
-These constructions are just for typing convenience, they
-don't generate different code.
-Here are some examples of valid assignment statements:
+Here's an example with some valid assignment statements:
 \begin{verbatim}
-X := X+Y;
-X+=Y;      { Same as X := X+Y, needs -Sc command line switch}
-X/=2;      { Same as X := X/2, needs -Sc command line switch}
-Done := False;
-Weather := Good;
-MyPi := 4* Tan(1);
+var
+  Done: Boolean;
+  S: String;
+  X, Y: Double;
+begin
+  Done:=False or (1=2);
+  S:='text';
+  X:=X+Y;
+  {$COPERATORS ON}
+  X+=Y; // same as X:=X+Y
+  X/=2; // same as X:=X/2
+end.
 \end{verbatim}
 \end{remark}
 
@@ -10001,13 +10005,13 @@ Keeping in mind that the dereferencing of a typed pointer results
 in a variable of the type the pointer points to, the following are
 also valid assignments:
 \begin{verbatim}
-Var
+var
   L : ^Longint;
   P : PPChar;
-
 begin
   L^:=3;
   P^^:='A';
+end.
 \end{verbatim}
 Note the double dereferencing in the second assignment.
 \subsection{Procedure statements}
