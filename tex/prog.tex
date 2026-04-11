@@ -380,33 +380,32 @@ These values can also be specified on the command line as
 \end{verbatim}
 
 \subsection{\var{\protect\$COPERATORS} : Allow C like operators}
-This boolean switch determines whether C like assignment operators 
-are allowed. By default, these assignments are not allowed.
-After the following statement:
-\begin{verbatim}
-{$COPERATORS ON}
-\end{verbatim}
-the following operators are allowed:
+When the \var{\$COPERATORS} directive or the \var{-Si} options are enabled,
+some assignments in the style of a \C language available (disabled by default).
+They allow shorthand notation for some constructs:
 \begin{verbatim}
 var
-  N : Double;
+  N: Double;
 begin
-  N:=1;
-  N+=3; // add 3 to N and assign the result to N
-  N-=2; // subtract 2 from N and assign the result to N
-  N*=2; // multiply N with 2 and assign the result to N
-  N/=2; // divide N with 2 and assign the result to N
+  N+=1; // same as N:=N+1
+  N-=2; // same as N:=N-2
+  N*=3; // same as N:=N*3
+  N/=4; // same as N:=N/4
 end.
 \end{verbatim}
 
-Operations can be performed on integers or float numbers, but division only works on float numbers.
-For integer division, you simply use \var{N:=N div 2}.
+This form is no different from the regular one and generates the same code
+(and has the same requirements, for example, regarding the operand types).
 
-Note that the expression to the right of the operator is evaluated first, then the operator itself.
+Note that division is the Pascal \var{/} operator, not \var{div}, so it's only
+available for float numbers. For integers, the full form (\var{N := N div 5})
+must be explicitly used.
+
+The expression to the right of the operator is evaluated first, then the operator itself.
 For example, the result of the following expression will be \var{6}, not \var{4}:
 \begin{verbatim}
-n:=3;
-n*=1+1; // n:=n*(1+1)
+N:=3;
+N*=1+1; // same as N:=N*(1+1)
 \end{verbatim}
 
 \subsection{\var{\protect\$DEFINE} or \var{\protect\$DEFINEC} : Define a symbol}
