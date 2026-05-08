@@ -45,8 +45,13 @@ fp
 at the command line. It can also be started from a graphical user
 interface such as \windows.
 \begin{remark}
-Under \windows, it is possible to switch between windowed mode and
+\begin{itemize}
+\item Under \windows, it is possible to switch between windowed mode and
 full screen mode by pressing \key{Alt-Enter}.
+\item For better experience in work with IDE it is recommended to setup font,
+font size, colors and other aspects of console/terminal to your liking. XTerm
+and Kitty terminal example configuration files are listed in appendix {\ref{ch:TerminalConfigExample}}.
+\end{itemize}
 \end{remark}
 %
 % IDE command-line options.
@@ -66,11 +71,14 @@ The IDE uses this interface by default to access files. Under certain
 circumstances, this can lead to problems. This switch tells the IDE not to
 use the long filenames.
 \item [-Cfilename] Read IDE options from \file{filename}. 
-There should be no whitespace between the file name and the \var{-C}.
-\item [-F] Use alternative graphic characters. This can be used to run the
-IDE on \linux in an X-term or through a telnet session.
-\item [-R] After starting the IDE, change automatically to the directory
-which was active when the IDE exited the last time.
+There should be no whitespace between the file name and the \var{-C}. Extension
+of \file{filename} is ignored and files \file{filename.cfg}, \file{filename.dsk} and
+\file{filename.ini} are used. More information on the configuration files can be
+found in \sees{ideconfigfiles}.
+\item [-R] Or \var{-R+}. After starting the IDE, change automatically to the
+directory which was active when the IDE exited the last time. \var{-R-} to keep
+statup directory as active directory. Overrides configuration option
+\emph{Return to last directory} (\sees{prefdesktop}).
 \item [-S] Disable the mouse. When this option is used, the use of a mouse is
 disabled, even if a mouse is present.
 \item[-Tttyname] (\linux/Unix only) Send program output to tty \var{ttyname}.
@@ -86,6 +94,7 @@ character instead of a \var{-} character. So \var{/S} is equivalent to \var{-S}.
 % IDE configuration files
 %
 \subsection{IDE configuration files}
+\label{se:ideconfigfiles}
 Configuration files are essential for IDE to work. If none is found then they
 will be created, thus IDE expects to have write permission in directory where
 it is started from.
@@ -114,7 +123,7 @@ Possible locations for default configuration files:
 \begin{itemize}
 \item \linux/\unix:
 \begin{enumerate}
-\item \file{~/.fp}
+\item \file{\~{}/.fp}
 \item Directory of IDE executable.
 \item Current directory.
 \end{enumerate}
@@ -368,7 +377,7 @@ be made active in one of several ways:
 windows. To activate the previously activated window, \key{Shift-F6} can
 be used.
 \item The menu item \menu{Window|Next} can be used to activate the next
-window in the list of windows, while \var{Window|Previous} will select
+window in the list of windows, while \menu{Window|Previous} will select
 the previous window.
 \item If the window has a number in the upper right corner, it can be
 activated by pressing \key{Alt-<number>}.
@@ -453,7 +462,9 @@ to load and save files, as well as to exit the IDE.
 \item[New from template] Prompts for a template to be used, asks to fill in
 any parameters, and then starts a new editor window with the template.
 \item[Open] (\key{F3}) Presents a file selection dialog, and opens
-the selected file in a new editor window.
+the selected file in a new editor window. In a file list by entering beginning
+of file name respective file will be searched and selected. To search for a
+directory enter first letter as capital letter.
 \item[Print] print the contents of the current edit window.
 \item[Print setup] set up the printer properties.
 \item[Reload] Reload a file from disk.
@@ -510,7 +521,9 @@ text at the cursor position. The clipboard contents remain as they were.
 selection.
 \item[Select All] Selects all text in the current window. The selected
 text can then be cut or copied to the clipboard.
-\item[Unselect] undo the selection.
+\item[Unselect] Undo the selection.
+\item[Comment] Insert line comment in front of every selected line.
+\item[Uncomment] Remove line comment from beginning of every selected line.
 \item[Show clipboard] Opens a window in which the current clipboard contents
 are shown.
 \end{description}
@@ -780,8 +793,8 @@ Hides the active window.
 \item[Close] (\key{ALT-F3})
 Closes the active window.
 \item[List] (\key{Alt-0})
-Shows the list of opened windows. From there a
-window can be activated, closed, shown and hidden.
+Shows the list of opened windows. From there a window can be activated,
+closed, shown and hidden. List is searchable by file name.
 \item[Refresh display]
 Redraws the screen.
 \end{description}
@@ -2247,7 +2260,7 @@ When using VESA modes, the display refresh rate may be very low.
 On older graphics card (1998 and before), it is possible to use the
 {\em UniVBE} driver from {\em SciTech}\footnote{It can be downloaded from
 \seeurl{http://www.informatik.fh-muenchen.de/~ifw98223/vbehz.htm}
-{http://www.informatik.fh-muenchen.de/\~{}ifw98223/vbehz.htm}}
+{http://www.informatik.fh-muenchen.de/~ifw98223/vbehz.htm}}
 % It is quite outdated
 %(last update somewhere in 1998).
 %For newer graphics cards which support VESA 3.0, you can try to get one
@@ -2260,6 +2273,12 @@ On older graphics card (1998 and before), it is possible to use the
 \item[Desktop File]
 Specifies where the desktop file is saved: the current directory, or the
 directory where the config file was found.
+\item[Desktop]
+Configure some aspects of desktop:
+\begin{description}
+\item[Show clock] In right upper corner of desktop clock will be shown.
+\item[Show heap monitor] Show used memory in kilobytes in right lower corner of desktop.
+\end{description}
 \item[Auto save]
 Here it is possible to set which files are saved when a program is run or
 when the IDE is exited:
@@ -2317,6 +2336,8 @@ file. Off by default.
 When checked, the list of codecompletion words is saved. On by default.
 \item[CodeTemplates]
 When checked, the defined code templates are saved. On by default.
+\item[Return to last directory] When checked, on startup current directory
+will be set to what it was upon exit the IDE last time. Off by default.
 \end{description}
 
 \begin{remark}
@@ -2540,6 +2561,7 @@ The IDE contains a help system which can display the following file formats:
 \item[INF] The OS/2 help format.
 \item[NG] The Norton Guide Help format.
 \item[HTML] HTML files.
+\item[CHM] CHM files.
 \end{description}
 In future some more formats may be added. However, the above formats should
 cover already a wide spectrum of available help files.

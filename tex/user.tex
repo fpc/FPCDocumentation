@@ -4269,6 +4269,121 @@ respectively.
 
 The FTP site is mirrored, it may be faster to use a mirror.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  Terminal emulator configuration examples
+\chapter{Terminal emulator configuration examples}
+\label{ch:TerminalConfigExample}
+
+Provided configuration files are designed to match experience of using Turbo
+Pascal IDE. DOS like color schema, cursor style - underscore. \key{Ctrl-Ins},
+\key{Shift-Ins} must work. Copy and paste in terminal itself are remapped to
+\key{Ctrl-Shift-C} and \key{Ctrl-Shift-V} respectively.
+
+\section{XTerm terminal configuration file}
+
+Following content should be placed 
+in \file{\~{}/.Xresources} file. File is loaded on logging in.
+
+\begin{verbatim}
+xterm*title: Terminal
+xterm*VT100.cursorColor: yellow
+xterm*VT100.cursorBlink: true
+xterm*VT100.cursorUnderLine: true
+xterm*VT100.dynamicColors: true
+xterm*VT100.geometry: 80x25
+
+! Enable OSC 52 copy/paste (enabled paste is a potential security risk).
+xterm*VT100.disallowedWindowOps: \
+     1,2,3,4,5,6,7,8,9,11,13,14,18,19,20,21,SetWinLines,SetXprop
+
+xterm*faceName: Monospace Regular
+xterm*faceSize: 16
+xterm*rightScrollBar: true
+xterm*savelines: 16384
+xterm*scrollKey: true
+xterm*scrollTtyOutput: false
+
+! DOS colors...
+xterm*foreground: rgb:b8/b8/b8
+xterm*background: rgb:19/19/19
+xterm*color0: rgb:19/19/19
+xterm*color1: rgb:a8/00/00
+xterm*color2: rgb:00/a8/00
+xterm*color3: rgb:a8/54/00
+xterm*color4: rgb:00/00/a8
+xterm*color5: rgb:a8/00/a8
+xterm*color6: rgb:00/a8/a8
+xterm*color7: rgb:b8/b8/b8
+xterm*color8: rgb:54/54/54
+xterm*color9: rgb:fc/54/54
+xterm*color10: rgb:54/fc/54
+xterm*color11: rgb:fc/fc/54
+xterm*color12: rgb:54/54/fc
+xterm*color13: rgb:fc/54/fc
+xterm*color14: rgb:54/fc/fc
+xterm*color15: rgb:fc/fc/fc
+
+xterm*VT100.Translations: #override \
+     Shift <KeyPress> Insert: insert() \n\
+     Shift <KeyPress> Delete: insert() \n\
+     Ctrl Shift <Key>V: insert-selection(CLIPBOARD) \n\
+     Ctrl Shift <Key>C: copy-selection(CLIPBOARD) 
+\end{verbatim}
+
+\section{Kitty terminal configuration file}
+
+Following content should be appended to \file{\~{}/.config/kitty/kitty.conf} file.
+Configuration file is loaded on startup of Kitty terminal.
+
+\begin{verbatim}
+font_family Monospace Regular
+font_size 16.0
+cursor_shape underline
+scrollback_lines 16384
+foreground #dddddd
+background #191919
+
+color0 #191919
+color8 #545454
+#: black
+
+color1 #a80000
+color9 #fc5454
+#: red
+
+color2  #00a800
+color10 #54fc54
+#: green
+
+color3  #a85400
+color11 #fcfc54
+#: yellow
+
+color4  #0000a8
+color12 #5454fc
+#: blue
+
+color5  #a800a8
+color13 #fc54fc
+#: magenta
+
+color6  #00a8a8
+color14 #54fcfc
+#: cyan
+
+color7  #b8b8b8
+color15 #fcfcfc
+#: white
+
+shell_integration no-cursor
+map shift+insert no_op
+map kitty_mod+up no_op
+map kitty_mod+down no_op
+map kitty_mod+right no_op
+map kitty_mod+left no_op
+map alt+enter toggle_fullscreen
+\end{verbatim}
+
 \printindex[msgnr]
 
 \printindex[msgtxt]
