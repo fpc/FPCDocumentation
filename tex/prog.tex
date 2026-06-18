@@ -6724,6 +6724,7 @@ The definition of these calls is as follows:
 procedure InitCriticalSection(var cs: TRTLCriticalSection);
 procedure DoneCriticalSection(var cs: TRTLCriticalSection);
 procedure EnterCriticalSection(var cs: TRTLCriticalSection);
+function TryEnterCriticalSection(var cs: TRTLCriticalSection) : longint;
 procedure LeaveCriticalSection(var cs: TRTLCriticalSection);
 \end{verbatim}
 The meaning of these calls is again almost obvious:
@@ -6736,6 +6737,10 @@ critical section. After this call neither \var{EnterCrititicalSection}
 nor \var{LeaveCriticalSection} may be used.
 \item[EnterCriticalSection] When this call returns, the calling 
 thread is the only thread running the code between the \var{EnterCriticalSection} 
+call and the following \var{LeaveCriticalsection} call.
+\item[TryEnterCriticalSection] When this call returns, the return value is zero if another 
+thread owns the critical section, or nonzero if the current thread already owns or successfully obtained the critical section. 
+In the latter case, the thread is the only thread running the code between the \var{tryEnterCriticalSection} 
 call and the following \var{LeaveCriticalsection} call.
 \item[LeaveCriticalSection] Signals that the protected code can be executed 
 by other threads.
