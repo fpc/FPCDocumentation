@@ -120,7 +120,7 @@ begin
     lFooter:=lLast;
     While (lFooter>=0) and (Pos('</footer>',lFile[lFooter])=0) do
       Dec(lFooter);
-    if lFooter<>0 then
+    if lFooter<>-1 then
       begin
       // Make sure the closing tag is on a line by it's own, so we can insert correctly.
       lFooterLine:=lFile[lFooter];
