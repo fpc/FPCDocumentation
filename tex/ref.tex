@@ -6686,6 +6686,55 @@ property definitions as part of an interface definition, be aware that the
 properties will only be known in the \fpc compiled program: other Windows
 programs will not be aware of the property definitions.
 
+\section{Dispatch Interfaces}
+\index{COM}\index{DispatchInterfaces!COM}
+
+Instead of the \var{Interface} keyword, you can also use the \var{dispinterface} keywords. 
+This is specially for COM interfaces that implement the \var{IDispatch} interface:
+This means the compiler will not attempt to locate a method address in the interface table, 
+but instead will perform the call using the \var{Invoke} method offered by \var{IDispatch}. 
+To this end, you must specify the dispatch ID for each method, as follows:
+This will compile on any platform but will work only on Windows, as only windows has the COM framework.
+
+\begin{verbatim}
+type
+  IADsCollectionDisp = dispinterface
+    ['{72B945E0-253B-11CF-A988-00AA006BC149}']
+    property _NewEnum: IUnknown readonly dispid -4;
+    procedure Add(const bstrName: WideString; vItem: OleVariant); dispid 4;
+    procedure Remove(const bstrItemToBeRemoved: WideString); dispid 5;
+    function  GetObject(const bstrName: WideString): OleVariant; dispid 6;
+  end;
+\end{verbatul}  
+Only external COM interface definitions can be dispatch interfaces, classes cannot implement them.
+
+Note that the parameter and result types must be automatable, meaning they can be anything that an OleVariant typed variable can contain. 
+
+You can store a dispatch interface in an OleVariant, and then call the methods of the dispatch interface or set properties:
+\begin{verbatim}
+var
+   WordFileName, PDFFileName: String;
+   WordApplication, WordFile: OleVariant;
+begin
+   WordApplication := Null;
+   WordFile := Null;
+   WordFileName := 'mydoc.docx';
+   PDFFileName := ChangeFileExt(WordFileName, '.pdf');
+   WordApplication := CreateOleObject('Word.Application');
+   If VarIsNull(WordApplication) then
+     exit;
+   WordApplication.Visible := False; 
+   WordApplication.DisplayAlerts := False; 
+   WordFile := WordApplication.Documents.Open(WordFileName);
+   If VarIsNull(WordFile) = False then
+     exit;
+   WordFile.SaveAs2(PDFFileName, 17); //wdFormatPDF = 17
+   WordFile.Close;
+   WordApplication.Quit;
+end;
+\end{verbatim}
+The compiler will insert the necessary code to translate the above calls to IDispatch method calls.
+
 \section{CORBA and other Interfaces}
 \index{CORBA}\index{COM}\index{Interfaces!CORBA}
 COM is not the only architecture where interfaces are used. CORBA knows
