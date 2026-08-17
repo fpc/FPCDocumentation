@@ -132,6 +132,7 @@ ifeq (chm,$(HTMLFMT))
   RTLCHMOPTS="--chm-title=(RTL) Runtime Library"
   FCLCHMOPTS="--chm-title=(FCL) Free Component Library"
   FCLRESCHMOPTS="--chm-title=(FCL) Free Pascal Resources support"
+  CSSFILE=
 endif
 
 ifeq (ipf,$(HTMLFMT))
@@ -242,7 +243,11 @@ PDFDIR:=$(DISTDIR)/pdf
 PSDIR:=$(DISTDIR)/ps
 DVIDIR:=$(DISTDIR)/dvi
 TXTDIR:=$(DISTDIR)/txt
+ifeq ($(HTMLFMT),chm)
+HTMLDIR:=$(DISTDIR)/chm
+else
 HTMLDIR:=$(DISTDIR)/html
+endif
 
 PS = $(addprefix $(PSDIR)/, $(addsuffix .ps, $(DOCS)))
 DVI = $(addprefix $(DVIDIR)/, $(addsuffix .dvi, $(DOCS)))
@@ -1041,6 +1046,7 @@ html: fpc_all comphelp.inc $(INCLUDES) $(CHK) | $(HTMLDIR)/
 
 chm: 
 	$(MAKE) html HTMLFMT=chm
+	bash fixdocs.sh
    
 ipf:
 	$(MAKE) html HTMLFMT=ipf
@@ -1143,6 +1149,20 @@ htmltar:
 htmlzip:
         $(MAKE) zipinstall ZIPTARGET=htmlinstall UNIXHier= USEZIP=y FULLZIPNAME=doc-html
 
+chmzip: 
+        $(MAKE) chm
+	mkdir -p dist/help
+        rm -f dist/help/*
+        cp dist/chm/*.chm dist/help
+	cp dist/chm/fpdoc/fpdoc.kwd dist/help
+	cp dist/chm/prog/prog.kwd dist/help
+	cp dist/chm/user/user.kwd dist/help
+	cp dist/chm/ref/ref.kwd dist/help
+        cp readmechm.txt dist/help
+	cd dist && zip ../doc-chm.zip help/*.chm help/readmechm.txt
+	rm -r dist/help
+	
+
 psdist: pszip pstar
 
 pdfdist: pdfzip pdftar
@@ -1153,7 +1173,9 @@ dvidist: dvizip
 
 htmldist: htmlzip htmltar
 
-alldist: dvidist psdist txtdist pdfdist htmldist
+chmdist: chmzip
+
+alldist: dvidist psdist txtdist pdfdist htmldist chmdist
 
 
 #####################################################################

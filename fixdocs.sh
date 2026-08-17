@@ -5,8 +5,19 @@
 # 
 # Needs more errorchecking.
 
-export FPCSRCDIR=/fpc/fpctrunk
-make HTMLFMT=chm html CSSFILE=$FPCSRCDIR/utils/fpdoc/fpdoc.css FPDOC=fpdoc FPCSRCDIR=$FPCSRCDIR 2>&1 |tee buildlog.txt
+#
+# Try to detect
+#
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+if [ -d $SCRIPT_DIR ]; then
+  FPCSRCDIR=$SCRIPT_DIR/../fpcsrc
+elif [ -d $HOME/fpc ]; then
+  FPCSRCDIR=$HOME/fpc 
+fi
+  
+export FPCSRCDIR
+
+make HTMLFMT=chm html CSSFILE=fpdoc.cst FPDOC=fpdoc FPCSRCDIR=$FPCSRCDIR 2>&1 |tee buildlog.txt
 
 cd src
 fpc relinkdocs.pp
@@ -14,7 +25,7 @@ fpc compilelatexchm.pp
 fpc gentoc
 cd ..
 
-cd dist/html
+cd dist/chm
 ../../src/relinkdocs
 rm -rf prog-old
 rm -rf ref-old
@@ -45,4 +56,4 @@ cp -r ../../pics .
  
 ../../src/gentoc . .
 
-rm fpdoc.kwd user.kwd prog.kwd
+rm -f fpdoc.kwd user.kwd prog.kwd
