@@ -9301,6 +9301,48 @@ parameter list:
 Remark that this last behavior is not compatible with \delphi syntax.
 Switching on \var{Delphi} mode will allow you to use \delphi syntax.
 
+If a function returns a procedural type (a pointer to a function or procedure),
+then it can be called immediately (without assigning a pointer to a variable)
+by specifying additional parentheses for its arguments:
+\begin{verbatim}
+  i := GetProc(1, 2)('test');
+  // which is equivalent to
+  p := GetProc(1, 2);
+  i := p('test');
+\end{verbatim}
+If the called functions have no arguments, empty parentheses must be specified
+so that the compiler can distinguish between a function call and a call to the
+function's result:
+\begin{verbatim}
+  GetProc()();
+  // which is equivalent to
+  p := GetProc();
+  p();
+\end{verbatim}
+The difference is demonstrated in the following example. In \var{Delphi} mode,
+all calls will assign the value \var{123} to the variable \var{i}. In \var{fpc}
+and \var{objfpc} mode, the example will fail to compile due to the first two
+lines containing the calls:
+\begin{verbatim}
+program Project1;
+//{$mode delphi}
+type TFunc = function: integer;
+  function GetInt: integer;
+  begin
+    result := 123;
+  end;
+  function GetProc: TFunc;
+  begin
+    result := @GetInt;
+  end;
+var i: integer;
+begin
+  i := GetProc;     // ERROR - GetProc returns TFunc (optional parentheses omitted)
+  i := GetProc();   // ERROR - GetProc returns TFunc (optional parentheses included)
+  i := GetProc()(); // OK
+end.
+\end{verbatim}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set constructors
 \section{Set constructors}
