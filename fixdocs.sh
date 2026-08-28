@@ -9,13 +9,19 @@
 # Try to detect
 #
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
-if [ -d $SCRIPT_DIR ]; then
-  FPCSRCDIR=$SCRIPT_DIR/../fpcsrc
-elif [ -d $HOME/fpc ]; then
-  FPCSRCDIR=$HOME/fpc 
+if [ -z "$FPCSRCDIR" ]; then
+  if [ -d $SCRIPT_DIR/../fpcsrc ]; then
+    FPCSRCDIR=$SCRIPT_DIR/../fpcsrc
+  elif [ -d $HOME/fpc ]; then
+    FPCSRCDIR=$HOME/fpc
+  fi
 fi
   
 export FPCSRCDIR
+
+# Start from a clean tree: the html files below are rewritten in place, so
+# reprocessing an earlier run would work on already converted files.
+rm -rf dist/chm
 
 make HTMLFMT=chm html CSSFILE=fpdoc.cst FPDOC=fpdoc FPCSRCDIR=$FPCSRCDIR 2>&1 |tee buildlog.txt
 

@@ -343,13 +343,13 @@ begin
   wrtChr('<');
   wrtStr(TDOMElement(node).TagName);
 
-  { Force charset label to utf-8, because it is the encoding we actually write }
+  { Force charset label to iso-8859-1, because it is the encoding we actually write }
   if meta then
   begin
     s := TDOMElement(node).GetAttribute('http-equiv');
     if SameText(s, 'content-type') then
     begin
-      wrtStr(' content="text/html; charset=iso8859-1" http-equiv="Content-Type">');
+      wrtStr(' content="text/html; charset=iso-8859-1" http-equiv="Content-Type">');
       Exit;
     end;
   end;

@@ -11,7 +11,9 @@ interface
 {$endif}
 
 {$define debugoutput}
-{$define useutf8}
+// Output must stay pure ASCII with numeric entities: the read/write pass is then
+// idempotent, and HTML Help does not honour the charset meta tag.
+{define useutf8}
 {define printattr}
 {define printchildren}
 uses typinfo,classes,gdeque,
