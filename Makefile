@@ -2776,7 +2776,7 @@ clean: fpc_clean
 distclean: fpc_distclean clean cleanexamples
 	-rm *.zip *.gz
 tex/date.inc:
-	@$(ECHO) \\date\{`date +'%B %Y'`\} > tex/date.inc
+	@$(ECHO) \\date\{`LC_TIME=en_US date +'%B %Y'`\} > tex/date.inc
 postproc$(EXEEXT): postproc.pp htmlpp.pp
 	$(FPC) postproc.pp
 preparegrammar$(EXEEXT): preparegrammar.pp
