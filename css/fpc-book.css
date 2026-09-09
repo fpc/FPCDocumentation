@@ -1,0 +1,936 @@
+/*
+    fpc-book.css
+
+    Complete stylesheet for the Free Pascal HTML documentation.
+    A quiet reading look with a serif text font, a narrow column and warm
+    paper colours. Follows the light or dark setting of the reader's screen.
+
+    One of three styles that can be used, see also fpc-modern.css and
+    fpc-compact.css. Only one of them is linked in a page.
+
+    This file is free software, distributed under the same terms as the
+    Free Pascal documentation itself.
+*/
+
+/* ------------------------------------------------------------------ */
+/* Colours, fonts and sizes                                           */
+/* ------------------------------------------------------------------ */
+
+:root {
+  color-scheme: light dark;
+
+  /* Text and page colours. */
+  --fpc-bg: #fdfbf7;
+  --fpc-bg-soft: #f4f0e8;
+  --fpc-bg-code: #f6f2ea;
+  --fpc-fg: #2b2722;
+  --fpc-fg-strong: #171310;
+  --fpc-fg-muted: #6b6257;
+
+  /* Lines around boxes, tables and code. */
+  --fpc-border: #ded5c6;
+  --fpc-border-soft: #ece5d9;
+
+  /* Colour used for links and highlights. */
+  --fpc-accent: #8a3324;
+  --fpc-accent-hover: #6b2419;
+  --fpc-accent-soft: #d9c3b8;
+
+  /* Colour of program text and identifiers. */
+  --fpc-code-fg: #4a3f33;
+
+  /* Font stacks. Only fonts already present on the machine are used. */
+  --fpc-font-body: Charter, "Bitstream Charter", "Source Serif 4", "Source Serif Pro",
+                   Georgia, "Liberation Serif", "DejaVu Serif", serif;
+  --fpc-font-head: var(--fpc-font-body);
+  --fpc-font-mono: ui-monospace, "SFMono-Regular", "Iosevka", "Fira Mono", Consolas,
+                   "DejaVu Sans Mono", "Liberation Mono", monospace;
+
+  /* Background put behind a picture. The syntax diagrams are drawn in black
+     on nothing at all, so on a dark page they need a light sheet under them. */
+  --fpc-image-bg: transparent;
+  --fpc-image-pad: 0;
+
+  /* Width of the text column and rounding of boxes. */
+  --fpc-content-width: 44rem;
+  --fpc-radius: 3px;
+}
+
+/* Colours used when the screen is set to dark and no choice was made. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fpc-bg: #1a1714;
+    --fpc-bg-soft: #221e19;
+    --fpc-bg-code: #221e19;
+    --fpc-fg: #ded6c9;
+    --fpc-fg-strong: #f4eee3;
+    --fpc-fg-muted: #a19686;
+
+    --fpc-border: #3b342b;
+    --fpc-border-soft: #2b2620;
+
+    --fpc-accent: #dd8b6f;
+    --fpc-accent-hover: #eda98f;
+    --fpc-accent-soft: #4d3428;
+
+    --fpc-code-fg: #d3c8b8;
+
+    --fpc-image-bg: #fbf7ef;
+    --fpc-image-pad: 0.3rem;
+  }
+}
+
+/* The same colours, used when the reader picked dark in the menu. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --fpc-bg: #1a1714;
+  --fpc-bg-soft: #221e19;
+  --fpc-bg-code: #221e19;
+  --fpc-fg: #ded6c9;
+  --fpc-fg-strong: #f4eee3;
+  --fpc-fg-muted: #a19686;
+
+  --fpc-border: #3b342b;
+  --fpc-border-soft: #2b2620;
+
+  --fpc-accent: #dd8b6f;
+  --fpc-accent-hover: #eda98f;
+  --fpc-accent-soft: #4d3428;
+
+  --fpc-code-fg: #d3c8b8;
+
+  --fpc-image-bg: #fbf7ef;
+  --fpc-image-pad: 0.3rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Page                                                               */
+/* ------------------------------------------------------------------ */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  max-width: var(--fpc-content-width);
+  margin: 0 auto;
+  padding: 0 1.5rem 6rem;
+  background: var(--fpc-bg);
+  color: var(--fpc-fg);
+  font-family: var(--fpc-font-body);
+  font-size: 1.125rem;
+  line-height: 1.75;
+  text-rendering: optimizeLegibility;
+}
+
+body * {
+  box-sizing: border-box;
+}
+
+@media (max-width: 40rem) {
+  body {
+    font-size: 1.0625rem;
+    padding: 0 1rem 3rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Headings                                                           */
+/* ------------------------------------------------------------------ */
+
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body h6 {
+  font-family: var(--fpc-font-head);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--fpc-fg-strong);
+  margin: 3rem 0 1rem;
+  /* Keep the heading visible when a link jumps to it. */
+  scroll-margin-top: 2rem;
+}
+
+body h1 a,
+body h2 a,
+body h3 a,
+body h4 a,
+body h5 a,
+body h6 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+body h1 a:hover,
+body h2 a:hover,
+body h3 a:hover,
+body h4 a:hover,
+body h5 a:hover,
+body h6 a:hover {
+  color: var(--fpc-accent);
+}
+
+body h2.titleHead {
+  font-size: clamp(2rem, 5vw, 2.6rem);
+  font-weight: 500;
+  text-align: center;
+  margin: 3rem 0 1.5rem;
+}
+
+body h1.partHead,
+body h2.chapterHead,
+body h2.likechapterHead,
+body h2.appendixHead {
+  font-size: clamp(1.7rem, 4vw, 2rem);
+  font-weight: 500;
+  margin-top: 1.5rem;
+  padding-left: 0.9rem;
+  border-left: 4px solid var(--fpc-accent);
+}
+
+body h3.sectionHead,
+body h3.likesectionHead {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+body h4.subsectionHead,
+body h4.likesubsectionHead {
+  font-size: 1.15rem;
+}
+
+body h5.subsubsectionHead,
+body h5.likesubsubsectionHead {
+  font-size: 1.05rem;
+  font-style: italic;
+  font-weight: 500;
+}
+
+body .paragraphHead,
+body .likeparagraphHead,
+body .subparagraphHead,
+body .likesubparagraphHead {
+  font-size: 1rem;
+  color: var(--fpc-fg-strong);
+}
+
+/* The chapter or section number in front of a heading. */
+body .titlemark {
+  color: var(--fpc-fg-muted);
+  font-weight: 400;
+  white-space: pre;
+}
+
+/* ------------------------------------------------------------------ */
+/* Title page                                                         */
+/* ------------------------------------------------------------------ */
+
+/*
+  The rows of underscores on the title page are plain text, so they are
+  made invisible by painting all direct text of the block transparent and
+  giving the real elements their colour back.
+*/
+body div.maketitle {
+  color: transparent;
+  text-align: center;
+  margin: 3rem 0 3.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--fpc-border);
+}
+
+body div.maketitle * {
+  color: var(--fpc-fg-muted);
+}
+
+body div.maketitle h2,
+body div.maketitle h2 * {
+  color: var(--fpc-fg-strong);
+}
+
+body div.maketitle .author,
+body div.maketitle .author * {
+  color: var(--fpc-fg);
+  font-size: 1.05rem;
+  font-style: italic;
+}
+
+body div.maketitle br {
+  line-height: 1.2;
+}
+
+/* ------------------------------------------------------------------ */
+/* Text                                                               */
+/* ------------------------------------------------------------------ */
+
+body p {
+  margin: 0 0 1.1rem;
+}
+
+body p.indent {
+  text-indent: 0;
+}
+
+body a {
+  color: var(--fpc-accent);
+  text-decoration: underline;
+  text-decoration-color: var(--fpc-accent-soft);
+  text-underline-offset: 0.18em;
+}
+
+body a:hover {
+  color: var(--fpc-accent-hover);
+  text-decoration-color: currentColor;
+}
+
+body a:focus-visible {
+  outline: 2px solid var(--fpc-accent);
+  outline-offset: 2px;
+}
+
+body hr {
+  height: 0;
+  border: 0;
+  border-top: 1px solid var(--fpc-border);
+  margin: 2rem 0;
+}
+
+body img {
+  max-width: 100%;
+  height: auto;
+  padding: var(--fpc-image-pad);
+  background: var(--fpc-image-bg);
+  border-radius: var(--fpc-radius);
+}
+
+body img.math {
+  max-width: none;
+  padding: 0 0.15em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Lists                                                              */
+/* ------------------------------------------------------------------ */
+
+body ul,
+body ol {
+  margin: 0 0 1.1rem;
+  padding-left: 1.5rem;
+}
+
+body li {
+  margin: 0.3rem 0;
+}
+
+body li p {
+  margin-bottom: 0.4rem;
+}
+
+body ul.itemize1,
+body ul.itemize2 {
+  list-style-type: disc;
+}
+
+body dl.description {
+  margin: 1.4rem 0;
+  padding-left: 0;
+}
+
+body dt.description {
+  margin-top: 1.1rem;
+  color: var(--fpc-fg-strong);
+}
+
+body dd.description {
+  margin: 0.2rem 0 0 1.5rem;
+  padding-left: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Tables                                                             */
+/* ------------------------------------------------------------------ */
+
+/* Wide tables get their own scrollbar instead of stretching the page. */
+body div.tabular {
+  overflow-x: auto;
+  margin: 1.75rem 0;
+}
+
+body div.table {
+  margin: 1.75rem 0;
+}
+
+/* A book table has a rule above and below, and nothing in between. */
+body table.tabular {
+  border-collapse: collapse;
+  border-spacing: 0;
+  border-top: 1.5px solid var(--fpc-fg-muted);
+  border-bottom: 1.5px solid var(--fpc-fg-muted);
+  font-size: 0.92em;
+  margin: 0 auto;
+}
+
+body table.tabular td {
+  padding: 0.4rem 0.85rem;
+  vertical-align: top;
+}
+
+/* A first row followed by a rule is the heading of the table. */
+body table.tabular tr:first-child:has(+ tr.hline) td {
+  font-variant: small-caps;
+  letter-spacing: 0.03em;
+  color: var(--fpc-fg-strong);
+}
+
+body table.tabular tr.hline,
+body .hline {
+  border-top-color: var(--fpc-border);
+}
+
+body table.tabular tr.hline td {
+  padding: 0;
+}
+
+body .hline hr,
+body .cline hr {
+  border: 0;
+  border-top: 1px solid var(--fpc-border);
+}
+
+body table[rules] {
+  border-left-color: var(--fpc-border);
+  border-right-color: var(--fpc-border);
+}
+
+body .caption {
+  display: block;
+  margin: 0.6rem 0;
+  color: var(--fpc-fg-muted);
+  font-size: 0.9em;
+  font-style: italic;
+  line-height: 1.5;
+  text-align: left;
+}
+
+body .caption .id {
+  font-style: normal;
+  font-variant: small-caps;
+  color: var(--fpc-fg);
+}
+
+/* ------------------------------------------------------------------ */
+/* Boxes                                                              */
+/* ------------------------------------------------------------------ */
+
+body .fbox,
+body div.fbox,
+body .framebox-c,
+body .framebox-l,
+body .framebox-r {
+  border: 1px solid var(--fpc-border);
+  border-radius: var(--fpc-radius);
+  padding: 0.6rem 0.9rem;
+  background: var(--fpc-bg-soft);
+}
+
+body div.quote {
+  margin: 1.5rem 0;
+  padding: 0 0 0 1.5rem;
+  border-left: 2px solid var(--fpc-border);
+  color: var(--fpc-fg-muted);
+  font-size: 0.97em;
+}
+
+/*
+  Blocks holding a syntax diagram. The row of underscores that latex draws
+  above and below the drawing is one single long word, so it is cut off at
+  the edge of the block instead of sticking out of the page.
+*/
+body blockquote.quote {
+  overflow: hidden;
+}
+
+/* Notes in the margin are shown as a note above the text instead. */
+body .marginpar,
+body .reversemarginpar {
+  float: none;
+  width: auto;
+  margin: 1.5rem 0;
+  padding: 0 0 0 1.5rem;
+  background: none;
+  border-left: 2px solid var(--fpc-accent);
+  color: var(--fpc-fg);
+  font-size: 0.95em;
+  font-style: italic;
+  text-decoration: none;
+}
+
+body div.footnotes {
+  margin: 3rem 0 0;
+  padding: 0.9rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--fpc-border);
+  background: none;
+  color: var(--fpc-fg-muted);
+  font-size: 0.9em;
+  font-style: normal;
+}
+
+body span.footnote-mark sup.textsuperscript {
+  font-size: 0.7em;
+  padding-left: 0.1em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Figures                                                            */
+/* ------------------------------------------------------------------ */
+
+body div.figure {
+  margin: 2rem auto;
+  text-align: center;
+}
+
+body div.float {
+  margin: 2rem 0;
+}
+
+/* The separator line that latex draws around a floating table or figure. */
+body hr.float,
+body hr.endfloat,
+body hr.figure,
+body hr.endfigure {
+  display: none;
+}
+
+body div.center {
+  margin: 1.5rem 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Blocks of program text                                             */
+/* ------------------------------------------------------------------ */
+
+body pre.verbatim,
+body pre.lstlisting,
+body pre.lstinputlisting,
+body div.listinginput {
+  font-family: var(--fpc-font-mono);
+  font-size: 0.83em;
+  line-height: 1.6;
+  color: var(--fpc-code-fg);
+  background: var(--fpc-bg-code);
+  border: 0;
+  border-left: 3px solid var(--fpc-accent-soft);
+  padding: 0.85rem 1.1rem;
+  margin: 1.4rem 0 1.6rem;
+  overflow-x: auto;
+  tab-size: 2;
+}
+
+body pre.verbatim {
+  white-space: pre;
+}
+
+/* Word lists printed in columns keep their plain look, so they can be split. */
+body div.columns-3 pre.verbatim,
+body div.columns-4 pre.verbatim {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  overflow: visible;
+}
+
+body div.listinginput p {
+  margin: 0;
+}
+
+/* Inside a block everything is program text already, so no extra marking. */
+body pre.verbatim span,
+body div.listinginput span,
+body pre.lstlisting span,
+body pre.lstinputlisting span {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* The lines drawn around an example listing are not needed any more. */
+body hr:has(+ div.listinginput),
+body div.listinginput + hr {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Program text inside a sentence                                     */
+/* ------------------------------------------------------------------ */
+
+body code.verb,
+body .pcrr7t-,
+body .pcrr7t-x-x-80,
+body .pcrr7t-x-x-90,
+body .pcrr8c-,
+body .pcrr8c-x-x-80,
+body .pcrb7t-,
+body .cmtt-10,
+body .cmtt-9,
+body .cmtt-8 {
+  font-family: var(--fpc-font-mono);
+  font-size: 0.85em;
+  color: var(--fpc-accent);
+  background: none;
+  overflow-wrap: break-word;
+}
+
+body .pcrb7t- {
+  font-weight: 600;
+}
+
+/* File names and program names, written in a sans serif font in print. */
+body .cmss-10,
+body .cmss-9,
+body .cmss-8 {
+  font-family: var(--fpc-font-mono);
+  font-size: 0.85em;
+  color: var(--fpc-fg-muted);
+}
+
+body h1 .cmss-10,
+body h2 .cmss-10,
+body h3 .cmss-10,
+body h4 .cmss-10,
+body h5 .cmss-10,
+body a .cmss-10 {
+  color: inherit;
+}
+
+/* Lines kept as typed. */
+body .obeylines-h,
+body .obeylines-v {
+  white-space: nowrap;
+}
+
+body div.obeylines-v p {
+  margin: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Next / previous / up bar                                           */
+/* ------------------------------------------------------------------ */
+
+body div.crosslinks {
+  margin: 1.5rem 0 2.5rem;
+  padding: 0 0 0.9rem;
+  border-bottom: 1px solid var(--fpc-border);
+}
+
+/*
+  The square brackets around the links are plain text. Setting the size of
+  that text to zero hides them, the links get their own size back.
+*/
+body div.crosslinks p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 0;
+  font-size: 0;
+}
+
+body div.crosslinks a {
+  color: var(--fpc-fg-muted);
+  font-size: 0.8rem;
+  font-variant: small-caps;
+  letter-spacing: 0.09em;
+  text-decoration: none;
+}
+
+body div.crosslinks a:hover {
+  color: var(--fpc-accent);
+  text-decoration: underline;
+}
+
+body div.crosslinks:not(:first-of-type) {
+  margin: 3.5rem 0 1.25rem;
+  padding: 1.1rem 0 0;
+  border-bottom: 0;
+  border-top: 1px solid var(--fpc-border);
+}
+
+/* ------------------------------------------------------------------ */
+/* Menus for the style and the colours                                */
+/* ------------------------------------------------------------------ */
+
+body div.fpc-switch {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+/* Bar used on pages that have no next / previous links. */
+body div.fpc-switch-bar {
+  display: flex;
+  margin: 1.5rem 0 2.5rem;
+  padding: 0 0 0.9rem;
+  border-bottom: 1px solid var(--fpc-border);
+}
+
+body select.fpc-switch-select {
+  padding: 0.2rem 0.5rem;
+  font-family: var(--fpc-font-body);
+  font-size: 0.85rem;
+  line-height: 1.3;
+  color: var(--fpc-fg-muted);
+  background: var(--fpc-bg);
+  border: 1px solid var(--fpc-border);
+  border-radius: var(--fpc-radius);
+  cursor: pointer;
+}
+
+body select.fpc-switch-select:hover {
+  color: var(--fpc-accent);
+  border-color: var(--fpc-accent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Table of contents of the whole document                            */
+/* ------------------------------------------------------------------ */
+
+body div.tableofcontents {
+  margin: 2rem 0 3rem;
+}
+
+body div.tableofcontents br {
+  display: none;
+}
+
+body div.tableofcontents > span {
+  display: block;
+  padding: 0.22rem 0;
+  color: var(--fpc-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+body div.tableofcontents > span a {
+  color: var(--fpc-fg);
+  text-decoration: none;
+}
+
+body div.tableofcontents > span a:hover {
+  color: var(--fpc-accent);
+  text-decoration: underline;
+}
+
+body .partToc,
+body .chapterToc,
+body .likechapterToc,
+body .appendixToc,
+body .lotToc {
+  margin-top: 1.3rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+body .sectionToc,
+body .likesectionToc {
+  margin-left: 1.5rem;
+}
+
+body .subsectionToc,
+body .likesubsectionToc {
+  margin-left: 3rem;
+  font-size: 0.95em;
+}
+
+body .subsubsectionToc,
+body .likesubsubsectionToc {
+  margin-left: 4.5rem;
+  font-size: 0.95em;
+}
+
+body .paragraphToc,
+body .subparagraphToc {
+  margin-left: 6rem;
+  font-size: 0.95em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Short list of subsections on a page                                */
+/* ------------------------------------------------------------------ */
+
+body div[class$="TOCS"] {
+  margin: 2rem 0;
+  padding: 0 0 0 1.5rem;
+  border-left: 2px solid var(--fpc-border);
+  font-size: 0.95em;
+}
+
+body div[class$="TOCS"]::before {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--fpc-fg-muted);
+  font-size: 0.9em;
+  font-style: italic;
+  content: "On this page";
+}
+
+body div.sectionTOCS::before,
+body div.likesectionTOCS::before {
+  content: "In this chapter";
+}
+
+body div.subsectionTOCS::before,
+body div.subsubsectionTOCS::before,
+body div.likesubsectionTOCS::before,
+body div.likesubsubsectionTOCS::before {
+  content: "In this section";
+}
+
+body div[class$="TOCS"] br {
+  display: none;
+}
+
+body div[class$="TOCS"] > span {
+  display: block;
+  margin-left: 0;
+  padding: 0.2rem 0;
+  color: var(--fpc-fg-muted);
+  font-size: 1em;
+  font-weight: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+body div[class$="TOCS"] > span.subsectionToc {
+  margin-left: 1.25rem;
+}
+
+body div[class$="TOCS"] > span.subsubsectionToc {
+  margin-left: 2.5rem;
+}
+
+body div.subsectionTOCS > span.subsectionToc,
+body div.likesubsectionTOCS > span.subsectionToc,
+body div.subsubsectionTOCS > span.subsubsectionToc {
+  margin-left: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Index                                                              */
+/* ------------------------------------------------------------------ */
+
+body div.columns-3,
+body div.columns-4 {
+  column-gap: 2rem;
+  font-size: 0.95em;
+}
+
+body .index-item,
+body .index-subitem,
+body .index-subsubitem {
+  display: block;
+  break-inside: avoid;
+}
+
+body .index-subitem {
+  margin-left: 1rem;
+}
+
+body .index-subsubitem {
+  margin-left: 2rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Page footer                                                        */
+/* ------------------------------------------------------------------ */
+
+body span.timestamp {
+  display: inline-block;
+  margin-right: 0.8rem;
+  color: var(--fpc-fg-muted);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+body a.reportissue-link {
+  color: var(--fpc-fg-muted);
+  font-size: 0.85rem;
+  font-variant: small-caps;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+}
+
+body a.reportissue-link:hover {
+  color: var(--fpc-accent);
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------------ */
+/* Printing                                                           */
+/* ------------------------------------------------------------------ */
+
+@media print {
+  /* A dark choice must not end up on paper. */
+  :root,
+  :root[data-theme="light"],
+  :root[data-theme="dark"] {
+    --fpc-image-bg: transparent;
+    --fpc-image-pad: 0;
+    --fpc-bg: #ffffff;
+    --fpc-bg-soft: #ffffff;
+    --fpc-bg-code: #ffffff;
+    --fpc-fg: #000000;
+    --fpc-fg-strong: #000000;
+    --fpc-fg-muted: #444444;
+    --fpc-border: #999999;
+    --fpc-border-soft: #cccccc;
+    --fpc-accent: #000000;
+    --fpc-accent-soft: #999999;
+    --fpc-code-fg: #000000;
+  }
+
+  body {
+    max-width: none;
+    padding: 0;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  /* Navigation, menus and reporting links are of no use on paper. */
+  body div.crosslinks,
+  body div.fpc-switch,
+  body div.fpc-switch-bar,
+  body a.reportissue-link {
+    display: none;
+  }
+
+  body a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  body h1,
+  body h2,
+  body h3,
+  body h4,
+  body h5,
+  body h6 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  body pre.verbatim,
+  body div.listinginput,
+  body table.tabular,
+  body div.figure,
+  body div.footnotes {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

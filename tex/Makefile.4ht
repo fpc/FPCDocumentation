@@ -9,6 +9,9 @@ $(HTMLDIR)/%.chk: %.tex
 	rm -rf $(basename $@)
 	rm -f $(addprefix $(basename $<),$(TEXEXTS))
 	cp -f tex/preamble.ts4 tex/preamble.inc
+ifneq ($(HTMLFMT),chm)
+	cat tex/preamble.switch >> tex/preamble.inc
+endif
 	$(GINSTALL) -d $(basename $@) -m755
 	$(LATEX) -output-directory=$(HTMLDIR)/$(basename $(notdir $<)) $<
 	$(LATEX) -output-directory=$(HTMLDIR)/$(basename $(notdir $<)) $<
@@ -23,6 +26,10 @@ else
 endif
 	cd $(basename $@) && tex4ht $(basename $(notdir $<))  && t4ht $(basename $(notdir $<)) -m644
 #	rm -f -r $(basename $@)/pics
+	cp -f css/*.css $(basename $@)/
+ifneq ($(HTMLFMT),chm)
+	cp -f css/*.js $(basename $@)/
+endif
 	rm -f $(addprefix $(basename $@)/$(basename $(notdir $<)),$(TEXEXTS))
 	./postproc$(EXEEXT) -v -t -b $(HTMLDIR)/ -d $(HTMLDIR)/$(basename $(notdir $<)) 
 	touch $@

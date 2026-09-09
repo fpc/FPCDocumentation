@@ -9,7 +9,19 @@
 \newwrite\kwdfile%
 \immediate\openout\kwdfile \jobname.kwd%
 \newcommand{\kwdfileentry}[1]{\immediate\write\kwdfile{#1}}%
-\newcommand{\keywordlink}[1]{\HCode{<a name="keyword_#1"></a>}\kwdfileentry{#1=\FileName\#keyword_#1}\typeout{Keyword link_ #1}}  
+\newcommand{\keywordlink}[1]{\HCode{<a name="keyword_#1"></a>}\kwdfileentry{#1=\FileName\#keyword_#1}\typeout{Keyword link_ #1}}
+%
+% Look of the generated pages. The stylesheets live in the css directory and
+% are copied next to the generated pages by the makefile. Available styles
+% are fpc-modern.css, fpc-book.css and fpc-compact.css; change the name
+% below to use another one.
+% The link must come after the stylesheet that tex4ht generates itself.
+%
+\newcommand{\fpchtmlstyle}{fpc-compact.css}
+\AtBeginDocument{%
+\Configure{@HEAD}{\HCode{<meta name="viewport" content="width=device-width, initial-scale=1">\Hnewline}}%
+\Configure{@HEAD}{\HCode{<link rel="stylesheet" type="text/css" href="\fpchtmlstyle" id="fpc-doc-style-link">\Hnewline}}%
+}%
 %
 % End.
 %
