@@ -5,7 +5,7 @@ unit htmlpp;
 interface
 
 uses
-  Types, Classes, SysUtils;
+  Types, Classes, SysUtils, StrUtils;
 
 Type
   { THTMLPostProcessor }
@@ -20,6 +20,7 @@ Type
     FNewIssueURL: String;
     FOnLog: TProcessorLogEvent;
     FRecurse: Boolean;
+    FSidebar: Boolean;
     FTimeStamp: Boolean;
     procedure GetFilesInDir(aDir: string; aFiles: TStrings);
   protected
@@ -28,7 +29,11 @@ Type
   public
     constructor create(aOwner : TComponent); override;
     procedure processfile(const aBaseDir, aFileName : String);
+    // Copies the contents list of a manual to a javascript file for the sidebar.
+    procedure WriteTocFile(const aDir : String);
     procedure execute; virtual;
+    // Write the contents list of every processed directory to fpc-toc.js.
+    property Sidebar : Boolean Read FSidebar Write FSidebar;
     property TimeStamp : Boolean Read FTimeStamp Write FTimeStamp;
     property Backup : Boolean Read FBackup Write FBackup;
     property Recurse : Boolean Read FRecurse Write FRecurse;
@@ -156,6 +161,78 @@ begin
 end;
 
 
+procedure THTMLPostProcessor.WriteTocFile(const aDir: String);
+
+const
+  SMarker = '<div class="tableofcontents"';
+
+var
+  lHTML : TStrings;
+  lName,lMain,lContent,lToc : String;
+  lStart,lOpen,lStop,lLevel,lIdx : Integer;
+
+begin
+  lName:=ExtractFileName(ExcludeTrailingPathDelimiter(aDir));
+  lMain:=IncludeTrailingPathDelimiter(aDir)+lName+'.html';
+  if not FileExists(lMain) then
+    begin
+    DoLog('No main page "%s", no contents list written',[lMain]);
+    Exit;
+    end;
+  lHTML:=TStringList.Create;
+  try
+    lHTML.LoadFromFile(lMain);
+    lContent:=lHTML.Text;
+    lStart:=Pos(SMarker,lContent);
+    if lStart=0 then
+      begin
+      DoLog('No contents list in "%s", nothing written',[lMain]);
+      Exit;
+      end;
+    lOpen:=PosEx('>',lContent,lStart);
+    if lOpen=0 then
+      begin
+      DoLog('Unfinished contents list in "%s", nothing written',[lMain]);
+      Exit;
+      end;
+    // Look for the tag closing the list, skipping any list nested in it.
+    lLevel:=1;
+    lStop:=0;
+    lIdx:=lOpen+1;
+    While (lIdx<=Length(lContent)) and (lStop=0) do
+      begin
+      if Copy(lContent,lIdx,4)='<div' then
+        Inc(lLevel)
+      else if Copy(lContent,lIdx,6)='</div>' then
+        begin
+        Dec(lLevel);
+        if lLevel=0 then
+          lStop:=lIdx;
+        end;
+      Inc(lIdx);
+      end;
+    if lStop=0 then
+      begin
+      DoLog('Unclosed contents list in "%s", nothing written',[lMain]);
+      Exit;
+      end;
+    lToc:=Copy(lContent,lOpen+1,lStop-lOpen-1);
+    // Tags are spread over several lines, a space keeps them apart.
+    lToc:=StringReplace(lToc,#13,' ',[rfReplaceAll]);
+    lToc:=StringReplace(lToc,#10,' ',[rfReplaceAll]);
+    lToc:=StringReplace(lToc,'\','\\',[rfReplaceAll]);
+    lToc:=StringReplace(lToc,'"','\"',[rfReplaceAll]);
+    lHTML.Clear;
+    lHTML.Add('/* Contents of this manual, used by fpc-theme-switch.js. */');
+    lHTML.Add('window.fpcDocToc = "'+lToc+'";');
+    lHTML.SaveToFile(IncludeTrailingPathDelimiter(aDir)+'fpc-toc.js');
+    DoLog('Wrote contents list of "%s"',[lName]);
+  finally
+    lHTML.Free;
+  end;
+end;
+
+
 procedure THTMLPostProcessor.execute;
 var
   lFiles : TStrings;
@@ -182,6 +259,8 @@ begin
             DoLog('Exception %s processing file "%s": %s',[E.ClassName,lFile,E.Message]);
         end;
         end;
+      if FSidebar then
+        WriteTocFile(lDir);
       end;
   finally
     lFiles.Free;

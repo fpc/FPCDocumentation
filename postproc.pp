@@ -47,6 +47,7 @@ begin
   Writeln('-n --new-issue-url=URL      the URL to report a new issue');
   Writeln('-t --timestamp              add timestamp to page footer');
   Writeln('-r --recurse                recurse into subdirectories');
+  Writeln('-s --sidebar                write the contents list of each directory to fpc-toc.js');
   ExitCode:=Ord(Msg<>'');
 end;
 
@@ -57,15 +58,19 @@ var
 
 begin
   Terminate;
-  lErr:=checkoptions('hvtcrd:n:b:',['help','directory:','new-issue-url:','base-dir:','verbose','timestamp','backup','recurse']);
-  if lErr<>'' then
+  lErr:=checkoptions('hvtcrsd:n:b:',['help','directory:','new-issue-url:','base-dir:','verbose','timestamp','backup','recurse','sidebar']);
+  if (lErr<>'') or HasOption('h','help') then
+    begin
     Usage(lErr);
+    Exit;
+    end;
   FProcessor.Dirs:=GetOptionValues('d','directory');
   FProcessor.NewIssueURL:=GetOptionValue('i','issue-url');
   FProcessor.BaseDir:=GetOptionValue('b','base-dir');
   FProcessor.TimeStamp:=HasOption('t','timestamp');
   FProcessor.Backup:=HasOption('c','backup');
   FProcessor.Recurse:=HasOption('r','recurse');
+  FProcessor.Sidebar:=HasOption('s','sidebar');
   if hasOption('v','verbose') then
     FProcessor.OnLog:=@DoProcessorLog;
   FProcessor.Execute;

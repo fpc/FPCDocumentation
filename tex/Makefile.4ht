@@ -4,6 +4,11 @@
 
 HTFONTS=/usr/share/texmf/tex/generic/tex4ht/ht-fonts/
 TEXEXTS=.4ct .aux .dvi .xref .4tc .idx .log .tmp .lg .idv
+
+# The contents list for the sidebar is not wanted in the chm help files.
+ifneq ($(HTMLFMT),chm)
+POSTPROCOPTS=-s
+endif
 	
 $(HTMLDIR)/%.chk: %.tex
 	rm -rf $(basename $@)
@@ -31,5 +36,5 @@ ifneq ($(HTMLFMT),chm)
 	cp -f css/*.js $(basename $@)/
 endif
 	rm -f $(addprefix $(basename $@)/$(basename $(notdir $<)),$(TEXEXTS))
-	./postproc$(EXEEXT) -v -t -b $(HTMLDIR)/ -d $(HTMLDIR)/$(basename $(notdir $<)) 
+	./postproc$(EXEEXT) -v -t $(POSTPROCOPTS) -b $(HTMLDIR)/ -d $(HTMLDIR)/$(basename $(notdir $<))
 	touch $@
