@@ -8709,27 +8709,43 @@ following characters:
 </p>
 <dl>
 <dt>d </dt><dd>Placeholder for a decimal number.</dd>
+<dt>u </dt><dd>Placeholder for an unsigned decimal number.</dd>
 <dt>f </dt><dd>Placeholder for a floating point number (an extended)</dd>
-<dt>s </dt><dd>Placeholder for a string of arbitrary length.</dd>
+<dt>s </dt><dd>Placeholder for a string of arbitrary length, up to the next space.</dd>
 <dt>c </dt><dd>Placeholder for a single character</dd>
 </dl>
+<p>
+<var>%%</var> matches a single <var>%</var> character in <var>S</var>.
+A space in <var>Fmt</var> matches any number of spaces in <var>S</var>, including none.
+Any other character in <var>Fmt</var> must match the character at the current position in <var>S</var>:
+on a mismatch, scanning stops.
+</p>
 <p>
 The <var>Pointers</var> array contains a list of pointers, each pointer should point to a
 memory location of a type that corresponds to the type of placeholder in that position:
 </p>
 <dl>
 <dt>d </dt><dd>A pointer to an integer.</dd>
+<dt>u </dt><dd>A pointer to a cardinal.</dd>
 <dt>f </dt><dd>A pointer to an extended.</dd>
 <dt>s </dt><dd>A pointer to an ansistring.</dd>
 <dt>c </dt><dd>A pointer to a single character.</dd>
 </dl>
 <p>
 On return, these locations will be filled with the actual values found in <var>S</var> for the placeholders in <var>fmt</var>.
-The return value of the function is the number of found values.
+</p>
+<p>
+The return value of the function is the number of values that were converted and assigned.
+Scanning stops at the first placeholder that cannot be converted or at the first literal character that does not match,
+so the result is less than the number of placeholders if <var>S</var> does not match <var>Fmt</var> completely.
+Literal characters after the last placeholder are not checked: <var>SScanf('(1, 2', '(%d, %d)', [@a,@b])</var> returns 2.
+Placeholders that were not converted leave their memory location unchanged.
 </p>
 </descr>
 <errors>
 No error checking is performed on the type of the memory location.
+An <var>EFormatError</var> exception is raised if <var>Fmt</var> contains an unknown placeholder.
+An <var>EConvertError</var> exception is raised if a number is out of range for its type.
 </errors>
 <seealso>
 <link id="Format"/>
