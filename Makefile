@@ -2578,7 +2578,7 @@ endif
 TEXINPUTS:=$(VPATH):.:examples:
 export TEXINPUTS
 ifndef HTMLFMT
-  HTMLFMT=html
+  HTMLFMT=material
 endif
 ifndef RTLLINKPREFIX
   ifeq (chm, $(HTMLFMT))
